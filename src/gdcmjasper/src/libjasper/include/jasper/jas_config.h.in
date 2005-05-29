@@ -100,30 +100,47 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "@JAS_VERSION@"
 
-#if 0
+/* Size of fundamental data types.  */
 /* The size of a `int', as computed by sizeof. */
-#define SIZEOF_INT 4
+#define SIZEOF_INT    @GDCM_SIZEOF_INT@
 
 /* The size of a `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
-
-/* The size of a `long long', as computed by sizeof. */
-#define SIZEOF_LONG_LONG 8
+#define SIZEOF_LONG   @GDCM_SIZEOF_LONG@
 
 /* The size of a `short', as computed by sizeof. */
-#define SIZEOF_SHORT 2
+#define SIZEOF_SHORT  @GDCM_SIZEOF_SHORT@
 
+/* The size of a `char', as computed by sizeof. */
+#define SIZEOF_CHAR   @GDCM_SIZEOF_CHAR@
+
+/* The size of a `double', as computed by sizeof. */
+#define SIZEOF_DOUBLE @GDCM_SIZEOF_DOUBLE@
+
+/* The size of a `float', as computed by sizeof. */
+#define SIZEOF_FLOAT  @GDCM_SIZEOF_FLOAT@
+
+/* Could someone give me an example of plateform that have 
+ * different size for unsigned types ?? */
 /* The size of a `unsigned int', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_INT 4
+#define SIZEOF_UNSIGNED_INT @GDCM_SIZEOF_INT@
 
 /* The size of a `unsigned long', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_LONG 4
-
-/* The size of a `unsigned long long', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_LONG_LONG 8
+#define SIZEOF_UNSIGNED_LONG @GDCM_SIZEOF_LONG@
 
 /* The size of a `unsigned short', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_SHORT 2
+#define SIZEOF_UNSIGNED_SHORT @GDCM_SIZEOF_SHORT@
+
+
+/* Define size of long long and/or __int64 bit integer type only if the type
+   exists.  */
+/* The size of a `long long', as computed by sizeof. */
+#cmakedefine GDCM_SIZEOF_LONG_LONG @GDCM_SIZEOF_LONG_LONG@
+#cmakedefine GDCM_SIZEOF___INT64   @GDCM_SIZEOF___INT64@
+
+/* The size of a `unsigned long long', as computed by sizeof. */
+#define SIZEOF_UNSIGNED_LONG_LONG @GDCM_SIZEOF_LONG_LONG@
+
+
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -146,44 +163,41 @@
    if it is not supported. */
 /* #undef inline */
 
-/* I have #define for types... */
-#if 0
-/* Define to `long long' if <sys/types.h> does not define. */
-#define longlong long long
+/* Whether types "long long" and "__int64" are enabled.  If a type is
+   enabled then it is a unique fundamental type.  */
+#cmakedefine GDCM_TYPE_USE_LONG_LONG
+#cmakedefine GDCM_TYPE_USE___INT64
 
-/* Define to `unsigned' if <sys/types.h> does not define. */
-/* #undef size_t */
-
-/* Define to `int' if <sys/types.h> does not define. */
-/* #undef ssize_t */
-
-/* Define to `unsigned char' if <sys/types.h> does not define. */
-#define uchar unsigned char
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-/* #undef uint */
-
-/* Define to `unsigned long' if <sys/types.h> does not define. */
-#define ulong unsigned long
-
-/* Define to `unsigned long long' if <sys/types.h> does not define. */
-#define ulonglong unsigned long long
-
-/* Define to `unsigned short' if <sys/types.h> does not define. */
-/* #undef ushort */
-#endif
+/* Some properties of the available types.  */
+#cmakedefine GDCM_TYPE_SAME_LONG_AND___INT64
+#cmakedefine GDCM_TYPE_SAME_LONG_LONG_AND___INT64
+#cmakedefine GDCM_TYPE_CONVERT_UI64_TO_DOUBLE
 
 
+// On win32 there is no long long therefore use __int64 instead
+//
 #ifndef HAVE_SYS_TYPES_H
 typedef unsigned short     ushort;
 typedef unsigned int       uint;
 typedef unsigned long      ulong;
+#ifdef GDCM_TYPE_USE___INT64
+typedef unsigned char      uchar;
+typedef unsigned __int64   ulonglong;
+typedef __int64            longlong;
 #else
+#error this is not supposed to happen please report your compiler
+#endif
+#else
+#ifdef GDCM_TYPE_USE_LONG_LONG
 typedef unsigned char      uchar;
 typedef unsigned long long ulonglong;
 typedef long long          longlong;
+#else
+#error this is not supposed to happen please report your compiler
+#endif
 /* #define  ssize_t    int */
 #endif
+
 
 #endif
 
