@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmTestFUNCTION.cxx,v $
+  Module:    $RCSfile: gdcmTestCompareTypes.cxx,v $
   Language:  C++
   Date:      $Date: 2005/05/29 23:06:41 $
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,23 +16,16 @@
                                                                                 
 =========================================================================*/
 
-// Minimal test for existence of __FUNCTION__ pseudo-macro
-#include <string.h>
+#define TYPE_LONG_LONG long long
 
-int TestFUNCTION()
-{
-#ifdef __BORLANDC__
-  #ifndef __FUNCTION__
-    #define __FUNCTION__ __FUNC__
-  #endif
-#endif
-  const char *f = __FUNCTION__;
-  int r = strcmp( "TestFUNCTION", f);
-  return r;
-}
- 
+typedef GDCM_TEST_COMPARE_TYPE_1 Type1;
+typedef GDCM_TEST_COMPARE_TYPE_2 Type2;
+
+void function(Type1**) {}
+
 int main()
 {
-  return TestFUNCTION();
+  Type2** p = 0;
+  function(p);
+  return 0;
 }
-
