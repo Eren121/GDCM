@@ -175,32 +175,15 @@
 
 
 #ifndef HAVE_SYS_TYPES_H
+typedef unsigned short     ushort;
+typedef unsigned int       uint;
+typedef unsigned long      ulong;
 #else
 typedef unsigned char      uchar;
-typedef unsigned short     ushort;
-typedef unsigned int       uint;
-typedef unsigned long      ulong;
-typedef long long          longlong;
 typedef unsigned long long ulonglong;
+typedef long long          longlong;
 /* #define  ssize_t    int */
 #endif
-
-/* Something I don't uderstand (neither Benoit does ...)
-   The previous 'ifndef' causes warning with gcc, like :
-   /usr/include/sys/types.h:152: warning: `ushort' previously declared here
-   Commenting it out and uncommenting the following causes syntax error ?!?
-*/  
-/*
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-typedef unsigned char      uchar;
-typedef unsigned short     ushort;
-typedef unsigned int       uint;
-typedef unsigned long      ulong;
-typedef long long          longlong;
-typedef unsigned long long ulonglong;
-#define UINT32_MAX    (4294967295U)
-#endif
-*/
 
 #endif
 
