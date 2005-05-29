@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/17 12:44:09 $
-  Version:   $Revision: 1.238 $
+  Date:      $Date: 2005/05/29 21:56:36 $
+  Version:   $Revision: 1.239 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,7 +117,7 @@ File::File( std::string const &filename )
    {
       // Compute the RLE or JPEG info
       OpenFile();
-      std::string ts = GetTransferSyntax();
+      const std::string &ts = GetTransferSyntax();
       Fp->seekg( entry->GetOffset(), std::ios::beg );
       if ( Global::GetTS()->IsRLELossless(ts) ) 
          ComputeRLEInfo();

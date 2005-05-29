@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/22 13:37:57 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/05/29 21:56:36 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -256,6 +256,7 @@ bool TS::IsJPEG(TSKey const &key)
    {
       if ( IsJPEGLossy( key )
         || IsJPEGLossless( key )
+        || IsJPEG2000( key )
          )
       {
          r = true;
