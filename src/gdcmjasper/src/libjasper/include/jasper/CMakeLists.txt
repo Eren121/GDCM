@@ -172,6 +172,6 @@ IF(GDCM_SIZEOF___INT64)
 ENDIF(GDCM_SIZEOF___INT64)
 
 CONFIGURE_FILE(
-  "${JASPER_SOURCE_DIR}/src/libjasper/include/jasper/jas_config.h.in"
-  "${JASPER_BINARY_DIR}/src/libjasper/include/jasper/jas_config.h"
+  "${GDCMJASPER_SOURCE_DIR}/src/libjasper/include/jasper/jas_config.h.in"
+  "${GDCMJASPER_BINARY_DIR}/src/libjasper/include/jasper/jas_config.h"
   @ONLY IMMEDIATE)
