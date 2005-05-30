@@ -28,17 +28,29 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
    <UL>
    <LI>ACR-NEMA version 1 and 2
    </LI>
-   <LI>Dicom version 3.0 (including various encodings of jpeg, RLE).
+   <LI>Dicom version 3.0 (including various encodings of JPEG -lossless and
+       lossy-, RLE).
        Please refer to
        <A HREF="ConformanceSummary.html">gdcm conformance summary</A>
        for more details.
-   <LI>Papyrus V2 and V3 file headers are readable; the user will have to use low level
-accessors if he wants to get the image pixels -sorry-
+   <LI>Papyrus V2 and V3 file headers are readable; the user will have to use 
+       low level accessors if he wants to get the image pixels -sorry-
    </LI>
    </UL>
+<LI> gdcm includes a lot of heuristics that allow reading all the 
+    'exotic' files (headers with oddities) we had to deal with.<BR>
+     Any king of 'exotic' Dicom file is welcome, to help us to improve our
+     library.
+</LI>
 </LI>
 <LI>gdcm is distributed with
    <A HREF="License.html">Berkeley-like license</A>.
+</LI>
+<LI>gdcm is cross platform (it compiles with gcc 2.95, 2.96, 3.0.x, 3.2.x,
+     3.3.x, 3.4.x, 4.0.x, 4.1.x , icc , cc (SunOS), VisualC++, Borland, 
+     nmake... )
+</LI>
+<LI> gdcm has a nightly Dashboard (the whole lib is checked every night)
 </LI>
 <LI>gdcm targets both GNU/Un*ces and Windows/VC++
    (refer to

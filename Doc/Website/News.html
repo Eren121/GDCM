@@ -24,16 +24,32 @@ Any contribution is welcome.
 <UL>
 <LI> Decoders   
    <UL>
-      <LI> gdcm doesn't read yet JPEG-LS and JPEG2000 encoded files.
-      <LI> gdcm doesn't read yet MPEG encoded files.
+      <LI> gdcm doesn't read yet JPEG-LS encoded files.
+      <UL>
+          We said 'JPEG-LS', not Lossless Jpeg ...<br>
+          [JPEG-LS is the basis for new lossless/near-lossless compression
+          standard for continuous-tone images intended for JPEG2000. 
+          The standard is based on the LOCO-I algorithm 
+          (LOw COmplexity LOssless COmpression for Images) 
+          developed at Hewlett-Packard Laboratories] 
+     </UL>
+     <LI> gdcm doesn't read yet JPEG2000 encoded files.
+     <UL>
+         But we are working on it.
+      </UL>
+      <LI> gdcm doesn't read yet MPEG2 encoded files.
+      <UL>
+          But we are working on it.
+      </UL>
    </UL>
 <LI>Reader
    <UL>
       <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
            to load a given list of <TT>DocEntries</TT> 
            (to save CPU time and RAM space)
-      <LI> Allow 'frame by frame' reading (should be helpfull for huge multiframe
-images)
+      <LI> Allow 'frame by frame' reading (should be helpfull for huge 
+           multiframe images)
+      <LI> Allow subvolume selection / frames selection before reading.
       <LI> Expose Read/Decompression mechanisms to allow user getting
          information from <tt>DICOMDIR</TT> <br> -or from his own Data Base- 
          and reading his images without parsing
@@ -69,7 +85,7 @@ images)
            entries)to the default entry list, before
            making a <TT>DICOMDIR</TT> from a root directory
       <LI> Allow user to add an entry of his owns (for instance an <TT>Icon</TT>
-           to each image, or to each Serie.  
+           to each image, or to each Serie).  
       </UL>
 <LI> SerieHelper
    <UL>
