@@ -194,6 +194,9 @@ typedef unsigned char      uchar;
 typedef unsigned long long ulonglong;
 typedef long long          longlong;
 #else
+typedef unsigned short     ushort;
+typedef unsigned int       uint;
+typedef unsigned long      ulong;
 typedef unsigned char      uchar;
 typedef unsigned __int64   ulonglong;
 typedef __int64            longlong;
