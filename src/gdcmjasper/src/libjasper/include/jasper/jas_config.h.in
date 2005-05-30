@@ -217,6 +217,16 @@ typedef __int64            longlong;
 /* #define  ssize_t    int */
 #endif // HAVE_SYS_TYPES_H
 
+#if defined(_WIN32) && !defined(JASPERSTATIC)
+#ifdef JASPERDLL
+#define EXTERN(type)            __declspec(dllexport) type
+#else
+#define EXTERN(type)            __declspec(dllimport) type
+#endif
+#else
+#define EXTERN(type)            extern type
+#endif
+
 
 #endif
 
