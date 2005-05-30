@@ -194,7 +194,9 @@ typedef unsigned char      uchar;
 typedef unsigned long long ulonglong;
 typedef long long          longlong;
 #else
-#error this is not supposed to happen please report your compiler
+typedef unsigned char      uchar;
+typedef unsigned __int64   ulonglong;
+typedef __int64            longlong;
 #endif // GDCM_TYPE_USE_LONG_LONG
 /* #define  ssize_t    int */
 #endif // HAVE_SYS_TYPES_H
