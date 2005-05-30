@@ -158,8 +158,6 @@ SET(BLACK_LIST
   # From David Clunie's Compresion Dataset  
   "D_CLUNIE_CT1_JLSN.dcm"
   "D_CLUNIE_CT1_JLSL.dcm"
-  "D_CLUNIE_CT1_J2KR.dcm"
-  "D_CLUNIE_CT1_J2KI.dcm"
   #Not a Dicom Image, but a RT Object
   "RS2.16.124.113534.2.3.5.0.120040728.21342.353.12747_anonimized.dcm" 
   #Dicom MPEG image
