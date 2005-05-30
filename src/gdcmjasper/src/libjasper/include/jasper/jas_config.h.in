@@ -189,7 +189,20 @@ typedef __int64            longlong;
 #error this is not supposed to happen please report your compiler
 #endif //GDCM_TYPE_USE___INT64
 #else
+#cmakedefine HAVE_GDCM_SIZEOF_UINT
+#cmakedefine HAVE_GDCM_SIZEOF_USHORT
+#cmakedefine HAVE_GDCM_SIZEOF_ULONG
+
 #ifdef GDCM_TYPE_USE_LONG_LONG
+#ifndef HAVE_GDCM_SIZEOF_USHORT
+typedef unsigned short     ushort;
+#endif
+#ifndef HAVE_GDCM_SIZEOF_UINT
+typedef unsigned int       uint;
+#endif
+#ifndef HAVE_GDCM_SIZEOF_ULONG
+typedef unsigned long      ulong;
+#endif
 typedef unsigned char      uchar;
 typedef unsigned long long ulonglong;
 typedef long long          longlong;
