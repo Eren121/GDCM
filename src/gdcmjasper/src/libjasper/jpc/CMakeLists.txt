@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 SET(libjpc_la_SOURCES
   #  jpc_bs.h
@@ -45,4 +45,4 @@ SET(libjpc_la_SOURCES
   jpc_util.c
   )
 
-ADD_LIBRARY(jpc ${libjpc_la_SOURCES})
+#ADD_LIBRARY(jpc ${libjpc_la_SOURCES})

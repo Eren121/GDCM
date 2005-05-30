@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 SET(libbmp_la_SOURCES
   #  bmp_cod.h
@@ -9,4 +9,4 @@ SET(libbmp_la_SOURCES
   bmp_enc.c
   )
 
-ADD_LIBRARY(bmp ${libbmp_la_SOURCES})
+#ADD_LIBRARY(bmp ${libbmp_la_SOURCES})

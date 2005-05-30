@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 #EXTRA_DIST = README
 
@@ -15,12 +15,12 @@ SET(libjpg_la_SOURCES
   #  jpg_jpeglib.h
   #  $(MISCSOURCES)
   jpg_val.c
-  )
-SET(EXTRA_libjpg_la_SOURCES
+  #  )
+  #SET(EXTRA_libjpg_la_SOURCES
   #  jpg_dec.c
   #  jpg_enc.c
   jpg_dummy.c
   )
 
-ADD_LIBRARY(jpg ${libjpg_la_SOURCES} ${EXTRA_libjpg_la_SOURCES})
+#ADD_LIBRARY(jpg ${libjpg_la_SOURCES} ${EXTRA_libjpg_la_SOURCES})
 

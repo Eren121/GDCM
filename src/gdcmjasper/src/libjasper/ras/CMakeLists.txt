@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 SET(libras_la_SOURCES
   #  ras_cod.h
@@ -9,4 +9,4 @@ SET(libras_la_SOURCES
   ras_enc.c
   )
 
-ADD_LIBRARY(ras ${libras_la_SOURCES})
+#ADD_LIBRARY(ras ${libras_la_SOURCES})

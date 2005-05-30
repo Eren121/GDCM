@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 SET(libpnm_la_SOURCES
   #  pnm_cod.h
@@ -9,4 +9,4 @@ SET(libpnm_la_SOURCES
   pnm_enc.c
   )
 
-ADD_LIBRARY(pnm ${libpnm_la_SOURCES})
+#ADD_LIBRARY(pnm ${libpnm_la_SOURCES})

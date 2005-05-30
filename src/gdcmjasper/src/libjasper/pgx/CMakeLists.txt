@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 SET(libpgx_la_SOURCES
   #  pgx_cod.h
@@ -9,4 +9,4 @@ SET(libpgx_la_SOURCES
   pgx_enc.c
   )
 
-ADD_LIBRARY(pgx ${libpgx_la_SOURCES})
+#ADD_LIBRARY(pgx ${libpgx_la_SOURCES})

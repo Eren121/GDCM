@@ -1,5 +1,5 @@
 # all the include are there:
-INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
+#INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
 SET(libbase_la_SOURCES
   jas_cm.c
@@ -16,4 +16,4 @@ SET(libbase_la_SOURCES
   jas_tvp.c
   jas_version.c
   )
-ADD_LIBRARY(base ${libbase_la_SOURCES} )
+#ADD_LIBRARY(base ${libbase_la_SOURCES} )
