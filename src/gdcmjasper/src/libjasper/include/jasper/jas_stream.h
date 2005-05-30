@@ -64,7 +64,7 @@
 /*
  * I/O Stream Class
  *
- * $Id: jas_stream.h,v 1.1 2005/05/22 18:33:01 malaterre Exp $
+ * $Id: jas_stream.h,v 1.2 2005/05/30 02:56:28 malaterre Exp $
  */
 
 #ifndef JAS_STREAM_H
@@ -291,7 +291,7 @@ typedef struct {
 jas_stream_t *jas_stream_fopen(const char *filename, const char *mode);
 
 /* Open a memory buffer as a stream. */
-jas_stream_t *jas_stream_memopen(char *buf, int bufsize);
+EXTERN(jas_stream_t) *jas_stream_memopen(char *buf, int bufsize);
 
 /* Open a file descriptor as a stream. */
 jas_stream_t *jas_stream_fdopen(int fd, const char *mode);
@@ -303,7 +303,7 @@ jas_stream_t *jas_stream_reopen(const char *path, const char *mode, FILE *fp);
 jas_stream_t *jas_stream_tmpfile(void);
 
 /* Close a stream. */
-int jas_stream_close(jas_stream_t *stream);
+EXTERN(int) jas_stream_close(jas_stream_t *stream);
 
 /******************************************************************************\
 * Macros/functions for getting/setting the stream state.
