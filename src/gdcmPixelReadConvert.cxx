@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/29 21:56:36 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/05/30 00:24:10 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -397,10 +397,14 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 {
    if ( IsJPEG2000 )
    {
-//      gdcmWarningMacro( "Sorry, JPEG2000 not yet taken into account" );
+      // I don't think we'll ever be able to deal with multiple fragments
+      assert( JPEGInfo->GetFragmentCount() == 1 );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
-    if ( ! gdcm_read_JPEG2000_file( fp,Raw, JPEGInfo->GetFirstFragment()->GetLength() ) )
-          return false;
+      if ( ! gdcm_read_JPEG2000_file( fp,Raw, 
+          JPEGInfo->GetFirstFragment()->GetLength() ) )
+      {
+         return true;
+      }
    }
 
    if ( IsJPEGLS )
@@ -419,14 +423,15 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
    }
+   else
+     {
+     // Precompute the offset localRaw will be shifted with
+     int length = XSize * YSize * SamplesPerPixel;
+     int numberBytes = BitsAllocated / 8;
 
-   // else ??
-   // Precompute the offset localRaw will be shifted with
-   int length = XSize * YSize * SamplesPerPixel;
-   int numberBytes = BitsAllocated / 8;
-
-   JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
-   return true;
+     JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
+     return true;
+     }
 }
 
 /**
