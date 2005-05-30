@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/22 18:38:52 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/05/30 01:30:39 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,15 +34,11 @@ namespace gdcm
  * @warning : not yet made
  */
 
-bool gdcm_read_JPEG2000_file (std::ifstream* fp, void* raw, size_t inputlength)
+bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 {
   jas_init(); //important...
-  // FIXME this is really ugly but it seems I have to load the complete
-  // jpeg2000 stream to use jasper:
-  uint8_t *inputdata = new uint8_t[inputlength];
-  //fp is already 'seek' to proper pos
-  fp->read((char*)inputdata, inputlength);
-  jas_stream_t *jasStream = jas_stream_memopen((char *)inputdata, inputlength);
+  jas_stream_t *jasStream = 
+    jas_stream_memopen((char *)inputdata, inputlength);
     
   int fmtid;
   if ((fmtid = jas_image_getfmt(jasStream)) < 0) 
