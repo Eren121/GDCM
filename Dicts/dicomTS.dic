@@ -170,6 +170,7 @@
 1.2.840.10008.5.1.4.1.1.88.50     Mammography CAD SR
 1.2.840.10008.5.1.4.1.1.88.59     Key Object Selection Document
 1.2.840.10008.5.1.4.1.1.88.65     Chest CAD SR
+1.2.840.10008.5.1.4.1.1.104.1     Encapsulated PDF Storage
 1.2.840.10008.5.1.4.1.1.128       Positron Emission Tomography Image Storage
 1.2.840.10008.5.1.4.1.1.129       Standalone PET Curve Storage
 1.2.840.10008.5.1.4.1.1.481.1     RT Image Storage
