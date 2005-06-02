@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:41:10 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/02 09:38:53 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,15 +33,21 @@
 #include "gdcmSQItem.h" 
 #include "gdcmValEntry.h" 
 
+#include <fstream>
 #include <iostream>
+#include <iomanip> // for std::ios::left, ...
 
 //Generated file:
 #include "gdcmDataImages.h"
 
 int TestPrintAllDocument(int, char *[])
 {
+   //std::ostringstream s;
    int i = 0;
-
+   int swapC;
+   std::string pixelType, photomInterp;
+   int l;
+   l = strlen("PALETTE COLOR ");
    while( gdcmDataImages[i] != 0 )
    {
       std::string filename = GDCM_DATA_ROOT;
@@ -51,18 +57,34 @@ int TestPrintAllDocument(int, char *[])
       gdcm::File *e1= new gdcm::File( filename );
       e1->SetPrintLevel(2);
       e1->Print();
+      // just to be able to grep the display result, for some usefull info
+ 
+      //s.setf(std::ios::left);
+      //s << std::setw(60-filename.length()) << " ";
+      //std::cout << s.str() << gdcmDataImages[i];
 
-      // just to be able to grep the display result, for some usefull info     
-      std::cout << filename
-                << " TransferSyntaxName= [" << e1->GetTransferSyntaxName() 
-                << "] SwapCode = "          << e1->GetSwapCode() 
-                << " PhotometricInterpretation=" 
-                                            << e1->GetEntryValue(0x0028,0x0004)
-                << " pixelType="            << e1->GetPixelType() 
-                << " SamplesPerPixel="      << e1->GetSamplesPerPixel()
-                << " PlanarConfiguration="  << e1->GetPlanarConfiguration();
+      std::cout << gdcmDataImages[i];
+      for (unsigned int j=0; j<60-strlen(gdcmDataImages[i]); j++)
+         std::cout << " ";    
+
+      pixelType = e1->GetPixelType();
+      std::cout << " pixelType="            << pixelType;
+      if (pixelType == "8U" || pixelType == "8S" )
+         std::cout << " ";
+      std::cout << " Smpl.P.Pix.="          << e1->GetSamplesPerPixel()
+                << " Plan.Config.="         << e1->GetPlanarConfiguration();
+      photomInterp =  e1->GetEntryValue(0x0028,0x0004);
+               
+      std::cout << " Photom.Interp.="       << photomInterp;
+      for (unsigned int j=0; j<l-photomInterp.length(); j++)
+         std::cout << " ";
+ 
+      std::cout << " TransferSyntaxName= [" << e1->GetTransferSyntaxName() << "]" ;
+      swapC = e1->GetSwapCode();
+      if (swapC != 1234)
+          std::cout << " SwapCode = "       << e1->GetSwapCode(); 
       if ( e1->CheckIfEntryExist(0x0088,0x0200) )
-           std::cout << " Icon Image Sequence";
+          std::cout << " Icon Image Sequence";
 
        std::cout << std::endl;
    
