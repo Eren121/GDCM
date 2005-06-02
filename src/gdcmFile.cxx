@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/29 21:56:36 $
-  Version:   $Revision: 1.239 $
+  Date:      $Date: 2005/06/02 14:20:14 $
+  Version:   $Revision: 1.240 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -210,7 +210,10 @@ bool File::IsReadable()
    {
       return false; // "Pixel Representation" i.e. 'Sign'
    }
-
+   if ( !GetDocEntry(GrPixel, NumPixel) )
+   {
+      return false; // Pixel Dicom Element not found :-(
+   }
    return true;
 }
 
