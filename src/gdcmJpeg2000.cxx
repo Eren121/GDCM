@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/30 01:30:39 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/06/02 12:37:21 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,11 +27,10 @@ namespace gdcm
 //-----------------------------------------------------------------------------
  /**
  * \brief   routine for JPEG decompression 
- * @param fp pointer to an already open file descriptor 
- *                      JPEG2000 encoded image
- * @param image_buffer to receive uncompressed pixels
+ * @param raw raw
+ * @param inputdata inputdata
+ * @param inputlength inputlength 
  * @return 1 on success, 0 on error
- * @warning : not yet made
  */
 
 bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
@@ -74,8 +73,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
     for ( i = 0; i < height; i++)
       for ( j = 0; j < width; j++)
         for ( k= 0; k < numcmpts; k++)
-          *data8++ =
-            (uint8_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
+          *data8++ = (uint8_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
     }
   else if (prec <= 16)
     {
@@ -83,8 +81,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
     for ( i = 0; i < height; i++) 
       for ( j = 0; j < width; j++) 
         for ( k= 0; k < numcmpts; k++)
-          *data16++ = 
-            (uint16_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
+          *data16++ = (uint16_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
     }
   else if (prec <= 32)
     {
@@ -92,8 +89,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
     for ( i = 0; i < height; i++) 
       for ( j = 0; j < width; j++) 
         for ( k= 0; k < numcmpts; k++)
-          *data32++ = 
-            (uint32_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
+          *data32++ = (uint32_t)(jas_image_readcmptsample(jasImage, k, j ,i ));
     }
 
   jas_image_destroy(jasImage);

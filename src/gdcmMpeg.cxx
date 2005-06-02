@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/23 13:28:19 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/02 12:32:55 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,15 +28,15 @@ extern "C" {
 #include "global.h"
 
 /* private prototypes */
-static int  video_sequence _ANSI_ARGS_((int *framenum));
-static int Decode_Bitstream _ANSI_ARGS_((void));
-static int  Headers _ANSI_ARGS_((void));
-static void Initialize_Sequence _ANSI_ARGS_((void));
-static void Initialize_Decoder _ANSI_ARGS_((void));
+static int  video_sequence        _ANSI_ARGS_((int *framenum));
+static int  Decode_Bitstream      _ANSI_ARGS_((void));
+static int  Headers               _ANSI_ARGS_((void));
+static void Initialize_Sequence   _ANSI_ARGS_((void));
+static void Initialize_Decoder    _ANSI_ARGS_((void));
 static void Deinitialize_Sequence _ANSI_ARGS_((void));
-//static void Process_Options _ANSI_ARGS_((int argc, char *argv[]));
+//static void Process_Options       _ANSI_ARGS_((int argc, char *argv[]));
 
-/* IMPLEMENTAION specific rouintes */
+/* IMPLEMENTATION specific routines */
 static void Initialize_Decoder()
 {
   int i;
@@ -58,7 +58,7 @@ static void Initialize_Decoder()
 
 }
 
-/* mostly IMPLEMENTAION specific rouintes */
+/* mostly IMPLEMENTATION specific routines */
 static void Initialize_Sequence()
 {
   int cc, size;
@@ -303,7 +303,7 @@ namespace gdcm
  * @param fp pointer to an already open file descriptor 
  *                      8 significant bits per pixel
  * @param image_buffer to receive uncompressed pixels
- * @param statesuspension Suspension State basically it should be 3 otherwise more complex to handle
+ * @param length length
  * @return 1 on success, 0 on error
  */
 
