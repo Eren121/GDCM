@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/03 09:43:04 $
-  Version:   $Revision: 1.138 $
+  Date:      $Date: 2005/06/02 09:40:58 $
+  Version:   $Revision: 1.139 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,17 +60,18 @@
 //  Directory Record Type      Directory Record Types which may be included
 //                                in the next lower-level directory Entity
 //
-// (Root directory Entity)     PATIENT
+// (Root directory Entity)     PATIENT, TOPIC, PRIVATE
 //
-// PATIENT                     STUDY
+// PATIENT                     STUDY, PRIVATE
 //
-// STUDY                       SERIES, VISIT, RESULTS, STUDY COMPONENT
+// STUDY                       SERIES, VISIT, RESULTS, STUDY COMPONENT, PRIVATE
 //
 // SERIES                      IMAGE, OVERLAYS, MODALITY LUT, VOI LUT,
 //                             CURVE, STORED PRINT, RT DOSE, RT STRUCTURE SET
 //                             RT PLAN, RT TREAT RECORD, PRESENTATION, WAVEFORM,
 //                             SR DOCUMENT, KEY OBJECT DOC, SPECTROSCOPY,
-//                             RAW DATA, REGISTRATION, FIDUCIAL
+//                             RAW DATA, REGISTRATION, FIDUCIAL, PRIVATE,
+//                             ENCAP DOC
 // IMAGE
 // OVERLAY
 // MODALITY LUT
@@ -89,6 +90,8 @@
 // RAW DATA
 // REGISTRATION
 // FIDUCIAL
+// PRIVATE
+// ENCAP DOC
 // 
 // ----------------------
 // The current gdcm version only deals with :
@@ -133,7 +136,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Document( )
 {
    // At this step, Document constructor is already executed,
-   // whatever user passed (a root directory or a DICOMDIR)
+   // whatever user passed (either a root directory or a DICOMDIR)
    // and whatever the value of parseDir was.
    // (nothing is cheked in Document constructor, to avoid overhead)
 
