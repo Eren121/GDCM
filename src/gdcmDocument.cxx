@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/25 12:54:17 $
-  Version:   $Revision: 1.241 $
+  Date:      $Date: 2005/06/02 12:26:19 $
+  Version:   $Revision: 1.242 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,7 @@ Document::Document()
 
 /**
  * \brief   Constructor (not to break the API) 
- * @param   filename 'Document' (File or DicomDir) to be opened for parsing
+ * @param   fileName 'Document' (File or DicomDir) to be opened for parsing
  */
 Document::Document( std::string const &fileName )
          :ElementSet(-1) 
@@ -105,7 +105,7 @@ Document::~Document ()
 
 /**
  * \brief   Loader  
- * @param   filename 'Document' (File or DicomDir) to be opened for parsing
+ * @param   fileName 'Document' (File or DicomDir) to be opened for parsing
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 15:01:47 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/06/02 12:26:42 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -172,9 +172,8 @@ void Dict::ClearEntry()
 }
 
 /**
- * \brief   Get the dictionary entry identified by a given tag (group,element)
- * @param   group   group of the entry to be found
- * @param   elem element of the entry to be found
+ * \brief   Get the dictionary entry identified by a given tag ("group|element")
+ * @param   key   tag of the entry to be found
  * @return  the corresponding dictionary entry when existing, NULL otherwise
  */
 DictEntry *Dict::GetEntry(TagKey const &key)
