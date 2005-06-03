@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:38:35 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/03 09:55:18 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,8 @@ typedef std::list<gdcm::File *> FileList;
 // If there is sameSerie, sameStudy is set to true
 int CompareImages(FileList &list, bool sameSerie, bool sameStudy)
 {
+   gdcm::Debug::DebugOn();
+
    if( sameSerie )
       sameStudy = true;
 
@@ -144,7 +146,7 @@ void ClearList(FileList &list)
    list.clear();
 }
 
-gdcm::File *WriteImage(gdcm::File *file,const std::string &fileName)
+gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
 {
    // Create a 256x256x1 image 8 bits, unsigned 
    std::ostringstream str;
@@ -164,12 +166,16 @@ gdcm::File *WriteImage(gdcm::File *file,const std::string &fileName)
    // Set the samples per pixel
    file->InsertValEntry("1",0x0028,0x0002); // Samples per Pixel
 
-   if( !file->IsReadable() )
-   {
-      std::cout << "Failed\n"
-                << "        Prepared image isn't readable\n";
-      return NULL;
-   }
+   // The so called 'prepared image', built ex nihilo just before,
+   // has NO Pixel Element yet.
+   // therefore, it's NEVER 'file readable' ...
+    
+   //if( !file->IsReadable() )
+   // {
+   //   std::cout << "Failed\n"
+   //             << "        Prepared image isn't readable\n";
+   //  return NULL;
+   //}
 
    size_t size = 256 * 256 * 1;
    unsigned char *imageData = new unsigned char[size];
@@ -249,7 +255,7 @@ int TestImageSet(int argc, char *argv[])
       serieUID = gdcm::Util::CreateUniqueUID();
       file->InsertValEntry(serieUID, 0x0020, 0x000e);
 
-      newFile = WriteImage(file,fileName.str());
+      newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {
          delete file;
@@ -261,7 +267,7 @@ int TestImageSet(int argc, char *argv[])
       delete file;
    }
 
-   if( CompareImages(fileList,false,false) )
+   if( CompareImages(fileList, false, false) )
    {
       ClearList(fileList);
       return 1;
@@ -279,10 +285,10 @@ int TestImageSet(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
-      file->InsertValEntry(studyUID,0x0020,0x000d);
-      file->InsertValEntry(serieUID,0x0020,0x000e);
+      file->InsertValEntry(studyUID, 0x0020, 0x000d);
+      file->InsertValEntry(serieUID, 0x0020, 0x000e);
 
-      newFile = WriteImage(file,fileName.str());
+      newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {
          delete file;
@@ -294,7 +300,7 @@ int TestImageSet(int argc, char *argv[])
       delete file;
    }
 
-   if( CompareImages(fileList,true,true) )
+   if( CompareImages(fileList, true, true) )
    {
       ClearList(fileList);
       return 1;
@@ -311,10 +317,10 @@ int TestImageSet(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
-      file->InsertValEntry(studyUID,0x0020,0x000d);
+      file->InsertValEntry(studyUID, 0x0020, 0x000d);
       serieUID = gdcm::Util::CreateUniqueUID();
-      file->InsertValEntry(serieUID,0x0020,0x000e);
-      newFile = WriteImage(file,fileName.str());
+      file->InsertValEntry(serieUID, 0x0020, 0x000e);
+      newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {
          delete file;
@@ -326,7 +332,7 @@ int TestImageSet(int argc, char *argv[])
       delete file;
    }
 
-   if( CompareImages(fileList,false,true) )
+   if( CompareImages(fileList, false, true) )
    {
       ClearList(fileList);
       return 1;
