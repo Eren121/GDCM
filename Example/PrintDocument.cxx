@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/26 16:21:54 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/06/03 15:36:01 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,11 +56,13 @@ int main(int argc, char *argv[])
       e1->SetLoadMode(NO_SEQ | NO_SHADOW);
    e1->Load( fileName.c_str() );
 
-   if ( !e1->IsReadable() )
-   {
-      delete e1;
-      return 0;
-   }
+// we use PrintDocument, because we want to print what we get
+
+//   if ( !e1->IsReadable() )
+//   {
+//      delete e1;
+//      return 0;
+//   }
 
    e1->Print();
       
@@ -75,9 +77,9 @@ int main(int argc, char *argv[])
    }       
    
    if(e1->IsReadable())
-      std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
+      std::cout <<std::endl<<fileName<<" is 'file Readable'"<<std::endl;
    else
-      std::cout <<std::endl<<fileName<<" is NOT Readable"<<std::endl;
+      std::cout <<std::endl<<fileName<<" is NOT 'file Readable'"<<std::endl;
    std::cout<<std::flush;
    delete e1;
 
