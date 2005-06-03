@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/02 13:42:18 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2005/06/03 09:05:15 $
+  Version:   $Revision: 1.112 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,11 +99,11 @@ typedef std::list<Element> ListElements;
    bool operator<(Document &document);
 
 /**
- * \brief \brief Sets the LoadMode as a boolean string. 
+ * \brief Sets the LoadMode as a boolean string. 
  *        NO_SEQ, NO_SHADOW, ... (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
- *        contain accurate values in the 0x0000 element 
- *        of each Shadow Group. The paser will fail if the size is wrong !
+ *        contain accurate values in the 0x0000 element (if any) 
+ *        of *each* Shadow Group. The parser will fail if the size is wrong !
  * @param   mode Load mode to be used    
  */
    void SetLoadMode (int mode) { LoadMode = mode; }
