@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/02 12:26:19 $
-  Version:   $Revision: 1.242 $
+  Date:      $Date: 2005/06/03 16:05:23 $
+  Version:   $Revision: 1.243 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,9 +116,9 @@ bool Document::Load( std::string const &fileName )
    if( IsDocumentAlreadyLoaded )
    {
       gdcmWarningMacro( "A file was already parsed inside this "
-                     << "gdcm::Document (previous name was: "
-                    << Filename.c_str() << ". New name is :"
-                    << fileName );
+                        << "gdcm::Document (previous name was: "
+                        << Filename.c_str() << ". New name is :"
+                        << fileName );
      // todo : clean out the 'Document'
      // We should call ClearEntry() on the parent object ?!?
    }
@@ -807,9 +807,9 @@ int Document::ComputeGroup0002Length( FileType filetype )
  
             if( filetype == ExplicitVR )
             {
-               if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") ) 
+               if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UT") ) 
                {
-                  // explicit VR AND OB, OW, SQ : 4 more bytes
+                  // explicit VR AND OB, OW, SQ, UT : 4 more bytes
                   groupLength +=  4;
                }
             }
@@ -1304,7 +1304,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
    
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
    {
-      if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UN" ) 
+      if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" || vr == "UN" ) 
       {
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
@@ -1659,7 +1659,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    // Allthough not recent many such GE corrupted images are still present
    // on Creatis hard disks. Hence this fix shall remain when such images
    // are no longer in use (we are talking a few years, here)...
-   // Note: XMedCom probably uses such a trick since it is able to read
+   // Note: XMedCon probably uses such a trick since it is able to read
    //       those pesky GE images ...
    if ( foundLength == 13)
    {
