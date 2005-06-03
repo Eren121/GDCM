@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/14 15:15:15 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/03 15:40:53 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ void EndMethod(void *toto) {
 
 int main(int argc, char *argv[]) 
 {
-   //gdcm::Debug::DebugOn();
+  // gdcm::Debug::DebugOn();
    std::string dirName;   
 
    if (argc > 1)
@@ -67,7 +67,10 @@ int main(int argc, char *argv[])
    // new style (user is allowed no to load Sequences an/or Shadow Groups)
    dcmdir = new gdcm::DicomDir( );
    dcmdir->SetParseDir(true);
-   dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);
+// some images have a wrong length for element 0x0000 of private groups
+//   dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);
+
+   dcmdir->SetLoadMode(NO_SEQ);
    dcmdir->Load(dirName);
 
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
