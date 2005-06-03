@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/27 21:19:03 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/06/03 16:08:16 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -175,19 +175,19 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
  *          But as I don't know how to do it, I leave it this way
  *          BTW, this is also a Strategy, I don't know this is the best approach :)
  */
-void SerieHelper::OrderFileList(FileList *CoherentFileList)
+void SerieHelper::OrderFileList(FileList *coherentFileList)
 {
-   if( ImagePositionPatientOrdering( CoherentFileList ) )
+   if( ImagePositionPatientOrdering( coherentFileList ) )
    {
       return ;
    }
-   else if( ImageNumberOrdering(CoherentFileList ) )
+   else if( ImageNumberOrdering(coherentFileList ) )
    {
       return ;
    }
    else  
    {
-      FileNameOrdering(CoherentFileList );
+      FileNameOrdering(coherentFileList );
    }
 }
 
@@ -221,7 +221,7 @@ FileList *SerieHelper::GetNextCoherentFileList()
 /**
  * \brief   Get the Coherent Files list according to its Serie UID
  * @param SerieUID SerieUID
- * \return  pointer to the Coherent Filseslist if found, otherwhise NULL
+ * \return  pointer to the Coherent Files list if found, otherwhise NULL
  */
 FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {
@@ -241,6 +241,7 @@ FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
  *   -# Image Position Patient
  *   -# Image Number
  *   -# More to come :-)
+ * WARNING : FileList = std::vector<File* >
  * @param fileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
@@ -422,7 +423,7 @@ bool SerieHelper::FileNameOrdering(FileList *fileList)
 /**
  * \brief   Canonical printer.
  */
-void SerieHelper::Print(std::ostream &os, std::string const & indent)
+void SerieHelper::Print(std::ostream &os, std::string const &indent)
 {
    // For all the Coherent File lists of the gdcm::Serie
    CoherentFileListmap::iterator itl = CoherentFileListHT.begin();

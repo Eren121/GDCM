@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/05/27 21:19:04 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/06/03 16:08:16 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ typedef std::vector<File* > FileList;
  * - This class should be used for a stack of 2D dicom images.
  *   It allows to explore (recursively or not) a directory and 
  *   makes a set of 'Coherent Files' list (coherent : same Serie UID)
- *   It allows to sort any of the Coherent File list on the image postion
+ *   It allows to sort any of the Coherent File list on the image position
  */
 class GDCM_EXPORT SerieHelper 
 {

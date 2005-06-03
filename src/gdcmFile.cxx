@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/02 14:20:14 $
-  Version:   $Revision: 1.240 $
+  Date:      $Date: 2005/06/03 16:08:16 $
+  Version:   $Revision: 1.241 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,26 +192,33 @@ bool File::IsReadable()
    const std::string &res = GetEntryValue(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 )
    {
+      gdcmWarningMacro("Wrong Image Dimensions" << res);
       return false; // Image Dimensions
    }
    if ( !GetDocEntry(0x0028, 0x0100) )
    {
+      gdcmWarningMacro("Bits Allocated (0028|0100) not found"); 
       return false; // "Bits Allocated"
    }
    if ( !GetDocEntry(0x0028, 0x0101) )
    {
+      gdcmWarningMacro("Bits Stored (0028|0101) not found");
       return false; // "Bits Stored"
    }
    if ( !GetDocEntry(0x0028, 0x0102) )
    {
+      gdcmWarningMacro("Hight Bit (0028|0102) not found"); 
       return false; // "High Bit"
    }
    if ( !GetDocEntry(0x0028, 0x0103) )
    {
+      gdcmWarningMacro("Pixel Representation (0028|0103) not found");
       return false; // "Pixel Representation" i.e. 'Sign'
    }
    if ( !GetDocEntry(GrPixel, NumPixel) )
    {
+      gdcmWarningMacro("Pixel Dicom Element " << std::hex <<
+                        GrPixel << "|" << NumPixel << "not found");
       return false; // Pixel Dicom Element not found :-(
    }
    return true;
