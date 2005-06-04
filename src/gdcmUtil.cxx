@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/04 01:24:15 $
-  Version:   $Revision: 1.150 $
+  Date:      $Date: 2005/06/04 01:57:36 $
+  Version:   $Revision: 1.151 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
    #include <winsock.h>  // for gethostname and gethostbyname and GetTickCount...
-#ifdef GetCurrentTime
+#ifdef _MSC_VER
    #undef GetCurrentTime
 #endif
 #else
