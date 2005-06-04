@@ -14,6 +14,7 @@ SUBDIRS(
   gdcmjpeg
   #gdcmmpeg2
   gdcmjasper
+  #gdcmjpegls
   )
 
 # "jpeglib.h" is defined here:
