@@ -64,7 +64,7 @@
 /*
  * Image Library
  *
- * $Id: jas_image.c,v 1.1 2005/05/22 18:32:59 malaterre Exp $
+ * $Id: jas_image.c,v 1.2 2005/06/04 01:54:02 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -279,7 +279,7 @@ static jas_image_cmpt_t *jas_image_cmpt_copy(jas_image_cmpt_t *cmpt)
   return newcmpt;
 }
 
-void jas_image_destroy(jas_image_t *image)
+GLOBAL(void) jas_image_destroy(jas_image_t *image)
 {
   int i;
 
@@ -348,7 +348,7 @@ static void jas_image_cmpt_destroy(jas_image_cmpt_t *cmpt)
 * Load and save operations.
 \******************************************************************************/
 
-jas_image_t *jas_image_decode(jas_stream_t *in, int fmt, char *optstr)
+GLOBAL(jas_image_t) *jas_image_decode(jas_stream_t *in, int fmt, char *optstr)
 {
   jas_image_fmtinfo_t *fmtinfo;
   jas_image_t *image;
@@ -510,7 +510,7 @@ int jas_image_writecmpt(jas_image_t *image, int cmptno, jas_image_coord_t x, jas
 * File format operations.
 \******************************************************************************/
 
-void jas_image_clearfmts()
+GLOBAL(void) jas_image_clearfmts()
 {
   int i;
   jas_image_fmtinfo_t *fmtinfo;
@@ -568,7 +568,7 @@ int jas_image_strtofmt(char *name)
   return fmtinfo->id;
 }
 
-char *jas_image_fmttostr(int fmt)
+GLOBAL(char) *jas_image_fmttostr(int fmt)
 {
   jas_image_fmtinfo_t *fmtinfo;
   if (!(fmtinfo = jas_image_lookupfmtbyid(fmt))) {
@@ -577,7 +577,7 @@ char *jas_image_fmttostr(int fmt)
   return fmtinfo->name;
 }
 
-int jas_image_getfmt(jas_stream_t *in)
+GLOBAL(int) jas_image_getfmt(jas_stream_t *in)
 {
   jas_image_fmtinfo_t *fmtinfo;
   int found;
@@ -623,7 +623,7 @@ int jas_image_fmtfromname(char *name)
 * Miscellaneous operations.
 \******************************************************************************/
 
-uint_fast32_t jas_image_rawsize(jas_image_t *image)
+GLOBAL(uint_fast32_t) jas_image_rawsize(jas_image_t *image)
 {
   uint_fast32_t rawsize;
   int cmptno;
@@ -884,7 +884,7 @@ int jas_image_depalettize(jas_image_t *image, int cmptno, int numlutents,
   return 0;
 }
 
-int jas_image_readcmptsample(jas_image_t *image, int cmptno, int x, int y)
+GLOBAL(int) jas_image_readcmptsample(jas_image_t *image, int cmptno, int x, int y)
 {
   jas_image_cmpt_t *cmpt;
   uint_fast32_t v;

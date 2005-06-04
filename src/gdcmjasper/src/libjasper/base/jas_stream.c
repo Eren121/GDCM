@@ -64,7 +64,7 @@
 /*
  * I/O Stream Library
  *
- * $Id: jas_stream.c,v 1.1 2005/05/22 18:32:59 malaterre Exp $
+ * $Id: jas_stream.c,v 1.2 2005/06/04 01:54:02 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -168,7 +168,7 @@ static jas_stream_t *jas_stream_create()
   return stream;
 }
 
-jas_stream_t *jas_stream_memopen(char *buf, int bufsize)
+GLOBAL(jas_stream_t) *jas_stream_memopen(char *buf, int bufsize)
 {
   jas_stream_t *stream;
   jas_stream_memobj_t *obj;
@@ -457,7 +457,7 @@ static void jas_stream_destroy(jas_stream_t *stream)
   jas_free(stream);
 }
 
-int jas_stream_close(jas_stream_t *stream)
+GLOBAL(int) jas_stream_close(jas_stream_t *stream)
 {
   /* Flush buffer if necessary. */
   jas_stream_flush(stream);
