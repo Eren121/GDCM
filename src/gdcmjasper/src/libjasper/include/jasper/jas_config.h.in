@@ -217,6 +217,15 @@ typedef __int64            longlong;
 /* #define  ssize_t    int */
 #endif // HAVE_SYS_TYPES_H
 
+
+/* a function referenced thru EXTERNs: */
+#if defined( _WIN32 ) && defined (JPEGDLL)
+#define GLOBAL(type)            __declspec(dllexport) type
+#else
+#define GLOBAL(type)            type
+#endif
+
+/* a reference to a GLOBAL function: */
 #if defined(_WIN32) && !defined(JASPERSTATIC)
 #ifdef JASPERDLL
 #define EXTERN(type)            __declspec(dllexport) type
