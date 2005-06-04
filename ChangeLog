@@ -1,3 +1,6 @@
+2005-06-04 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Adding potential support for JPEG-LS DICOM files.
+
 2005-05-22 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Adding potential support for mpeg and jpeg2000 through two new lin
 	 - JasPer for JPEG2000
