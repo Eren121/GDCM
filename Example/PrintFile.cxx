@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/04 07:29:17 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/06/06 12:41:04 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,53 +19,77 @@
 #include "gdcmDebug.h"
 #include "gdcmFileHelper.h"
 
+#include "gdcmArgMgr.h"
+
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
+
+   START_USAGE(usage)
+   " \n PrintFile : \n",
+   " Display the header of a ACR-NEMA/PAPYRUS/DICOM File",
+   " usage: PrintFile filein=fileName [level=n] [noshadow] [noseq] [debug] ",
+   "        level = 0,1,2 : depending on the amount of details user wants to see",
+   "        noshadow : user doesn't want to load Private groups (odd number)",
+   "        noseq    : user doesn't want to load Sequences ",
+   "        debug    : user wants to run the program in 'debug mode' ",
+   FINISH_USAGE
+
    gdcm::File *e1;
    gdcm::FileHelper   *f1;
-   std::string fileName;
+   char *fileName;
+
+   // Initialize Arguments Manager   
+   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
   
    if (argc == 1) 
    {
-      std::cout << " usage : PrintFile fileName printLevel debug "
-          << "short (=NOSEQ + NOSHADOW)" 
-                << std::endl;
-    return 0;
+      am->ArgMgrUsage(usage); // Display 'usage'
+      delete am;
+      return 0;
    }
+
+   fileName  = am->ArgMgrWantString("filein",usage);
+
+   if (am->ArgMgrDefined("debug"))
+      gdcm::Debug::DebugOn();
 
    e1 = new gdcm::File();
 
-   if (argc > 1) 
-   {
-      fileName=argv[1];
+   if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
+       e1->SetLoadMode(NO_SEQ | NO_SHADOW);  
+   else if ( am->ArgMgrDefined("noshadow") )
+      e1->SetLoadMode(NO_SHADOW);
+   else if ( am->ArgMgrDefined("noseq") )
+      e1->SetLoadMode(NO_SEQ);
+
+   int level = am->ArgMgrGetInt("level", 2);
+
+   /* if unused Param we give up */
+   if ( am->ArgMgrPrintUnusedLabels() )
+   { 
+      am->ArgMgrUsage(usage);
+      delete e1;
+      delete am;
+      return 0;
    } 
-
-   if (argc > 3)
-      gdcm::Debug::DebugOn();
- 
    bool res; 
-   if (argc > 4)
-      e1->SetLoadMode(NO_SEQ | NO_SHADOW); 
-
+ 
    // gdcm::File::IsReadable() is no usable here, because we deal with
    // any kind of gdcm-Parsable *document* 
    // not only gdcm::File (as opposed to gdcm::DicomDir)
-   res = e1->Load( fileName.c_str() );
+
+   res = e1->Load( fileName );
    if ( !res )
    {
       delete e1;
+      delete am;
       return 0;
    }
 
    f1 = new gdcm::FileHelper(e1);
-
-   if (argc > 2)  // keep it here (f1 needs to be constructed !)
-   {
-      int level = atoi(argv[2]);   
-      f1->SetPrintLevel(level);
-   }
+   f1->SetPrintLevel( level );
 
    f1->Print();   
 
@@ -119,7 +143,7 @@ int main(int argc, char *argv[])
    std::cout<<std::flush;
    delete e1;
    delete f1;
-
+   delete am;
    return 0;
    
 }
