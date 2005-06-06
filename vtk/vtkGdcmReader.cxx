@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/28 14:32:54 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/06/06 08:38:29 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.70 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.71 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -491,7 +491,10 @@ int vtkGdcmReader::CheckFileCoherence()
       //gdcm::File GdcmFile( filename->c_str() );
       // to save some parsing time.
       gdcm::File GdcmFile;
-      GdcmFile.SetLoadMode( NO_SEQ | NO_SHADOW );
+      // Some images have a wrong length for 0x0000 element of private groups
+      // Better we don't use NO_SHADOW as a default option
+      //GdcmFile.SetLoadMode( NO_SEQ | NO_SHADOW );
+      GdcmFile.SetLoadMode( NO_SEQ );
       GdcmFile.Load(filename->c_str() );
       if (!GdcmFile.IsReadable())
       {
