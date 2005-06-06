@@ -72,6 +72,7 @@ SET(libgdcm_la_SOURCES
    gdcmUtil.cxx
    gdcmValEntry.cxx   
    gdcmVR.cxx
+   gdcmArgMgr.cxx
    ${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx
    )
 

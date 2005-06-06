@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/06/06 12:37:58 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,6 +34,7 @@ namespace gdcm
 /// since there is a lazy construction everything got skrew up somehow
 /// Therefore the actual initialization is done in a cxx file (avoid
 /// duplicated symbol), and an extern is used in gdcmCommon.h
+
 const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
 const std::string GDCM_UNFOUND   = "gdcm::Unfound";
 const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
