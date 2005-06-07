@@ -19,9 +19,9 @@ SET(libjpg_la_SOURCES
   jpg_val.c
   #  )
   #SET(EXTRA_libjpg_la_SOURCES
-  #  jpg_dec.c
-  #  jpg_enc.c
-  jpg_dummy.c
+  jpg_dec.c
+  jpg_enc.c
+  #jpg_dummy.c
   )
 
 #ADD_LIBRARY(jpg ${libjpg_la_SOURCES} ${EXTRA_libjpg_la_SOURCES})

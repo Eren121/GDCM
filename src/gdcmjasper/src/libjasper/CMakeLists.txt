@@ -29,9 +29,14 @@ MACRO(GDCM_CONVENIENT_LIBRARY)
   ENDFOREACH(SUBDIR)
 ENDMACRO(GDCM_CONVENIENT_LIBRARY)
 
+# Yeah ! I know how come I only did jpeg 8bits... bla bla
+# I'll wait until I actually such beast of jpeg2000 + some
+# crazy 16bits lossless jpeg...
+INCLUDE_DIRECTORIES(${GDCM_BINARY_DIR}/src/gdcmjpeg/8)
 GDCM_CONVENIENT_LIBRARY(base bmp jp2 jpc jpg mif pgx pnm ras) 
 
 #MESSAGE("src= ${GDCMJASPER_SOURCES}")
 ADD_LIBRARY(gdcmjasper ${GDCMJASPER_SOURCES})
+TARGET_LINK_LIBRARIES(gdcmjasper gdcmjpeg8)
 
 
