@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 08:59:39 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/06/07 10:07:20 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,7 +98,7 @@ TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
    // time consuming methods.
    // Let's try to shorten it !
  
-   //return Util::Format("%04x|%04x", group, elem);
+   //return Util::Format("%04x|%04x", group, elem); // too much time !
    char res[10];
    sprintf(res,"%04x|%04x", group, elem);
    return res;

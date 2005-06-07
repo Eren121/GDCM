@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/24 16:21:44 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/06/07 10:07:20 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -281,7 +281,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
    {
       if (v == "4294967295") // to avoid troubles in convertion 
       {
-         st = Util::Format(" x(ffffffff)");
+         st = "ffffffff";
       }
       else
       {
@@ -291,7 +291,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
          }
          else
          {
-            st = Util::Format(" ");
+            st = " ";
          }
       }
       s << st;
