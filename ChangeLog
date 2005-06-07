@@ -1,3 +1,6 @@
+2005-06-07 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * Adding users file in CVSROOT for mail blaming 
+
 2005-06-04 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * Adding potential support for JPEG-LS DICOM files.
 
