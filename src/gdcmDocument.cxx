@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 16:05:23 $
-  Version:   $Revision: 1.243 $
+  Date:      $Date: 2005/06/07 15:31:31 $
+  Version:   $Revision: 1.244 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,8 +35,6 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-// Refer to Document::CheckSwap()
-//const unsigned int Document::HEADER_LENGTH_TO_READ = 256;
 
 // Refer to Document::SetMaxSizeLoadEntry()
 const unsigned int Document::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
@@ -947,7 +945,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      if ( strLgrGroup != GDCM_UNFOUND)
                      {
                         lgrGroup = atoi(strLgrGroup.c_str());
-                        Fp->seekg(lgrGroup , std::ios::cur);
+                        Fp->seekg(lgrGroup, std::ios::cur);
                         used = false;
                         continue;
                      }
@@ -1158,7 +1156,6 @@ void Document::LoadDocEntry(DocEntry *entry)
    {
       if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
       {  
-         //s << "gdcm::NotLoaded (BinEntry)";
          s << GDCM_NOTLOADED;
          s << " Ad.:" << (long)entry->GetOffset();
          s << " x(" << std::hex << entry->GetOffset() << ")";
@@ -1167,10 +1164,8 @@ void Document::LoadDocEntry(DocEntry *entry)
          s << " x(" << std::hex << entry->GetLength() << ")";
          binEntryPtr->SetValue(s.str());
       }
-      // Be carefull : a BinEntry IS_A ValEntry ... 
       else if (ValEntry *valEntryPtr = dynamic_cast< ValEntry* >(entry) )
       {
-        // s << "gdcm::NotLoaded. (ValEntry)";
          s << GDCM_NOTLOADED;  
          s << " Address:" << (long)entry->GetOffset();
          s << " Length:"  << entry->GetLength();
@@ -1204,7 +1199,7 @@ void Document::LoadDocEntry(DocEntry *entry)
       uint32_t NewInt;
       int nbInt;
       // When short integer(s) are expected, read and convert the following 
-      // n *two characters properly i.e. consider them as short integers as
+      // (n * 2) characters properly i.e. consider them as short integers as
       // opposed to strings.
       // Elements with Value Multiplicity > 1
       // contain a set of integers (not a single one)       
@@ -1257,7 +1252,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    {
       newValue = Util::DicomString(str, length+1);
       gdcmWarningMacro("Warning: bad length: " << length <<
-                       ",For string :" <<  newValue.c_str()); 
+                       " ,For string :" <<  newValue.c_str()); 
       // Since we change the length of string update it length
       //entry->SetReadLength(length+1);
    }

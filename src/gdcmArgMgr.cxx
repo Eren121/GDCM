@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/06 12:37:58 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/07 15:31:31 $
+  Version:   $Revision: 1.2 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ ArgMgr::~ArgMgr()
  
 /**
  * \brief  checks if a parameter exists in the command line
- * @param searchParam  name of the searched parameter label
+ * @param searchParam  label name
  * @return   true if parameter 'label' exists
  *           Actually, it returns 0 if label is not found
  *           else, returns the number of the spot it was found last time.
@@ -202,8 +202,7 @@ int ArgMgr::ArgMgrPrintUnusedLabels ()
 
 /**
  * \brief  Prints program usage
- * @param usage  array of pointers to the documentation lines
- *               of the program.
+ * @param usage  array of pointers to the documentation lines of the program.
  * @return exception code
  */
 int ArgMgr::ArgMgrUsage(char **usage_text )
@@ -214,14 +213,12 @@ int ArgMgr::ArgMgrUsage(char **usage_text )
    return (0);
 }
 
-
 /**
  * \brief Forget it, right now ... 
- * sauvegarde une chaine de caract. dans un fichier de parameters
- *         Le nom du fichier est celui specifie sur la ligne
- *         d'appel par : PARAMOUT=???
- *         ou, par defaut, celui donne par ARG_DEFAULT_PARAMOUT
- * @param param  Chaine de caractere definissant le parameter:
+ * Saves a char. array in a parameter file
+ *         whose name is given on command line by : PARAMOUT=???
+ *         or, as a default, by ARG_DEFAULT_PARAMOUT
+ * @param param  char. array that defines the parameter:
  * @return   Entier correspondant au rang dans la liste de labels
  */
 int ArgMgr::ArgMgrSave ( char *param )
@@ -250,7 +247,7 @@ int ArgMgr::ArgMgrSave ( char *param )
  * \brief  Gets an int value passed as an argument to a program
  *         (use default value if not found)
  *  EXEMPLE:     int dimx = ArgMgrGetInt ( "DIMX", 256 );
- * @param label   parameter label
+ * @param label   label name 
  * @param defaultVal default value
  * @return parameter value
  */
@@ -265,7 +262,7 @@ int ArgMgr::ArgMgrGetInt(char *label, int defaultVal)
  * \brief  Gets a float value passed as an argument to a program
  *         (use default value if not found)
  *  EXEMPLE:     float scale = ArgMgrGetFloat ( "SCALE", 0.33 );
- * @param label   parameter label
+ * @param label   label name 
  * @param defaultVal default value
  * @return parameter value
  */
@@ -279,7 +276,7 @@ float ArgMgr::ArgMgrGetFloat(char *label, float defaultVal)
 /**
  * \brief  Gets a 'string' value passed as an argument to a program
  *         (use default value if not found)
- * @param label   parameter label
+ * @param label   label name 
  * @param defaultVal default value
  * @return parameter value
  */
@@ -291,11 +288,11 @@ char *ArgMgr::ArgMgrGetString(char *label, char *defaultVal)
 }
 
 /**
- * \brief  Gets a value amongst a set od values
+ * \brief  Gets a value amongst a set of values
  *         (use default value if not found) 
  *         EXEMPLE:     int nlab = ArgMgrGetLabel("CONFIRM","NO\\YES", 0); 
- * @param label   parameter label
- * @param liste  character Chain describing the varous values.
+ * @param label   label name 
+ * @param liste  character Chain describing the various values.
  *               Value are separated by '\\'.
  *               Not case sensitive.
  * @param val  number of default value
@@ -326,14 +323,14 @@ int ArgMgr::ArgMgrGetLabel (char *label, char *liste, int val )
 }
 
 /**
- * \brief  Lecture d'un arg.de type label parmi un ensemble de labels
+ * \brief  Demands a value amongst a set of values (abort if not found)
  *         EXEMPLE:     int nlab = ArgMgrWantLabel("CONFIRM","NO\\YES", usage); 
- * @param label   Parameter label
- * @param liste Chaine de caracteres decrivant les differents labels.
- *               Chaque label est separe par un '\\'.
- *               Aucune difference n'est faite entre maj./min.
+ * @param label   label name 
+ * @param liste  character Chain describing the various values.
+ *               Labels are separated by  '\\'.
+ *               No case sensitive.
  * @param usage Usage program (displayed if label not found)
- * @return   Entier correspondant au rang dans la liste de labels
+ * @return   int : range of value amongst the values list
  */
 int ArgMgr::ArgMgrWantLabel (char *label, char *liste, char *usage[] )
 {
@@ -355,7 +352,7 @@ int ArgMgr::ArgMgrWantLabel (char *label, char *liste, char *usage[] )
  * \brief  Demands an int value passed as an argument to a program
  *         If not found usage is displayed and the prog aborted
  *  EXEMPLE:     int dimx = ArgMgrWantInt ( "DIMX", usage );
- * @param label   Parameter label
+ * @param label   label name 
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
@@ -370,7 +367,7 @@ int ArgMgr::ArgMgrWantInt (char *label, char **usage)
  * \brief  Demands a float value passed as an argument to a program
  *         If not found usage is displayed and the prog aborted
  *  EXEMPLE:     float scale = ArgMgrWantFloat ( "SCALE", usage );
- * @param label   Parameter label
+ * @param label   label name 
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
@@ -397,11 +394,11 @@ char *ArgMgr::ArgMgrWantString(char *label, char **usage)
 }
 
 /**
- * \brief  decodage des elements d'un argument 'liste de STRING' de lgr qcq
- * @param label   pointer vers le label de la liste
- * @param number  taille de la liste  trouvee
- * @return   Pointer vers le tableau de lgr 'taille'
- *     Pointer NULL si erreur
+ * \brief  decodage des elements d'un argument 'ensemble de STRING' de lgr qcq
+ * @param label   label name 
+ * @param number  nb of found elements
+ * @return   Pointer to the array
+ *     Pointer NULL if error
  */
 char **ArgMgr::ArgMgrGetListOfString ( char *label, int *nbElem )
 {
@@ -428,11 +425,11 @@ char **ArgMgr::ArgMgrGetListOfString ( char *label, int *nbElem )
 }
 
 /**
- * \brief  decodage des elements d'un argument 'liste diINTEGER' de lgr quelconque
- * @param label   pointer vers le label de la liste
- * @param number  taille de la liste  trouvee
- * @return   Pointer vers le tableau de lgr 'taille'
- *     Pointer NULL si erreur
+ * \brief  decodage des elements d'un argument 'liste d'INTEGER' de lgr qcq
+ * @param label   label name 
+ * @param number  nb of found elements
+ * @return   Pointer to the array
+ *     Pointer NULL if error
  */
 int *ArgMgr::ArgMgrGetListOfInt ( char *label, int *number )
 {
@@ -467,7 +464,7 @@ return liste;
 
 /**
  * \brief  decodage des elements d'un argument 'liste de FLOAT' de lgr qcq
- * @param label   pointer vers le label de la liste
+ * @param label   label name 
  * @param number  taille de la liste  trouvee
  * @return   Pointer vers le tableau de lgr 'taille'
  *     NULL if error
@@ -520,11 +517,11 @@ int ArgMgr::IdStrCountChar (char *chaine, int caract)
 }
 
 /**
- * \brief     renvoie 1 tableau contenant une liste d'intervalles entiers
+ * \brief     renvoie 1 tableau contenant un ensemble de paires d'entiers
  * @param value     pointer vers la zone allouee contenant les
  *    intervalles (deb1,fin1, deb2,fin2, ...)
- * @param number     Pointer vers le nb d'interv trouves
- * @return        1 tableau contenant une liste d'intervalles entiers
+ * @param number     Pointer vers le nb de paires trouvees
+ * @return        1 tableau contenant un ensemble de paires d'entiers
  */
 int *ArgMgr::IdStrIntEnum ( char* value, int *number)
 {
@@ -570,11 +567,11 @@ int *ArgMgr::IdStrIntEnum ( char* value, int *number)
 }
 
 /**
- * \brief     renvoie 1 tableau contenant une liste d'intervalles FLOAT
+ * \brief     renvoie 1 tableau contenant un ensemble de 'paires' de FLOAT
  * @param value     pointer vers la zone allouee contenant les
- *     intervalles (deb1,fin1, deb2,fin2, ...)
- * @param number     Pointer vers le nb d'interv trouves
- * @return        1 tableau contenant une liste d'intervalles FLOAT
+ *     paires (deb1,fin1, deb2,fin2, ...)
+ * @param number     Pointer vers le nb de paires trouvees
+ * @return         tableau contenant un ensemble de 'paires' de FLOAT
  */
 float *ArgMgr::IdStrFloatEnum (char *value, int *number)
 {
@@ -617,9 +614,9 @@ float *ArgMgr::IdStrFloatEnum (char *value, int *number)
 }
 
 /**
- * \brief  decodage des elements d'un argument 'intervalles d'int' de lgr quelconque
- * @param label   pointer vers le label de la liste
- * @param number  taille de la liste d'intervalles trouvee
+ * \brief  decodage des elements d'un argument 'paires d'int' de lgr quelconque
+ * @param label   label name 
+ * @param number  taille de l'ensemble de paires trouvee
  * @return   Pointer vers le tableau de taille '2*nbElem'
  *     Pointer NULL si erreur
  */
@@ -634,9 +631,9 @@ int *ArgMgr::ArgMgrGetIntEnum ( char *label, int *number )
 }
 
 /**
- * \brief  decodage des elements d'un argument 'intervalles d'int' de lgr quelconque
- * @param label   pointer vers le label de la liste
- * @param number  taille de la liste d'intervalles trouvee
+ * \brief  decodage des elements d'un argument 'paires de float' de lgr quelconque
+ * @param label   label name 
+ * @param number  taille de l'ensemble de paires trouvee
  * @return   Pointer vers le tableau de taille '2*nbElem'
  *     Pointer NULL si erreur
  */
@@ -659,9 +656,9 @@ float *ArgMgr::ArgMgrGetFloatEnum ( char *label, int *number )
 /**************************************************************************
 *                                                                         *
 * Nom de la fonction : Majuscule                                          *
-* Role ............. : Met une chaine de caracteres en majuscules.        *
-* parameters ....... : Pointer vers la chaine.                           *
-* Valeur retournee . : pointer vers cette meme chaine en majuscule.      *
+* Role ............. : Creates a new Upper case char array.               *
+* parameters ....... : Pointer to the initial char array.                 *                           *
+* Valeur retournee . : Pointer to the new Upper case char array.          *
 *                                                                         *
 **************************************************************************/
 char *ArgMgr::Majuscule (char *chaine )
@@ -680,11 +677,11 @@ char *ArgMgr::Majuscule (char *chaine )
 /**************************************************************************
 *                                                                         *
 * Nom de la fonction : FiltreLong                                         *
-* Role ............. : Arrete le programme si l'argument est trop long.   *
-*                      ARG_LONG_MAX definit cette longueur.               *
-* parameters ....... : Pointer vers l'argument.                          *
-* Valeur retournee . : Faux s'il n'y a pas d'erreur.                      *
-*                      Vrai s'il y a une erreur.                          *
+* Role ............. : Stops the program if argument is too long.         *
+*                      ARG_LONG_MAX defines max length.                   *
+* parameters ....... : Pointer to the argument.                           *
+* Valeur retournee . : false if OK.                                       *
+*                      true if KO.                                        *
 **************************************************************************/
 int ArgMgr::FiltreLong ( char *arg  )
 {
@@ -694,13 +691,13 @@ int ArgMgr::FiltreLong ( char *arg  )
 }
 
 /*------------------------------------------------------------------------
- | Role       : Lit un parameter depuis un fichier
+ | Role       : Reads a parameter from a file
  | Retour     : Type   : char *
- |              Role   : pointer vers le label
+ |              Role   : pointer to the label
  | parameters : param  : char *
- |              Role   : one ou il faut stocker le parameter
+ |              Role   : one where the parameter will be stored
  |              fd     : FILE *
- |              Role   : descripteur du fichier (suppose ouvert)
+ |              Role   : File description (assumed to be open)
  +------------------------------------------------------------------------*/
 char *ArgMgr::LoadedParam ( char *param, FILE *fd )
 {
@@ -709,17 +706,16 @@ char *ArgMgr::LoadedParam ( char *param, FILE *fd )
   int    quote = false;
   int    nbcar = 0;
 
-  /* On supprime les espaces ****/
-  /* du debut de chaine *********/
+  /* remove spaces at the beginning****/
   while ( isspace(carlu=fgetc (fd)) );
   if (carlu==EOF)
      return 0;
-  /* On cherche une " eventuelle */
+  /* Search for a " */
   if ( carlu=='\"' ) 
   {
     carlu=fgetc(fd);
     quote=true;
-  /* On lit tous les caracteres */
+  /* Read all the characters */
   }
   while (  (carlu!=EOF)
         && (  ( (!quote)&&(!isspace(carlu)) )
@@ -742,13 +738,12 @@ char *ArgMgr::LoadedParam ( char *param, FILE *fd )
 }
 
 /*------------------------------------------------------------------------
- | Role       : Lecture d'arguments dans un fichier de parameters
- |              (cette fonction est recursive).
+ | Role       : Reading of arguments in a parameter file
+ |              (this function is recursive).
  | Retour     : Type   : int
- |              Role   : retourne le nombre de lettres necessaires
- |                       pour stocker en memoire tous les parameters
+ |              Role   : length needed to store all the parameters
  | parameters : filename : char *
- |              Role     : nom du fichier de parameter
+ |              Role     : parameter File name
  |
  +------------------------------------------------------------------------*/
 int ArgMgr::ArgLoadFromFile ( char *filename )
@@ -779,9 +774,9 @@ int ArgMgr::ArgLoadFromFile ( char *filename )
 }
 
 /*------------------------------------------------------------------------
- | Role       : Gestion des parameters standard de la ligne d'argument.
+ | Role       : Standard parameters management (on command line)
  | Retour     : Type   : void
- | parameters : aucun
+ | parameters : none
  +------------------------------------------------------------------------*/
 void ArgMgr::ArgStdArgs()
 {
@@ -804,7 +799,7 @@ void ArgMgr::ArgStdArgs()
 }
 
 /*------------------------------------------------------------------------
- | Role       : met en majuscule 'sur place'.
+ | Role       : Sets in Upper Case.
  | Retour     : Type   : char *
  | parameters : char *
  +------------------------------------------------------------------------*/
