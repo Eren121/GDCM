@@ -3,6 +3,7 @@ ISO/IEC  JPEG-LS "The emerging lossless/near-lossless compression standard for
 continuous-tone still images"
 
 UBC's JPEG-LS Codec Implementation
+http://kt.ijs.si/aleks/jpeg-ls/mirror.htm
 
 The software is available via anonymous ftp at
 ftp://dspftp.ece.ubc.ca/pub/jpeg-ls. Version 1.1 supports only the lossless part
