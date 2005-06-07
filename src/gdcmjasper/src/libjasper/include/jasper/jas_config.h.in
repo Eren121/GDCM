@@ -218,6 +218,8 @@ typedef __int64            longlong;
 #endif // HAVE_SYS_TYPES_H
 
 
+#cmakedefine JASPERSTATIC
+
 /* a function referenced thru EXTERNs: */
 #if defined( _WIN32 ) && defined (JPEGDLL)
 #define GLOBAL(type)            __declspec(dllexport) type
