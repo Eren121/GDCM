@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 10:07:20 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/06/07 13:44:47 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -231,10 +231,9 @@ void DocEntry::Print(std::ostream &os, std::string const & )
       lgth = GetReadLength(); // ReadLength, as opposed to Length
       if (lgth == 0xffffffff)
       {
-         st = "ffff";
          s.setf(std::ios::left);
-         s << std::setw(10-st.size()) << " ";  
-         s << st << " ";
+         s << std::setw(10-st.size());  
+         s << " ffff ";
          s.setf(std::ios::left);
          s << std::setw(8) << "-1"; 
       }
