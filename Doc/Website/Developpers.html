@@ -33,7 +33,7 @@ Please adopt the
   in order to prevent checkouts with broken code.
 </LI>
 <LI> All the commits must correspond to a state of the code where ctest
-  runs and has no failing subtest. Always run ctest before commiting.
+  runs and has no failing subtest. <b>Always</b> run ctest before commiting.
   <BR>
   <B>Notes</B>:
   <UL>
@@ -49,13 +49,22 @@ Please adopt the
 
 <!##############################>
 <H3>Compiler flags policy</H3>
-When working with gcc please use the following flags when
+When working with gcc, please use the following flags when
 configuring the cmake variable <TT>CMAKE_CXX_FLAGS</TT>
+As a side not if you have proper bash/zsh setup cmake automatically
+inspect your CFLAGS and CXXFLAGS. So you can set them up for any
+project. <b>Be carefull</b> though, the quality of your code will greatly
+improve by doing so.
 <BR>
-<TT>-g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter
-         -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated
-         -Woverloaded-virtual
+For CFLAGS:
+<TT> -Wall -W 
 </TT>
+For CXXFLAGS:
+<TT> -Wall -W -Wshadow -Wunused -Wno-system-headers -Wno-deprecated
+     -Woverloaded-virtual
+</TT>
+For paranoid people, or simply beginner you can also try to compiler gdcm
+using the -pedantic flags compiler option.
 
 <!##############################>
 <H3>Sending the result to kitware's dashboard (optional)</H3>
@@ -65,9 +74,14 @@ The results should appear in
 <A HREF="http://public.kitware.com/dashboard.php?name=gdcm">
         Kitware's dashboard</A>
 under the name of your machine (uname). For ease of use you can
-change the SITE variable in your CMakeCache.txt to something more
+change the BUILDNAME variable in your CMakeCache.txt to something more
 accurate such as: GDCM-my_machine_name. The entry will then be within
 the "Experimental Builds" entry.
+<b>UPDATE:</b>Since GDCM moved to its own dashboard there is no possble
+collision with other project. You can then send dashboard without having
+to properly prepend 'GDCM-' to your cmake BUILDNAME variable. But the 
+Win32, mingw, gcc, SunOS is still very important...
+
 
 
 <!#######################################################################>
