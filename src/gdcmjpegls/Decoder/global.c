@@ -51,8 +51,12 @@
  */
 
 #include <time.h>
-#include <unistd.h>
 #include "global.h"
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+#include <io.h>
+#endif
 
 
 
