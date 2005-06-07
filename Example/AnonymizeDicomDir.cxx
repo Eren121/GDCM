@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 11:12:10 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/07 14:41:47 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,10 @@
 #include "gdcmArgMgr.h"
 
 #include <iostream>
+
+/**
+ * \brief AnonymizeDicomDir
+ */
 
 void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp, 
                uint16_t group, uint16_t elem, 
