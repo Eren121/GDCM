@@ -8,3 +8,7 @@ SET (DROP_SITE "public.kitware.com")
 SET (DROP_LOCATION "/cgi-bin/HTTPUploadDartFile.cgi")
 SET (TRIGGER_SITE 
     "http://${DROP_SITE}/cgi-bin/Submit-GDCM-TestingResults.cgi")
+
+# Dart server configuration 
+SET (CVS_WEB_URL "http://www.creatis.insa-lyon.fr/viewcvs/viewcvs.cgi/gdcm/")
+SET (CVS_WEB_CVSROOT "")
