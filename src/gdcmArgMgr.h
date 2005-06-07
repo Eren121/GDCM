@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/06 12:37:58 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/07 07:46:50 $
+  Version:   $Revision: 1.2 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef  ___ARG_MGR__
 #define  ___ARG_MGR__
 
+#include "gdcmCommon.h"
 #include <stdlib.h> // For atof
 
 namespace gdcm
@@ -26,7 +27,7 @@ namespace gdcm
 
 #define ID_RFILE_TEXT   "rt"
 #define ARGMAXCOUNT 100   // Maximum number of arguments
-#define  ARG_LONG_MAX          1000
+#define ARG_LONG_MAX          1000
 
 // default file name
 #define ARG_DEFAULT_PARAMOUT    "fileout.par"
@@ -35,7 +36,7 @@ namespace gdcm
 #define  ARG_LABEL_LOGFILE       "LOG"
 #define  ARG_LABEL_PARAMOUT      "paramout"
 
-#define START_USAGE(usage)   static char * usage[] = {
+#define START_USAGE(usage)   char *usage[] = {
 #define FINISH_USAGE         0};
 
 //-----------------------------------------------------------------------------
@@ -46,8 +47,7 @@ namespace gdcm
  *                              of 'command line program')        
  */
  
-//class GDCM_EXPORT ArgMgr {
-class ArgMgr
+class GDCM_EXPORT ArgMgr
 {
 public:
    ArgMgr(int argc, char **argv);
@@ -68,7 +68,7 @@ public:
    int   ArgMgrWantInt   (char*, char**);  /* Demands an int                   */
    float ArgMgrWantFloat (char*, char**);  /* Demands a float                  */
    char *ArgMgrWantString(char*, char**);  /* Demands a string                 */
-   int   ArgMgrWantLabel (char *, char *, char **);
+   int   ArgMgrWantLabel (char*, char *, char **);
 
    int   *ArgMgrGetListOfInt   (char *, int *);   /* Gets a list of int        */
    float *ArgMgrGetListOfFloat (char *, int *);   /* Gets a list of float      */
