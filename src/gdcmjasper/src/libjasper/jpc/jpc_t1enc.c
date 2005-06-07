@@ -64,7 +64,7 @@
 /*
  * Tier 1 Encoder
  *
- * $Id: jpc_t1enc.c,v 1.1 2005/05/22 18:33:05 malaterre Exp $
+ * $Id: jpc_t1enc.c,v 1.2 2005/06/07 19:22:42 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -121,7 +121,7 @@ int jpc_enc_enccblks(jpc_enc_t *enc)
   int bmx;
   int v;
   jpc_enc_tile_t *tile;
-  uint_fast32_t prcno;
+  int_fast32_t prcno;
   jpc_enc_prc_t *prc;
 
   tile = enc->curtile;
@@ -207,6 +207,9 @@ int jpc_enc_enccblk(jpc_enc_t *enc, jas_stream_t *out, jpc_enc_tcmpt_t *tcmpt, j
   int segsym;
   int termmode;
   int c;
+  // Unused vars:
+  (void)enc;
+  (void)out;
 
   bout = 0;
   rlvl = band->rlvl;
@@ -647,7 +650,9 @@ static int jpc_encrefpass(jpc_mqenc_t *mqenc, int bitpos, int vcausalflag, jas_m
   jpc_fix_t *dvscanstart;
   jpc_fix_t *dp;
   jpc_fix_t *fp;
-int k;
+  int k;
+  // Unused:
+  (void)vcausalflag;
 
   *nmsedec = 0;
   width = jas_matrix_numcols(data);
@@ -740,6 +745,8 @@ static int jpc_encrawrefpass(jpc_bitstream_t *out, int bitpos, int vcausalflag, 
   jpc_fix_t *dvscanstart;
   jpc_fix_t *dp;
   jpc_fix_t *fp;
+  // Unused
+  (void)vcausalflag;
 
   *nmsedec = 0;
   width = jas_matrix_numcols(data);
