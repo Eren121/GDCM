@@ -1,5 +1,4 @@
-#INCLUDE_REGULAR_EXPRESSION("^(jas).*$")
-
+INCLUDE_REGULAR_EXPRESSION("^.*$") 
 
 #libjasperinclude_HEADERS = \
 #  jasper.h \

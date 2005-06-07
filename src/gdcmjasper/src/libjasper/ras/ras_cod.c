@@ -64,11 +64,11 @@
 /*
  * Sun Rasterfile Library
  *
- * $Id: ras_cod.c,v 1.1 2005/05/22 18:33:10 malaterre Exp $
+ * $Id: ras_cod.c,v 1.2 2005/06/07 17:20:35 malaterre Exp $
  */
 
 /* Note: There is not currently any code common to both the encoder and
   decoder. */
 
 /* Keep picky compilers happy. */
-int ras_dummy;
+int ras_dummy = 0;

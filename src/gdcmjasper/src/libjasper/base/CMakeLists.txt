@@ -1,3 +1,5 @@
+INCLUDE_REGULAR_EXPRESSION("^.*$")
+
 # all the include are there:
 #INCLUDE_DIRECTORIES(${JASPER_SOURCE_DIR}/src/libjasper/include)
 
