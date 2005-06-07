@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 07:46:50 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/07 14:58:54 $
+  Version:   $Revision: 1.3 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define  ___ARG_MGR__
 
 #include "gdcmCommon.h"
+#include <stdio.h> // for FILE
 #include <stdlib.h> // For atof
 
 namespace gdcm
