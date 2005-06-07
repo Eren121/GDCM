@@ -23,9 +23,7 @@ IF(GDCM_DOCUMENTATION)
     "${GDCM_SOURCE_DIR}/src ${GDCM_SOURCE_DIR}/Doc/DoxyPython.txt ${GDCM_SOURCE_DIR}/Doc/DoxyVtkGdmReaderExamples.txt"
   )
   SET(GDCM_DOCUMENTATION_EXCLUDE_COMMON
-    "${GDCM_SOURCE_DIR}/src/gdcmJpeg.cxx"
-    "${GDCM_SOURCE_DIR}/src/jdatasrc.cxx"
-    "${GDCM_SOURCE_DIR}/src/jdatadst.cxx"
+    "${GDCM_SOURCE_DIR}/src/gdcmJpeg.cxx ${GDCM_SOURCE_DIR}/src/jdatasrc.cxx ${GDCM_SOURCE_DIR}/src/jdatadst.cxx"
   )
   
   IF(GDCM_VTK)
