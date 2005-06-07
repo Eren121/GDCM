@@ -118,6 +118,7 @@ int     alpha,     /* alphabet size */
 int     highmask;
 #endif
 
+void usage();
 
 
 
@@ -261,7 +262,7 @@ void initbuffers(int multi, int comp) {
 
 }
 
-swaplines()
+void swaplines()
 {
   pixel *temp;
   temp = pscanl0;
@@ -271,7 +272,7 @@ swaplines()
   cscanline = cscanl0 + components*(LEFTMARGIN-1);
 }
 
-c_swaplines(int i)
+void c_swaplines(int i)
 {
   pixel *temp;
   temp = c_pscanl0[i];
@@ -300,8 +301,7 @@ void closebuffers(int multi) {
 
 
 int initialize(int argc, char *argv[]) {
-  char line[256],tmp_char[1],   
-    *infilename = NULL,
+  char *infilename = NULL,
     *outfilename = OUTFILE ".out",
     *c_outfilename[MAX_COMPONENTS],
     *color_mode_string;
@@ -554,9 +554,11 @@ int initialize(int argc, char *argv[]) {
   }
 
   if ((!multi) && (color_mode==PLANE_INT))
+    {
     if (components>1) {
       fprintf(stderr,"\nERROR: Cannot use -P (PPM output) with plane intereleaved mode\n");
       exit(10);
+      }
     }
   else multi=1;
 
@@ -570,7 +572,7 @@ int initialize(int argc, char *argv[]) {
   }
 
   if ((multi) && (out_files) && (out_files!=components)) {
-    fprintf(stderr,"ERROR: Number of files, %d%, for output must be equal to number of image components, %d\n",out_files,components);
+    fprintf(stderr,"ERROR: Number of files, %d, for output must be equal to number of image components, %d\n",out_files,components);
     exit(10);
   }
 
@@ -613,6 +615,8 @@ int initialize(int argc, char *argv[]) {
   }
 
 
+  /* msgfile seems to start being used here, let's initialize it here */
+  if ( !msgfile ) msgfile = stdout;
   /* Open out file */
   if ( outfilename == NULL ) {
     usage();
@@ -865,7 +869,7 @@ int initialize(int argc, char *argv[]) {
 int main (int argc, char *argv[]) {
   int n,n_c,n_r,my_i,n_s,mk,seek_return;
   int found_EOF = 0;
-  double t0, t1, get_utime();
+  double t0, t1; /*, get_utime();*/
   long pos0, pos1,    
     tot_in = 0,
     tot_out = 0;
@@ -875,7 +879,7 @@ int main (int argc, char *argv[]) {
   
   /* Parse the parameters, initialize */
   /* Not yet fully implemented */
-  bufiinit();
+  bufiinit(NULL);
   pos0 = initialize(argc, argv); 
 
 
@@ -1474,7 +1478,7 @@ int main (int argc, char *argv[]) {
 
 
 
-usage()
+void usage()
 {
   fprintf(stderr,"Usage: %s [flags] [infile] [outfile1 [outfile2, ...]]\n\
 DEFAULTS:\n\
@@ -1500,7 +1504,7 @@ outfile2, ... : Multiple output specification for plane or line int. mode.\n\
 }
 
 
-bad_flag(char *s)
+void bad_flag(char *s)
 {
     fprintf(stderr,"Bad flag %s\n",s);
     usage();

@@ -73,7 +73,7 @@ inline int lossless_regular_mode_d(int Q, int SIGN, int Px)
   At = A[Q];
   {
     /* Estimate k */
-      register nst = Nt;
+      register int nst = Nt;
       for(k=0; nst < At; nst *=2, k++);
   }
 
@@ -542,7 +542,7 @@ int lossless_undoscanline_pixel(pixel *psl,    /* previous scanline */
 /*** watch it! actual pixels in the scan line are numbered 1 to no .
      pixels with indices < 1 or > no are dummy "border" pixels  */
 {
-  int i, psfix, n_c, color, enter_run=0, break_run, was_in_run = 0,
+  int i, psfix, n_c, color, enter_run=0, was_in_run = 0,
       test_run;
   pixel Ra, Rb, Rc, Rd;
   pixel c_aa[MAX_COMPONENTS],

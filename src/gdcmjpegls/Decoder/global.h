@@ -95,7 +95,9 @@ extern char  *plane_int_string,
       *pixel_int_string;
 
 
+#ifndef BIG_ENDIAN
 #define BIG_ENDIAN  1
+#endif
 
 typedef struct  jpeg_ls {
 
@@ -334,6 +336,9 @@ extern int  N[TOT_CONTEXTS],
 void error(char *msg);
 void *safealloc(size_t size);
 void *safecalloc(size_t numels, size_t size);
+double get_utime();
+int set_thresholds(int alfa, int NEAR, int *T1p, int *T2p, int *T3p);
+void check_compatibility(jpeg_ls_header *head_frame, jpeg_ls_header *head_scan, int n_s);
 
 /* scanline.c */
 void prepareLUTs();
@@ -348,6 +353,8 @@ void bitiinit();
 void bitflush();
 void createzeroLUT();
 void buffinit(FILE *);
+void bufiinit(FILE *fil);
+void bitiflush();
 
 /*  melcode.c */
 void init_process_run(int);
@@ -358,6 +365,15 @@ int  process_run_dec(int,int);
 void prepareLUTs();
 void prepare_qtables(int, int);
 void init_stats(int);
+
+/* lossless_d.c */
+int lossless_undoscanline(  pixel *psl, pixel *sl, int no, int color);
+int lossless_undoscanline_pixel(pixel *psl, pixel *sl, int no);
+
+/* lossy_d.c */
+int lossy_undoscanline(  pixel *psl, pixel *sl, int no, int color);
+int lossy_undoscanline_pixel(  pixel *psl, pixel *sl, int no);
+
 
 #ifdef BIG_ENDIAN
 #    define ENDIAN8(x)   (x)

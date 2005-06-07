@@ -51,6 +51,7 @@
  */
 
 #include <time.h>
+#include <unistd.h>
 #include "global.h"
 
 
@@ -69,7 +70,7 @@ without the written permission of the copyright holder.\n\
 FILE *in, *out;
 FILE *c_in[MAX_COMPONENTS];
 FILE *c_out[MAX_COMPONENTS];
-FILE *msgfile = stdout;
+FILE *msgfile = NULL; // = stdout;
 
 /* Context quantization thresholds  - initially unset */
 int     T3 = -1,
@@ -141,13 +142,14 @@ void *safecalloc(size_t numels, size_t size) {
 double get_utime()
 {
   clock_t c;
+  (void)c;
 
   return (double)clock()/CLOCKS_PER_SEC;
 }
 
 
 /* Set thresholds to default unless specified by header: */
-set_thresholds(int alfa, int NEAR, int *T1p, int *T2p, int *T3p)
+int set_thresholds(int alfa, int NEAR, int *T1p, int *T2p, int *T3p)
 {
   int lambda,
       ilambda = 256/alfa,
@@ -155,6 +157,8 @@ set_thresholds(int alfa, int NEAR, int *T1p, int *T2p, int *T3p)
       T1 = *T1p, 
       T2 = *T2p, 
       T3 = *T3p;
+  /* Unused */
+  (void)quant;
   
   if (alfa<4096)
      lambda = (alfa+127)/256;
@@ -220,7 +224,7 @@ set_thresholds(int alfa, int NEAR, int *T1p, int *T2p, int *T3p)
 
 /* We first check compatibility with JPEG-LS, then with this implementation */
 
-void check_compatibility(jpeg_ls_header *head_frame, jpeg_ls_header *head_scan, int n_s) 
+void check_compatibility(jpeg_ls_header *head_frame, jpeg_ls_header *head_scan, int n_s)
 {
 
     int  number_of_scans,i;  
@@ -322,7 +326,7 @@ char *ttyfilename = "CON";
 
 #define PAUSE  20
 
-fprint_disclaimer(FILE *fp, int nopause)
+void fprint_disclaimer(FILE *fp, int nopause)
 {
     char *p0, *p1;
     FILE *ttyf;
