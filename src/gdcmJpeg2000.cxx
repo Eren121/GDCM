@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 20:21:57 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/06/07 20:23:13 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,6 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
   int height = jas_image_cmptheight(jasImage, 0);
   int prec = jas_image_cmptprec(jasImage, 0);
   int i, j, k;
-  char *fmtname = jas_image_fmttostr(fmtid);
 
   // The following should serioulsy be rewritten I cannot belive we need to
   // do a per pixel decompression, there should be a way to read a full
