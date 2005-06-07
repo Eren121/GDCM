@@ -1,3 +1,5 @@
+INCLUDE_REGULAR_EXPRESSION("^.*$")
+
 SET(GDCM_MPEG2ENC_SOURCES
   conform.c
   putseq.c

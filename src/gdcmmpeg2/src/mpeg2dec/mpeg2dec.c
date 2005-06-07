@@ -77,6 +77,7 @@ int my_close(int infile)
 
 
 
+#ifdef GDCM_BUILD_MPEG2DEC
 int main(argc,argv)
 int argc;
 char *argv[];
@@ -181,6 +182,7 @@ char *argv[];
 
   return ret;
 }
+#endif /*GDCM_BUILD_MPEG2DEC*/
 
 /* IMPLEMENTATION specific routines */
 static void Initialize_Decoder()
