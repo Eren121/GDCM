@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 19:15:04 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/07 11:12:10 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,8 @@
 
 #include "gdcmDocument.h"
 #include "gdcmFile.h"
+
+#include "gdcmArgMgr.h"
 
 #include <iostream>
 
@@ -65,45 +67,49 @@ void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp,
 }
 
 int main(int argc, char *argv[])
-{  
-   gdcm::File *f1;
- 
-   gdcm::Debug::DebugOn();
-   std::cout << "------------------------------------------------" << std::endl;
-   std::cout << "Anonymize a gdcm-readable DICOMDIR   "            << std::endl;
-   std::cout << "even some Objects are not yet taken into account" << std::endl;
-   std::cout << "Warning : the DICOMDIR is overwritten"            << std::endl;
-   std::cout << "        : to preserve file integrity "
-             << " think unto using a copy .. "                     << std::endl;
- 
-   if( argc < 3 )
-    {
-    std::cerr << "Usage " << argv[0] << " DICOMDIR to anonymize  " 
-              << std::endl;
-    return 1;
-    }
+{ 
 
-   std::string fileName       = argv[1];
+   START_USAGE(usage)
+   " \n AnonymizeDicomDir :\n",
+   " Anonymize a gdcm-readable DICOMDIR ",
+   "           even when some 'Objects' are not yet taken into account",
+   "           Warning : the DICOMDIR is overwritten",
+   " usage: AnonymizeDicomDir filein=dicomDirName [debug] ",
+   "        debug    : user wants to run the program in 'debug mode' ",
+   FINISH_USAGE
+
+   // ----- Initialize Arguments Manager ------   
+   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+  
+   if (am->ArgMgrDefined("usage")) 
+   {
+      am->ArgMgrUsage(usage); // Display 'usage'
+      delete am;
+      return 0;
+   }
+ 
+   char *fileName  = am->ArgMgrWantString("filein",usage); 
+
+   delete am;  // we don't need Argument Manager any longer
 
 // ============================================================
 //   Read the input DICOMDIR
 // ============================================================
 
-   std::cout << argv[1] << std::endl;
-
-   f1 = new gdcm::File( fileName );
+   gdcm::File *f1 = new gdcm::File( fileName );
    if (!f1->IsReadable()) {
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "file" <<std::endl;
    }
    std::cout << " ... is readable " << std::endl;
 
-
    // Directory record sequence
    gdcm::DocEntry *e = f1->GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
       std::cout << "No Directory Record Sequence (0004,1220) found" <<std::endl;;
+      delete f1;
+      delete e;
       return 0;         
    }
    
@@ -111,11 +117,13 @@ int main(int argc, char *argv[])
    if ( !s )
    {
       std::cout << "Element (0004,1220) is not a Sequence ?!?" <<std::endl;
+      delete f1;
+      delete e;
       return 0;
    }
 
    // Open the file LTTG (aka ALAP)
-   std::fstream *fp = new std::fstream(fileName.c_str(), 
+   std::fstream *fp = new std::fstream(fileName, 
                               std::ios::in | std::ios::out | std::ios::binary);
    gdcm::DocEntry *d;
    std::string v;
@@ -165,8 +173,9 @@ int main(int argc, char *argv[])
    // Close the file ASAP
 
    fp->close();
+
    delete fp;
-    
+   delete e;   
    delete f1;
    return 0;
 }

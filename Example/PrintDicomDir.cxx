@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/26 16:21:54 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/06/07 11:12:10 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,11 +25,33 @@
 #include "gdcmTS.h"
 #include "gdcmDebug.h"
 
+#include "gdcmArgMgr.h"
+
 #include <fstream>
 #include <iostream>
 
 int main(int argc, char* argv[])
-{  
+{
+   START_USAGE(usage)
+   " \n PrintDicomDir :\n",
+   " Display the tree-like structure of a DICOMDIR File",
+   " usage: PrintDicomDir filein=fileName [level=n] [debug] ",
+   "        detail = 1 : Patients, 2 : Studies, 3 : Series, 4 : Images ",
+   "                 5 : Full Content ",
+   "        level = 0,1,2 : depending on user (what he wants to see)",
+   "        debug    : user wants to run the program in 'debug mode' ",
+   FINISH_USAGE
+
+   // Initialize Arguments Manager   
+   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+  
+   if (argc == 1) 
+   {
+      am->ArgMgrUsage(usage); // Display 'usage'
+      delete am;
+      return 0;
+   }
+  
    gdcm::DicomDir *e1;
    gdcm::TSKey v;
 
@@ -38,19 +60,26 @@ int main(int argc, char* argv[])
    gdcm::DicomDirSerie *se;
    gdcm::DicomDirImage *im;
   
-   std::string fileName; 
-   if (argc > 1) 
-      fileName = argv[1];    
-   else 
-   {
-      fileName = GDCM_DATA_ROOT;
-      fileName += "/DICOMDIR";
-   }
+   char *fileName;
+   fileName  = am->ArgMgrWantString("filein",usage); 
 
-   if (argc > 3)
+   int level  = am->ArgMgrGetInt("level", 2);
+
+   int detailLevel = am->ArgMgrGetInt("detail", 2);
+
+   if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
 
-   // new style is useless, since it has no effect fore *reading* a DICOMDIR
+   /* if unused Param we give up */
+   if ( am->ArgMgrPrintUnusedLabels() )
+   { 
+      am->ArgMgrUsage(usage);
+      delete e1;
+      delete am;
+      return 0;
+   } 
+
+   // new style is useless, since it has no effect for *reading* a DICOMDIR
    // (only meaningfull when *creating* a DICOMDIR)
 
    e1 = new gdcm::DicomDir( fileName );
@@ -70,12 +99,7 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   e1->SetPrintLevel(2);
-   int detailLevel;
-   if (argc > 2)
-      detailLevel = atoi(argv[2]);   
-   else
-      detailLevel = 3;
+   e1->SetPrintLevel(level);
 
    // Test if the DicomDir contains any Patient
    pa = e1->GetFirstPatient();
@@ -165,18 +189,23 @@ int main(int argc, char* argv[])
  
       pa = e1->GetFirstPatient(); 
       while ( pa ) {  // les PATIENT de ce DICOMDIR
-         std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name
+       // Patient's Name, Patient ID 
+         std::cout << "Pat.Name:[" << pa->GetEntryValue(0x0010, 0x0010) <<"]"; // Patient's Name
+         std::cout << " Pat.ID:[";
+         std::cout << pa->GetEntryValue(0x0010, 0x0020) << "]" << std::endl; // Patient ID
 
          st = pa->GetFirstStudy();
          while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- "<< st->GetEntryValue(0x0008, 0x1030) << std::endl;    // Study Description
-            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010); // Study ID
+            std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]";// Study Description 
+            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010);       // Study ID
+            std::cout << "]" << std::endl;
 
             se = st->GetFirstSerie();
             while ( se ) { // on degouline les SERIES de cette study
-               std::cout << "--- --- "<< se->GetEntryValue(0x0008, 0x103e) << std::endl;      // Serie Description
+               std::cout << "--- --- Ser.Descr:["<< se->GetEntryValue(0x0008, 0x103e)<< "]";  // Series Description
                std::cout << " Ser.nb:["         <<  se->GetEntryValue(0x0020, 0x0011);        // Series number
                std::cout << "] Mod.:["          <<  se->GetEntryValue(0x0008, 0x0060) << "]"; // Modality
+               std::cout << std::endl;    
 
                im = se->GetFirstImage();
                while ( im ) { // on degouline les Images de cette serie

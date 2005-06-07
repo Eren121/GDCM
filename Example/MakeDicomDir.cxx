@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 15:40:53 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/07 11:12:10 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
+
+#include "gdcmArgMgr.h"
 
 #include <iostream>
 
@@ -37,7 +39,7 @@ void EndMethod(void *toto) {
 
 /**
   * \ingroup Test
-  * \brief   Explores recursively the given directory (or GDCM_DATA_ROOT by default)
+  * \brief   Explores recursively the given directory
   *          orders the gdcm-readable found Files
   *          according their Patient/Study/Serie/Image characteristics
   *          makes the gdcmDicomDir 
@@ -46,46 +48,79 @@ void EndMethod(void *toto) {
 
 int main(int argc, char *argv[]) 
 {
-  // gdcm::Debug::DebugOn();
-   std::string dirName;   
+   START_USAGE(usage)
+   " \n MakeDicomDir :\n",
+   " Explores recursively the given directory, makes the relevant DICOMDIR",
+   "          and writes it as 'NewDICOMDIR'",
+   " usage: MakeDicomDir dirname=rootDirectoryName [noshadow] [noseq] [debug] ",
+   "        noshadow : user doesn't want to load Private groups (odd number)",
+   "        noseq    : user doesn't want to load Sequences ",
+   "        debug    : user wants to run the program in 'debug mode' ",
+   FINISH_USAGE
 
-   if (argc > 1)
+   // ----- Initialize Arguments Manager ------   
+   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+  
+   if (am->ArgMgrDefined("usage")) 
    {
-      dirName = argv[1];
+      am->ArgMgrUsage(usage); // Display 'usage'
+      delete am;
+      return 0;
    }
+
+   char *dirName;   
+   dirName  = am->ArgMgrGetString("dirName","."); 
+
+   int loadMode;
+   if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
+       loadMode = NO_SEQ | NO_SHADOW;  
+   else if ( am->ArgMgrDefined("noshadow") )
+      loadMode = NO_SHADOW;
+   else if ( am->ArgMgrDefined("noseq") )
+      loadMode = NO_SEQ;
    else
-   {
-      dirName = GDCM_DATA_ROOT;
+      loadMode = 0;
+
+   if (am->ArgMgrDefined("debug"))
+      gdcm::Debug::DebugOn();
+ 
+   // if unused Param we give up
+   if ( am->ArgMgrPrintUnusedLabels() )
+   { 
+      am->ArgMgrUsage(usage);
+      delete am;
+      return 0;
    }
+
+   delete am;  // we don't need Argument Manager any longer
+
+   // ----- Begin Processing -----
 
    gdcm::DicomDir *dcmdir;
-    // we ask for Directory parsing
- 
-    // Old style (still available) :
-    // dcmdir = new gdcm::DicomDir(dirName, true);
 
-   // new style (user is allowed no to load Sequences an/or Shadow Groups)
+   // we ask for Directory parsing
+
    dcmdir = new gdcm::DicomDir( );
    dcmdir->SetParseDir(true);
-// some images have a wrong length for element 0x0000 of private groups
-//   dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);
-
-   dcmdir->SetLoadMode(NO_SEQ);
-   dcmdir->Load(dirName);
 
    dcmdir->SetStartMethod(StartMethod, (void *) NULL);
    dcmdir->SetEndMethod(EndMethod);
-   
+
+   dcmdir->SetLoadMode(loadMode);
+   dcmdir->Load(dirName);
+
+    // ----- Check the result
+    
    if ( !dcmdir->GetFirstPatient() ) 
    {
       std::cout << "makeDicomDir: no patient found. Exiting."
                 << std::endl;
-
       delete dcmdir;
       return 1;
    }
     
-   // Create the corresponding DicomDir
+   // ----- Create the corresponding DicomDir
+
    dcmdir->WriteDicomDir("NewDICOMDIR");
    delete dcmdir;
 
