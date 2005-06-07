@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/06/07 09:58:29 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -178,35 +178,35 @@ void DicomDirElement::Print(std::ostream &os)
    s << "Meta Elements :"<<std::endl;
    for (it = DicomDirMetaList.begin(); it != DicomDirMetaList.end(); ++it)
    {
-      greltag = Util::Format("%04x|%04x ",it->Group,it->Elem);
+      greltag = DictEntry::TranslateToKey(it->Group,it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Patient Elements :"<<std::endl;
    for (it = DicomDirPatientList.begin(); it != DicomDirPatientList.end(); ++it)
    {
-      greltag = Util::Format("%04x|%04x ",it->Group,it->Elem);
+      greltag = DictEntry::TranslateToKey(it->Group,it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Study Elements :"<<std::endl;
    for (it = DicomDirStudyList.begin(); it != DicomDirStudyList.end(); ++it)
    {
-      greltag = Util::Format("%04x|%04x ", it->Group, it->Elem);
+      greltag = DictEntry::TranslateToKey(it->Group, it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Serie Elements :"<<std::endl;
    for (it = DicomDirSerieList.begin(); it != DicomDirSerieList.end(); ++it)
    {
-      greltag = Util::Format("%04x|%04x ", it->Group, it->Elem);
+      greltag = DictEntry::TranslateToKey( it->Group, it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
    s << "Image Elements :"<<std::endl;
    for (it = DicomDirImageList.begin(); it != DicomDirImageList.end(); ++it)
    {
-      greltag = Util::Format("%04x|%04x ", it->Group, it->Elem);
+      greltag = DictEntry::TranslateToKey(it->Group, it->Elem);
       s << "   (" << greltag << ") = " << it->Value << std::endl;
    }
 
