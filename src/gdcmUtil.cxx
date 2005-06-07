@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/06 13:07:19 $
-  Version:   $Revision: 1.152 $
+  Date:      $Date: 2005/06/07 13:48:35 $
+  Version:   $Revision: 1.153 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,6 +94,7 @@ const std::string Util::GDCM_UID = "1.2.826.0.1.3680043.2.1143";
 std::string Util::RootUID        = GDCM_UID;
 const uint16_t Util::FMIV = 0x0001;
 uint8_t *Util::FileMetaInformationVersion = (uint8_t *)&FMIV;
+std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
 
 //-------------------------------------------------------------------------
 // Public
@@ -389,7 +390,7 @@ std::string Util::DicomString(const char *s, size_t l)
  * \brief Create a /DICOM/ string:
  * It should a of even length (no odd length ever)
  * It can contain as many (if you are reading this from your
- * editor the following character is is backslash followed by zero
+ * editor the following character is backslash followed by zero
  * that needed to be escaped with an extra backslash for doxygen) \\0
  * as you want.
  * This function is similar to DicomString(const char*), 
@@ -789,7 +790,8 @@ std::string Util::CreateUniqueUID(const std::string &root)
 
    // A root was specified use it to forge our new UID:
    append += ".";
-   append += Util::GetMACAddress();
+   //append += Util::GetMACAddress(); // to save CPU time
+   append += Util::GDCM_MAC_ADRESS;
    append += ".";
    append += Util::GetCurrentDateTime();
 
