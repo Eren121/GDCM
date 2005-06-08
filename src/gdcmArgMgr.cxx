@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 08:06:55 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/08 08:58:22 $
+  Version:   $Revision: 1.4 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,10 +25,6 @@
 #include <stdlib.h>  // For strtol and strtod
 
 #include "gdcmArgMgr.h"
-
-#define ARG_DEFAULT_PARAMOUT    "fileout.par"
-#define ARG_DEFAULT_LOGFILE     "gdcm.log"
-
 
 namespace gdcm 
 {
@@ -692,7 +688,7 @@ int ArgMgr::FiltreLong ( char *arg  )
 
 /*------------------------------------------------------------------------
  | Role       : Reads a parameter from a file
- | Retour     : Type   : char *
+ | Return     : Type   : char *
  |              Role   : pointer to the label
  | parameters : param  : char *
  |              Role   : one where the parameter will be stored
@@ -740,7 +736,7 @@ char *ArgMgr::LoadedParam ( char *param, FILE *fd )
 /*------------------------------------------------------------------------
  | Role       : Reading of arguments in a parameter file
  |              (this function is recursive).
- | Retour     : Type   : int
+ | Return     : Type   : int
  |              Role   : length needed to store all the parameters
  | parameters : filename : char *
  |              Role     : parameter File name
@@ -775,7 +771,7 @@ int ArgMgr::ArgLoadFromFile ( char *filename )
 
 /*------------------------------------------------------------------------
  | Role       : Standard parameters management (on command line)
- | Retour     : Type   : void
+ | Return     : Type   : void
  | parameters : none
  +------------------------------------------------------------------------*/
 void ArgMgr::ArgStdArgs()
@@ -788,7 +784,7 @@ void ArgMgr::ArgStdArgs()
   if ( (logfile = ArgMgrValue(ARG_LABEL_LOGFILE))!=0) 
   {
     if ( *logfile == '\0' )
-       logfile = ARG_DEFAULT_LOGFILE;
+       logfile = (char *)ARG_DEFAULT_LOGFILE;
     fd = fopen ( logfile, "a+" );
     if ( fd ) 
     {
@@ -800,7 +796,7 @@ void ArgMgr::ArgStdArgs()
 
 /*------------------------------------------------------------------------
  | Role       : Sets in Upper Case.
- | Retour     : Type   : char *
+ | Return     : Type   : char *
  | parameters : char *
  +------------------------------------------------------------------------*/
 char *ArgMgr::maj ( char *a )
