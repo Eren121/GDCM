@@ -7,6 +7,12 @@
 
 #cmakedefine JPEGLSSTATIC
 
+#cmakedefine HAVE_C_INLINE
+
+#ifndef HAVE_C_INLINE
+#define inline
+#endif
+
 /* a function referenced thru EXTERNs: */
 #if defined( _WIN32 ) && defined (JPEGLSDLL)
 #define GLOBAL(type)            __declspec(dllexport) type
