@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 11:12:10 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/06/08 08:09:07 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,6 @@ int main(int argc, char* argv[])
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
       am->ArgMgrUsage(usage);
-      delete e1;
       delete am;
       return 0;
    } 
