@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 12:51:27 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/06/08 15:21:58 $
+  Version:   $Revision: 1.6 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,7 +96,7 @@ private :
 
 private :
 
-   char *ArgParamOut;          /* Output File Name for param */
+   const char *ArgParamOut;          /* Output File Name for param */
 
    char *ArgUsed;              /* Used Arguments             */
    char *ArgLab[ARGMAXCOUNT];  /* Arguments Labels           */

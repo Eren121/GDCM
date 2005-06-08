@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 12:51:27 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/06/08 15:21:58 $
+  Version:   $Revision: 1.7 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -777,9 +777,9 @@ void ArgMgr::ArgStdArgs()
   char *logfile;
   FILE *fd;
 
-  if ( (ArgParamOut=ArgMgrValue(ARG_LABEL_PARAMOUT))==0 )
+  if ( (ArgParamOut=ArgMgrValue((char*)ARG_LABEL_PARAMOUT))==0 )
     ArgParamOut = ARG_DEFAULT_PARAMOUT;
-  if ( (logfile = ArgMgrValue(ARG_LABEL_LOGFILE))!=0) 
+  if ( (logfile = ArgMgrValue((char*)ARG_LABEL_LOGFILE))!=0) 
   {
     if ( *logfile == '\0' )
        logfile = (char *)ARG_DEFAULT_LOGFILE;
