@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/02 09:38:53 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/08 04:01:41 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,8 @@ int TestPrintAllDocument(int, char *[])
       //std::cout << s.str() << gdcmDataImages[i];
 
       std::cout << gdcmDataImages[i];
-      for (unsigned int j=0; j<60-strlen(gdcmDataImages[i]); j++)
+      unsigned int j;
+      for ( j=0; j<60-strlen(gdcmDataImages[i]); j++)
          std::cout << " ";    
 
       pixelType = e1->GetPixelType();
@@ -76,7 +77,7 @@ int TestPrintAllDocument(int, char *[])
       photomInterp =  e1->GetEntryValue(0x0028,0x0004);
                
       std::cout << " Photom.Interp.="       << photomInterp;
-      for (unsigned int j=0; j<l-photomInterp.length(); j++)
+      for (j=0; j<l-photomInterp.length(); j++)
          std::cout << " ";
  
       std::cout << " TransferSyntaxName= [" << e1->GetTransferSyntaxName() << "]" ;
