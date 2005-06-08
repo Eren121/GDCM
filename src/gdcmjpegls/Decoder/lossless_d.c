@@ -331,12 +331,11 @@ int lossless_undoscanline(  pixel *psl,      /* previous scanline */
 /*** watch it! actual pixels in the scan line are numbered 1 to no .
      pixels with indices < 1 or > no are dummy "border" pixels  */
 {
-  int i, psfix;
+  int i;
   pixel Ra, Rb, Rc, Rd;
   int SIGN;
   int cont;
 
-  psfix = 0;
 
 
   /**********************************************/
@@ -542,7 +541,7 @@ int lossless_undoscanline_pixel(pixel *psl,    /* previous scanline */
 /*** watch it! actual pixels in the scan line are numbered 1 to no .
      pixels with indices < 1 or > no are dummy "border" pixels  */
 {
-  int i, psfix, n_c, color, enter_run=0, was_in_run = 0,
+  int i, n_c, color, enter_run=0, was_in_run = 0,
       test_run;
   pixel Ra, Rb, Rc, Rd;
   pixel c_aa[MAX_COMPONENTS],
@@ -555,7 +554,6 @@ int lossless_undoscanline_pixel(pixel *psl,    /* previous scanline */
   int  SIGN;
   int cont,c_cont[MAX_COMPONENTS];
 
-  psfix = 0;
 
   /**********************************************/
   /* Do for all pixels in the row in 8-bit mode */
