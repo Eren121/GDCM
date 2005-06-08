@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 08:58:22 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/06/08 09:24:17 $
+  Version:   $Revision: 1.5 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -201,7 +201,7 @@ int ArgMgr::ArgMgrPrintUnusedLabels ()
  * @param usage  array of pointers to the documentation lines of the program.
  * @return exception code
  */
-int ArgMgr::ArgMgrUsage(char **usage_text )
+int ArgMgr::ArgMgrUsage(const char **usage_text )
 {
    while ( *usage_text ) 
       std::cout << std::endl << *(usage_text++);
@@ -328,7 +328,7 @@ int ArgMgr::ArgMgrGetLabel (char *label, char *liste, int val )
  * @param usage Usage program (displayed if label not found)
  * @return   int : range of value amongst the values list
  */
-int ArgMgr::ArgMgrWantLabel (char *label, char *liste, char *usage[] )
+int ArgMgr::ArgMgrWantLabel (char *label, char *liste, const char *usage[] )
 {
    char *lab;
    char *vallab;
@@ -352,7 +352,7 @@ int ArgMgr::ArgMgrWantLabel (char *label, char *liste, char *usage[] )
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
-int ArgMgr::ArgMgrWantInt (char *label, char **usage)
+int ArgMgr::ArgMgrWantInt (char *label, const char **usage)
 {
    return        ( (ArgMgrDefined(label) ) 
                  ? (atoi(ArgMgrValue(label) ) ) 
@@ -367,7 +367,7 @@ int ArgMgr::ArgMgrWantInt (char *label, char **usage)
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
-float ArgMgr::ArgMgrWantFloat (char *label, char **usage)
+float ArgMgr::ArgMgrWantFloat (char *label, const char **usage)
 {
    return       ( (ArgMgrDefined(label) ) 
                 ? ((float)atof(ArgMgrValue(label) ) ) 
@@ -382,7 +382,7 @@ float ArgMgr::ArgMgrWantFloat (char *label, char **usage)
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
-char *ArgMgr::ArgMgrWantString(char *label, char **usage)
+char *ArgMgr::ArgMgrWantString(char *label, const char **usage)
 {
    return      ( (ArgMgrDefined(label) ) 
                ? (ArgMgrValue(label) ) 

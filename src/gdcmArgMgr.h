@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 14:58:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/08 09:24:17 $
+  Version:   $Revision: 1.4 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ namespace gdcm
 #define  ARG_LABEL_LOGFILE       "LOG"
 #define  ARG_LABEL_PARAMOUT      "paramout"
 
-#define START_USAGE(usage)   char *usage[] = {
+#define START_USAGE(usage)   const char *usage[] = {
 #define FINISH_USAGE         0};
 
 //-----------------------------------------------------------------------------
@@ -58,7 +58,7 @@ public:
    char  *ArgMgrValue             (char *);      /* Returns Param value       */
    char  *ArgMgrUnused            (void);        /* Returns a never used arg. */
    int    ArgMgrSave              (char *);      /* Save of parameters out    */
-   int    ArgMgrUsage             (char **);     /* Display program usage     */
+   int    ArgMgrUsage             (const char **);/* Display program usage     */
    int    ArgMgrPrintUnusedLabels (void);        /* Prints unused labels      */
 
    int    ArgMgrGetInt   (char*, int);  /* Gets an int   (with default value)  */
@@ -66,10 +66,10 @@ public:
    char  *ArgMgrGetString(char*, char*);/* Gets a string (with default value)  */
    int    ArgMgrGetLabel (char *, char *, int);
   
-   int   ArgMgrWantInt   (char*, char**);  /* Demands an int                   */
-   float ArgMgrWantFloat (char*, char**);  /* Demands a float                  */
-   char *ArgMgrWantString(char*, char**);  /* Demands a string                 */
-   int   ArgMgrWantLabel (char*, char *, char **);
+   int   ArgMgrWantInt   (char*, const char**);  /* Demands an int                   */
+   float ArgMgrWantFloat (char*, const char**);  /* Demands a float                  */
+   char *ArgMgrWantString(char*, const char**);  /* Demands a string                 */
+   int   ArgMgrWantLabel (char*, char *, const char **);
 
    int   *ArgMgrGetListOfInt   (char *, int *);   /* Gets a list of int        */
    float *ArgMgrGetListOfFloat (char *, int *);   /* Gets a list of float      */
