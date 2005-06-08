@@ -332,29 +332,29 @@ char *ttyfilename = "CON";
 
 void fprint_disclaimer(FILE *fp, int nopause)
 {
-    char *p0, *p1;
-    FILE *ttyf;
-    int  i, c;
+  char *p0, *p1;
+  FILE *ttyf;
+  int  i; /*, c;*/
 
-    nopause = nopause | !isatty(fileno(fp));
+  nopause = nopause | !isatty(fileno(fp));
 
-    if ( !nopause && (ttyf=fopen(ttyfilename,"r"))==NULL ) {
-  nopause = 1;
-    }
+  if ( !nopause && (ttyf=fopen(ttyfilename,"r"))==NULL ) {
+    nopause = 1;
+  }
 
-    for ( i=1, p0=disclaimer; ; i++ ) {
-  if ( !(*p0)  ) break;
-  if ( !nopause && i%PAUSE==0 ) {
+  for ( i=1, p0=disclaimer; ; i++ ) {
+    if ( !(*p0)  ) break;
+    if ( !nopause && i%PAUSE==0 ) {
       fflush(fp);
       fprintf(stderr, "--- (press RETURN to continue) ---"); 
       fflush(stderr);
-      c = getc(ttyf);
-  }
-  for ( p1=p0; (*p1 != '\n') && (*p1 != 0); p1++ );
-  *p1 = 0;
-  fprintf(fp,"%s\n",p0);
-  p0 = p1+1;
+/*      c = getc(ttyf);*/
     }
-    fprintf(fp,"\n"); fflush(fp);
-    if ( !nopause) fclose(ttyf);
+    for ( p1=p0; (*p1 != '\n') && (*p1 != 0); p1++ );
+    *p1 = 0;
+    fprintf(fp,"%s\n",p0);
+    p0 = p1+1;
+  }
+  fprintf(fp,"\n"); fflush(fp);
+  if ( !nopause) fclose(ttyf);
 }

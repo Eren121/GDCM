@@ -51,6 +51,7 @@
 
 #include "global.h"
 #include "bitio.h"
+#include <string.h> // for memset
 
 
 extern int zeroLUT[];     /* lookup table to find number of leading zeroes */
