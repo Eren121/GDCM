@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 09:24:17 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/06/08 12:51:27 $
+  Version:   $Revision: 1.6 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ namespace gdcm
  * @param argc arguments count, as passed to main()
  * @param argv  pointers array on the arguments passed to main()  
  */
- ArgMgr::ArgMgr(int argc, char *argv[])
+ ArgMgr::ArgMgr(int argc, char **argv)
  {
    int i;
    int nblettre;
@@ -201,10 +201,10 @@ int ArgMgr::ArgMgrPrintUnusedLabels ()
  * @param usage  array of pointers to the documentation lines of the program.
  * @return exception code
  */
-int ArgMgr::ArgMgrUsage(const char **usage_text )
+int ArgMgr::ArgMgrUsage(const char **usage )
 {
-   while ( *usage_text ) 
-      std::cout << std::endl << *(usage_text++);
+   while ( *usage ) 
+      std::cout << std::endl << *(usage++);
    std::cout << std::endl; 
    return (0);
 }
@@ -328,7 +328,7 @@ int ArgMgr::ArgMgrGetLabel (char *label, char *liste, int val )
  * @param usage Usage program (displayed if label not found)
  * @return   int : range of value amongst the values list
  */
-int ArgMgr::ArgMgrWantLabel (char *label, char *liste, const char *usage[] )
+int ArgMgr::ArgMgrWantLabel (char *label, char *liste, const char **usage )
 {
    char *lab;
    char *vallab;
@@ -396,7 +396,7 @@ char *ArgMgr::ArgMgrWantString(char *label, const char **usage)
  * @return   Pointer to the array
  *     Pointer NULL if error
  */
-char **ArgMgr::ArgMgrGetListOfString ( char *label, int *nbElem )
+char **ArgMgr::ArgMgrGetListOfString ( char *label, int *number )
 {
   int taille;
   char  *value = ArgMgrValue(label);
@@ -405,8 +405,8 @@ char **ArgMgr::ArgMgrGetListOfString ( char *label, int *nbElem )
   char  *chainecur; 
   if (!value)
      return 0;
-  *nbElem = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
-  taille = *nbElem;
+  *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
+  taille = *number;
   liste = (char **) malloc (sizeof(char*) * taille + strlen(value)+1);
   if ( !liste )
      return 0;
@@ -513,11 +513,10 @@ int ArgMgr::IdStrCountChar (char *chaine, int caract)
 }
 
 /**
- * \brief     renvoie 1 tableau contenant un ensemble de paires d'entiers
- * @param value     pointer vers la zone allouee contenant les
- *    intervalles (deb1,fin1, deb2,fin2, ...)
- * @param number     Pointer vers le nb de paires trouvees
- * @return        1 tableau contenant un ensemble de paires d'entiers
+ * \brief     returns an array of set of 'INT pairs'
+ * @param value   char array decribing a set of 'INT pairs' (deb1,fin1, deb2,fin2, ...)
+ * @param number   nb of found pairs
+ * @return        array of set of 'INT pairs'
  */
 int *ArgMgr::IdStrIntEnum ( char* value, int *number)
 {
@@ -525,7 +524,7 @@ int *ArgMgr::IdStrIntEnum ( char* value, int *number)
    int taille;
    int i;
 
-   *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Virgules +1 */
+   *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
    taille= *number;
    liste = (int *) calloc (1,sizeof(int)*2*taille );
    if ( !liste )
@@ -561,20 +560,19 @@ int *ArgMgr::IdStrIntEnum ( char* value, int *number)
    }
    return liste;
 }
-
+ 
 /**
- * \brief     renvoie 1 tableau contenant un ensemble de 'paires' de FLOAT
- * @param value     pointer vers la zone allouee contenant les
- *     paires (deb1,fin1, deb2,fin2, ...)
- * @param number     Pointer vers le nb de paires trouvees
- * @return         tableau contenant un ensemble de 'paires' de FLOAT
+ * \brief     returns an array a set of 'FLOAT pairs'
+ * @param value   char array decribing a set of 'FLOAT pairs' (deb1,fin1, deb2,fin2, ...)
+ * @param number   nb of found pairs
+ * @return        array of set of 'FLOAT pairs'
  */
 float *ArgMgr::IdStrFloatEnum (char *value, int *number)
 {
    float *liste;
    int taille;
    int i;
-   *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Virgules +1 */
+   *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
    taille= *number;
    liste = (float *) calloc (1,sizeof(float)*2*taille );
    if ( !liste )

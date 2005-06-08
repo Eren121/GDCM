@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 09:24:17 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/06/08 12:51:27 $
+  Version:   $Revision: 1.5 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,16 +26,16 @@
 namespace gdcm
 {
 
-#define ID_RFILE_TEXT   "rt"
-#define ARGMAXCOUNT 100   // Maximum number of arguments
-#define ARG_LONG_MAX          1000
+#define ID_RFILE_TEXT        "rt"
+#define ARGMAXCOUNT          100   // Maximum number of arguments
+#define ARG_LONG_MAX         1000
 
 // default file name
-#define ARG_DEFAULT_PARAMOUT    "fileout.par"
-#define ARG_DEFAULT_LOGFILE     "gdcm.log"
+#define ARG_DEFAULT_PARAMOUT "fileout.par"
+#define ARG_DEFAULT_LOGFILE  "gdcm.log"
 
-#define  ARG_LABEL_LOGFILE       "LOG"
-#define  ARG_LABEL_PARAMOUT      "paramout"
+#define ARG_LABEL_LOGFILE    "LOG"
+#define ARG_LABEL_PARAMOUT   "paramout"
 
 #define START_USAGE(usage)   const char *usage[] = {
 #define FINISH_USAGE         0};
