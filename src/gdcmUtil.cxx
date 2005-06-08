@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 13:48:35 $
-  Version:   $Revision: 1.153 $
+  Date:      $Date: 2005/06/08 12:24:53 $
+  Version:   $Revision: 1.154 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -321,10 +321,11 @@ std::string Util::GetCurrentDateTime()
    strftime (tmp, sizeof (tmp), "%Y%m%d%H%M%S", ptm);
 
    // Add milliseconds
-   std::string r = tmp;
-   r += Format("%03ld", milliseconds);
+   // Don't use Util::Format to accelerate execution of code
+   char tmpAll[80];
+   sprintf(tmpAll,"%s%03ld",tmp,milliseconds);
 
-   return r;
+   return tmpAll;
 }
 
 unsigned int Util::GetCurrentThreadID()
@@ -796,8 +797,11 @@ std::string Util::CreateUniqueUID(const std::string &root)
    append += Util::GetCurrentDateTime();
 
    //Also add a mini random number just in case:
+   char tmp[10];
    int r = (int) (100.0*rand()/RAND_MAX);
-   append += Format("%02d", r);
+   // Don't use Util::Format to accelerate the execution
+   sprintf(tmp,"%02d", r);
+   append += tmp;
 
    // If append is too long we need to rehash it
    if( (prefix + append).size() > 64 )
