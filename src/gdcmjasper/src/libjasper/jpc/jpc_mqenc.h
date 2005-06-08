@@ -64,7 +64,7 @@
 /*
  * MQ Arithmetic Encoder
  *
- * $Id: jpc_mqenc.h,v 1.1 2005/05/22 18:33:05 malaterre Exp $
+ * $Id: jpc_mqenc.h,v 1.2 2005/06/08 17:12:49 malaterre Exp $
  */
 
 #ifndef JPC_MQENC_H
@@ -216,12 +216,17 @@ int jpc_mqenc_dump(jpc_mqenc_t *mqenc, FILE *out);
 
 /* Note: This macro is included only to satisfy the needs of
   the mqenc_putbit macro. */
+/* The cast to 'unsigned' allow us to get rid of multiple annoying warnings
+ * on gcc: 
+ * jpc_t1enc.c:958: warning: signed and unsigned type in conditional expression
+ * I am not sure this is the best patch ever since jpc_mqenc_codemps2 is
+ * only returning 0 or -1 ... */
 #define  jpc_mqenc_putbit_macro(enc, bit) \
   (((*((enc)->curctx))->mps == (bit)) ? \
     (((enc)->areg -= (*(enc)->curctx)->qeval), \
-    ((!((enc)->areg & 0x8000)) ? (jpc_mqenc_codemps2(enc)) : \
+    ((!((enc)->areg & 0x8000)) ? ((unsigned)jpc_mqenc_codemps2(enc)) : \
     ((enc)->creg += (*(enc)->curctx)->qeval))) : \
-    jpc_mqenc_codelps(enc))
+    (unsigned)jpc_mqenc_codelps(enc))
 
 /* Note: These function prototypes are included only to satisfy the
   needs of the mqenc_putbit_macro macro.  Do not call any of these
