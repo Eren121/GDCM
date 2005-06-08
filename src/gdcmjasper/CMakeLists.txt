@@ -1,3 +1,8 @@
 PROJECT(GDCMJASPER C)
 
+# Don't ask my why...
+IF(APPLE)
+  SET(CMAKE_SHARED_LINKER_FLAGS "-single_module")
+ENDIF(APPLE)
+
 SUBDIRS(src)
