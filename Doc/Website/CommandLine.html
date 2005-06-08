@@ -15,7 +15,8 @@
           noshadow : user doesn't want to load Private groups (odd number)
           noseq    : user doesn't want to load Sequences
           debug    : user wants to run the program in 'debug mode'
-    </pre>
+   </pre>
+
    <LI> Anonymize
    <pre>
    Anonymize a full gdcm-readable Dicom image
@@ -23,7 +24,8 @@
                     Use AnonymizeNoLoad instead.
    usage: Anonymize filein=inputFileName fileout=anonymizedFileName [debug]
           debug    : user wants to run the program in 'debug mode'
-   <pre>
+   </pre>
+
    <LI> AnonymizeNoLoad
    <pre> 
    Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable
@@ -32,17 +34,19 @@
    usage: AnonymizeNoLoad filein=inputFileName fileout=outputFileName [debug]
           debug    : user wants to run the program in 'debug mode'
    </pre>
+
    <LI> ReWrite
    <pre>
    Re write a full gdcm-readable Dicom image (compressed Pixels are expanded)
-     (usefull when the file is not very straight).                  
-    usage: ReWrite filein=inputFileName fileout=anonymizedFileName
+                   (usefull when the file is not very straight).                  
+   usage: ReWrite filein=inputFileName fileout=anonymizedFileName
                    [mode=write mode] [noshadow] [noseq][debug]
-           mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)
-           noshadow : user doesn't want to load Private groups (odd number)
-           noseq    : user doesn't want to load Sequences
-           debug    : user wants to run the program in 'debug mode' 
+          mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)
+          noshadow : user doesn't want to load Private groups (odd number)
+          noseq    : user doesn't want to load Sequences
+          debug    : user wants to run the program in 'debug mode' 
    </pre>
+
    <LI> PrintDicomDir
    <pre>
    Display the tree-like structure of a DICOMDIR File
@@ -50,25 +54,28 @@
           detail = 1 : Patients, 2 : Studies, 3 : Series, 4 : Images
                    5 : Full Content
           level = 0,1,2 : depending on user (what he wants to see, when detail=5)
-          debug    : user wants to run the program in 'debug mode'
+           debug    : user wants to run the program in 'debug mode'
    </pre>
+
    <LI> MakeDicomDir
    <pre>
    Explores recursively the given directory, makes the relevant DICOMDIR
           and writes it as 'NewDICOMDIR'
    usage: MakeDicomDir dirname=rootDirectoryName [noshadow] [noseq] [debug]
-           noshadow : user doesn't want to load Private groups (odd number)
-           noseq    : user doesn't want to load Sequences
-           debug    : user wants to run the program in 'debug mode'
+          noshadow : user doesn't want to load Private groups (odd number)
+          noseq    : user doesn't want to load Sequences
+          debug    : user wants to run the program in 'debug mode'
    </pre>
+
    <LI> AnonymizeDicomDir
    <pre>
    Anonymize a gdcm-readable DICOMDIR even when some 'Objects'
-           are not yet taken into account
-           Warning : the DICOMDIR is overwritten
+          are not yet taken into account
+          Warning : the DICOMDIR is overwritten
    usage: AnonymizeDicomDir filein=dicomDirName [debug]
           debug    : user wants to run the program in 'debug mode'
    </pre>
+
 </UL>
 </BODY>
 </HTML>
