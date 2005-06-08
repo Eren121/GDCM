@@ -32,16 +32,17 @@ Please adopt the
 <LI>All the commits should be atomic. They must preserve the compilation
   in order to prevent checkouts with broken code.
 </LI>
-<LI> All the commits must correspond to a state of the code where ctest
-  runs and has no failing subtest. <b>Always</b> run ctest before commiting.
+<LI> All the commits must correspond to a state of the code where <TT>ctest</TT>
+  runs and has no failing subtest. <b>Always</b> run <TT>ctest</TT> before 
+  commiting.
   <BR>
   <B>Notes</B>:
   <UL>
-  <LI> you can start ctest in verbose mode through the command
+  <LI> you can start <TT>ctest</TT> in verbose mode through the command
      <TT>ctest -V >& log</TT>
   </LI>
-  <LI> you can start a single test through ctest with
-      ctest -R FailingTestName -V >& log
+  <LI> you can start a single test through <TT>ctest</TT> with
+      <TT>ctest -R <i>FailingTestName</i> -V >& log</TT>
   </LI>
   </UL>
 </LI>
@@ -49,22 +50,25 @@ Please adopt the
 
 <!##############################>
 <H3>Compiler flags policy</H3>
-When working with gcc, please use the following flags when
-configuring the cmake variable <TT>CMAKE_CXX_FLAGS</TT>
-As a side not if you have proper bash/zsh setup cmake automatically
-inspect your CFLAGS and CXXFLAGS. So you can set them up for any
-project. <b>Be carefull</b> though, the quality of your code will greatly
+When working with <TT>gcc</TT>, please use the following flags when
+configuring the <TT>cmake</TT> variable <TT>CMAKE_CXX_FLAGS</TT>
+As a side note if you have proper <TT>bash/zsh</TT> setup <TT>cmake</TT> 
+automatically inspect your <TT>CFLAGS</TT> and <TT>CXXFLAGS</TT>. 
+So you can set them up for any project. 
+<b>Be carefull</b> though, the quality of your code will greatly
 improve by doing so.
 <BR>
 For CFLAGS:
 <TT> -Wall -W 
 </TT>
+<BR>
 For CXXFLAGS:
 <TT> -Wall -W -Wshadow -Wunused -Wno-system-headers -Wno-deprecated
      -Woverloaded-virtual
 </TT>
+<BR>
 For paranoid people, or simply beginner you can also try to compiler gdcm
-using the -pedantic flags compiler option.
+using the <TT>-pedantic</TT> flag compiler option.
 
 <!##############################>
 <H3>Sending the result to kitware's dashboard (optional)</H3>
@@ -74,10 +78,10 @@ The results should appear in
 <A HREF="http://public.kitware.com/dashboard.php?name=gdcm">
         Kitware's dashboard</A>
 under the name of your machine (uname). For ease of use you can
-change the BUILDNAME variable in your CMakeCache.txt to something more
+change the BUILDNAME variable in your <TT>CMakeCache.txt</TT> to something more
 accurate such as: GDCM-my_machine_name. The entry will then be within
-the "Experimental Builds" entry.
-<b>UPDATE:</b>Since GDCM moved to its own dashboard there is no possble
+the "Experimental Builds" entry.<BR>
+<b>UPDATE:</b>Since GDCM moved to its own dashboard there is no possible
 collision with other project. You can then send dashboard without having
 to properly prepend 'GDCM-' to your cmake BUILDNAME variable. But the 
 Win32, mingw, gcc, SunOS is still very important...
