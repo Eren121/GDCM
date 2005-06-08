@@ -62,7 +62,7 @@
  */
 
 /*
- * $Id: jpc_enc.c,v 1.2 2005/06/07 19:22:42 malaterre Exp $
+ * $Id: jpc_enc.c,v 1.3 2005/06/08 17:39:37 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -2505,7 +2505,7 @@ static jpc_enc_cblk_t *cblk_create(jpc_enc_cblk_t *cblk, jpc_enc_cp_t *cp, jpc_e
   uint_fast32_t cblkno;
   uint_fast32_t tlcblktlx;
   uint_fast32_t tlcblktly;
-  // unused:
+  /* unused:*/
   (void)cp;
 
   cblkno = cblk - prc->cblks;
