@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 15:31:31 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/08 08:06:55 $
+  Version:   $Revision: 1.3 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -269,7 +269,7 @@ int ArgMgr::ArgMgrGetInt(char *label, int defaultVal)
 float ArgMgr::ArgMgrGetFloat(char *label, float defaultVal)
 {
    return     ( (ArgMgrDefined(label))
-               ? (atof(ArgMgrValue(label)))
+               ? ((float)atof(ArgMgrValue(label)))
                : (defaultVal) );
 }
 
@@ -374,7 +374,7 @@ int ArgMgr::ArgMgrWantInt (char *label, char **usage)
 float ArgMgr::ArgMgrWantFloat (char *label, char **usage)
 {
    return       ( (ArgMgrDefined(label) ) 
-                ? (atof(ArgMgrValue(label) ) ) 
+                ? ((float)atof(ArgMgrValue(label) ) ) 
                 : (ArgMgrUsage(usage),1.0) );
 }
 
