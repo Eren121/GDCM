@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 15:21:58 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/06/09 11:27:54 $
+  Version:   $Revision: 1.7 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,40 +54,40 @@ public:
    ArgMgr(int argc, char **argv);
    ~ArgMgr();
 
-   int    ArgMgrDefined           (char *);      /* Checks if Param is defined*/
-   char  *ArgMgrValue             (char *);      /* Returns Param value       */
-   char  *ArgMgrUnused            (void);        /* Returns a never used arg. */
-   int    ArgMgrSave              (char *);      /* Save of parameters out    */
-   int    ArgMgrUsage             (const char **);/* Display program usage     */
-   int    ArgMgrPrintUnusedLabels (void);        /* Prints unused labels      */
+   int    ArgMgrDefined           (const char *param);/* Checks if Param is defined*/
+   char  *ArgMgrValue             (const char *param);/* Returns Param value       */
+   char  *ArgMgrUnused            (void);             /* Returns a never used arg. */
+   int    ArgMgrSave              (char *);           /* Save of parameters out    */
+   int    ArgMgrUsage             (const char **usage);    /* Display program usage     */
+   int    ArgMgrPrintUnusedLabels (void);             /* Prints unused labels      */
 
-   int    ArgMgrGetInt   (char*, int);  /* Gets an int   (with default value)  */
-   float  ArgMgrGetFloat (char*, float);/* Gets a float  (with default value)  */
-   char  *ArgMgrGetString(char*, char*);/* Gets a string (with default value)  */
-   int    ArgMgrGetLabel (char *, char *, int);
+   int    ArgMgrGetInt   (const char *param, int);  /* Gets an int   (with default value)*/
+   float  ArgMgrGetFloat (const char *param, float);/* Gets a float  (with default value)*/
+   char  *ArgMgrGetString(const char *param, char*);/* Gets a string (with default value)*/
+   int    ArgMgrGetLabel (const char *param, char *, int);
   
-   int   ArgMgrWantInt   (char*, const char**);  /* Demands an int                   */
-   float ArgMgrWantFloat (char*, const char**);  /* Demands a float                  */
-   char *ArgMgrWantString(char*, const char**);  /* Demands a string                 */
-   int   ArgMgrWantLabel (char*, char *, const char **);
+   int   ArgMgrWantInt   (const char *param, const char **usage);  /* Demands an int           */
+   float ArgMgrWantFloat (const char *param, const char **usage);  /* Demands a float          */
+   char *ArgMgrWantString(const char *param, const char **usage);  /* Demands a string         */
+   int   ArgMgrWantLabel (const char *param, char *, const char **usage);
 
-   int   *ArgMgrGetListOfInt   (char *, int *);   /* Gets a list of int        */
-   float *ArgMgrGetListOfFloat (char *, int *);   /* Gets a list of float      */
-   char **ArgMgrGetListOfString(char *, int *);   /* Gets a list of string     */
+   int   *ArgMgrGetListOfInt   (const char *param, int *);   /* Gets a list of int       */
+   float *ArgMgrGetListOfFloat (const char *param, int *);   /* Gets a list of float     */
+   char **ArgMgrGetListOfString(const char *param, int *);   /* Gets a list of string    */
 
-   int   * ArgMgrGetIntEnum     (char *, int *); /* Gets a list of int intervals  */
-   float * ArgMgrGetFloatEnum   (char *, int *); /* Gets a list of float intervals*/
+   int   * ArgMgrGetIntEnum     (const char *param, int *); /* Gets a list of int pairs  */
+   float * ArgMgrGetFloatEnum   (const char *param, int *); /* Gets a list of float pairs*/
 
 private :
 
-   int    FiltreLong      (char *);
-   char  *LoadedParam     (char *, FILE *);
-   int    ArgLoadFromFile (char *);
-   void   ArgStdArgs      (void);
+   int    FiltreLong       (char *);
+   const char  *LoadedParam(const char *, FILE *);
+   int    ArgLoadFromFile  (char *);
+   void   ArgStdArgs       (void);
 
    // These ones are 'general purpose methods'
    char  *maj             (char *);
-   char  *Majuscule       (char *);
+   char  *Majuscule       (const char *);
    int IdStrCountChar     (char *chaine, int caract);
    int *IdStrIntEnum      (char* value, int *number);
    float *IdStrFloatEnum  (char* value, int *number);
@@ -96,7 +96,7 @@ private :
 
 private :
 
-   const char *ArgParamOut;          /* Output File Name for param */
+   const char *ArgParamOut;    /* Output File Name for param */
 
    char *ArgUsed;              /* Used Arguments             */
    char *ArgLab[ARGMAXCOUNT];  /* Arguments Labels           */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/09 09:36:51 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/06/09 11:27:54 $
+  Version:   $Revision: 1.9 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,16 +116,16 @@ ArgMgr::~ArgMgr()
  
 /**
  * \brief  checks if a parameter exists in the command line
- * @param searchParam  label name
+ * @param param  label name
  * @return   true if parameter 'label' exists
  *           Actually, it returns 0 if label is not found
  *           else, returns the number of the spot it was found last time.
  */
-int ArgMgr::ArgMgrDefined( char *searchParam )
+int ArgMgr::ArgMgrDefined( const char *param )
 {
   int i, trouve ;
   char *temp;
-  temp = Majuscule ( searchParam ) ;
+  temp = Majuscule ( param ) ;
   for ( trouve = false, i = ArgCount-1; i>0; i-- )
   { 
     trouve = ! strcmp( ArgLab[i], temp ) ;
@@ -149,7 +149,7 @@ int ArgMgr::ArgMgrDefined( char *searchParam )
  * @return   Value, as a characters string, of the parameter
  *            whose label is given.
  */
-char *ArgMgr::ArgMgrValue ( char *param )
+char *ArgMgr::ArgMgrValue ( const char *param )
 {
    int trouve ;
    if ( (trouve = ArgMgrDefined ( param )) != false )
@@ -247,7 +247,7 @@ int ArgMgr::ArgMgrSave ( char *param )
  * @param defaultVal default value
  * @return parameter value
  */
-int ArgMgr::ArgMgrGetInt(char *label, int defaultVal)
+int ArgMgr::ArgMgrGetInt(const char *label, int defaultVal)
 {
    return ( (ArgMgrDefined(label))
             ? (atoi(ArgMgrValue(label)))
@@ -258,28 +258,28 @@ int ArgMgr::ArgMgrGetInt(char *label, int defaultVal)
  * \brief  Gets a float value passed as an argument to a program
  *         (use default value if not found)
  *  EXEMPLE:     float scale = ArgMgrGetFloat ( "SCALE", 0.33 );
- * @param label   label name 
+ * @param param   label name 
  * @param defaultVal default value
  * @return parameter value
  */
-float ArgMgr::ArgMgrGetFloat(char *label, float defaultVal)
+float ArgMgr::ArgMgrGetFloat(const char *param, float defaultVal)
 {
-   return     ( (ArgMgrDefined(label))
-               ? ((float)atof(ArgMgrValue(label)))
+   return     ( (ArgMgrDefined(param))
+               ? ((float)atof(ArgMgrValue(param)))
                : (defaultVal) );
 }
 
 /**
  * \brief  Gets a 'string' value passed as an argument to a program
  *         (use default value if not found)
- * @param label   label name 
+ * @param param   label name 
  * @param defaultVal default value
  * @return parameter value
  */
-char *ArgMgr::ArgMgrGetString(char *label, char *defaultVal)
+char *ArgMgr::ArgMgrGetString(const char *param, char *defaultVal)
 {
-   return    ( (ArgMgrDefined(label)) 
-              ? (ArgMgrValue(label))
+   return    ( (ArgMgrDefined(param)) 
+              ? (ArgMgrValue(param))
               : (defaultVal) );
 }
 
@@ -287,14 +287,14 @@ char *ArgMgr::ArgMgrGetString(char *label, char *defaultVal)
  * \brief  Gets a value amongst a set of values
  *         (use default value if not found) 
  *         EXEMPLE:     int nlab = ArgMgrGetLabel("CONFIRM","NO\\YES", 0); 
- * @param label   label name 
+ * @param param   label name 
  * @param liste  character Chain describing the various values.
  *               Value are separated by '\\'.
  *               Not case sensitive.
  * @param val  number of default value
  * @return   int : range of value amongst the values list
  */
-int ArgMgr::ArgMgrGetLabel (char *label, char *liste, int val )
+int ArgMgr::ArgMgrGetLabel (const char *param, char *liste, int val )
 {
   char *lab;
   char *vallab;
@@ -303,7 +303,7 @@ int ArgMgr::ArgMgrGetLabel (char *label, char *liste, int val )
   tmp = (char *) malloc(strlen(liste)+1);
   strcpy(tmp,liste);
 
-  if ( (vallab = ArgMgrGetString(label,(char *)NULL)) != 0 ) 
+  if ( (vallab = ArgMgrGetString(param,(char *)NULL)) != 0 ) 
   { 
      for ( lab = strtok (tmp,"\\"); 
            lab != 0; 
@@ -321,19 +321,19 @@ int ArgMgr::ArgMgrGetLabel (char *label, char *liste, int val )
 /**
  * \brief  Demands a value amongst a set of values (abort if not found)
  *         EXEMPLE:     int nlab = ArgMgrWantLabel("CONFIRM","NO\\YES", usage); 
- * @param label   label name 
+ * @param param   label name 
  * @param liste  character Chain describing the various values.
  *               Labels are separated by  '\\'.
  *               No case sensitive.
  * @param usage Usage program (displayed if label not found)
  * @return   int : range of value amongst the values list
  */
-int ArgMgr::ArgMgrWantLabel (char *label, char *liste, const char **usage )
+int ArgMgr::ArgMgrWantLabel (const char *param, char *liste, const char **usage )
 {
    char *lab;
    char *vallab;
    int i = 1;
-   if ( (vallab = ArgMgrGetString(label,0)) != 0 ) 
+   if ( (vallab = ArgMgrGetString(param,0)) != 0 ) 
    {
       for ( lab = strtok (liste,"\\"); lab != 0; lab = strtok(0L,"\\"), i++ )
         if ( strcmp(maj(lab),maj(vallab))==0) 
@@ -352,7 +352,7 @@ int ArgMgr::ArgMgrWantLabel (char *label, char *liste, const char **usage )
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
-int ArgMgr::ArgMgrWantInt (char *label, const char **usage)
+int ArgMgr::ArgMgrWantInt (const char *label, const char **usage)
 {
    return        ( (ArgMgrDefined(label) ) 
                  ? (atoi(ArgMgrValue(label) ) ) 
@@ -367,7 +367,7 @@ int ArgMgr::ArgMgrWantInt (char *label, const char **usage)
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
-float ArgMgr::ArgMgrWantFloat (char *label, const char **usage)
+float ArgMgr::ArgMgrWantFloat (const char *label, const char **usage)
 {
    return       ( (ArgMgrDefined(label) ) 
                 ? ((float)atof(ArgMgrValue(label) ) ) 
@@ -382,7 +382,7 @@ float ArgMgr::ArgMgrWantFloat (char *label, const char **usage)
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
  */
-char *ArgMgr::ArgMgrWantString(char *label, const char **usage)
+char *ArgMgr::ArgMgrWantString(const char *label, const char **usage)
 {
    return      ( (ArgMgrDefined(label) ) 
                ? (ArgMgrValue(label) ) 
@@ -396,7 +396,7 @@ char *ArgMgr::ArgMgrWantString(char *label, const char **usage)
  * @return   Pointer to the array
  *     Pointer NULL if error
  */
-char **ArgMgr::ArgMgrGetListOfString ( char *label, int *number )
+char **ArgMgr::ArgMgrGetListOfString ( const char *label, int *number )
 {
   int taille;
   char  *value = ArgMgrValue(label);
@@ -427,7 +427,7 @@ char **ArgMgr::ArgMgrGetListOfString ( char *label, int *number )
  * @return   Pointer to the array
  *     Pointer NULL if error
  */
-int *ArgMgr::ArgMgrGetListOfInt ( char *label, int *number )
+int *ArgMgr::ArgMgrGetListOfInt ( const char *label, int *number )
 {
   char *value = ArgMgrValue(label);
   int *liste;
@@ -465,7 +465,7 @@ return liste;
  * @return   Pointer vers le tableau de lgr 'taille'
  *     NULL if error
  */
-float *ArgMgr::ArgMgrGetListOfFloat ( char *label, int *number )
+float *ArgMgr::ArgMgrGetListOfFloat ( const char *label, int *number )
 {
   char *value = ArgMgrValue(label);
   float *liste;
@@ -609,14 +609,14 @@ float *ArgMgr::IdStrFloatEnum (char *value, int *number)
 
 /**
  * \brief  decodage des elements d'un argument 'paires d'int' de lgr quelconque
- * @param label   label name 
+ * @param param   label name 
  * @param number  taille de l'ensemble de paires trouvee
  * @return   Pointer vers le tableau de taille '2*nbElem'
  *     Pointer NULL si erreur
  */
-int *ArgMgr::ArgMgrGetIntEnum ( char *label, int *number )
+int *ArgMgr::ArgMgrGetIntEnum ( const char *param, int *number )
 {
-   char *value = ArgMgrValue(label);
+   char *value = ArgMgrValue(param);
    int *liste;
    if (!value) 
       return 0;
@@ -626,14 +626,14 @@ int *ArgMgr::ArgMgrGetIntEnum ( char *label, int *number )
 
 /**
  * \brief  decodage des elements d'un argument 'paires de float' de lgr quelconque
- * @param label   label name 
+ * @param param   label name 
  * @param number  taille de l'ensemble de paires trouvee
  * @return   Pointer vers le tableau de taille '2*nbElem'
  *     Pointer NULL si erreur
  */
-float *ArgMgr::ArgMgrGetFloatEnum ( char *label, int *number )
+float *ArgMgr::ArgMgrGetFloatEnum ( const char *param, int *number )
 {
-   char  *value = ArgMgrValue(label);
+   char  *value = ArgMgrValue(param);
    float *liste;
    if (!value) 
       return 0;
@@ -655,12 +655,12 @@ float *ArgMgr::ArgMgrGetFloatEnum ( char *label, int *number )
 * Valeur retournee . : Pointer to the new Upper case char array.          *
 *                                                                         *
 **************************************************************************/
-char *ArgMgr::Majuscule (char *chaine )
+char *ArgMgr::Majuscule (const char *chaine )
 {
   char *ptr, *ptr2, *ptr3;
   ptr2 = (char *)malloc(strlen(chaine)*sizeof(char)+1);
   ptr3=ptr2;
-  for ( ptr = chaine ; *ptr!='\0' ; ptr ++ ) 
+  for ( ptr = (char *)chaine ; *ptr!='\0' ; ptr ++ ) 
    {  
        *ptr3 = toupper ( * ptr ); ptr3++; 
    }
@@ -693,10 +693,10 @@ int ArgMgr::FiltreLong ( char *arg  )
  |              fd     : FILE *
  |              Role   : File description (assumed to be open)
  +------------------------------------------------------------------------*/
-char *ArgMgr::LoadedParam ( char *param, FILE *fd )
+const char *ArgMgr::LoadedParam ( const char *param, FILE *fd )
 {
   int    carlu;
-  char * car = param;
+  char  *car = (char *)param;
   int    quote = false;
   int    nbcar = 0;
 
