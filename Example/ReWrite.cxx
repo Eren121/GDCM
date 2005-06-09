@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 11:12:10 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/09 21:32:14 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
 
    delete am;  // we don't need Argument Manager any longer
 
-   void *imageData;
    int dataSize;
 
    gdcm::File *e1 = new gdcm::File();
@@ -136,7 +135,7 @@ int main(int argc, char *argv[])
    transferSyntaxName = e1->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
    
-   imageData= f1->GetImageData();
+   f1->GetImageData(); // somewhat important... can't remember
 
    switch (mode[0])
    {
