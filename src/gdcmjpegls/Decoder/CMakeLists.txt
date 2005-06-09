@@ -13,5 +13,6 @@ SET(GDCMJPEGLS_SRCS
   melcode.c)
 
 ADD_LIBRARY(gdcmjpegls ${GDCMJPEGLS_SRCS})
+#ADD_EXECUTABLE(locod ${GDCMJPEGLS_SRCS})
 
 # TODO must do the INSTALL_ blah thing

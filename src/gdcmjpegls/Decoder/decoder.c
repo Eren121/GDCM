@@ -127,7 +127,6 @@ void usage();
 /* Write one row of pixel values */
 inline void write_one_line(pixel* line, int cols, FILE* outfile)
 {
-
   int i, index;
   unsigned int* maptable;
       
@@ -227,7 +226,8 @@ inline void write_one_line(pixel* line, int cols, FILE* outfile)
 
 
 
-void initbuffers(int multi, int comp) {
+void initbuffers(int multi, int comp)
+{
 
   int  i;
 
@@ -282,25 +282,26 @@ void c_swaplines(int i)
   c_cscanline[i] = c_cscanl0[i] + (LEFTMARGIN-1);
 }
 
-void closebuffers(int multi) {
+void closebuffers(int multi)
+{
 
-  int     i;
+  int i;
 
   fclose(in);
   if (multi==0)
-     fclose(out);
-        else
-           for (i=0;i<components;i++)
-         fclose(c_out[i]);
+    fclose(out);
+  else
+    for (i=0;i<components;i++)
+      fclose(c_out[i]);
 
-        free(pscanl0);
-        free(cscanl0);
+  free(pscanl0);
+  free(cscanl0);
 }
 
 
-
-
-int initialize(int argc, char *argv[]) {
+/* command line argument parsing */
+int initialize(int argc, char *argv[])
+{
   char *infilename = NULL,
     *outfilename = OUTFILE ".out",
     *c_outfilename[MAX_COMPONENTS],
@@ -1481,33 +1482,33 @@ int main (int argc, char *argv[]) {
 void usage()
 {
   fprintf(stderr,"Usage: %s [flags] [infile] [outfile1 [outfile2, ...]]\n\
-DEFAULTS:\n\
-infile   = %s.\n\
-outfile1 = %s for color image in a single (PPM) output file.\n\
-outfile1 = %s for monochrome image in a single (PGM) output file.\n\
-outfile[1,2,...] = %s for multiple (PGM) output files \n\
-     in plane or line interleaved modes.\n",
+    DEFAULTS:\n\
+    infile   = %s.\n\
+    outfile1 = %s for color image in a single (PPM) output file.\n\
+    outfile1 = %s for monochrome image in a single (PGM) output file.\n\
+    outfile[1,2,...] = %s for multiple (PGM) output files \n\
+    in plane or line interleaved modes.\n",
     "locod", "specified JLS file", OUTFILE ".out", 
     OUTFILE "1.out",
     OUTFILE "[1,2,...].out");
-fprintf(stderr,"FLAGS:\n\
-outfile2, ... : Multiple output specification for plane or line int. mode.\n\
--i<infile>    : Alternate input specification, use -i- for stdin.\n\
--o<outfile>   : Alternate output specification, use -o- for stdout.\n\
--P            : Generate single (.ppm) output file for sample/line int. mode.\n\
-");
-    fprintf(stderr,"\
--h            : Print this help.\n\
-*** No spaces allowed between a flag and its argument.\n\
-");
+  fprintf(stderr,"FLAGS:\n\
+    outfile2, ... : Multiple output specification for plane or line int. mode.\n\
+    -i<infile>    : Alternate input specification, use -i- for stdin.\n\
+    -o<outfile>   : Alternate output specification, use -o- for stdout.\n\
+    -P            : Generate single (.ppm) output file for sample/line int. mode.\n\
+    ");
+  fprintf(stderr,"\
+    -h            : Print this help.\n\
+    *** No spaces allowed between a flag and its argument.\n\
+    ");
   
 }
 
 
 void bad_flag(char *s)
 {
-    fprintf(stderr,"Bad flag %s\n",s);
-    usage();
-    exit(10);
+  fprintf(stderr,"Bad flag %s\n",s);
+  usage();
+  exit(10);
 }
 
