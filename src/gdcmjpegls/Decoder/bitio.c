@@ -187,11 +187,11 @@ void bitiflush()  {
     }
     discard = filled-k;
     if ( treg != (reg<<discard) ) {
-      fprintf(stderr,"bitiflush: inconsistent bits=%d discard=%d reg=%08x treg=%08x\n",bits, discard, reg, treg);
+      fprintf(stderr,"bitiflush: inconsistent bits=%d discard=%d reg=%08lx treg=%08x\n",bits, discard, reg, treg);
       exit(10);
     }
     if ( reg & (((1<<discard)-1)<<(BITBUFSIZE-discard)) )
-      fprintf(stderr,"bitiflush: Warning: discarding nonzero bits; reg=%08x bits=%d discard=%d\n",reg,bits,discard);
+      fprintf(stderr,"bitiflush: Warning: discarding nonzero bits; reg=%08lx bits=%d discard=%d\n",reg,bits,discard);
 
     fp -= dbytes;  /* do the unget */
     if ( buff[fp-1]==0xff && buff[fp]==0 ) fp++;
