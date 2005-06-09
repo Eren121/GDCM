@@ -62,7 +62,7 @@
  */
 
 /*
- * $Id: jpc_dec.c,v 1.1 2005/05/22 18:33:04 malaterre Exp $
+ * $Id: jpc_dec.c,v 1.2 2005/06/09 22:09:41 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -424,6 +424,7 @@ static int jpc_dec_process_crg(jpc_dec_t *dec, jpc_ms_t *ms)
     cmpt->vsubstep = crg->comps[cmptno].voff;
     */
   }
+  (void)crg; /* 'crg' is assigned a value that is never used in function jpc_dec_process_crg*/
   return 0;
 }
 
@@ -905,6 +906,7 @@ if (!(tile->pi = jpc_dec_pi_create(dec, tile)))
   }
   jpc_pi_init(tile->pi);
 
+  (void)brcbgyend; /* 'brcbgyend' is assigned a value that is never used in function jpc_dec_tileinit*/
   return 0;
 }
 

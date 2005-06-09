@@ -64,7 +64,7 @@
 /*
  * Tier 1 Encoder
  *
- * $Id: jpc_t1enc.c,v 1.3 2005/06/08 17:39:37 malaterre Exp $
+ * $Id: jpc_t1enc.c,v 1.4 2005/06/09 22:09:41 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -202,7 +202,6 @@ int jpc_enc_enccblk(jpc_enc_t *enc, jas_stream_t *out, jpc_enc_tcmpt_t *tcmpt, j
   int t;
   jpc_bitstream_t *bout;
   jpc_enc_pass_t *termpass;
-  jpc_enc_rlvl_t *rlvl;
   int vcausal;
   int segsym;
   int termmode;
@@ -212,7 +211,6 @@ int jpc_enc_enccblk(jpc_enc_t *enc, jas_stream_t *out, jpc_enc_tcmpt_t *tcmpt, j
   (void)out;
 
   bout = 0;
-  rlvl = band->rlvl;
 
   cblk->stream = jas_stream_memopen(0, 0);
   assert(cblk->stream);
@@ -401,6 +399,7 @@ dump_passes(cblk->passes, cblk->numpasses, cblk);
     jpc_bitstream_close(bout);
   }
 
+  (void)ret; /* 'ret' is assigned a value that is never used in function jpc_enc_enccblk*/
   return 0;
 }
 

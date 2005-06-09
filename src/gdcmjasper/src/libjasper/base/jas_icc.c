@@ -328,6 +328,7 @@ jas_iccprof_t *jas_iccprof_load(jas_stream_t *in)
 #if 0
       jas_eprintf("warning: skipping unknown tag type\n");
 #endif
+      (void)attrvalinfo; /*'attrvalinfo' is assigned a value that is never used in function jas_iccprof_load*/
       prevattrval = 0;
       continue;
     }
@@ -1074,6 +1075,7 @@ static int jas_icctxtdesc_copy(jas_iccattrval_t *attrval,
   attrval = 0;
   othattrval = 0;
   txtdesc = 0;
+  (void)txtdesc;
 
   /* Not yet implemented. */
   abort();
@@ -1260,6 +1262,7 @@ static int jas_icclut8_copy(jas_iccattrval_t *attrval,
   attrval = 0;
   othattrval = 0;
   lut8 = 0;
+  (void)lut8;
   abort();
   return -1;
 }

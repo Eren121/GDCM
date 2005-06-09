@@ -64,7 +64,7 @@
 /*
  * Image Library
  *
- * $Id: jas_image.c,v 1.2 2005/06/04 01:54:02 malaterre Exp $
+ * $Id: jas_image.c,v 1.3 2005/06/09 22:09:39 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -1339,6 +1339,8 @@ jas_image_dump(image, stderr);
   numoutclrchans = jas_clrspc_numchans(jas_cmprof_clrspc(outprof));
   numoutauxchans = 0;
   numoutchans = numoutclrchans + numoutauxchans;
+  (void)numoutchans;/*  'numoutchans' is assigned a value that is never used in function jas_image_chclrspc*/
+  (void)numinauxchans; /* 'numinauxchans' is assigned a value that is never used in function jas_image_chclrspc*/
   prec = 8;
 
   if (!(outimage = jas_image_create0()))

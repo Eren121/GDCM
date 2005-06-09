@@ -64,7 +64,7 @@
 /*
  * JP2 Library
  *
- * $Id: jp2_dec.c,v 1.1 2005/05/22 18:33:03 malaterre Exp $
+ * $Id: jp2_dec.c,v 1.2 2005/06/09 22:09:40 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -372,6 +372,8 @@ jas_image_t *jp2_decode(jas_stream_t *in, char *optstr)
         } else {
         jas_image_setcmpttype(dec->image, newcmptno, jp2_getct(jas_image_clrspc(dec->image), 0, channo + 1));
         }
+#else
+        (void)cdefd;
 #endif
       }
     }

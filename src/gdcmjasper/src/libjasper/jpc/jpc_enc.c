@@ -62,7 +62,7 @@
  */
 
 /*
- * $Id: jpc_enc.c,v 1.3 2005/06/08 17:39:37 malaterre Exp $
+ * $Id: jpc_enc.c,v 1.4 2005/06/09 22:09:41 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -768,6 +768,7 @@ error:
   if (cp) {
     jpc_enc_cp_destroy(cp);
   }
+  (void)ret; /* ret' is assigned a value that is never used in function cp_create */
   return 0;
 }
 
@@ -800,6 +801,7 @@ int ratestrtosize(char *s, uint_fast32_t rawsize, uint_fast32_t *size)
       *size = f * rawsize;
     }
   }
+  (void)cp; /* 'cp' is assigned a value that is never used in function ratestrtosize */
   return 0;
 }
 
@@ -1096,14 +1098,13 @@ startoff = jas_stream_getrwcount(enc->out);
     enc->mainbodysize = UINT_FAST32_MAX;
   }
 
+  (void)mctsynweight; /* 'mctsynweight' is assigned a value that is never used in function jpc_enc_encodemainhdr */
   return 0;
 }
 
 static int jpc_enc_encodemainbody(jpc_enc_t *enc)
 {
   int tileno;
-  int tilex;
-  int tiley;
   int i;
   jpc_sot_t *sot;
   jpc_enc_tcmpt_t *comp;
@@ -1117,7 +1118,6 @@ static int jpc_enc_encodemainbody(jpc_enc_t *enc)
   int adjust;
   int j;
   int absbandno;
-  long numbytes;
   long tilehdrlen;
   long tilelen;
   jpc_enc_tile_t *tile;
@@ -1139,12 +1139,7 @@ int numgbits;
 
   cp = enc->cp;
 
-  /* Avoid compile warnings. */
-  numbytes = 0;
-
   for (tileno = 0; tileno < JAS_CAST(int, cp->numtiles); ++tileno) {
-    tilex = tileno % cp->numhtiles;
-    tiley = tileno / cp->numhtiles;
 
     if (!(enc->curtile = jpc_enc_tile_create(enc->cp, enc->image, tileno))) {
       abort();
