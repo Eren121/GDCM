@@ -5,17 +5,11 @@
 SUBDIRS(include/jasper) # This is one can stay here
 
 MACRO(GDCM_CONVENIENT_LIBRARY)
-  #MESSAGE("ARGC=${ARGC}")
-  #MESSAGE("ARGV=${ARGV}")
   SET(GDCMJASPER_SOURCES)
   FOREACH(SUBDIR ${ARGV})
     INCLUDE("${GDCMJASPER_SOURCE_DIR}/src/libjasper/${SUBDIR}/CMakeLists.txt")
-    #MESSAGE("FILES=${lib${SUBDIR}_la_SOURCES}")
     #SET(convenient_lib${SUBDIR}_la_SOURCES)
     FOREACH(file ${lib${SUBDIR}_la_SOURCES})
-      #MESSAGE("${SUBDIR}/${file}")
-      #MESSAGE("BAR ${convenient_lib${SUBDIR}_la_SOURCES}")
-      #MESSAGE("${GDCMJASPER_SOURCE_DIR}/src/libjasper/${SUBDIR}/${file}")
       #SET(convenient_lib${SUBDIR}_la_SOURCES
       #  "${GDCMJASPER_SOURCE_DIR}/src/libjasper/${SUBDIR}/${file}"
       #  "${convenient_lib${SUBDIR}_la_SOURCES}"
@@ -25,18 +19,24 @@ MACRO(GDCM_CONVENIENT_LIBRARY)
         ${GDCMJASPER_SOURCES}
         )
     ENDFOREACH(file)
-    #MESSAGE("R= ${convenient_lib${SUBDIR}_la_SOURCES}")
   ENDFOREACH(SUBDIR)
 ENDMACRO(GDCM_CONVENIENT_LIBRARY)
 
 # Yeah ! I know how come I only did jpeg 8bits... bla bla
 # I'll wait until I actually such beast of jpeg2000 + some
 # crazy 16bits lossless jpeg...
-INCLUDE_DIRECTORIES(${GDCM_BINARY_DIR}/src/gdcmjpeg/8)
+IF(HAVE_LIBJPEG)
+  INCLUDE_DIRECTORIES(${GDCM_BINARY_DIR}/src/gdcmjpeg/8)
+ENDIF(HAVE_LIBJPEG)
+
+INCLUDE_DIRECTORIES(${GDCMJASPER_BINARY_DIR}/src/libjasper/include)
+INCLUDE_DIRECTORIES(${GDCMJASPER_SOURCE_DIR}/src/libjasper/include)
 GDCM_CONVENIENT_LIBRARY(base bmp jp2 jpc jpg mif pgx pnm ras) 
 
 #MESSAGE("src= ${GDCMJASPER_SOURCES}")
 ADD_LIBRARY(gdcmjasper ${GDCMJASPER_SOURCES})
-TARGET_LINK_LIBRARIES(gdcmjasper gdcmjpeg8)
+IF(HAVE_LIBJPEG)
+  TARGET_LINK_LIBRARIES(gdcmjasper gdcmjpeg8)
+ENDIF(HAVE_LIBJPEG)
 
 

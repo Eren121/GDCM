@@ -24,6 +24,8 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 SET(JAS_VERSION "1.701.0")
 
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+
 CHECK_INCLUDE_FILE("dlfcn.h"    HAVE_DLFCN_H)
 CHECK_INCLUDE_FILE("fcntl.h"    HAVE_FCNTL_H)
 CHECK_INCLUDE_FILE("inttypes.h" HAVE_INTTYPES_H)
@@ -71,11 +73,21 @@ CHECK_TYPE_SIZE("long long" GDCM_SIZEOF_LONG_LONG)
 CHECK_TYPE_SIZE("__int64"   GDCM_SIZEOF___INT64)
 
 IF(GDCM_SIZEOF___INT64)
+  STRING(ASCII 35 POUND)
+  FILE(WRITE ${GDCMJASPER_BINARY_DIR}/gdcmTestCompareTypes.cxx
+    "${POUND}define TYPE_LONG_LONG long long\n"
+    "typedef GDCM_TEST_COMPARE_TYPE_1 Type1;\n"
+    "typedef GDCM_TEST_COMPARE_TYPE_2 Type2;\n"
+    "void function(Type1**) {}\n"
+    "int main() {\n"
+    "  Type2** p = 0;\n"
+    "  function(p);\n"
+    "  return 0; }")
   IF("GDCM_TYPE_SAME_LONG_AND___INT64" MATCHES "^GDCM_TYPE_SAME_LONG_AND___INT64$")
     MESSAGE(STATUS "Checking whether long and __int64 are the same type")
     TRY_COMPILE(GDCM_TYPE_SAME_LONG_AND___INT64
-      ${GDCM_BINARY_DIR}/CMakeTmp
-      ${GDCM_SOURCE_DIR}/CMake/gdcmTestCompareTypes.cxx
+      ${GDCMJASPER_BINARY_DIR}/
+      ${GDCMJASPER_BINARY_DIR}/gdcmTestCompareTypes.cxx
       COMPILE_DEFINITIONS
       -DGDCM_TEST_COMPARE_TYPE_1=long
       -DGDCM_TEST_COMPARE_TYPE_2=__int64
@@ -100,8 +112,8 @@ IF(GDCM_SIZEOF___INT64)
     IF("GDCM_TYPE_SAME_LONG_LONG_AND___INT64" MATCHES "^GDCM_TYPE_SAME_LONG_LONG_AND___INT64$")
       MESSAGE(STATUS "Checking whether long long and __int64 are the same type")
       TRY_COMPILE(GDCM_TYPE_SAME_LONG_LONG_AND___INT64
-        ${GDCM_BINARY_DIR}/CMakeTmp
-        ${GDCM_SOURCE_DIR}/CMake/gdcmTestCompareTypes.cxx
+        ${GDCMJASPER_BINARY_DIR}
+        ${GDCMJASPER_SOURCE_DIR}/gdcmTestCompareTypes.cxx
         COMPILE_DEFINITIONS
         -DGDCM_TEST_COMPARE_TYPE_1=TYPE_LONG_LONG
         -DGDCM_TEST_COMPARE_TYPE_2=__int64
@@ -129,9 +141,20 @@ IF(GDCM_SIZEOF___INT64)
       # "Visual C++ Processor Pack" is installed.
       IF("GDCM_TYPE_CONVERT_UI64_TO_DOUBLE" MATCHES "^GDCM_TYPE_CONVERT_UI64_TO_DOUBLE$")
         MESSAGE(STATUS "Checking whether unsigned __int64 can convert to double")
+        FILE(WRITE ${GDCMJASPER_BINARY_DIR}/gdcmTestCompareTypes.cxx
+          "${POUND}define TYPE_UNSIGNED___INT64 unsigned __int64\n"
+          "typedef GDCM_TEST_CONVERT_TYPE_TO TypeTo;\n"
+          "typedef GDCM_TEST_CONVERT_TYPE_FROM TypeFrom;\n"
+          "void function(TypeTo& l, TypeFrom const& r) {\n"
+          "  l = static_cast<TypeTo>(r); }\n"
+          "int main() {\n"
+          "  TypeTo tTo = TypeTo();\n"
+          "  TypeFrom tFrom = TypeFrom();\n"
+          "  function(tTo, tFrom);\n"
+          "  return 0; }")
         TRY_COMPILE(GDCM_TYPE_CONVERT_UI64_TO_DOUBLE
-          ${GDCM_BINARY_DIR}/CMakeTmp
-          ${GDCM_SOURCE_DIR}/CMake/gdcmTestConvertTypes.cxx
+          ${GDCMJASPER_BINARY_DIR}
+          ${GDCMJASPER_BINARY_DIR}/gdcmTestConvertTypes.cxx
           COMPILE_DEFINITIONS
           -DGDCM_TEST_CONVERT_TYPE_FROM=TYPE_UNSIGNED___INT64
           -DGDCM_TEST_CONVERT_TYPE_TO=double
