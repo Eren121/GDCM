@@ -6,7 +6,8 @@ PROJECT(GDCMJPEGLS)
 IF("HAVE_C_INLINE" MATCHES "^HAVE_C_INLINE$")
   STRING(ASCII 35 POUND)
   FILE(WRITE ${GDCMJPEGLS_BINARY_DIR}/gdcmTestInline.c
-    "inline int foo() { return 0; }")
+    "inline int foo() { return 0; }\n
+    int main() { return foo(); }")
   MESSAGE(STATUS "Checking if C compiler has inline keyword")
   TRY_COMPILE(HAVE_C_INLINE
     ${GDCMJPEGLS_BINARY_DIR}
@@ -29,6 +30,7 @@ IF("HAVE_C_INLINE" MATCHES "^HAVE_C_INLINE$")
   ENDIF(HAVE_C_INLINE)
 ENDIF("HAVE_C_INLINE" MATCHES "^HAVE_C_INLINE$")
 
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("unistd.h"    HAVE_UNISTD_H)
 CONFIGURE_FILE(
   "${GDCMJPEGLS_SOURCE_DIR}/jpegls_config.h.in"
