@@ -62,7 +62,7 @@
 /*
  * Color Management
  *
- * $Id: jas_cm.c,v 1.1 2005/05/22 18:32:58 malaterre Exp $
+ * $Id: jas_cm.c,v 1.2 2005/06/09 22:01:59 malaterre Exp $
  */
 
 #include <jasper/jas_config.h>
@@ -548,7 +548,7 @@ int jas_cmxform_apply(jas_cmxform_t *xform, jas_cmpixmap_t *in, jas_cmpixmap_t *
       bufptr = &outbuf[i];
       dataptr = &fmt->buf[n];
       for (j = 0; j < m; ++j) {
-        v = (*bufptr) * scale + bias;
+        v = (long)((*bufptr) * scale + bias); /* warning C4244: '=' : conversion from 'jas_cmreal_t' to 'long', possible loss of data */
         bufptr += xform->numoutchans;
         if (jas_cmputint(&dataptr, fmt->sgnd, fmt->prec, v))
           goto error;
@@ -908,10 +908,10 @@ static jas_cmreal_t jas_cmshapmatlut_lookup(jas_cmshapmatlut_t *lut, jas_cmreal_
   int lo;
   int hi;
   t = x * (lut->size - 1);
-  lo = floor(t);
+  lo = (int)floor(t); /* warning C4244: '=' : conversion from 'double' to 'int', possible loss of data */
   if (lo < 0)
     return lut->data[0];
-  hi = ceil(t);
+  hi = (int)ceil(t); /* warning C4244: '=' : conversion from 'double' to 'int', possible loss of data */
   if (hi >= lut->size)
     return lut->data[lut->size - 1];
   return lut->data[lo] + (t - lo) * (lut->data[hi] - lut->data[lo]);

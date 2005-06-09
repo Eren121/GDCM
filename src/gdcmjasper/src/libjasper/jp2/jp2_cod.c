@@ -64,7 +64,7 @@
 /*
  * JP2 Library
  *
- * $Id: jp2_cod.c,v 1.1 2005/05/22 18:33:03 malaterre Exp $
+ * $Id: jp2_cod.c,v 1.2 2005/06/09 22:02:00 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -262,7 +262,7 @@ jp2_box_t *jp2_box_get(jas_stream_t *in)
     if (jp2_getuint64(in, &extlen)) {
       goto error;
     }
-    box->len = extlen;
+    box->len = (uint_fast32_t)extlen; /* warning C4244: '=' : conversion from 'uint_fast64_t' to 'uint_fast32_t', possible loss of data */
   }
   if (box->len != 0 && box->len < 8) {
     goto error;
@@ -704,8 +704,8 @@ static int jp2_putuint32(jas_stream_t *out, uint_fast32_t val)
 
 static int jp2_putuint64(jas_stream_t *out, uint_fast64_t val)
 {
-  if (jp2_putuint32(out, (val >> 32) & 0xffffffffUL) ||
-    jp2_putuint32(out, val & 0xffffffffUL)) {
+  if (jp2_putuint32(out, (uint_fast32_t)((val >> 32) & 0xffffffffUL) ||
+    jp2_putuint32(out, (uint_fast32_t)(val & 0xffffffffUL)))) { /* warning C4244: 'function' : conversion from 'uint_fast64_t' to 'uint_fast32_t', possible loss of data */
     return -1;
   }
   return 0;
