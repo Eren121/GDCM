@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 15:21:58 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/06/09 09:36:51 $
+  Version:   $Revision: 1.8 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -371,7 +371,7 @@ float ArgMgr::ArgMgrWantFloat (char *label, const char **usage)
 {
    return       ( (ArgMgrDefined(label) ) 
                 ? ((float)atof(ArgMgrValue(label) ) ) 
-                : (ArgMgrUsage(usage),1.0) );
+                : (ArgMgrUsage(usage),(float)1.0) );
 }
 
 /**
