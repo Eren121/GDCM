@@ -419,7 +419,7 @@ EXTERN int broken_link;
 
 /* FIXME */
 #include <sys/types.h>
-#ifdef _WIN32
+#if defined(_MSC_VER) || defined(__BORLANDC__)
 typedef int ssize_t;
 #endif
 
