@@ -1,8 +1,8 @@
 PROJECT(GDCMJASPER C)
 
-# Don't ask my why...
+# Don't ask me why...
 IF(APPLE)
-  SET(CMAKE_SHARED_LINKER_FLAGS "-single_module")
+  SET(CMAKE_SHARED_LINKER_FLAGS -single_module CACHE STRING "" FORCE)
 ENDIF(APPLE)
 
 #OPTION(HAVE_LIBJPEG "Do you have ijg" OFF)
