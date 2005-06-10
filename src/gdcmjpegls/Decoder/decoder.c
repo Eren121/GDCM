@@ -876,6 +876,7 @@ int main (int argc, char *argv[]) {
     tot_out = 0;
   pixel *local_scanl0,*local_scanl1,*local_pscanline,*local_cscanline;
   int MCUs_counted;
+  local_cscanline = local_pscanline = NULL;
   
   
   /* Parse the parameters, initialize */
