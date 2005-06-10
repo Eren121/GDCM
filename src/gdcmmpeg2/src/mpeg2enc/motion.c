@@ -490,7 +490,8 @@ int secondfield,ipflag;
 {
   int w2;
   unsigned char *mb, *toporg, *topref, *botorg, *botref;
-  int var,vmc,v0,dmc,dmcfieldi,dmc8i;
+  int var,vmc,v0,dmcfieldi,dmc8i;
+  /* int dmc; */
   int imin,jmin,imin8u,jmin8u,imin8l,jmin8l,dmcfield,dmc8,sel,sel8u,sel8l;
   int iminf,jminf,imin8uf,jmin8uf,imin8lf,jmin8lf,dmcfieldf,dmc8f,self,sel8uf,sel8lf;
   int iminr,jminr,imin8ur,jmin8ur,imin8lr,jmin8lr,dmcfieldr,dmc8r,selr,sel8ur,sel8lr;
@@ -543,7 +544,7 @@ int secondfield,ipflag;
     {
       /* Dual Prime prediction */
       mbi->motion_type = MC_DMV;
-      dmc = dmc_dp;     /* L1 metric */
+      /*dmc = dmc_dp;*/     /* L1 metric */
       vmc = vmc_dp;     /* we already calculated L2 error for Dual */
 
     }
