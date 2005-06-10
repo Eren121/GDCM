@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 15:31:31 $
-  Version:   $Revision: 1.244 $
+  Date:      $Date: 2005/06/10 14:05:38 $
+  Version:   $Revision: 1.245 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@ Document::Document()
 
 /**
  * \brief   Constructor (not to break the API) 
- * @param   fileName 'Document' (File or DicomDir) to be opened for parsing
+ * @param   fileName 'Document' (File or DicomDir) to be open for parsing
  */
 Document::Document( std::string const &fileName )
          :ElementSet(-1) 
@@ -83,11 +83,6 @@ Document::Document( std::string const &fileName )
    IsDocumentAlreadyLoaded = false;
 
    Load(fileName);
-
-   // Normaly (?) Fp should be already deleted by CloseFile()
-   if ( Fp != 0 ) 
-      delete Fp;
-   Fp = 0;    
 }
 /**
  * \brief   Canonical destructor.
@@ -103,7 +98,7 @@ Document::~Document ()
 
 /**
  * \brief   Loader  
- * @param   fileName 'Document' (File or DicomDir) to be opened for parsing
+ * @param   fileName 'Document' (File or DicomDir) to be open for parsing
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
@@ -118,7 +113,7 @@ bool Document::Load( std::string const &fileName )
                         << Filename.c_str() << ". New name is :"
                         << fileName );
      // todo : clean out the 'Document'
-     // We should call ClearEntry() on the parent object ?!?
+     // Should we call ClearEntry() on the parent object ?!?
    }
 
    Filename = fileName;

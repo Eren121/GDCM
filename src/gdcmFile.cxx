@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 16:08:16 $
-  Version:   $Revision: 1.241 $
+  Date:      $Date: 2005/06/10 14:05:37 $
+  Version:   $Revision: 1.242 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ File::File():
 {
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
-   GrPixel  = 0x7fe0;
+   GrPixel  = 0x7fe0;  // to avoid further troubles
    NumPixel = 0x0010;
 }
 
@@ -68,6 +68,33 @@ File::File( std::string const &filename )
 {    
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
+
+   Load( filename );
+}
+
+/**
+ * \brief   Canonical destructor.
+ */
+File::~File ()
+{
+   if( RLEInfo )
+      delete RLEInfo;
+   if( JPEGInfo )
+      delete JPEGInfo;
+}
+
+//-----------------------------------------------------------------------------
+// Public
+
+/**
+ * \brief   Loader  
+ * @param   fileName file to be open for parsing
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool File::Load( std::string const &fileName ) 
+{
+   this->Document::Load( fileName );
 
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
@@ -125,7 +152,7 @@ File::File( std::string const &filename )
          ComputeJPEGFragmentInfo();
       CloseFile();
 
-      // Create a new BinEntry to change the the DictEntry
+      // Create a new BinEntry to change the DictEntry
       // The changed DictEntry will have 
       // - a correct PixelVR OB or OW)
       // - the name to "Pixel Data"
@@ -156,24 +183,8 @@ File::File( std::string const &filename )
          }
       }
    }
+   return true;
 }
-
-
-/**
- * \brief   Canonical destructor.
- */
-File::~File ()
-{
-   if( RLEInfo )
-      delete RLEInfo;
-   if( JPEGInfo )
-      delete JPEGInfo;
-}
-
-//-----------------------------------------------------------------------------
-// Public
-
-
 /**
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current File was properly parsed
