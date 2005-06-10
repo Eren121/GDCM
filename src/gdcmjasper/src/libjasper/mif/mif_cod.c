@@ -577,6 +577,7 @@ static int mif_process_cmpt(mif_hdr_t *hdr, char *buf)
   if (mif_hdr_addcmpt(hdr, hdr->numcmpts, cmpt)) {
     goto error;
   }
+  (void)id; /* is is assigned a value that is never used */
   return 0;
 
 error:
