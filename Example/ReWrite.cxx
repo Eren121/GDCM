@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/10 08:00:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/10 14:10:22 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,15 +27,16 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n ReWrite :\n",
-   " Re write a full gdcm-readable Dicom image",
-   "     (usefull when the file header is not very straight).",
-   "                 ",
-   " usage: ReWrite filein=inputFileName fileout=anonymizedFileName ",
-   "       [mode=write mode] [noshadow] [noseq][debug] ", 
-   "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)",
+   " Re write a full gdcm-readable Dicom image                              ",
+   "     (usefull when the file header is not very straight).               ",
+   "",
+   " usage: ReWrite filein=inputFileName fileout=anonymizedFileName         ", 
+   "       [mode=write mode] [noshadow] [noseq][debug]                      ", 
+   "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
    "        noshadow : user doesn't want to load Private groups (odd number)",
-   "        noseq    : user doesn't want to load Sequences ",
-   "        debug    : user wants to run the program in 'debug mode' ",
+   "        noseq    : user doesn't want to load Sequences                  ",
+   "        rgb      : user wants to tranform LUT (if any) to RGB pixels    ",
+   "        debug    : user wants to run the program in 'debug mode'        ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
       return 0;
    }
 
-   char *mode = am->ArgMgrGetString("filein",(char *)"X");
+   char *mode = am->ArgMgrGetString("mode",(char *)"X");
 
    int loadMode;
    if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
@@ -72,6 +73,8 @@ int main(int argc, char *argv[])
       loadMode = NO_SEQ;
    else
       loadMode = 0;
+
+   bool rgb = am->ArgMgrDefined("RGB");
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
@@ -86,7 +89,7 @@ int main(int argc, char *argv[])
 
    delete am;  // we don't need Argument Manager any longer
 
-   int dataSize;
+   // ----------- End Arguments Manager ---------
 
    gdcm::File *e1 = new gdcm::File();
    e1->SetLoadMode(loadMode);
@@ -98,6 +101,7 @@ int main(int argc, char *argv[])
       delete am;
       return 0;
    }
+  
    if (!e1->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
@@ -107,10 +111,22 @@ int main(int argc, char *argv[])
    }
    
    gdcm::FileHelper *f1 = new gdcm::FileHelper(e1);
+   void *imageData;
+   int dataSize;
+  
+   if (rgb)
+   {
+      dataSize  = f1->GetImageDataSize();
+      imageData = f1->GetImageData(); // somewhat important... can't remember
+      f1->SetWriteModeToRGB();
+   }
+   else
+   {
+      dataSize  = f1->GetImageDataRawSize();
+      imageData = f1->GetImageDataRaw();
+      f1->SetWriteModeToRaw();
+   }
 
-// ---     
-
-   dataSize = f1->GetImageDataSize();
    std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
@@ -134,12 +150,11 @@ int main(int argc, char *argv[])
    std::cout << "NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
    transferSyntaxName = e1->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
-   
-   f1->GetImageData(); // somewhat important... can't remember
 
    switch (mode[0])
    {
    case 'A' :
+   case 'a' :
             // Writting an ACR file
             // from a full gdcm readable File
 
@@ -148,7 +163,7 @@ int main(int argc, char *argv[])
       break;
 
    case 'D' : // Not documented in the 'usage', because the method is known to be bugged. 
-
+   case 'd' :
            // Writting a DICOM Implicit VR file
            // from a full gdcm readable File
 
@@ -157,6 +172,7 @@ int main(int argc, char *argv[])
       break;
 
    case 'X' :
+   case 'x' :
               // writting a DICOM Explicit VR 
               // from a full gdcm readable File
 
@@ -165,6 +181,7 @@ int main(int argc, char *argv[])
       break;
 
    case 'R' :
+   case 'r' :
              //  Writting a Raw File, 
 
       std::cout << "WriteRaw" << std::endl;
