@@ -138,7 +138,7 @@ inline void write_one_line(pixel* line, int cols, FILE* outfile)
       line8 = (unsigned char*)safealloc(cols);
   
       for (i=0; i< cols; i++)
-        *(line8+i)=ENDIAN8(*(line+i));
+        *(line8+i)=(unsigned char)ENDIAN8(*(line+i));
     
       fwrite(line8, sizeof(unsigned char), cols, outfile);
 
