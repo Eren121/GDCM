@@ -1,7 +1,7 @@
 SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   "comparison is always (true|false) due to limited range of data type"
-  "ld: warning prebinding disabled because \\(__TEXT segment \\(address = 0x[0-9]+ size = 0x68000\\) of (.*) overlaps with __LINKEDIT segment \\(address = 0x[0-9]+ size = 0x[0-9]+\\) of (.*)"
+  "ld: warning prebinding disabled because \\(__TEXT segment \\(address = 0x[0-9]+ size = 0x[0-9]+\\) of (.*) overlaps with __LINKEDIT segment \\(address = 0x[0-9]+ size = 0x[0-9]+\\) of (.*)"
   "ld: warning prebinding disabled because dependent library: (.*)libgdcm.dylib is not prebound"
   )
 
