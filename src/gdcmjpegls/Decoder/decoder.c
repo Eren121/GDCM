@@ -1465,9 +1465,9 @@ int main (int argc, char *argv[]) {
 
 
   t1 = get_utime();
-  fprintf(msgfile,"Total bits  in: %ld  Symbols out: %ld  %5.3lf bps\n",
+  fprintf(msgfile,"Total bits  in: %ld  Symbols out: %ld  %5.3f bps\n",
            tot_in,tot_out,tot_in/(double)tot_out);
-  fprintf(msgfile,"Time = %1.3lf secs : %1.0lf KSymbols/sec\n",t1-t0,
+  fprintf(msgfile,"Time = %1.3f secs : %1.0f KSymbols/sec\n",t1-t0,
           (tot_out)/(1024*(t1-t0)));
 
   if ( found_EOF )
