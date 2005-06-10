@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/09 21:32:14 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/10 08:00:20 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
       return 0;
    }
 
-   char *mode = am->ArgMgrGetString("filein","X");
+   char *mode = am->ArgMgrGetString("filein",(char *)"X");
 
    int loadMode;
    if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
@@ -174,7 +174,6 @@ int main(int argc, char *argv[])
    }
    delete e1;
    delete f1;
-   delete am;
    return 0;
 }
 
