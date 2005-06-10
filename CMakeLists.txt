@@ -200,6 +200,8 @@ INSTALL_FILES(/include .h gdcmConfigure.h)
 OPTION(BUILD_TESTING "Build testing." ON)
 
 IF(BUILD_TESTING)
+  CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/CTestCustom.ctest.in
+      ${GDCM_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
   MARK_AS_ADVANCED(DART_ROOT)
