@@ -123,7 +123,7 @@ unsigned char *frame;
   Tmin = (int) floor(bit_rate/(8.0*frame_rate) + 0.5);
 
   if (T<Tmin)
-    T = Tmin;
+    T = (int)Tmin;
 
   S = bitcount();
   Q = 0;
@@ -191,16 +191,16 @@ void rc_update_pict()
   switch (pict_type)
   {
   case I_TYPE:
-    Xi = X;
+    Xi = (int)X;
     d0i = d;
     break;
   case P_TYPE:
-    Xp = X;
+    Xp = (int)X;
     d0p = d;
     Np--;
     break;
   case B_TYPE:
-    Xb = X;
+    Xb = (int)X;
     d0b = d;
     Nb--;
     break;
