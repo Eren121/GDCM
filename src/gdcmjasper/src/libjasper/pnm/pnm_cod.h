@@ -64,7 +64,7 @@
 /*
  * Portable Pixmap/Graymap Format Support
  *
- * $Id: pnm_cod.h,v 1.1 2005/05/22 18:33:09 malaterre Exp $
+ * $Id: pnm_cod.h,v 1.2 2005/06/11 17:50:27 malaterre Exp $
  */
 
 #ifndef PNM_COD_H
@@ -115,7 +115,7 @@
 
 typedef struct {
 
-  int magic;
+  uint_fast16_t magic;
   /* The magic number. */
 
   int width;
