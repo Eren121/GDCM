@@ -29,6 +29,15 @@ IF(HAVE_LIBJPEG)
   INCLUDE_DIRECTORIES(${GDCM_BINARY_DIR}/src/gdcmjpeg/8)
 ENDIF(HAVE_LIBJPEG)
 
+# For more info about this patch see the thread on gcc:
+# [ld: common symbols not allowed with MH_DYLIB output format with the -multi_module option]
+# http://www.mail-archive.com/gcc@gcc.gnu.org/msg05981.html
+IF(APPLE)
+  SET_SOURCE_FILES_PROPERTIES(
+    "${GDCMJASPER_SOURCE_DIR}/src/libjasper/jpc/jpc_t1cod.c"
+    PROPERTIES COMPILE_FLAGS -fno-common)
+ENDIF(APPLE)
+
 INCLUDE_DIRECTORIES(${GDCMJASPER_BINARY_DIR}/src/libjasper/include)
 INCLUDE_DIRECTORIES(${GDCMJASPER_SOURCE_DIR}/src/libjasper/include)
 GDCM_CONVENIENT_LIBRARY(base bmp jp2 jpc jpg mif pgx pnm ras) 
