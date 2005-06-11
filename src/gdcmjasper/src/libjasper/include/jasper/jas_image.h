@@ -64,7 +64,7 @@
 /*
  * Image Class
  *
- * $Id: jas_image.h,v 1.2 2005/05/30 02:56:28 malaterre Exp $
+ * $Id: jas_image.h,v 1.3 2005/06/11 14:23:09 malaterre Exp $
  */
 
 #ifndef JAS_IMAGE_H
@@ -308,7 +308,7 @@ jas_image_t *jas_image_create0(void);
 jas_image_t *jas_image_copy(jas_image_t *image);
 
 /* Deallocate any resources associated with an image. */
-EXTERN(void) jas_image_destroy(jas_image_t *image);
+JASEXTERN(void) jas_image_destroy(jas_image_t *image);
 
 /* Get the width of the image in units of the image reference grid. */
 #define jas_image_width(image) \
@@ -401,10 +401,10 @@ EXTERN(void) jas_image_destroy(jas_image_t *image);
 
 /* Get the raw size of an image (i.e., the nominal size of the image without
   any compression. */
-EXTERN(uint_fast32_t) jas_image_rawsize(jas_image_t *image);
+JASEXTERN(uint_fast32_t) jas_image_rawsize(jas_image_t *image);
 
 /* Create an image from a stream in some specified format. */
-EXTERN(jas_image_t) *jas_image_decode(jas_stream_t *in, int fmt, char *optstr);
+JASEXTERN(jas_image_t) *jas_image_decode(jas_stream_t *in, int fmt, char *optstr);
 
 /* Write an image to a stream in a specified format. */
 int jas_image_encode(jas_image_t *image, jas_stream_t *out, int fmt,
@@ -444,7 +444,7 @@ int jas_image_copycmpt(jas_image_t *dstimage, int dstcmptno,
 int jas_image_depalettize(jas_image_t *image, int cmptno, int numlutents,
   int_fast32_t *lutents, int dtype, int newcmptno);
 
-EXTERN(int) jas_image_readcmptsample(jas_image_t *image, int cmptno, int x, int y);
+JASEXTERN(int) jas_image_readcmptsample(jas_image_t *image, int cmptno, int x, int y);
 void jas_image_writecmptsample(jas_image_t *image, int cmptno, int x, int y,
   int_fast32_t v);
 
@@ -455,7 +455,7 @@ int jas_image_getcmptbytype(jas_image_t *image, int ctype);
 \******************************************************************************/
 
 /* Clear the table of image formats. */
-EXTERN(void) jas_image_clearfmts(void);
+JASEXTERN(void) jas_image_clearfmts(void);
 
 /* Add entry to table of image formats. */
 int jas_image_addfmt(int id, char *name, char *ext, char *desc,
@@ -465,7 +465,7 @@ int jas_image_addfmt(int id, char *name, char *ext, char *desc,
 int jas_image_strtofmt(char *s);
 
 /* Get the name of the image format with the specified ID. */
-EXTERN(char) *jas_image_fmttostr(int fmt);
+JASEXTERN(char) *jas_image_fmttostr(int fmt);
 
 /* Lookup image format information by the format ID. */
 jas_image_fmtinfo_t *jas_image_lookupfmtbyid(int id);
@@ -477,7 +477,7 @@ jas_image_fmtinfo_t *jas_image_lookupfmtbyname(const char *name);
 int jas_image_fmtfromname(char *filename);
 
 /* Get the format of image data in a stream. */
-EXTERN(int) jas_image_getfmt(jas_stream_t *in);
+JASEXTERN(int) jas_image_getfmt(jas_stream_t *in);
 
 
 #define  jas_image_cmprof(image)  ((image)->cmprof_)

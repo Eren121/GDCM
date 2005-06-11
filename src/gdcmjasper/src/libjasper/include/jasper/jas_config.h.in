@@ -221,22 +221,22 @@ typedef __int64            longlong;
 #cmakedefine JASPERSTATIC
 #cmakedefine JASPERDLL
 
-/* a function referenced thru EXTERNs: */
+/* a function referenced thru JASEXTERNs: */
 #if defined( _WIN32 ) && defined (JASPERDLL)
-#define GLOBAL(type)            __declspec(dllexport) type
+#define JASGLOBAL(type)            __declspec(dllexport) type
 #else
-#define GLOBAL(type)            type
+#define JASGLOBAL(type)            type
 #endif
 
-/* a reference to a GLOBAL function: */
+/* a reference to a JASGLOBAL function: */
 #if defined(_WIN32) && !defined(JASPERSTATIC)
 #ifdef JASPERDLL
-#define EXTERN(type)            __declspec(dllexport) type
+#define JASEXTERN(type)            __declspec(dllexport) type
 #else
-#define EXTERN(type)            __declspec(dllimport) type
+#define JASEXTERN(type)            __declspec(dllimport) type
 #endif
 #else
-#define EXTERN(type)            extern type
+#define JASEXTERN(type)            extern type
 #endif
 
 

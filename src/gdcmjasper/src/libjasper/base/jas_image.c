@@ -64,7 +64,7 @@
 /*
  * Image Library
  *
- * $Id: jas_image.c,v 1.3 2005/06/09 22:09:39 malaterre Exp $
+ * $Id: jas_image.c,v 1.4 2005/06/11 14:23:07 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -279,7 +279,7 @@ static jas_image_cmpt_t *jas_image_cmpt_copy(jas_image_cmpt_t *cmpt)
   return newcmpt;
 }
 
-GLOBAL(void) jas_image_destroy(jas_image_t *image)
+JASGLOBAL(void) jas_image_destroy(jas_image_t *image)
 {
   int i;
 
@@ -348,7 +348,7 @@ static void jas_image_cmpt_destroy(jas_image_cmpt_t *cmpt)
 * Load and save operations.
 \******************************************************************************/
 
-GLOBAL(jas_image_t) *jas_image_decode(jas_stream_t *in, int fmt, char *optstr)
+JASGLOBAL(jas_image_t) *jas_image_decode(jas_stream_t *in, int fmt, char *optstr)
 {
   jas_image_fmtinfo_t *fmtinfo;
   jas_image_t *image;
@@ -510,7 +510,7 @@ int jas_image_writecmpt(jas_image_t *image, int cmptno, jas_image_coord_t x, jas
 * File format operations.
 \******************************************************************************/
 
-GLOBAL(void) jas_image_clearfmts()
+JASGLOBAL(void) jas_image_clearfmts()
 {
   int i;
   jas_image_fmtinfo_t *fmtinfo;
@@ -568,7 +568,7 @@ int jas_image_strtofmt(char *name)
   return fmtinfo->id;
 }
 
-GLOBAL(char) *jas_image_fmttostr(int fmt)
+JASGLOBAL(char) *jas_image_fmttostr(int fmt)
 {
   jas_image_fmtinfo_t *fmtinfo;
   if (!(fmtinfo = jas_image_lookupfmtbyid(fmt))) {
@@ -577,7 +577,7 @@ GLOBAL(char) *jas_image_fmttostr(int fmt)
   return fmtinfo->name;
 }
 
-GLOBAL(int) jas_image_getfmt(jas_stream_t *in)
+JASGLOBAL(int) jas_image_getfmt(jas_stream_t *in)
 {
   jas_image_fmtinfo_t *fmtinfo;
   int found;
@@ -623,7 +623,7 @@ int jas_image_fmtfromname(char *name)
 * Miscellaneous operations.
 \******************************************************************************/
 
-GLOBAL(uint_fast32_t) jas_image_rawsize(jas_image_t *image)
+JASGLOBAL(uint_fast32_t) jas_image_rawsize(jas_image_t *image)
 {
   uint_fast32_t rawsize;
   int cmptno;
@@ -884,7 +884,7 @@ int jas_image_depalettize(jas_image_t *image, int cmptno, int numlutents,
   return 0;
 }
 
-GLOBAL(int) jas_image_readcmptsample(jas_image_t *image, int cmptno, int x, int y)
+JASGLOBAL(int) jas_image_readcmptsample(jas_image_t *image, int cmptno, int x, int y)
 {
   jas_image_cmpt_t *cmpt;
   uint_fast32_t v;

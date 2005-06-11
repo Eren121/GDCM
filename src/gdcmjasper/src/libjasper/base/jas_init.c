@@ -72,7 +72,7 @@
 \******************************************************************************/
 
 /* Initialize the image format table. */
-GLOBAL(int) jas_init()
+JASGLOBAL(int) jas_init()
 {
   jas_image_fmtops_t fmtops;
   int fmtid;
