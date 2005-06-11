@@ -62,7 +62,7 @@
  */
 
 /*
- * $Id: jpc_t1cod.h,v 1.1 2005/05/22 18:33:05 malaterre Exp $
+ * $Id: jpc_t1cod.h,v 1.2 2005/06/11 02:05:31 malaterre Exp $
  */
 
 #ifndef JPC_T1COD_H
@@ -179,7 +179,7 @@
 
 /* These lookup tables are used by various macros/functions. */
 /* Do not access these lookup tables directly. */
-extern int jpc_zcctxnolut[];
+extern int jpc_zcctxnolut[4 * 256];
 extern int jpc_spblut[];
 extern int jpc_scctxnolut[];
 extern int jpc_magctxnolut[];

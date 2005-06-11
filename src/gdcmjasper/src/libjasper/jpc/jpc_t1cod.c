@@ -62,7 +62,7 @@
  */
 
 /*
- * $Id: jpc_t1cod.c,v 1.1 2005/05/22 18:33:05 malaterre Exp $
+ * $Id: jpc_t1cod.c,v 1.2 2005/06/11 02:05:27 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -264,17 +264,17 @@ jpc_initmqctxs();
   }
 
   for (i = 0; i < (1 << JPC_NMSEDEC_BITS); ++i) {
-    t = i * jpc_pow2i(-JPC_NMSEDEC_FRACBITS);
+    t = (float)(i * jpc_pow2i(-JPC_NMSEDEC_FRACBITS));
     u = t;
-    v = t - 1.5;
+    v = (float)(t - 1.5);
     jpc_signmsedec[i] = jpc_dbltofix(floor((u * u - v * v) * jpc_pow2i(JPC_NMSEDEC_FRACBITS) + 0.5) / jpc_pow2i(JPC_NMSEDEC_FRACBITS));
 /* XXX - this calc is not correct */
     jpc_signmsedec0[i] = jpc_dbltofix(floor((u * u) * jpc_pow2i(JPC_NMSEDEC_FRACBITS) + 0.5) / jpc_pow2i(JPC_NMSEDEC_FRACBITS));
-    u = t - 1.0;
+    u = (float)(t - 1.0);
     if (i & (1 << (JPC_NMSEDEC_BITS - 1))) {
-      v = t - 1.5;
+      v = (float)(t - 1.5);
     } else {
-      v = t - 0.5;
+      v = (float)(t - 0.5);
     }
     jpc_refnmsedec[i] = jpc_dbltofix(floor((u * u - v * v) * jpc_pow2i(JPC_NMSEDEC_FRACBITS) + 0.5) / jpc_pow2i(JPC_NMSEDEC_FRACBITS));
 /* XXX - this calc is not correct */

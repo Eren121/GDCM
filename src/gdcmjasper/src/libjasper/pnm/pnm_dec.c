@@ -64,7 +64,7 @@
 /*
  * Portable Pixmap/Graymap Format Support
  *
- * $Id: pnm_dec.c,v 1.1 2005/05/22 18:33:09 malaterre Exp $
+ * $Id: pnm_dec.c,v 1.2 2005/06/11 02:05:38 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -352,7 +352,7 @@ static int pnm_getdata(jas_stream_t *in, pnm_hdr_t *hdr, jas_image_t *image)
               v = uv;
             }
           }
-          jas_matrix_set(data[cmptno], 0, x, v);
+          jas_matrix_set(data[cmptno], 0, x, (jas_seqent_t)v);
         }
       }
     }

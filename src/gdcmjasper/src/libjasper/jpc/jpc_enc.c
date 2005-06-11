@@ -62,7 +62,7 @@
  */
 
 /*
- * $Id: jpc_enc.c,v 1.4 2005/06/09 22:09:41 malaterre Exp $
+ * $Id: jpc_enc.c,v 1.5 2005/06/11 02:05:20 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -798,7 +798,7 @@ int ratestrtosize(char *s, uint_fast32_t rawsize, uint_fast32_t *size)
     } else if (f > 1.0) {
       *size = rawsize + 1;
     } else {
-      *size = f * rawsize;
+      *size = (uint_fast32_t)(f * rawsize);
     }
   }
   (void)cp; /* 'cp' is assigned a value that is never used in function ratestrtosize */
@@ -1037,8 +1037,8 @@ startoff = jas_stream_getrwcount(enc->out);
   cod->mctrans = (cp->tcp.mctid != JPC_MCT_NONE);
   if (tccp->csty & JPC_COX_PRT) {
     for (rlvlno = 0; rlvlno < tccp->maxrlvls; ++rlvlno) {
-      cod->compparms.rlvls[rlvlno].parwidthval = tccp->prcwidthexpns[rlvlno];
-      cod->compparms.rlvls[rlvlno].parheightval = tccp->prcheightexpns[rlvlno];
+      cod->compparms.rlvls[rlvlno].parwidthval = (uint_fast8_t)tccp->prcwidthexpns[rlvlno];
+      cod->compparms.rlvls[rlvlno].parheightval = (uint_fast8_t)tccp->prcheightexpns[rlvlno];
     }
   }
   if (jpc_putms(enc->out, enc->cstate, enc->mrk)) {
@@ -1389,14 +1389,14 @@ if (jpc_enc_enccblks(enc)) {
     rho = (double) (tile->brx - tile->tlx) * (tile->bry - tile->tly) /
       ((cp->refgrdwidth - cp->imgareatlx) * (cp->refgrdheight -
       cp->imgareatly));
-    tile->rawsize = cp->rawsize * rho;
+    tile->rawsize = (uint_fast32_t)(cp->rawsize * rho);
 
     for (lyrno = 0; lyrno < tile->numlyrs - 1; ++lyrno) {
-      tile->lyrsizes[lyrno] = tile->rawsize * jpc_fixtodbl(
-        cp->tcp.ilyrrates[lyrno]);
+      tile->lyrsizes[lyrno] = (uint_fast32_t)(tile->rawsize * jpc_fixtodbl(
+        cp->tcp.ilyrrates[lyrno]));
     }
-    tile->lyrsizes[tile->numlyrs - 1] = (cp->totalsize != UINT_FAST32_MAX) ?
-      (rho * enc->mainbodysize) : UINT_FAST32_MAX;
+    tile->lyrsizes[tile->numlyrs - 1] = (uint_fast32_t)((cp->totalsize != UINT_FAST32_MAX) ?
+      (rho * enc->mainbodysize) : UINT_FAST32_MAX);
     for (lyrno = 0; lyrno < tile->numlyrs; ++lyrno) {
       if (tile->lyrsizes[lyrno] != UINT_FAST32_MAX) {
         if (tilehdrlen <= JAS_CAST(long, tile->lyrsizes[lyrno])) {
