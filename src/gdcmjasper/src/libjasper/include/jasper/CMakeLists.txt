@@ -141,7 +141,7 @@ IF(GDCM_SIZEOF___INT64)
       # "Visual C++ Processor Pack" is installed.
       IF("GDCM_TYPE_CONVERT_UI64_TO_DOUBLE" MATCHES "^GDCM_TYPE_CONVERT_UI64_TO_DOUBLE$")
         MESSAGE(STATUS "Checking whether unsigned __int64 can convert to double")
-        FILE(WRITE ${GDCMJASPER_BINARY_DIR}/gdcmTestCompareTypes.cxx
+        FILE(WRITE ${GDCMJASPER_BINARY_DIR}/gdcmTestConvertTypes.cxx
           "${POUND}define TYPE_UNSIGNED___INT64 unsigned __int64\n"
           "typedef GDCM_TEST_CONVERT_TYPE_TO TypeTo;\n"
           "typedef GDCM_TEST_CONVERT_TYPE_FROM TypeFrom;\n"
