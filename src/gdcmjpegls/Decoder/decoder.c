@@ -316,7 +316,7 @@ int initialize(int argc, char *argv[])
   int pos;   /* position in the file, after the header */
 
   for (i=0;i<MAX_COMPONENTS;i++) {
-    c_outfilename[i]=malloc(strlen(OUTFILE)+20);
+    c_outfilename[i]=(char*)malloc(strlen(OUTFILE)+20);
     sprintf(c_outfilename[i],"%s%d.out",OUTFILE,i+1);
   }
 
