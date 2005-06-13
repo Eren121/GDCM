@@ -12,6 +12,16 @@ SET(GDCMJPEGLS_SRCS
   bitio.c 
   melcode.c)
 
+# Do the -fno-common magic
+IF(APPLE)
+  FOREACH(f ${GDCMJPEGLS_SRCS})
+    SET_SOURCE_FILES_PROPERTIES(
+      "${GDCMJPEGLS_SOURCE_DIR}/Decoder/${f}"
+      PROPERTIES COMPILE_FLAGS -fno-common)
+  ENDFOREACH(f)
+ENDIF(APPLE)
+
+
 ADD_LIBRARY(gdcmjpegls ${GDCMJPEGLS_SRCS})
 #ADD_EXECUTABLE(locod ${GDCMJPEGLS_SRCS})
 
