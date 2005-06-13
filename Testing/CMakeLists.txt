@@ -161,7 +161,11 @@ SET(BLACK_LIST
   #Not a Dicom Image, but a RT Object
   "RS2.16.124.113534.2.3.5.0.120040728.21342.353.12747_anonimized.dcm" 
   #Dicom MPEG image
-  "ETIAM_video_002.dcm" 
+  "ETIAM_video_002.dcm"
+  #Something stupid occured in the code for LibIDO images.
+  #I Black list them for a while. JP
+  "gdcm-ACR-LibIDO.acr"
+  "LIBIDO-24-ACR_NEMA-Rectangle.dcm" 
   )
 
 # Add a special test that requires dciodvfy from dicom3tools
