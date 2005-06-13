@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/30 01:30:39 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/06/13 15:43:48 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -488,6 +488,7 @@ void PixelReadConvert::BuildLUTRGBA()
        || LutGreenDescriptor == GDCM_UNFOUND
        || LutBlueDescriptor  == GDCM_UNFOUND )
    {
+      gdcmWarningMacro( "(At least) a LUT Descriptor is missing" );
       return;
    }
 
@@ -510,6 +511,7 @@ void PixelReadConvert::BuildLUTRGBA()
    nbRead = sscanf( LutGreenDescriptor.c_str(),
                     "%d\\%d\\%d",
                     &lengthG, &debG, &nbitsG );
+  
    if( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Green LUT descriptor" );
@@ -521,71 +523,100 @@ void PixelReadConvert::BuildLUTRGBA()
    nbRead = sscanf( LutRedDescriptor.c_str(),
                     "%d\\%d\\%d",
                     &lengthB, &debB, &nbitsB );
+   gdcmWarningMacro(" lengthR " << lengthR << " debR " 
+                 << debR << " nbitsR " << nbitsR);
+   gdcmWarningMacro(" lengthG " << lengthG << " debG " 
+                 << debG << " nbitsG " << nbitsG);
+   gdcmWarningMacro(" lengthB " << lengthB << " debB " 
+                 << debB << " nbitsB " << nbitsB);
    if( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Blue LUT descriptor" );
    }
+
+   if ( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
+      lengthR=65536;
+   if( !lengthG ) // if = 2^16, this shall be 0
+      lengthG=65536;
+   if ( !lengthB ) // if = 2^16, this shall be 0
+      lengthB=65536; 
                                                                                 
    ////////////////////////////////////////////////////////
+
    if ( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
    {
+      gdcmWarningMacro( "(At least) a LUT is missing" );
       return;
    }
 
-   ////////////////////////////////////////////////
-   // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
-   LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
-   if ( !LutRGBA )
-      return;
-
-   memset( LutRGBA, 0, 1024 );
-                                                                                
-   int mult;
-   if ( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
+   // -------------------------------------------------------------
+   
+   if ( BitsAllocated <= 8)
    {
-      // when LUT item size is different than pixel size
-      mult = 2; // high byte must be = low byte
+
+      // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
+      LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
+      if ( !LutRGBA )
+         return;
+
+      memset( LutRGBA, 0, 1024 );
+                                                                                
+      int mult;
+      if ( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
+      {
+         // when LUT item size is different than pixel size
+         mult = 2; // high byte must be = low byte
+      }
+      else
+      {
+         // See PS 3.3-2003 C.11.1.1.2 p 619
+         mult = 1;
+      }
+                                                                                
+      // if we get a black image, let's just remove the '+1'
+      // from 'i*mult+1' and check again
+      // if it works, we shall have to check the 3 Palettes
+      // to see which byte is ==0 (first one, or second one)
+      // and fix the code
+      // We give up the checking to avoid some (useless ?) overhead
+      // (optimistic asumption)
+      int i;
+      uint8_t *a;
+
+      //take "Subscript of the first Lut Value" (debR,debG,debB) into account!
+
+      a = LutRGBA + 0 + debR;
+      for( i=0; i < lengthR; ++i )
+      {
+         *a = LutRedData[i*mult+1];
+         a += 4;
+      }
+                                                                                
+      a = LutRGBA + 1 + debG;
+      for( i=0; i < lengthG; ++i)
+      {
+         *a = LutGreenData[i*mult+1];
+         a += 4;
+      }
+                                                                                
+      a = LutRGBA + 2 + debB;
+      for(i=0; i < lengthB; ++i)
+      {
+         *a = LutBlueData[i*mult+1];
+         a += 4;
+      }
+                                                                                
+      a = LutRGBA + 3 ;
+      for(i=0; i < 256; ++i)
+      {
+         *a = 1; // Alpha component
+         a += 4;
+      }
    }
    else
    {
-      // See PS 3.3-2003 C.11.1.1.2 p 619
-      mult = 1;
-   }
-                                                                                
-   // if we get a black image, let's just remove the '+1'
-   // from 'i*mult+1' and check again
-   // if it works, we shall have to check the 3 Palettes
-   // to see which byte is ==0 (first one, or second one)
-   // and fix the code
-   // We give up the checking to avoid some (useless ?) overhead
-   // (optimistic asumption)
-   int i;
-   uint8_t *a = LutRGBA + 0;
-   for( i=0; i < lengthR; ++i )
-   {
-      *a = LutRedData[i*mult+1];
-      a += 4;
-   }
-                                                                                
-   a = LutRGBA + 1;
-   for( i=0; i < lengthG; ++i)
-   {
-      *a = LutGreenData[i*mult+1];
-      a += 4;
-   }
-                                                                                
-   a = LutRGBA + 2;
-   for(i=0; i < lengthB; ++i)
-   {
-      *a = LutBlueData[i*mult+1];
-      a += 4;
-   }
-                                                                                
-   a = LutRGBA + 3;
-   for(i=0; i < 256; ++i)
-   {
-      *a = 1; // Alpha component
-      a += 4;
+      gdcmWarningMacro( "Sorry Palette Color Lookup Tables not yet dealt with"
+                         << "for 16 Bits Per Pixel images" );
    }
 }
 
