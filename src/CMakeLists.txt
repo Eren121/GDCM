@@ -12,7 +12,7 @@ INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 #ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
-  #gdcmmpeg2
+  gdcmmpeg2
   gdcmjasper
   gdcmjpegls
   )
@@ -28,6 +28,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(libgdcm_la_SOURCES
+   gdcmArgMgr.cxx
    gdcmBase.cxx
    gdcmBinEntry.cxx
    gdcmContentEntry.cxx
@@ -71,8 +72,8 @@ SET(libgdcm_la_SOURCES
    gdcmTS.cxx
    gdcmUtil.cxx
    gdcmValEntry.cxx   
+   gdcmValidator.cxx
    gdcmVR.cxx
-   gdcmArgMgr.cxx
    ${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx
    )
 
