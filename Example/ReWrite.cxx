@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/10 14:10:22 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/06/14 09:04:59 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,12 +74,12 @@ int main(int argc, char *argv[])
    else
       loadMode = 0;
 
-   bool rgb = am->ArgMgrDefined("RGB");
+   bool rgb = ( 0 != am->ArgMgrDefined("RGB") );
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
  
-   // if unused Param we give up
+   // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
       am->ArgMgrUsage(usage);
