@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/05/30 01:30:39 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/06/14 13:56:42 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,7 +80,11 @@ private:
    void AllocateRaw();
 
 // Variables
-   /// Pixel data represented as RGB after LUT color interpretation.
+/**
+ * \brief Pixel data represented as RGB after LUT color interpretation.
+ *        'uint8_t' is just to avoid warnings at compile time.
+ *        feel free to cast it as uint16_t if you need
+ */ 
    uint8_t *RGB;
    /// Size of RGB image.
    size_t   RGBSize;

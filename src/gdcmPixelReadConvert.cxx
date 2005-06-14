@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/13 15:43:48 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/06/14 13:56:41 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -299,7 +299,7 @@ void PixelReadConvert::Squeeze()
 }
 
 /**
- * \brief Build the RGB image from the Raw imagage and the LUTs.
+ * \brief Build the RGB image from the Raw image and the LUTs.
  */
 bool PixelReadConvert::BuildRGBImage()
 {
@@ -324,14 +324,32 @@ bool PixelReadConvert::BuildRGBImage()
                                                                                 
    // Build RGB Pixels
    AllocateRGB();
-   uint8_t *localRGB = RGB;
-   for (size_t i = 0; i < RawSize; ++i )
+   
+   int j;
+   if( BitsAllocated <= 8)
    {
-      int j  = Raw[i] * 4;
-      *localRGB++ = LutRGBA[j];
-      *localRGB++ = LutRGBA[j+1];
-      *localRGB++ = LutRGBA[j+2];
-   }
+      uint8_t *localRGB = RGB;
+      for (size_t i = 0; i < RawSize; ++i )
+      {
+         j  = Raw[i] * 4;
+         *localRGB++ = LutRGBA[j];
+         *localRGB++ = LutRGBA[j+1];
+         *localRGB++ = LutRGBA[j+2];
+      }
+    }
+ 
+    else  // deal with 16 bits pixels and 16 bits Palette color
+    {
+      uint16_t *localRGB = (uint16_t *)RGB;
+      for (size_t i = 0; i < RawSize/2; ++i )
+      {
+         j  = ((uint16_t *)Raw)[i] * 4;
+         *localRGB++ = ((uint16_t *)LutRGBA)[j];
+         *localRGB++ = ((uint16_t *)LutRGBA)[j+1];
+         *localRGB++ = ((uint16_t *)LutRGBA)[j+2];
+      } 
+    }
+ 
    return true;
 }
 
@@ -497,21 +515,22 @@ void PixelReadConvert::BuildLUTRGBA()
    int lengthR;   // Red LUT length in Bytes
    int debR;      // Subscript of the first Lut Value
    int nbitsR;    // Lut item size (in Bits)
-   int nbRead = sscanf( LutRedDescriptor.c_str(),
+   int nbRead;    // nb of items in LUT descriptor (must be = 3)
+
+   nbRead = sscanf( LutRedDescriptor.c_str(),
                         "%d\\%d\\%d",
                         &lengthR, &debR, &nbitsR );
    if( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Red LUT descriptor" );
-   }
-                                                                                
+   }                                                                                
    int lengthG;  // Green LUT length in Bytes
    int debG;     // Subscript of the first Lut Value
    int nbitsG;   // Lut item size (in Bits)
+
    nbRead = sscanf( LutGreenDescriptor.c_str(),
                     "%d\\%d\\%d",
-                    &lengthG, &debG, &nbitsG );
-  
+                    &lengthG, &debG, &nbitsG );  
    if( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Green LUT descriptor" );
@@ -523,16 +542,17 @@ void PixelReadConvert::BuildLUTRGBA()
    nbRead = sscanf( LutRedDescriptor.c_str(),
                     "%d\\%d\\%d",
                     &lengthB, &debB, &nbitsB );
+   if( nbRead != 3 )
+   {
+      gdcmWarningMacro( "Wrong Blue LUT descriptor" );
+   }
+ 
    gdcmWarningMacro(" lengthR " << lengthR << " debR " 
                  << debR << " nbitsR " << nbitsR);
    gdcmWarningMacro(" lengthG " << lengthG << " debG " 
                  << debG << " nbitsG " << nbitsG);
    gdcmWarningMacro(" lengthB " << lengthB << " debB " 
                  << debB << " nbitsB " << nbitsB);
-   if( nbRead != 3 )
-   {
-      gdcmWarningMacro( "Wrong Blue LUT descriptor" );
-   }
 
    if ( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
       lengthR=65536;
@@ -553,7 +573,6 @@ void PixelReadConvert::BuildLUTRGBA()
    
    if ( BitsAllocated <= 8)
    {
-
       // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
       LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
       if ( !LutRGBA )
@@ -615,8 +634,61 @@ void PixelReadConvert::BuildLUTRGBA()
    }
    else
    {
+      // Probabely the same stuff is to be done for 16 Bits Pixels
+      // with 65536 entries LUT ?!?
+      // Still looking for accurate info on the web :-(
+
       gdcmWarningMacro( "Sorry Palette Color Lookup Tables not yet dealt with"
-                         << "for 16 Bits Per Pixel images" );
+                         << " for 16 Bits Per Pixel images" );
+
+      // forge the 4 * 16 Bits Red/Green/Blue/Alpha LUT
+
+      LutRGBA = (uint8_t *)new uint16_t[ 65536*4 ]; // 2^16 * 4 (R, G, B, Alpha)
+      if ( !LutRGBA )
+         return;
+      memset( LutRGBA, 0, 65536*4*2 );  // 16 bits = 2 bytes ;-)
+
+      int i;
+      uint16_t *a16;
+
+      //take "Subscript of the first Lut Value" (debR,debG,debB) into account!
+
+      a16 = (uint16_t*)LutRGBA + 0 + debR;
+      for( i=0; i < lengthR; ++i )
+      {
+         *a16 = ((uint16_t*)LutRedData)[i+1];
+         a16 += 4;
+      }
+                                                                              
+      a16 = (uint16_t*)LutRGBA + 1 + debG;
+      for( i=0; i < lengthG; ++i)
+      {
+         *a16 = ((uint16_t*)LutGreenData)[i+1];
+         a16 += 4;
+      }
+                                                                                
+      a16 = (uint16_t*)LutRGBA + 2 + debB;
+      for(i=0; i < lengthB; ++i)
+      {
+         *a16 = ((uint16_t*)LutBlueData)[i+1];
+         a16 += 4;
+      }
+                                                                             
+      a16 = (uint16_t*)LutRGBA + 3 ;
+      for(i=0; i < 65536; ++i)
+      {
+         *a16 = 1; // Alpha component
+         a16 += 4;
+      }
+/*
+      a16=(uint16_t*)LutRGBA;
+      for (int j=0;j<65536;j++)
+      {
+         std::cout << *a16     << " " << *(a16+1) << " "
+                   << *(a16+2) << " " << *(a16+3) << std::endl;
+         a16+=4;
+      }
+*/
    }
 }
 
@@ -878,10 +950,11 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    uint8_t *c = copyRaw + l+ l;
    int32_t R, G, B;
 
-   /// \todo : Replace by the 'well known' integer computation
-   ///         counterpart. Refer to
+   ///  We replaced easy to understand but time consuming floating point
+   ///  computations by the 'well known' integer computation counterpart
+   ///  Refer to :
    ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
-   ///         for code optimisation.
+   ///  for code optimisation.
 
    for ( int i = 0; i < nbFrames; i++ )
    {
@@ -946,7 +1019,7 @@ void PixelReadConvert::ConvertHandleColor()
    //     - "Planar Configuration" = 0,
    //     - "Photometric Interpretation" = "PALETTE COLOR".
    // Hence gdcm will use the folowing "heuristic" in order to be tolerant
-   // towards Dicom-non-conformance files:
+   // towards Dicom-non-conformant files:
    //   << whatever the "Planar Configuration" value might be, a
    //      "Photometric Interpretation" set to "PALETTE COLOR" forces
    //      a LUT intervention >>
@@ -1005,7 +1078,7 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
                      * SamplesPerPixel;
    if ( HasLUT )
    {
-      RGBSize = 3 * RawSize;
+      RGBSize = 3 * RawSize; // works for 8 and 16 bits per Pixel
    }
    else
    {
