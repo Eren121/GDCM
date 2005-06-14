@@ -165,7 +165,11 @@ SET(BLACK_LIST
   #Something stupid occured in the code for LibIDO images.
   #I Black list them for a while. JP
   "gdcm-ACR-LibIDO.acr"
-  "LIBIDO-24-ACR_NEMA-Rectangle.dcm" 
+  "LIBIDO-24-ACR_NEMA-Rectangle.dcm"
+  #16 Bits per pixel images with LUT 16 Bits.
+  #I wait to be 100% sure before releasing them. JP
+  "re16sti.dcm"
+  "rle16loo.dcm"   
   )
 
 # Add a special test that requires dciodvfy from dicom3tools
