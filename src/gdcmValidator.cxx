@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 20:33:54 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/14 20:53:19 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #include "gdcmElementSet.h"
 #include "gdcmBinEntry.h"
 #include "gdcmValEntry.h"
+
+#include <sstream>
 
 namespace gdcm 
 {
@@ -42,9 +44,12 @@ bool CheckVM(ValEntry *v)
     {
     n = 0;
     }
-  n++; //poteaux / intervalles
+  n++; // number of '\' + 1 == Value Multiplicity
 
-  unsigned int m = atoi(v->GetVM().c_str());
+  unsigned int m;
+  std::istringstream os;
+  os.str( v->GetVM());
+  os >> m;
 
   return n == m;
 }
