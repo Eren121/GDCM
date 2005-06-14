@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 09:04:59 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/06/14 09:21:00 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
    }
    
    gdcm::FileHelper *f1 = new gdcm::FileHelper(e1);
-   void *imageData;
+   void *imageData; 
    int dataSize;
   
    if (rgb)
@@ -123,10 +123,14 @@ int main(int argc, char *argv[])
    else
    {
       dataSize  = f1->GetImageDataRawSize();
-      imageData = f1->GetImageDataRaw();
+      imageData = f1->GetImageDataRaw();// somewhat important... can't remember
       f1->SetWriteModeToRaw();
    }
 
+   if ( imageData == 0 ) // to avoid warning
+   {
+      std::cout << "Was unable to read pixels " << std::endl;
+   }
    std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
