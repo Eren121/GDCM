@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:14:55 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/06/14 19:22:13 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,6 +36,9 @@ namespace gdcm
  *  - error : for bad library use, seriously wrong DICOM
  *  - debug : for information/debug messages
  *  - warning : for warning about DICOM quality (kosher)
+ *  - assert : design by contract implementation. A function should have 
+ *             proper input and proper output. 
+ *             (should not happen, not user controlled)
  * 
  * A debugging message is only show if the flag is on (DebugFlag)
  * This is static var and can be set at beginning of code:
