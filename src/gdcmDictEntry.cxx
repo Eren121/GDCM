@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 14:50:36 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/06/14 14:00:03 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 #include <iomanip> // for std::ios::left, ...
 #include <fstream>
-#include <stdio.h> // for sprintf, grrrr
+#include <stdio.h> // for sprintf
 
 namespace gdcm 
 {
@@ -33,8 +33,8 @@ namespace gdcm
  * @param   group      DICOM-Group Number
  * @param   elem       DICOM-Element Number
  * @param   vr         Value Representation
- * @param   vm         Value Mutlplicity 
- * @param   name      description of the element
+ * @param   vm         Value Multiplicity 
+ * @param   name       description of the element
 */
 
 DictEntry::DictEntry(uint16_t group, uint16_t elem,

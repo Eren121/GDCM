@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 13:44:47 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/06/14 14:00:04 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -239,7 +239,7 @@ void DocEntry::Print(std::ostream &os, std::string const & )
       }
       else
       {
-         st = Util::Format("x(%x)",lgth);
+         st = Util::Format("x(%x)",lgth); // we may keep it
          s.setf(std::ios::left);
          s << std::setw(10-st.size()) << " ";
          s << st << " ";
@@ -247,7 +247,7 @@ void DocEntry::Print(std::ostream &os, std::string const & )
          s << std::setw(8) << lgth; 
       }
       s << " Off.: ";
-      st = Util::Format("x(%x)",o); 
+      st = Util::Format("x(%x)",o);  // we may keep it
       s << std::setw(10-st.size()) << " ";
       s << st << " ";
       s << std::setw(8) << o; 

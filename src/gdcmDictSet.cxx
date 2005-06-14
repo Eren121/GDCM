@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/06/14 14:00:04 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ DictSet::~DictSet()
    Dicts.clear();
 
    // Remove virtual dictionary entries
-   VirtualEntry.clear();
+   VirtualEntries.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -95,33 +95,44 @@ Dict *DictSet::GetDict(DictKey const &dictName)
 }
 
 /**
- * \brief   Create a DictEntry which will be referenced 
- *          in no dictionary
+ * \brief   Create a DictEntry which will be referenced in no dictionary
+ * @param   group   Group number of the Entry 
+ * @param   elem  Element number of the Entry
+ * @param   vr  Value Representation of the Entry
+ * @param   vm  Value Multiplicity of the Entry
+ * @param   name  English name of the Entry
  * @return  virtual entry
  */
 DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
-                                         uint16_t element,
+                                         uint16_t elem,
                                          TagName vr,
                                          TagName vm,
                                          TagName name)
 {
    DictEntry *entry;
-   const std::string tag = DictEntry::TranslateToKey(group,element)
-                           + "#" + vr + "#" + vm + "#" + name;
+
+  // Let's follow 'Purify' advice
+  //
+  // const std::string tag = DictEntry::TranslateToKey(group,elem)
+  //                         + "#" + vr + "#" + vm + "#" + name;
+   char res[10];
+   sprintf(res,"%04x|%04x", group, elem);
+   std::string tag = res;
+   tag += "#" + vr + "#" + vm + "#" + name;  
+  
    TagKeyHT::iterator it;
    
-   it = VirtualEntry.find(tag);
-   if(it != VirtualEntry.end())
+   it = VirtualEntries.find(tag);
+   if(it != VirtualEntries.end())
    {
       entry = &(it->second);
    }
    else
    {
-      DictEntry ent(group, element, vr, vm, name);
-      VirtualEntry.insert(
-         std::map<TagKey, DictEntry>::value_type
-            (tag, ent));
-      entry = &(VirtualEntry.find(tag)->second);
+      DictEntry ent(group, elem, vr, vm, name);
+      VirtualEntries.insert(
+         std::map<TagKey, DictEntry>::value_type(tag, ent) );
+      entry = &(VirtualEntries.find(tag)->second);
    }
 
    return entry;
