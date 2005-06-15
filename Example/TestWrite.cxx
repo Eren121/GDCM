@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:22:11 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/06/15 09:54:13 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,13 @@ int main(int argc, char *argv[])
    std::string fileName = argv[1]; 
    std::string mode = argv[2];
 
-   e1 = new gdcm::File( fileName.c_str() );
+   //e1 = new gdcm::File( fileName.c_str() );
+
+   // new style :
+   e1 = new gdcm::File( );
+   e1->SetLoadMode(0);
+   e1->Load( fileName.c_str() );
+
    if (!e1->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
@@ -74,9 +80,12 @@ int main(int argc, char *argv[])
   // e1->Print(); 
    
    f1 = new gdcm::FileHelper(e1);
+   dataSize = f1->GetImageDataSize();
+   imageData= f1->GetImageData();
+
+
 // ---     
 
-   dataSize = f1->GetImageDataSize();
    std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
@@ -100,8 +109,9 @@ int main(int argc, char *argv[])
    std::cout << "NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
    transferSyntaxName = e1->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
-   
-/*   if (  transferSyntaxName != "Implicit VR - Little Endian"
+
+/*   
+  if (  transferSyntaxName != "Implicit VR - Little Endian"
       && transferSyntaxName != "Explicit VR - Little Endian"     
       && transferSyntaxName != "Deflated Explicit VR - Little Endian"      
       && transferSyntaxName != "Explicit VR - Big Endian"
@@ -111,9 +121,8 @@ int main(int argc, char *argv[])
       f1->GetPixelReadConverter()->Print();
       std::cout << std::endl << "==========================================="
                 << std::endl; 
-   }*/
-   imageData= f1->GetImageData();
-
+   }
+*/
    switch (mode[0])
    {
    case 'a' :

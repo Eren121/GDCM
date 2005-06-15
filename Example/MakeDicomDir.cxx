@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 09:08:46 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/06/15 09:54:49 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,6 @@ void EndMethod(void *toto) {
 // ---
 
 /**
-  * \ingroup Test
   * \brief   Explores recursively the given directory
   *          orders the gdcm-readable found Files
   *          according their Patient/Study/Serie/Image characteristics
