@@ -12,6 +12,7 @@ SET(EXAMPLE_SOURCES
   exAnonymize
   exAnonymizeNoLoad  # without loading the Pixel Data
   exColorToRGB
+  exGrey2RGB
   exGC
   exImageLighten
   exOverlaysACR
