@@ -12,7 +12,7 @@ INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 #ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
-  gdcmmpeg2
+  #gdcmmpeg2
   gdcmjasper
   gdcmjpegls
   )
