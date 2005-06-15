@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 13:56:41 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/06/15 19:59:39 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -259,7 +259,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    {
       //gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
       //return false;
-//      ReadMPEGFile(fp, Raw, PixelDataLength); // fp has already been seek to start of mpeg
+      //ReadMPEGFile(fp, Raw, PixelDataLength); // fp has already been seek to start of mpeg
       return true;
    }
    else
@@ -416,6 +416,8 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 {
    if ( IsJPEG2000 )
    {
+     // make sure this is the right JPEG compression
+     assert( !IsJPEGLossless || !IsJPEGLossy || !IsJPEGLS );
      // FIXME this is really ugly but it seems I have to load the complete
      // jpeg2000 stream to use jasper:
       // I don't think we'll ever be able to deal with multiple fragments properly
@@ -444,10 +446,13 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
       {
          return true;
       }
+      // wow what happen, must be an error
+      return false;
    }
-
-   if ( IsJPEGLS )
+   else if ( IsJPEGLS )
    {
+     // make sure this is the right JPEG compression
+     assert( !IsJPEGLossless || !IsJPEGLossy || !IsJPEG2000 );
    // WARNING : JPEG-LS is NOT the 'classical' Jpeg Lossless : 
    // [JPEG-LS is the basis for new lossless/near-lossless compression
    // standard for continuous-tone images intended for JPEG2000. The standard
@@ -456,6 +461,34 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
    //
    // see http://datacompression.info/JPEGLS.shtml
    //
+#if 0
+   std::cerr << "count:" << JPEGInfo->GetFragmentCount() << std::endl;
+      unsigned long inputlength = 0;
+      JPEGFragment *jpegfrag = JPEGInfo->GetFirstFragment();
+      while( jpegfrag )
+      {
+         inputlength += jpegfrag->GetLength();
+         jpegfrag = JPEGInfo->GetNextFragment();
+      }
+      gdcmAssertMacro( inputlength != 0);
+      uint8_t *inputdata = new uint8_t[inputlength];
+      char *pinputdata = (char*)inputdata;
+      jpegfrag = JPEGInfo->GetFirstFragment();
+      while( jpegfrag )
+      {
+         fp->seekg( jpegfrag->GetOffset(), std::ios::beg);
+         fp->read(pinputdata, jpegfrag->GetLength());
+         pinputdata += jpegfrag->GetLength();
+         jpegfrag = JPEGInfo->GetNextFragment();
+      }  
+      
+  //fp->read((char*)Raw, PixelDataLength);
+
+  std::ofstream out("/tmp/jpegls.jpg");
+  out.write((char*)inputdata, inputlength);
+  out.close();
+  delete[] inputdata;
+#endif
 
       gdcmWarningMacro( "Sorry, JPEG-LS not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
@@ -463,14 +496,16 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
          return false;
    }
    else
-     {
+   {
+     // make sure this is the right JPEG compression
+     assert( !IsJPEGLS || !IsJPEG2000 );
      // Precompute the offset localRaw will be shifted with
      int length = XSize * YSize * SamplesPerPixel;
      int numberBytes = BitsAllocated / 8;
 
      JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
      return true;
-     }
+   }
 }
 
 /**
