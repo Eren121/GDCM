@@ -891,7 +891,7 @@
 0028 0006 US 1 Planar Configuration
 0028 0008 IS 1 Number of Frames
 0028 0009 AT 1-n Frame Increment Pointer
-0028 000a AT 1-n Frame Dimension Ponter
+0028 000a AT 1-n Frame Dimension Pointer
 0028 0010 US 1 Rows
 0028 0011 US 1 Columns
 0028 0012 US 1 Planes
