@@ -333,7 +333,7 @@ char *ttyfilename = "CON";
 void fprint_disclaimer(FILE *fp, int nopause)
 {
   char *p0, *p1;
-  FILE *ttyf;
+  FILE *ttyf = NULL;
   int  i; /*, c;*/
 
   nopause = nopause | !isatty(fileno(fp));
