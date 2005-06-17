@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 16:08:16 $
-  Version:   $Revision: 1.140 $
+  Date:      $Date: 2005/06/17 12:36:07 $
+  Version:   $Revision: 1.141 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -257,7 +257,7 @@ DicomDirMeta *DicomDir::NewMeta()
    DocEntry *entry = GetFirstEntry();
    if( entry )
    { 
-      MetaElems = new DicomDirMeta(true);
+      MetaElems = new DicomDirMeta(true); // true = empty
 
       entry = GetFirstEntry();
       while( entry )
@@ -273,7 +273,7 @@ DicomDirMeta *DicomDir::NewMeta()
    }
    else  // after root directory parsing
    {
-      MetaElems = new DicomDirMeta(false);
+      MetaElems = new DicomDirMeta(false); // false = not empty
    }
    MetaElems->SetSQItemNumber(0); // To avoid further missprinting
    return MetaElems;  

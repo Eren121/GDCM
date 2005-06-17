@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/10 14:05:38 $
-  Version:   $Revision: 1.245 $
+  Date:      $Date: 2005/06/17 12:36:07 $
+  Version:   $Revision: 1.246 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1247,7 +1247,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    {
       newValue = Util::DicomString(str, length+1);
       gdcmWarningMacro("Warning: bad length: " << length <<
-                       " ,For string :" <<  newValue.c_str()); 
+                       " For string :" <<  newValue.c_str()); 
       // Since we change the length of string update it length
       //entry->SetReadLength(length+1);
    }
@@ -1261,7 +1261,12 @@ void Document::LoadDocEntry(DocEntry *entry)
    {
       if ( Fp->fail() || Fp->eof())
       {
-         gdcmWarningMacro("Unread element value");
+         if ( Fp->fail() )
+            gdcmWarningMacro("--> fail");
+
+         gdcmWarningMacro("Unread element value " << valEntry->GetKey() 
+                          << " lgt : " << valEntry->GetReadLength() 
+                          << " at " << std::hex << valEntry->GetOffset());
          valEntry->SetValue(GDCM_UNREAD);
          return;
       }

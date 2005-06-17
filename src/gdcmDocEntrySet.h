@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/10 11:20:34 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/06/17 12:36:07 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,9 +38,9 @@ typedef std::string BaseTagKey;
  * \brief
  * \ref DocEntrySet is an abstract base class for \ref ElementSet
  * and \ref SQItem which are both containers for DocEntries.
- * \ref ElementSet is based on the STL map<> container
- * (see \ref ElementSet::TagHT), as opposed to \ref SQItem
- * which is based on an STL list container (see \ref ListDocEntry).
+ *  - \ref ElementSet is based on the STL map<> container
+ * (see \ref ElementSet::TagHT)
+ *  - \ref SQItem is based on an STL list container (see \ref ListDocEntry).
  * Since the syntax for adding a new element to a map<> or a list<>
  * differ, \ref DocEntrySet is designed as an adapter to unify the
  * interfaces of \ref DocEntrySet and \ref ElementSet.
