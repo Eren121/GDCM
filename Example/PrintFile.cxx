@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:46:15 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/06/17 14:36:19 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -162,9 +162,9 @@ int main(int argc, char *argv[])
          {
             uint16_t* lutrgba16 = (uint16_t*)lutrgba;
             for (int i=0;i<f1->GetLutItemNumber();i++)
-               std::cout << lutrgba[i*4]   << " "
-                         << lutrgba[i*4+1] << " "
-                         << lutrgba[i*4+2] << std::endl;
+               std::cout << lutrgba16[i*4]   << " "
+                         << lutrgba16[i*4+1] << " "
+                         << lutrgba16[i*4+2] << std::endl;
          }
       }
    }
