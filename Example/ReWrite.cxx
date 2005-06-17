@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 09:21:00 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/06/17 12:37:20 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
    if ( !res )
    {
       delete e1;
-      delete am;
       return 0;
    }
   
@@ -106,7 +105,6 @@ int main(int argc, char *argv[])
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        delete e1;
-       delete am; 
        return 0;
    }
    
