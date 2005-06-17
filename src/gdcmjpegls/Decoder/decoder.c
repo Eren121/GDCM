@@ -118,7 +118,6 @@ int     alpha,     /* alphabet size */
 int     highmask;
 #endif
 
-void usage();
 
 
 

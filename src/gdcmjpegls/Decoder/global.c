@@ -145,8 +145,8 @@ void *safecalloc(size_t numels, size_t size) {
 
 double get_utime()
 {
-  clock_t c;
-  (void)c;
+  /*clock_t c;
+  (void)c;*/
 
   return (double)clock()/CLOCKS_PER_SEC;
 }
