@@ -119,6 +119,7 @@ int     highmask;
 #endif
 
 
+void usage();
 
 
 
