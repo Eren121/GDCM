@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 11:12:10 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/06/17 12:46:15 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences ",
    "        debug    : user wants to run the program in 'debug mode' ",
+   "        showlut  : user wants to display the Palette Color (as an int array)",
    FINISH_USAGE
 
    // Initialize Arguments Manager   
@@ -63,6 +64,8 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
 
+   bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
+ 
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -70,6 +73,10 @@ int main(int argc, char *argv[])
       delete am;
       return 0;
    } 
+
+   delete am;  // we don't need Argument Manager any longer
+
+   // ----------- End Arguments Manager ---------
  
    // gdcm::File::IsReadable() is no usable here, because we deal with
    // any kind of gdcm-Parsable *document* 
@@ -82,7 +89,6 @@ int main(int argc, char *argv[])
    if ( !res )
    {
       delete e1;
-      delete am;
       return 0;
    }
 
@@ -117,11 +123,11 @@ int main(int argc, char *argv[])
              << "] "<< std::endl;
 
    int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
-   std::cout << " NumberOfScalarComponents = " << numberOfScalarComponents <<std::endl
+   std::cout << " NumberOfScalarComponents = " << numberOfScalarComponents 
+             <<std::endl
              << " LUT = " << (e1->HasLUT() ? "TRUE" : "FALSE")
              << std::endl;
 
-  
    if ( e1->GetEntryValue(0x0002,0x0010) == gdcm::GDCM_NOTLOADED ) 
    {
       std::cout << "Transfer Syntax not loaded. " << std::endl
@@ -131,9 +137,38 @@ int main(int argc, char *argv[])
    }
   
    std::string transferSyntaxName = e1->GetTransferSyntaxName();
-   std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
+   std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
+             << std::endl;
    std::cout << " SwapCode= " << e1->GetSwapCode() << std::endl;
-   
+ 
+   // Display the LUT as an int array (for degugging purpose)
+   if ( e1->HasLUT() && showlut )
+   {
+      uint8_t* lutrgba = f1->GetLutRGBA();
+      if ( lutrgba == 0 )
+      {
+         std::cout << "Lut RGBA not built ?!?" << std::endl;
+      }
+      else
+      {
+         if ( f1->GetLutItemSize() == 8 )
+         {
+            for (int i=0;i<f1->GetLutItemNumber();i++)
+               std::cout << (int)(lutrgba[i*4])   << " "
+                         << (int)(lutrgba[i*4+1]) << " "
+                         << (int)(lutrgba[i*4+2]) << std::endl;
+         }
+         else // LutItemSize assumed to be = 16
+         {
+            uint16_t* lutrgba16 = (uint16_t*)lutrgba;
+            for (int i=0;i<f1->GetLutItemNumber();i++)
+               std::cout << lutrgba[i*4]   << " "
+                         << lutrgba[i*4+1] << " "
+                         << lutrgba[i*4+2] << std::endl;
+         }
+      }
+   }
+     
    if(e1->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
    else
@@ -141,7 +176,5 @@ int main(int argc, char *argv[])
    std::cout<<std::flush;
    delete e1;
    delete f1;
-   delete am;
-   return 0;
-   
+   return 0;   
 }
