@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/15 19:59:39 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/06/17 12:35:00 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -612,7 +612,8 @@ void PixelReadConvert::BuildLUTRGBA()
       LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
       if ( !LutRGBA )
          return;
-
+      LutItemNumber = 256;
+      LutItemSize   = 8;
       memset( LutRGBA, 0, 1024 );
                                                                                 
       int mult;
@@ -683,6 +684,9 @@ void PixelReadConvert::BuildLUTRGBA()
          return;
       memset( LutRGBA, 0, 65536*4*2 );  // 16 bits = 2 bytes ;-)
 
+      LutItemNumber = 65536;
+      LutItemSize   = 16;
+
       int i;
       uint16_t *a16;
 
@@ -691,21 +695,21 @@ void PixelReadConvert::BuildLUTRGBA()
       a16 = (uint16_t*)LutRGBA + 0 + debR;
       for( i=0; i < lengthR; ++i )
       {
-         *a16 = ((uint16_t*)LutRedData)[i+1];
+         *a16 = ((uint16_t*)LutRedData)[i];
          a16 += 4;
       }
                                                                               
       a16 = (uint16_t*)LutRGBA + 1 + debG;
       for( i=0; i < lengthG; ++i)
       {
-         *a16 = ((uint16_t*)LutGreenData)[i+1];
+         *a16 = ((uint16_t*)LutGreenData)[i];
          a16 += 4;
       }
                                                                                 
       a16 = (uint16_t*)LutRGBA + 2 + debB;
       for(i=0; i < lengthB; ++i)
       {
-         *a16 = ((uint16_t*)LutBlueData)[i+1];
+         *a16 = ((uint16_t*)LutBlueData)[i];
          a16 += 4;
       }
                                                                              
@@ -968,6 +972,15 @@ void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
  */
 void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
 {
+  // Remarks for YBR newbees :
+  // YBR_FULL works very much like RGB, i.e. three samples per pixel, 
+  // just the color space is YCbCr instead of RGB. This is particularly useful
+  // for doppler ultrasound where most of the image is grayscale 
+  // (i.e. only populates the Y components) and Cb and Cr are mostly zero,
+  // except for the few patches of color on the image. //
+  // On such images, RLE achieves a compression ratio that is much better 
+  // than the compression ratio on an equivalent RGB image. 
+    
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
    memmove( copyRaw, localRaw, RawSize );

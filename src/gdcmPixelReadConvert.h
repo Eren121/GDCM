@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 13:56:42 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/06/17 12:35:00 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,12 +43,13 @@ public:
    void Print( std::ostream &os = std::cout, std::string const &indent = "" );
 
    // Getter accessors:
-   uint8_t *GetRGB()     { return RGB;     }
-   size_t   GetRGBSize() { return RGBSize; }
-   uint8_t *GetRaw()     { return Raw;     }
-   size_t   GetRawSize() { return RawSize; }
-   uint8_t *GetLutRGBA() { return LutRGBA; }
-
+   uint8_t *GetRGB()           { return RGB;     }
+   size_t   GetRGBSize()       { return RGBSize; }
+   uint8_t *GetRaw()           { return Raw;     }
+   size_t   GetRawSize()       { return RawSize; }
+   uint8_t *GetLutRGBA()       { return LutRGBA; }
+   int      GetLutItemNumber() { return LutItemNumber; }
+   int      GetLutItemSize()   { return LutItemSize;   }
    // Predicates:
    bool IsRawRGB();
 
@@ -57,6 +58,7 @@ public:
    bool ReadAndDecompressPixelData( std::ifstream *fp );
    void Squeeze();
    bool BuildRGBImage();
+   void BuildLUTRGBA();
 
 private:
    // Use the fp:
@@ -66,7 +68,6 @@ private:
 
    // In place (within Decompressed and with no fp access) decompression
    // or convertion:
-   void BuildLUTRGBA();
    void ConvertSwapZone();
    void ConvertReorderEndianity();
    bool ConvertReArrangeBits() throw ( FormatError );
@@ -95,6 +96,11 @@ private:
    /// \brief Red/Green/Blue/Alpha LookUpTable build out of the
    ///        Red/Green/Blue LUT descriptors (see \ref BuildLUTRGBA ).
    uint8_t *LutRGBA;
+   int LutItemNumber;
+   int LutItemSize;
+
+   // *ALL* the following info belong to the FileHelper
+   // One should think there is an analyze error in the model !
 
    size_t PixelOffset;
    size_t PixelDataLength;
@@ -135,7 +141,6 @@ private:
    uint8_t *LutRedData;
    uint8_t *LutGreenData;
    uint8_t *LutBlueData;
-
 };
 } // end namespace gdcm
 

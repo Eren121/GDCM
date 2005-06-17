@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 09:45:33 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/06/17 12:35:00 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,6 +93,8 @@ public:
 
    // LUT
    uint8_t* GetLutRGBA();
+   int GetLutItemNumber();
+   int GetLutItemSize();
 
    // Write mode
 

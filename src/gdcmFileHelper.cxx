@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/05/27 10:51:00 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/06/17 12:35:00 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -500,7 +500,25 @@ size_t FileHelper::GetRawDataSize()
  */
 uint8_t* FileHelper::GetLutRGBA()
 {
+   if ( PixelReadConverter->GetLutRGBA() ==0 )
+      PixelReadConverter->BuildLUTRGBA();
    return PixelReadConverter->GetLutRGBA();
+}
+
+/**
+ * \brief Access to the underlying \ref PixelReadConverter RGBA LUT Item Number
+ */
+int FileHelper::GetLutItemNumber()
+{
+   return PixelReadConverter->GetLutItemNumber();
+}
+
+/**
+ * \brief Access to the underlying \ref PixelReadConverter RGBA LUT Item Size
+ */
+int FileHelper::GetLutItemSize()
+{
+   return PixelReadConverter->GetLutItemSize();
 }
 
 /**
