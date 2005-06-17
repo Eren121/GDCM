@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 17:01:46 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/06/17 12:27:52 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmRLEFramesInfo.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 
 namespace gdcm 
 {
@@ -61,7 +62,7 @@ RLEFrame *RLEFramesInfo::GetNextFrame()
  * \brief     Reads from disk the Pixel Data of 'Run Length Encoded'
  *            Dicom encapsulated file and decompress it.
  * @param     fp already open File Pointer
- *            at which the pixel data should be copied
+ *            from which the pixel data should be read
  * @param raw raw
  * @param xSize x Size
  * @param ySize y Size
@@ -105,20 +106,34 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize,
                                                  int ySize, int numberOfFrames)
 {
    size_t pixelNumber = xSize * ySize;
-   size_t rawSize = xSize * ySize * numberOfFrames;
+   size_t rawSize     = pixelNumber * numberOfFrames * 2;
 
    // We assumed Raw contains the decoded RLE pixels but as
    // 8 bits per pixel. In order to convert those pixels to 16 bits
    // per pixel we cannot work in place within Raw and hence
    // we copy it in a safe place, say copyRaw.
 
-   uint8_t *copyRaw = new uint8_t[rawSize * 2];
-   memmove( copyRaw, raw, rawSize * 2 );
+   uint8_t *copyRaw = new uint8_t[rawSize];
+   memmove( copyRaw, raw, rawSize );
 
    uint8_t *x = raw;
-   uint8_t *a = copyRaw;
-   uint8_t *b = a + pixelNumber;
+   uint8_t *a;
+   uint8_t *b;
 
+   // Warning : unckecked patch to see the behaviour on Big Endian Processors
+
+   if ( !Util::IsCurrentProcessorBigEndian() )
+   { 
+      a = copyRaw;         // begining of 'low bytes'
+      b = a + pixelNumber; // begining of 'hight bytes'
+   }
+   else
+   {
+      b = copyRaw;         // begining of 'low bytes'
+      a = b + pixelNumber; // begining of 'hight bytes'
+   } 
+
+   // Re order bytes
    for ( int i = 0; i < numberOfFrames; i++ )
    {
       for ( unsigned int j = 0; j < pixelNumber; j++ )
@@ -127,6 +142,8 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize,
          *(x++) = *(a++);
       }
    }
+
+
    delete[] copyRaw;
 
    return true;
