@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:36:07 $
-  Version:   $Revision: 1.246 $
+  Date:      $Date: 2005/06/19 15:57:29 $
+  Version:   $Revision: 1.247 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1283,7 +1283,9 @@ void Document::LoadDocEntry(DocEntry *entry)
    }
    else
    {
-      gdcmErrorMacro( "Should have a ValEntry, here !");
+      gdcmWarningMacro("Should have a ValEntry, here ! " << valEntry->GetKey() 
+                          << " lgt : " << valEntry->GetReadLength() 
+                          << " at " << std::hex << valEntry->GetOffset());
    }
 }
 
