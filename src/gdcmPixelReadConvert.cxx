@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:35:00 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/06/20 17:12:03 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -719,7 +719,8 @@ void PixelReadConvert::BuildLUTRGBA()
          *a16 = 1; // Alpha component
          a16 += 4;
       }
-/*
+/* Just to 'see' the LUT, at debug time
+
       a16=(uint16_t*)LutRGBA;
       for (int j=0;j<65536;j++)
       {
@@ -947,6 +948,8 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
  */
 void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 {
+   gdcmWarningMacro("ConvertRGBPlanesToRGBPixels");
+
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
    memmove( copyRaw, localRaw, RawSize );
@@ -977,7 +980,7 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
   // just the color space is YCbCr instead of RGB. This is particularly useful
   // for doppler ultrasound where most of the image is grayscale 
   // (i.e. only populates the Y components) and Cb and Cr are mostly zero,
-  // except for the few patches of color on the image. //
+  // except for the few patches of color on the image.
   // On such images, RLE achieves a compression ratio that is much better 
   // than the compression ratio on an equivalent RGB image. 
     
@@ -1003,6 +1006,8 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    ///  Refer to :
    ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
    ///  for code optimisation.
+
+   gdcmWarningMacro("ConvertYcBcRPlanesToRGBPixels");
 
    for ( int i = 0; i < nbFrames; i++ )
    {
@@ -1079,6 +1084,8 @@ void PixelReadConvert::ConvertHandleColor()
    // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
    // - [Planar 2] OR  [Photo D] requires LUT intervention.
 
+   gdcmWarningMacro("ConvertHandleColor");
+
    if ( ! IsRawRGB() )
    {
       // [Planar 2] OR  [Photo D]: LUT intervention done outside
@@ -1101,11 +1108,13 @@ void PixelReadConvert::ConvertHandleColor()
    }
                                                                                 
    // When planarConf is 0, and RLELossless (forbidden by Dicom norm)
-   // pixels need to be RGB-fied anyway
+   // pixels need to be RGB-fyied anyway
+
    if (IsRLELossless)
-   {
+   { 
      ConvertRGBPlanesToRGBPixels();
    }
+
    // In *normal *case, when planarConf is 0, pixels are already in RGB
 }
 
