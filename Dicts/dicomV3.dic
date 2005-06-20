@@ -272,7 +272,7 @@
 0018 0033 DS 1-n Energy Window Total Width (RET)
 0018 0034 LO 1 Intervention Drug Name
 0018 0035 TM 1 Intervention Drug Start Time
-0018 0036 SQ 1 Interventional Therapy Sequence
+0018 0036 SQ 1 Intervention Sequence
 0018 0037 CS 1 Therapy Type (RET)
 0018 0038 CS 1 Intervention Status
 0018 0039 CS 1 Therapy Description (RET)
