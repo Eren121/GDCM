@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/06/17 12:35:00 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/06/20 17:10:17 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -853,6 +853,9 @@ void FileHelper::SetWriteToRGB()
       Archive->Push(0x0028,0x1202);
       Archive->Push(0x0028,0x1203);
 
+      // push out Palette Color Lookup Table UID, if any
+      Archive->Push(0x0028,0x1199);
+
       // For old '24 Bits' ACR-NEMA
       // Thus, we have a RGB image and the bits allocated = 24 and 
       // samples per pixels = 1 (in the read file)
@@ -900,6 +903,10 @@ void FileHelper::RestoreWrite()
    Archive->Restore(0x0028,0x1201);
    Archive->Restore(0x0028,0x1202);
    Archive->Restore(0x0028,0x1203);
+
+   // For the Palette Color Lookup Table UID
+   Archive->Restore(0x0028,0x1203); 
+
 
    // group 0002 may be pushed out for ACR-NEMA writting purposes 
    Archive->Restore(0x0002,0x0000);
