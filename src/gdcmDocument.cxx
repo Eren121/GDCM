@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/19 15:57:29 $
-  Version:   $Revision: 1.247 $
+  Date:      $Date: 2005/06/20 15:58:53 $
+  Version:   $Revision: 1.248 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -195,9 +195,25 @@ bool Document::Load( std::string const &fileName )
       LoadEntryBinArea(0x0028,0x1222);
       // Segmented Blue  Palette Color LUT Data
       LoadEntryBinArea(0x0028,0x1223);
-   } 
+   }
+ 
    //FIXME later : how to use it?
-   LoadEntryBinArea(0x0028,0x3006);  //LUT Data (CTX dependent) 
+   SeqEntry *modLutSeq = GetSeqEntry(0x0028,0x3000);
+   if ( modLutSeq !=0 )
+   {
+      SQItem *sqi= modLutSeq->GetFirstSQItem();
+      if ( !sqi )
+      {
+         BinEntry *b = sqi->GetBinEntry(0x0028,0x3006);
+         if ( b != 0 )
+         {
+            if ( b->GetLength() != 0 )
+            {
+               LoadEntryBinArea(b);    //LUT Data (CTX dependent)
+            }   
+        }
+     }      
+   }
 
    CloseFile(); 
   
