@@ -339,6 +339,7 @@
 0018 1068 DS 1 Multiplex Group Time Offset
 0018 1069 DS 1 Trigger Time Offset
 0018 106a CS 1 Synchronization Trigger
+0018 106b UI 1 Synchronization Frame of Reference
 0018 106c US 2 Synchronization Channel
 0018 106e UL 1 Trigger Sample Position
 0018 1070 LO 1 Radiopharmaceutical Route
@@ -899,6 +900,7 @@
 0028 0010 US 1 Rows
 0028 0011 US 1 Columns
 0028 0012 US 1 Planes
+0028 0013 US 1 Instants (RET)
 0028 0014 US 1 Ultrasound Color Data Present
 0028 0030 DS 2 Pixel Spacing
 0028 0031 DS 2 Zoom Factor
@@ -921,6 +923,8 @@
 0028 0110 US 1 Smallest Image Pixel Value in Plane
 0028 0111 US 1 Largest Image Pixel Value in Plane
 0028 0120 US 1 Pixel Padding Value
+0028 0122 US 1 Waveform Padding Value
+0028 0199 US 1 Special Code (RET)
 0028 0200 US 1 Image Location (RET)
 0028 0300 CS 1 Quality Control Image
 0028 0301 CS 1 Burned In Annotation
@@ -1037,11 +1041,13 @@
 0038 4000 LT 1 Visit Comments
 
 003a 0000 UL 1 Group Length
+003a 0002 SQ 1 Waveform Sequence
 003a 0004 CS 1 Waveform Originality
 003a 0005 US 1 Number of Waveform Channels
 003a 0010 UL 1 Number of Waveform Samples
 003a 001a DS 1 Sampling Frequency
 003a 0020 SH 1 Multiplex Group Label
+003a 0103 CS 1 Data Value Representation
 003a 0200 SQ 1 Channel Definition Sequence
 003a 0202 IS 1 Waveform Channel Number
 003a 0203 SH 1 Channel Label
@@ -1127,6 +1133,8 @@
 0040 050a LO 1 Specimen Accession Number
 0040 0550 SQ 1 Specimen Sequence
 0040 0551 LO 1 Specimen Identifier
+0040 0552 SQ 1 Specimen Description Sequence
+0040 0553 ST 1 Specimen Description
 0040 0555 SQ 1 Acquisition Context Sequence
 0040 0556 ST 1 Acquisition Context Description
 0040 059a SQ 1 Specimen Type Code Sequence
@@ -1138,6 +1146,7 @@
 0040 08d8 SQ 1 Pixel Spacing Sequence
 0040 08da SQ 1 Coordinate System Axis Code Sequence
 0040 08ea SQ 1 Measurement Units Code Sequence
+0040 09f8 SQ 1 Vital Stain Code Sequence
 0040 1001 SH 1 Requested Procedure ID
 0040 1002 LO 1 Reason for the Requested Procedure
 0040 1003 SH 1 Requested Procedure Priority
@@ -1228,6 +1237,7 @@
 0040 a13a DT 1-n Referenced Datetime
 0040 a160 UT 1 Text Value
 0040 a168 SQ 1 Concept Code Sequence
+0040 a16a ST 1 Bibliographics Citation
 0040 a170 SQ 1 Purpose of Reference Code Sequence
 0040 a180 US 1 Annotation Group Number
 0040 a195 SQ 1 Modifier Code Sequence
@@ -1245,6 +1255,7 @@
 0040 a504 SQ 1 Content Template Sequence
 0040 a525 SQ 1 Identical Documents Sequence
 0040 a730 SQ 1 Content Sequence
+0040 a992 ST 1 Uniform Resource Locator
 0040 b020 SQ 1 Annotation Sequence
 0040 db00 CS 1 Template Identifier
 0040 db06 DT 1 Template Version (RET)
@@ -1253,6 +1264,7 @@
 0040 db0c UI 1 Template Extension Organization UID (RET)
 0040 db0d UI 1 Template Extension Creator UID (RET)
 0040 db73 UL 1-n Referenced Content Item Identifier
+0041 1050 SQ 1 Special PAPYRUS 3.0
 
 0050 0000 UL 1 Group Length
 0050 0004 CS 1 Calibration Image
@@ -2024,8 +2036,8 @@
 300e 0008 PN 1 Reviewer Name
 
 4000 0000 UL 1 Group Length
-4000 0010 UL 1 Arbitrary FIXME RET
-4000 4000 UL 1 Comments FIXME RET
+4000 0010 LT 1 Arbitrary (RET)
+4000 4000 LT 1 Comments (RET)
 
 4008 0000 UL 1 Group Length
 4008 0040 SH 1 Results ID
@@ -2554,7 +2566,6 @@
 
 fffa fffa SQ 1 Digital Signatures Sequence
 fffc fffc OB 1 Data Set Trailing Padding
-fffe e000 UL 1 Item FIXME
-fffe e00d UL 1 Item Delimitation Item FIXME
-fffe e0dd UL 1 Sequence Delimitation Item FIXME
-ffff ffff UK 1 Unknown Code FIXME
+fffe e000 UL 1 Item
+fffe e00d UL 1 Item Delimitation Item
+fffe e0dd UL 1 Sequence Delimitation Item
