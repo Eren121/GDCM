@@ -801,7 +801,7 @@
 0020 0050 DS 1 Location (RET)
 0020 0052 UI 1 Frame of Reference UID
 0020 0060 CS 1 Laterality
-0020,0062 CS 1 Image Laterality
+0020 0062 CS 1 Image Laterality
 0020 0070 SH 1 Image Geometry Type (RET)
 0020 0080 UI 1 Masking Image
 0020 0100 IS 1 Temporal Position Identifier
