@@ -63,7 +63,7 @@ class PdfTextParser:
       return True
     return False
 
-  # FIXME this function could we avoided...
+  # FIXME this function could be avoided...
   def IsSuspicious(self,s):
     l = len(s)
     if l > 80:
@@ -144,6 +144,53 @@ class PdfTextParser:
   # Main function to call for parsing
   def Parse(self):
     self.Open()
+
+"""
+subclass
+"""
+class UIDParser(PdfTextParser):
+  def IsAStartingLine(self,s):
+    patt = re.compile('^1.2.840.10008.[0-9.]+ (.*)$') 
+    if( patt.match(s) ):
+      return True
+    #print "Is Not:", s
+    return False
+
+  def IsAFullLine(self,s):
+    patt = re.compile('^1.2.840.10008.[0-9.]+ (.*) PS ?[0-9].1?[0-9]$') 
+    if( patt.match(s) ):
+      return True
+    patt = re.compile('^1.2.840.10008.[0-9.]+ (.*) Well-known frame of reference$') 
+    if( patt.match(s) ):
+      return True
+    patt = re.compile('^1.2.840.10008.[0-9.]+ (.*) \\(Retired\\)$') 
+    if( patt.match(s) ):
+      return True
+    return False
+
+  def IsAComment(self,s):
+    if PdfTextParser.IsAComment(self,s):
+      return True
+    # else let's enhance the super class
+    patt = re.compile('^SPM2 (.*) http(.*)$') 
+    if( patt.match(s) ):
+      return True
+    return False
+
+  def AddOutputLine(self,s):
+    if self.IsAFullLine(s):
+      return PdfTextParser.AddOutputLine(self,s)
+    print "Discarding:", s
+
+class TransferSyntaxParser(UIDParser):
+  def IsAFullLine(self,s):
+    patt = re.compile('^(.*) Transfer Syntax PS ?[0-9].1?[0-9]$') 
+    if patt.match(s):
+      return UIDParser.IsAStartingLine(self,s)
+    print "Not a TS:", s
+    return False
+    
+  
 
 """
 This class is meant to expand line like:
@@ -258,6 +305,7 @@ if __name__ == "__main__":
   inputfilename = os.sys.argv[1]
   outputfilename = os.sys.argv[2]
   tempfile = "/tmp/mytemp"
+  """
   dp = PdfTextParser()
   dp.SetInputFileName( inputfilename )
   #dp.SetOutputFileName( outputfilename )
@@ -268,6 +316,10 @@ if __name__ == "__main__":
   exp.SetInputFileName( tempfile )
   exp.SetOutputFileName( outputfilename )
   exp.Expand()
-
+  """
+  dp = TransferSyntaxParser()
+  dp.SetInputFileName( inputfilename )
+  dp.SetOutputFileName( outputfilename )
+  dp.Parse()
 
   #print dp.IsAStartingLine( "(0004,1212) File-set Consistency Flag US 1\n" )
