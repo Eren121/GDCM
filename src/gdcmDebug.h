@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 19:22:13 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/06/21 14:05:06 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,7 @@ public:
  * @param msg message part
  */
 #ifdef NDEBUG
-#define gdcmDebugMacro(msg)
+#define gdcmDebugMacro(msg) {}
 #else
 #define gdcmDebugMacro(msg)                                 \
 {                                                           \
@@ -126,7 +126,7 @@ public:
  * @param msg message part
  */
 #ifdef NDEBUG
-#define gdcmWarningMacro(msg)
+#define gdcmWarningMacro(msg) {}
 #else
 #define gdcmWarningMacro(msg)                               \
 {                                                           \
@@ -149,7 +149,7 @@ public:
  * @param msg second message part 
  */
 #ifdef NDEBUG
-#define gdcmErrorMacro(msg)
+#define gdcmErrorMacro(msg) {}
 #else
 #define gdcmErrorMacro(msg)                                 \
 {                                                           \
@@ -171,7 +171,7 @@ public:
  *        gdcmAssertMacro( "my message" && 2 < 3 )
  */
 #ifdef NDEBUG
-#define gdcmAssertMacro(arg)
+#define gdcmAssertMacro(arg) {}
 #else
 #define gdcmAssertMacro(arg)                                \
 {                                                           \
