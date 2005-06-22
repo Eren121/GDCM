@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/20 17:12:03 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/06/22 07:52:32 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,7 +167,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         gdcmWarningMacro( "Unable to read Red LUT data" );
+         gdcmWarningMacro( "Unable to read Red Palette Color Lookup Table data" );
       }
 
       // //// Green round:
@@ -175,7 +175,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         gdcmWarningMacro( "Unable to read Green LUT data" );
+         gdcmWarningMacro( "Unable to read Green Palette Color Lookup Table data" );
       }
 
       // //// Blue round:
@@ -183,7 +183,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         gdcmWarningMacro( "Unable to read Blue LUT data" );
+         gdcmWarningMacro( "Unable to read Blue Palette Color Lookup Table data" );
       }
    }
 
@@ -216,7 +216,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    AllocateRaw();
 
    //////////////////////////////////////////////////
-   //// Second stage: read from disk dans decompress.
+   //// Second stage: read from disk and decompress.
    if ( BitsAllocated == 12 )
    {
       ReadAndDecompress12BitsTo16Bits( fp);
@@ -321,12 +321,14 @@ bool PixelReadConvert::BuildRGBImage()
       // The job can't be done
       return false;
    }
+
+   gdcmWarningMacro( "--> BuildRGBImage" );
                                                                                 
    // Build RGB Pixels
    AllocateRGB();
    
    int j;
-   if( BitsAllocated <= 8)
+   if( BitsAllocated <= 8 )
    {
       uint8_t *localRGB = RGB;
       for (size_t i = 0; i < RawSize; ++i )
@@ -420,7 +422,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      assert( !IsJPEGLossless || !IsJPEGLossy || !IsJPEGLS );
      // FIXME this is really ugly but it seems I have to load the complete
      // jpeg2000 stream to use jasper:
-      // I don't think we'll ever be able to deal with multiple fragments properly
+     // I don't think we'll ever be able to deal with multiple fragments properly
 
       unsigned long inputlength = 0;
       JPEGFragment *jpegfrag = JPEGInfo->GetFirstFragment();
@@ -589,16 +591,16 @@ void PixelReadConvert::BuildLUTRGBA()
    gdcmWarningMacro(" lengthB " << lengthB << " debB " 
                  << debB << " nbitsB " << nbitsB);
 
-   if ( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
+   if( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
       lengthR=65536;
    if( !lengthG ) // if = 2^16, this shall be 0
       lengthG=65536;
-   if ( !lengthB ) // if = 2^16, this shall be 0
+   if( !lengthB ) // if = 2^16, this shall be 0
       lengthB=65536; 
                                                                                 
    ////////////////////////////////////////////////////////
 
-   if ( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
+   if( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
    {
       gdcmWarningMacro( "(At least) a LUT is missing" );
       return;
@@ -606,7 +608,7 @@ void PixelReadConvert::BuildLUTRGBA()
 
    // -------------------------------------------------------------
    
-   if ( BitsAllocated <= 8)
+   if( BitsAllocated <= 8 )
    {
       // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
       LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
@@ -617,7 +619,7 @@ void PixelReadConvert::BuildLUTRGBA()
       memset( LutRGBA, 0, 1024 );
                                                                                 
       int mult;
-      if ( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
+      if( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
       {
          // when LUT item size is different than pixel size
          mult = 2; // high byte must be = low byte
@@ -640,10 +642,14 @@ void PixelReadConvert::BuildLUTRGBA()
 
       //take "Subscript of the first Lut Value" (debR,debG,debB) into account!
 
+      //FIXME :  +1 : to get 'low value' byte
+      //         Trouble expected on Big Endian Processors ?
+      //         16 BIts Per Pixel Palette Color to be swapped?
+
       a = LutRGBA + 0 + debR;
       for( i=0; i < lengthR; ++i )
       {
-         *a = LutRedData[i*mult+1];
+         *a = LutRedData[i*mult+1]; 
          a += 4;
       }
                                                                                 
@@ -660,7 +666,7 @@ void PixelReadConvert::BuildLUTRGBA()
          *a = LutBlueData[i*mult+1];
          a += 4;
       }
-                                                                                
+                                    
       a = LutRGBA + 3 ;
       for(i=0; i < 256; ++i)
       {
@@ -911,31 +917,81 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
    if ( BitsStored != BitsAllocated )
    {
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
-      if ( BitsAllocated == 16 )
+      if ( BitsAllocated == 16 
       {
-         uint16_t mask = 0xffff;
-         mask = mask >> ( BitsAllocated - BitsStored );
+         // pmask : to mask the 'unused bits' (may contain overlays)
+         uint16_t pmask = 0xffff;
+         pmask = pmask >> ( BitsAllocated - BitsStored );
+
          uint16_t *deb = (uint16_t*)Raw;
-         for(int i = 0; i<l; i++)
+
+         if ( !PixelSign )
          {
-            *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
-            deb++;
+            for(int i = 0; i<l; i++)
+            {             
+               *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask;
+               deb++;
+            }
+         }
+         else
+         {
+            // smask : to check the 'sign' when BitsStored != BitsAllocated
+            uint16_t smask = 0x8000;
+            smask = smask >> ( BitsAllocated - BitsStored );
+            // nmask : to propagate sign bit on negative values
+            int16_t nmask = 0x8000;  
+            nmask = nmask >> ( BitsAllocated - BitsStored );
+
+            for(int i = 0; i<l; i++)
+            {
+               *deb = *deb >> (BitsStored - HighBitPosition - 1);
+               if ( *deb & smask )
+                  *deb = *deb | nmask;
+               else
+                  *deb = *deb & pmask;
+               deb++;
+            }
          }
       }
       else if ( BitsAllocated == 32 )
       {
-         uint32_t mask = 0xffffffff;
-         mask = mask >> ( BitsAllocated - BitsStored );
+         // pmask : to mask the 'unused bits' (may contain overlays)
+         uint32_t pmask = 0xffffffff;
+         pmask = pmask >> ( BitsAllocated - BitsStored );
+
          uint32_t *deb = (uint32_t*)Raw;
-         for(int i = 0; i<l; i++)
+
+         if ( !PixelSign )
          {
-            *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & mask;
-            deb++;
+            for(int i = 0; i<l; i++)
+            {             
+               *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask;
+               deb++;
+            }
+         }
+         else
+         {
+            // smask : to check the 'sign' when BitsStored != BitsAllocated
+            uint32_t smask = 0x80000000;
+            smask = smask >> ( BitsAllocated - BitsStored );
+            // nmask : to propagate sign bit on negative values
+            int32_t nmask = 0x80000000;   
+            nmask = nmask >> ( BitsAllocated - BitsStored )
+
+            for(int i = 0; i<l; i++)
+            {
+               *deb = *deb >> (BitsStored - HighBitPosition - 1);
+               if ( *deb & smask )
+                  *deb = *deb | nmask;
+               else
+                  *deb = *deb & pmask;
+               deb++;
+            }
          }
       }
       else
       {
-         gdcmWarningMacro("Weird image");
+         gdcmWarningMacro("Weird image (BitsAllocated !=8, 12, 16, 32)");
          throw FormatError( "Weird image !?" );
       }
    }
@@ -948,7 +1004,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
  */
 void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 {
-   gdcmWarningMacro("ConvertRGBPlanesToRGBPixels");
+   gdcmWarningMacro("--> ConvertRGBPlanesToRGBPixels");
 
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
@@ -983,7 +1039,9 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
   // except for the few patches of color on the image.
   // On such images, RLE achieves a compression ratio that is much better 
   // than the compression ratio on an equivalent RGB image. 
-    
+ 
+   gdcmWarningMacro("--> ConvertYcBcRPlanesToRGBPixels");
+   
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
    memmove( copyRaw, localRaw, RawSize );
@@ -1006,8 +1064,6 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    ///  Refer to :
    ///            http://lestourtereaux.free.fr/papers/data/yuvrgb.pdf
    ///  for code optimisation.
-
-   gdcmWarningMacro("ConvertYcBcRPlanesToRGBPixels");
 
    for ( int i = 0; i < nbFrames; i++ )
    {
@@ -1084,11 +1140,13 @@ void PixelReadConvert::ConvertHandleColor()
    // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
    // - [Planar 2] OR  [Photo D] requires LUT intervention.
 
-   gdcmWarningMacro("ConvertHandleColor");
+   gdcmWarningMacro("--> ConvertHandleColor"
+                    << "Planar Configuration " << PlanarConfiguration );
 
    if ( ! IsRawRGB() )
    {
       // [Planar 2] OR  [Photo D]: LUT intervention done outside
+      gdcmWarningMacro("--> RawRGB : LUT intervention done outside");
       return;
    }
                                                                                 
@@ -1097,11 +1155,13 @@ void PixelReadConvert::ConvertHandleColor()
       if ( IsYBRFull )
       {
          // [Planar 1] AND [Photo C] (remember YBR_FULL_422 acts as RGB)
+         gdcmWarningMacro("--> YBRFull");
          ConvertYcBcRPlanesToRGBPixels();
       }
       else
       {
          // [Planar 1] AND [Photo C]
+         gdcmWarningMacro("--> YBRFull");
          ConvertRGBPlanesToRGBPixels();
       }
       return;
@@ -1112,6 +1172,7 @@ void PixelReadConvert::ConvertHandleColor()
 
    if (IsRLELossless)
    { 
+     gdcmWarningMacro("--> RLE Lossless");
      ConvertRGBPlanesToRGBPixels();
    }
 
