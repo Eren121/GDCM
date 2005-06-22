@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/20 15:58:53 $
-  Version:   $Revision: 1.248 $
+  Date:      $Date: 2005/06/22 08:01:41 $
+  Version:   $Revision: 1.249 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,8 +169,12 @@ bool Document::Load( std::string const &fileName )
    std::string PhotometricInterpretation = GetEntryValue(0x0028,0x0004);   
    if( PhotometricInterpretation == "PALETTE COLOR " )
    {
-      LoadEntryBinArea(0x0028,0x1200);  // gray LUT   
-      /// FIXME FIXME FIXME
+   // FIXME
+   // Probabely this line should be outside the 'if'
+   // Try to find an image sample holding a 'gray LUT'
+      LoadEntryBinArea(0x0028,0x1200);  // gray LUT
+   
+      /// FIXME
       /// The tags refered by the three following lines used to be CORRECTLY
       /// defined as having an US Value Representation in the public
       /// dictionary. BUT the semantics implied by the three following
@@ -202,7 +206,7 @@ bool Document::Load( std::string const &fileName )
    if ( modLutSeq !=0 )
    {
       SQItem *sqi= modLutSeq->GetFirstSQItem();
-      if ( !sqi )
+      if ( sqi != 0 )
       {
          BinEntry *b = sqi->GetBinEntry(0x0028,0x3006);
          if ( b != 0 )
