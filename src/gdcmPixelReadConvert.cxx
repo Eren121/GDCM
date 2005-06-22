@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/22 08:00:29 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/06/22 08:04:34 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -207,7 +207,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    }
 
    fp->seekg( PixelOffset, std::ios::beg );
-   if( fp->fail() || fp->eof())
+   if ( fp->fail() || fp->eof() )
    {
       gdcmWarningMacro( "Unable to find PixelOffset in file." );
       return false;
@@ -227,12 +227,12 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // after the field containing the image data. In this case, these
       // bad data are added to the size of the image (in the PixelDataLength
       // variable). But RawSize is the right size of the image !
-      if( PixelDataLength != RawSize)
+      if ( PixelDataLength != RawSize )
       {
          gdcmWarningMacro( "Mismatch between PixelReadConvert : "
                             << PixelDataLength << " and RawSize : " << RawSize );
       }
-      if( PixelDataLength > RawSize)
+      if ( PixelDataLength > RawSize )
       {
          fp->read( (char*)Raw, RawSize);
       }
@@ -328,7 +328,7 @@ bool PixelReadConvert::BuildRGBImage()
    AllocateRGB();
    
    int j;
-   if( BitsAllocated <= 8 )
+   if ( BitsAllocated <= 8 )
    {
       uint8_t *localRGB = RGB;
       for (size_t i = 0; i < RawSize; ++i )
@@ -557,7 +557,7 @@ void PixelReadConvert::BuildLUTRGBA()
    nbRead = sscanf( LutRedDescriptor.c_str(),
                         "%d\\%d\\%d",
                         &lengthR, &debR, &nbitsR );
-   if( nbRead != 3 )
+   if ( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Red LUT descriptor" );
    }                                                                                
@@ -568,7 +568,7 @@ void PixelReadConvert::BuildLUTRGBA()
    nbRead = sscanf( LutGreenDescriptor.c_str(),
                     "%d\\%d\\%d",
                     &lengthG, &debG, &nbitsG );  
-   if( nbRead != 3 )
+   if ( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Green LUT descriptor" );
    }
@@ -579,7 +579,7 @@ void PixelReadConvert::BuildLUTRGBA()
    nbRead = sscanf( LutRedDescriptor.c_str(),
                     "%d\\%d\\%d",
                     &lengthB, &debB, &nbitsB );
-   if( nbRead != 3 )
+   if ( nbRead != 3 )
    {
       gdcmWarningMacro( "Wrong Blue LUT descriptor" );
    }
@@ -591,16 +591,16 @@ void PixelReadConvert::BuildLUTRGBA()
    gdcmWarningMacro(" lengthB " << lengthB << " debB " 
                  << debB << " nbitsB " << nbitsB);
 
-   if( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
+   if ( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
       lengthR=65536;
-   if( !lengthG ) // if = 2^16, this shall be 0
+   if ( !lengthG ) // if = 2^16, this shall be 0
       lengthG=65536;
-   if( !lengthB ) // if = 2^16, this shall be 0
+   if ( !lengthB ) // if = 2^16, this shall be 0
       lengthB=65536; 
                                                                                 
    ////////////////////////////////////////////////////////
 
-   if( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
+   if ( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
    {
       gdcmWarningMacro( "(At least) a LUT is missing" );
       return;
@@ -608,7 +608,7 @@ void PixelReadConvert::BuildLUTRGBA()
 
    // -------------------------------------------------------------
    
-   if( BitsAllocated <= 8 )
+   if ( BitsAllocated <= 8 )
    {
       // forge the 4 * 8 Bits Red/Green/Blue/Alpha LUT
       LutRGBA = new uint8_t[ 1024 ]; // 256 * 4 (R, G, B, Alpha)
@@ -619,7 +619,7 @@ void PixelReadConvert::BuildLUTRGBA()
       memset( LutRGBA, 0, 1024 );
                                                                                 
       int mult;
-      if( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
+      if ( ( nbitsR == 16 ) && ( BitsAllocated == 8 ) )
       {
          // when LUT item size is different than pixel size
          mult = 2; // high byte must be = low byte
@@ -745,7 +745,7 @@ void PixelReadConvert::ConvertSwapZone()
 {
    unsigned int i;
 
-   if( BitsAllocated == 16 )
+   if ( BitsAllocated == 16 )
    {
       uint16_t *im16 = (uint16_t*)Raw;
       switch( SwapCode )
@@ -764,7 +764,7 @@ void PixelReadConvert::ConvertSwapZone()
             gdcmWarningMacro("SwapCode value (16 bits) not allowed.");
       }
    }
-   else if( BitsAllocated == 32 )
+   else if ( BitsAllocated == 32 )
    {
       uint32_t s32;
       uint16_t high;
@@ -830,7 +830,7 @@ void PixelReadConvert::ConvertReorderEndianity()
       uint16_t *deb = (uint16_t *)Raw;
       for(int i = 0; i<l; i++)
       {
-         if( *deb == 0xffff )
+         if ( *deb == 0xffff )
          {
            *deb = 0;
          }
