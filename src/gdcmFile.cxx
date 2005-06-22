@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/10 14:05:37 $
-  Version:   $Revision: 1.242 $
+  Date:      $Date: 2005/06/22 08:11:23 $
+  Version:   $Revision: 1.243 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,9 +77,9 @@ File::File( std::string const &filename )
  */
 File::~File ()
 {
-   if( RLEInfo )
+   if ( RLEInfo )
       delete RLEInfo;
-   if( JPEGInfo )
+   if ( JPEGInfo )
       delete JPEGInfo;
 }
 
@@ -157,7 +157,7 @@ bool File::Load( std::string const &fileName )
       // - a correct PixelVR OB or OW)
       // - the name to "Pixel Data"
       BinEntry *oldEntry = dynamic_cast<BinEntry *>(entry);
-      if(oldEntry)
+      if (oldEntry)
       {
          std::string PixelVR;
          // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
@@ -168,7 +168,7 @@ bool File::Load( std::string const &fileName )
             PixelVR = "OW";
 
          // Change only made if usefull
-         if( PixelVR != oldEntry->GetVR() )
+         if ( PixelVR != oldEntry->GetVR() )
          {
             DictEntry* newDict = NewVirtualDictEntry(GrPixel,NumPixel,
                                                      PixelVR,"1","Pixel Data");
@@ -195,7 +195,7 @@ bool File::Load( std::string const &fileName )
  */
 bool File::IsReadable()
 {
-   if( !Document::IsReadable() )
+   if ( !Document::IsReadable() )
    {
       return false;
    }
@@ -399,16 +399,16 @@ float File::GetXSpacing()
    // (never saw any image with that field :-(
 
    const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
-   if( strImagerPixelSpacing != GDCM_UNFOUND )
+   if ( strImagerPixelSpacing != GDCM_UNFOUND )
    {
-      if( ( nbValues = sscanf( strImagerPixelSpacing.c_str(), 
+      if ( ( nbValues = sscanf( strImagerPixelSpacing.c_str(), 
             "%f\\%f", &yspacing, &xspacing)) != 2 )
       {
          // if no values, xspacing is set to 1.0
-         if( nbValues == 0 )
+         if ( nbValues == 0 )
             xspacing = 1.0;
          // if single value is found, xspacing is defaulted to yspacing
-         if( nbValues == 1 )
+         if ( nbValues == 1 )
             xspacing = yspacing;
 
          if ( xspacing == 0.0 )
@@ -421,20 +421,20 @@ float File::GetXSpacing()
 
    const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
 
-   if( strSpacing == GDCM_UNFOUND )
+   if ( strSpacing == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
       return 1.;
    }
 
-   if( ( nbValues = sscanf( strSpacing.c_str(), 
+   if ( ( nbValues = sscanf( strSpacing.c_str(), 
          "%f \\%f ", &yspacing, &xspacing)) != 2 )
    {
       // if no values, xspacing is set to 1.0
-      if( nbValues == 0 )
+      if ( nbValues == 0 )
          xspacing = 1.0;
       // if single value is found, xspacing is defaulted to yspacing
-      if( nbValues == 1 )
+      if ( nbValues == 1 )
          xspacing = yspacing;
 
       if ( xspacing == 0.0 )
@@ -473,12 +473,12 @@ float File::GetYSpacing()
    // (never saw any image with that field :-(
 
    const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
-   if( strImagerPixelSpacing != GDCM_UNFOUND )
+   if ( strImagerPixelSpacing != GDCM_UNFOUND )
    {
       nbValues = sscanf( strImagerPixelSpacing.c_str(), "%f", &yspacing);
    
    // if sscanf cannot read any float value, it won't affect yspacing
-      if( nbValues == 0 )
+      if ( nbValues == 0 )
             yspacing = 1.0;
 
       if ( yspacing == 0.0 )
@@ -498,7 +498,7 @@ float File::GetYSpacing()
    nbValues = sscanf( strSpacing.c_str(), "%f", &yspacing);
 
    // if no values, yspacing is set to 1.0
-   if( nbValues == 0 )
+   if ( nbValues == 0 )
       yspacing = 1.0;
 
    if ( yspacing == 0.0 )
@@ -571,7 +571,7 @@ float File::GetXOrigin()
       }
    }
 
-   if( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
+   if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
    {
       return 0.;
    }
@@ -601,7 +601,7 @@ float File::GetYOrigin()
       }  
    }
 
-   if( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
+   if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
    {
       return 0.;
    }
@@ -624,7 +624,7 @@ float File::GetZOrigin()
 
    if ( strImPos != GDCM_UNFOUND )
    {
-      if( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3)
+      if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3)
       {
          gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)");
          return 0.;  // bug in the element 0x0020,0x0032
@@ -638,7 +638,7 @@ float File::GetZOrigin()
    strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
    if ( strImPos != GDCM_UNFOUND )
    {
-      if( sscanf( strImPos.c_str(), 
+      if ( sscanf( strImPos.c_str(), 
           "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos ) != 3 )
       {
          gdcmWarningMacro( "Wrong Image Position (RET) (0020,0030)");
@@ -653,7 +653,7 @@ float File::GetZOrigin()
    std::string strSliceLocation = GetEntryValue(0x0020,0x1041); // for *very* old ACR-NEMA images
    if ( strSliceLocation != GDCM_UNFOUND )
    {
-      if( sscanf( strSliceLocation.c_str(), "%f ", &zImPos) != 1)
+      if ( sscanf( strSliceLocation.c_str(), "%f ", &zImPos) != 1)
       {
          gdcmWarningMacro( "Wrong Slice Location (0020,1041)");
          return 0.;  // bug in the element 0x0020,0x1041
@@ -668,7 +668,7 @@ float File::GetZOrigin()
    std::string strLocation = GetEntryValue(0x0020,0x0050);
    if ( strLocation != GDCM_UNFOUND )
    {
-      if( sscanf( strLocation.c_str(), "%f ", &zImPos) != 1)
+      if ( sscanf( strLocation.c_str(), "%f ", &zImPos) != 1 )
       {
          gdcmWarningMacro( "Wrong Location (0020,0050)");
          return 0.;  // bug in the element 0x0020,0x0050
@@ -698,7 +698,7 @@ void File::GetImageOrientationPatient( float iop[6] )
    // 0020 0037 DS REL Image Orientation (Patient)
    if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
    {
-      if( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
+      if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
          gdcmWarningMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
@@ -708,7 +708,7 @@ void File::GetImageOrientationPatient( float iop[6] )
    // 0020 0035 DS REL Image Orientation (RET)
    else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
    {
-      if( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
+      if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
          gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
@@ -1082,7 +1082,7 @@ float File::GetRescaleIntercept()
    const std::string &strRescInter = GetEntryValue(0x0028,0x1052);
    if ( strRescInter != GDCM_UNFOUND )
    {
-      if( sscanf( strRescInter.c_str(), "%f ", &resInter) != 1 )
+      if ( sscanf( strRescInter.c_str(), "%f ", &resInter) != 1 )
       {
          // bug in the element 0x0028,0x1052
          gdcmWarningMacro( "Rescale Intercept (0028,1052) is empty." );
@@ -1103,7 +1103,7 @@ float File::GetRescaleSlope()
    std::string strRescSlope = GetEntryValue(0x0028,0x1053);
    if ( strRescSlope != GDCM_UNFOUND )
    {
-      if( sscanf( strRescSlope.c_str(), "%f ", &resSlope) != 1)
+      if ( sscanf( strRescSlope.c_str(), "%f ", &resSlope) != 1 )
       {
          // bug in the element 0x0028,0x1053
          gdcmWarningMacro( "Rescale Slope (0028,1053) is empty.");
@@ -1406,7 +1406,7 @@ bool File::Write(std::string fileName, FileType writetype)
 
    // Entry : 0002|0000 = group length -> recalculated
    ValEntry*e0000 = GetValEntry(0x0002,0x0000);
-   if( e0000 )
+   if ( e0000 )
    {
       std::ostringstream sLen;
       sLen << ComputeGroup0002Length(writetype);

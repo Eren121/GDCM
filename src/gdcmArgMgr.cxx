@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/09 11:27:54 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/06/22 08:11:23 $
+  Version:   $Revision: 1.10 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,11 +106,11 @@ namespace gdcm
 ArgMgr::~ArgMgr()
 {
    for(int i=0;i<ArgCount;i++)
-      if(ArgLab[i])
+      if ( ArgLab[i] )
          free(ArgLab[i]);
-   if(ArgUsed)
+   if ( ArgUsed )
       free(ArgUsed);
-   if(Appel)
+   if ( Appel )
       free(Appel);
 }
  
@@ -223,7 +223,7 @@ int ArgMgr::ArgMgrSave ( char *param )
    FILE         *fd;
    if ( *ArgParamOut == '\0' )
       return 0;
-   if(deja) 
+   if ( deja ) 
    {
       fd = fopen ( ArgParamOut, "a+" );
    }
