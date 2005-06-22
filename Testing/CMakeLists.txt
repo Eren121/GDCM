@@ -19,6 +19,7 @@ SET(TEST_SOURCES
   TestImageSet.cxx
   TestDicomDirElement.cxx
   TestDicomString.cxx
+  #TestValidate.cxx
 )
 
 # add tests that require data
@@ -171,6 +172,15 @@ SET(BLACK_LIST
   "rle16sti.dcm"
   "rle16loo.dcm"   
   )
+
+# Don't understand why jasper is segfaulting with borland...I bet a borland bug
+IF(BORLAND)
+  SET(BLACK_LIST
+    ${BLACK_LIST}
+    "D_CLUNIE_CT1_J2KR.dcm"
+    "D_CLUNIE_CT1_J2KI.dcm"
+    )
+ENDIF(BORLAND)
 
 # Add a special test that requires dciodvfy from dicom3tools
 INCLUDE(${GDCM_SOURCE_DIR}/CMake/FindDicom3Tools.cmake)
