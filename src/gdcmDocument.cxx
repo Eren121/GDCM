@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/22 08:01:41 $
-  Version:   $Revision: 1.249 $
+  Date:      $Date: 2005/06/23 09:20:23 $
+  Version:   $Revision: 1.250 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1981,7 +1981,8 @@ bool Document::CheckSwap()
  */
 void Document::SwitchByteSwapCode() 
 {
-   gdcmWarningMacro( "Switching Byte Swap code from "<< SwapCode);
+   gdcmWarningMacro( "Switching Byte Swap code from "<< SwapCode
+                     << " at :" <<std::hex << Fp->tellg() );
    if ( SwapCode == 1234 ) 
    {
       SwapCode = 4321;
