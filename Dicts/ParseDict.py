@@ -182,6 +182,10 @@ class UIDParser(PdfTextParser):
       return PdfTextParser.AddOutputLine(self,s)
     print "Discarding:", s
 
+
+"""
+TransferSyntaxParser
+"""
 class TransferSyntaxParser(UIDParser):
   def IsAFullLine(self,s):
     patt = re.compile('^(.*) Transfer Syntax PS ?[0-9].1?[0-9]$') 
@@ -190,7 +194,109 @@ class TransferSyntaxParser(UIDParser):
     print "Not a TS:", s
     return False
     
-  
+"""
+Papyrus parser
+pdftotext -f 19 -l 41 -raw -nopgbrk /tmp/Papyrus31Specif.pdf /tmp/Papyrus31Specif.txt 
+
+I need to do a second pass for pages:
+#29 since I need to find [0-9.]+
+#40,41 since it start with number in two columns !!
+""" 
+class PapyrusParser(PdfTextParser):
+  def __init__(self):
+    self._PreviousPage = 0
+    self._PreviousNumber = 0
+    PdfTextParser.__init__(self)
+
+  def IsAStartingLine(self,s):
+    patt = re.compile('^[A-Za-z \'\(\)]+ +\\([0-9A-F]+,[0-9A-F]+\\) +(.*)$') 
+    if( patt.match(s) ):
+      return True
+    return False
+
+  def IsAFullLine(self,s):
+    patt = re.compile('^[A-Za-z \'\(\)]+ +\\([0-9A-F]+,[0-9A-F]+\\) +(.*)$') 
+    if( patt.match(s) ):
+      return True
+    return False
+
+  def IsAComment(self,s):
+    # dummy case:
+    if s == 'Attribute Name Tag Type Attribute Description':
+      print "Dummy", s
+      return True
+    # Indicate page #, spaces ending with only one number
+    # Sometime there is a line with only one number, we need to
+    # make sure that page # is strictly increasing
+    patt = re.compile('^[1-9][0-9]+$') 
+    if( patt.match(s) ):
+      if( eval(s) > self._PreviousPage):
+        print "Page #", eval(s)
+        self._PreviousNumber = 0
+        self._PreviousPage = eval(s)
+        return True
+    # Now within each page there is a comment that start with a #
+    # let's do the page approach wich reset at each page
+    patt = re.compile('^[0-9]+$') 
+    if( patt.match(s) ):
+      print "Number #", eval(s)
+      self._PreviousNumber = eval(s)
+      return True
+    return False
+
+  def AddOutputLine(self,s):
+    assert not self.IsAComment(s)
+    s = s.replace('\n','')
+    #print "REMOVE return:", s
+    patt = re.compile('^([A-Za-z \'\(\)]+) (\\([0-9A-F]+,[0-9A-F]+\\)) ([0-9C]+) (.*)$') 
+    m = patt.match(s)
+    ss = 'dummy (0000,0000) 0'
+    if m:
+      ss = m.group(2) + ' ' + m.group(3) + ' ' + m.group(1)
+    else:
+      patt = re.compile('^([A-Za-z \'\(\)]+) (\\([0-9A-F]+,[0-9A-F]+\\)) (.*)$') 
+      m = patt.match(s)
+      if m:
+        ss = m.group(2) + ' 0 ' + m.group(1)
+    self._OutLines.append(ss + '\n')
+
+  def Open(self):
+    self._Infile = file(self._InputFilename, 'r')
+    for line in self._Infile.readlines():
+      line = line[:-1] # remove '\n'
+      if not self.IsAComment( line ):
+        if self.IsAStartingLine(line):
+          #print "Previous buffer:",self._PreviousBuffers
+          previousbuffer = ' '.join(self._PreviousBuffers)
+          if self.IsAFullLine(previousbuffer):
+            self.AddOutputLine(previousbuffer)
+          else:
+            if previousbuffer:
+              print "Not a buffer:", previousbuffer
+          # We can clean buffer, since only the case 'suspicious' +
+          # 'Not a full line' has not added buffer to the list
+          self._PreviousBuffers = []
+          # In all cases save the line for potentially growing this line
+          # just to be safe remove any white space at begining of string
+          assert not self.IsAComment(line)
+          self._PreviousBuffers.append(line.strip())
+        else:
+          #print "Not a line",line
+          assert not self.IsAComment(line)
+          # just to be safe remove any white space at begining of string
+          self._PreviousBuffers.append(line.strip())
+      else:
+        #print "Previous buffer:",self._PreviousBuffers
+        previousbuffer = ' '.join(self._PreviousBuffers)
+        if previousbuffer and self.IsAStartingLine(previousbuffer):
+          #print "This line is added:", previousbuffer
+          self.AddOutputLine( previousbuffer )
+#        else:
+#          #print "Line is comment:", line
+#          print "Buffer is:", previousbuffer
+        # Ok this is a comment we can safely clean the buffer:
+        self._PreviousBuffers = []
+    self.Write()
 
 """
 This class is meant to expand line like:
@@ -296,6 +402,7 @@ class DicomV3Expander:
     self.Write()
     infile.close()
 
+
 if __name__ == "__main__":
   argc = len(os.sys.argv )
   if ( argc < 3 ):
@@ -316,8 +423,13 @@ if __name__ == "__main__":
   exp.SetInputFileName( tempfile )
   exp.SetOutputFileName( outputfilename )
   exp.Expand()
-  """
+
   dp = TransferSyntaxParser()
+  dp.SetInputFileName( inputfilename )
+  dp.SetOutputFileName( outputfilename )
+  dp.Parse()
+  """
+  dp = PapyrusParser()
   dp.SetInputFileName( inputfilename )
   dp.SetOutputFileName( outputfilename )
   dp.Parse()
