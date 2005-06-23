@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/22 08:04:34 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/06/23 09:18:37 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -914,6 +914,7 @@ void PixelReadConvert::ConvertFixGreyLevels()
  */
 bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
 {
+
    if ( BitsStored != BitsAllocated )
    {
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
@@ -925,30 +926,42 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
 
          uint16_t *deb = (uint16_t*)Raw;
 
-         if ( !PixelSign )
+         if ( !PixelSign )  // Pixels are unsigned
          {
             for(int i = 0; i<l; i++)
-            {             
+            {   
                *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask;
                deb++;
             }
          }
-         else
+         else // Pixels are signed
          {
             // smask : to check the 'sign' when BitsStored != BitsAllocated
-            uint16_t smask = 0x8000;
-            smask = smask >> ( BitsAllocated - BitsStored );
+            uint16_t smask = 0x0001;
+            smask = smask << ( 16 - (BitsAllocated - BitsStored + 1) );
             // nmask : to propagate sign bit on negative values
             int16_t nmask = 0x8000;  
-            nmask = nmask >> ( BitsAllocated - BitsStored );
-
+            nmask = nmask >> ( BitsAllocated - BitsStored - 1 );
+/*
+std::cout  << "BitsStored "     << BitsStored 
+           << " BitsAllocated " << BitsAllocated 
+           << std::endl;
+std::cout  << std::hex  << "pmask " << pmask
+           << " smask " << smask
+           << " nmask " << nmask
+           << std::endl;
+*/ 
             for(int i = 0; i<l; i++)
             {
                *deb = *deb >> (BitsStored - HighBitPosition - 1);
                if ( *deb & smask )
+               {
                   *deb = *deb | nmask;
+               }
                else
+               {
                   *deb = *deb & pmask;
+               }
                deb++;
             }
          }
@@ -972,11 +985,11 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
          else
          {
             // smask : to check the 'sign' when BitsStored != BitsAllocated
-            uint32_t smask = 0x80000000;
-            smask = smask >> ( BitsAllocated - BitsStored );
+            uint32_t smask = 0x00000001;
+            smask = smask >> ( 32 - (BitsAllocated - BitsStored +1 ));
             // nmask : to propagate sign bit on negative values
             int32_t nmask = 0x80000000;   
-            nmask = nmask >> ( BitsAllocated - BitsStored );
+            nmask = nmask >> ( BitsAllocated - BitsStored -1 );
 
             for(int i = 0; i<l; i++)
             {
