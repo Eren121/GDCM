@@ -1,104 +1,40 @@
-(0010,0010) 2 Patient's Name
-(0010,0020) 2 Patient's ID
-(0010,0030) 2 Patient's Birth Date
-(0010,0040) 2 Patient's Sex
-(0010,1020) 3 Patient's Height
-(0010,1030) 3 Patient's Weight
-(0008,1120) 3 Referenced Patient Sequence
-(0038,0008) 3 Current Patient Location
-(0008,0080) 3 Institution Name
-(0008,1125) 3 Referenced Visit Sequence
-(0008,0020) 2 Study Date
-(0008,0030) 2 Study Time
-(0020,000D) 1 Study UID
-(0020,0010) 2 Study ID
-(0008,0050) 2 Accession number
-(0008,1110) 3 Referenced Study Sequence
-(0008,0060) 1 Modality
-(0020,000E) 1 Series Instance UID
-(0020,0011) 2 Series Number
-(0041,1015) 1 Number of images
-(0041,0013) 3 Image Identifier Sequence
-(0041,1010) 1 Pointer Sequence
-(0041,1041) 1 Referenced Image SOP Class UID
-(0020,0013) 2 Image Number
-(0028,0002) 1 Samples per Pixel
-(0028,0010) 1 Rows
-(0028,0011) 1 Columns
-(0028,0100) 1 Bits Allocated
-(0028,0101) 1 Bits Stored
-(0028,0102) 1 High Bit
-(0028,0103) 1 Pixel Representation
-(7FE0,0010) 1 Pixel Data
-(0041,1011) 2 Image Pointer
-(0041,1012) 3 Pixel Offset
-(0041,1050) 1 Image Sequence
-(0041,1014) 1 External PAPYRUS File Reference Sequence
-(0041,1021) 1C Referenced SOP Class UID
-(0041,1032) 1C Referenced File Path
-(0008,0001) 0 induced some changes to the Data Element
-(0008,0016) 1 SOP Class UID
-(0008,0018) 1 SOP Instance UID
-(0008,1125) 0 Referenced Visit SOP Instance UIDs
-(0010,0010) 2 Patient's Name
-(0010,0020) 2 Patient ID
-(0010,0021) 0 Issuer of Patient ID
-(0010,1000) 3 Other Patient IDs
-(0010,1001) 3 Other Patient Names
-(0010,1040) 0 Patient's Address
-(0010,2152) 0 Region of Residence
-(0010,0030) 0 Patient's Birth Date
-(0010,0032) 3 Patient's Birth Time
-(0010,2160) 3 Ethnic Group
-(0010,0040) 2 Patient's Sex
-(0010,1020) 3 Patient's Height
-(0010,1030) 3 Patient's Weight
-(0010,1080) 0 Military Rank
-(0010,1081) 0 Military Service
-(0010,4000) 3 Patient Comments
-(0038,0500) 0 Patient State
-(0010,21C0) 0 Pregnancy Status
-(0010,2000) 0 Medical Alerts
-(0010,2110) 0 Contrast Allergies
-(0038,0050) 0 Special needs
-(0010,21D0) 0 Last Menstrual Date
-(0010,21A0) 0 Smoking Status
-(0008,1110) 0 Referenced Study SOP Instance UIDs
-(0008,0079) 0 Institution ID
-(0008,0080) 0 Institution Name
-(0008,0081) 0 Institution Address
-(0038,0010) 0 Admission ID
-(0038,0008) 0 Visit Status ID
-(0038,4000) 0 Comments
-(0038,0020) 0 Admitting Date
-(0038,0021) 0 Admitting Time
-(0038,0016) 0 Route of Admissions
-(0008,0090) 0 Referring Physician
-(0038,0030) 0 Discharge Date
-(0038,0032) 0 Discharge Time
-(0038,001A) 0 Scheduled Admission Date
-(0008,1125) 0 Referenced Visit SOP Instance UIDs
-(0020,000D) 0 Study Instance UID
-(0008,1160) 0 Accession Number
-(0020,0010) 2 Study ID
-(0032,0012) 0 Study ID Issuer
-(0008,1030) 3 Procedure Description
-(0008,1032) 0 Procedure Code
-(0032,000A) 0 Study Status ID
-(0032,000C) 0 Study Priority ID
-(0032,4000) 0 Comments
-(0032,1000) 0 Scheduled Study Start Date
-(0032,1030) 0 Reason for study
-(0032,1062) 0 Requested Procedure Primary Coding Scheme UID
-(0032,1080) 0 Study Arrival Date
-(0032,1081) 0 Study Arrival Time
-(0008,1050) 2 Attending Physician
-(0008,0020) 2 Study Date
-(0008,0030) 2 Study Time
-(0032,0032) 0 Study Verified Date
-(0032,0033) 0 Study Verified Time
-(0020,1000) 0 Series in Study
-(0020,1004) 0 Acquisition in Study
-(0008,1060) 0 Name of Physician(s) Reading Study
-(0032,0034) 0 Study Read Date
-(0032,0035) 0 Study Read Time
+0041 0000 UL 1 Group Length
+0041 0010 LO 1 Owner ID (PAPYRUS 3.0)
+0041 1000 LT 1 Comments
+0041 1010 SQ 1 Pointer Sequence
+0041 1011 UL 1 Image Pointer
+0041 1012 UL 1 Pixel Offset
+0041 1013 SQ 1 Image Identifier Sequence
+0041 1014 SQ 1 External PAPYRUS-File Reference Sequence
+0041 1015 US 1 Number of images
+0041 1021 UI 1 Referenced SOP Class UID
+0041 1022 UI 1 Referenced SOP Instance UID
+0041 1031 LO 1 Referenced File Name
+0041 1032 LO 1-n Referenced File Path
+0041 1041 UI 1 Referenced Image SOP Class UID
+0041 1042 UI 1 Referenced Image SOP Instance UID
+0041 1050 SQ 1 Image Sequence
+
+6xxx 0000 Group Length UL 1
+6xxx 00xx Owner ID LT 1 PAPYRUS 3.0
+6xxx xx00 Overlay ID IS 1
+6xxx xx01 Linked Overlays LT 1-n
+6xxx xx10 Overlays Rows US 1
+6xxx xx11 Overlays Columns US 1
+6xxx xx40 Overlay Type LO 1 RECTANGLE, ANNOTATION, GRAPHIC
+6xxx xx50 Overlay Origin US 1-n
+6xxx xx60 Editable LO 1
+6xxx xx70 Overlay Font LO 1 TIMES, HELVETICA
+6xxx xx72 Overlay Style LO 1 NORMAL. BOLD, ITALIC, BOLDITALIC
+6xxx xx74 Overlay Font Size US 1
+6xxx xx76 Overlay Color LO 1-n WHITE, BLACK, RED, GREEN. BLUE, CYAN, MAGENTA, YELLOW
+6xxx xx78 Shadow Size US 1
+6xxx xx80 Fill Pattern LO 1 NONE, OPAQUE, TRANSPARENT
+6xxx xx82 Overlay Pen Size US 1
+6xxx xxA0 Label LO 1
+6xxx xxA2 Post It Text LT 1
+6xxx xxA4 Anchor Point US 1-n
+6xxx xxB0 ROI Type LO 1 MASK, RECT, ELLIPSE, POLYGON
+6xxx xxB2 Attached Annotation LT 1
+6xxx xxBA Contour Points US 1-n
+6xxx xxBC Mask Data US 1-n
