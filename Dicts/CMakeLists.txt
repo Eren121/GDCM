@@ -7,19 +7,24 @@ SET(ALL_DICTS
   dicomV3.dic
   Papyrus.dic
   NIH.dic     #the forbidden one...
+  dicomV3PhilipsIntera.dic
   )
 
 # The following line make sure we are not appending on an already existing file
-FILE(WRITE "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" "")
+#FILE(WRITE "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" "")
+#FOREACH(dict ${ALL_DICTS})
+#  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
+#  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ${dict_append})
+#ENDFOREACH(dict)
+
+# Better solution
+SET(TEST_DICT_BODY)
 FOREACH(dict ${ALL_DICTS})
   FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
-  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ${dict_append})
+  SET(TEST_DICT_BODY "${TEST_DICT_BODY}\n${dict_append}")
 ENDFOREACH(dict)
-
-FOREACH(test 1.dic 2.dic 3.dic)
-  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${test}" test_append)
-  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/test.dic" ${test_append})
-ENDFOREACH(test)
+CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/gdcm.dic.in"
+  "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Nice trick to avoid creating a .h file each time we compile gdcm
@@ -28,7 +33,7 @@ ENDFOREACH(test)
 # Which is a variable afterward...
 
 # Following code contributing by Andy Cedilnik (Kitware)
-FILE(READ "gdcm.dic" ENT)
+FILE(READ "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ENT)
 STRING(REGEX REPLACE "\r?\n" ";" ENT "${ENT}")
 SET(DICOM_DATA_DICTIONARY "")
 
@@ -36,8 +41,22 @@ FOREACH(line ${ENT})
   STRING(REGEX REPLACE
     "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) (.*)$"
     "   {0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"}, " nline "${line}")
+  #MESSAGE( "${nline}" )
   SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
+
+
+#FILE(READ "dicomV3PhilipsIntera.dic" ENT)
+#STRING(REGEX REPLACE "\r?\n" ";" ENT "${ENT}")
+#SET(DICOM_DATA_DICTIONARY "")
+#FOREACH(line ${ENT})
+#  STRING(REGEX REPLACE
+#    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) (.*)$"
+#    "   {0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"}, " nline "${line}")
+#  #SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
+#  MESSAGE( "${nline}" )
+#ENDFOREACH(line)
+
 
 SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n {0,0,0,0,0}")
 
