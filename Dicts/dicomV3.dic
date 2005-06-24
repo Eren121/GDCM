@@ -899,7 +899,7 @@
 0028 000a AT 1-n Frame Dimension Pointer
 0028 0010 US 1 Rows
 0028 0011 US 1 Columns
-0028 0012 US 1 Planes (RET)
+0028 0012 US 1 Planes
 0028 0013 US 1 Instants (RET)
 0028 0014 US 1 Ultrasound Color Data Present
 0028 0015 US 1 UsedNbX ACR Special (RET)
