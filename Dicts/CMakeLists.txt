@@ -1,22 +1,34 @@
 #-----------------------------------------------------------------------------
 # DICOM dictionary stuff
 
+#-----------------------------------------------------------------------------
+# Generate our own 'DICOM' dictionary, based on the following dictionaries:
+SET(ALL_DICTS
+  dicomV3.dic
+  Papyrus.dic
+  NIH.dic     #the forbidden one...
+  )
 
-INSTALL_FILES(${GDCM_DATA_DIR} .dic
-  dicomV3
-  dicomVR
-  dicomTS
-  DicomDir
-  DictGroupName
-)
+# The following line make sure we are not appending on an already existing file
+FILE(WRITE "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" "")
+FOREACH(dict ${ALL_DICTS})
+  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
+  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ${dict_append})
+ENDFOREACH(dict)
 
+FOREACH(test 1.dic 2.dic 3.dic)
+  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${test}" test_append)
+  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/test.dic" ${test_append})
+ENDFOREACH(test)
+
+#-----------------------------------------------------------------------------
 # Nice trick to avoid creating a .h file each time we compile gdcm
 # Since CONFIGURE_FILE do a 'copy if different'
 # We have to write the file here since is contains 'DICOM_DICTIONARY'
 # Which is a variable afterward...
 
 # Following code contributing by Andy Cedilnik (Kitware)
-FILE(READ "dicomV3.dic" ENT)
+FILE(READ "gdcm.dic" ENT)
 STRING(REGEX REPLACE "\r?\n" ";" ENT "${ENT}")
 SET(DICOM_DATA_DICTIONARY "")
 
@@ -88,23 +100,21 @@ ENDFOREACH(line)
 # ... Set the dictionnary
 SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n {0,0,0,0}")
 
-FOREACH(file dicomV3.dic  dicomTS.dic dicomVR.dic DicomDir.dic DictGroupName.dic)
-  CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/${file}"
-    "${GDCM_BINARY_DIR}/Dicts/${file}.out")
-ENDFOREACH(file)
+#FOREACH(file dicomV3.dic dicomTS.dic dicomVR.dic DicomDir.dic DictGroupName.dic)
+#  CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/${file}"
+#    "${GDCM_BINARY_DIR}/Dicts/${file}.out")
+#ENDFOREACH(file)
+
 CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in" 
   "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
 
 #-----------------------------------------------------------------------------
-# Now generate our own 'DICOM' dictionary, based on the following dictionaries:
-SET(ALL_DICTS
-  dicomV3.dic
-  Papyrus.dic
-  NIH.dic     #the forbidden one...
-  )
-
-FOREACH(dict ${ALL_DICTS})
-  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
-  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ${dict_append})
-ENDFOREACH(dict)
+INSTALL_FILES(${GDCM_DATA_DIR} .dic
+  dicomV3
+  dicomVR
+  dicomTS
+  DicomDir
+  DictGroupName
+  gdcm
+)
 
