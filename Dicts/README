@@ -16,3 +16,45 @@ Sources for dicom public dictionaries:
    you can find on the net is very partial.
    WARNING : The Dicom Tag is an identifier inside the Dicom Dictionary,
              The Tag Name *is not*
+
+
+Comment on the file NIH.dic, you can find the following discussion
+on comp.protocol.dicom(*). As clearly specify by David Clunie all
+thoses tags are extremely dangerous to use since they override some
+other, we are only adding them to gdcm to be able to read /apparently/
+some NIH images. SHOULD NOT EVER BE USED FOR WRITTING IMAGES !
+
+(*)
+[Re: Retired element VR and VM, was Re: 0028,3006 LUT Data (nightmare)]
+...
+> 'gdcm' Dicom dictionary uses a few tags, such as :
+>  0018 106b UI 1 Synchronization Frame of Reference
+This should be:
+(0020,0200) Synchronization Frame of Reference UID
+>  0028 0122 US 1 Waveform Padding Value
+(5400,100A)    Waveform Padding Value
+>   003a 0002 SQ 1 Waveform Sequence
+(5400,0100)    Waveform Sequence
+>   003a 0103 CS 1 Data Value Representation
+(50xx,0103)    Data Value Representation
+>   0040 0552 SQ 1 Specimen Description Sequence
+No such attribute
+>   0040 0553 ST 1 Specimen Description
+No such attribute
+>   0040 09f8 SQ 1 Vital Stain Code Sequence
+No such attribute
+>   0040 a16a ST 1 Bibliographics Citation
+No such attribute
+>   0040 a992 ST 1 Uniform Resource Locator
+No such attribute
+
+I suspect these were taken for the draft for trial implementation
+of Sup 23 SR, which was problematic in many ways, not the least
+of which was that some of its attributes with the same number
+were re-used with different purpose and VR, etc.
+
+Some may have been from early drafts of other supplements (e.g.,
+waveform from the looks of things).
+
+None of these should ever be used. 
+...
