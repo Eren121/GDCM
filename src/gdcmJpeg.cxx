@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 20:04:08 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -271,7 +271,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
     return 0;
   }
   // Now we can initialize the JPEG decompression object.
-  if( statesuspension == 0 )
+  if ( statesuspension == 0 )
     {
     jpeg_create_decompress(&cinfo);
     jpeg_stdio_src(&cinfo, fp, this, 1);
@@ -282,9 +282,9 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
     }
    // Step 3: read file parameters with jpeg_read_header()
 
-   if( statesuspension < 2 )
+   if ( statesuspension < 2 )
    {
-      if( jpeg_read_header(&cinfo, TRUE) == JPEG_SUSPENDED )
+      if ( jpeg_read_header(&cinfo, TRUE) == JPEG_SUSPENDED )
       {
       // Suspension in jpeg_read_header
       statesuspension = 2; 
@@ -292,7 +292,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
  
       // Step 4: set parameters for decompression
       // prevent the library from performing any color space conversion
-      if( cinfo.process == JPROC_LOSSLESS )
+      if ( cinfo.process == JPROC_LOSSLESS )
       {
          cinfo.jpeg_color_space = JCS_UNKNOWN;
          cinfo.out_color_space = JCS_UNKNOWN;
@@ -300,9 +300,9 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
    }
 
    // Step 5: Start decompressor
-   if(statesuspension < 3 )
+   if (statesuspension < 3 )
    {
-      if( jpeg_start_decompress(&cinfo) == FALSE )
+      if ( jpeg_start_decompress(&cinfo) == FALSE )
       {
          // Suspension: jpeg_start_decompress
          statesuspension = 3;
@@ -330,7 +330,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
 
    while (cinfo.output_scanline < cinfo.output_height)
    {
-      if( jpeg_read_scanlines(&cinfo, buffer, 1) == 0 )
+      if ( jpeg_read_scanlines(&cinfo, buffer, 1) == 0 )
         {
         // Suspension in jpeg_read_scanlines
         statesuspension = 3;
@@ -349,7 +349,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
    }
 
    // Step 7: Finish decompression
-   if( jpeg_finish_decompress(&cinfo) == FALSE )
+   if ( jpeg_finish_decompress(&cinfo) == FALSE )
      {
      // Suspension: jpeg_finish_decompress
      statesuspension = 4;

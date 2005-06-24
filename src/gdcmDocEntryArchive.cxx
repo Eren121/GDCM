@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/24 09:14:09 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,19 +53,19 @@ DocEntryArchive::~DocEntryArchive()
  */
 bool DocEntryArchive::Push(DocEntry *newEntry)
 {
-   if(!newEntry)
+   if ( !newEntry )
       return false;
 
    uint16_t group = newEntry->GetDictEntry()->GetGroup();
    uint16_t elem  = newEntry->GetDictEntry()->GetElement();
    std::string key = DictEntry::TranslateToKey(group,elem);
 
-   if( Archive.find(key)==Archive.end() )
+   if ( Archive.find(key)==Archive.end() )
    {
       // Save the old DocEntry if any
       DocEntry *old = ArchFile->GetDocEntry(group, elem);
       Archive[key]  = old;
-      if( old )
+      if ( old )
          ArchFile->RemoveEntryNoDestroy(old);
 
       // Set the new DocEntry
@@ -88,12 +88,12 @@ bool DocEntryArchive::Push(uint16_t group, uint16_t elem)
 {
    std::string key = DictEntry::TranslateToKey(group, elem);
 
-   if( Archive.find(key)==Archive.end() )
+   if ( Archive.find(key)==Archive.end() )
    {
       // Save the old DocEntry if any
       DocEntry *old = ArchFile->GetDocEntry(group, elem);
       Archive[key] = old;
-      if( old )
+      if ( old )
          ArchFile->RemoveEntryNoDestroy(old);
 
       return true;
@@ -114,15 +114,15 @@ bool DocEntryArchive::Restore(uint16_t group, uint16_t elem)
    std::string key=DictEntry::TranslateToKey(group, elem);
 
    TagDocEntryHT::iterator restoreIt=Archive.find(key);
-   if( restoreIt!=Archive.end() )
+   if ( restoreIt!=Archive.end() )
    {
       // Delete the new value
       DocEntry *rem = ArchFile->GetDocEntry(group, elem);
-      if( rem )
+      if ( rem )
          ArchFile->RemoveEntry(rem);
 
       // Restore the old value
-      if( Archive[key] )
+      if ( Archive[key] )
          ArchFile->AddEntry(Archive[key]);
 
       Archive.erase(restoreIt);
@@ -166,7 +166,7 @@ void DocEntryArchive::Print(std::ostream &os)
        it!=Archive.end();
        ++it)
    {
-      if(it->second)
+      if ( it->second )
          it->second->Print(os);
    }
 }

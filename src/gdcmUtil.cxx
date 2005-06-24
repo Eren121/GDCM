@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 12:24:53 $
-  Version:   $Revision: 1.154 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.155 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -187,17 +187,17 @@ std::string Util::CreateCleanString(std::string const &s)
 
    for(unsigned int i=0; i<str.size(); i++)
    {
-      if(!isprint((unsigned char)str[i]))
+      if (!isprint((unsigned char)str[i]) )
       {
          str[i] = '.';
       }
    }
 
-   if(str.size() > 0)
+   if (str.size() > 0 )
    {
-      if(!isprint((unsigned char)s[str.size()-1]))
+      if (!isprint((unsigned char)s[str.size()-1]) )
       {
-         if(s[str.size()-1] == 0)
+         if (s[str.size()-1] == 0 )
          {
             str[str.size()-1] = ' ';
          }
@@ -219,7 +219,7 @@ std::string Util::NormalizePath(std::string const &pathname)
    std::string name = pathname;
    int size = name.size();
 
-   if( name[size-1] != SEPARATOR_X && name[size-1] != SEPARATOR_WIN )
+   if ( name[size-1] != SEPARATOR_X && name[size-1] != SEPARATOR_WIN )
    {
       name += SEPARATOR;
    }
@@ -235,7 +235,7 @@ std::string Util::GetPath(std::string const &fullName)
    std::string res = fullName;
    int pos1 = res.rfind("/");
    int pos2 = res.rfind("\\");
-   if( pos1 > pos2)
+   if ( pos1 > pos2 )
    {
       res.resize(pos1);
    }
@@ -258,7 +258,7 @@ std::string Util::GetName(std::string const &fullName)
   std::string::size_type slash_pos = filename.rfind("/");
   std::string::size_type backslash_pos = filename.rfind("\\");
   slash_pos = slash_pos > backslash_pos ? slash_pos : backslash_pos;
-  if(slash_pos != std::string::npos)
+  if (slash_pos != std::string::npos )
     {
     return filename.substr(slash_pos + 1);
     }
@@ -401,7 +401,7 @@ std::string Util::DicomString(const char *s, size_t l)
 std::string Util::DicomString(const char *s)
 {
    size_t l = strlen(s);
-   if( l%2 )
+   if ( l%2 )
    {
       l++;
    }
@@ -421,7 +421,7 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
   // s2 is the string from the DICOM reference: 'MONOCHROME1'
   std::string s1_even = s1; //Never change input parameter
   std::string s2_even = DicomString( s2 );
-  if( s1_even[s1_even.size()-1] == ' ')
+  if ( s1_even[s1_even.size()-1] == ' ' )
   {
     s1_even[s1_even.size()-1] = '\0'; //replace space character by null
   }
@@ -592,7 +592,7 @@ int GetMacAddrSys ( unsigned char *addr )
    char                    **paddrs;
    int                     sock, status=0;
 
-   if(gethostname(hostname,  MAXHOSTNAMELEN) != 0)
+   if (gethostname(hostname,  MAXHOSTNAMELEN) != 0 )
    {
       perror("gethostname");
       return -1;
@@ -601,7 +601,7 @@ int GetMacAddrSys ( unsigned char *addr )
    paddrs = phost->h_addr_list;
 
    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-   if(sock == -1)
+   if (sock == -1 )
    {
       perror("sock");
       return -1;
@@ -614,7 +614,7 @@ int GetMacAddrSys ( unsigned char *addr )
    memcpy(&psa->sin_addr, *paddrs, sizeof(struct in_addr));
 
    status = ioctl(sock, SIOCGARP, &parpreq);
-   if(status == -1)
+   if (status == -1 )
    {
       perror("SIOCGARP");
       return -1;
@@ -651,7 +651,7 @@ int GetMacAddrSys ( unsigned char *addr )
    #define ifreq_size(i) sizeof(struct ifreq)
 #endif // HAVE_SA_LEN
 
-   if( (sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP)) < 0 )
+   if ( (sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP)) < 0 )
    {
       return -1;
    }
@@ -779,7 +779,7 @@ std::string Util::CreateUniqueUID(const std::string &root)
 {
    std::string prefix;
    std::string append;
-   if( root.empty() )
+   if ( root.empty() )
    {
       // gdcm UID prefix, as supplied by http://www.medicalconnections.co.uk
       prefix = RootUID; 
@@ -804,7 +804,7 @@ std::string Util::CreateUniqueUID(const std::string &root)
    append += tmp;
 
    // If append is too long we need to rehash it
-   if( (prefix + append).size() > 64 )
+   if ( (prefix + append).size() > 64 )
    {
       gdcmErrorMacro( "Size of UID is too long." );
       // we need a hash function to truncate this number
@@ -817,7 +817,7 @@ std::string Util::CreateUniqueUID(const std::string &root)
 
 void Util::SetRootUID(const std::string &root)
 {
-   if( root.empty() )
+   if ( root.empty() )
       RootUID = GDCM_UID;
    else
       RootUID = root;
@@ -988,7 +988,7 @@ std::string Util::GetIPAddress()
    char szHostName[HOST_NAME_MAX+1];
    int r = gethostname(szHostName, HOST_NAME_MAX);
  
-   if( r == 0 )
+   if ( r == 0 )
    {
       // Get host adresses
       struct hostent *pHost = gethostbyname(szHostName);
@@ -997,7 +997,7 @@ std::string Util::GetIPAddress()
       {
          for( int j = 0; j<pHost->h_length; j++ )
          {
-            if( j > 0 ) str += ".";
+            if ( j > 0 ) str += ".";
  
             str += Util::Format("%u", 
                 (unsigned int)((unsigned char*)pHost->h_addr_list[i])[j]);

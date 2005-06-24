@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 16:08:16 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ void SerieHelper::AddFileName(std::string const &filename)
 {
    // Create a DICOM file
    File *header = new File( filename ); 
-   if( header->IsReadable() )
+   if ( header->IsReadable() )
    {
       int allrules = 1;
       // First step the user has defined s set of rules for the DICOM he is looking for
@@ -99,14 +99,14 @@ void SerieHelper::AddFileName(std::string const &filename)
       {
          const Rule &r = *it;
          const std::string s;// = header->GetEntryValue( r.first );
-         if( !Util::DicomStringEqual(s, r.second.c_str()))
+         if ( !Util::DicomStringEqual(s, r.second.c_str()) )
          {
            // Argh ! This rule is unmatch let's just quit
            allrules = 0;
            break;
          }
       }
-      if( allrules ) // all rules are respected:
+      if ( allrules ) // all rules are respected:
       {
          // Alright ! we have a found a DICOM that match the user expectation. 
          // Let's add it !
@@ -177,11 +177,11 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
  */
 void SerieHelper::OrderFileList(FileList *coherentFileList)
 {
-   if( ImagePositionPatientOrdering( coherentFileList ) )
+   if ( ImagePositionPatientOrdering( coherentFileList ) )
    {
       return ;
    }
-   else if( ImageNumberOrdering(coherentFileList ) )
+   else if ( ImageNumberOrdering(coherentFileList ) )
    {
       return ;
    }
@@ -198,7 +198,7 @@ void SerieHelper::OrderFileList(FileList *coherentFileList)
 FileList *SerieHelper::GetFirstCoherentFileList()
 {
    ItListHt = CoherentFileListHT.begin();
-   if( ItListHt != CoherentFileListHT.end() )
+   if ( ItListHt != CoherentFileListHT.end() )
       return ItListHt->second;
    return NULL;
 }
@@ -263,7 +263,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          it = fileList->begin();
          it != fileList->end(); ++it )
    {
-      if( first ) 
+      if ( first ) 
       {
          (*it)->GetImageOrientationPatient( cosines );
       
@@ -319,7 +319,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    // gdcmAssertMacro( CoherentFileVector.capacity() >= n );
 
    // Find out if min/max are coherent
-   if( min == max )
+   if ( min == max )
      {
      gdcmWarningMacro( "Looks like all images have the exact same image position...");
      return false;
@@ -394,7 +394,7 @@ bool SerieHelper::ImageNumberOrdering(FileList *fileList)
    }
 
    // Find out if image numbers are coherent (consecutive)
-   if( min == max || max == 0 || max >= (n+min))
+   if ( min == max || max == 0 || max >= (n+min) )
       return false;
 
    std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberLessThan );

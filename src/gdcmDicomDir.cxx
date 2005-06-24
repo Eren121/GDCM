@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:36:07 $
-  Version:   $Revision: 1.141 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.142 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -227,17 +227,17 @@ bool DicomDir::Load(std::string const &fileName )
  */
 bool DicomDir::IsReadable()
 {
-   if( Filetype == Unknown)
+   if ( Filetype == Unknown )
    {
       gdcmWarningMacro( "Wrong filetype");
       return false;
    }
-   if( !MetaElems )
+   if ( !MetaElems )
    {
       gdcmWarningMacro( "Meta Elements missing in DicomDir");
       return false;
    }
-   if( Patients.size() <= 0 )
+   if ( Patients.size() <= 0 )
    {
       gdcmWarningMacro( "NO Patient in DicomDir");
       return false;
@@ -251,18 +251,18 @@ bool DicomDir::IsReadable()
  */  
 DicomDirMeta *DicomDir::NewMeta()
 {
-   if( MetaElems )
+   if ( MetaElems )
       delete MetaElems;
 
    DocEntry *entry = GetFirstEntry();
-   if( entry )
+   if ( entry )
    { 
       MetaElems = new DicomDirMeta(true); // true = empty
 
       entry = GetFirstEntry();
       while( entry )
       {
-         if( dynamic_cast<SeqEntry *>(entry) )
+         if ( dynamic_cast<SeqEntry *>(entry) )
             break;
 
          RemoveEntryNoDestroy(entry);
@@ -351,7 +351,7 @@ void DicomDir::ParseDirectory()
 void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg, 
                                DicomDir::Method *argDelete )
 {
-   if( StartArg && StartMethodArgDelete )
+   if ( StartArg && StartMethodArgDelete )
    {
       StartMethodArgDelete( StartArg );
    }
@@ -373,7 +373,7 @@ void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg,
 void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg, 
                                   DicomDir::Method *argDelete )
 {
-   if( ProgressArg && ProgressMethodArgDelete )
+   if ( ProgressArg && ProgressMethodArgDelete )
    {
       ProgressMethodArgDelete( ProgressArg );
    }
@@ -393,7 +393,7 @@ void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg,
 void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg, 
                              DicomDir::Method *argDelete )
 {
-   if( EndArg && EndMethodArgDelete )
+   if ( EndArg && EndMethodArgDelete )
    {
       EndMethodArgDelete( EndArg );
    }
@@ -452,7 +452,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
 
    std::ofstream *fp = new std::ofstream(fileName.c_str(),  
                                          std::ios::out | std::ios::binary);
-   if( !fp ) 
+   if ( !fp ) 
    {
       gdcmWarningMacro("Failed to open(write) File: " << fileName.c_str());
       return false;
@@ -552,7 +552,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
    {
       Progress = (float)(count+1)/(float)fileList.size();
       CallProgressMethod();
-      if( Abort )
+      if ( Abort )
       {
          break;
       }
@@ -561,13 +561,13 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
    f->SetLoadMode(LoadMode); // we allow user not to load Sequences...
    f->Load( it->c_str() );
 
-//     if( !f )
+//     if ( !f )
 //     {
 //         gdcmWarningMacro( "Failure in new gdcm::File " << it->c_str() );
 //         continue;
 //      }
       
-      if( f->IsReadable() )
+      if ( f->IsReadable() )
       {
          // Add the file to the chained list:
          list.push_back(f);
@@ -602,7 +602,7 @@ void DicomDir::CallStartMethod()
 {
    Progress = 0.0f;
    Abort    = false;
-   if( StartMethod )
+   if ( StartMethod )
    {
       StartMethod( StartArg );
    }
@@ -613,7 +613,7 @@ void DicomDir::CallStartMethod()
  */
 void DicomDir::CallProgressMethod()
 {
-   if( ProgressMethod )
+   if ( ProgressMethod )
    {
       ProgressMethod( ProgressArg );
    }
@@ -625,7 +625,7 @@ void DicomDir::CallProgressMethod()
 void DicomDir::CallEndMethod()
 {
    Progress = 1.0f;
-   if( EndMethod )
+   if ( EndMethod )
    {
       EndMethod( EndArg );
    }
@@ -702,40 +702,40 @@ void DicomDir::CreateDicomDir()
          continue;
       }
 
-      if( v == "PATIENT " )
+      if ( v == "PATIENT " )
       {
          si = new DicomDirPatient(true);
-         if( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
+         if ( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
          {
             delete si;
             si = NULL;
             gdcmErrorMacro( "Add PatientToEnd failed");
          }
       }
-      else if( v == "STUDY " )
+      else if ( v == "STUDY " )
       {
          si = new DicomDirStudy(true);
-         if( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
+         if ( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
          {
             delete si;
             si = NULL;
             gdcmErrorMacro( "Add AddStudyToEnd failed");
          }
       }
-      else if( v == "SERIES" )
+      else if ( v == "SERIES" )
       {
          si = new DicomDirSerie(true);
-         if( !AddSerieToEnd( static_cast<DicomDirSerie *>(si)) )
+         if ( !AddSerieToEnd( static_cast<DicomDirSerie *>(si)) )
          {
             delete si;
             si = NULL;
             gdcmErrorMacro( "Add AddSerieToEnd failed");
          }
       }
-      else if( v == "IMAGE " ) 
+      else if ( v == "IMAGE " ) 
       {
          si = new DicomDirImage(true);
-         if( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
+         if ( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
          {
             delete si;
             si = NULL;
@@ -748,7 +748,7 @@ void DicomDir::CreateDicomDir()
          // neither an 'IMAGE' SQItem. Skip to next item.
          continue;
       }
-      if( si )
+      if ( si )
          MoveSQItem(si,tmpSI);
 
       tmpSI=s->GetNextSQItem();
@@ -772,7 +772,7 @@ bool DicomDir::AddPatientToEnd(DicomDirPatient *dd)
  */
 bool DicomDir::AddStudyToEnd(DicomDirStudy *dd)
 {
-   if( Patients.size() > 0 )
+   if ( Patients.size() > 0 )
    {
       ListDicomDirPatient::iterator itp = Patients.end();
       itp--;
@@ -788,13 +788,13 @@ bool DicomDir::AddStudyToEnd(DicomDirStudy *dd)
  */
 bool DicomDir::AddSerieToEnd(DicomDirSerie *dd)
 {
-   if( Patients.size() > 0 )
+   if ( Patients.size() > 0 )
    {
       ListDicomDirPatient::iterator itp = Patients.end();
       itp--;
 
       DicomDirStudy *study = (*itp)->GetLastStudy();
-      if( study )
+      if ( study )
       {
          study->AddSerie(dd);
          return true;
@@ -809,16 +809,16 @@ bool DicomDir::AddSerieToEnd(DicomDirSerie *dd)
  */
 bool DicomDir::AddImageToEnd(DicomDirImage *dd)
 {
-   if( Patients.size() > 0 )
+   if ( Patients.size() > 0 )
    {
       ListDicomDirPatient::iterator itp = Patients.end();
       itp--;
 
       DicomDirStudy *study = (*itp)->GetLastStudy();
-      if( study )
+      if ( study )
       {
          DicomDirSerie *serie = study->GetLastSerie();
-         if( serie )
+         if ( serie )
          {
             serie->AddImage(dd);
             return true;
@@ -860,14 +860,14 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
       serCurInstanceUID  = (*it)->GetEntryValue(0x0020,0x000e);
       serCurID           = (*it)->GetEntryValue(0x0020,0x0011);
 
-      if( patCurName != patPrevName || patCurID != patPrevID || first )
+      if ( patCurName != patPrevName || patCurID != patPrevID || first )
       {
          SetElement(path, GDCM_DICOMDIR_PATIENT, *it);
          first = true;
       }
 
       // if new Study Deal with 'STUDY' Elements   
-      if( studCurInstanceUID != studPrevInstanceUID || studCurID != studPrevID 
+      if ( studCurInstanceUID != studPrevInstanceUID || studCurID != studPrevID 
          || first )
       {
          SetElement(path, GDCM_DICOMDIR_STUDY, *it);
@@ -875,7 +875,7 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
       }
 
       // if new Serie Deal with 'SERIE' Elements   
-      if( serCurInstanceUID != serPrevInstanceUID || serCurID != serPrevID
+      if ( serCurInstanceUID != serPrevInstanceUID || serCurID != serPrevID
          || first )
       {
          SetElement(path, GDCM_DICOMDIR_SERIE, *it);
@@ -918,7 +918,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       case GDCM_DICOMDIR_IMAGE:
          elemList = Global::GetDicomDirElements()->GetDicomDirImageElements();
          si = new DicomDirImage(true);
-         if( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
+         if ( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
          {
             delete si;
             gdcmErrorMacro( "Add ImageToEnd failed");
@@ -927,7 +927,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       case GDCM_DICOMDIR_SERIE:
          elemList = Global::GetDicomDirElements()->GetDicomDirSerieElements();
          si = new DicomDirSerie(true);
-         if( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
+         if ( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
          {
             delete si;
             gdcmErrorMacro( "Add SerieToEnd failed");
@@ -936,7 +936,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       case GDCM_DICOMDIR_STUDY:
          elemList = Global::GetDicomDirElements()->GetDicomDirStudyElements();
          si = new DicomDirStudy(true);
-         if( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
+         if ( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
          {
             delete si;
             gdcmErrorMacro( "Add StudyToEnd failed");
@@ -945,7 +945,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       case GDCM_DICOMDIR_PATIENT:
          elemList = Global::GetDicomDirElements()->GetDicomDirPatientElements();
          si = new DicomDirPatient(true);
-         if( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
+         if ( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
          {
             delete si;
             gdcmErrorMacro( "Add PatientToEnd failed");
@@ -954,7 +954,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       case GDCM_DICOMDIR_META:
          elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
          si = new DicomDirMeta(true);
-         if( MetaElems )
+         if ( MetaElems )
          {
             delete MetaElems;
             gdcmErrorMacro( "MetaElements already exist, they will be destroyed");
@@ -985,7 +985,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
 
       entry->SetOffset(0); // just to avoid further missprinting
 
-      if( header )
+      if ( header )
       {
          // NULL when we Build Up (ex nihilo) a DICOMDIR
          //   or when we add the META elems
@@ -996,16 +996,16 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          val = GDCM_UNFOUND;
       }
 
-      if( val == GDCM_UNFOUND) 
+      if ( val == GDCM_UNFOUND) 
       {
-         if( tmpGr == 0x0004 && tmpEl == 0x1130 ) // File-set ID
+         if ( tmpGr == 0x0004 && tmpEl == 0x1130 ) // File-set ID
          {
            // force to the *end* File Name
            val = Util::GetName( path );
          }
-         else if( tmpGr == 0x0004 && tmpEl == 0x1500 ) // Only used for image
+         else if ( tmpGr == 0x0004 && tmpEl == 0x1500 ) // Only used for image
          {
-            if( header->GetFileName().substr(0, path.length()) != path )
+            if ( header->GetFileName().substr(0, path.length()) != path )
             {
                gdcmWarningMacro( "The base path of file name is incorrect");
                val = header->GetFileName();
@@ -1073,7 +1073,7 @@ bool DicomDir::HeaderLessThan(Document *header1, Document *header2)
  */
 void DicomDir::Print(std::ostream &os, std::string const & )
 {
-   if( MetaElems )
+   if ( MetaElems )
    {
       MetaElems->SetPrintLevel(PrintLevel);
       MetaElems->Print(os);   

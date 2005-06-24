@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:15:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ bool CheckVM(ValEntry *v)
 {
   const std::string &s = v->GetValue();
   std::string::size_type n = s.find("\\");
-  if (n == s.npos) // none found
+  if ( n == s.npos ) // none found
   {
     n = 0;
   }
@@ -69,7 +69,7 @@ void Validator::SetInput(ElementSet *input)
     }
     else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
     {   
-      if( !CheckVM(v))
+      if ( !CheckVM(v) )
       {
         std::cout << "Rah this DICOM contains one wrong tag:" << 
         v->GetValue() << " " <<

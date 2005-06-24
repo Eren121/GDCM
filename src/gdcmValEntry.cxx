@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 10:07:20 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,13 +146,13 @@ void ValEntry::SetValue(std::string const &val)
    if ( l != 0) // To avoid to be cheated by 'zero length' integers
    {   
       const VRKey &vr = GetVR();
-      if( vr == "US" || vr == "SS" )
+      if ( vr == "US" || vr == "SS" )
       {
          // for multivaluated items
          l = (Util::CountSubstring(val, "\\") + 1) * 2;
          ContentEntry::SetValue(val);
       }
-      else if( vr == "UL" || vr == "SL" )
+      else if ( vr == "UL" || vr == "SL" )
       {
          // for multivaluated items
          l = (Util::CountSubstring(val, "\\") + 1) * 4;;
@@ -214,7 +214,7 @@ void ValEntry::Print(std::ostream &os, std::string const &)
     
    TSAtr v  = GetValue();     
    d2 = Util::CreateCleanString(v);  // replace non printable characters by '.'            
-   if( (long)GetLength() <= ValEntry::GetMaxSizePrintEntry()
+   if ( (long)GetLength() <= ValEntry::GetMaxSizePrintEntry()
     || PrintLevel >= 3
     || d2.find(GDCM_NOTLOADED) < d2.length() )
    {

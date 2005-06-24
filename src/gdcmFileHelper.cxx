@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/06/22 07:53:52 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -172,20 +172,20 @@ FileHelper::FileHelper(std::string const &filename )
  */
 FileHelper::~FileHelper()
 { 
-   if( PixelReadConverter )
+   if ( PixelReadConverter )
    {
       delete PixelReadConverter;
    }
-   if( PixelWriteConverter )
+   if ( PixelWriteConverter )
    {
       delete PixelWriteConverter;
    }
-   if( Archive )
+   if ( Archive )
    {
       delete Archive;
    }
 
-   if( SelfHeader )
+   if ( SelfHeader )
    {
       delete FileInternal;
    }
@@ -538,7 +538,7 @@ bool FileHelper::WriteRawData(std::string const &fileName)
       return false;
    }
 
-   if( PixelWriteConverter->GetUserData() )
+   if ( PixelWriteConverter->GetUserData() )
    {
       fp1.write( (char *)PixelWriteConverter->GetUserData(), 
                  PixelWriteConverter->GetUserDataSize() );
@@ -655,7 +655,7 @@ bool FileHelper::Write(std::string const &fileName)
    /// \todo the best trick would be *change* the recognition code
    ///       but pb expected if user deals with, e.g. COMPLEX images
    
-   if( WriteType == ACR_LIBIDO )
+   if ( WriteType == ACR_LIBIDO )
    {
       SetWriteToLibido();
    }
@@ -676,7 +676,7 @@ bool FileHelper::Write(std::string const &fileName)
    }
 
    bool check = CheckWriteIntegrity(); // verifies length
-   if(check)
+   if (check)
    {
       check = FileInternal->Write(fileName,WriteType);
    }
@@ -708,7 +708,7 @@ bool FileHelper::Write(std::string const &fileName)
  */
 bool FileHelper::CheckWriteIntegrity()
 {
-   if(PixelWriteConverter->GetUserData())
+   if ( PixelWriteConverter->GetUserData() )
    {
       int numberBitsAllocated = FileInternal->GetBitsAllocated();
       if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
@@ -725,13 +725,13 @@ bool FileHelper::CheckWriteIntegrity()
                      * FileInternal->GetSamplesPerPixel()
                      * ( numberBitsAllocated / 8 );
       size_t rgbSize = decSize;
-      if( FileInternal->HasLUT() )
+      if ( FileInternal->HasLUT() )
          rgbSize = decSize * 3;
 
       switch(WriteMode)
       {
          case WMODE_RAW :
-            if( decSize!=PixelWriteConverter->GetUserDataSize() )
+            if ( decSize!=PixelWriteConverter->GetUserDataSize() )
             {
                gdcmWarningMacro( "Data size (Raw) is incorrect. Should be " 
                            << decSize << " / Found :" 
@@ -740,7 +740,7 @@ bool FileHelper::CheckWriteIntegrity()
             }
             break;
          case WMODE_RGB :
-            if( rgbSize!=PixelWriteConverter->GetUserDataSize() )
+            if ( rgbSize!=PixelWriteConverter->GetUserDataSize() )
             {
                gdcmWarningMacro( "Data size (RGB) is incorrect. Should be " 
                           << decSize << " / Found " 
@@ -760,15 +760,15 @@ bool FileHelper::CheckWriteIntegrity()
  */ 
 void FileHelper::SetWriteToRaw()
 {
-   if( FileInternal->GetNumberOfScalarComponents() == 3 
-    && !FileInternal->HasLUT())
+   if ( FileInternal->GetNumberOfScalarComponents() == 3 
+    && !FileInternal->HasLUT() )
    {
       SetWriteToRGB();
    } 
    else
    {
       ValEntry *photInt = CopyValEntry(0x0028,0x0004);
-      if(FileInternal->HasLUT())
+      if (FileInternal->HasLUT() )
       {
          photInt->SetValue("PALETTE COLOR ");
       }
@@ -781,9 +781,9 @@ void FileHelper::SetWriteToRaw()
                                        PixelReadConverter->GetRawSize());
 
       std::string vr = "OB";
-      if( FileInternal->GetBitsAllocated()>8 )
+      if ( FileInternal->GetBitsAllocated()>8 )
          vr = "OW";
-      if( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
+      if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
       BinEntry *pixel = 
          CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
@@ -805,7 +805,7 @@ void FileHelper::SetWriteToRaw()
  */ 
 void FileHelper::SetWriteToRGB()
 {
-   if(FileInternal->GetNumberOfScalarComponents()==3)
+   if ( FileInternal->GetNumberOfScalarComponents()==3 )
    {
       PixelReadConverter->BuildRGBImage();
       
@@ -818,7 +818,7 @@ void FileHelper::SetWriteToRGB()
       ValEntry *photInt = CopyValEntry(0x0028,0x0004);
       photInt->SetValue("RGB ");
 
-      if(PixelReadConverter->GetRGB())
+      if ( PixelReadConverter->GetRGB() )
       {
          PixelWriteConverter->SetReadData(PixelReadConverter->GetRGB(),
                                           PixelReadConverter->GetRGBSize());
@@ -830,9 +830,9 @@ void FileHelper::SetWriteToRGB()
       }
 
       std::string vr = "OB";
-      if( FileInternal->GetBitsAllocated()>8 )
+      if ( FileInternal->GetBitsAllocated()>8 )
          vr = "OW";
-      if( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
+      if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
       BinEntry *pixel = 
          CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
@@ -859,7 +859,7 @@ void FileHelper::SetWriteToRGB()
       // For old '24 Bits' ACR-NEMA
       // Thus, we have a RGB image and the bits allocated = 24 and 
       // samples per pixels = 1 (in the read file)
-      if(FileInternal->GetBitsAllocated()==24) 
+      if ( FileInternal->GetBitsAllocated()==24 ) 
       {
          ValEntry *bitsAlloc = CopyValEntry(0x0028,0x0100);
          bitsAlloc->SetValue("8 ");
@@ -988,7 +988,7 @@ void FileHelper::SetWriteToLibido()
    ValEntry *oldCol = dynamic_cast<ValEntry *>
                 (FileInternal->GetDocEntry(0x0028, 0x0011));
    
-   if( oldRow && oldCol )
+   if ( oldRow && oldCol )
    {
       std::string rows, columns; 
 
@@ -1017,9 +1017,9 @@ void FileHelper::SetWriteToNoLibido()
 {
    ValEntry *recCode = dynamic_cast<ValEntry *>
                 (FileInternal->GetDocEntry(0x0008,0x0010));
-   if( recCode )
+   if ( recCode )
    {
-      if( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )
+      if ( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )
       {
          ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
          libidoCode->SetValue("");
@@ -1055,7 +1055,7 @@ ValEntry *FileHelper::CopyValEntry(uint16_t group, uint16_t elem)
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    ValEntry *newE;
 
-   if( oldE )
+   if ( oldE )
    {
       newE = new ValEntry(oldE->GetDictEntry());
       newE->Copy(oldE);
@@ -1082,11 +1082,11 @@ BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    BinEntry *newE;
 
-   if( oldE ) 
-      if( oldE->GetVR()!=vr )
+   if ( oldE ) 
+      if ( oldE->GetVR()!=vr )
          oldE = NULL;
 
-   if( oldE )
+   if ( oldE )
    {
       newE = new BinEntry(oldE->GetDictEntry());
       newE->Copy(oldE);
@@ -1499,7 +1499,7 @@ uint8_t *FileHelper::GetRaw()
       // The Raw image migth not be loaded yet:
       std::ifstream *fp = FileInternal->OpenFile();
       PixelReadConverter->ReadAndDecompressPixelData( fp );
-      if(fp) 
+      if ( fp ) 
          FileInternal->CloseFile();
 
       raw = PixelReadConverter->GetRaw();

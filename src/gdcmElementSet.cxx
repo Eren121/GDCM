@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 08:48:18 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ bool ElementSet::AddEntry(DocEntry *newEntry)
 {
    const TagKey &key = newEntry->GetKey();
 
-   if( TagHT.count(key) == 1 )
+   if ( TagHT.count(key) == 1 )
    {
       gdcmWarningMacro( "Key already present: " << key.c_str());
       return false;
@@ -89,7 +89,7 @@ bool ElementSet::AddEntry(DocEntry *newEntry)
 bool ElementSet::RemoveEntry( DocEntry *entryToRemove)
 {
    const TagKey &key = entryToRemove->GetKey();
-   if( TagHT.count(key) == 1 )
+   if ( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
       //gdcmWarningMacro( "One element erased.");
@@ -108,7 +108,7 @@ bool ElementSet::RemoveEntry( DocEntry *entryToRemove)
 bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
 {
    const TagKey &key = entryToRemove->GetKey();
-   if( TagHT.count(key) == 1 )
+   if ( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
       //gdcmWarningMacro( "One element erased.");

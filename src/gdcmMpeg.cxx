@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/02 12:32:55 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,7 @@ static void Initialize_Decoder()
   int i;
 
   /* Clip table */
-  if (!(Clip=(unsigned char *)malloc(1024)))
+  if ( !(Clip=(unsigned char *)malloc(1024)) )
     Error("Clip[] malloc failed\n");
 
   Clip += 384;
@@ -51,7 +51,7 @@ static void Initialize_Decoder()
     Clip[i] = (i<0) ? 0 : ((i>255) ? 255 : i);
 
   /* IDCT */
-  if (Reference_IDCT_Flag)
+  if ( Reference_IDCT_Flag )
     Initialize_Reference_IDCT();
   else
     Initialize_Fast_IDCT();
@@ -65,12 +65,15 @@ static void Initialize_Sequence()
   static int Table_6_20[3] = {6,8,12};
 
   /* check scalability mode of enhancement layer */
-  if (Two_Streams && (enhan.scalable_mode!=SC_SNR) && (base.scalable_mode!=SC_DP))
-    Error("unsupported scalability mode\n");
-
+  if ( Two_Streams && (enhan.scalable_mode!=SC_SNR) 
+      &&
+       (base.scalable_mode!=SC_DP) )
+  {
+     Error("unsupported scalability mode\n");
+  }
   /* force MPEG-1 parameters for proper decoder behavior */
   /* see ISO/IEC 13818-2 section D.9.14 */
-  if (!base.MPEG2_Flag)
+  if ( !base.MPEG2_Flag )
   {
     progressive_sequence = 1;
     progressive_frame = 1;
@@ -100,39 +103,39 @@ static void Initialize_Sequence()
 
   for (cc=0; cc<3; cc++)
   {
-    if (cc==0)
+    if ( cc==0 )
       size = Coded_Picture_Width*Coded_Picture_Height;
     else
       size = Chroma_Width*Chroma_Height;
 
-    if (!(backward_reference_frame[cc] = (unsigned char *)malloc(size)))
+    if ( !(backward_reference_frame[cc] = (unsigned char *)malloc(size)) )
       Error("backward_reference_frame[] malloc failed\n");
 
-    if (!(forward_reference_frame[cc] = (unsigned char *)malloc(size)))
+    if ( !(forward_reference_frame[cc] = (unsigned char *)malloc(size)) )
       Error("forward_reference_frame[] malloc failed\n");
 
-    if (!(auxframe[cc] = (unsigned char *)malloc(size)))
+    if ( !(auxframe[cc] = (unsigned char *)malloc(size)) )
       Error("auxframe[] malloc failed\n");
 
-    if(Ersatz_Flag)
-      if (!(substitute_frame[cc] = (unsigned char *)malloc(size)))
+    if (  Ersatz_Flag )
+      if ( !(substitute_frame[cc] = (unsigned char *)malloc(size)) )
         Error("substitute_frame[] malloc failed\n");
 
 
-    if (base.scalable_mode==SC_SPAT)
+    if ( base.scalable_mode==SC_SPAT )
     {
       /* this assumes lower layer is 4:2:0 */
-      if (!(llframe0[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
+      if ( !(llframe0[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
         Error("llframe0 malloc failed\n");
-      if (!(llframe1[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
+      if ( !(llframe1[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
         Error("llframe1 malloc failed\n");
     }
   }
 
   /* SCALABILITY: Spatial */
-  if (base.scalable_mode==SC_SPAT)
+  if ( base.scalable_mode==SC_SPAT )
   {
-    if (!(lltmp = (short *)malloc(lower_layer_prediction_horizontal_size*((lower_layer_prediction_vertical_size*vertical_subsampling_factor_n)/vertical_subsampling_factor_m)*sizeof(short))))
+    if ( !(lltmp = (short *)malloc(lower_layer_prediction_horizontal_size*((lower_layer_prediction_vertical_size*vertical_subsampling_factor_n)/vertical_subsampling_factor_m)*sizeof(short))))
       Error("lltmp malloc failed\n");
   }
 
@@ -166,7 +169,6 @@ static int Headers()
 
   ld = &base;
   
-
   /* return when end of sequence (0) or picture
      header has been parsed (1) */
 
@@ -202,7 +204,7 @@ static int Decode_Bitstream()
 
     ret = Headers();
     
-    if(ret==1)
+    if ( ret==1 )
     {
       ret = video_sequence(&Bitstream_Framenum);
     }
@@ -226,18 +228,18 @@ static void Deinitialize_Sequence()
     free(forward_reference_frame[i]);
     free(auxframe[i]);
 
-    if (base.scalable_mode==SC_SPAT)
+    if ( base.scalable_mode==SC_SPAT )
     {
      free(llframe0[i]);
      free(llframe1[i]);
     }
   }
 
-  if (base.scalable_mode==SC_SPAT)
+  if ( base.scalable_mode==SC_SPAT )
     free(lltmp);
 
 #ifdef DISPLAY
-  if (Output_Type==T_X11) 
+  if ( Output_Type==T_X11 ) 
     Terminate_Display_Process();
 #endif
 }
@@ -261,7 +263,7 @@ static int video_sequence(int *Bitstream_Framenumber)
   Decode_Picture(Bitstream_Framenum, Sequence_Framenum);
 
   /* update picture numbers */
-  if (!Second_Field)
+  if ( !Second_Field )
   {
     Bitstream_Framenum++;
     Sequence_Framenum++;
@@ -272,7 +274,7 @@ static int video_sequence(int *Bitstream_Framenumber)
   {
     Decode_Picture(Bitstream_Framenum, Sequence_Framenum);
 
-    if (!Second_Field)
+    if ( !Second_Field )
     {
       Bitstream_Framenum++;
       Sequence_Framenum++;
@@ -343,11 +345,11 @@ bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
 #endif
 
 
-  if(base.Infile != 0)
+  if ( base.Infile != 0 )
   {
     Initialize_Buffer(); 
   
-    if(Show_Bits(8)==0x47)
+    if ( Show_Bits(8)==0x47 )
     {
       sprintf(Error_Text,"Decoder currently does not parse transport streams\n");
       Error(Error_Text);
@@ -376,7 +378,7 @@ bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
     Initialize_Buffer(); 
   }
 
-  if(base.Infile!=0)
+  if ( base.Infile!=0 )
   {
     //lseek(base.Infile, 0l, SEEK_SET);
     //fp->seekg(mpeg_start, ios_base::beg);
@@ -384,12 +386,12 @@ bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
 
   Initialize_Buffer(); 
 
-  if(Two_Streams)
+  if ( Two_Streams )
   {
   abort();
     ld = &enhan; /* select enhancement layer context */
 
-    if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+    if ( (enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
     {
       sprintf(Error_Text,"enhancment layer bitstream file %s not found\n",
         Enhancement_Layer_Bitstream_Filename);
@@ -407,7 +409,7 @@ bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
 
   //close(base.Infile);
 
-  if (Two_Streams)
+  if ( Two_Streams )
     {
     abort();
     close(enhan.Infile);

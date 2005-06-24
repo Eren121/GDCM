@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/06 12:49:27 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ DictGroupName::DictGroupName()
 {
    std::string filename = DictSet::BuildDictPath() + DICT_GROUP_NAME;
    std::ifstream from(filename.c_str());
-   if(!from)
+   if ( !from )
    {
       gdcmWarningMacro("Can't open dictionary" << filename.c_str());
       FillDefaultDictGroupName(groupName);
@@ -61,7 +61,7 @@ DictGroupName::DictGroupName()
          from.getline(buff, 1024, '"');
          from.getline(buff, 1024, '"');
          value = buff;
-         if(!from.eof())
+         if ( !from.eof() )
             groupName[key] = value;
 
          from.getline(buff, 1024, '\n');
@@ -83,7 +83,7 @@ DictGroupName::~DictGroupName()
 const TagName &DictGroupName::GetName(uint16_t group)
 {
    DictGroupNameHT::const_iterator it = groupName.find(group);
-   if (it == groupName.end())
+   if ( it == groupName.end() )
    {
       return GDCM_UNFOUND;
    }

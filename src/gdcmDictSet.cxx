@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 18:37:55 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ Dict *DictSet::LoadDictFromFile(std::string const &filename,
 Dict *DictSet::GetDict(DictKey const &dictName) 
 {
    DictSetHT::iterator dict = Dicts.find(dictName);
-   if(dict != Dicts.end())
+   if ( dict != Dicts.end() )
    {
       return dict->second;
    }
@@ -124,7 +124,7 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
    TagKeyHT::iterator it;
    
    it = VirtualEntries.find(tag);
-   if(it != VirtualEntries.end())
+   if ( it != VirtualEntries.end() )
    {
       entry = &(it->second);
    }
@@ -146,7 +146,7 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
 Dict *DictSet::GetFirstEntry()
 {
    ItDictHt = Dicts.begin();
-   if( ItDictHt != Dicts.end() )
+   if ( ItDictHt != Dicts.end() )
       return ItDictHt->second;
    return NULL;
 }

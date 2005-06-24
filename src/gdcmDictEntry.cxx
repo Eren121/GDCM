@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 14:00:03 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,13 +124,13 @@ void DictEntry::Print(std::ostream &os, std::string const & )
    std::ostringstream s;
 
    vr = GetVR();
-   if(vr==GDCM_UNKNOWN)
+   if ( vr==GDCM_UNKNOWN )
       vr="  ";
 
    s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
    s << " [" << vr  << "] ";
 
-   if (PrintLevel >= 1)
+   if ( PrintLevel >= 1 )
    {
       s.setf(std::ios::left);
       s << std::setw(66-GetName().length()) << " ";

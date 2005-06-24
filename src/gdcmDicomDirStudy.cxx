@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:02:16 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ namespace gdcm
 DicomDirStudy::DicomDirStudy(bool empty)
               :DicomDirObject()
 {
-   if( !empty )
+   if ( !empty )
    {
       ListDicomDirStudyElem const &elemList = 
          Global::GetDicomDirElements()->GetDicomDirStudyElements();

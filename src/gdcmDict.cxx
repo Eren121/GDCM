@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/02 12:26:42 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ Dict::Dict(std::string const &filename)
    TagName name;
 
    std::ifstream from( filename.c_str() );
-   if( !from )
+   if ( !from )
    {
       gdcmWarningMacro( "Can't open dictionary" << filename.c_str());
       // Using default embeded one:
@@ -100,7 +100,7 @@ bool Dict::AddEntry(DictEntry const &newEntry)
 {
    const TagKey &key = newEntry.GetKey();
 
-   if(KeyHt.count(key) == 1)
+   if ( KeyHt.count(key) == 1 )
    {
       gdcmWarningMacro( "Already present" << key.c_str());
       return false;
@@ -136,7 +136,7 @@ bool Dict::ReplaceEntry(DictEntry const &newEntry)
 bool Dict::RemoveEntry(TagKey const &key) 
 {
    TagKeyHT::const_iterator it = KeyHt.find(key);
-   if(it != KeyHt.end()) 
+   if ( it != KeyHt.end() ) 
    {
       KeyHt.erase(key);
 
@@ -204,7 +204,7 @@ DictEntry *Dict::GetEntry(uint16_t group, uint16_t elem)
 DictEntry *Dict::GetFirstEntry()
 {
    ItKeyHt = KeyHt.begin();
-   if( ItKeyHt != KeyHt.end() )
+   if ( ItKeyHt != KeyHt.end() )
       return &(ItKeyHt->second);
    return NULL;
 }

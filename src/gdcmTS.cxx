@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/09 21:14:43 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ TS::TS()
 {
    std::string filename = DictSet::BuildDictPath() + DICT_TS;
    std::ifstream from(filename.c_str());
-   if( !from )
+   if ( !from )
    {
       gdcmWarningMacro("Can't open dictionary" << filename.c_str());
       FillDefaultTSDict( TsMap );
@@ -104,7 +104,7 @@ TS::TS()
          from >> std::ws;
          std::getline(from, name);
 
-         if(key != "")
+         if (key != "")
          {
             TsMap[key] = name;
          }
@@ -167,7 +167,7 @@ bool TS::IsRLELossless(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( key == SpecialStrings[RLELossless] )
       {
@@ -187,7 +187,7 @@ bool TS::IsJPEGLossless(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( key == SpecialStrings[JPEGFullProgressionProcess10_12]
         || key == SpecialStrings[JPEGLosslessProcess14]
@@ -209,7 +209,7 @@ bool TS::IsJPEGLossy(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( key == SpecialStrings[JPEGBaselineProcess1]
         || key == SpecialStrings[JPEGExtendedProcess2_4]
@@ -232,7 +232,7 @@ bool TS::IsJPEG2000(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( key == SpecialStrings[JPEG2000Lossless]
         || key == SpecialStrings[JPEG2000] )
@@ -252,7 +252,7 @@ bool TS::IsJPEG(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( IsJPEGLossy( key )
         || IsJPEGLossless( key )
@@ -275,7 +275,7 @@ bool TS::IsJPEGLS(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( key == SpecialStrings[JPEGLSLossless]
         || key == SpecialStrings[JPEGLSNearLossless] ) 
@@ -295,7 +295,7 @@ bool TS::IsMPEG(TSKey const &key)
 {
    bool r = false;
    // First check this is an actual transfer syntax
-   if( IsTransferSyntax(key) )
+   if ( IsTransferSyntax(key) )
    {
       if ( key == SpecialStrings[MPEG2MainProfile] ) 
       {

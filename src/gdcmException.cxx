@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ std::string Exception::getName() const throw()
 
       std::string name;
       std::string iname = typeid(*this).name();
-      if(iname[0] == 'Q')
+      if ( iname[0] == 'Q' )
       {
          nested = iname[1] - '0';
          iname = std::string(iname, 2, std::string::npos);
@@ -94,8 +94,8 @@ std::string Exception::getName() const throw()
          ::sscanf(iname.c_str(), "%u%n", &nb, &offset);
          iname = std::string(iname, offset, std::string::npos);
          name += std::string(iname, 0, nb);
-         if(i + 1 < nested) name += "::";
-         iname = std::string(iname, nb, std::string::npos);
+         if ( i + 1 < nested) name += "::";
+         iname = std::string(iname, nb, std::string::npos );
       }
       return name;
 #else           // no class name demangling

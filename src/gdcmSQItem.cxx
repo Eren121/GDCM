@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 08:48:18 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.71 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -147,7 +147,7 @@ bool SQItem::RemoveEntry( DocEntry *entryToRemove )
                               it != DocEntries.end();
                             ++it)
    {
-      if( *it == entryToRemove )
+      if ( *it == entryToRemove )
       {
          DocEntries.erase(it);
          gdcmWarningMacro( "One element erased: " << entryToRemove->GetKey() );
@@ -170,7 +170,7 @@ bool SQItem::RemoveEntryNoDestroy(DocEntry *entryToRemove)
                               it != DocEntries.end();
                             ++it)
    {
-      if( *it == entryToRemove )
+      if ( *it == entryToRemove )
       {
          DocEntries.erase(it);
          gdcmWarningMacro( "One element erased, no destroyed: "
@@ -204,7 +204,7 @@ void SQItem::ClearEntry()
 DocEntry *SQItem::GetFirstEntry()
 {
    ItDocEntries = DocEntries.begin();
-   if( ItDocEntries != DocEntries.end() )
+   if ( ItDocEntries != DocEntries.end() )
       return *ItDocEntries;
    return 0;   
 }
@@ -216,7 +216,7 @@ DocEntry *SQItem::GetFirstEntry()
 DocEntry *SQItem::GetNextEntry()
 {
    ++ItDocEntries;
-   if( ItDocEntries != DocEntries.end() )
+   if ( ItDocEntries != DocEntries.end() )
       return  *ItDocEntries;
    return NULL;
 }

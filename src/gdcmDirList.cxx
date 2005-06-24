@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 14:40:57 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/06/24 10:55:59 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ bool DirList::IsDirectory(std::string const &dirName)
 {
   struct stat fs;
   assert( dirName[dirName.size()-1] != '/' );
-  if(stat(dirName.c_str(), &fs) == 0)
+  if ( stat(dirName.c_str(), &fs) == 0 )
     {
 #if _WIN32
     return ((fs.st_mode & _S_IFDIR) != 0);
@@ -102,10 +102,10 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
        b = FindNextFile(hFile, &fileData))
    {
       fileName = fileData.cFileName;
-      if( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+      if ( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
       {
          // Need to check for . and .. to avoid infinite loop
-         if( fileName != "." && fileName != ".." && recursive )
+         if ( fileName != "." && fileName != ".." && recursive )
          {
             numberOfFiles += Explore(dirName+fileName,recursive);
          }
@@ -139,14 +139,14 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    {
       fileName = dirName + d->d_name;
       stat(fileName.c_str(), &buf); //really discard output ?
-      if( S_ISREG(buf.st_mode) )    //is it a regular file?
+      if ( S_ISREG(buf.st_mode) )    //is it a regular file?
       {
          Filenames.push_back( fileName );
          numberOfFiles++;
       }
-      else if( S_ISDIR(buf.st_mode) ) //directory?
+      else if ( S_ISDIR(buf.st_mode) ) //directory?
       {
-         if( d->d_name[0] != '.' && recursive ) //we are also skipping hidden files
+         if ( d->d_name[0] != '.' && recursive ) //we are also skipping hidden files
          {
             numberOfFiles += Explore( fileName, recursive);
          }

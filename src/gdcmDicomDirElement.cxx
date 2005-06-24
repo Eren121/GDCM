@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 09:58:29 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/06/24 10:55:58 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ DicomDirElement::DicomDirElement()
 {
    std::string filename = DictSet::BuildDictPath() + DICT_ELEM;
    std::ifstream from(filename.c_str());
-   if(!from)
+   if ( !from )
    {
       gdcmWarningMacro( "Can't open DicomDirElement dictionary" 
                         << filename.c_str());
@@ -60,15 +60,15 @@ DicomDirElement::DicomDirElement()
          from.getline(buff, 1024, ' ');
          strType = buff;
 
-         if( strType == "metaElem" )
+         if ( strType == "metaElem" )
             type = DD_META;
-         else if( strType == "patientElem" )
+         else if ( strType == "patientElem" )
             type = DD_PATIENT;
-         else if( strType == "studyElem" )
+         else if ( strType == "studyElem" )
             type = DD_STUDY;
-         else if( strType == "serieElem" )
+         else if ( strType == "serieElem" )
             type = DD_SERIE;
-         else if( strType == "imageElem" )
+         else if ( strType == "imageElem" )
             type = DD_IMAGE;
          else
          {
@@ -77,7 +77,7 @@ DicomDirElement::DicomDirElement()
             type = DD_UNKNOWN;
          }
 
-         if( type!=DD_UNKNOWN )
+         if ( type!=DD_UNKNOWN )
          {
             from >> std::hex >> elem.Group >> elem.Elem;
 
