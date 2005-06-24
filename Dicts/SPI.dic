@@ -1,0 +1,36 @@
+0009 0015 LO 1 SPI                   UID                   
+0009 0010 LO 1 SIEMENS MED           RecognitionCode       
+                
+0011 0010 LO 1 SPI RELEASE 1         Organ                 
+0011 0015 LO 1 SPI RELEASE 1         AllergyIndication     
+0011 0020 LO 1 SPI RELEASE 1         Pregnancy             
+0011 0010 DA 1 SIEMENS CM VA0  CMS   RegistrationDate      
+0011 0011 TM 1 SIEMENS CM VA0  CMS   RegistrationTime      
+0011 0023 IS 1 SIEMENS CM VA0  CMS   UsedPatientWeight     
+                
+0013 0020 LO 1 SIEMENS CM VA0  CMS   PatientName           
+0013 0022 LO 1 SIEMENS CM VA0  CMS   PatientId             
+0013 0030 LO 1 SIEMENS CM VA0  CMS   PatientBirthdate      
+0013 0031 DS 1 SIEMENS CM VA0  CMS   PatientWeight         
+0013 0035 LO 1 SIEMENS CM VA0  CMS   PatientSex            
+0013 0040 LO 1 SIEMENS CM VA0  CMS   ProcedureDescription  
+0013 0042 LO 1 SIEMENS CM VA0  CMS   RestDirection         
+0013 0044 LO 1 SIEMENS CM VA0  CMS   PatientPosition       
+                
+0019 0010 DS 1 SIEMENS CM VA0  CMS   NetFrequency          
+0019 0011 LO 1 SIEMENS CM VA0  ACQU  SequenceFileName      
+0019 0021 DS 1 SIEMENS CT VA0  GEN   Exposure              
+0019 0026 DS 1 SIEMENS CT VA0  GEN   GeneratorVoltage      
+0019 0050 IS 1 SIEMENS MR VA0  GEN   NumberOfAverages      
+0019 0060 DS 1 SIEMENS MR VA0  GEN   FlipAngle             
+0019 0012 DS 1 SIEMENS MR VA0  COAD  MagneticFieldStrength 
+                
+0021 0010 DS 1 SIEMENS MED           Zoom                  
+0021 0011 DS 2 SIEMENS MED           Target                
+0021 0020 DS 2 SIEMENS CM VA0  CMS   FoV                   
+0021 0060 DS 3 SIEMENS CM VA0  CMS   ImagePosition         
+0021 0061 DS 3 SIEMENS CM VA0  CMS   ImageNormal           
+0021 006a DS 3 SIEMENS CM VA0  CMS   ImageRow              
+0021 006b DS 3 SIEMENS CM VA0  CMS   ImageColumn           
+0021 0039 DS 1 SIEMENS MR VA0  GEN   SlabThickness         
+0021 0070 IS 1 SIEMENS MR VA0  GEN   NumberOfEchoes        
