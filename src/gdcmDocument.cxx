@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/23 09:20:23 $
-  Version:   $Revision: 1.250 $
+  Date:      $Date: 2005/06/24 10:53:46 $
+  Version:   $Revision: 1.251 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ bool Document::Load( std::string const &fileName )
 {
    // We should clean out anything that already exists.
    // Check IsDocumentAlreadyLoaded to be sure.
-   if( IsDocumentAlreadyLoaded )
+   if ( IsDocumentAlreadyLoaded )
    {
       gdcmWarningMacro( "A file was already parsed inside this "
                         << "gdcm::Document (previous name was: "
@@ -167,7 +167,7 @@ bool Document::Load( std::string const &fileName )
    // Load 'non string' values
       
    std::string PhotometricInterpretation = GetEntryValue(0x0028,0x0004);   
-   if( PhotometricInterpretation == "PALETTE COLOR " )
+   if ( PhotometricInterpretation == "PALETTE COLOR " )
    {
    // FIXME
    // Probabely this line should be outside the 'if'
@@ -293,7 +293,7 @@ bool Document::SetShaDict(DictKey const &dictName)
  */
 bool Document::IsReadable()
 {
-   if( Filetype == Unknown)
+   if ( Filetype == Unknown )
    {
       gdcmWarningMacro( "Wrong filetype");
       return false;
@@ -476,14 +476,14 @@ std::ifstream *Document::OpenFile()
       return 0;
    }
 
-   if(Fp)
+   if ( Fp )
    {
       gdcmWarningMacro( "File already open: " << Filename.c_str());
       CloseFile();
    }
 
    Fp = new std::ifstream(Filename.c_str(), std::ios::in | std::ios::binary);
-   if( ! *Fp )
+   if ( ! *Fp )
    {
    // Don't user gdcmErrorMacro :
    // a spurious message will appear when you use, for instance 
@@ -499,14 +499,14 @@ std::ifstream *Document::OpenFile()
  
    uint16_t zero = 0;
    Fp->read((char*)&zero, (size_t)2);
-   if( Fp->eof() )
+   if ( Fp->eof() )
    {
       CloseFile();
       return 0;
    }
  
    //-- ACR or DICOM with no Preamble; may start with a Shadow Group --
-   if( 
+   if ( 
        zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
        zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
        zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
@@ -522,12 +522,12 @@ std::ifstream *Document::OpenFile()
    Fp->seekg(126L, std::ios::cur);
    char dicm[4] = {' ',' ',' ',' '};
    Fp->read(dicm,  (size_t)4);
-   if( Fp->eof() )
+   if ( Fp->eof() )
    {
       CloseFile();
       return 0;
    }
-   if( memcmp(dicm, "DICM", 4) == 0 )
+   if ( memcmp(dicm, "DICM", 4) == 0 )
    {
       HasDCMPreamble = true;
       return Fp;
@@ -546,7 +546,7 @@ std::ifstream *Document::OpenFile()
  */
 bool Document::CloseFile()
 {
-   if( Fp )
+   if ( Fp )
    {
       Fp->close();
       delete Fp;
@@ -610,7 +610,7 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
       return;
 
    BinEntry *binElement = dynamic_cast<BinEntry *>(docElement);
-   if( !binElement )
+   if ( !binElement )
       return;
 
    LoadEntryBinArea(binElement);
@@ -623,11 +623,11 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
  */
 void Document::LoadEntryBinArea(BinEntry *elem) 
 {
-   if(elem->GetBinArea())
+   if (elem->GetBinArea() )
       return;
 
    bool openFile = !Fp;
-   if(openFile)
+   if ( openFile )
       OpenFile();
 
    size_t o =(size_t)elem->GetOffset();
@@ -635,14 +635,14 @@ void Document::LoadEntryBinArea(BinEntry *elem)
 
    size_t l = elem->GetLength();
    uint8_t *a = new uint8_t[l];
-   if( !a )
+   if ( !a )
    {
       gdcmWarningMacro( "Cannot allocate BinEntry content");
       return;
    }
 
    Fp->read((char*)a, l);
-   if( Fp->fail() || Fp->eof())
+   if ( Fp->fail() || Fp->eof() )
    {
       delete[] a;
       return;
@@ -650,7 +650,7 @@ void Document::LoadEntryBinArea(BinEntry *elem)
 
    elem->SetBinArea(a);
 
-   if(openFile)
+   if ( openFile )
       CloseFile();
 }
 
@@ -662,7 +662,7 @@ void Document::LoadEntryBinArea(BinEntry *elem)
  */
 void Document::LoadDocEntrySafe(DocEntry *entry)
 {
-   if(Fp)
+   if ( Fp )
    {
       long PositionOnEntry = Fp->tellg();
       LoadDocEntry(entry);
@@ -682,11 +682,11 @@ bool Document::operator<(Document &document)
    // Patient Name
    std::string s1 = GetEntryValue(0x0010,0x0010);
    std::string s2 = document.GetEntryValue(0x0010,0x0010);
-   if(s1 < s2)
+   if (s1 < s2)
    {
       return true;
    }
-   else if( s1 > s2 )
+   else if ( s1 > s2 )
    {
       return false;
    }
@@ -712,7 +712,7 @@ bool Document::operator<(Document &document)
          {
             return true;
          }
-         else if( s1 > s2 )
+         else if ( s1 > s2 )
          {
             return false;
          }
@@ -725,7 +725,7 @@ bool Document::operator<(Document &document)
             {
                return true;
             }
-            else if( s1 > s2 )
+            else if ( s1 > s2 )
             {
                return false;
             }
@@ -751,7 +751,7 @@ uint16_t Document::ReadInt16()
    {
       throw FormatError( "Document::ReadInt16()", " file error." );
    }
-   if( Fp->eof() )
+   if ( Fp->eof() )
    {
       throw FormatError( "Document::ReadInt16()", "EOF." );
    }
@@ -773,7 +773,7 @@ uint32_t Document::ReadInt32()
    {
       throw FormatError( "Document::ReadInt32()", " file error." );
    }
-   if( Fp->eof() )
+   if ( Fp->eof() )
    {
       throw FormatError( "Document::ReadInt32()", "EOF." );
    }
@@ -810,15 +810,15 @@ int Document::ComputeGroup0002Length( FileType filetype )
    {
       gr = entry->GetGroup();
 
-      if( gr == 0x0002 )
+      if ( gr == 0x0002 )
       {
          found0002 = true;
 
-         if( entry->GetElement() != 0x0000 )
+         if ( entry->GetElement() != 0x0000 )
          {
             vr = entry->GetVR();
  
-            if( filetype == ExplicitVR )
+            if ( filetype == ExplicitVR )
             {
                if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UT") ) 
                {
@@ -918,7 +918,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
 
             LoadDocEntry( newBinEntry );
-            if( !set->AddEntry( newBinEntry ) )
+            if ( !set->AddEntry( newBinEntry ) )
             {
               //Expect big troubles if here
               //delete newBinEntry;
@@ -968,7 +968,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                }
              }
 
-            if( !set->AddEntry( newValEntry ) )
+            if ( !set->AddEntry( newValEntry ) )
             {
               // If here expect big troubles
               // delete newValEntry; //otherwise mem leak
@@ -977,13 +977,13 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             if (delimitor)
             {
-               if(!used)
+               if ( !used )
                   delete newDocEntry;
                break;
             }
-            if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
+            if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max )
             {
-               if(!used)
+               if ( !used )
                   delete newDocEntry;
                break;
             }
@@ -1043,20 +1043,20 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      newDocEntry->GetOffset(),
                      l, delim_mode);
          }
-         if( !set->AddEntry( newSeqEntry ) )
+         if ( !set->AddEntry( newSeqEntry ) )
          {
             used = false;
          }
 
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
-            if( !used )
+            if ( !used )
                delete newDocEntry;
             break;
          }
       }
 
-      if( !used )
+      if ( !used )
          delete newDocEntry;
    }
 }
@@ -1082,7 +1082,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          // FIXME Should warn user
          break;
       }
-      if( delim_mode )
+      if ( delim_mode )
       {
          if ( newDocEntry->IsSequenceDelimitor() )
          {
@@ -1149,7 +1149,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
-   if( group == 0xfffe )
+   if ( group == 0xfffe )
    {
       // NO more value field for SQ !
       return;
@@ -1263,7 +1263,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    str[length] = '\0'; //this is only useful when length is odd
    // Special DicomString call to properly handle \0 and even length
    std::string newValue;
-   if( length % 2 )
+   if ( length % 2 )
    {
       newValue = Util::DicomString(str, length+1);
       gdcmWarningMacro("Warning: bad length: " << length <<
@@ -1291,7 +1291,7 @@ void Document::LoadDocEntry(DocEntry *entry)
          return;
       }
 
-      if( vr == "UI" )
+      if ( vr == "UI" )
       {
          // Because of correspondance with the VR dic
          valEntry->SetValue(newValue);
@@ -1471,7 +1471,7 @@ std::string Document::FindDocEntryVR()
    Fp->read (vr, (size_t)2);
    vr[2] = 0;
 
-   if( !CheckDocEntryVR(vr) )
+   if ( !CheckDocEntryVR(vr) )
    {
       Fp->seekg(positionOnEntry, std::ios::beg);
       return GDCM_UNKNOWN;
@@ -1519,14 +1519,14 @@ std::string Document::GetDocEntryValue(DocEntry *entry)
       // Elements with Value Multiplicity > 1
       // contain a set of short integers (not a single one) 
    
-      if( vr == "US" || vr == "SS" )
+      if ( vr == "US" || vr == "SS" )
       {
          uint16_t newInt16;
 
          nbInt = length / 2;
          for (int i=0; i < nbInt; i++) 
          {
-            if( i != 0 )
+            if ( i != 0 )
             {
                s << '\\';
             }
@@ -1542,14 +1542,14 @@ std::string Document::GetDocEntryValue(DocEntry *entry)
       // as usual for standard multivaluated filels
       // Elements with Value Multiplicity > 1
       // contain a set of integers (not a single one) 
-      else if( vr == "UL" || vr == "SL" )
+      else if ( vr == "UL" || vr == "SL" )
       {
          uint32_t newInt32;
 
          nbInt = length / 4;
          for (int i=0; i < nbInt; i++) 
          {
-            if( i != 0)
+            if ( i != 0)
             {
                s << '\\';
             }
@@ -1706,12 +1706,12 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    //////// We encountered a 'delimiter' element i.e. a tag of the form 
    // "fffe|xxxx" which is just a marker. Delimiters length should not be
    // taken into account.
-   else if( gr == 0xfffe )
+   else if ( gr == 0xfffe )
    {    
      // According to the norm, fffe|0000 shouldn't exist. BUT the Philips
      // image gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm happens to
      // causes extra troubles...
-     if( entry->GetElement() != 0x0000 )
+     if ( entry->GetElement() != 0x0000 )
      {
         foundLength = 0;
      }
@@ -1774,12 +1774,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
  *         true  when we hope ours assuptions are OK
  */
 bool Document::CheckSwap()
-{
-   // The only guaranted way of finding the swap code is to find a
-   // group tag since we know it's length has to be of four bytes i.e.
-   // 0x00000004. Finding the swap code in then straigthforward. Trouble
-   // occurs when we can't find such group...
-   
+{   
    uint32_t  s32;
    uint16_t  s16;
        
@@ -1794,7 +1789,7 @@ bool Document::CheckSwap()
    Fp->read(deb, 256);
    
    char *entCur = deb + 128;
-   if( memcmp(entCur, "DICM", (size_t)4) == 0 )
+   if ( memcmp(entCur, "DICM", (size_t)4) == 0 )
    {
       gdcmWarningMacro( "Looks like DICOM Version3 (preamble + DCM)" );
       
@@ -1818,11 +1813,11 @@ bool Document::CheckSwap()
       // even if elem 0002,0010 (Transfer Syntax) tells us the file is
       // *Implicit* VR  (see former 'gdcmData/icone.dcm')
       
-      if( memcmp(entCur, "UL", (size_t)2) == 0 ||
-          memcmp(entCur, "OB", (size_t)2) == 0 ||
-          memcmp(entCur, "UI", (size_t)2) == 0 ||
-          memcmp(entCur, "CS", (size_t)2) == 0 )  // CS, to remove later
-                                                  // when Write DCM *adds*
+      if ( memcmp(entCur, "UL", (size_t)2) == 0 ||
+           memcmp(entCur, "OB", (size_t)2) == 0 ||
+           memcmp(entCur, "UI", (size_t)2) == 0 ||
+           memcmp(entCur, "CS", (size_t)2) == 0 )  // CS, to remove later
+                                                   // when Write DCM *adds*
       // FIXME
       // Use Document::dicom_vr to test all the possibilities
       // instead of just checking for UL, OB and UI !? group 0000 
@@ -1884,12 +1879,12 @@ bool Document::CheckSwap()
 
    if ( SwapCode != 0 )
    {
-      if( memcmp(entCur, "UL", (size_t)2) == 0 ||
-          memcmp(entCur, "OB", (size_t)2) == 0 ||
-          memcmp(entCur, "UI", (size_t)2) == 0 ||
-          memcmp(entCur, "SH", (size_t)2) == 0 ||
-          memcmp(entCur, "AE", (size_t)2) == 0 ||
-          memcmp(entCur, "OB", (size_t)2) == 0 )
+      if ( memcmp(entCur, "UL", (size_t)2) == 0 ||
+           memcmp(entCur, "OB", (size_t)2) == 0 ||
+           memcmp(entCur, "UI", (size_t)2) == 0 ||
+           memcmp(entCur, "SH", (size_t)2) == 0 ||
+           memcmp(entCur, "AE", (size_t)2) == 0 ||
+           memcmp(entCur, "OB", (size_t)2) == 0 )
          {
             Filetype = ExplicitVR;
             gdcmWarningMacro( "Group 0002 : Explicit Value Representation");
@@ -2053,37 +2048,38 @@ DocEntry *Document::ReadNextDocEntry()
    std::string vr = FindDocEntryVR();
    std::string realVR = vr;
 
-   if( vr == GDCM_UNKNOWN)
+   if ( vr == GDCM_UNKNOWN )
    {
       if ( elem == 0x0000 ) // Group Length
          realVR = "UL";     // must be UL
       else
       {
          DictEntry *dictEntry = GetDictEntry(group,elem);
-         if( dictEntry )
+         if ( dictEntry )
             realVR = dictEntry->GetVR();
       }
    }
 
    DocEntry *newEntry;
-   if( Global::GetVR()->IsVROfSequence(realVR) )
+   if ( Global::GetVR()->IsVROfSequence(realVR) )
       newEntry = NewSeqEntry(group, elem);
-   else if( Global::GetVR()->IsVROfStringRepresentable(realVR) )
+   else if ( Global::GetVR()->IsVROfStringRepresentable(realVR) )
       newEntry = NewValEntry(group, elem,vr);
    else
       newEntry = NewBinEntry(group, elem,vr);
 
-   if( vr == GDCM_UNKNOWN )
+   if ( vr == GDCM_UNKNOWN )
    {
-      if( Filetype == ExplicitVR )
+      if ( Filetype == ExplicitVR )
       {
          // We thought this was explicit VR, but we end up with an
          // implicit VR tag. Let's backtrack.
          if ( newEntry->GetGroup() != 0xfffe )
          { 
             std::string msg;
-            msg = Util::Format("Entry (%04x,%04x) should be Explicit VR\n", 
-                          newEntry->GetGroup(), newEntry->GetElement());
+            int offset = Fp->tellg();
+            msg = Util::Format("Entry (%04x,%04x) at %x should be Explicit VR\n", 
+                          newEntry->GetGroup(), newEntry->GetElement(), offset );
             gdcmWarningMacro( msg.c_str() );
           }
       }
