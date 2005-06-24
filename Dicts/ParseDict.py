@@ -212,36 +212,55 @@ class PapyrusParser(PdfTextParser):
     patt = re.compile('^[A-Za-z \'\(\)]+ +\\([0-9A-F]+,[0-9A-F]+\\) +(.*)$') 
     if( patt.match(s) ):
       return True
+    # After page 39, lines are like:
+    patt = re.compile('^[0-9x]+ [0-9xA-F]+ .*$') 
+    if( patt.match(s) ):
+      #print "PAge 39", s
+      return True
     return False
 
   def IsAFullLine(self,s):
     patt = re.compile('^[A-Za-z \'\(\)]+ +\\([0-9A-F]+,[0-9A-F]+\\) +(.*)$') 
     if( patt.match(s) ):
       return True
+    # After page 39, lines are like:
+    patt = re.compile('^[0-9x]+ [0-9xA-F]+ .* [A-Z][A-Z] [0-9].*$') 
+    if( patt.match(s) ):
+      #print "PAge 39", s
+      return True
     return False
 
   def IsAComment(self,s):
     # dummy case:
     if s == 'Attribute Name Tag Type Attribute Description':
-      print "Dummy", s
+      #print "Dummy", s
+      return True
+    patt = re.compile('^.*ANNEXE.*$')
+    if patt.match(s):
       return True
     # Indicate page #, spaces ending with only one number
     # Sometime there is a line with only one number, we need to
     # make sure that page # is strictly increasing
     patt = re.compile('^[1-9][0-9]+$') 
     if( patt.match(s) ):
-      if( eval(s) > self._PreviousPage):
-        print "Page #", eval(s)
+      p = eval(s)
+      if( p > self._PreviousPage):
+        #print "Page #", p
         self._PreviousNumber = 0
-        self._PreviousPage = eval(s)
+        self._PreviousPage = p
         return True
+#      else:
+#        print "PAGE ERROR:", s
     # Now within each page there is a comment that start with a #
     # let's do the page approach wich reset at each page
     patt = re.compile('^[0-9]+$') 
     if( patt.match(s) ):
-      print "Number #", eval(s)
-      self._PreviousNumber = eval(s)
-      return True
+      if( eval(s) > self._PreviousNumber):
+        #print "Number #", eval(s)
+        self._PreviousNumber = eval(s)
+        return True
+      #else:
+      #  print "ERROR:", s
     return False
 
   def AddOutputLine(self,s):
@@ -258,6 +277,16 @@ class PapyrusParser(PdfTextParser):
       m = patt.match(s)
       if m:
         ss = m.group(2) + ' 0 ' + m.group(1)
+      else:
+        ss = s
+        # There is two case one that end with all capital letter
+        # explaining the 'DEFINED TERMS'
+        patt = re.compile('^[0-9x]+ [0-9xA-F]+ .* [A-Z][A-Z] [0-9] [A-Z, ]$') 
+        #patt = re.compile('^[0-9x]+ [0-9xA-F]+ .* [A-Z][A-Z] [0-9]|1\\-n [A-Z, |3.0]+$') 
+        #patt = re.compile('^[0-9x]+ [0-9xA-F]+ .* [A-Z][A-Z] [01n-] [A-Z, |3.0]+$') 
+        if patt.match(s):
+          print "Match", s
+          ss = ''
     self._OutLines.append(ss + '\n')
 
   def Open(self):
@@ -402,6 +431,49 @@ class DicomV3Expander:
     self.Write()
     infile.close()
 
+"""
+Parse line from a philips document, line are like this:
+
+Syncra Scan Type 2005,10A1 VR = CS, VM = 1
+"""
+class InteraParser:
+  def __init__(self):
+    self._InputFilename = ''
+    self._OutputFilename = ''
+
+  def Reformat(self,s):
+    assert self.IsGood(s)
+    patt = re.compile("^([A-Za-z0-9 -]+) ([0-9A-Z]+),([0-9A-Z]+) VR = ([A-Z][A-Z]), VM = (.*)$")
+    m = patt.match(s)
+    if m:
+      dicom = m.group(2) + ' ' + m.group(3) + ' ' + m.group(4) + ' ' + m.group(5) + ' ' + m.group(1)
+      return dicom
+    else:
+      print "oops"
+
+  def IsGood(self,s):
+    patt = re.compile("^[A-Za-z0-9 -]+ [0-9A-Z]+,[0-9A-Z]+ VR = [A-Z][A-Z], VM = .*$")
+    if patt.match(s):
+      return True
+    print "Not good:", s
+    return False
+
+  def SetInputFileName(self,s):
+    self._InputFilename = s
+
+  def SetOutputFileName(self,s):
+    self._OutputFilename = s
+  
+  def Parse(self):
+    infile = file(self._InputFilename, 'r')
+    outLines = []
+    for line in infile.readlines():
+      print self.Reformat(line)
+      outLines.append( self.Reformat(line) + '\n' )
+    outfile = file(self._OutputFilename, 'w')
+    outfile.writelines( outLines )
+    outfile.close()
+ 
 
 if __name__ == "__main__":
   argc = len(os.sys.argv )
@@ -428,8 +500,13 @@ if __name__ == "__main__":
   dp.SetInputFileName( inputfilename )
   dp.SetOutputFileName( outputfilename )
   dp.Parse()
-  """
   dp = PapyrusParser()
+  dp.SetInputFileName( inputfilename )
+  dp.SetOutputFileName( outputfilename )
+  dp.Parse()
+  """
+
+  dp = InteraParser()
   dp.SetInputFileName( inputfilename )
   dp.SetOutputFileName( outputfilename )
   dp.Parse()
