@@ -92,44 +92,19 @@ FOREACH(file dicomV3.dic  dicomTS.dic dicomVR.dic DicomDir.dic DictGroupName.dic
   CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/${file}"
     "${GDCM_BINARY_DIR}/Dicts/${file}.out")
 ENDFOREACH(file)
-CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in" "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
+CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in" 
+  "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
 
+#-----------------------------------------------------------------------------
+# Now generate our own 'DICOM' dictionary, based on the following dictionaries:
+SET(ALL_DICTS
+  dicomV3.dic
+  Papyrus.dic
+  NIH.dic     #the forbidden one...
+  )
 
-#FILE(READ "dicomV3VM2004.dic" ENT2)
-#STRING(REGEX REPLACE "\n" ";" ENT2 "${ENT2}")
-#SET(DICOM_DICTIONARY2 "")
-#
-#FOREACH(line ${ENT2})
-#  STRING(REGEX REPLACE
-##    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([A-Z]+) (.*)([ \(RET\)]*)$"
-#    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([0-9]|[1]-[0-9n]|[2]-[2][n]|[3]-[3][n]) (.*)$"
-##    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\", \"\\6\"}," nline "${line}")
-#    "   { \\1, \\2, \"\\3\" , \"\\4\" , \"\\5\"}," nline "${line}")
-#  SET(DICOM_DICTIONARY2 "${DICOM_DICTIONARY2}\n${nline}")
-#ENDFOREACH(line)
-#
-#
-#
-##FILE(READ "04_06PU.txt" ENT3)
-#FILE(READ "extract.txt" ENT3)
-#
-#STRING(REGEX REPLACE "\n" ";" ENT3 "${ENT3}")
-#SET(DICOM_DICTIONARY3 "")
-#
-#FOREACH(line ${ENT3})
-#  STRING(REGEX REPLACE
-##    "^[(]([0-9a-fA-F]+),([0-9a-fA-F]+)[)] (.*) ([A-ZA-Z]*) ([[0-3][-][1-3n]*|[1-]*[0-9]+]*) ?([RET|Retired]*)$"
-#    "^[(]([0-9a-fA-F]+),([0-9a-fA-F]+)[)]  +(.*)  +([A-ZA-Z   [[0-3][-][1-3n]*|[1-]*[0-9]+]]*)([ RET]*)$"
-#    "   { \\1 , \\2, \\3, \\4, \\5  }," nline "${line}")
-#  STRING(COMPARE NOTEQUAL "${line}" "${nline}" add)
-#  IF(add)
-#    #SET(DICOM_DICTIONARY3 "${DICOM_DICTIONARY3}\n${nline}")
-#    MESSAGE("${nline}")
-#  ELSE(add)
-#    MESSAGE("WRONG:${nline}")
-#  ENDIF(add)
-#ENDFOREACH(line)
+FOREACH(dict ${ALL_DICTS})
+  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
+  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ${dict_append})
+ENDFOREACH(dict)
 
-
-# Txt generation:
-# ~/Software/xpdf-3.00-linux/pdftotext -f 9 -l 81 -raw -nopgbrk 04_06PU.PDF 04_06PU-3.txt
