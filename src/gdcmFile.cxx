@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/22 08:11:23 $
-  Version:   $Revision: 1.243 $
+  Date:      $Date: 2005/06/24 10:50:20 $
+  Version:   $Revision: 1.244 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -224,7 +224,7 @@ bool File::IsReadable()
    if ( !GetDocEntry(0x0028, 0x0103) )
    {
       gdcmWarningMacro("Pixel Representation (0028|0103) not found");
-      return false; // "Pixel Representation" i.e. 'Sign'
+      return false; // "Pixel Representation" i.e. 'Sign' ( 0 : unsigned, 1 : signed)
    }
    if ( !GetDocEntry(GrPixel, NumPixel) )
    {
@@ -260,50 +260,50 @@ ModalityType File::GetModality()
    std::string strModality = GetEntryValue(0x0008,0x0060);
    if ( strModality != GDCM_UNFOUND )
    {
-           if ( strModality.find("AU") < strModality.length()) return AU;
-      else if ( strModality.find("AS") < strModality.length()) return AS;
-      else if ( strModality.find("BI") < strModality.length()) return BI;
-      else if ( strModality.find("CF") < strModality.length()) return CF;
-      else if ( strModality.find("CP") < strModality.length()) return CP;
-      else if ( strModality.find("CR") < strModality.length()) return CR;
-      else if ( strModality.find("CT") < strModality.length()) return CT;
-      else if ( strModality.find("CS") < strModality.length()) return CS;
-      else if ( strModality.find("DD") < strModality.length()) return DD;
-      else if ( strModality.find("DF") < strModality.length()) return DF;
-      else if ( strModality.find("DG") < strModality.length()) return DG;
-      else if ( strModality.find("DM") < strModality.length()) return DM;
-      else if ( strModality.find("DS") < strModality.length()) return DS;
-      else if ( strModality.find("DX") < strModality.length()) return DX;
+           if ( strModality.find("AU")  < strModality.length()) return AU;
+      else if ( strModality.find("AS")  < strModality.length()) return AS;
+      else if ( strModality.find("BI")  < strModality.length()) return BI;
+      else if ( strModality.find("CF")  < strModality.length()) return CF;
+      else if ( strModality.find("CP")  < strModality.length()) return CP;
+      else if ( strModality.find("CR")  < strModality.length()) return CR;
+      else if ( strModality.find("CT")  < strModality.length()) return CT;
+      else if ( strModality.find("CS")  < strModality.length()) return CS;
+      else if ( strModality.find("DD")  < strModality.length()) return DD;
+      else if ( strModality.find("DF")  < strModality.length()) return DF;
+      else if ( strModality.find("DG")  < strModality.length()) return DG;
+      else if ( strModality.find("DM")  < strModality.length()) return DM;
+      else if ( strModality.find("DS")  < strModality.length()) return DS;
+      else if ( strModality.find("DX")  < strModality.length()) return DX;
       else if ( strModality.find("ECG") < strModality.length()) return ECG;
       else if ( strModality.find("EPS") < strModality.length()) return EPS;
-      else if ( strModality.find("FA") < strModality.length()) return FA;
-      else if ( strModality.find("FS") < strModality.length()) return FS;
-      else if ( strModality.find("HC") < strModality.length()) return HC;
-      else if ( strModality.find("HD") < strModality.length()) return HD;
-      else if ( strModality.find("LP") < strModality.length()) return LP;
-      else if ( strModality.find("LS") < strModality.length()) return LS;
-      else if ( strModality.find("MA") < strModality.length()) return MA;
-      else if ( strModality.find("MR") < strModality.length()) return MR;
-      else if ( strModality.find("NM") < strModality.length()) return NM;
-      else if ( strModality.find("OT") < strModality.length()) return OT;
-      else if ( strModality.find("PT") < strModality.length()) return PT;
-      else if ( strModality.find("RF") < strModality.length()) return RF;
-      else if ( strModality.find("RG") < strModality.length()) return RG;
+      else if ( strModality.find("FA")  < strModality.length()) return FA;
+      else if ( strModality.find("FS")  < strModality.length()) return FS;
+      else if ( strModality.find("HC")  < strModality.length()) return HC;
+      else if ( strModality.find("HD")  < strModality.length()) return HD;
+      else if ( strModality.find("LP")  < strModality.length()) return LP;
+      else if ( strModality.find("LS")  < strModality.length()) return LS;
+      else if ( strModality.find("MA")  < strModality.length()) return MA;
+      else if ( strModality.find("MR")  < strModality.length()) return MR;
+      else if ( strModality.find("NM")  < strModality.length()) return NM;
+      else if ( strModality.find("OT")  < strModality.length()) return OT;
+      else if ( strModality.find("PT")  < strModality.length()) return PT;
+      else if ( strModality.find("RF")  < strModality.length()) return RF;
+      else if ( strModality.find("RG")  < strModality.length()) return RG;
       else if ( strModality.find("RTDOSE")   
-                                       < strModality.length()) return RTDOSE;
+                                        < strModality.length()) return RTDOSE;
       else if ( strModality.find("RTIMAGE")  
-                                       < strModality.length()) return RTIMAGE;
+                                        < strModality.length()) return RTIMAGE;
       else if ( strModality.find("RTPLAN")
-                                       < strModality.length()) return RTPLAN;
+                                        < strModality.length()) return RTPLAN;
       else if ( strModality.find("RTSTRUCT") 
-                                       < strModality.length()) return RTSTRUCT;
-      else if ( strModality.find("SM") < strModality.length()) return SM;
-      else if ( strModality.find("ST") < strModality.length()) return ST;
-      else if ( strModality.find("TG") < strModality.length()) return TG;
-      else if ( strModality.find("US") < strModality.length()) return US;
-      else if ( strModality.find("VF") < strModality.length()) return VF;
-      else if ( strModality.find("XA") < strModality.length()) return XA;
-      else if ( strModality.find("XC") < strModality.length()) return XC;
+                                        < strModality.length()) return RTSTRUCT;
+      else if ( strModality.find("SM")  < strModality.length()) return SM;
+      else if ( strModality.find("ST")  < strModality.length()) return ST;
+      else if ( strModality.find("TG")  < strModality.length()) return TG;
+      else if ( strModality.find("US")  < strModality.length()) return US;
+      else if ( strModality.find("VF")  < strModality.length()) return VF;
+      else if ( strModality.find("XA")  < strModality.length()) return XA;
+      else if ( strModality.find("XC")  < strModality.length()) return XC;
 
       else
       {
@@ -312,7 +312,6 @@ ModalityType File::GetModality()
          return Unknow;
       }
    }
-
    return Unknow;
 }
 
@@ -328,7 +327,6 @@ int File::GetXSize()
    {
       return 0;
    }
-
    return atoi( strSize.c_str() );
 }
 
@@ -350,8 +348,9 @@ int File::GetYSize()
       return 0;
    }
 
-   // The Rows (0028,0010) entry was optional for ACR/NEMA. It might
-   // hence be a signal (1D image). So we default to 1:
+   // The Rows (0028,0010) entry was optional for ACR/NEMA.
+   // (at least some images didn't have it.)
+   // It might hence be a signal (1D image). So we default to 1:
    return 1;
 }
 
@@ -359,7 +358,7 @@ int File::GetYSize()
  * \brief   Retrieve the number of planes of volume or the number
  *          of frames of a multiframe.
  * \warning When present we consider the "Number of Frames" as the third
- *          dimension. When Missing we consider the third dimension as
+ *          dimension. When missing we consider the third dimension as
  *          being the ACR-NEMA "Planes" tag content.
  * @return  The encountered size when found, 1 by default (single image).
  */
@@ -379,13 +378,12 @@ int File::GetZSize()
    {
       return atoi( strSize2.c_str() );
    }
-
    return 1;
 }
 
 /**
-  * \brief gets the info from 0028,0030 : Pixel Spacing
-  *                         (first in  0018,1164 : ImagerPixelSpacing) 
+  * \brief gets the info from 0018,1164 : ImagerPixelSpacing
+  *                      then 0028,0030 : Pixel Spacing
   *             else 1.0
   * @return X dimension of a pixel
   */
@@ -396,7 +394,6 @@ float File::GetXSpacing()
    int nbValues;
 
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
-   // (never saw any image with that field :-(
 
    const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
    if ( strImagerPixelSpacing != GDCM_UNFOUND )
@@ -417,7 +414,6 @@ float File::GetXSpacing()
          return xspacing;
       }  
    }
-
 
    const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
 
@@ -441,10 +437,9 @@ float File::GetXSpacing()
          xspacing = 1.0;
 
       return xspacing;
-
    }
 
-   // to avoid troubles with David Clunie's-like images
+   // to avoid troubles with David Clunie's-like images (at least one)
    if ( xspacing == 0. && yspacing == 0.)
       return 1.;
 
@@ -460,8 +455,8 @@ float File::GetXSpacing()
 }
 
 /**
-  * \brief gets the info from 0028,0030 : Pixel Spacing
-  *                         (first in  0018,1164 : ImagerPixelSpacing)   
+  * \brief gets the info from 0018,1164 : ImagerPixelSpacing
+  *               then from   0028,0030 : Pixel Spacing                         
   *             else 1.0
   * @return Y dimension of a pixel
   */
@@ -470,7 +465,6 @@ float File::GetYSpacing()
    float yspacing = 1.;
    int nbValues;
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
-   // (never saw any image with that field :-(
 
    const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
    if ( strImagerPixelSpacing != GDCM_UNFOUND )
@@ -521,8 +515,8 @@ float File::GetZSpacing()
    //   overlapping   (Spacing between Slices < Slice Thickness)
    //   disjointes    (Spacing between Slices > Slice Thickness)
    // Slice Thickness : epaisseur de tissus sur laquelle est acquis le signal
-   //   It only concerns the MRI guys, not people wanting to visualize volmues
-   //   If Spacing Between Slices is Missing, 
+   //   It only concerns the MRI guys, not people wanting to visualize volumes
+   //   If Spacing Between Slices is missing, 
    //   we suppose slices joint together
    
    const std::string &strSpacingBSlices = GetEntryValue(0x0018,0x0088);
@@ -650,7 +644,8 @@ float File::GetZOrigin()
       }
    }
 
-   std::string strSliceLocation = GetEntryValue(0x0020,0x1041); // for *very* old ACR-NEMA images
+   // for *very* old ACR-NEMA images
+   std::string strSliceLocation = GetEntryValue(0x0020,0x1041);
    if ( strSliceLocation != GDCM_UNFOUND )
    {
       if ( sscanf( strSliceLocation.c_str(), "%f ", &zImPos) != 1)
@@ -686,7 +681,7 @@ float File::GetZOrigin()
 /**
   * \brief gets the info from 0020,0037 : Image Orientation Patient
   * (needed to organize DICOM files based on their x,y,z position)
-  * @param iop adress of the (6)float aray to receive values
+  * @param iop adress of the (6)float array to receive values
   * @return cosines of image orientation patient
   */
 void File::GetImageOrientationPatient( float iop[6] )
@@ -736,7 +731,7 @@ int File::GetBitsStored()
 
 /**
  * \brief   Retrieve the number of Bits Allocated
- *          (8, 12 -compacted ACR-NEMA files, 16, ...)
+ *          (8, 12 -compacted ACR-NEMA files-, 16, ...)
  * @return  The encountered number of Bits Allocated, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
@@ -754,9 +749,9 @@ int File::GetBitsAllocated()
 
 /**
  * \brief   Retrieve the high bit position.
- * \warning The method defaults to 0 when information is Missing.
+ * \warning The method defaults to 0 when information is missing.
  *          The responsability of checking this value is left to the caller.
- * @return  The high bit positin when present. 0 when Missing.
+ * @return  The high bit position when present. 0 when missing.
  */
 int File::GetHighBitPosition()
 {
@@ -771,9 +766,9 @@ int File::GetHighBitPosition()
 
 /**
  * \brief   Retrieve the number of Samples Per Pixel
- *          (1 : gray level, 3 : RGB -1 or 3 Planes-)
+ *          (1 : gray level, 3 : RGB/YBR -1 or 3 Planes-)
  * @return  The encountered number of Samples Per Pixel, 1 by default.
- *          (Gray level Pixels)
+ *          (we assume Gray level Pixels)
  */
 int File::GetSamplesPerPixel()
 {
@@ -811,7 +806,7 @@ int File::GetPlanarConfiguration()
 int File::GetPixelSize()
 {
    // 0028 0100 US IMG Bits Allocated
-   // (in order no to be messed up by old RGB images)
+   // (in order no to be messed up by old ACR-NEMA RGB images)
    //   if (File::GetEntryValue(0x0028,0x0100) == "24")
    //      return 3;
 
@@ -848,6 +843,7 @@ int File::GetPixelSize()
  *          - FD floating double 64 bits (Not kosher DICOM, but so usefull!)
  * \warning 12 bit images appear as 16 bit.
  *          24 bit images appear as 8 bit + photochromatic interp ="RGB "
+ *                                        + Planar Configuration = 0
  * @return  0S if nothing found. NOT USABLE file. The caller has to check
  */
 std::string File::GetPixelType()
@@ -896,7 +892,8 @@ std::string File::GetPixelType()
  * \brief   Check whether the pixels are signed (1) or UNsigned (0) data.
  * \warning The method defaults to false (UNsigned) when tag 0028|0103
  *          is missing.
- *          The responsability of checking this value is left to the caller.
+ *          The responsability of checking this value is left to the caller
+ *          (NO transformation is performed on the pixels to make then >0)
  * @return  True when signed, false when UNsigned
  */
 bool File::IsSignedPixelData()
@@ -1118,7 +1115,7 @@ float File::GetRescaleSlope()
  *   to have to manage a LUT and expects to get an RBG Pixel image
  *   (or a monochrome one ...) 
  * \warning to be used with GetImagePixels()
- * @return 1 if Gray level, 3 if Color (RGB, YBR or PALETTE COLOR)
+ * @return 1 if Gray level, 3 if Color (RGB, YBR, *or PALETTE COLOR*)
  */
 int File::GetNumberOfScalarComponents()
 {
@@ -1227,11 +1224,12 @@ size_t File::GetPixelAreaLength()
 
 /**
  * \brief Adds the characteristics of a new element we want to anonymize
- *
+ * @param   group  Group number of the target tag.
+ * @param   elem Element number of the target tag.
+ * @param   value new value (string) to substitute with 
  */
 void File::AddAnonymizeElement (uint16_t group, uint16_t elem, 
                                 std::string const &value) 
-
 { 
    Element el;
    el.Group = group;
@@ -1283,7 +1281,7 @@ void File::AnonymizeNoLoad()
 }
 
 /**
- * \brief anonymize a File (removes Patient's personal info passed with
+ * \brief anonymize a File (remove Patient's personal info passed with
  *        AddAnonymizeElement()
  */
 bool File::AnonymizeFile()
@@ -1391,7 +1389,7 @@ bool File::AnonymizeFile()
  *       (as opposed to 'DicomDir related') entries 
  *       then writes in a file all the (Dicom Elements) included the Pixels 
  * @param fileName file name to write to
- * @param writetype Type of the File to be written 
+ * @param writetype type of the file to be written 
  *          (ACR, ExplicitVR, ImplicitVR)
  */
 bool File::Write(std::string fileName, FileType writetype)
@@ -1493,9 +1491,9 @@ void File::ComputeRLEInfo()
          rleSegmentOffsetTable[k] = ReadInt32();
       }
 
-      // Deduce from both the RLE Header and the frameLength the
-      // fragment length, and again store this info in a
-      // RLEFramesInfo.
+      // Deduce from both RLE Header and frameLength 
+      // the fragment length, and again store this info
+      // in a RLEFramesInfo.
       long rleSegmentLength[15];
       // skipping (not reading) RLE Segments
       if ( nbRleSegments > 1)
@@ -1523,8 +1521,8 @@ void File::ComputeRLEInfo()
        RLEInfo->AddFrame(newFrame);
    }
 
-   // Make sure that at the end of the item we encounter a 'Sequence
-   // Delimiter Item':
+   // Make sure that  we encounter a 'Sequence Delimiter Item'
+   // at the end of the item :
    if ( !ReadTag(0xfffe, 0xe0dd) )
    {
       gdcmWarningMacro( "No sequence delimiter item at end of RLE item sequence");
@@ -1564,8 +1562,8 @@ void File::ComputeJPEGFragmentInfo()
        SkipBytes(fragmentLength);
    }
 
-   // Make sure that at the end of the item we encounter a 'Sequence
-   // Delimiter Item':
+   // Make sure that  we encounter a 'Sequence Delimiter Item'
+   // at the end of the item :
    if ( !ReadTag(0xfffe, 0xe0dd) )
    {
       gdcmWarningMacro( "No sequence delimiter item at end of JPEG item sequence");
@@ -1575,17 +1573,17 @@ void File::ComputeJPEGFragmentInfo()
 /**
  * \brief   Assuming the internal file pointer \ref Document::Fp 
  *          is placed at the beginning of a tag check whether this
- *          tag is (TestGroup, TestElement).
+ *          tag is (TestGroup, TestElem).
  * \warning On success the internal file pointer \ref Document::Fp
  *          is modified to point after the tag.
  *          On failure (i.e. when the tag wasn't the expected tag
- *          (TestGroup, TestElement) the internal file pointer
+ *          (TestGroup, TestElem) the internal file pointer
  *          \ref Document::Fp is restored to it's original position.
- * @param   testGroup   The expected group of the tag.
- * @param   testElement The expected Element of the tag.
+ * @param   testGroup The expected group   of the tag.
+ * @param   testElem  The expected Element of the tag.
  * @return  True on success, false otherwise.
  */
-bool File::ReadTag(uint16_t testGroup, uint16_t testElement)
+bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
 {
    long positionOnEntry = Fp->tellg();
    long currentPosition = Fp->tellg();          // On debugging purposes
@@ -1593,24 +1591,24 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElement)
    // Read the Item Tag group and element, and make
    // sure they are what we expected:
    uint16_t itemTagGroup;
-   uint16_t itemTagElement;
+   uint16_t itemTagElem;
    try
    {
-      itemTagGroup   = ReadInt16();
-      itemTagElement = ReadInt16();
+      itemTagGroup = ReadInt16();
+      itemTagElem  = ReadInt16();
    }
    catch ( FormatError e )
    {
       //std::cerr << e << std::endl;
       return false;
    }
-   if ( itemTagGroup != testGroup || itemTagElement != testElement )
+   if ( itemTagGroup != testGroup || itemTagElem != testElem )
    {
       gdcmWarningMacro( "Wrong Item Tag found:"
        << "   We should have found tag ("
-       << std::hex << testGroup << "," << testElement << ")" << std::endl
+       << std::hex << testGroup << "," << testElem << ")" << std::endl
        << "   but instead we encountered tag ("
-       << std::hex << itemTagGroup << "," << itemTagElement << ")"
+       << std::hex << itemTagGroup << "," << itemTagElem << ")"
        << "  at address: " << "  0x(" << (unsigned int)currentPosition  << ")" 
        ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
@@ -1629,15 +1627,15 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElement)
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElement) the internal file pointer
  *          \ref Document::Fp is restored to it's original position.
- * @param   testGroup   The expected group of the tag.
- * @param   testElement The expected Element of the tag.
+ * @param   testGroup The expected Group   of the tag.
+ * @param   testElem  The expected Element of the tag.
  * @return  On success returns the length associated to the tag. On failure
  *          returns 0.
  */
-uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElement)
+uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
 {
 
-   if ( !ReadTag(testGroup, testElement) )
+   if ( !ReadTag(testGroup, testElem) )
    {
       return 0;
    }
