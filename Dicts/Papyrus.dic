@@ -14,27 +14,3 @@
 0041 1041 UI 1 Referenced Image SOP Class UID
 0041 1042 UI 1 Referenced Image SOP Instance UID
 0041 1050 SQ 1 Image Sequence
-
-6xxx 0000 Group Length UL 1
-6xxx 00xx Owner ID LT 1 PAPYRUS 3.0
-6xxx xx00 Overlay ID IS 1
-6xxx xx01 Linked Overlays LT 1-n
-6xxx xx10 Overlays Rows US 1
-6xxx xx11 Overlays Columns US 1
-6xxx xx40 Overlay Type LO 1 RECTANGLE, ANNOTATION, GRAPHIC
-6xxx xx50 Overlay Origin US 1-n
-6xxx xx60 Editable LO 1
-6xxx xx70 Overlay Font LO 1 TIMES, HELVETICA
-6xxx xx72 Overlay Style LO 1 NORMAL. BOLD, ITALIC, BOLDITALIC
-6xxx xx74 Overlay Font Size US 1
-6xxx xx76 Overlay Color LO 1-n WHITE, BLACK, RED, GREEN. BLUE, CYAN, MAGENTA, YELLOW
-6xxx xx78 Shadow Size US 1
-6xxx xx80 Fill Pattern LO 1 NONE, OPAQUE, TRANSPARENT
-6xxx xx82 Overlay Pen Size US 1
-6xxx xxA0 Label LO 1
-6xxx xxA2 Post It Text LT 1
-6xxx xxA4 Anchor Point US 1-n
-6xxx xxB0 ROI Type LO 1 MASK, RECT, ELLIPSE, POLYGON
-6xxx xxB2 Attached Annotation LT 1
-6xxx xxBA Contour Points US 1-n
-6xxx xxBC Mask Data US 1-n
