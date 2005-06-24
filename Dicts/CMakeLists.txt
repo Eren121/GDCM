@@ -7,7 +7,6 @@ SET(ALL_DICTS
   dicomV3.dic
   Papyrus.dic
   NIH.dic     #the forbidden one...
-  dicomV3PhilipsIntera.dic
   )
 
 # The following line make sure we are not appending on an already existing file
