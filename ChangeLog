@@ -1,3 +1,10 @@
+2005-06-25 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+   * dicomV3.dic is deprecated in favor of gdcm.dic
+     There is now a dictionary per family:
+     - dicomV3.dic -> DICOM V3
+     - Papyrus.dic -> Papyrus
+     - NIH.dic    -> tas that were never allowed in the main standart
+
 2005-06-08 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * src/gdcmUtil.cxx : change call to Util::Format to sprintf because of 
      lantency with the Util::Format function
