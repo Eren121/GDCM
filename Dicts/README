@@ -240,3 +240,25 @@ Basically all the dictionary should have been:
 2001 xx22 FL 1 Water Fat Shift
 instead of
 2001 1022 FL 1 Water Fat Shift
+
+
+About GEMS Genie:
+Doc was taken from:
+http://www.gehealthcare.com/usen/fun_img/nmedicine/nmdicom/docs/confstmt.pdf
+
+433  echo "http://www.gehealthcare.com/usen/fun_img/nmedicine/nmdicom/docs/confstmt.pdf" > GEMS-Genie.dic
+434  echo "http://www.gehealthcare.com/usen/interoperability/dicom/docs/2270669_100r0_3.pdf" > GEMS-Advance.dic
+
+According to 2270669_100r0_3.pdf, there is different interpretation for:
+
+0009 10b3 SL 1 GE Advance ImageSet.ir_num_subsets
+0009 10b4 FL 1 GE Advance ImageSet.ir_recon_fov
+
+or:
+
+0009 10b4 FL 1 GE Advance ImageSet.ir_num_subsets
+... grrrr
+ok nevermind I found also this document:
+http://www.gehealthcare.com/usen/fun_img/pet/docs/5101600GDOr0.pdf
+that defines:
+0009 10b3 SL 1 GE Advance ImageSet.ir_num_subsets
