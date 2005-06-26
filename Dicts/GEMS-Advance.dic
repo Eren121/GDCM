@@ -242,3 +242,65 @@
 0013 1012 OB 1 > GE Advance Annotation.annotation_data
 0013 1013 SL 1 > GE Advance Annotation.annotation_size
 0013 1014 LO 1 > GE Advance Annotation.label_id
+5001 0010 SH 1 Private Creator Data Element
+5001 1001 UI 1 GE Advance Curve.curve_id
+5001 1002 SH 1 GE Advance Curve.compatible_version
+5001 1003 SH 1 GE Advance Curve.software_version
+5001 1004 SL 1 GE Advance Curve.statistics_type
+5001 1005 LT 1 GE Advance Curve.how_derived
+5001 1006 SL 1 GE Advance Curve.how_derived_size
+5001 1007 SL 1 GE Advance Curve.multi_patient
+5001 1008 SL 1 GE Advance Curve.deadtime
+5003 0010 SH 1 Private Creator Data Element
+5003 1001 SQ 1 GE Advance Graph Sequence
+5003 1002 UI 1 > GE Advance Graph.graph_id
+5003 1003 SH 1 > GE Advance Graph.compatible_version
+5003 1004 SH 1 > GE Advance Graph.software_version
+5003 1005 LO 1 > GE Advance Graph.title
+5003 1006 DT 1 > GE Advance Graph.graph_datetime
+5003 1007 ST 1 > GE Advance Graph.graph_description
+5003 1008 LO 1 > GE Advance Graph.title_font_name
+5003 1009 SH 1 > GE Advance Graph.title_font_size
+5003 100a LO 1 > GE Advance Graph.footer
+5003 100b SH 1 > GE Advance Graph.footer_font_size
+5003 100c LO 1 > GE Advance Graph.foreground_color
+5003 100d LO 1 > GE Advance Graph.background_color
+5003 100e SL 1 > GE Advance Graph.graph_border
+5003 100f SL 1 > GE Advance Graph.graph_width
+5003 1010 SL 1 > GE Advance Graph.graph_height
+5003 1011 SL 1 > GE Advance Graph.grid
+5003 1012 LO 1 > GE Advance Graph.label_font_name
+5003 1013 SH 1 > GE Advance Graph.label_font_size
+5003 1014 LO 1 > GE Advance Graph.axes_color
+5003 1015 LO 1 > GE Advance Graph.x_axis_label
+5003 1016 SL 1 > GE Advance Graph.x_axis_units
+5003 1017 FL 1 > GE Advance Graph.x_major_tics
+5003 1018 FL 1 > GE Advance Graph.x_axis_min
+5003 1019 FL 1 > GE Advance Graph.x_axis_max
+5003 101a LO 1 > GE Advance Graph.y_axis_label
+5003 101b SL 1 > GE Advance Graph.y_axis_units
+5003 101c FL 1 > GE Advance Graph.y_major_tics
+5003 101d FL 1 > GE Advance Graph.y_axis_min
+5003 101e FL 1 > GE Advance Graph.y_axis_max
+5003 101f LO 1 > GE Advance Graph.legend_font_name
+5003 1020 SH 1 > GE Advance Graph.legend_font_size
+5003 1021 SL 1 > GE Advance Graph.legend_location_x
+5003 1022 SL 1 > GE Advance Graph.legend_location_y
+5003 1023 SL 1 > GE Advance Graph.legend_width
+5003 1024 SL 1 > GE Advance Graph.legend_height
+5003 1025 SL 1 > GE Advance Graph.legend_border
+5003 1026 SL 1 > GE Advance Graph.multi_patient
+5005 0010 SH 1 Private Creator Data Element
+5005 1001 SQ 1 GE Advance CurvePresentation Sequence
+5005 1002 UI 1 > GE Advance CurvePresentation.curvepresent_id
+5005 1003 UI 1 > GE Advance CurvePresentation.graph_id
+5005 1004 UI 1 > GE Advance CurvePresentation.curve_id
+5005 1005 SH 1 > GE Advance CurvePresentation.compatible_version
+5005 1006 SH 1 > GE Advance CurvePresentation.software_version
+5005 1007 LO 1 > GE Advance CurvePresentation.curve_label
+5005 1008 LO 1 > GE Advance CurvePresentation.color
+5005 1009 SL 1 > GE Advance CurvePresentation.line_type
+5005 100a SL 1 > GE Advance CurvePresentation.line_width
+5005 100b SL 1 > GE Advance CurvePresentation.point_symbol
+5005 100c SL 1 > GE Advance CurvePresentation.point_symbol_dim
+5005 100d LO 1 > GE Advance CurvePresentation.point_color
