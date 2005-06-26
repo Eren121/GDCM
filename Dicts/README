@@ -80,3 +80,163 @@ This document is produced using:
 GE Medical Systems HISPEED ADVANTAGE CT/i CONFORMANCE STATEMENT:
 http://www.gehealthcare.com/euen/interoperability/docs/2162114_100r5.pdf
 
+the 0023 tags were also extracted from:
+[Technical Publications]
+http://www.gehealthcare.com/usen/interoperability/dicom/docs/22046092.pdf
+
+Ok I finally understood the Private Creator thing:
+V 0025|0010 lg :       x(c) 12       Off.:     x(e4e) 3662    [LO]                                                      [gdcm::Unknown] [GEMS_SERS_01]
+V 0027|0010 lg :       x(c) 12       Off.:     x(eda) 3802    [LO]                                                      [gdcm::Unknown] [GEMS_IMAG_01]
+V 0029|0010 lg :       x(c) 12       Off.:    x(10b8) 4280    [LO]                                                      [gdcm::Unknown] [GEMS_IMPS_01]
+V 0043|0010 lg :       x(c) 12       Off.:    x(112a) 4394    [LO]                                                      [gdcm::Unknown] [GEMS_PARM_01]
+
+And if you take document:
+http://www.gehealthcare.com/euen/interoperability/docs/2288567_100r3_0.pdf
+they are all described:
+
+B.2.5 Private Creator Identification (GEMS_STDY_01)
+B.2.6 Private Creator Identification (GEMS_SERS_01)
+B.2.7 Private Creator Identification (GEMS_IMAG_01)
+...
+
+In fact the best document is:
+LightSpeed QX/i 1.2 Conformance Statement for DICOM v3.0 (ID/Net v3.0) 
+http://www.gehealthcare.com/euen/interoperability/docs/2288567_100r3_0.pdf
+
+
+I was searching for 0043 1039, I could only find:
+http://www.gehealthcare.com/it_solutions/connectivity/pdf/hispeed_np.pdf
+but the link points nowhere, the document describes:
+HiSpeed LX/i, FX/i, DX/i, DX/iB 2.00/2.01/2.02 CONFORMANCE STATEMENT for DICOM v3.0
+
+..let's use google cache... not fun !
+
+
+0043 1060 was found at: http://www.gehealthcare.com/it_solutions/connectivity/pdf/2246181r25.pdf
+0043 1060 IS 8 slop_int_10...slop_int_17
+
+I would also need:
+Signa Horizon Lx DICOM CONFORMANCE STATEMENT for DICOM v3.0
+grrrr: Vas flags 0043 1032 SS 1 in http://www.vitalcom.com/it_solutions/connectivity/pdf/2317752r3.pdf
+but 0043 1032 SS 1 Raw data type http://www.vitalcom.com/it_solutions/connectivity/pdf/2171143r25.pdf
+
+Adding a page from : http://www.vitalcom.com/it_solutions/connectivity/pdf/2317752r3.pdf
+ 
+A Coord of Top Right Corner (0027,1049) FL 1 
+S Coord of Top Right Corner (0027,104A) FL 1 
+R Coord of Bottom Right Corner (0027,104B) FL 1 
+A Coord of Bottom Right Corner (0027,104C) FL 1 
+S Coord of Bottom Right Corner (0027,104D) FL 1 
+Image dimension - X (0027,1060) FL 1 
+Image dimension - Y (0027,1061) FL 1 
+Number of Excitations (0027,1062) FL 1 
+B.1. 8 Private Creator Identification (GEMS_IMPS_01) 
+Lower range of Pixels1 (0029,1015) SL 1 
+Lower range of Pixels1 (0029,1016) SL 1 
+Lower range of Pixels2 (0029,1017) SL 1 
+Upper range of Pixels2 (0029,1018) SL 1 
+Len of tot hdr in bytes (0029,101A) SL 1 
+Version of the hdr struct (0029,1026) SS 1 
+Advantage comp. Overflow (0029,1034) SL 1 
+Advantage comp. Underflow (0029,1035) SL 1 
+B.1. 9 Private Creator Identification (GEMS_PARM_01) 
+Bitmap of prescan options (0043,1001) SS 1 
+Gradient offset in X (0043,1002) SS 1 
+Gradient offset in Y (0043,1003) SS 1 
+Gradient offset in Z (0043,1004) SS 1 
+Img is original or unoriginal (0043,1005) SS 1 
+Number of EPI shots (0043,1006) SS 1 
+Views per segment (0043,1007) SS 1 
+Respiratory rate, bpm (0043,1008) SS 1 
+Respiratory trigger point (0043,1009) SS 1 
+Type of receiver used (0043,100A) SS 1 
+Peak rate of change of gradient field (0043,100B) DS 1 
+Limits in units of percent (0043,100C) DS 1 
+PSD estimated limit (0043,100D) DS 1 
+PSD estimated limit in tesla per second (0043,100E) DS 1 
+Saravghead (0043,100F) DS 1 
+Window value (0043,1010) US 1 
+GE image integrity (0043,101C) SS 1 
+Level value (0043,101D) SS 1 
+Unique image iden (0043,1028) OB 1 
+Histogram tables (0043,1029) OB 1 
+User defined data (0043,102A) OB 1 
+Private Scan Options (0043,102B) SS 4 
+Effective echo spacing (0043,102C) SS 1 
+String slop field 1 (0043,102D) SH 1 
+String slop field 2 (0043,102E) SH 1 
+Image Type (real, imaginary, phase, magnitude) (0043,102F) SS 1 
+Vas collapse flag (0043,1030) SS 1 
+
+RA cord of target recon center (0043,1031) DS 2 
+Vas flags (0043,1032) SS 1 
+Neg_scanspacing (0043,1033) FL 1 
+Offset Frequency (0043,1034) IS 1 
+User_usage_tag (0043,1035) UL 1 
+User_fill_map_MSW (0043,1036) UL 1 
+User_fill_map_LSW (0043,1037) UL 1 
+User data 25...User data 48 (0043,1038) FL 24
+Slop_int_6... slop_int_9 (0043,1039) IS 4 
+ 6: b_value 
+ 7: private imaging options 2 
+ 8: ihtagging
+ 9: ihtagspc 
+Slop_int_10...slop_int_17 (0043,1060) IS 8
+ 10: ihfcineim 
+ 11: ihfcinent 
+ 12: Reserved
+ 13: oprtarr 
+ 14: averages
+ 15: Current Station #
+ 16: Total # of Stations
+ 17: Reserved 
+ 
+Scanner Study Entity UID (0043,1061) UI 1 
+Scanner Study ID (0043,1062) SH 1 
+Scanner Table Entry (single gradient coil systems only)
+Scanner Table Entry + Gradient Coil Selected (0043,106f) DS 3 or 4
+
+
+-------------------------------------------------
+Notes from:
+PathSpeedtm PACS Version 8.0 CONFORMANCE STATEMENT for DICOM V3.0
+http://www.gehealthcare.com/it_solutions/connectivity/pdf/iis_fp_10282r1.pdf
+
+See GE_ImageThumbnails
+--------------------------------------------------
+
+
+About ACUSON.dic, generated from aspen3.pdf:
+[Acusion Aspen(tm) Ultrasound System Dicom Conformance Statement for aspen 3.0 3.5]
+http://mais.baikal.ru/library/pdf/aspen3.pdf
+
+
+--------------------------------------------------
+According to :
+http://www.gehealthcare.com/usen/interoperability/dicom/docs/ep250409r4.pdf
+
+2.5 EXTENSIONS / SPECIALIZATIONS / PRIVATIZATIONS 
+If so configured, the product will send ultrasound raw data information in private data elements designated by the Private 
+Creator element: 
+
+Element Name Tag VR VM Description 
+Private Creator 7FE1,00xx LO 1 GEMS_Ultrasound_MovieGroup_001
+ 
+This means that all private tags starting with 7FE1,xx will belong to the GEMS_Ultrasound_MovieGroup_001. 
+If so configured, the product will send preview image in private data elements designated by the Private Creator element: 
+
+Element Name Tag VR VM Description 
+Private Creator 6003,00xx LO 1 GEMS_Ultrasound_ImageGroup_001
+ 
+This means that all private tags starting with 6003,00xx will belong to the GEMS_Ultrasound_ImageGroup_001
+
+--------------------------------------------------
+In preparation for the new Philips dictionaray with values taken from:
+http://www.medical.philips.com/main/company/connectivity/assets/docs/dicomcs/mr91.pdf
+rename the old dictionary to avoid confusion
+
+Basically all the dictionary should have been:
+
+2001 xx22 FL 1 Water Fat Shift
+instead of
+2001 1022 FL 1 Water Fat Shift
