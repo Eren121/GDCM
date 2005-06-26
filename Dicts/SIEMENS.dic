@@ -6,14 +6,13 @@
 0003 0020 US 1 Message Type
 0003 0030 DA 1 Max Waiting Date
 0003 0031 TM 1 Max Waiting Time
+
 0009 0000 DS 1 Number of Measurements
 0009 0001 UN 1 CR Header Information
 0009 0001 UN 1 SIENET General Purpose IMGEF
 0009 0001 UN 1 RIS Patient Info IMGEF
 0009 0001 US 1 SIENET Command Field
-0009 0010 CS 1 Storage Mode
 0009 0010 LO 1 Generator Identification Label
-0009 0010 LO 1 Recognition Code
 0009 0011 LO 1 Gantry Identification Label
 0009 0012 UL 1 Evaluation Mask - Image
 0009 0012 LO 1 X-Ray Tube Identification Label
@@ -27,12 +26,17 @@
 0009 0026 DA 1 Last Move Date
 0009 0027 TM 1 Last Move Time
 0009 0029 LO 1 Actual User
-0009 0030 UL 1 Byte Offset of Original Header
-0009 0031 UL 1 Length of Original Header
-0009 0040 UL 1 Byte Offset of Pixelmatrix
-0009 0041 UL 1 Length of Pixelmatrix In Bytes
 0009 00f5 LO 1 PDM EFID Placeholder
 0009 00f6 LO 1 PDM Data Object Type Extension
+0009 1010 CS 1 Storage Mode
+0009 1040 SH 1 Data Object Subtype
+0009 1041 SH 1 Data Object Subtype
+0009 1110 LO 1 Recognition Code
+0009 1130 UL 1 Byte Offset of Original Header
+0009 1131 UL 1 Length of Original Header
+0009 1140 UL 1 Byte Offset of Pixelmatrix
+0009 1141 UL 1 Length of Pixelmatrix In Bytes
+
 0011 0003 LO 1 Patient UID
 0011 0004 LO 1 Patient ID
 0011 000a LO 1 Case ID
@@ -60,6 +64,7 @@
 0011 00c0 LO 1 Patient Insurance Status
 0011 00d0 LO 1 Patient Billing Type
 0011 00d2 LO 1 Patient Billing Address
+
 0013 0000 PN 1 Modifying Physician
 0013 0010 DA 1 Modification Date
 0013 0012 TM 1 Modification Time
@@ -279,15 +284,12 @@
 0021 0007 IS 3 CSI Matrix Size Extended
 0021 0008 DS 3 Spatial Grid Shift
 0021 0009 DS 1 Signal Limits Minimum
-0021 0010 DS 1 Zoom
 0021 0010 DS 1 Signal Limits Maximum
 0021 0010 IS 1 Rotation Angle
 0021 0010 UL 2 Creation Mask
 0021 0011 DS 1 Spec Info Mask
-0021 0011 DS 2 Target
 0021 0011 IS 1 Start Angle
 0021 0012 DS 1 EPI Time Rate of Change of Magnitude
-0021 0012 IS 1 Tube Angle
 0021 0013 DS 1 EPI Time Rate of Change of X Component
 0021 0014 DS 1 EPI Time Rate of Change of Y Component
 0021 0015 DS 1 EPI Time Rate of Change of Z Component
@@ -299,7 +301,6 @@
 0021 0020 DS 2 FoV
 0021 0020 IS 1 Phase Correction Rows Sequence
 0021 0020 UL 2 Evaluation Mask
-0021 0020 US 1 ROI Mask
 0021 0021 DS 1 EPI Rise Time
 0021 0021 IS 1 Phase Correction Columns Sequence
 0021 0022 DS 1 Image Magnification Factor
@@ -389,6 +390,11 @@
 0021 0094 DS 1 EPI Change Value of X Component
 0021 0095 DS 1 EPI Change Value of Y Component
 0021 0096 DS 1 EPI Change Value of Z Component
+0021 1010 DS 1 Zoom
+0021 1011 DS 2 Target
+0021 1012 IS 1 Tube Angle
+0021 1020 US 1 ROI Mask
+
 0029 0004 CS 1 Photometric Interpretation
 0029 0008 CS 1 CSA Data Type
 0029 0008 CS 1 CSA Image Header Type
@@ -456,6 +462,7 @@
 0029 00b0 US 1 Radius of Circular Shutter
 0029 00b2 US 1 Origin of Circular Shutter
 0029 00c1 US 1 Contour of Irregular Shutter
+
 0031 0010 LO 1 Request UID
 0031 0012 LO 1 Examination Reason
 0031 0030 DA 1 Requested Date
@@ -491,9 +498,19 @@
 6021 0000 LO 1 Osteo Contour Comment
 6021 0010 LO 1 Image Graphics
 6021 0010 US 256 Osteo Contour Buffer
+
+7001 0000 UL 1 Group Length
 7001 0010 LO 1 Dummy
+7001 1010 LO 1 Dummy
+
+7003 0000 UL 1 Group Length
 7003 0010 LO 1 Header
+7003 1010 LO 1 Header
+
+7005 0000 LO 1 Group Length
 7005 0010 LO 1 Dummy
+7005 1010 LO 1 Dummy
+
 7fe1 0000 OB 1-n Binary Data
 7fe1 0010 OB 1 CSA Data
 7fe3 0000 LO 1 Image Graphics Format Code
