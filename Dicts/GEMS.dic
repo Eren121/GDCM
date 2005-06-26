@@ -13,7 +13,6 @@
 0019 1003 DS 1 Cell number at Theta
 0019 1004 DS 1 Cell spacing
 0019 100F DS 1 Horiz. Frame of ref.
-0019 100F DS 1 Horiz. frame of ref.
 0019 1011 SS 1 Series contrast
 0019 1012 SS 1 Last pseq
 0019 1013 SS 1 Start number for baseline
@@ -195,7 +194,6 @@
 0023 1050 SS 1 Summary image
 0023 1070 FD 1 Start time(secs) in first axial
 0023 1074 SL 1 No. of updates to header
-0023 107D SS 1 Indicates if study has complete info (DICOM/genesis)
 0023 107D SS 1 Indicates if the study has complete info (DICOM/genesis)
 0025 1006 SS 1 Last pulse sequence used
 0025 1007 SL 1 Images in Series
