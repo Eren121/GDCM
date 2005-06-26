@@ -29,5 +29,5 @@
 0023 3070 LO 1 CR Machine Type
 0023 3080 LO 1 CR Technician Code
 0023 3090 LO 1 CR Energy Subtraction value
-0023 30F0 LO 1 CR Distribution Code
-0023 30FF US 1 CR Shutters Applied
+0023 30f0 LO 1 CR Distribution Code
+0023 30ff US 1 CR Shutters Applied
