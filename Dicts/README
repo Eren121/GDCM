@@ -247,6 +247,8 @@ Doc was taken from:
 http://www.gehealthcare.com/usen/fun_img/nmedicine/nmdicom/docs/confstmt.pdf
 
 433  echo "http://www.gehealthcare.com/usen/fun_img/nmedicine/nmdicom/docs/confstmt.pdf" > GEMS-Genie.dic
+To build GEMS-Genie I also used: http://www.gehealthcare.com/usen/fun_img/nmedicine/nmdicom/docs/2383442_100r1.pdf
+
 434  echo "http://www.gehealthcare.com/usen/interoperability/dicom/docs/2270669_100r0_3.pdf" > GEMS-Advance.dic
 
 According to 2270669_100r0_3.pdf, there is different interpretation for:
@@ -262,3 +264,35 @@ ok nevermind I found also this document:
 http://www.gehealthcare.com/usen/fun_img/pet/docs/5101600GDOr0.pdf
 that defines:
 0009 10b3 SL 1 GE Advance ImageSet.ir_num_subsets
+
+
+--------------------------------------------------
+About 6002,1000 I only found one ref:
+[Advantage Workstation 4.0 CONFORMANCE STATEMENT for DICOM V3.0]
+http://www.gehealthcare.com/usen/interoperability/dicom/docs/2261302_100r1.pdf
+
+
+--------------------------------------------------
+For GEMS-Advantx.dic
+[EchoPAC PC version 4 CONFORMANCE STATEMENT for DICOM]
+http://www.gehealthcare.com/it_solutions/connectivity/pdf/EP250409r06.pdf
+http://www.gehealthcare.com/usen/xr/dicom/docs/2142506_100r01_ps.pdf
+
+
+--------------------------------------------------
+ELSCINT Dictionary was done by ripping stuff from:
+Value Multiplicity was deducted by looking at the values for this particular image...
+http://www.merge-efilm.com/phpbb2/viewtopic.php?t=171&sid=11cde708c1f4feac179467c117373732
+
+
+About PHILIPS-EasyVision.dic, BE VERY AFRAID:
+http://www.medical.philips.com/main/company/connectivity/assets/docs/dicomcs/ev44_final.pdf
+... pure pleasure...
+
+
+--------------------------------------------------
+SPI.dic and SIEMENS.dic were generated based on D. Clunie work at:
+[3.3.2.2.2 Siemens Magnetom SP SPI Format]
+http://www.dclunie.com/medical-image-faq/html/part4.html
+
+and spi.tpl siemens.tpl from dicom3tools (20050611 snapshot)
