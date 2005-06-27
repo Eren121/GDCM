@@ -29,6 +29,7 @@
 0009 00f5 LO 1 PDM EFID Placeholder
 0009 00f6 LO 1 PDM Data Object Type Extension
 0009 1010 CS 1 Storage Mode
+0009 1015 LO 1 UID
 0009 1040 SH 1 Data Object Subtype
 0009 1041 SH 1 Data Object Subtype
 0009 1110 LO 1 Recognition Code
@@ -37,6 +38,7 @@
 0009 1140 UL 1 Byte Offset of Pixelmatrix
 0009 1141 UL 1 Length of Pixelmatrix In Bytes
 
+0011 0000 UL 1 Group Length
 0011 0003 LO 1 Patient UID
 0011 0004 LO 1 Patient ID
 0011 000a LO 1 Case ID
