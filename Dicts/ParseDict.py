@@ -328,6 +328,71 @@ class PapyrusParser(PdfTextParser):
     self.Write()
 
 """
+Parser for:
+GE Medical Systems HISPEED ADVANTAGE CT/i CONFORMANCE STATEMENT
+pdftotext -f 81 -l 90 -raw -nopgbrk 2162114_100r5.pdf 2162114_100r5.txt
+"""
+class GEMSParser(PdfTextParser):
+#  def __init__(self):
+#    PdfTextParser.__init__(self)
+
+  def IsAStartingLine(self,s):
+    #patt = re.compile('^[A-Za-z \'\(\)]+ +\\([0-9A-F]+,[0-9A-F]+\\) +(.*)$') 
+    patt = re.compile('^[A-Za-z0-9 .#(),_/-]+ +\\([0-9A-F]+, ?[0-9A-F]+\\) +(.*)$')
+    if( patt.match(s) ):
+      return True
+    return False
+
+  def IsAFullLine(self,s):
+    #patt = re.compile('^[A-Za-z \'\(\)]+ +\\([0-9A-F]+,[0-9A-F]+\\) +(.*)$') 
+    patt = re.compile('^[A-Za-z0-9 .#(),_/-]+ +\\([0-9A-F]+, ?[0-9A-F]+\\) [A-Z][A-Z] [0-9]+$') 
+    if( patt.match(s) ):
+      return True
+    print "Not full:", s
+    return False
+
+  def IsAComment(self,s):
+    if PdfTextParser.IsAComment(self,s):
+      return True
+    #patt = re.compile('^.*GE Medical Systems LightSpeed QX/i CONFORMANCE STATEMENT REV 2.2 sm 2288567-100.*$')
+    #if patt.match(s):
+    #  return True
+    patt = re.compile('^.*GE Medical Systems HISPEED ADVANTAGE CT/i CONFORMANCE STATEMENT.*$') 
+    if patt.match(s):
+      return True
+    patt = re.compile('^GE Medical Systems LightSpeed QX/i CONFORMANCE STATEMENT.*$')
+    if patt.match(s):
+      return True
+    patt = re.compile('^Attribute Name Tag VR VM$')
+    if patt.match(s):
+      return True
+    patt = re.compile('^B.[1-9].*Private .*$')
+    if patt.match(s):
+      return True
+    patt = re.compile('^Table B.1.? .* Private .*$')
+    if patt.match(s):
+      return True
+    patt = re.compile('^Note :.*$')
+    if patt.match(s):
+      return True
+    patt = re.compile('^7.11.1$')
+    if patt.match(s):
+      return True
+    return False
+
+  def AddOutputLine(self,s):
+    #print s
+    assert not self.IsAComment(s)
+    patt = re.compile('^([A-Za-z0-9 .#(),_/-]+) +\\(([0-9A-F]+), ?([0-9A-F]+)\\) ([A-Z][A-Z]) ([0-9]+)$') 
+    m = patt.match(s)
+    if m:
+      ss = m.group(2).lower() + ' ' + m.group(3).lower() + ' ' + m.group(4) + ' ' + m.group(5) + ' ' + m.group(1)
+      self._OutLines.append(ss + '\n')
+    else:
+      print 'OOOPs', s
+
+
+"""
 This class is meant to expand line like:
 - (xxxx,xxxx to xxxx) xxxxxxxxxxxx
 or
@@ -357,8 +422,12 @@ class DicomV3Expander:
       s2 = m.group(2)
       return s1.lower() + s2
     else:
-      print "Impossible case:", s
-      os.sys.exit(1)
+      patt = re.compile('^[0-9a-fA-F]+ [0-9a-fA-F]+ [A-Z][A-Z] [0-9n-] .*$')
+      if patt.match(s):
+        return s
+      else:
+        print "Impossible case:", s
+        os.sys.exit(1)
 
   def AddOutputLine(self,s):
     if s.__class__ == list:
@@ -375,7 +444,9 @@ class DicomV3Expander:
     list = []
     if self.NeedToExpansion(s, list):
       self.AddOutputLine(list) # list != []
-    elif self.NeedXXExpansion(s, list):
+    elif self.NeedGroupXXExpansion(s, list):
+      self.AddOutputLine(list) # list != []
+    elif self.NeedElemXXExpansion(s, list):
       self.AddOutputLine(list) # list != []
     else:
       self.AddOutputLine(self.LowerCaseTag(s))
@@ -399,7 +470,7 @@ class DicomV3Expander:
 
   # If line is like:
   # (50xx,1200) Number of Patient Related Studies IS 1
-  def NeedXXExpansion(self,s,list):
+  def NeedGroupXXExpansion(self,s,list):
     patt = re.compile('^\\(([0-9a-fA-F]+)xx,([0-9a-fA-F]+)\\)(.*)$')
     m = patt.match(s)
     if m:
@@ -416,6 +487,40 @@ class DicomV3Expander:
         #print l
         list.append(l)
       return True
+    return False
+
+  # If line is like:
+  # (2001,xx00) Number of Patient Related Studies IS 1
+  def NeedElemXXExpansion(self,s,list):
+    patt = re.compile('^([0-9a-fA-F]+) ([0-9a-fA-F]+)xx(.*)$')
+    m = patt.match(s)
+    if m:
+      #print m.groups()
+      gr = m.group(1)
+      el_start = m.group(2)
+      start = '0x00'
+      end   = '0xFF'
+      for i in range(eval(start), eval(end)):
+        el = '%02x'% i
+        l = '('+gr+','+el_start+el+')'+m.group(3)
+        print l
+        list.append(l)
+      return True
+    else:
+      patt = re.compile('^([0-9a-fA-F]+) xx([0-9a-fA-F]+)(.*)$')
+      m = patt.match(s)
+      if m:
+        #print m.groups()
+        gr = m.group(1)
+        el_start = m.group(2)
+        start = '0x00'
+        end   = '0xFF'
+        for i in range(eval(start), eval(end)):
+          el = '%02x'% i
+          l = '('+gr+','+el+el_start+')'+m.group(3)
+          print l
+          list.append(l)
+        return True
     return False
 
   def Write(self):
@@ -474,7 +579,106 @@ class InteraParser:
     outfile.writelines( outLines )
     outfile.close()
  
+"""
+Parse line from a dicom3tools document, line are like this:
 
+(0003,0008) VERS="SSPI" VR="US"   VM="1"        Owner="SIEMENS ISI"             Keyword="ISICommandField"                       Name="ISI Command Field"
+"""
+class Dicom3ToolsParser:
+  def __init__(self):
+    self._InputFilename = ''
+    self._OutputFilename = ''
+
+  def Reformat(self,s):
+    assert self.IsGood(s)
+    patt = re.compile("^\(([0-9a-f]+),([0-9a-f]+)\)\s+VERS=\".*\"\s+VR=\"([A-Z][A-Z])\"\s+VM=\"(.*)\"\s+Owner=\".*\"\s+Keyword=\".*\"\s+Name=\"(.*)\"$")
+    m = patt.match(s)
+    dicom = ''
+    if m:
+      # Apparently some have Name == '?', skip those
+      name = m.group(5)
+      if name != '?' and name != '? ':
+        dicom = m.group(1) + ' ' + m.group(2) + ' ' + m.group(3) + ' ' + m.group(4) + ' ' + m.group(5)
+      else:
+        print "oops"
+    else:
+      print "oops"
+    return dicom
+
+  def IsGood(self,s):
+    #patt = re.compile("^\([0-9a-f]+,[0-9a-f]+\) VERS=\".*\" VR=\"[A-Z][A-Z]\" VM=\".*\" Owner=\".*\" Keyword=\".*\" Name=\".*\"$")
+    patt = re.compile("^\([0-9a-f]+,[0-9a-f]+\)\s+VERS=\".*\"\s+VR=\"[A-Z][A-Z]\"\s+VM=\".*\"\s+Owner=\".*\"\s+Keyword=\".*\"\s+Name=\".*\".*$")
+    if patt.match(s):
+      return True
+    print "Not good:", s
+    return False
+
+  def SetInputFileName(self,s):
+    self._InputFilename = s
+
+  def SetOutputFileName(self,s):
+    self._OutputFilename = s
+  
+  def Parse(self):
+    infile = file(self._InputFilename, 'r')
+    outLines = []
+    for line in infile.readlines():
+      newline = self.Reformat(line)
+      print newline
+      if newline:
+        outLines.append( newline + '\n' )
+    outfile = file(self._OutputFilename, 'w')
+    outfile.writelines( outLines )
+    outfile.close()
+ 
+"""
+Parse line from a PhilipsAdvance document, line are like this:
+
+GE Advance Implementation Version Name (0009,1001) 3 LO 2 n/a
+"""
+class GEAdvanceParser:
+  def __init__(self):
+    self._InputFilename = ''
+    self._OutputFilename = ''
+
+  def Reformat(self,s):
+    assert self.IsGood(s)
+    #patt = re.compile("^\(([0-9a-f]+),([0-9a-f]+)\)\s+VERS=\".*\"\s+VR=\"([A-Z][A-Z])\"\s+VM=\"(.*)\"\s+Owner=\".*\"\s+Keyword=\".*\"\s+Name=\"(.*)\"$")
+    patt = re.compile("^([A-Za-z0-9 ._>]+) \\(([0-9A-F]+),([0-9A-F]+)\\) [0-9] ([A-Z][A-Z]) ([0-9]) .*$")
+    m = patt.match(s)
+    dicom = ''
+    if m:
+      dicom = m.group(2) + ' ' + m.group(3).lower() + ' ' + m.group(4) + ' ' + m.group(5) + ' ' + m.group(1)
+    else:
+      print "oops"
+    return dicom
+
+  def IsGood(self,s):
+    #patt = re.compile("^\([0-9a-f]+,[0-9a-f]+\)\s+VERS=\".*\"\s+VR=\"[A-Z][A-Z]\"\s+VM=\".*\"\s+Owner=\".*\"\s+Keyword=\".*\"\s+Name=\".*\".*$")
+    patt = re.compile("^[A-Za-z0-9 ._>]+ \\([0-9A-F]+,[0-9A-F]+\\) [0-9] [A-Z][A-Z] [0-9] .*$")
+    if patt.match(s):
+      return True
+    print "Not good:", s
+    return False
+
+  def SetInputFileName(self,s):
+    self._InputFilename = s
+
+  def SetOutputFileName(self,s):
+    self._OutputFilename = s
+  
+  def Parse(self):
+    infile = file(self._InputFilename, 'r')
+    outLines = []
+    for line in infile.readlines():
+      newline = self.Reformat(line)
+      #print newline
+      if newline:
+        outLines.append( newline + '\n' )
+    outfile = file(self._OutputFilename, 'w')
+    outfile.writelines( outLines )
+    outfile.close()
+ 
 if __name__ == "__main__":
   argc = len(os.sys.argv )
   if ( argc < 3 ):
@@ -490,9 +694,9 @@ if __name__ == "__main__":
   #dp.SetOutputFileName( outputfilename )
   dp.SetOutputFileName( tempfile )
   dp.Parse()
-
   exp = DicomV3Expander()
-  exp.SetInputFileName( tempfile )
+  #exp.SetInputFileName( tempfile )
+  exp.SetInputFileName( inputfilename )
   exp.SetOutputFileName( outputfilename )
   exp.Expand()
 
@@ -500,15 +704,32 @@ if __name__ == "__main__":
   dp.SetInputFileName( inputfilename )
   dp.SetOutputFileName( outputfilename )
   dp.Parse()
+
   dp = PapyrusParser()
   dp.SetInputFileName( inputfilename )
   dp.SetOutputFileName( outputfilename )
   dp.Parse()
-  """
 
   dp = InteraParser()
   dp.SetInputFileName( inputfilename )
   dp.SetOutputFileName( outputfilename )
   dp.Parse()
+  dp = GEMSParser()
+  dp.SetInputFileName( inputfilename )
+  dp.SetOutputFileName( outputfilename )
+  dp.Parse()
+
+  """
+  dp = Dicom3ToolsParser()
+  dp.SetInputFileName( inputfilename )
+  dp.SetOutputFileName( outputfilename )
+  dp.Parse()
+
+  """
+  dp = GEAdvanceParser()
+  dp.SetInputFileName( inputfilename )
+  dp.SetOutputFileName( outputfilename )
+  dp.Parse()
+  """
 
   #print dp.IsAStartingLine( "(0004,1212) File-set Consistency Flag US 1\n" )
