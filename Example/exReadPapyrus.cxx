@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 15:44:50 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/06/27 15:46:27 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,9 @@
 #include "gdcmSQItem.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
+
+#include "gdcmArgMgr.h"
+#include <iostream>
 
 //#include <fstream>
 
@@ -70,45 +73,96 @@ bool RemoveFile(const char *source)
 
 int main(int argc, char *argv[])
 {
-   if (argc < 3)
+
+   START_USAGE(usage)
+   " \n exReadPapyrus :\n",
+   " Reads a Papyrus V3 File, Writes a Multiframe Dicoim V3 File ",
+   "     (just to show gdcm can do it ...)               ",
+   "",
+   " usage: exReadPapyrus filein=inputPapyrusFileName fileout=outputDicomFileName", 
+   "                      [debug]  ", 
+   "        debug    : user wants to run the program in 'debug mode'        ",
+   FINISH_USAGE
+
+
+   // ----- Initialize Arguments Manager ------
+   
+   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+  
+   if (am->ArgMgrDefined("usage")) 
    {
-      std::cerr << "Usage :" << std::endl << 
-      argv[0] << " input_papyrus output_dicom verbose" << std::endl;
-      return 1;
+      am->ArgMgrUsage(usage); // Display 'usage'
+      delete am;
+      return 0;
+   }
+   char *fileName = am->ArgMgrWantString("filein",usage);
+   if ( fileName == NULL )
+   {
+      delete am;
+      return 0;
    }
 
-   std::string filename = argv[1];
-   std::string output = argv[2];
-
-   if (argc > 3)
-      gdcm::Debug::DebugOn();
-
-   if( FileExists( output.c_str() ) )
+   char *outputFileName = am->ArgMgrWantString("fileout",usage);
+   if ( outputFileName == NULL )
    {
-      if( !RemoveFile( output.c_str() ) )
+      delete am;
+      return 0;
+   }
+
+   if (am->ArgMgrDefined("debug"))
+      gdcm::Debug::DebugOn();
+ 
+   // if unused Params we give up
+   if ( am->ArgMgrPrintUnusedLabels() )
+   { 
+      am->ArgMgrUsage(usage);
+      delete am;
+      return 0;
+   }
+
+   delete am;  // we don't need Argument Manager any longer
+
+   // ----------- End Arguments Manager ---------
+
+   if( FileExists( outputFileName ) )
+   {
+      if( !RemoveFile( outputFileName ) )
       {
          std::cerr << "Ouch, the file exist, but I cannot remove it" << std::endl;
          return 1;
       }
    }
-   gdcm::FileHelper *original = new gdcm::FileHelper( filename );
-   gdcm::File *h = original->GetFile();
+
+   int loadMode = 0x0; // load everything
+   gdcm::File *e1 = new gdcm::File();
+   e1->SetLoadMode(loadMode);
+
+   bool res = e1->Load( fileName );
+   if ( !res )
+   {
+      delete e1;
+      return 0;
+   }
 
    // Look for private Papyrus Sequence
-   gdcm::SeqEntry *seqPapyrus= h->GetSeqEntry(0x0041, 0x1050);
+   gdcm::SeqEntry *seqPapyrus= e1->GetSeqEntry(0x0041, 0x1050);
    if (!seqPapyrus)
    {
-      std::cout << "NOT a Papyrus File" << std::endl;
-      delete h;
+      std::cout << "NOT a Papyrus File : " << fileName <<std::endl;
+      delete e1;
       return 1;
    }
 
+//   gdcm::FileHelper *original = new gdcm::FileHelper( fileName );
+//   gdcm::File *h = original->GetFile();
+
+   //gdcm::FileHelper *f1 = new gdcm::FileHelper(e1);
    gdcm::SQItem *sqi = seqPapyrus->GetFirstSQItem();
    if (sqi == 0)
    {
       std::cout << "NO SQItem found within private Papyrus Sequence"
           << std::endl;
-      delete h;
+      delete e1;
       return 1;
    }
       
@@ -123,8 +177,8 @@ int main(int argc, char *argv[])
 //  Modality, Transfer Syntax, Study Date, Study Time
 // Patient Name, Media Storage SOP Instance UID, etc
 
-   MediaStSOPinstUID   =   h->GetEntryValue(0x0002,0x0002);
-   TransferSyntax      =   h->GetEntryValue(0x0002,0x0010);
+   MediaStSOPinstUID   =  e1->GetEntryValue(0x0002,0x0002);
+   TransferSyntax      =  e1->GetEntryValue(0x0002,0x0010);
    StudyDate           = sqi->GetEntryValue(0x0008,0x0020);
    StudyTime           = sqi->GetEntryValue(0x0008,0x0030);
    Modality            = sqi->GetEntryValue(0x0008,0x0060);
@@ -153,7 +207,7 @@ int main(int argc, char *argv[])
    BitsAllocated       = sqi->GetEntryValue(0x0028,0x0100);
    BitsStored          = sqi->GetEntryValue(0x0028,0x0101);
    HighBit             = sqi->GetEntryValue(0x0028,0x0102);
-   PixelRepresentation = sqi->GetEntryValue(0x0028,0x0102);
+   PixelRepresentation = sqi->GetEntryValue(0x0028,0x0103);
 
    // just convert those needed to compute PixelArea length
    int iRows            = (uint32_t) atoi( Rows.c_str() );
@@ -170,15 +224,15 @@ int main(int argc, char *argv[])
    //  allocate enough room to get the pixels of all images.
    uint8_t *PixelArea = new uint8_t[lgrImage*nbImages];
    uint8_t *currentPosition = PixelArea;
-  gdcm::BinEntry *pixels;
+   gdcm::BinEntry *pixels;
 
    // declare and open the file
    std::ifstream *Fp;
-   Fp = new std::ifstream(filename.c_str(), std::ios::in | std::ios::binary);
+   Fp = new std::ifstream(fileName, std::ios::in | std::ios::binary);
    if( ! *Fp )
    {
-      std::cout <<  "Cannot open file: " << filename << std::endl;
-      //gdcmDebugMacro( "Cannot open file: " << filename.c_str() );
+      std::cout <<  "Cannot open file: " << fileName << std::endl;
+      //gdcmDebugMacro( "Cannot open file: " << fileName.c_str() );
       delete Fp;
       Fp = 0;
       return 0;
@@ -235,7 +289,7 @@ int main(int argc, char *argv[])
    n->InsertValEntry(BitsAllocated,      0x0028,0x0100);
    n->InsertValEntry(BitsStored,         0x0028,0x0101);
    n->InsertValEntry(HighBit,            0x0028,0x0102);
-   n->InsertValEntry(PixelRepresentation,0x0028,0x0102);
+   n->InsertValEntry(PixelRepresentation,0x0028,0x0103);
 
    // create the file
    gdcm::FileHelper *file = new gdcm::FileHelper(n);
@@ -244,13 +298,13 @@ int main(int argc, char *argv[])
    file->SetWriteTypeToDcmExplVR();
 
    //file->SetPrintLevel(2);
-   file->Print();
+   n->Print();
 
    // Write the file
-   file->Write(argv[2]); 
+   file->Write(outputFileName); 
    if (!file)
    {
-      std::cout <<"Fail to open (write) file:[" << argv[2]<< "]" << std::endl;;
+      std::cout <<"Fail to open (write) file:[" << outputFileName << "]" << std::endl;;
       return 1;  
    }
    return 0;
