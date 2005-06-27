@@ -16,9 +16,10 @@
 0009 xx38 SL 1 RR Window Width 
 0009 xx39 SL 1 RR Window Offset 
 0009 xx3a SL 1 Percent Cycle Imaged 
-0009 xx41 SL 1 Patient Flags 
-0009 xx42 DA 1 Patient Creation Date 
-0009 xx43 TM 1 Patient Creation Time 
+0009 xx40 PN 1 Patient Object Name
+0009 xx41 SL 1 Patient Flags
+0009 xx42 DA 1 Patient Creation Date
+0009 xx43 TM 1 Patient Creation Time
 0011 0010 LO 1 Private Creator Identification 
 0011 xx0a SL 1 Series Type  
 0011 xx0b SL 1 Effective Series Duration 
@@ -60,10 +61,27 @@
 0011 xx56 FD 1 Elapsed Time 
 0013 0010 LO 1 Private Creator Identification 
 0013 xx10 FD 2 Digital FOV 
+0013 xx11 SL 1 Source Translator
 0013 xx16 SL 1 AutoTrack Peak 
 0013 xx17 SL 1 AutoTrack Width 
 0013 xx18 FD 1 Transmission Scan Time 
 0013 xx19 FD 1 Transmission Mask Width 
 0013 xx1a FD 1 Copper Attenuator Thickness 
 0013 xx1e FD 1-n Tomo View Offset 
-0013 xx26 LT 1 Study Comments 
+0013 xx26 LT 1 Study Comments
+0033 xx08 CS 1 GENIE Data Object Type
+0033 xx10 SL 1 Modified
+0033 xx11 LO 1 Name
+0033 xx16 LO 1 ProtocolDataUID
+0033 xx17 SH 1 Date
+0033 xx18 SH 1 Time
+0033 xx19 UL 1 ProtocoldataFlags
+0033 xx1A UL 1 ProtocolName
+0033 xx1B LO 1 RelevantDataUID
+0033 xx1C LO 1 BulkData
+0033 xx1D SL 1-n IntData
+0033 xx1E FD 1-n DoubleData
+0033 xx1F LT 1-n StringData
+0033 xx20 LT 1-n BulkDataFormat
+0033 xx23 LT 1-n StringDataFormat
+0033 xx24 LT 1 Description
