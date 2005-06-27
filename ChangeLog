@@ -1,3 +1,12 @@
+2005-06-26 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
+	 * Quite a few new dictionaries were added in gdcm. The file:
+	   gdcm/Dict/README should always explain were the info was found
+		 (in case of double check). Also some dict are still only
+		 express as 'template' (they contain 'xx'), therefore
+		 a python script should be run first to generate a full dict.
+		 In the longer term this python script should be replaced by
+		 a cmake script.
+
 2005-06-25 Mathieu Malaterre  <Mathieu.Malaterre@creatis.insa-lyon.fr>
    * dicomV3.dic is deprecated in favor of gdcm.dic
      There is now a dictionary per family:
