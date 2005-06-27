@@ -7,14 +7,8 @@ SET(ALL_DICTS
   dicomV3.dic
   Papyrus.dic
   NIH.dic     #the forbidden one...
+  SPI.dic
   )
-
-# The following line make sure we are not appending on an already existing file
-#FILE(WRITE "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" "")
-#FOREACH(dict ${ALL_DICTS})
-#  FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
-#  FILE(APPEND "${GDCM_BINARY_DIR}/Dicts/gdcm.dic" ${dict_append})
-#ENDFOREACH(dict)
 
 # Better solution
 SET(TEST_DICT_BODY)
@@ -40,22 +34,8 @@ FOREACH(line ${ENT})
   STRING(REGEX REPLACE
     "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) (.*)$"
     "   {0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"}, " nline "${line}")
-  #MESSAGE( "${nline}" )
   SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
-
-
-#FILE(READ "dicomV3PhilipsIntera.dic" ENT)
-#STRING(REGEX REPLACE "\r?\n" ";" ENT "${ENT}")
-#SET(DICOM_DATA_DICTIONARY "")
-#FOREACH(line ${ENT})
-#  STRING(REGEX REPLACE
-#    "^([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ([A-Z]+) ([1-9n-]+) (.*)$"
-#    "   {0x\\1, 0x\\2, \"\\3\" , \"\\4\" , \"\\5\"}, " nline "${line}")
-#  #SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY}\n${nline}")
-#  MESSAGE( "${nline}" )
-#ENDFOREACH(line)
-
 
 SET(DICOM_DATA_DICTIONARY "${DICOM_DATA_DICTIONARY} \n {0,0,0,0,0}")
 
@@ -117,11 +97,6 @@ ENDFOREACH(line)
 #-----------------------------------------------------------------------------
 # ... Set the dictionnary
 SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n {0,0,0,0}")
-
-#FOREACH(file dicomV3.dic dicomTS.dic dicomVR.dic DicomDir.dic DictGroupName.dic)
-#  CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/${file}"
-#    "${GDCM_BINARY_DIR}/Dicts/${file}.out")
-#ENDFOREACH(file)
 
 CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in" 
   "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
