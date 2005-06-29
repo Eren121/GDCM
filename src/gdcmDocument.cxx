@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:53:46 $
-  Version:   $Revision: 1.251 $
+  Date:      $Date: 2005/06/29 15:58:33 $
+  Version:   $Revision: 1.252 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -994,7 +994,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       }
       else
       {
-         // VR = "SQ"
+         /////////////////////// SeqEntry :  VR = "SQ"
+
          unsigned long l = newDocEntry->GetReadLength();          
          if ( l != 0 ) // don't mess the delim_mode for zero-length sequence
          {
@@ -1008,8 +1009,20 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
          }
  
-         if ( (LoadMode & NO_SEQ) && ! delim_mode ) // User asked to skip SQ
+        if ( (LoadMode & NO_SHADOWSEQ) && ! delim_mode )
+        { 
+           // User asked to skip SQ only if they belong to Shadow group
+           if ( newDocEntry->GetGroup()%2 != 0 )
+           {
+              Fp->seekg( l, std::ios::cur);
+              used = false;
+              continue;  
+           } 
+        } 
+ 
+         if ( (LoadMode & NO_SEQ) && ! delim_mode ) 
          {
+           // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);
             used = false;
             continue;
@@ -2104,7 +2117,7 @@ DocEntry *Document::ReadNextDocEntry()
 
 /**
  * \brief   Handle broken private tag from Philips NTSCAN
- *          where the endianess is being switch to BigEndian for no
+ *          where the endianess is being switched to BigEndian for no
  *          apparent reason
  * @return  no return
  */
