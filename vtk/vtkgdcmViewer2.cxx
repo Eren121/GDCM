@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 14:40:58 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/06/29 16:15:16 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,7 @@
 #include <vtkLookupTable.h>
 
 #include "vtkGdcmReader.h"
+#include "gdcmDocument.h"  // for NO_SHADOWSEQ
 
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
@@ -93,6 +94,8 @@ int main(int argc, char *argv[])
       for(int i=1; i< argc; i++)
          reader->AddFileName( argv[i] );
 
+// TODO : allow user to choose Load Mode
+   reader->SetLoadMode(NO_SHADOWSEQ);  
    reader->Update();
 
    //print debug info:
