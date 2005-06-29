@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/22 08:37:54 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/06/29 16:00:13 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -144,8 +144,10 @@ int main(int argc, char *argv[])
    char *fileName = am->ArgMgrWantString("filein",usage);
 
    int loadMode;
-   if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
-       loadMode = NO_SEQ | NO_SHADOW;  
+   if ( am->ArgMgrDefined("noshadowseq") )
+      loadMode = NO_SHADOWSEQ;
+   else if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
+      loadMode = NO_SEQ | NO_SHADOW;  
    else if ( am->ArgMgrDefined("noshadow") )
       loadMode = NO_SHADOW;
    else if ( am->ArgMgrDefined("noseq") )
