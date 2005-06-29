@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/28 09:29:05 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/06/29 16:12:43 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,6 +51,16 @@ public:
    vtkBooleanMacro(AllowLookupTable, int);
 
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
+
+/**
+ * \brief Sets the LoadMode as a boolean string. 
+ *        NO_SEQ, NO_SHADOW, ... (nothing more, right now)
+ *        WARNING : before using NO_SHADOW, be sure *all* your files
+ *        contain accurate values in the 0x0000 element (if any) 
+ *        of *each* Shadow Group. The parser will fail if the size is wrong !
+ * @param   mode Load mode to be used    
+ */
+   void SetLoadMode (int mode) { LoadMode = mode; }
 
 protected:
    vtkGdcmReader();
@@ -103,6 +113,12 @@ private:
    //    files patterned
    std::list<std::string> InternalFileNameList;
    //ETX
+
+   /// \brief Bit string integer (each one considered as a boolean)
+   ///        Bit 0 : Skip Sequences,    if possible
+   ///        Bit 1 : Skip Shadow Groups if possible
+   ///        Probabely, some more to add
+   int LoadMode;
 };
 
 //-----------------------------------------------------------------------------

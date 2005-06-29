@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/06 08:38:29 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/06/29 16:12:43 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,10 @@
 
 #include "gdcmFileHelper.h"
 #include "gdcmFile.h"
+#include "gdcmDocument.h"  // for NO_SEQ
+
 #include "vtkGdcmReader.h"
+#include "gdcmDebug.h"
 
 //#include <stdio.h>
 #include <vtkObjectFactory.h>
@@ -83,7 +86,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.71 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.72 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -93,6 +96,8 @@ vtkGdcmReader::vtkGdcmReader()
    this->LookupTable = NULL;
    this->AllowLookupTable = 0;
    this->LightChecking = false;
+   this->LoadMode = 0; // Load everything (possible values : NO_SEQ, NO_SHADOW
+                       //                                    NO_SHADOWSEQ)
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -105,7 +110,7 @@ vtkGdcmReader::~vtkGdcmReader()
 
 //-----------------------------------------------------------------------------
 // Print
-void vtkGdcmReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkGdcmReader::PrintSelf(ostream &os, vtkIndent indent)
 {
    this->Superclass::PrintSelf(os,indent);
    os << indent << "Filenames  : " << endl;
@@ -158,7 +163,7 @@ void vtkGdcmReader::SetFileName(const char *name)
 }
 
 /*
- * Ask for a 'light' checking - actually : just initializing-
+ * Ask for a 'light' checking -actually : just initializing-
  *if you are 150% sure *all* the files are coherent
  */
 void vtkGdcmReader::SetCheckFileCoherenceLight()
@@ -491,10 +496,7 @@ int vtkGdcmReader::CheckFileCoherence()
       //gdcm::File GdcmFile( filename->c_str() );
       // to save some parsing time.
       gdcm::File GdcmFile;
-      // Some images have a wrong length for 0x0000 element of private groups
-      // Better we don't use NO_SHADOW as a default option
-      //GdcmFile.SetLoadMode( NO_SEQ | NO_SHADOW );
-      GdcmFile.SetLoadMode( NO_SEQ );
+      GdcmFile.SetLoadMode( LoadMode );
       GdcmFile.Load(filename->c_str() );
       if (!GdcmFile.IsReadable())
       {
@@ -652,10 +654,15 @@ size_t vtkGdcmReader::LoadImageInMemory(
              std::string fileName, 
              unsigned char *dest,
              const unsigned long updateProgressTarget,
-             unsigned long & updateProgressCount)
+             unsigned long &updateProgressCount)
 {
    vtkDebugMacro(<< "Copying to memory image [" << fileName.c_str() << "]");
-   gdcm::FileHelper file( fileName.c_str() );
+   gdcm::File *f;
+   f = new gdcm::File();
+   f->SetLoadMode( LoadMode );
+   f->Load( fileName.c_str() );
+
+   gdcm::FileHelper fileH( f );
    size_t size;
 
    // If the data structure of vtk for image/volume representation
@@ -665,19 +672,19 @@ size_t vtkGdcmReader::LoadImageInMemory(
    // line comes first (for some axis related reasons?). Hence we need
    // to load the image line by line, starting from the end.
 
-   int numColumns = file.GetFile()->GetXSize();
-   int numLines   = file.GetFile()->GetYSize();
-   int numPlanes  = file.GetFile()->GetZSize();
-   int lineSize   = NumComponents * numColumns * file.GetFile()->GetPixelSize();
+   int numColumns = fileH.GetFile()->GetXSize();
+   int numLines   = fileH.GetFile()->GetYSize();
+   int numPlanes  = fileH.GetFile()->GetZSize();
+   int lineSize   = NumComponents * numColumns * fileH.GetFile()->GetPixelSize();
    int planeSize  = lineSize * numLines;
 
    unsigned char *src;
    
-   if( file.GetFile()->HasLUT() && AllowLookupTable )
+   if( fileH.GetFile()->HasLUT() && AllowLookupTable )
    {
-      size               = file.GetImageDataSize();
-      src                = (unsigned char*) file.GetImageDataRaw();
-      unsigned char *lut = (unsigned char*) file.GetLutRGBA();
+      size               = fileH.GetImageDataSize();
+      src                = (unsigned char*) fileH.GetImageDataRaw();
+      unsigned char *lut = (unsigned char*) fileH.GetLutRGBA();
 
       if(!this->LookupTable)
       {
@@ -700,8 +707,8 @@ size_t vtkGdcmReader::LoadImageInMemory(
    }
    else
    {
-      size = file.GetImageDataSize();
-      src  = (unsigned char*)file.GetImageData();
+      size = fileH.GetImageDataSize();
+      src  = (unsigned char*)fileH.GetImageData();
    } 
 
    unsigned char *dst = dest + planeSize - lineSize;
@@ -721,7 +728,8 @@ size_t vtkGdcmReader::LoadImageInMemory(
          updateProgressCount++;
       }
       dst += 2 * planeSize;
-   }   
+   }
+   delete f;   
    return size;
 }
 
@@ -737,7 +745,7 @@ int vtkGdcmReader::CheckFileCoherenceLight()
    std::list<std::string>::iterator filename = InternalFileNameList.begin();
 
    gdcm::File GdcmFile;
-   GdcmFile.SetLoadMode( NO_SEQ | NO_SHADOW );
+   GdcmFile.SetLoadMode( LoadMode );
    GdcmFile.Load(filename->c_str() );
    if (!GdcmFile.IsReadable())
    {
