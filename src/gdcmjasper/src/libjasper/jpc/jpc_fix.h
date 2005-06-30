@@ -64,7 +64,7 @@
 /*
  * Fixed-Point Number Class
  *
- * $Id: jpc_fix.h,v 1.1 2005/05/22 18:33:04 malaterre Exp $
+ * $Id: jpc_fix.h,v 1.2 2005/06/30 16:52:00 malaterre Exp $
  */
 
 #ifndef JPC_FIX_H
@@ -92,7 +92,7 @@ typedef int_fast32_t jpc_fix_t;
 typedef int_fast64_t jpc_fix_big_t;
 
 /* The number of bits used for the fractional part of a fixed-point number. */
-#define JPC_FIX_FRACBITS  13
+#define JPC_FIX_FRACBITS  10
 
 /******************************************************************************\
 * Instantiations of the generic fixed-point number macros for the
