@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:50:20 $
-  Version:   $Revision: 1.244 $
+  Date:      $Date: 2005/06/30 14:49:02 $
+  Version:   $Revision: 1.245 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -206,26 +206,41 @@ bool File::IsReadable()
       gdcmWarningMacro("Wrong Image Dimensions" << res);
       return false; // Image Dimensions
    }
+   bool b0028_0100 = true;
    if ( !GetDocEntry(0x0028, 0x0100) )
    {
       gdcmWarningMacro("Bits Allocated (0028|0100) not found"); 
-      return false; // "Bits Allocated"
+      //return false; // "Bits Allocated"
+      b0028_0100 = false;
    }
+   bool b0028_0101 = true;
    if ( !GetDocEntry(0x0028, 0x0101) )
    {
       gdcmWarningMacro("Bits Stored (0028|0101) not found");
-      return false; // "Bits Stored"
+      //return false; // "Bits Stored"
+      b0028_0101 = false;
    }
+   bool b0028_0102 = true;
    if ( !GetDocEntry(0x0028, 0x0102) )
    {
       gdcmWarningMacro("Hight Bit (0028|0102) not found"); 
-      return false; // "High Bit"
+      //return false; // "High Bit"
+      b0028_0102 = false;
    }
+   bool b0028_0103 = true;
    if ( !GetDocEntry(0x0028, 0x0103) )
    {
       gdcmWarningMacro("Pixel Representation (0028|0103) not found");
-      return false; // "Pixel Representation" i.e. 'Sign' ( 0 : unsigned, 1 : signed)
+      //return false; // "Pixel Representation" i.e. 'Sign' ( 0 : unsigned, 1 : signed)
+      b0028_0103 = false;
    }
+
+   if ( !b0028_0100 && !b0028_0101 && !b0028_0102 && !b0028_0103)
+   {
+      gdcmWarningMacro("Too much mandatory Tags missing !");
+      return false;
+   }
+
    if ( !GetDocEntry(GrPixel, NumPixel) )
    {
       gdcmWarningMacro("Pixel Dicom Element " << std::hex <<
