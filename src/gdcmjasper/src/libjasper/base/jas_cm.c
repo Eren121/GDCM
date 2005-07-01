@@ -62,7 +62,7 @@
 /*
  * Color Management
  *
- * $Id: jas_cm.c,v 1.2 2005/06/09 22:01:59 malaterre Exp $
+ * $Id: jas_cm.c,v 1.3 2005/07/01 13:18:59 malaterre Exp $
  */
 
 #include <jasper/jas_config.h>
@@ -158,7 +158,7 @@ jas_cmprof_t *jas_cmprof_createfromclrspc(int clrspc)
       goto error;
     if (!(prof = jas_cmprof_createfromiccprof(iccprof)))
       goto error;
-#if 0
+#if 1
     jas_iccprof_destroy(iccprof);
 #else
     prof->iccprof = iccprof;
