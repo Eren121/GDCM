@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/30 14:50:05 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/07/01 11:25:51 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,6 +50,8 @@ PixelReadConvert::PixelReadConvert()
    LutRedData   = 0;
    LutGreenData = 0;
    LutBlueData  = 0;
+   RLEInfo      = 0;
+   JPEGInfo     = 0;
 }
 
 /// Canonical Destructor
