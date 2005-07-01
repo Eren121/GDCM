@@ -64,7 +64,7 @@
 /*
  * Image Library
  *
- * $Id: jas_image.c,v 1.4 2005/06/11 14:23:07 malaterre Exp $
+ * $Id: jas_image.c,v 1.5 2005/07/01 13:17:00 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -302,7 +302,8 @@ static jas_image_cmpt_t *jas_image_cmpt_create(uint_fast32_t tlx, uint_fast32_t 
   jas_image_cmpt_t *cmpt;
   long size;
 
-  if (!(cmpt = jas_malloc(sizeof(jas_image_cmpt_t)))) {
+  /*if (!(cmpt = jas_malloc(sizeof(jas_image_cmpt_t)))) {*/
+  if (!(cmpt = jas_image_cmpt_create0())) {
     return 0;
   }
 
