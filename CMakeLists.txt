@@ -124,8 +124,8 @@ INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(GDCM_WORDS_BIGENDIAN)
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+CHECK_INCLUDE_FILE("stdint.h"       CMAKE_HAVE_STDINT_H)
 IF(UNIX) #Avoid polluting Win32 cmakecache
-  CHECK_INCLUDE_FILE("stdint.h"       CMAKE_HAVE_STDINT_H)
   CHECK_INCLUDE_FILE("inttypes.h"     CMAKE_HAVE_INTTYPES_H)
 ENDIF(UNIX)
 
