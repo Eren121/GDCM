@@ -1253,7 +1253,6 @@
 0040 db0c UI 1 Template Extension Organization UID (RET)
 0040 db0d UI 1 Template Extension Creator UID (RET)
 0040 db73 UL 1-n Referenced Content Item Identifier
-0041 1050 SQ 1 Special PAPYRUS 3.0
 
 0050 0000 UL 1 Group Length
 0050 0004 CS 1 Calibration Image
