@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/02 15:54:18 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/07/02 19:19:57 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@
 
 // Broken plateform do not respect C99 and do not provide those typedef
 // Special case for recent borland compiler, comes with stdint.h
-#if defined(_MSC_VER) || __BORLANDC__ < 0x0560  || defined(__MINGW32__)
+#if defined(_MSC_VER) || defined(__BORLANDC__) && (__BORLANDC__ < 0x0560)  || defined(__MINGW32__)
 typedef  signed char         int8_t;
 typedef  signed short        int16_t;
 typedef  signed int          int32_t;
