@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/07/02 18:09:36 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <ctype.h> // for isdigit
 
 // TODO
 // a lot of troubles expected with TS : 1.2.840.113619.5.2
