@@ -100,57 +100,15 @@ ENDFOREACH(file ${TEST_SOURCES})
 # We need to test the reading of all dicom images in the gdcmData directory
 # First parse this directory and extract all images
 
-IF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)
-  FILE(GLOB GDCM_DATA_IMAGES_GLOB
-    "${GDCM_DATA_ROOT}/*.acr"
-    "${GDCM_DATA_ROOT}/*.dcm"
-    "${GDCM_DATA_ROOT}/*.nema"
-    "${GDCM_DATA_ROOT}/*.ima"
-    )
-  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB
-    "${GDCM_DATA_ROOT}/*FileSeq0.acr"
-    "${GDCM_DATA_ROOT}/*FileSeq0.dcm"
-    "${GDCM_DATA_ROOT}/*FileSeq0.nema"
-    "${GDCM_DATA_ROOT}/*FileSeq0.ima"
-    )
-ELSE(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
-  # Since there is a bug in cmake 1.8.3, I'll have to do two separate globs
-  FILE(GLOB GDCM_DATA_IMAGES_GLOB_ACR
-    "${GDCM_DATA_ROOT}/*.acr"
-    )
-  FILE(GLOB GDCM_DATA_IMAGES_GLOB_DCM
-    "${GDCM_DATA_ROOT}/*.dcm"
-    )
-  FILE(GLOB GDCM_DATA_IMAGES_GLOB_NEMA
-    "${GDCM_DATA_ROOT}/*.nema"
-    )
-  FILE(GLOB GDCM_DATA_IMAGES_GLOB_IMA
-    "${GDCM_DATA_ROOT}/*.ima"
-    )
-  SET(GDCM_DATA_IMAGES_GLOB 
-    ${GDCM_DATA_IMAGES_GLOB_DCM} ${GDCM_DATA_IMAGES_GLOB_ACR}
-    ${GDCM_DATA_IMAGES_GLOB_NEMA} ${GDCM_DATA_IMAGES_GLOB_IMA})
-
-  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_ACR
-    "${GDCM_DATA_ROOT}/*FileSeq0.acr"
-    )
-  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_DCM
-    "${GDCM_DATA_ROOT}/*FileSeq0.dcm"
-    )
-  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_NEMA
-    "${GDCM_DATA_ROOT}/*FileSeq0.nema"
-    )
-  FILE(GLOB GDCM_DATA_SEQ_IMAGES_GLOB_IMA
-    "${GDCM_DATA_ROOT}/*FileSeq0.ima"
-    )
-  SET(GDCM_DATA_SEQ_IMAGES_GLOB 
-    ${GDCM_DATA_SEQ_IMAGES_GLOB_DCM} ${GDCM_DATA_SEQ_IMAGES_GLOB_ACR}
-    ${GDCM_DATA_SEQ_IMAGES_GLOB_NEMA} ${GDCM_DATA_SEQ_IMAGES_GLOB_IMA})
-ENDIF(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 1.9)   
+FILE(GLOB GDCM_DATA_IMAGES_GLOB
+  "${GDCM_DATA_ROOT}/*.acr"
+  "${GDCM_DATA_ROOT}/*.dcm"
+  "${GDCM_DATA_ROOT}/*.nema"
+  "${GDCM_DATA_ROOT}/*.ima"
+  )
 
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
-  
   # Multiframe Papyrus format image
   # Just to remember this format exists, and is gdcm::File compliant
   # (NOT gdcm::FileHelper ...)
@@ -182,11 +140,17 @@ IF(BORLAND)
     )
 ENDIF(BORLAND)
 
+# Create a specific list of dicom files that we know are part of a sequence
+SET(SEQ_LIST
+  "SIEMENS_MAGNETOM-12-MONO2-FileSeq[0-9].dcm"
+  )
+
 # Add a special test that requires dciodvfy from dicom3tools
 INCLUDE(${GDCM_SOURCE_DIR}/CMake/FindDicom3Tools.cmake)
 
 # This is a GLOB expression, change it into a list separated with a comma and \n
 SET(GDCM_DATA_IMAGES)
+SET(GDCM_DATA_SEQ_IMAGES)
 FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
   IF(DCIODVFY_FOUND)
@@ -196,17 +160,11 @@ FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
   IF(NOT bad_dicom)
     SET(GDCM_DATA_IMAGES "${GDCM_DATA_IMAGES}\n\"${filename_temp}\",")
-  ENDIF(NOT bad_dicom)
-ENDFOREACH(filename)
-
-SET(GDCM_DATA_SEQ_IMAGES)
-FOREACH(filename ${GDCM_DATA_SEQ_IMAGES_GLOB})
-  GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
-  STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
-  IF(NOT bad_dicom)
-    STRING(REGEX REPLACE "(.*)FileSeq0(.*)" "\\1FileSeq%d\\2" filename_temp2 ${filename_temp})
-
-    SET(GDCM_DATA_SEQ_IMAGES "${GDCM_DATA_SEQ_IMAGES}\n\"${filename_temp2}\",")
+    # SEQ_LIST is a regular expression:
+    STRING(REGEX MATCH ${SEQ_LIST} is_seq ${filename_temp})
+    IF(is_seq)
+      SET(GDCM_DATA_SEQ_IMAGES "${GDCM_DATA_SEQ_IMAGES}\n\"${filename_temp}\",")
+    ENDIF(is_seq)
   ENDIF(NOT bad_dicom)
 ENDFOREACH(filename)
 
