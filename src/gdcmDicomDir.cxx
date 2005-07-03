@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:58 $
-  Version:   $Revision: 1.142 $
+  Date:      $Date: 2005/07/03 12:45:53 $
+  Version:   $Revision: 1.143 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -702,24 +702,18 @@ void DicomDir::CreateDicomDir()
          continue;
       }
 
-      if ( v == "PATIENT " )
+      // A decent DICOMDIR has much more images than series,
+      // more series than studies, and so on.
+      // This is the right order to preform the tests
+
+      if ( v == "IMAGE " ) 
       {
-         si = new DicomDirPatient(true);
-         if ( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
+         si = new DicomDirImage(true);
+         if ( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
          {
             delete si;
             si = NULL;
-            gdcmErrorMacro( "Add PatientToEnd failed");
-         }
-      }
-      else if ( v == "STUDY " )
-      {
-         si = new DicomDirStudy(true);
-         if ( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
-         {
-            delete si;
-            si = NULL;
-            gdcmErrorMacro( "Add AddStudyToEnd failed");
+            gdcmErrorMacro( "Add AddImageToEnd failed");
          }
       }
       else if ( v == "SERIES" )
@@ -732,21 +726,37 @@ void DicomDir::CreateDicomDir()
             gdcmErrorMacro( "Add AddSerieToEnd failed");
          }
       }
-      else if ( v == "IMAGE " ) 
+      else if ( v == "STUDY " )
       {
-         si = new DicomDirImage(true);
-         if ( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
+         si = new DicomDirStudy(true);
+         if ( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
          {
             delete si;
             si = NULL;
-            gdcmErrorMacro( "Add AddImageToEnd failed");
+            gdcmErrorMacro( "Add AddStudyToEnd failed");
+         }
+      }
+      else if ( v == "PATIENT " )
+      {
+         si = new DicomDirPatient(true);
+         if ( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
+         {
+            delete si;
+            si = NULL;
+            gdcmErrorMacro( "Add PatientToEnd failed");
          }
       }
       else
       {
-         // It was not a 'PATIENT', nor a 'STUDY', nor a 'SERIE',
-         // neither an 'IMAGE' SQItem. Skip to next item.
-         continue;
+         // It was neither a 'PATIENT', nor a 'STUDY', nor a 'SERIE',
+         // nor an 'IMAGE' SQItem. Skip to next item.
+         gdcmWarningMacro( " -------------------------------------------"
+         << "a non PATIENT/STUDY/SERIE/IMAGE SQItem was found : "
+         << v);
+
+        // FIXME : deal with other item types !
+        tmpSI=s->GetNextSQItem(); // To avoid infinite loop
+        continue;
       }
       if ( si )
          MoveSQItem(si,tmpSI);
@@ -866,7 +876,7 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
          first = true;
       }
 
-      // if new Study Deal with 'STUDY' Elements   
+      // if new Study, deal with 'STUDY' Elements   
       if ( studCurInstanceUID != studPrevInstanceUID || studCurID != studPrevID 
          || first )
       {
@@ -874,7 +884,7 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
          first = true;
       }
 
-      // if new Serie Deal with 'SERIE' Elements   
+      // if new Serie, deal with 'SERIE' Elements   
       if ( serCurInstanceUID != serPrevInstanceUID || serCurID != serPrevID
          || first )
       {
