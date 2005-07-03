@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/02 16:51:16 $
-  Version:   $Revision: 1.253 $
+  Date:      $Date: 2005/07/03 12:42:04 $
+  Version:   $Revision: 1.254 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -153,7 +153,9 @@ bool Document::Load( std::string const &fileName )
 
    lgt -= beg;                  // remaining length to parse    
 
-   ParseDES( this, beg, lgt, false); // Loading is done during parsing
+   // Recursive call.
+   // Loading is done during parsing
+   ParseDES( this, beg, lgt, false); // delim_mode is first defaulted to false
 
    if ( IsEmpty() )
    { 
@@ -186,7 +188,7 @@ bool Document::Load( std::string const &fileName )
       /// altered on PURPOSE but now contains a WRONG value.
       /// In order to fix things and restore the dictionary to its
       /// correct value, one needs to decided of the semantics by deciding
-      /// whether the following tags are either:
+      /// whether the following tags are either :
       /// - multivaluated US, and hence loaded as ValEntry, but afterwards
       ///   also used as BinEntry, which requires the proper conversion,
       /// - OW, and hence loaded as BinEntry, but afterwards also used
@@ -226,7 +228,7 @@ bool Document::Load( std::string const &fileName )
    // ----------------------------
    // Specific code to allow gdcm to read ACR-LibIDO formated images
    // Note: ACR-LibIDO is an extension of the ACR standard that was
-   //       used at CREATIS. For the time being (say a couple years)
+   //       used at CREATIS. For the time being (say a couple of years)
    //       we keep this kludge to allow CREATIS users 
    //       reading their old images.
    //
@@ -854,7 +856,7 @@ void Document::Initialize()
 
 /**
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
- * @param set DocEntrySet we are going to parse ('zero level'   or a SQItem)
+ * @param set DocEntrySet we are going to parse ('zero level' or a SQItem)
  * @param offset start of parsing
  * @param l_max  length to parse
  * @param delim_mode : whether we are in 'delimitor mode' (l=0xffffff) or not
@@ -868,6 +870,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    SeqEntry *newSeqEntry;
    VRKey vr;
    bool used;
+   bool delim_mode_intern;
 
    while (true)
    {
@@ -999,39 +1002,38 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          /////////////////////// SeqEntry :  VR = "SQ"
 
          unsigned long l = newDocEntry->GetReadLength();          
-         if ( l != 0 ) // don't mess the delim_mode for zero-length sequence
+         if ( l != 0 ) // don't mess the delim_mode for 'zero-length sequence'
          {
             if ( l == 0xffffffff )
             {
-              delim_mode = true;
+              delim_mode_intern = true;
             }
             else
             {
-              delim_mode = false;
+              delim_mode_intern = false;
             }
          }
- 
-        if ( (LoadMode & NO_SHADOWSEQ) && ! delim_mode )
-        { 
-           // User asked to skip SQ only if they belong to Shadow group
-           if ( newDocEntry->GetGroup()%2 != 0 )
-           {
-              Fp->seekg( l, std::ios::cur);
-              used = false;
-              continue;  
-           } 
-        } 
- 
-         if ( (LoadMode & NO_SEQ) && ! delim_mode ) 
+
+         if ( (LoadMode & NO_SHADOWSEQ) && ! delim_mode_intern )
+         { 
+           // User asked to skip SeQuences *only* if they belong to Shadow Group
+            if ( newDocEntry->GetGroup()%2 != 0 )
+            {
+                Fp->seekg( l, std::ios::cur);
+                used = false;
+                continue;  
+            } 
+         } 
+         if ( (LoadMode & NO_SEQ) && ! delim_mode_intern ) 
          {
            // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);
             used = false;
             continue;
-          }
+         }
          
          // no other way to create it ...
-         newSeqEntry->SetDelimitorMode( delim_mode );
+         newSeqEntry->SetDelimitorMode( delim_mode_intern );
 
          // At the top of the hierarchy, stands a Document. When "set"
          // is a Document, then we are building the first depth level.
@@ -1056,13 +1058,13 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {  // Don't try to parse zero-length sequences
             ParseSQ( newSeqEntry, 
                      newDocEntry->GetOffset(),
-                     l, delim_mode);
+                     l, delim_mode_intern);
          }
          if ( !set->AddEntry( newSeqEntry ) )
          {
             used = false;
          }
-
+ 
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if ( !used )
@@ -1095,6 +1097,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       if ( !newDocEntry )
       {
          // FIXME Should warn user
+         gdcmWarningMacro("in ParseSQ : should never get here!");
          break;
       }
       if ( delim_mode )
@@ -1134,7 +1137,9 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       delete newDocEntry;
       Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);
       // fill up the current SQItem, starting at the beginning of fff0,e000
+
       ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
+
       offsetStartCurrentSQItem = Fp->tellg();
       // end try -----------------
  
@@ -1178,7 +1183,7 @@ void Document::LoadDocEntry(DocEntry *entry)
    }
 
    // The elements whose length is bigger than the specified upper bound
-   // are not loaded. Instead we leave a short notice of the offset of
+   // are not loaded. Instead we leave a short notice on the offset of
    // the element content and it's length.
 
    std::ostringstream s;
