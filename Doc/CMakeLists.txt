@@ -39,7 +39,7 @@ IF(GDCM_DOCUMENTATION)
      SET(GDCM_DOCUMENTATION_HAVE_DOT "NO")
   ENDIF(DOT)
 
-  #Should rewrote this thing with FOREACH:
+  #Should rewrite this thing with FOREACH:
   #-----------------------------------------------------------------------------
   # Build the documentation for developpers
 
