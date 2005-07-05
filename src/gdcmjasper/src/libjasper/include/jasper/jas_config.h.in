@@ -221,6 +221,9 @@ typedef __int64            longlong;
 /* #define  ssize_t    int */
 #endif /* HAVE_SYS_TYPES_H */
 
+/* check how the compiler implement the return of malloc(0) */
+/* jasper does not support the case where it returns NULL */
+#cmakedefine NULL_ON_MALLOC_0
 
 #cmakedefine JASPERSTATIC
 #cmakedefine JASPERDLL
