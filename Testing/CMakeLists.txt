@@ -131,15 +131,6 @@ SET(BLACK_LIST
   "rle16loo.dcm"   
   )
 
-# Don't understand why jasper is segfaulting with borland...I bet a borland bug
-IF(BORLAND)
-  SET(BLACK_LIST
-    ${BLACK_LIST}
-    "D_CLUNIE_CT1_J2KR.dcm"
-    "D_CLUNIE_CT1_J2KI.dcm"
-    )
-ENDIF(BORLAND)
-
 # Create a specific list of dicom files that we know are part of a sequence
 SET(SEQ_LIST
   "SIEMENS_MAGNETOM-12-MONO2-FileSeq[0-9].dcm"
