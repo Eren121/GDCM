@@ -64,7 +64,7 @@
 /*
  * Memory Allocator
  *
- * $Id: jas_malloc.c,v 1.2 2005/07/05 23:05:31 malaterre Exp $
+ * $Id: jas_malloc.c,v 1.3 2005/07/05 23:39:06 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -90,7 +90,7 @@
 
 void *jas_malloc(size_t size)
 {
-#ifdef __BORLANDC__
+#ifdef NULL_ON_MALLOC_0
   // Apparently jasper does not take into account POSIX:
   // http://www.opengroup.org/onlinepubs/007908799/xsh/malloc.html
   // If the size of the space requested is 0, the behaviour is implementation-dependent; 
