@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.155 $
+  Date:      $Date: 2005/07/05 23:50:19 $
+  Version:   $Revision: 1.156 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,10 @@
 
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
    #include <winsock.h>  // for gethostname and gethostbyname and GetTickCount...
-#ifndef __BORLANDC__
+// I haven't find a way to determine wether we need to under GetCurrentTime or not...
+// I think the best solution would simply to get rid of this problematic function
+// and use a 'less' common name...
+#if !defined(__BORLANDC__) || (__BORLANDC__ >= 0x0560)
    #undef GetCurrentTime
 #endif
 #else
