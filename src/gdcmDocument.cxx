@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/03 12:42:04 $
-  Version:   $Revision: 1.254 $
+  Date:      $Date: 2005/07/05 18:44:21 $
+  Version:   $Revision: 1.255 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ Document::Document( std::string const &fileName )
    SwapCode = 1234;
    Filetype = ExplicitVR;
    Group0002Parsed = false;
-   LoadMode = 0x00000000; // Load everything
+   LoadMode = 0x00000000; // Load everything, later
 
    // Load will set it to true if sucessfull
    IsDocumentAlreadyLoaded = false;
@@ -927,6 +927,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             {
               //Expect big troubles if here
               //delete newBinEntry;
+              gdcmWarningMacro("in ParseDES : shouldn't get here !");
               used=false;
             }
          }
@@ -2035,11 +2036,11 @@ void Document::SetMaxSizeLoadEntry(long newSize)
 }
 
 /**
- * \brief   Read the next tag but WITHOUT loading it's value
+ * \brief   Read the next tag WITHOUT loading it's value
  *          (read the 'Group Number', the 'Element Number',
  *          gets the Dict Entry
  *          gets the VR, gets the length, gets the offset value)
- * @return  On succes the newly created DocEntry, NULL on failure.      
+ * @return  On succes : the newly created DocEntry, NULL on failure.      
  */
 DocEntry *Document::ReadNextDocEntry()
 {
@@ -2098,7 +2099,7 @@ DocEntry *Document::ReadNextDocEntry()
          { 
             std::string msg;
             int offset = Fp->tellg();
-            msg = Util::Format("Entry (%04x,%04x) at %x should be Explicit VR\n", 
+            msg = Util::Format("Entry (%04x,%04x) at 0x(%x) should be Explicit VR\n", 
                           newEntry->GetGroup(), newEntry->GetElement(), offset );
             gdcmWarningMacro( msg.c_str() );
           }
@@ -2124,8 +2125,8 @@ DocEntry *Document::ReadNextDocEntry()
 
 /**
  * \brief   Handle broken private tag from Philips NTSCAN
- *          where the endianess is being switched to BigEndian for no
- *          apparent reason
+ *          where the endianess is being switched to BigEndian 
+ *          for no apparent reason
  * @return  no return
  */
 void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
