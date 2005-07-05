@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 20:33:53 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/05 18:47:38 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,10 +22,10 @@
 int TestValidate(int argc, char *argv[])
 {
   if( argc < 2 )
-    {
-    std::cerr << "ouh les cornes" << std::endl;
+  {
+    std::cerr << "ouh les cornes / shame on you" << std::endl;
     return 1;
-    }
+  }
 
   const char *filename = argv[1];
 
