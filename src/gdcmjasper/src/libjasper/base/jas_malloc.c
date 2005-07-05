@@ -64,7 +64,7 @@
 /*
  * Memory Allocator
  *
- * $Id: jas_malloc.c,v 1.1 2005/05/22 18:32:59 malaterre Exp $
+ * $Id: jas_malloc.c,v 1.2 2005/07/05 23:05:31 malaterre Exp $
  */
 
 /******************************************************************************\
@@ -90,7 +90,17 @@
 
 void *jas_malloc(size_t size)
 {
+#ifdef __BORLANDC__
+  // Apparently jasper does not take into account POSIX:
+  // http://www.opengroup.org/onlinepubs/007908799/xsh/malloc.html
+  // If the size of the space requested is 0, the behaviour is implementation-dependent; 
+  // the value returned will be either a null pointer or a unique pointer.
+
+  // As quick fix always over allocate so we avoid the case of the NULL pointer
+  return malloc(size+1);
+#else
   return malloc(size);
+#endif
 }
 
 void jas_free(void *ptr)
