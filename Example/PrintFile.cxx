@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/05 12:57:36 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/07/05 13:26:32 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -157,10 +157,10 @@ int main(int argc, char *argv[])
 
    int level = am->ArgMgrGetInt("level", 2);
 
+   bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
+
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
-
-   bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
  
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )

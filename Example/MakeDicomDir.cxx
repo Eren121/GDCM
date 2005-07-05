@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/15 09:54:49 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/07/05 13:26:32 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,8 @@ int main(int argc, char *argv[])
    " \n MakeDicomDir :\n",
    " Explores recursively the given directory, makes the relevant DICOMDIR",
    "          and writes it as 'NewDICOMDIR'",
-   " usage: MakeDicomDir dirname=rootDirectoryName [noshadow] [noseq] [debug] ",
+   " usage: MakeDicomDir dirname=rootDirectoryName [noshadowseq][noshadow][noseq] [debug] ",
+   "        noshadowseq: user doesn't want to load Private Sequences",
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences ",
    "        debug    : user wants to run the program in 'debug mode' ",
@@ -60,7 +61,7 @@ int main(int argc, char *argv[])
    // ----- Initialize Arguments Manager ------   
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
   
-   if (am->ArgMgrDefined("usage")) 
+   if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
@@ -70,15 +71,16 @@ int main(int argc, char *argv[])
    char *dirName;   
    dirName  = am->ArgMgrGetString("dirName",(char *)"."); 
 
-   int loadMode;
-   if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
-       loadMode = NO_SEQ | NO_SHADOW;  
-   else if ( am->ArgMgrDefined("noshadow") )
-      loadMode = NO_SHADOW;
-   else if ( am->ArgMgrDefined("noseq") )
-      loadMode = NO_SEQ;
-   else
-      loadMode = 0;
+   int loadMode = 0x00000000;
+   if ( am->ArgMgrDefined("noshadowseq") )
+      loadMode |= NO_SHADOWSEQ;
+   else 
+   {
+   if ( am->ArgMgrDefined("noshadow") )
+         loadMode |= NO_SHADOW;
+      if ( am->ArgMgrDefined("noseq") )
+         loadMode |= NO_SEQ;
+   }
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
