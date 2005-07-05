@@ -13,21 +13,21 @@ IF("NULL_ON_MALLOC_0" MATCHES "^NULL_ON_MALLOC_0$")
       "${GDCMJASPER_BINARY_DIR}"
       "${GDCMJASPER_BINARY_DIR}/jasperNULLmalloc.c"
       OUTPUT_VARIABLE OUTPUT)
-  IF(NULL_ON_MALLOC_0)
+  IF(RESULT_NULL_ON_MALLOC_0 EQUAL 0)
     MESSAGE(STATUS "Checking if compiler return NULL on malloc(0) -- yes")
     SET(NULL_ON_MALLOC_0 1 CACHE INTERNAL "Check if compiler returns NULL on malloc(0)")
     WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeOutput.log
       "Determining how compiler implement malloc(0)"
       "passed with the following output:\n"
       "${OUTPUT}\n" APPEND)
-  ELSE(NULL_ON_MALLOC_0)
-    MESSAGE(STATUS "Checking if ifreq has a sa_len -- no")
+  ELSE(RESULT_NULL_ON_MALLOC_0 EQUAL 0)
+    MESSAGE(STATUS "Checking if compiler returns NULL on malloc(0) -- no")
     SET(NULL_ON_MALLOC_0 0 CACHE INTERNAL "Check if compiler returns NULL on malloc(0)")
     WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeError.log
       "Determining how compiler implement malloc(0)"
       "failed with the following output:\n"
       "${OUTPUT}\n" APPEND)
-  ENDIF(NULL_ON_MALLOC_0)
+  ENDIF(RESULT_NULL_ON_MALLOC_0 EQUAL 0)
 ENDIF("NULL_ON_MALLOC_0" MATCHES "^NULL_ON_MALLOC_0$")
 
 #OPTION(HAVE_LIBJPEG "Do you have ijg" OFF)
