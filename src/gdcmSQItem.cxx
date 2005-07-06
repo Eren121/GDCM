@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/03 12:47:23 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/07/06 08:43:18 $
+  Version:   $Revision: 1.73 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,6 +103,7 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
  * \brief   Inserts *in the right place* any Entry (Dicom Element)
  *          into the Sequence Item
  * @param entry Entry to add
+ * @return always true 
  */
 bool SQItem::AddEntry(DocEntry *entry)
 {   
