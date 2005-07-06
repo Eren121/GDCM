@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:06:48 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/07/06 09:53:43 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,10 +17,11 @@
 =========================================================================*/
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
+#include "gdcmDebug.h"
 
 //Generated file:
 #include "gdcmDataImages.h"
-
+ 
 int CompareInternal(std::string const & filename, std::string const & output)
 {
    std::cout << "   Testing: " << filename << std::endl;
@@ -123,13 +124,17 @@ int CompareInternal(std::string const & filename, std::string const & output)
 int TestReadWriteReadCompare(int argc, char *argv[]) 
 {
    int result = 0;
-   if (argc == 3)
+
+   if (argc == 4)
+      gdcm::Debug::DebugOn();
+
+   if (argc >= 3)
    {
-      const std::string input = argv[1];
+      const std::string input  = argv[1];
       const std::string output = argv[2];
       result += CompareInternal(input, output);
    }
-   else if( argc > 3 || argc == 2 )
+   else if( argc > 4 || argc == 2 )
    {
       std::cerr << "Please read the manual" << std::endl;
    }

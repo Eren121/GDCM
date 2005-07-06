@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/02 17:56:44 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/07/06 09:53:43 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #include "gdcmFileHelper.h"
 #include "gdcmGlobal.h"
 #include "gdcmTS.h"
+#include "gdcmDebug.h"
 
 #include <iostream>
 
@@ -549,7 +550,10 @@ int InternalTest(std::string const &filename,
 
 int TestAllReadCompareDicom(int argc, char *argv[]) 
 {
-   if ( argc == 3 )
+   if (argc == 4)
+      gdcm::Debug::DebugOn();
+
+   if ( argc >= 3 )
    {
       // The test is specified a specific filename, use it instead of looping
       // over all images
@@ -557,7 +561,7 @@ int TestAllReadCompareDicom(int argc, char *argv[])
       const std::string reference = argv[2];
       return InternalTest( input, reference );
    }
-   else if ( argc > 3 || argc == 2 )
+   else if ( argc > 4 || argc == 2 )
    {
       std::cerr << "   Usage: " << argv[0]
                 << " (no arguments needed)." << std::endl;
