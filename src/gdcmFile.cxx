@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/02 18:09:36 $
-  Version:   $Revision: 1.246 $
+  Date:      $Date: 2005/07/06 11:01:08 $
+  Version:   $Revision: 1.247 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,8 @@ File::~File ()
  */
 bool File::Load( std::string const &fileName ) 
 {
-   this->Document::Load( fileName );
+   if ( ! this->Document::Load( fileName ) )
+      return false;
 
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
