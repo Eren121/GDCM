@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/20 11:25:35 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/06 15:49:31 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
+
+#include <stdlib.h> // for exit
 
 typedef struct  // Maybe we should add it to gdcm ?
 {

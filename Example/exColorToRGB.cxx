@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exColorToRGB.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 14:39:48 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/06 15:49:31 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 
+#include <stdlib.h> // for exit
 
 int main(int argc, char *argv[])
 {

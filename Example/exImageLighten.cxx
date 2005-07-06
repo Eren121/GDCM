@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exImageLighten.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 14:39:49 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/06 15:49:31 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
+
+#include <stdlib.h> // for exit
 
 int main(int argc, char *argv[])
 {  
