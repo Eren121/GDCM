@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 00:15:11 $
-  Version:   $Revision: 1.256 $
+  Date:      $Date: 2005/07/06 08:42:33 $
+  Version:   $Revision: 1.257 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -858,7 +858,7 @@ void Document::Initialize()
  * \brief   Parses a DocEntrySet (Zero-level DocEntries or SQ Item DocEntries)
  * @param set DocEntrySet we are going to parse ('zero level' or a SQItem)
  * @param offset start of parsing
- * @param l_max  length to parse
+ * @param l_max  length to parse (meaningless when we are in 'delimitor mode')
  * @param delim_mode : whether we are in 'delimitor mode' (l=0xffffff) or not
  */ 
 void Document::ParseDES(DocEntrySet *set, long offset, 
@@ -879,7 +879,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          break;
       }
 
-      used = true;
       newDocEntry = ReadNextDocEntry( );
 
       if ( !newDocEntry )
@@ -887,15 +886,15 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          break;
       }
 
-      vr = newDocEntry->GetVR();
+      used = true;
       newValEntry = dynamic_cast<ValEntry*>(newDocEntry);
       newBinEntry = dynamic_cast<BinEntry*>(newDocEntry);
-      newSeqEntry = dynamic_cast<SeqEntry*>(newDocEntry);
 
       if ( newValEntry || newBinEntry )
       {
          if ( newBinEntry )
          {
+            vr = newDocEntry->GetVR();
             if ( Filetype == ExplicitVR && 
                  !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
             { 
@@ -925,10 +924,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             LoadDocEntry( newBinEntry );
             if ( !set->AddEntry( newBinEntry ) )
             {
-              //Expect big troubles if here
-              //delete newBinEntry;
-              gdcmWarningMacro("in ParseDES : shouldn't get here !");
-              used=false;
+               //gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
+               //                    << newBinEntry->GetKey() );
+               used=false;
             }
          }
          else
@@ -976,8 +974,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             if ( !set->AddEntry( newValEntry ) )
             {
-              // If here expect big troubles
-              // delete newValEntry; //otherwise mem leak
+              //gdcmWarningMacro( "in ParseDES : cannot add a ValEntry "
+              //                    << newValEntry->GetKey() );  
               used=false;
             }
 
@@ -1032,8 +1030,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             used = false;
             continue;
          }
+         // delay the dynamic cast as late as possible
+         newSeqEntry = dynamic_cast<SeqEntry*>(newDocEntry);
          
-         // no other way to create it ...
+         // no other way to create the Delimitor ...
          newSeqEntry->SetDelimitorMode( delim_mode_intern );
 
          // At the top of the hierarchy, stands a Document. When "set"
@@ -1063,6 +1063,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          }
          if ( !set->AddEntry( newSeqEntry ) )
          {
+            //gdcmWarningMacro( "in ParseDES : cannot add a SeqEntry "
+            //                    << newSeqEntry->GetKey() );
             used = false;
          }
  
