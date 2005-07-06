@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 08:42:33 $
-  Version:   $Revision: 1.257 $
+  Date:      $Date: 2005/07/06 09:25:12 $
+  Version:   $Revision: 1.258 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,16 +106,15 @@ Document::~Document ()
  */
 bool Document::Load( std::string const &fileName ) 
 {
-   // We should clean out anything that already exists.
-   // Check IsDocumentAlreadyLoaded to be sure.
    if ( IsDocumentAlreadyLoaded )
    {
       gdcmWarningMacro( "A file was already parsed inside this "
                         << "gdcm::Document (previous name was: "
                         << Filename.c_str() << ". New name is :"
                         << fileName );
-     // todo : clean out the 'Document'
-     // Should we call ClearEntry() on the parent object ?!?
+     // clean out the Entries, if already parsed
+     // (probabely a mistake from the user)
+     ClearEntry();
    }
 
    Filename = fileName;
@@ -924,8 +923,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             LoadDocEntry( newBinEntry );
             if ( !set->AddEntry( newBinEntry ) )
             {
-               //gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
-               //                    << newBinEntry->GetKey() );
+               gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
+                                   << newBinEntry->GetKey() );
                used=false;
             }
          }
@@ -974,8 +973,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             if ( !set->AddEntry( newValEntry ) )
             {
-              //gdcmWarningMacro( "in ParseDES : cannot add a ValEntry "
-              //                    << newValEntry->GetKey() );  
+              gdcmWarningMacro( "in ParseDES : cannot add a ValEntry "
+                                  << newValEntry->GetKey() );  
               used=false;
             }
 
@@ -1063,8 +1062,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          }
          if ( !set->AddEntry( newSeqEntry ) )
          {
-            //gdcmWarningMacro( "in ParseDES : cannot add a SeqEntry "
-            //                    << newSeqEntry->GetKey() );
+            gdcmWarningMacro( "in ParseDES : cannot add a SeqEntry "
+                                << newSeqEntry->GetKey() );
             used = false;
          }
  
