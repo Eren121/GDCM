@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 09:25:12 $
-  Version:   $Revision: 1.258 $
+  Date:      $Date: 2005/07/06 15:18:42 $
+  Version:   $Revision: 1.259 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,13 +108,22 @@ bool Document::Load( std::string const &fileName )
 {
    if ( IsDocumentAlreadyLoaded )
    {
+      if ( Filename == fileName )
+      {
+         gdcmWarningMacro( "The file was already parsed inside this "
+                        << "gdcm::Document (its name is: "
+                        << Filename.c_str() );
+         return true;
+      }
+
       gdcmWarningMacro( "A file was already parsed inside this "
                         << "gdcm::Document (previous name was: "
                         << Filename.c_str() << ". New name is :"
                         << fileName );
      // clean out the Entries, if already parsed
      // (probabely a mistake from the user)
-     ClearEntry();
+ 
+      ClearEntry();
    }
 
    Filename = fileName;
