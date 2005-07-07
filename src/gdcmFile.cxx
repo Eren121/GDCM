@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 11:01:08 $
-  Version:   $Revision: 1.247 $
+  Date:      $Date: 2005/07/07 10:12:32 $
+  Version:   $Revision: 1.248 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,12 +65,12 @@ File::File():
  * @param  filename name of the file whose header we want to analyze
  */
 File::File( std::string const &filename )
-     :Document(filename)
+     :Document( )
 {    
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
 
-   Load( filename );
+   Load( filename ); // gdcm::Document is first Loaded, then the 'File part'
 }
 
 /**
