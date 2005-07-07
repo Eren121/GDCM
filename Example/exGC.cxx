@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 15:49:31 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/07/07 17:31:54 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,13 +73,14 @@ int main(int argc, char *argv[])
 // ============================================================
    // a gdcm::File contains all the Dicom Field but the Pixels Element
 
-   gdcm::File *f1= new gdcm::File( fileName );
-
-
    std::cout << argv[1] << std::endl;
 
-   f1 = new gdcm::File( fileName );
-   if (!f1->IsReadable()) {
+   gdcm::File *f = new gdcm::File();
+   f->SetLoadMode( 0x00000000);
+   f->SetFileName( fileName );
+   bool res = f->Load();        
+
+   if (!res) {
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "DICOM / ACR File"
                  <<std::endl;
@@ -88,7 +89,7 @@ int main(int argc, char *argv[])
    std::cout << " ... is readable " << std::endl;
 
 /*
-   if (!f1->IsMonochrome()) {
+   if (!f->IsMonochrome()) {
        std::cerr << "Sorry, " << fileName <<"  not a 'color' File "
            << " "
                  <<std::endl;
@@ -101,11 +102,11 @@ int main(int argc, char *argv[])
 // ============================================================
 
    // We need a gdcm::FileHelper, since we want to load the pixels        
-   gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
 
    // (unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one) 
 
-   uint8_t *imageData = fh1->GetImageData();
+   uint8_t *imageData = fh->GetImageData();
 
    if ( imageData == 0 )
    {
@@ -120,7 +121,7 @@ int main(int argc, char *argv[])
  
    gdcm::FileHelper *copy = new gdcm::FileHelper( output );
  
-   gdcm::DocEntry *d = f1->GetFirstEntry();
+   gdcm::DocEntry *d = f->GetFirstEntry();
    while(d)
    {
       // We skip SeqEntries, since user cannot do much with them
@@ -146,10 +147,10 @@ int main(int argc, char *argv[])
           // We skip gdcm::SeqEntries
          }
       }
-      d = f1->GetNextEntry();
+      d = f->GetNextEntry();
    }
 
-   int imageSize = fh1->GetImageDataSize();
+   int imageSize = fh->GetImageDataSize();
 // Black up all 'grey' pixels
    int i;
    int n = 0;
@@ -194,8 +195,8 @@ int main(int argc, char *argv[])
 
    copy->WriteDcmExplVR( output );
 
-   delete f1;
-   delete fh1;
+   delete f;
+   delete fh;
    delete copy;
 
    exit (0);

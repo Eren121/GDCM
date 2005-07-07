@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exAnonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:19:45 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,7 @@
 #include <iostream>
 
 int main(int argc, char *argv[])
-{  
-   gdcm::File *f1;
- 
+{   
    gdcm::Debug::DebugOn();
    std::cout << "------------------------------------------------" << std::endl;
    std::cout << "Anonymize a full gdcm-readable  Dicom image"      << std::endl;
@@ -48,8 +46,12 @@ int main(int argc, char *argv[])
 
    std::cout << argv[1] << std::endl;
 
-   f1 = new gdcm::File( fileName );
-   if (!f1->IsReadable()) {
+   gdcm::File *f = new gdcm::File();
+   f->SetLoadMode( 0x00000000);
+   f->SetFileName( fileName );
+   bool res = f->Load();        
+
+   if (!res) {
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
            << "DICOM / ACR File"
                  <<std::endl;
@@ -63,11 +65,11 @@ int main(int argc, char *argv[])
 // ============================================================
 
    // We need a gdcm::FileHelper, since we want to load the pixels        
-   gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
 
    // (unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one) 
 
-   uint8_t *imageData = fh1->GetImageData();
+   uint8_t *imageData = fh->GetImageData();
 
    if ( imageData == 0 )
    {
@@ -82,35 +84,35 @@ int main(int argc, char *argv[])
 //  Choose the fields to anonymize.
 // ============================================================
    // Institution name 
-   f1->AddAnonymizeElement(0x0008, 0x0080, "Xanadoo"); 
+   f->AddAnonymizeElement(0x0008, 0x0080, "Xanadoo"); 
    // Patient's name 
-   f1->AddAnonymizeElement(0x0010, 0x0010, "Fantomas");   
+   f->AddAnonymizeElement(0x0010, 0x0010, "Fantomas");   
    // Patient's ID
-   f1->AddAnonymizeElement( 0x0010, 0x0020,"1515" );   
+   f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );   
    // Study Instance UID
-   f1->AddAnonymizeElement(0x0020, 0x000d, "9.99.999.9999" );
+   f->AddAnonymizeElement(0x0020, 0x000d, "9.99.999.9999" );
    // Telephone
-   f1->AddAnonymizeElement(0x0010, 0x2154, "3615" );
+   f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
   // Aware use will add new fields here
 
 // The gdcm::File is modified in memory
 
-   f1->AnonymizeFile();
+   f->AnonymizeFile();
 
 // ============================================================
 //   Write a new file
 // ============================================================
 
-   fh1->WriteDcmExplVR(outputFileName);
+   fh->WriteDcmExplVR(outputFileName);
    std::cout <<"End Anonymize" << std::cout;
 
 // ============================================================
 //   Remove the Anonymize list
 // ============================================================  
-   f1->ClearAnonymizeList();
+   f->ClearAnonymizeList();
     
-   delete f1;
-   delete fh1; 
+   delete f;
+   delete fh; 
    return 0;
 }
 

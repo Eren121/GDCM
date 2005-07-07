@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/14 09:09:50 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,10 +66,11 @@ int main(int argc, char *argv[])
    //   Parse the input file.
    // ============================================================
 
-   gdcm::File *f1;
-   f1 = new gdcm::File( );
-   f1->SetLoadMode(loadMode);
-   int res = f1->Load(fileName);
+   gdcm::File *f;
+   f = new gdcm::File( );
+   f->SetLoadMode(loadMode);
+   f->SetFileName( fileName );
+   bool res = f->Load();
 
    // gdcm::File::IsReadable() is no usable here, because we deal with
    // any kind of gdcm::Readable *document*
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
            << "Sorry, " << fileName <<"  not a gdcm-readable "
            << "DICOM / ACR Document"
            << std::endl;
-        delete f1;
+        delete f;
         return 1;
    }
    std::cout << fileName << " is readable " << std::endl;
@@ -95,21 +96,21 @@ int main(int argc, char *argv[])
    //  Choose the fields to anonymize.
    // ============================================================
    // Institution name 
-   f1->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
+   f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
    // Patient's name 
-   f1->AddAnonymizeElement( 0x0010, 0x0010, "Fantomas" );   
+   f->AddAnonymizeElement( 0x0010, 0x0010, "Fantomas" );   
    // Patient's ID
-   f1->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
+   f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
    // Patient's Birthdate
-   f1->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
+   f->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
    // Patient's Adress
-   f1->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
+   f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
    // Patient's Mother's Birth Name
-   f1->AddAnonymizeElement( 0x0010, 0x1060,"Vampirella" );   
+   f->AddAnonymizeElement( 0x0010, 0x1060,"Vampirella" );   
    // Study Instance UID
-   f1->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
+   f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
    // Telephone
-   f1->AddAnonymizeElement(0x0010, 0x2154, "3615" );
+   f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
 
   // Aware use will add new fields here
 
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
 
    // The gdcm::File remains untouched in memory
 
-   f1->AnonymizeNoLoad();
+   f->AnonymizeNoLoad();
 
    // No need to write the File : modif were done on disc !
    // File was overwritten ...
@@ -131,9 +132,9 @@ int main(int argc, char *argv[])
    // ============================================================
    //   Remove the Anonymize list
    // ============================================================  
-   f1->ClearAnonymizeList();
+   f->ClearAnonymizeList();
     
-   delete f1;
+   delete f;
    return 0;
 }
 

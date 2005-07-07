@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/27 15:46:27 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/07 17:31:54 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,35 +134,36 @@ int main(int argc, char *argv[])
    }
 
    int loadMode = 0x0; // load everything
-   gdcm::File *e1 = new gdcm::File();
-   e1->SetLoadMode(loadMode);
+   gdcm::File *f = new gdcm::File();
+   f->SetLoadMode( loadMode );
+   f->SetFileName( fileName );
+   bool res = f->Load();  
 
-   bool res = e1->Load( fileName );
    if ( !res )
    {
-      delete e1;
+      delete f;
       return 0;
    }
 
    // Look for private Papyrus Sequence
-   gdcm::SeqEntry *seqPapyrus= e1->GetSeqEntry(0x0041, 0x1050);
+   gdcm::SeqEntry *seqPapyrus= f->GetSeqEntry(0x0041, 0x1050);
    if (!seqPapyrus)
    {
       std::cout << "NOT a Papyrus File : " << fileName <<std::endl;
-      delete e1;
+      delete f;
       return 1;
    }
 
 //   gdcm::FileHelper *original = new gdcm::FileHelper( fileName );
 //   gdcm::File *h = original->GetFile();
 
-   //gdcm::FileHelper *f1 = new gdcm::FileHelper(e1);
+   //gdcm::FileHelper *f1 = new gdcm::FileHelper(f);
    gdcm::SQItem *sqi = seqPapyrus->GetFirstSQItem();
    if (sqi == 0)
    {
       std::cout << "NO SQItem found within private Papyrus Sequence"
           << std::endl;
-      delete e1;
+      delete f;
       return 1;
    }
       
@@ -177,8 +178,8 @@ int main(int argc, char *argv[])
 //  Modality, Transfer Syntax, Study Date, Study Time
 // Patient Name, Media Storage SOP Instance UID, etc
 
-   MediaStSOPinstUID   =  e1->GetEntryValue(0x0002,0x0002);
-   TransferSyntax      =  e1->GetEntryValue(0x0002,0x0010);
+   MediaStSOPinstUID   =  f->GetEntryValue(0x0002,0x0002);
+   TransferSyntax      =  f->GetEntryValue(0x0002,0x0010);
    StudyDate           = sqi->GetEntryValue(0x0008,0x0020);
    StudyTime           = sqi->GetEntryValue(0x0008,0x0030);
    Modality            = sqi->GetEntryValue(0x0008,0x0060);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 15:44:50 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/07 17:31:54 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
    gdcm::DicomDir *dcmdir;
    dcmdir = new gdcm::DicomDir();
 
-   std::cout << "\n------- BuildUpDicomDir: Test Print Meta only -----" << std::endl;
+   std::cout << "\n------- BuildUpDicomDir: Test Print Meta only -----" 
+             << std::endl;
    ((gdcm::Document *)dcmdir)->Print();
 
    gdcm::DicomDirPatient *p1=dcmdir->NewPatient();

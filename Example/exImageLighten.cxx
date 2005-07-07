@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exImageLighten.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 15:49:31 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/07 17:31:54 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,9 +26,7 @@
 #include <stdlib.h> // for exit
 
 int main(int argc, char *argv[])
-{  
-   gdcm::File *f1;
- 
+{ 
    std::cout << "-----------------------------------------------" << std::endl;
    std::cout << "Removes from a full gdcm-readable  Dicom image"  << std::endl;
    std::cout << " all the 'Shadow groups' and the 'Sequence' entries"
@@ -58,8 +56,12 @@ int main(int argc, char *argv[])
 
    std::cout << argv[1] << std::endl;
 
-   f1 = new gdcm::File( fileName );
-   if (!f1->IsReadable()) {
+   gdcm::File *f = new gdcm::File();
+   f->SetLoadMode( 0x00000000);
+   f->SetFileName( fileName );
+   bool res = f->Load();        
+
+   if (!res) {
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "DICOM / ACR File"
                  <<std::endl;
@@ -76,12 +78,12 @@ int main(int argc, char *argv[])
    // to load the Palettes Color (if any)
 
    // First, create a gdcm::FileHelper
-   gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
 
    // Load the pixels, DO NOT transform LUT (if any) into RGB Pixels 
-   uint8_t *imageDataRaw = fh1->GetImageDataRaw();
+   uint8_t *imageDataRaw = fh->GetImageDataRaw();
    // Get the image data size
-   size_t dataRawSize    = fh1->GetImageDataRawSize();
+   size_t dataRawSize    = fh->GetImageDataRawSize();
 
 // ============================================================
 //   Create a new gdcm::Filehelper, to hold new image.
@@ -93,9 +95,9 @@ int main(int argc, char *argv[])
 //   Selective copy of the entries (including Pixel Element).
 // ============================================================
 
-   gdcm::DocEntry *d = f1->GetFirstEntry();
+   gdcm::DocEntry *d = f->GetFirstEntry();
  
-   d = f1->GetFirstEntry();
+   d = f->GetFirstEntry();
    while(d)
    {
       // We skip SeqEntries, since user cannot do much with them
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
           // We skip gdcm::SeqEntries
          }
       }
-      d = f1->GetNextEntry();
+      d = f->GetNextEntry();
    }
    
    // User wants to keep the Palette Color -if any- 
@@ -133,8 +135,8 @@ int main(int argc, char *argv[])
    std::cout << std::endl
              << "------------------------------------------------------------"
              << std::endl;
-   delete f1;
-   delete fh1;
+   delete f;
+   delete fh;
    delete copy;
 
    exit (0);

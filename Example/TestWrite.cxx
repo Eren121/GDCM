@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/15 09:54:13 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 {  
    std::string fileNameToWrite;
 
-   gdcm::File *e1;
-   gdcm::FileHelper *f1;
+   gdcm::File *f;
+   gdcm::FileHelper *fh;
 
    void *imageData;
    int dataSize;
@@ -45,14 +45,14 @@ int main(int argc, char *argv[])
 /*
    if (0) {  // Just to keep the code for further use
       std::cout <<std::endl << "-------- Test gdcmFile ------" <<std::endl;
-      e1 = new gdcmFileHelper(argv[1]);
-      if (!f1->GetFile()->IsReadable()) {
+      f = new gdcmFileHelper(argv[1]);
+      if (!fh->GetFile()->IsReadable()) {
          std::cout << "Sorry, not a DICOM / ACR File"  <<std::endl;
          exit(0);
       }
       std::cout << std::endl << "----------------------> after new gdcmFile"
                 << std::endl;
-      e1->PrintEntry();
+      f->PrintEntry();
       std::cout <<std::endl <<"---------------------------------------" 
                 <<std::endl;
    }
@@ -65,23 +65,23 @@ int main(int argc, char *argv[])
    std::string fileName = argv[1]; 
    std::string mode = argv[2];
 
-   //e1 = new gdcm::File( fileName.c_str() );
+   //f = new gdcm::File( fileName.c_str() );
 
    // new style :
-   e1 = new gdcm::File( );
-   e1->SetLoadMode(0);
-   e1->Load( fileName.c_str() );
-
-   if (!e1->IsReadable())
+   f = new gdcm::File( );
+   f->SetLoadMode(0);
+   f->SetFileName( fileName );
+   bool res = f->Load();  
+   if ( !res )
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        return 0;
    }
-  // e1->Print(); 
+  // f->Print(); 
    
-   f1 = new gdcm::FileHelper(e1);
-   dataSize = f1->GetImageDataSize();
-   imageData= f1->GetImageData();
+   fh = new gdcm::FileHelper(f);
+   dataSize = fh->GetImageDataSize();
+   imageData= fh->GetImageData();
 
 
 // ---     
@@ -89,25 +89,25 @@ int main(int argc, char *argv[])
    std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
-   nX=e1->GetXSize();
-   nY=e1->GetYSize();
-   nZ=e1->GetZSize();
+   nX=f->GetXSize();
+   nY=f->GetYSize();
+   nZ=f->GetZSize();
    std::cout << " DIMX=" << nX << " DIMY=" << nY << " DIMZ=" << nZ << std::endl;
 
-   pixelType    = e1->GetPixelType();
-   sPP          = e1->GetSamplesPerPixel();
-   planarConfig = e1->GetPlanarConfiguration();
+   pixelType    = f->GetPixelType();
+   sPP          = f->GetSamplesPerPixel();
+   planarConfig = f->GetPlanarConfiguration();
    
    std::cout << " pixelType="           << pixelType 
              << " SampleserPixel="      << sPP
              << " PlanarConfiguration=" << planarConfig 
              << " PhotometricInterpretation=" 
-                                << e1->GetEntryValue(0x0028,0x0004) 
+                                << f->GetEntryValue(0x0028,0x0004) 
              << std::endl;
 
-   int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
+   int numberOfScalarComponents=f->GetNumberOfScalarComponents();
    std::cout << "NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
-   transferSyntaxName = e1->GetTransferSyntaxName();
+   transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
 
 /*   
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
       && transferSyntaxName != "Uncompressed ACR-NEMA"     ) {
       std::cout << std::endl << "==========================================="
                 << std::endl; 
-      f1->GetPixelReadConverter()->Print();
+      fh->GetPixelReadConverter()->Print();
       std::cout << std::endl << "==========================================="
                 << std::endl; 
    }
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".ACR";
       std::cout << "WriteACR" << std::endl;
-      f1->WriteAcr(fileNameToWrite);
+      fh->WriteAcr(fileNameToWrite);
       break;
 
    case 'd' :  // Not document in the 'usage', because the method is knowed to be bugged. 
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".DCM";
       std::cout << "WriteDCM Implicit VR" << std::endl;
-      f1->WriteDcmImplVR(fileNameToWrite);
+      fh->WriteDcmImplVR(fileNameToWrite);
       break;
 
    case 'x' :
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".XDCM";
       std::cout << "WriteDCM Explicit VR" << std::endl;
-      f1->WriteDcmExplVR(fileNameToWrite);
+      fh->WriteDcmExplVR(fileNameToWrite);
       break;
 
    case 'r' :
@@ -159,12 +159,12 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".RAW";
       std::cout << "WriteRaw" << std::endl;
-      f1->WriteRawData(fileNameToWrite);
+      fh->WriteRawData(fileNameToWrite);
       break;
 
    case 'v' :
 
-     if ( f1->GetFile()->GetBitsAllocated() == 8)
+     if ( fh->GetFile()->GetBitsAllocated() == 8)
      {
         std::cout << "videoinv for 8 bits" << std::endl;
         for (int i=0; i<dataSize; i++) 
@@ -182,12 +182,12 @@ int main(int argc, char *argv[])
      }
      fileNameToWrite = fileName + ".VDCM";
      std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
-     f1->WriteDcmExplVR(fileNameToWrite);
+     fh->WriteDcmExplVR(fileNameToWrite);
      break;
 
    }
-   delete e1;
-   delete f1;
+   delete f;
+   delete fh;
    return 0;
 }
 

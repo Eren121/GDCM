@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/05 13:26:32 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
  
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
-   { 
+   {
       am->ArgMgrUsage(usage);
       delete am;
       return 0;
@@ -180,8 +180,9 @@ int main(int argc, char *argv[])
 
    gdcm::File *f = new gdcm::File();
    f->SetLoadMode(loadMode);
+   f->SetFileName( fileName );
+   bool res = f->Load();        // just to see
 
-   bool res = f->Load( fileName );
    if ( !res )
    {
       delete f;

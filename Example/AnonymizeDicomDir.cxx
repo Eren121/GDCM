@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 14:41:47 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,19 +100,24 @@ int main(int argc, char *argv[])
 //   Read the input DICOMDIR
 // ============================================================
 
-   gdcm::File *f1 = new gdcm::File( fileName );
-   if (!f1->IsReadable()) {
+   gdcm::File *f;
+   f = new gdcm::File( );
+   f->SetLoadMode(0);
+   f->SetFileName( fileName );
+   bool res = f->Load();  
+   if ( !res )
+   {
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "file" <<std::endl;
    }
    std::cout << " ... is readable " << std::endl;
 
    // Directory record sequence
-   gdcm::DocEntry *e = f1->GetDocEntry(0x0004, 0x1220);
+   gdcm::DocEntry *e = f->GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
       std::cout << "No Directory Record Sequence (0004,1220) found" <<std::endl;;
-      delete f1;
+      delete f;
       delete e;
       return 0;         
    }
@@ -121,7 +126,7 @@ int main(int argc, char *argv[])
    if ( !s )
    {
       std::cout << "Element (0004,1220) is not a Sequence ?!?" <<std::endl;
-      delete f1;
+      delete f;
       delete e;
       return 0;
    }
@@ -180,7 +185,7 @@ int main(int argc, char *argv[])
 
    delete fp;
    delete e;   
-   delete f1;
+   delete f;
    return 0;
 }
 

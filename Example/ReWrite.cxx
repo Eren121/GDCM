@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:37:20 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,38 +91,38 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
-   gdcm::File *e1 = new gdcm::File();
-   e1->SetLoadMode(loadMode);
-
-   bool res = e1->Load( fileName );
+   gdcm::File *f = new gdcm::File();
+   f->SetLoadMode( loadMode );
+   f->SetFileName( fileName );
+   bool res = f->Load();  
    if ( !res )
    {
-      delete e1;
+      delete f;
       return 0;
    }
   
-   if (!e1->IsReadable())
+   if (!f->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
-       delete e1;
+       delete f;
        return 0;
    }
    
-   gdcm::FileHelper *f1 = new gdcm::FileHelper(e1);
+   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
    void *imageData; 
    int dataSize;
   
    if (rgb)
    {
-      dataSize  = f1->GetImageDataSize();
-      imageData = f1->GetImageData(); // somewhat important... can't remember
-      f1->SetWriteModeToRGB();
+      dataSize  = fh->GetImageDataSize();
+      imageData = fh->GetImageData(); // somewhat important... can't remember
+      fh->SetWriteModeToRGB();
    }
    else
    {
-      dataSize  = f1->GetImageDataRawSize();
-      imageData = f1->GetImageDataRaw();// somewhat important... can't remember
-      f1->SetWriteModeToRaw();
+      dataSize  = fh->GetImageDataRawSize();
+      imageData = fh->GetImageDataRaw();// somewhat important... can't remember
+      fh->SetWriteModeToRaw();
    }
 
    if ( imageData == 0 ) // to avoid warning
@@ -132,25 +132,25 @@ int main(int argc, char *argv[])
    std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
-   nX=e1->GetXSize();
-   nY=e1->GetYSize();
-   nZ=e1->GetZSize();
+   nX=f->GetXSize();
+   nY=f->GetYSize();
+   nZ=f->GetZSize();
    std::cout << " DIMX=" << nX << " DIMY=" << nY << " DIMZ=" << nZ << std::endl;
 
-   pixelType    = e1->GetPixelType();
-   sPP          = e1->GetSamplesPerPixel();
-   planarConfig = e1->GetPlanarConfiguration();
+   pixelType    = f->GetPixelType();
+   sPP          = f->GetSamplesPerPixel();
+   planarConfig = f->GetPlanarConfiguration();
    
    std::cout << " pixelType="           << pixelType 
              << " SampleserPixel="      << sPP
              << " PlanarConfiguration=" << planarConfig 
              << " PhotometricInterpretation=" 
-                                << e1->GetEntryValue(0x0028,0x0004) 
+                                << f->GetEntryValue(0x0028,0x0004) 
              << std::endl;
 
-   int numberOfScalarComponents=e1->GetNumberOfScalarComponents();
+   int numberOfScalarComponents=f->GetNumberOfScalarComponents();
    std::cout << "NumberOfScalarComponents " << numberOfScalarComponents <<std::endl;
-   transferSyntaxName = e1->GetTransferSyntaxName();
+   transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" << std::endl;
 
    switch (mode[0])
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
             // from a full gdcm readable File
 
       std::cout << "WriteACR" << std::endl;
-      f1->WriteAcr(outputFileName);
+      fh->WriteAcr(outputFileName);
       break;
 
    case 'D' : // Not documented in the 'usage', because the method is known to be bugged. 
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
            // from a full gdcm readable File
 
       std::cout << "WriteDCM Implicit VR" << std::endl;
-      f1->WriteDcmImplVR(outputFileName);
+      fh->WriteDcmImplVR(outputFileName);
       break;
 
    case 'X' :
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
               // from a full gdcm readable File
 
       std::cout << "WriteDCM Explicit VR" << std::endl;
-      f1->WriteDcmExplVR(outputFileName);
+      fh->WriteDcmExplVR(outputFileName);
       break;
 
    case 'R' :
@@ -187,12 +187,12 @@ int main(int argc, char *argv[])
              //  Writting a Raw File, 
 
       std::cout << "WriteRaw" << std::endl;
-      f1->WriteRawData(outputFileName);
+      fh->WriteRawData(outputFileName);
       break;
 
    }
-   delete e1;
-   delete f1;
+   delete f;
+   delete fh;
    return 0;
 }
 

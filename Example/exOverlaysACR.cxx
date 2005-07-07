@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/19 15:47:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/07 17:31:54 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ V 6006|0102[US] [Overlay Bit Position] [15] x(f)
  
 int main(int argc, char *argv[])
 {  
-   gdcm::File *f1;
+   gdcm::File *f;
  
    //gdcm::Debug::DebugOn();
 
@@ -85,22 +85,23 @@ int main(int argc, char *argv[])
 
    //std::cout << argv[1] << std::endl;
 
-   f1 = new gdcm::File( );
+   f = new gdcm::File( );
 
-   f1->SetLoadMode(NO_SEQ | NO_SHADOW);
-   f1->Load( fileName );
+   f->SetLoadMode(NO_SEQ | NO_SHADOW);
+   f->SetFileName( fileName );
+   bool res = f->Load();  
 
    if( gdcm::Debug::GetDebugFlag() )
    {
       std::cout << "---------------------------------------------" << std::endl;
-      f1->Print();
+      f->Print();
       std::cout << "---------------------------------------------" << std::endl;
    }
-   if (!f1->IsReadable()) {
+   if (!res) {
        std::cout << "Sorry, " << fileName <<"  not a gdcm-readable "
            << "DICOM / ACR File"
            <<std::endl;
-      delete f1;
+      delete f;
       return 0;
    }
    std::cout << " ... is readable " << std::endl;
@@ -109,18 +110,18 @@ int main(int argc, char *argv[])
 //   Check whether image contains Overlays ACR-NEMA style.
 // ============================================================
 
-   int bitsAllocated = f1->GetBitsAllocated();
+   int bitsAllocated = f->GetBitsAllocated();
    if ( bitsAllocated <= 8 )
    {
       std::cout << " 8 bits pixel image cannot contain Overlays " << std::endl;
-      delete f1;
+      delete f;
       return 0;
    }
-   std::string s1 = f1->GetEntryValue(0x6000, 0x0102);
+   std::string s1 = f->GetEntryValue(0x6000, 0x0102);
    if (s1 == gdcm::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Overlay " << std::endl;
-      delete f1;
+      delete f;
       return 0;
    }
    std::cout << " File is read! " << std::endl;
@@ -133,12 +134,12 @@ int main(int argc, char *argv[])
    // We don't use a gdcm::FileHelper, since it rubs out 
    // the 'non image' bits of the pixels...
 
-   int nx = f1->GetXSize();
-   int ny = f1->GetYSize();
+   int nx = f->GetXSize();
+   int ny = f->GetYSize();
  
    std::cout << "Dimensions " << ny << "  " <<ny << std::endl;
 
-   gdcm::DocEntry *p = f1->GetDocEntry(f1->GetGrPixel(), f1->GetNumPixel());
+   gdcm::DocEntry *p = f->GetDocEntry(f->GetGrPixel(), f->GetNumPixel());
    if (p == 0)
       std::cout << "Pixels element  not found" << std::endl;
    else
@@ -153,7 +154,7 @@ int main(int argc, char *argv[])
    if (fp == 0)
    {
       std::cout << "Unable to open File" << std::endl;
-      delete f1;
+      delete f;
       return 0;
    }
    else
@@ -169,7 +170,7 @@ int main(int argc, char *argv[])
                  << "readable. expected length :" << nx*ny 
                  << "  " << "read length : " << lgt
                  << std::endl;
-       delete f1;
+       delete f;
        delete pixels;  
        return 0;
    }
@@ -197,19 +198,19 @@ int main(int argc, char *argv[])
    gdcm::FileHelper *fh = 0;
 
       
-while ( (strOvlBitPosition = f1->GetEntryValue(currentOvlGroup, 0x0102)) 
+while ( (strOvlBitPosition = f->GetEntryValue(currentOvlGroup, 0x0102)) 
           != gdcm::GDCM_UNFOUND )
 {
 
-      strOverlayLocation = f1->GetEntryValue(currentOvlGroup, 0x0200);
+      strOverlayLocation = f->GetEntryValue(currentOvlGroup, 0x0200);
       if ( strOverlayLocation != gdcm::GDCM_UNFOUND )
       {
          overlayLocation = atoi(strOverlayLocation.c_str());
-         if ( overlayLocation != f1->GetGrPixel() )
+         if ( overlayLocation != f->GetGrPixel() )
          {
             std::cout << "Big Trouble : Overlays are NOT in the Pixels Group "
                       << std::hex << "(" << overlayLocation << " vs " 
-                      << f1->GetGrPixel() << std::endl;
+                      << f->GetGrPixel() << std::endl;
             // Actually, here, we should (try to) read the overlay location
             // and go on the job.
             continue;
@@ -288,8 +289,8 @@ while ( (strOvlBitPosition = f1->GetEntryValue(currentOvlGroup, 0x0102))
       i++;
    }
     
-   delete f1;
-   if (f1)
+   delete f;
+   if (f)
       delete fh;
    if (fileToBuild)
       delete fileToBuild;

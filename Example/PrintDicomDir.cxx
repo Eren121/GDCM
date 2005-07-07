@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/08 08:09:07 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/07/07 17:31:53 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
       return 0;
    }
   
-   gdcm::DicomDir *e1;
+   gdcm::DicomDir *f;
    gdcm::TSKey v;
 
    gdcm::DicomDirPatient *pa;
@@ -81,34 +81,34 @@ int main(int argc, char* argv[])
    // new style is useless, since it has no effect for *reading* a DICOMDIR
    // (only meaningfull when *creating* a DICOMDIR)
 
-   e1 = new gdcm::DicomDir( fileName );
+   f = new gdcm::DicomDir( fileName );
 
-   //e1 = new gdcm::DicomDir();
-   //e1->SetParseDir(false);
-   //e1->Load(  fileName );
+   //f = new gdcm::DicomDir();
+   //f->SetParseDir(false);
+   //f->Load(  fileName );
 
    // Test if the DicomDir is readable
-   if( !e1->IsReadable() )
+   if( !f->IsReadable() )
    {
       std::cout<<"          DicomDir '"<<fileName
                <<"' is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete e1;
+      delete f;
       return 1;
    }
 
-   e1->SetPrintLevel(level);
+   f->SetPrintLevel(level);
 
    // Test if the DicomDir contains any Patient
-   pa = e1->GetFirstPatient();
+   pa = f->GetFirstPatient();
    if ( pa  == 0)
    {
       std::cout<<"          DicomDir '"<<fileName
                <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete e1;
+      delete f;
       return 1;
    }
 
@@ -121,11 +121,11 @@ int main(int argc, char* argv[])
        << " =  PATIENT List ==========================================" 
        << std::endl<< std::endl;
 
-      pa = e1->GetFirstPatient();
+      pa = f->GetFirstPatient();
       while (pa) 
       {
          std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name   
-         pa = e1->GetNextPatient();    
+         pa = f->GetNextPatient();    
       }
       break;
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
         << " = PATIENT/STUDY List =======================================" 
         << std::endl<< std::endl;
 
-      pa = e1->GetFirstPatient();
+      pa = f->GetFirstPatient();
       while ( pa ) // on degouline les PATIENT de ce DICOMDIR
       {  
          std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name 
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
             std::cout << "--- "<< st->GetEntryValue(0x0008, 0x1030) << std::endl; // Study Description
             st = pa->GetNextStudy();
          }
-         pa = e1->GetNextPatient();    
+         pa = f->GetNextPatient();    
       }   
       break;
 
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
         << " =  PATIENT/STUDY/SERIE List ==================================" 
         << std::endl<< std::endl;
 
-      pa = e1->GetFirstPatient(); 
+      pa = f->GetFirstPatient(); 
       while ( pa )   // on degouline les PATIENT de ce DICOMDIR
       {
        // Patient's Name, Patient ID 
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
             }
             st = pa->GetNextStudy();
          }
-         pa = e1->GetNextPatient();    
+         pa = f->GetNextPatient();    
       } 
       break;
 
@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
            << " = PATIENT/STUDY/SERIE/IMAGE List ============================" 
            << std::endl<< std::endl;
  
-      pa = e1->GetFirstPatient(); 
+      pa = f->GetFirstPatient(); 
       while ( pa ) {  // les PATIENT de ce DICOMDIR
        // Patient's Name, Patient ID 
          std::cout << "Pat.Name:[" << pa->GetEntryValue(0x0010, 0x0010) <<"]"; // Patient's Name
@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
            }
             st = pa->GetNextStudy();
         }     
-        pa = e1->GetNextPatient();    
+        pa = f->GetNextPatient();    
       }
       break;
 
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
       std::cout << std::endl << std::endl  
            << " = DICOMDIR full content ==========================================" 
            << std::endl<< std::endl;
-      e1->Print();
+      f->Print();
       break;
 
    }  // end switch
@@ -241,8 +241,8 @@ int main(int argc, char* argv[])
         << " = Liste des PATIENT/STUDY/SERIE/IMAGE ===================================" 
         << std::endl<< std::endl;
  
-   itPatient = e1->GetDicomDirPatients().begin();
-   while ( itPatient != e1->GetDicomDirPatients().end() ) {  // on degouline les PATIENT de ce DICOMDIR
+   itPatient = f->GetDicomDirPatients().begin();
+   while ( itPatient != f->GetDicomDirPatients().end() ) {  // on degouline les PATIENT de ce DICOMDIR
       std::cout << (*itPatient)->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name
       itStudy = ((*itPatient)->GetDicomDirStudies()).begin();
       while (itStudy != (*itPatient)->GetDicomDirStudies().end() ) { // on degouline les STUDY de ce patient
@@ -264,12 +264,12 @@ int main(int argc, char* argv[])
  */  
 
 
-   if(e1->IsReadable())
+   if(f->IsReadable())
       std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
    else
       std::cout <<std::endl<<fileName<<" is NOT Readable"<<std::endl;
    std::cout<<std::flush;
-   delete e1;
+   delete f;
 
    return(0);
 }
