@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/29 15:58:33 $
-  Version:   $Revision: 1.113 $
+  Date:      $Date: 2005/07/07 16:37:41 $
+  Version:   $Revision: 1.114 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,8 @@ public:
 typedef std::list<Element> ListElements;
 
 // Loading
-   virtual bool Load( std::string const &filename ); 
+   virtual bool Load( std::string const &filename );
+   virtual bool Load( ); 
 
 // Dictionaries
    Dict *GetPubDict();
@@ -84,7 +85,8 @@ typedef std::list<Element> ListElements;
    /// Accessor to \ref Filename
    const std::string &GetFileName() const { return Filename; }
    /// Accessor to \ref Filename
-   void SetFileName(std::string const &fileName) { Filename = fileName; }
+   void SetFileName(std::string const &fileName) { if (Filename != fileName)
+                                 Filename = fileName, IsDocumentModified = true; }
 
    std::ifstream *OpenFile();
    bool CloseFile();
@@ -108,7 +110,8 @@ typedef std::list<Element> ListElements;
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
  * @param   mode Load mode to be used    
  */
-   void SetLoadMode (int mode) { LoadMode = mode; }
+   void SetLoadMode (int mode) { if (LoadMode != mode) 
+                                   LoadMode = mode, IsDocumentModified = true; }
 
 protected:
 // Methods
@@ -172,12 +175,14 @@ protected:
    /// Whether the gdcm::Document is already parsed/loaded
    /// - False from the creation of the gdcm::Document untill 
    ///   gdcm::Document:Load()
-   bool IsDocumentAlreadyLoaded;
+   bool IsDocumentAlreadyLoaded; // FIXME : probabely useless now
+
+   bool IsDocumentModified;
 
 private:
 // Methods
    void Initialize();
-
+   bool DoTheLoadingDocumentJob();
    // Read
    void ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
    void ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);

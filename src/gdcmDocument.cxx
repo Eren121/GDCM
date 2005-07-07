@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 13:55:39 $
-  Version:   $Revision: 1.261 $
+  Date:      $Date: 2005/07/07 16:37:40 $
+  Version:   $Revision: 1.262 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,11 +62,13 @@ Document::Document()
    // Load will set it to true if sucessfull
    Group0002Parsed = false;
    IsDocumentAlreadyLoaded = false;
+   IsDocumentModified = true;
    LoadMode = 0x00000000; // default : load everything, later
+   SetFileName("");
 }
 
 /**
- * \brief   Constructor (not to break the API) 
+ * \brief   Constructor (DEPRECATED : not to break the API) 
  * @param   fileName 'Document' (File or DicomDir) to be open for parsing
  */
 Document::Document( std::string const &fileName )
@@ -83,8 +85,10 @@ Document::Document( std::string const &fileName )
 
    // Load will set it to true if sucessfull
    IsDocumentAlreadyLoaded = false;
+   IsDocumentModified = true;
 
-   Load(fileName);
+   SetFileName(fileName);
+   Load( );
 }
 /**
  * \brief   Canonical destructor.
@@ -99,16 +103,41 @@ Document::~Document ()
 // Public
 
 /**
- * \brief   Loader  
+ * \brief   Loader. use SetLoadMode(), SetFileName() before ! 
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool Document::Load(  ) 
+{
+   if ( GetFileName() == "" )
+   {
+      gdcmWarningMacro( "Use SetFileName, before !" );
+      return false;
+   }
+   return DoTheLoadingDocumentJob( );
+} 
+/**
+ * \brief   Loader. (DEPRECATED : not to break the API)   
  * @param   fileName 'Document' (File or DicomDir) to be open for parsing
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
 bool Document::Load( std::string const &fileName ) 
 {
-   if ( IsDocumentAlreadyLoaded )
-   {
- // time waste hunting
+   Filename = fileName;
+   return DoTheLoadingDocumentJob( );
+}
+
+/**
+ * \brief   Performs the Loading Job (internal use only)  
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool Document::DoTheLoadingDocumentJob(  ) 
+{
+   if ( ! IsDocumentModified ) // Nothing to do !
+      return true;
+
  //     if ( Filename == fileName )
  //     {
  //        gdcmWarningMacro( "The file was already parsed inside this "
@@ -117,17 +146,14 @@ bool Document::Load( std::string const &fileName )
  //        return true;
  //     }
   
-      gdcmWarningMacro( "A file was already parsed inside this "
-                        << "gdcm::Document (previous name was: "
-                        << Filename.c_str() << ". New name is :"
-                        << fileName );
+   //gdcmWarningMacro( "A file was already parsed inside this "
+   //                  << "gdcm::Document (previous name was: "
+   //                  << Filename.c_str() << ". New name is :"
+   //                  << fileName );
      // clean out the Entries, if already parsed
      // (probabely a mistake from the user)
  
-      ClearEntry();
-   }
-
-   Filename = fileName;
+   ClearEntry();
 
    Fp = 0;
    if ( !OpenFile() )

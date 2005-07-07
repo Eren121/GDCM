@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/03 12:45:53 $
-  Version:   $Revision: 1.143 $
+  Date:      $Date: 2005/07/07 16:37:40 $
+  Version:   $Revision: 1.144 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,11 +164,52 @@ DicomDir::~DicomDir()
 //-----------------------------------------------------------------------------
 // Public
 
+/**
+ * \brief   Loader. use SetLoadMode(), SetFileName() before !  
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool DicomDir::Load( ) 
+{
+   // We should clean out anything that already exists.
+   Initialize();  // sets all private fields to NULL
+
+   if (!ParseDir)
+   {
+      if ( ! this->Document::Load( ) )
+         return false;
+   }
+    return DoTheLoadingJob( );   
+}
+
+/**
+ * \brief   Loader. (DEPRECATED : not to break the API)
+ * @param   fileName file to be open for parsing
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
 bool DicomDir::Load(std::string const &fileName ) 
 {
-   Filename = fileName;
    // We should clean out anything that already exists.
+   Initialize();  // sets all private fields to NULL
 
+   SetFileName( fileName );
+   if (!ParseDir)
+   {
+      if ( ! this->Document::Load( ) )
+         return false;
+   }
+   return DoTheLoadingJob( );
+}
+
+/**
+ * \brief   Does the Loading Job (internal use only)
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool DicomDir::DoTheLoadingJob( ) 
+{
+   // We should clean out anything that already exists.
    Initialize();  // sets all private fields to NULL
 
    if (!ParseDir)
@@ -180,10 +221,14 @@ bool DicomDir::Load(std::string const &fileName )
       {
          return false;
       }
-      Document::Load(fileName);
+      if (!Document::Load() )
+      {
+         return false;
+      }
+
       if ( GetFirstEntry() == 0 ) // when user passed a Directory to parse
       {
-         gdcmWarningMacro( "Entry HT empty for file: "<< fileName);
+         gdcmWarningMacro( "Entry HT empty for file: "<< GetFileName());
          return false;
       }
       // Directory record sequence
@@ -191,7 +236,7 @@ bool DicomDir::Load(std::string const &fileName )
       if ( !e )
       {
          gdcmWarningMacro( "NO 'Directory record sequence' (0x0004,0x1220)"
-                          << " in file " << fileName);
+                          << " in file " << GetFileName());
          return false;
       }
       else
@@ -201,7 +246,7 @@ bool DicomDir::Load(std::string const &fileName )
    {
    // Only if user passed a root directory
    // ------------------------------------
-      if ( fileName == "." )
+      if ( GetFileName() == "." )
       {
          // user passed '.' as Name
          // we get current directory name
@@ -210,8 +255,8 @@ bool DicomDir::Load(std::string const &fileName )
          SetFileName( dummy ); // will be converted into a string
       }
       NewMeta();
-      gdcmWarningMacro( "Parse directory and create the DicomDir : " << Filename );
-
+      gdcmWarningMacro( "Parse directory and create the DicomDir : " 
+                         << GetFileName() );
       ParseDirectory();
    }
    return true;

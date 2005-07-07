@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 10:12:32 $
-  Version:   $Revision: 1.248 $
+  Date:      $Date: 2005/07/07 16:37:40 $
+  Version:   $Revision: 1.249 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,17 +86,40 @@ File::~File ()
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \brief   Loader  
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool File::Load( ) 
+{
+   if ( ! this->Document::Load( ) )
+      return false;
+
+    return DoTheLoadingJob( );   
+}
+/**
+ * \brief   Loader. (DEPRECATED : not to break the API)
  * @param   fileName file to be open for parsing
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
 bool File::Load( std::string const &fileName ) 
 {
-   if ( ! this->Document::Load( fileName ) )
+   SetFileName( fileName );
+   if ( ! this->Document::Load( ) )
       return false;
+
+   return DoTheLoadingJob( );
+}
+
+/**
+ * \brief   Does the Loading Job (internal use only)
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool File::DoTheLoadingJob( ) 
+{
 
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/05/03 09:43:04 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/07/07 16:37:41 $
+  Version:   $Revision: 1.61 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,6 +57,7 @@ public:
    ~DicomDir();
 
    bool Load( std::string const &filename );
+   bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
    void SetParseDir(bool parseDir)  { ParseDir = parseDir; };
@@ -126,7 +127,7 @@ protected:
 private:
    void Initialize();
    void CreateDicomDir();
-
+   bool DoTheLoadingJob();
    bool AddPatientToEnd(DicomDirPatient *dd);
    bool AddStudyToEnd  (DicomDirStudy *dd);
    bool AddSerieToEnd  (DicomDirSerie *dd);

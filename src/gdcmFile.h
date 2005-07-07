@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/10 14:05:38 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2005/07/07 16:37:41 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,7 @@ public:
 
    // Loading
    bool Load( std::string const &filename );
- 
+   bool Load(); 
    // Standard values and informations contained in the header
    bool IsReadable();
 
@@ -189,6 +189,7 @@ protected:
    uint16_t GrPixel;
 
 private:
+   bool DoTheLoadingJob();
    void ComputeRLEInfo();
    void ComputeJPEGFragmentInfo();
    bool     ReadTag(uint16_t, uint16_t);
