@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 13:11:38 $
-  Version:   $Revision: 1.260 $
+  Date:      $Date: 2005/07/07 13:55:39 $
+  Version:   $Revision: 1.261 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,15 +108,15 @@ bool Document::Load( std::string const &fileName )
 {
    if ( IsDocumentAlreadyLoaded )
    {
-  /* 
-      if ( Filename == fileName )
-      {
-         gdcmWarningMacro( "The file was already parsed inside this "
-                        << "gdcm::Document (its name is: "
-                        << Filename.c_str() );
-         return true;
-      }
-  */
+ // time waste hunting
+ //     if ( Filename == fileName )
+ //     {
+ //        gdcmWarningMacro( "The file was already parsed inside this "
+ //                       << "gdcm::Document (its name is: "
+ //                       << Filename.c_str() );
+ //        return true;
+ //     }
+  
       gdcmWarningMacro( "A file was already parsed inside this "
                         << "gdcm::Document (previous name was: "
                         << Filename.c_str() << ". New name is :"
@@ -926,12 +926,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             // but when "this" is a SQItem, we are inserting this new
             // valEntry in a sequence item, and the key has the
             // generalized form (refer to \ref BaseTagKey):
-            if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
-            {
-               newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
-                                   + newBinEntry->GetKey() );
-            }
 
+            // time waste hunting
+            //if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
+            //{
+            //   newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
+            //                       + newBinEntry->GetKey() );
+            //}
+           
             if ( !set->AddEntry( newBinEntry ) )
             {
                gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
@@ -957,11 +959,13 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             // ...but when "set" is a SQItem, we are inserting this new
             // valEntry in a sequence item. Hence the key has the
             // generalized form (refer to \ref BaseTagKey):
-            if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
-            {
-               newValEntry->SetKey(  parentSQItem->GetBaseTagKey()
-                                   + newValEntry->GetKey() );
-            }
+
+            // time waste hunting
+            //if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
+            //{
+            //   newValEntry->SetKey(  parentSQItem->GetBaseTagKey()
+            //                      + newValEntry->GetKey() );
+            //}
 
             if ( LoadMode & NO_SHADOW ) // User asked to skip, if possible, 
                                         // shadow groups ( if possible :
@@ -1062,11 +1066,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // But when "set" is already a SQItem, we are building a nested
          // sequence, and hence the depth level of the new SeqEntry
          // we are building, is one level deeper:
+
+         // time waste hunting
          if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( parentSQItem->GetDepthLevel() + 1 );
-            newSeqEntry->SetKey(  parentSQItem->GetBaseTagKey()
-                                + newSeqEntry->GetKey() );
+
+          //  newSeqEntry->SetKey(  parentSQItem->GetBaseTagKey()
+          //                      + newSeqEntry->GetKey() );
          }
 
          if ( l != 0 )
@@ -1132,12 +1139,14 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       }
       // create the current SQItem
       SQItem *itemSQ = new SQItem( seqEntry->GetDepthLevel() );
+/*
       std::ostringstream newBase;
       newBase << seqEntry->GetKey()
               << "/"
               << SQItemNumber
               << "#";
       itemSQ->SetBaseTagKey( newBase.str() );
+*/
       unsigned int l = newDocEntry->GetReadLength();
       
       if ( l == 0xffffffff )

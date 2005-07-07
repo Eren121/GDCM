@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/07 08:48:18 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/07/07 13:55:39 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,11 +70,11 @@ public:
    ///  \brief Accessor on \ref SQDepthLevel.
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
-   ///  \brief Accessor on \ref BaseTagKey.
-   void SetBaseTagKey( BaseTagKey const &key ) { BaseTagKeyNested = key; }
-
-   ///  \brief Accessor on \ref BaseTagKey.
-   BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
+   // waste time hunting
+   // /  \brief Accessor on \ref BaseTagKey.
+   //void SetBaseTagKey( BaseTagKey const &key ) { BaseTagKeyNested = key; }
+   // /  \brief Accessor on \ref BaseTagKey.
+   //BaseTagKey const &GetBaseTagKey() const { return BaseTagKeyNested; }
 
 protected:
 // Variables that need to be accessed in subclasses
@@ -93,9 +93,10 @@ private:
    ///        (see \ref Print).
    int SQDepthLevel;
 
-   /// \brief A TagKey of a DocEntry nested in a sequence is prepended
-   ///        with this BaseTagKey.
-   BaseTagKey BaseTagKeyNested;
+   // waste time hunting
+   // / \brief A TagKey of a DocEntry nested in a sequence is prepended
+   // /        with this BaseTagKey.
+   //BaseTagKey BaseTagKeyNested;
 
    /// \brief SQ Item ordinal number 
    int SQItemNumber;
