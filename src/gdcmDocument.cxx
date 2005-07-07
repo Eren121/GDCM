@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 15:18:42 $
-  Version:   $Revision: 1.259 $
+  Date:      $Date: 2005/07/07 13:11:38 $
+  Version:   $Revision: 1.260 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,6 +108,7 @@ bool Document::Load( std::string const &fileName )
 {
    if ( IsDocumentAlreadyLoaded )
    {
+  /* 
       if ( Filename == fileName )
       {
          gdcmWarningMacro( "The file was already parsed inside this "
@@ -115,7 +116,7 @@ bool Document::Load( std::string const &fileName )
                         << Filename.c_str() );
          return true;
       }
-
+  */
       gdcmWarningMacro( "A file was already parsed inside this "
                         << "gdcm::Document (previous name was: "
                         << Filename.c_str() << ". New name is :"
@@ -898,8 +899,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       newValEntry = dynamic_cast<ValEntry*>(newDocEntry);
       newBinEntry = dynamic_cast<BinEntry*>(newDocEntry);
 
-      if ( newValEntry || newBinEntry )
+      if ( newValEntry || newBinEntry )  
       {
+       //////////////////////////// ContentEntry
          if ( newBinEntry )
          {
             vr = newDocEntry->GetVR();
@@ -914,6 +916,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
 
          //////////////////// BinEntry or UNKOWN VR:
+
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
             if ( dynamic_cast< Document* > ( set ) )
@@ -929,14 +932,18 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                    + newBinEntry->GetKey() );
             }
 
-            LoadDocEntry( newBinEntry );
             if ( !set->AddEntry( newBinEntry ) )
             {
                gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
                                    << newBinEntry->GetKey() );
                used=false;
             }
-         }
+            else
+            {
+               // Load only if we can add (not a duplicate key)
+               LoadDocEntry( newBinEntry );
+            }
+         }  // end BinEntry
          else
          {
          /////////////////////// ValEntry
@@ -955,9 +962,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                newValEntry->SetKey(  parentSQItem->GetBaseTagKey()
                                    + newValEntry->GetKey() );
             }
-             
-            LoadDocEntry( newValEntry );
-            bool delimitor=newValEntry->IsItemDelimitor();
 
             if ( LoadMode & NO_SHADOW ) // User asked to skip, if possible, 
                                         // shadow groups ( if possible :
@@ -986,14 +990,16 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                   << newValEntry->GetKey() );  
               used=false;
             }
-
-            if (delimitor)
+            else
             {
-               if ( !used )
-                  delete newDocEntry;
-               break;
+               // Load only if we can add (not a duplicate key)
+               LoadDocEntry( newValEntry );
             }
-            if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max )
+
+            bool delimitor=newValEntry->IsItemDelimitor();
+
+            if ( delimitor || 
+                (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
             {
                if ( !used )
                   delete newDocEntry;
@@ -1082,11 +1088,11 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                delete newDocEntry;
             break;
          }
-      }
+      }  // end SeqEntry : VR = "SQ"
 
       if ( !used )
          delete newDocEntry;
-   }
+   }                               // end While
 }
 
 /**
