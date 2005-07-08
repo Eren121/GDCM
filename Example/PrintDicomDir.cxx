@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:53 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/07/08 10:15:04 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,14 +78,11 @@ int main(int argc, char* argv[])
       return 0;
    } 
 
-   // new style is useless, since it has no effect for *reading* a DICOMDIR
-   // (only meaningfull when *creating* a DICOMDIR)
+   // new gdcm2 style 
 
-   f = new gdcm::DicomDir( fileName );
-
-   //f = new gdcm::DicomDir();
-   //f->SetParseDir(false);
-   //f->Load(  fileName );
+   f = new gdcm::DicomDir();
+   f->SetFileName ( fileName );
+   f->Load( );
 
    // Test if the DicomDir is readable
    if( !f->IsReadable() )
@@ -102,7 +99,7 @@ int main(int argc, char* argv[])
 
    // Test if the DicomDir contains any Patient
    pa = f->GetFirstPatient();
-   if ( pa  == 0)
+   if ( pa == 0)
    {
       std::cout<<"          DicomDir '"<<fileName
                <<" has no patient"<<std::endl
