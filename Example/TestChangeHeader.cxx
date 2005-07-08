@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:26:30 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,9 +31,16 @@ int main(int argc, char *argv[])
        return 1;
     }
 
-    gdcm::File *h1 = new gdcm::File( argv[1] );
+    gdcm::File *h1 = new gdcm::File( );
+    h1->SetFileName ( argv[1] );
+    h1->Load( );
     gdcm::FileHelper  *f1 = new gdcm::FileHelper( h1 );
-    gdcm::FileHelper  *f2 = new gdcm::FileHelper( argv[2] );
+    
+    gdcm::File *h2 = new gdcm::File( );
+    h2->SetFileName ( argv[2] );
+    h2->Load( );
+    gdcm::FileHelper  *f2 = new gdcm::FileHelper( h2 );   
+    
 
     // 0018 1310 US ACQ Acquisition Matrix
     gdcm::DictEntry *dictEntry =
@@ -52,6 +59,11 @@ int main(int argc, char *argv[])
     h1->Print();
     
     f1->WriteDcmExplVR("output-matrix.dcm");
+    
+    delete f1;
+    delete f2;
+    delete h1;
+    delete h2;
 
     return 0;
 }

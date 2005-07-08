@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 14:26:30 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,7 +80,10 @@ int main(int argc, char *argv[])
             return 1;
          }
       }
-      gdcm::FileHelper *original = new gdcm::FileHelper( filename );
+      gdcm::File *fileOr = new gdcm::File();
+      fileOr->SetFileName( filename );
+      fileOr->Load();
+      gdcm::FileHelper *original = new gdcm::FileHelper( fileOr );
    
       std::cout << "--- Original ----------------------" << std::endl;
       //original->GetFile()->Print();

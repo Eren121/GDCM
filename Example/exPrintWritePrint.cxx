@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPrintWritePrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/03 11:06:22 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,8 @@
 
 int main(int argc, char *argv[])
 {  
-   gdcm::File *e1;
-   gdcm::FileHelper *f1;
+   gdcm::File *f;
+   gdcm::FileHelper *fh;
    std::string fileNameToWrite;
    void *imageData;
    int dataSize;
@@ -58,25 +58,26 @@ int main(int argc, char *argv[])
    std::string fileName = argv[1]; 
    std::string mode = argv[2];
 
-   e1 = new gdcm::File( );
-   e1->SetLoadMode( NO_SEQ );
-   e1->Load(  fileName.c_str() );
+   f = new gdcm::File( );
+   f->SetLoadMode( NO_SEQ );
+   f->SetFileName( fileName );
+   f->Load( );
 
-   if (!e1->IsReadable())
+   if (!f->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        return 0;
    }
    
-   f1 = new gdcm::FileHelper(e1);
+   fh = new gdcm::FileHelper(f);
   // ---     
 
-   e1->Print();
+   f->Print();
 
-   imageData= f1->GetImageData();
-   dataSize = f1->GetImageDataSize();
+   imageData= fh->GetImageData();
+   dataSize = fh->GetImageDataSize();
 
-   f1->SetWriteModeToRGB();
+   fh->SetWriteModeToRGB();
 
    switch (mode[0])
    {
@@ -86,7 +87,7 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".ACR";
       std::cout << "WriteACR" << std::endl;
-      f1->WriteAcr(fileNameToWrite);
+      fh->WriteAcr(fileNameToWrite);
       break;
 
    case 'd' : 
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".DCM";
       std::cout << "WriteDCM Implicit VR" << std::endl;
-      f1->WriteDcmImplVR(fileNameToWrite);
+      fh->WriteDcmImplVR(fileNameToWrite);
       break;
 
    case 'x' :
@@ -105,7 +106,7 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".XDCM";
       std::cout << "WriteDCM Explicit VR" << std::endl;
-      f1->WriteDcmExplVR(fileNameToWrite);
+      fh->WriteDcmExplVR(fileNameToWrite);
       break;
 
    case 'r' :
@@ -114,15 +115,15 @@ int main(int argc, char *argv[])
 
       fileNameToWrite = fileName + ".RAW";
       std::cout << "WriteRaw" << std::endl;
-      f1->WriteRawData(fileNameToWrite);
+      fh->WriteRawData(fileNameToWrite);
       break;
    }
 
    std::cout << "-----------------------------------------------------------------" 
           << std::endl;
-   e1->Print();
-   delete e1;
-   delete f1;
+   f->Print();
+   delete f;
+   delete fh;
    return 0;
 }
 

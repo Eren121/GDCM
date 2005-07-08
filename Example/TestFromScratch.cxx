@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFromScratch.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,8 +43,11 @@ int main(int argc, char *argv[])
    //gdcm::Debug::GetReference().SetDebug(1);
 
    std::string filename = argv[1];
-   gdcm::FileHelper *f1 = new gdcm::FileHelper( filename );
-   gdcm::File *h1 = f1->GetFile();
+   gdcm::File *h1 = new gdcm::File();
+   h1->SetFileName( filename );
+   h1->Load( );
+   gdcm::FileHelper *f1 = new gdcm::FileHelper( h1 );
+   
 
    int dataSize = f1->GetImageDataSize();
    std::cout << "DataSize:      " << dataSize << std::endl;
@@ -84,6 +87,7 @@ int main(int argc, char *argv[])
 
    delete f1;
    delete f2;
+   delete h1;
    delete h2;
 
    return 0;

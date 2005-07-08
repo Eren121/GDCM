@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,10 @@ int main(int argc, char *argv[])
    std::string header = argv[1];
    const char *output = argv[2];
 
-   gdcm::File       *f1 = new gdcm::File( header );
+   gdcm::File       *f1 = new gdcm::File( );
+   f1->SetFileName ( header );
+   f1->Load( );
+   
    gdcm::FileHelper *f2 = new gdcm::FileHelper( f1 );
 
    // If the following call is important, then the API sucks. Why is it

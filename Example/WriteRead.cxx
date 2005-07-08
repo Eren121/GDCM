@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,8 +42,9 @@ int main(int argc, char *argv[])
 // --------------------- we read the input image
 
    std::cout << argv[1] << std::endl;
-
-   e1 = new gdcm::File( fileName );
+   e1 = new gdcm::File( );
+   e1->SetFileName( fileName );
+   e1->Load();
    if (!e1->IsReadable()) {
        std::cerr << "Sorry, " << fileName <<"  not a Readable DICOM / ACR File"
                  <<std::endl;
@@ -61,8 +62,9 @@ int main(int argc, char *argv[])
       f1->WriteDcmExplVR(fileNameToWrite);
 
 // --------------------- we read the written image
-      
-   e2 = new gdcm::File( fileNameToWrite );
+   e2 = new gdcm::File( );
+   e2->SetFileName( fileNameToWrite );
+   e2->Load();
    if (!e2->IsReadable()) {
        std::cerr << "Sorry, " << fileNameToWrite << " not a Readable DICOM / ACR File"  
                  <<std::endl;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:31 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,16 +26,24 @@ int main(int argc, char *argv[])
 {
    std::string fileName;
 
-   gdcm::FileHelper *f1;
-
-   if(argc > 1 )
-      f1 = new gdcm::FileHelper(argv[1]);
-   else  {
+   gdcm::FileHelper *h;
+   gdcm::File *f = new gdcm::File();
+   
+   
+   if(argc > 1 ) 
+     f->SetFileName(argv[1]);
+   else  
+   {
       fileName = GDCM_DATA_ROOT;
       fileName += "/test.acr";
-      f1 = new gdcm::FileHelper(fileName);
+      f->SetFileName(fileName);
    }
-
+   
+   f->Load();
+   // Should test if it worked !
+   
+   h = new gdcm::FileHelper(f);
+   
    std::string ManufacturerName="SIEMENS ";
    std::string RecCode="ACR-NEMA 2.0";
    std::string ImagePositionPatient, Location, ImageLocation;
@@ -44,17 +52,17 @@ int main(int argc, char *argv[])
 
    float x, y, z, l;
 
-   int dataSize = f1->GetImageDataSize();
+   int dataSize = h->GetImageDataSize();
    std::cout << "---> pourFindTaggs : dataSize " << dataSize << std::endl;
 
-   f1->SetValEntry(RecCode ,0x0008,0x0010);
-   f1->SetValEntry(ManufacturerName ,0x0008,0x0070);
+   h->SetValEntry(RecCode ,0x0008,0x0010);
+   h->SetValEntry(ManufacturerName ,0x0008,0x0070);
 
 // ImagePositionPatient
-   ImagePositionPatient = f1->GetFile()->GetEntryValue(0x0020,0x0032);
+   ImagePositionPatient = h->GetFile()->GetEntryValue(0x0020,0x0032);
 
 // Image Position (RET)
-   f1->SetValEntry(ImagePositionPatient, 0x0020,0x0030);
+   h->SetValEntry(ImagePositionPatient, 0x0020,0x0030);
 
    sscanf(ImagePositionPatient.c_str(), "%f%c%f%c%f", &x,&c,&y,&c,&z);
 
@@ -70,7 +78,7 @@ int main(int argc, char *argv[])
 // Location
    std::string zizi = gdcm::Util::Format("%f",l);
    Location = gdcm::Util::DicomString(zizi.c_str());
-   f1->SetValEntry(Location, 0x0020,0x0050);
+   h->SetValEntry(Location, 0x0020,0x0050);
 
 // sinon, la longueur du champ est erronée (?!?) 
 // Probable sac de noeud entre strlen(xxx.c_str()) et xxx.length()
@@ -79,21 +87,21 @@ int main(int argc, char *argv[])
 // SetEntryLength is private now.
 //TO DO : see if the pb goes on...
 
-//f1->GetFile()->SetEntryLength(strlen(Location.c_str())-1, 0x0020,0x0050);
+//h->GetFile()->SetEntryLength(strlen(Location.c_str())-1, 0x0020,0x0050);
 
 // Image Location 
 
    zizi = gdcm::Util::Format("%d",0x7FE0);
    ImageLocation = gdcm::Util::DicomString(zizi.c_str());
-//f1->SetValEntry(Location, 0x0028,0x0200);
-//f1->GetFile()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
+//h->SetValEntry(Location, 0x0028,0x0200);
+//h->GetFile()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
 
-// void *imageData= f1->GetImageData();
+// void *imageData= h->GetImageData();
 
 // ecriture d'un fichier ACR à partir d'un dcmFile correct.
 
    std::cout << "----------------before PrintEntry---------------------" << std::endl;
-   f1->GetFile()->Print();
+   h->GetFile()->Print();
    std::cout << "----------------before WriteDcm---------------------" << std::endl;
 
 
@@ -101,7 +109,7 @@ int main(int argc, char *argv[])
 
    fileNameToWrite = fileName + ".acr";
    std::cout << "WriteACR" << std::endl;
-   f1->WriteAcr(fileNameToWrite);
+   h->WriteAcr(fileNameToWrite);
 
    std::cout << "----------------apres Write---------------------" << std::endl;
 

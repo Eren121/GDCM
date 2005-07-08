@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:06:32 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/07/08 12:02:02 $
+  Version:   $Revision: 1.7 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,33 +100,33 @@ int main( int argc, char *argv[] )
     ////////////////////////////////////////////////////////////
     // Create a new dicom header and fill in some info        //
     ////////////////////////////////////////////////////////////
-    gdcm::File *h1 = new gdcm::File();
+    gdcm::File *f = new gdcm::File();
 
-    //h1->SetDateAndTime(filedate, filetime);
-    //h1->SetModality("CT");
-    //h1->SetPatientName( "TestPatient");
-    //h1->SetPatientID( "TestID");
-    //h1->SetStudyID( "1");
-    //h1->SetSeriesNumber( "1");
-    //h1->SetSliceThickness(spacing[2]);
-    //h1->SetSpaceBetweenSlices(spacing[2]);
-    //h1->SetXYSpacing( spacing[0], spacing[1]);
-    //h1->SetXSize(sizex);
-    //h1->SetYSize(sizey);
-    //h1->SetNbBitsAllocated(16);
-    //h1->SetNbBitsStored(12);
-    //h1->SetNbBitsStored(12);
-    //h1->SetPixelSigned(true);
-    //h1->SetCenter( wcenter);
-    //h1->SetWindow( wwidth);
+    //f->SetDateAndTime(filedate, filetime);
+    //f->SetModality("CT");
+    //f->SetPatientName( "TestPatient");
+    //f->SetPatientID( "TestID");
+    //f->SetStudyID( "1");
+    //f->SetSeriesNumber( "1");
+    //f->SetSliceThickness(spacing[2]);
+    //f->SetSpaceBetweenSlices(spacing[2]);
+    //f->SetXYSpacing( spacing[0], spacing[1]);
+    //f->SetXSize(sizex);
+    //f->SetYSize(sizey);
+    //f->SetNbBitsAllocated(16);
+    //f->SetNbBitsStored(12);
+    //f->SetNbBitsStored(12);
+    //f->SetPixelSigned(true);
+    //f->SetCenter( wcenter);
+    //f->SetWindow( wwidth);
 
     ////////////////////////////////////////////////////////////
     // Create a new dicom file object from the header         //
     ////////////////////////////////////////////////////////////
-    gdcm::FileHelper  *f1 = new gdcm::FileHelper(h1);
-    uint8_t *myData = f1->GetImageData(); // Get an Image pointer
-    f1->SetImageData( myData, sliceSize); // This callback ensures that the internal
-                                          // Pixel_Data of f1 is set correctly
+    gdcm::FileHelper  *fh = new gdcm::FileHelper(f);
+    uint8_t *myData = fh->GetImageData(); // Get an Image pointer
+    fh->SetImageData( myData, sliceSize); // This callback ensures that the internal
+                                          // Pixel_Data of fh is set correctly
 
     
     ////////////////////////////////////////////////////////////
@@ -135,8 +135,8 @@ int main( int argc, char *argv[] )
     for (int z=0; z<sizez; z++) 
     {
        // Set dicom relevant information for that slice
-       //h1->SetImageUIDFromSliceNumber(z);
-       //h1->SetImageLocation(orig[0],orig[1],orig[2]+z*spacing[2]);
+       //f->SetImageUIDFromSliceNumber(z);
+       //f->SetImageLocation(orig[0],orig[1],orig[2]+z*spacing[2]);
 
        // copy image slice content
        memcpy(myData,imageData+z*sizex*sizey,sliceSize);
@@ -144,15 +144,15 @@ int main( int argc, char *argv[] )
        // write the image
        std::string filename = directory + gdcm::Util::Format("%Image_%05d.dcm", z);
        std::cout << "Writing file " << filename;
-       f1->WriteDcmExplVR(filename);
+       fh->WriteDcmExplVR(filename);
        std::cout << " OK" << std::endl;
     }
 
     ////////////////////////////////////////////////////////////
     // Free the allocated objects                             //
     ////////////////////////////////////////////////////////////
-    // delete f1; // FIXME: these calls sometimes crashes under .NET ????
-    // delete h1;
+    // delete fh; // FIXME: these calls sometimes crashes under .NET ????
+    // delete f;
 
     return 0;
 }
