@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAnonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 16:41:51 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/08 13:39:56 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,12 @@ int Anonymize(std::string const &filename,
       //////////////// Step 1:
       std::cout << "      1...";
       std::cout << std::endl;
-      gdcm::File *f1 = new gdcm::File( filename );
+      
+      gdcm::File *f;
+      f = new gdcm::File( );
+      f->SetFileName( filename );
+      f->Load();
+      
       std::cout << " ... Read !" << std::endl;   
       // ============================================================
       //   Load the pixels in memory.
@@ -63,43 +68,43 @@ int Anonymize(std::string const &filename,
       // ============================================================
 
       // We need a gdcm::FileHelper, since we want to load the pixels        
-      gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+      gdcm::FileHelper *fh = new gdcm::FileHelper(f);
 
       // --- Don't forget to load the Pixels ...
       // We shall not use them, but we have to load them
   
-      fh1->GetImageData();
+      fh->GetImageData();
 
       std::cout << " Image Data... Got ! " << std::endl;
 
       // Institution name 
-      f1->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
+      f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
       // Patient's name 
-      f1->AddAnonymizeElement( 0x0010, 0x0010, "Fantomas" );   
+      f->AddAnonymizeElement( 0x0010, 0x0010, "Fantomas" );   
       // Patient's ID
-      f1->AddAnonymizeElement( 0x0010, 0x0020,"1515" );   
+      f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );   
       // Study Instance UID
-      f1->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
+      f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
       // Telephone
-      f1->AddAnonymizeElement( 0x0010, 0x2154, "3615" );
+      f->AddAnonymizeElement( 0x0010, 0x2154, "3615" );
 
       std::cout << " Anonymize list... Done ! " << std::endl;
 
-      f1->AnonymizeFile();
+      f->AnonymizeFile();
 
       std::cout << " Anonymize File... Done ! " << std::endl;
  
-      fh1->WriteDcmExplVR(output);  
+      fh->WriteDcmExplVR(output);  
       std::cout << " Anonymized File... Written ! " << std::endl;
 
-      f1->ClearAnonymizeList();
+      f->ClearAnonymizeList();
       std::cout << " Anonymize list... Cleared ! " << std::endl;
     
-      delete f1;
-      delete fh1;
+      delete f;
+      delete fh;
 
       // Read the file we just wrote
-      f1 = new gdcm::File( output );
+      f = new gdcm::File( output );
 
       std::cout << " Anonymized File... Re-Read ! " << std::endl;
 
@@ -107,27 +112,27 @@ int Anonymize(std::string const &filename,
       bool plouf = false;
 
       // Compare and abort if different.
-      v = f1->GetEntryValue(0x0008, 0x0080);
+      v = f->GetEntryValue(0x0008, 0x0080);
       if ( v != gdcm::GDCM_UNFOUND ) 
          if (v.find("Xanadoo") >= v.length() )
             plouf = true;
 
-      v = f1->GetEntryValue(0x0010, 0x0010);
+      v = f->GetEntryValue(0x0010, 0x0010);
       if ( v != gdcm::GDCM_UNFOUND ) 
          if (v.find("Fantomas") >= v.length() )
             plouf = true;
 
       if ( v != gdcm::GDCM_UNFOUND )
-         v = f1->GetEntryValue(0x0010, 0x0020);
+         v = f->GetEntryValue(0x0010, 0x0020);
          if (v.find("1515") >= v.length() )
             plouf = true;
 
        if ( v != gdcm::GDCM_UNFOUND )
-         v = f1->GetEntryValue(0x0010, 0x000d);
+         v = f->GetEntryValue(0x0010, 0x000d);
          if (v.find("9.99.999.9999") >= v.length() )
             plouf = true;
       
-      delete f1;
+      delete f;
 
       if ( !plouf)
       { 
@@ -142,18 +147,18 @@ int Anonymize(std::string const &filename,
 
       // Read the file we just anonymize and check
 
-      f1 = new gdcm::File( output );
+      f = new gdcm::File( output );
 
       // First, we set values to replace the ones we want to hide
    
       // Patient's name 
-      f1->AddAnonymizeElement(0x0010, 0x0010, "XXL");  
+      f->AddAnonymizeElement(0x0010, 0x0010, "XXL");  
       std::cout << " replace Patient's Name " << std::endl;
       // Patient's ID
-      f1->AddAnonymizeElement( 0x0010, 0x0020,"007" );
+      f->AddAnonymizeElement( 0x0010, 0x0020,"007" );
       std::cout << " replace Patient's ID " << std::endl;
       // Study Instance UID
-      f1->AddAnonymizeElement(0x0020, 0x000d, "6.66.666.6666" );
+      f->AddAnonymizeElement(0x0020, 0x000d, "6.66.666.6666" );
       std::cout << " replace Study ID " << std::endl;
 
       // --------------------- we overwrite the file
@@ -162,33 +167,33 @@ int Anonymize(std::string const &filename,
       // The gdcm::File remains untouched in memory
 
       std::cout <<"Let's AnonymizeNoLoad " << std::endl;;
-      f1->AnonymizeNoLoad();
+      f->AnonymizeNoLoad();
 
       std::cout <<"End AnonymizeNoLoad" << std::endl;
       // No need to write the File : modif were done on disc !
  
-      delete f1;
-      f1 = new gdcm::File( output );
+      delete f;
+      f = new gdcm::File( output );
 
       std::string val;
       plouf = false;
 
-      val = f1->GetEntryValue(0x0010, 0x0010);
+      val = f->GetEntryValue(0x0010, 0x0010);
       if ( val != gdcm::GDCM_UNFOUND ) 
          if (val.find("XXL") >= v.length() )
             plouf = true;
      
       if ( val != gdcm::GDCM_UNFOUND )
-         val = f1->GetEntryValue(0x0010, 0x0020);
+         val = f->GetEntryValue(0x0010, 0x0020);
          if (val.find("007") >= v.length() )
       plouf = true;
 
       if ( val != gdcm::GDCM_UNFOUND )
-         val = f1->GetEntryValue(0x0010, 0x000d);
+         val = f->GetEntryValue(0x0010, 0x000d);
          if (val.find("6.66.666.6666") >= v.length() )
       plouf = true;
       
-      delete f1;
+      delete f;
 
       if ( !plouf)
       { 

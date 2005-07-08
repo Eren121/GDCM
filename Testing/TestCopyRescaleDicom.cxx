@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/20 15:50:27 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,10 +72,13 @@ int CopyRescaleDicom(std::string const &filename,
          return 1;
       }
    }
-
+ 
    //////////////// Step 1:
    std::cout << "      1...";
-   gdcm::File originalF = gdcm::File( filename );
+   gdcm::File originalF = gdcm::File( );
+   originalF.SetFileName( filename );
+   originalF.Load();
+   
    gdcm::File copyF     = gdcm::File( );
 
    //First of all copy the file, field by field

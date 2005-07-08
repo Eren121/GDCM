@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/06 08:59:46 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ int CompareDictGroupName(gdcm::DictGroupName &groupName,
 {
    std::string val = groupName.GetName(group);
    std::cout << "Group : 0x" << std::hex << std::setw(4) << group 
-             << std::dec << " : " << val << " - " 
+             << std::dec << " : " << val << " - "
              << (bool)(val==ref) << std::endl;
 
    return val!=ref;

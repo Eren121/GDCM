@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/03 10:00:06 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,9 @@ int TestDicomDir(int argc, char *argv[])
       file += "/DICOMDIR";
    }
 
-   dicomdir = new gdcm::DicomDir(file);
+   dicomdir = new gdcm::DicomDir( );
+   dicomdir->SetFileName(file);
+   dicomdir->Load( );
    if (argc > 2) 
    {
       int level = atoi(argv[2]);   
@@ -185,8 +187,10 @@ int TestDicomDir(int argc, char *argv[])
              << "NewDICOMDIR written on disc =================================" 
              << std::endl<< std::endl;
   // Read what we wrote  
-   gdcm::DicomDir *d2 = new gdcm::DicomDir("NewDICOMDIR");
-   if (!d2)
+   gdcm::DicomDir *d2 = new gdcm::DicomDir( );
+   d2->SetFileName("NewDICOMDIR");
+   d2->Load( );
+   if (!d2->IsReadable( ))
    {
       std::cout << std::endl << std::endl  
                 << "Read NewDicomDir from disc failed ========================" 

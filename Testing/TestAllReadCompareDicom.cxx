@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 09:53:43 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/07/08 13:39:56 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -396,16 +396,20 @@ int InternalTest(std::string const &filename,
 
       ////// Step 1:
       std::cout << "1...";
-      gdcm::FileHelper *tested = new gdcm::FileHelper( filename );
-      if( !tested->GetFile()->IsReadable() )
+      gdcm::File *f = new gdcm::File();
+      f->SetFileName( filename );
+      f->Load();
+ 
+      if( !f->IsReadable() )
       {
         std::cout << " Failed" << std::endl
                    << "      Image not gdcm compatible:"
                   << filename << std::endl;
-        delete tested;
+        delete f;
         return 1;
       }
-
+     gdcm::FileHelper *tested = new gdcm::FileHelper( f );
+     
       ////// Step 2:
       ////// Check for existence of reference baseline dicom file:
       std::cout << "2...";
@@ -437,6 +441,7 @@ int InternalTest(std::string const &filename,
                   << filename << std::endl;
          delete reference;
          delete tested;
+         delete f;
          return 1;
       }
 
@@ -464,6 +469,7 @@ int InternalTest(std::string const &filename,
                    << reference->GetZSize() << std::endl;
          delete reference;
          delete tested;
+         delete f;
          return 1;
       }
 
@@ -479,6 +485,7 @@ int InternalTest(std::string const &filename,
                    << reference->GetNumberOfComponents() << std::endl;
          delete reference;
          delete tested;
+         delete f;
          return 1;
       }
 
@@ -498,6 +505,7 @@ int InternalTest(std::string const &filename,
                    << std::endl;
          delete tested;
          delete reference;
+         delete f;
          return 1;
       }
 
@@ -536,12 +544,14 @@ int InternalTest(std::string const &filename,
 
          delete tested;
          delete reference;
+         delete f;
          return 1;
       }
 
       //////////////// Clean up:
       delete tested;
       delete reference;
+      delete f;
 
       std::cout << "OK." << std::endl;
       

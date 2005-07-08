@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/26 18:50:45 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ int TestSerieHelper(int argc, char *argv[])
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
 
    s = new gdcm::SerieHelper();
-   s->SetDirectory(dirName, true); // true : recursive exploration 
+   s->SetDirectory(dirName, true); // true : recursive exploration
    std::cout << " -------------------------------------------Finish parsing :["
              << dirName << "]" << std::endl;
 

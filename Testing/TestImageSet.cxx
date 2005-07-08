@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 09:55:18 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -198,7 +198,9 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
    delete hlp;
 
 // Read the written image
-   gdcm::File *reread = new gdcm::File( fileName );
+   gdcm::File *reread = new gdcm::File(  );
+   reread->SetFileName( fileName );
+   reread->Load();
    if( !reread->IsReadable() )
    {
      std::cerr << "Failed" << std::endl

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:31:15 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,9 +42,12 @@ int CopyDicom(std::string const &filename,
 
       //////////////// Step 1:
       std::cout << "      1...";
-      gdcm::File *originalH = new gdcm::File( filename );
+      
+      gdcm::File *originalH = new gdcm::File( );
       gdcm::File *copyH     = new gdcm::File( );
 
+      originalH->SetFileName( filename );
+      originalH->Load( );
       //First of all copy the file, field by field
 
       //////////////// Step 2:

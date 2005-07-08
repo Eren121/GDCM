@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/04/19 10:03:22 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -185,7 +185,9 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    delete dcmdir;
 
    // Read the newly written DicomDir
-   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir("NewDICOMDIR");
+   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir();
+   newDicomDir->SetFileName("NewDICOMDIR");
+   newDicomDir->Load( );
    if( !newDicomDir->IsReadable() )
    {
       std::cout<<"          Written DicomDir 'NewDICOMDIR'"

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 12:02:33 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,12 +15,15 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#include "gdcmHeader.h"
+#include "gdcmFileHelper.h"
 #include "gdcmFile.h"
 
 // Writting of a DICOM file, using a correct gdcmHeader.
 // and pixels of an other image
 
+
+// NO SYNTAX UPDATED
+// Doesn't compile !
 
 int TestChangeHeader(int argc, char *argv[])
 {
@@ -32,10 +35,12 @@ int TestChangeHeader(int argc, char *argv[])
    }
 
    std::string firstArgument = argv[1];
-   gdcmFile  *f1 = new gdcmFile(firstArgument);
-
+   
+   gdcm::File  *f1 = new gdcm::File();
+   f1->SetFileName(firstArgument);
+   f1->Load( );
    std::string secondArgument = argv[2];
-   gdcmFile  *f2 = new gdcmFile(secondArgument);
+   gdcm::File  *f2 = new gdcm::File(secondArgument);
 
    //f1->PrintPubElVal();
 

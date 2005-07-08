@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestException.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:42:23 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/08 13:39:57 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,6 @@ void functionForException()
 {
       throw myException("in functionForException : ");
 }
-
 
 
 
