@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 16:37:41 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/07/08 10:13:38 $
+  Version:   $Revision: 1.62 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,8 +59,19 @@ public:
    bool Load( std::string const &filename );
    bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
+   
+   /// Sets the root Directory name to parse, recursively
+   void SetDirectoryName(std::string const &dirName) 
+        { ParseDir = true; if (Filename != dirName)
+                               Filename = dirName, IsDocumentModified = true; };
+   /// Accessor to \ref Filename
+   virtual void SetFileName(std::string const &fileName) 
+                   { ParseDir = false; if (Filename != fileName)
+                               Filename = fileName, IsDocumentModified = true; }
 
+   /// DEPRECATED : use SetDirectoryName
    void SetParseDir(bool parseDir)  { ParseDir = parseDir; };
+   
    // Informations contained in the parser
    virtual bool IsReadable();
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 16:37:41 $
-  Version:   $Revision: 1.114 $
+  Date:      $Date: 2005/07/08 10:13:38 $
+  Version:   $Revision: 1.115 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,8 +85,9 @@ typedef std::list<Element> ListElements;
    /// Accessor to \ref Filename
    const std::string &GetFileName() const { return Filename; }
    /// Accessor to \ref Filename
-   void SetFileName(std::string const &fileName) { if (Filename != fileName)
-                                 Filename = fileName, IsDocumentModified = true; }
+   virtual void SetFileName(std::string const &fileName) 
+                   { if (Filename != fileName)
+                        Filename = fileName, IsDocumentModified = true; }
 
    std::ifstream *OpenFile();
    bool CloseFile();
@@ -111,7 +112,7 @@ typedef std::list<Element> ListElements;
  * @param   mode Load mode to be used    
  */
    void SetLoadMode (int mode) { if (LoadMode != mode) 
-                                   LoadMode = mode, IsDocumentModified = true; }
+                                     LoadMode = mode, IsDocumentModified = true; }
 
 protected:
 // Methods
