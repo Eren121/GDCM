@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:35:00 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/07/08 14:36:48 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,14 +50,19 @@ public:
    FileHelper( );
    FileHelper( File *header );
    FileHelper( std::string const &filename );
- 
+   
    virtual ~FileHelper();
 
    void Print(std::ostream &os = std::cout, std::string const &indent = ""); 
 
    /// Accessor to \ref File
    File *GetFile() { return FileInternal; }
+   
 
+   void SetLoadMode(int loadMode);
+   void SetFileName(std::string const &fileName);
+   bool Load();
+   
    // File methods
    bool SetValEntry(std::string const &content,
                     uint16_t group, uint16_t elem);

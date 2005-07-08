@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/07/08 14:36:48 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,7 +146,8 @@ FileHelper::FileHelper(File *header)
 }
 
 /**
- * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
+ * \brief DEPRECATED : use SetFilename() + Load() methods
+ *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (gdcm::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
@@ -194,6 +195,39 @@ FileHelper::~FileHelper()
 
 //-----------------------------------------------------------------------------
 // Public
+
+/**
+ * \brief Sets the LoadMode of the internal gdcm::File as a boolean string. 
+ *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ
+ *... (nothing more, right now)
+ *        WARNING : before using NO_SHADOW, be sure *all* your files
+ *        contain accurate values in the 0x0000 element (if any) 
+ *        of *each* Shadow Group. The parser will fail if the size is wrong !
+ * @param   mode Load mode to be used    
+ */
+void FileHelper::SetLoadMode(int loadMode) 
+{ 
+   GetFile()->SetLoadMode( loadMode ); 
+}
+/**
+ * \brief Sets the LoadMode of the internal gdcm::File
+ * @param  fileName name of the file to be open  
+ */
+void FileHelper::SetFileName(std::string const &fileName)
+{
+   FileInternal->SetFileName( fileName );
+}
+
+/**
+ * \brief   Loader  
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool FileHelper::Load()
+{ 
+   return FileInternal->Load();
+}
+
 /**
  * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
  *          through it's (group, element) and modifies it's content with
