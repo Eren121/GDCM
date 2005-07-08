@@ -126,39 +126,78 @@ Any contribution is welcome.
    <UL>
       <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
           are available to allow easy displaying of single/multiframe 
-          GreyLevel/RGB/PaletteColor images
+          GreyLevel/RGB/PaletteColor images<br><br>
       <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)
+           <br><br>
+      <LI> Because the <TT>gdcm::DicomDir::Load()</TT> method may be used
+           either for loading an already made <TT>DICOMDIR</TT> file or for
+           parsing all the dicom files with a given root directory we
+           syntaxically separated the operations: <br>
+           For loading an already made <TT>DICOMDIR</TT> file, use : <br>
+           <pre>
+           gdcm::DicomDir *d = new gdcm::DicomDir();
+           d->SetFileName(fileName);
+           d->Load( );  
+           </pre>
+ 
+           For parsing all the dicom files with a given root directory, use :<br>
+           <pre>
+           gdcm::DicomDir *d = new gdcm::DicomDir();
+           d->SetDirectoryName(dirName);
+           d->Load( )  
+           </pre>
+
+           <b>Don't</b> use any longer old deprecated style: <br>
+           <TT>
+           gdcm::DicomDir *d = new gdcm::DicomDir();<br>
+           d->SetParseDir(true);   // </TT>or <TT>d->SetParseDir(false);<br>
+           d->Load( fileName );<br>  
+           </TT>
+           <br> 
       <LI> User is now allowed to tell <TT>gdcm::Document</TT> constructor 
             he doesn't want to deal with <TT>SeqEntry</TT> 
             (every time it's possible) <br> and/or he doesn't 
             want to deal with <TT>Shadow groups</TT> (every time it's
+            possible) <br> or he doesn't 
+            want to deal with <TT>SeqEntry</TT> that belong to a <TT>Shadow group</TT>  (every time it's
             possible)<br>
-            use : <br><TT>
-            gdcm::File *f = new gdcm::File();<br>
-            f->SetLoadMode(NO_SEQ | NO_SHADOW);<br>
-            f->Load(fileName);<br>
-            </TT>
-            instead of : <br>
+            use : <br>
+            <pre>
+            gdcm::File *f = new gdcm::File();
+                  f->SetLoadMode(NO_SEQ);            | depending on what
+                  f->SetLoadMode(NO_SHADOW);         | you want *not* 
+                  f->SetLoadMode(NO_SEQ | NO_SHADOW);| to load from the
+                  f->SetLoadMode(NO_SHADOWSEQ);      | target file
+            f->SetFileName(fileName);
+            f->Load( );
+            </pre>
+            <b>Don't</b> use any longer old deprecated style: <br>
             <TT>
             gdcm::File *f = new gdcm::File(fileName);</TT> <br>
-            (old style still available)    
-
+            <br>
         <LI> User is now allowed to tell <TT>gdcm::DicomDir</TT> constructor 
+            he doesn't want to deal with <TT>SeqEntry</TT> 
             he doesn't want to deal with <TT>SeqEntry</TT> 
             (every time it's possible) <br> and/or he doesn't 
             want to deal with <TT>Shadow groups</TT> (every time it's
-            possible)<br>
-            use : <br><TT>
-            gdcm::DicomDir *dcmdir = new gdcm::DicomDir( );<br>
-            dcmdir->SetParseDir(true);<br>
-            dcmdir->SetLoadMode(NO_SEQ | NO_SHADOW);<br>
-            dcmdir->Load(dirName);<br>
-            </TT>
-            instead of : <br>
+            possible) <br> or he doesn't 
+            want to deal with <TT>SeqEntry</TT> that belong to a <TT>Shadow group</TT>  (every time it's
+            possible)<br> when he parses all the Dicom files within a given
+            directory
+            use : <br>
+            <pre>
+            gdcm::DicomDir *f = new gdcm::DicomDir();
+                  f->SetLoadMode(NO_SEQ);            | depending on what
+                  f->SetLoadMode(NO_SHADOW);         | you want *not* 
+                  f->SetLoadMode(NO_SEQ | NO_SHADOW);| to load from the files
+                  f->SetLoadMode(NO_SHADOWSEQ);      | within the root directory 
+            f->SetDirectoryName(rootDirectoryName);
+            f->Load( );
+            </pre>
+            <b>Don't</b> use any longer old deprecated style: <br>
             <TT>
             gdcm::DicomDir *dcmdir = new gdcm::DicomDir(dirName, true);</TT><br>
-            (old style still available)    
-       <LI>
+            <br>         
    </UL>
 
    <LI> Bug fixes
