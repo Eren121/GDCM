@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:58 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/07/08 19:07:12 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #include "gdcmDicomDirElement.h"
 #include "gdcmGlobal.h"
 #include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirVisit.h"
 #include "gdcmDebug.h"
 
 namespace gdcm 
@@ -67,6 +68,13 @@ void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t)
    {
       (*cc)->WriteContent( fp, t );
    }
+
+   for(ListDicomDirVisit::iterator cc = Visits.begin();
+                                   cc!= Visits.end();
+                                 ++cc )
+   {
+      (*cc)->WriteContent( fp, t );
+   }
 }
 
 /**
@@ -77,6 +85,17 @@ DicomDirSerie *DicomDirStudy::NewSerie()
 {
    DicomDirSerie *st = new DicomDirSerie();
    Series.push_back(st);
+   return st;
+} 
+
+/**
+ * \brief   adds a new Visit at the beginning of the VisitList
+ *          of a partially created DICOMDIR
+ */
+DicomDirVisit *DicomDirStudy::NewVisit()
+{
+   DicomDirVisit *st = new DicomDirVisit();
+   Visits.push_back(st);
    return st;
 } 
 
@@ -95,6 +114,20 @@ void DicomDirStudy::ClearSerie()
 }
 
 /**
+ * \brief  Remove all visits in the study 
+ */
+void DicomDirStudy::ClearVisit()
+{
+   for(ListDicomDirVisit::iterator cc =  Visits.begin();
+                                   cc != Visits.end();
+                                 ++cc )
+   {
+      delete *cc;
+   }
+   Visits.clear();
+}
+
+/**
  * \brief   Get the first entry while visiting the DicomDirSeries
  * \return  The first DicomDirSerie if found, otherwhise NULL
  */
@@ -103,6 +136,18 @@ DicomDirSerie *DicomDirStudy::GetFirstSerie()
    ItSerie = Series.begin();
    if (ItSerie != Series.end())
       return *ItSerie;
+   return NULL;
+}
+
+/**
+ * \brief   Get the first entry while visiting the DicomDirVisit
+ * \return  The first DicomDirVisit if found, otherwhise NULL
+ */
+DicomDirVisit *DicomDirStudy::GetFirstVisit()
+{
+   ItVisit = Visits.begin();
+   if (ItVisit != Visits.end())
+      return *ItVisit;
    return NULL;
 }
 
@@ -122,8 +167,23 @@ DicomDirSerie *DicomDirStudy::GetNextSerie()
 }  
 
 /**
+ * \brief   Get the next entry while visiting the DicomDirVisit
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next DicomDirVisit if found, otherwhise NULL
+ */
+DicomDirVisit *DicomDirStudy::GetNextVisit()
+{
+   gdcmAssertMacro (ItVisit != Visits.end());
+
+   ++ItVisit;
+   if (ItVisit != Visits.end())
+      return *ItVisit;
+   return NULL;
+}
+
+/**
  * \brief   Get the last entry while visiting the DicomDirSeries
- * \return  The first DicomDirSerie if found, otherwhise NULL
+ * \return  The last DicomDirSerie if found, otherwhise NULL
  */
 DicomDirSerie *DicomDirStudy::GetLastSerie()
 {
@@ -132,6 +192,21 @@ DicomDirSerie *DicomDirStudy::GetLastSerie()
    {
      --ItSerie;
       return *ItSerie;
+   }
+   return NULL;
+}
+
+/**
+ * \brief   Get the last entry while visiting the DicomDirVisit
+ * \return  The last DicomDirVisit if found, otherwhise NULL
+ */
+DicomDirVisit *DicomDirStudy::GetLastVisit()
+{
+   ItVisit = Visits.end();
+   if (ItVisit != Visits.begin())
+   {
+     --ItVisit;
+      return *ItVisit;
    }
    return NULL;
 }
@@ -162,6 +237,15 @@ void DicomDirStudy::Print(std::ostream &os, std::string const & )
       (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);
    }
+
+   for(ListDicomDirVisit::iterator cc2 =  Visits.begin();
+                                   cc2 != Visits.end();
+                                   ++cc2)
+   {
+      (*cc2)->SetPrintLevel(PrintLevel);
+      (*cc2)->Print(os);
+   }
+
 }
 
 //-----------------------------------------------------------------------------

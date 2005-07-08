@@ -39,6 +39,7 @@ SET(libgdcm_la_SOURCES
    gdcmDicomDirMeta.cxx
    gdcmDicomDirObject.cxx
    gdcmDicomDirPatient.cxx
+   gdcmDicomDirVisit.cxx
    gdcmDicomDirSerie.cxx
    gdcmDicomDirStudy.cxx
    gdcmDict.cxx

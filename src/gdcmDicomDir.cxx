@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 10:13:38 $
-  Version:   $Revision: 1.145 $
+  Date:      $Date: 2005/07/08 19:07:12 $
+  Version:   $Revision: 1.146 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirVisit.h"
 #include "gdcmDicomDirImage.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirMeta.h"
@@ -772,6 +773,16 @@ void DicomDir::CreateDicomDir()
             gdcmErrorMacro( "Add AddSerieToEnd failed");
          }
       }
+      else if ( v == "VISIT " )
+      {
+         si = new DicomDirVisit(true);
+         if ( !AddVisitToEnd( static_cast<DicomDirVisit *>(si)) )
+         {
+            delete si;
+            si = NULL;
+            gdcmErrorMacro( "Add AddVisitToEnd failed");
+         }
+      }
       else if ( v == "STUDY " )
       {
          si = new DicomDirStudy(true);
@@ -859,6 +870,26 @@ bool DicomDir::AddSerieToEnd(DicomDirSerie *dd)
    return false;
 }
 
+/**
+ * \brief  AddVisitToEnd 
+ * @param   dd SQ Item to enqueue to the DicomDirVisit chained List
+ */
+bool DicomDir::AddVisitToEnd(DicomDirVisit *dd)
+{
+   if ( Patients.size() > 0 )
+   {
+      ListDicomDirPatient::iterator itp = Patients.end();
+      itp--;
+
+      DicomDirStudy *study = (*itp)->GetLastStudy();
+      if ( study )
+      {
+         study->AddVisit(dd);
+         return true;
+      }
+   }
+   return false;
+}
 /**
  * \brief   AddImageToEnd
  * @param   dd SQ Item to enqueue to the DicomDirImage chained List

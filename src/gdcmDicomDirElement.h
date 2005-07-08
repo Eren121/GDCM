@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/07/08 19:07:12 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,9 @@ typedef std::list<Element> ListDicomDirSerieElem;
 typedef std::list<Element> ListDicomDirImageElem;
 
 // For future use (Full DICOMDIR)
+
+typedef std::list<Element> ListDicomDirVisitElem;
 /*
-typedef std::list<Element> ListDicomDirVisit;
 typedef std::list<Element> ListDicomDirResult;
 typedef std::list<Element> ListDicomDirStudyComponent;
 
@@ -98,6 +99,12 @@ public:
 
    /**
     * \brief   returns a reference to the chained List 
+    *          related to the VISIT Elements of a DICOMDIR.
+    */      
+   ListDicomDirVisitElem const &GetDicomDirVisitElements() const
+      { return DicomDirVisitList; };
+   /**
+    * \brief   returns a reference to the chained List 
     *          related to the SERIE Elements of a DICOMDIR.
     */
    ListDicomDirSerieElem const &GetDicomDirSerieElements() const
@@ -124,6 +131,8 @@ private:
    ListDicomDirPatientElem DicomDirPatientList;
    /// Elements chained list, related to the StudyElements of DICOMDIR
    ListDicomDirStudyElem   DicomDirStudyList;
+   /// Elements chained list, related to the VisitElements of DICOMDIR
+   ListDicomDirVisitElem   DicomDirVisitList;
    /// Elements chained list, related to the SerieElements of DICOMDIR
    ListDicomDirSerieElem   DicomDirSerieList;
    /// Elements chained list, related to the ImageElements of DICOMDIR
