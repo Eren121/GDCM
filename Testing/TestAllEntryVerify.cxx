@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:56 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/07/11 14:47:19 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,9 +22,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
-//Generated file:
-//#include "gdcmDataImages.h"
 
 typedef std::string EntryValueType;   // same type as ValEntry::value
 typedef std::map< gdcm::TagKey, EntryValueType > MapEntryValues;
