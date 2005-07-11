@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 15:05:22 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/07/11 15:08:18 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,6 +85,10 @@ typedef  unsigned int        uint32_t;
 #endif
 
 #include <string>
+#if defined(_MSC_VER) && (_MSC_VER == 1200)
+/* ostream operator for std::string since VS6 does not provide it*/
+#include <iostream>
+#endif
 
 /// \brief namespace for Grass root DiCoM
 namespace gdcm
@@ -117,8 +121,7 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 
 typedef std::string TagKey;
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
-#include <iostream>
-/* ostream operator for std::string since VS6 does not provide it*/
+// Doing everything within gdcm namespace to avoid polluting 3d party software
 inline std::ostream& operator<<(std::ostream& _O, std::string _val)
 {
   return _O << _val.c_str();
