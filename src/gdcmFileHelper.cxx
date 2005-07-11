@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/07/08 14:36:48 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/07/11 08:30:39 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -203,7 +203,7 @@ FileHelper::~FileHelper()
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
- * @param   mode Load mode to be used    
+ * @param   loadMode Load mode to be used    
  */
 void FileHelper::SetLoadMode(int loadMode) 
 { 
