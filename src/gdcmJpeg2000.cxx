@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:37:53 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/07/11 18:10:29 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,8 @@ namespace gdcm
 bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 {
 #if 0
-  std::ofstream out("/tmp/jpeg2000.jpc");
+  std::cerr << "Inputlenght=" << inputlength << std::endl;
+  std::ofstream out("/tmp/jpeg2000.jpc", std::ios::binary);
   out.write((char*)inputdata,inputlength);
   out.close();
 #endif
