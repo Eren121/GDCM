@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 10:13:17 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/07/11 13:54:51 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -145,6 +145,7 @@ int main(int argc, char* argv[])
          while ( st ) { // on degouline les STUDY de ce patient
             std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]"; // Study Description 
             std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010) << "]"; // Study ID
+            std::cout << std::endl; 
             st = pa->GetNextStudy();
          }
          pa = f->GetNextPatient();    
