@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:56 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/07/11 08:50:48 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -396,7 +396,10 @@ int InternalTest(std::string const &filename,
 
       ////// Step 1:
       std::cout << "1...";
+
+       // new style 
       gdcm::File *f = new gdcm::File();
+      f->SetLoadMode ( 0x00000000 ); // Load everything
       f->SetFileName( filename );
       f->Load();
  
@@ -486,7 +489,6 @@ int InternalTest(std::string const &filename,
          delete reference;
          delete tested;
          delete f;
-         return 1;
       }
 
       // Test the data size
