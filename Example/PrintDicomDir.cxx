@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 10:15:04 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/07/11 10:13:17 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #include "gdcmValEntry.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirStudy.h"
+#include "gdcmDicomDirVisit.h"
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirImage.h"
 #include "gdcmTS.h"
@@ -58,6 +59,7 @@ int main(int argc, char* argv[])
    gdcm::DicomDirPatient *pa;
    gdcm::DicomDirStudy *st;
    gdcm::DicomDirSerie *se;
+   gdcm::DicomDirVisit *vs;
    gdcm::DicomDirImage *im;
   
    char *fileName;
@@ -121,7 +123,9 @@ int main(int argc, char* argv[])
       pa = f->GetFirstPatient();
       while (pa) 
       {
-         std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name   
+         std::cout << "Pat.Name:[" << pa->GetEntryValue(0x0010, 0x0010) <<"]"; // Patient's Name
+         std::cout << " Pat.ID:[";
+         std::cout << pa->GetEntryValue(0x0010, 0x0020) << "]" << std::endl; // Patient ID
          pa = f->GetNextPatient();    
       }
       break;
@@ -134,11 +138,13 @@ int main(int argc, char* argv[])
       pa = f->GetFirstPatient();
       while ( pa ) // on degouline les PATIENT de ce DICOMDIR
       {  
-         std::cout << pa->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name 
-
+         std::cout << "Pat.Name:[" << pa->GetEntryValue(0x0010, 0x0010) <<"]"; // Patient's Name
+         std::cout << " Pat.ID:[";
+         std::cout << pa->GetEntryValue(0x0010, 0x0020) << "]" << std::endl; // Patient ID
          st = pa->GetFirstStudy();
          while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- "<< st->GetEntryValue(0x0008, 0x1030) << std::endl; // Study Description
+            std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]"; // Study Description 
+            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010) << "]"; // Study ID
             st = pa->GetNextStudy();
          }
          pa = f->GetNextPatient();    
@@ -160,18 +166,30 @@ int main(int argc, char* argv[])
 
          st = pa->GetFirstStudy();
          while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]";// Study Description 
-            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010);       // Study ID
-            std::cout << "]" << std::endl;
+            std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]"; // Study Description 
+            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010) << "]"; // Study ID
+            std::cout << std::endl;
 
             se = st->GetFirstSerie();
             while ( se ) { // on degouline les SERIES de cette study
                std::cout << "--- --- Ser.Descr:["<< se->GetEntryValue(0x0008, 0x103e)<< "]";  // Series Description
-               std::cout << " Ser.nb:["         <<  se->GetEntryValue(0x0020, 0x0011);        // Series number
-               std::cout << "] Mod.:["          <<  se->GetEntryValue(0x0008, 0x0060) << "]"; // Modality
+               std::cout << " Ser.nb:["          << se->GetEntryValue(0x0020, 0x0011);        // Series number
+               std::cout << "] Mod.:["           << se->GetEntryValue(0x0008, 0x0060) << "]"; // Modality
                std::cout << std::endl;    
                se = st->GetNextSerie();   
             }
+  
+            vs = st->GetFirstVisit();
+            while ( vs ) { // on degouline les VISIT de cette study
+               std::cout << "--- --- VISIT: ";
+               std::cout << " Ref. File ID :[" << vs->GetEntryValue(0x0004, 0x1500) << "]"; // Referenced File ID
+               std::cout << " Inst.Name:["    << vs->GetEntryValue(0x0008,0x0080)   << "]"; // Institution Name
+               std::cout << " Adm.ID:["      << vs->GetEntryValue(0x0038, 0x0010)   << "]"; // Admission ID
+               std::cout << " Adm. date:["   << vs->GetEntryValue(0x0038, 0x0020)   << "]"; // Admitting Date
+               std::cout << std::endl;    
+               vs = st->GetNextVisit();    
+            }
+
             st = pa->GetNextStudy();
          }
          pa = f->GetNextPatient();    
@@ -192,9 +210,20 @@ int main(int argc, char* argv[])
 
          st = pa->GetFirstStudy();
          while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]";// Study Description 
-            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010);       // Study ID
-            std::cout << "]" << std::endl;
+            std::cout << "--- Stud.descr:["    << st->GetEntryValue(0x0008, 0x1030) << "]"; // Study Description 
+            std::cout << " Stud.ID:["          << st->GetEntryValue(0x0020, 0x0010) << "]"; // Study ID
+            std::cout << std::endl;
+  
+            vs = st->GetFirstVisit();
+            while ( vs ) { // on degouline les VISIT de cette study
+               std::cout << "--- --- VISIT: ";
+               std::cout << " Ref. File ID :[" << vs->GetEntryValue(0x0004, 0x1500) << "]"; // Referenced File ID
+               std::cout << " Inst.Name:["    << vs->GetEntryValue(0x0008,0x0080)   << "]"; // Institution Name
+               std::cout << " Adm.ID:["      << vs->GetEntryValue(0x0038, 0x0010)   << "]"; // Admission ID
+               std::cout << " Adm. date:["   << vs->GetEntryValue(0x0038, 0x0020)   << "]"; // Admitting Date
+               std::cout << std::endl;    
+               vs = st->GetNextVisit();    
+            }
 
             se = st->GetFirstSerie();
             while ( se ) { // on degouline les SERIES de cette study
@@ -205,7 +234,8 @@ int main(int argc, char* argv[])
 
                im = se->GetFirstImage();
                while ( im ) { // on degouline les Images de cette serie
-                  std::cout << "--- --- --- "<< im->GetEntryValue(0x0004, 0x1500) << std::endl; // File name
+                  std::cout << "--- --- --- "<< " IMAGE Ref. File ID :[" << im->GetEntryValue(0x0004, 0x1500) 
+                            << "]" << std::endl; // File name (Referenced File ID)
                   im = se->GetNextImage();   
                }
                se = st->GetNextSerie();   
