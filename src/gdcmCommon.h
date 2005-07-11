@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 15:20:46 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/07/11 16:18:47 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,11 +85,12 @@ typedef  unsigned int        uint32_t;
 #endif
 
 #include <string>
-#define FASTTAGKEY 0
+#define FASTTAGKEY 1
 
 // FIXME: Should rewrite this:
 #if FASTTAGKEY
 #include <iostream>
+#include <iomanip>
 #endif
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
 /* ostream operator for std::string since VS6 does not provide it*/
@@ -133,8 +134,9 @@ typedef union   {
 /* ostream operator for TagKey */
 inline std::ostream& operator<<(std::ostream& _O, TagKey _val)
 {
-  return ( _O << std::ios::hex << _val.tab[0] 
-    << "|" << std::ios::hex << _val.tab[1] );
+  return ( _O << std::right << std::setw(4) << std::setfill('0') << std::hex
+      << _val.tab[0] << "|" << std::right << std::setw(4) << 
+      std::setfill('0') << std::hex <<  _val.tab[1]);
 };
 inline bool operator==(TagKey _self, TagKey _val)
 {
@@ -143,14 +145,6 @@ inline bool operator==(TagKey _self, TagKey _val)
 inline bool operator<(TagKey _self, TagKey _val)
 {
   return _self.tagkey < _val.tagkey;
-};
-// FIXME
-// This one is clearly weird, see gdcmDocument:918
-inline TagKey operator+(TagKey _self, TagKey _val)
-{
-  TagKey r;
-  r.tagkey = _self.tagkey + _val.tagkey;
-  return r;
 };
 #else
 typedef std::string TagKey;
