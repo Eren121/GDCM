@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 15:08:18 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/07/11 15:20:46 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,6 +85,12 @@ typedef  unsigned int        uint32_t;
 #endif
 
 #include <string>
+#define FASTTAGKEY 0
+
+// FIXME: Should rewrite this:
+#if FASTTAGKEY
+#include <iostream>
+#endif
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
 /* ostream operator for std::string since VS6 does not provide it*/
 #include <iostream>
@@ -119,7 +125,36 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 /// We'll fix the mess up -without any change in the API- as soon as the bench
 /// marks are fully performed.
 
+#if FASTTAGKEY
+typedef union   {
+      uint16_t  tab[2];
+      uint32_t  tagkey;
+    } TagKey;
+/* ostream operator for TagKey */
+inline std::ostream& operator<<(std::ostream& _O, TagKey _val)
+{
+  return ( _O << std::ios::hex << _val.tab[0] 
+    << "|" << std::ios::hex << _val.tab[1] );
+};
+inline bool operator==(TagKey _self, TagKey _val)
+{
+  return _self.tagkey == _val.tagkey;
+};
+inline bool operator<(TagKey _self, TagKey _val)
+{
+  return _self.tagkey < _val.tagkey;
+};
+// FIXME
+// This one is clearly weird, see gdcmDocument:918
+inline TagKey operator+(TagKey _self, TagKey _val)
+{
+  TagKey r;
+  r.tagkey = _self.tagkey + _val.tagkey;
+  return r;
+};
+#else
 typedef std::string TagKey;
+#endif
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
 // Doing everything within gdcm namespace to avoid polluting 3d party software
 inline std::ostream& operator<<(std::ostream& _O, std::string _val)

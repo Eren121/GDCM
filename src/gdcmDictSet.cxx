@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:53:16 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/07/11 15:20:46 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,10 +116,17 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
   //
   // const std::string tag = DictEntry::TranslateToKey(group,elem)
   //                         + "#" + vr + "#" + vm + "#" + name;
+#if FASTTAGKEY
+   // FIXME
+   TagKey tag;
+   tag.tab[0] = group;
+   tag.tab[1] = elem;
+#else
    char res[10];
    sprintf(res,"%04x|%04x", group, elem);
    TagKey tag = res;
    tag += "#" + vr + "#" + vm + "#" + name;  
+#endif
   
    TagKeyHT::iterator it;
    
