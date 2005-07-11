@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 15:20:46 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/07/11 20:44:52 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,7 +116,7 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
   //
   // const std::string tag = DictEntry::TranslateToKey(group,elem)
   //                         + "#" + vr + "#" + vm + "#" + name;
-#if FASTTAGKEY
+#if FASTTAGKEY && 0
    // FIXME
    TagKey tag;
    tag.tab[0] = group;
@@ -124,11 +124,11 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
 #else
    char res[10];
    sprintf(res,"%04x|%04x", group, elem);
-   TagKey tag = res;
+   ExtendedTagKey tag = res;
    tag += "#" + vr + "#" + vm + "#" + name;  
 #endif
   
-   TagKeyHT::iterator it;
+   ExtendedTagKeyHT::iterator it;
    
    it = VirtualEntries.find(tag);
    if ( it != VirtualEntries.end() )
@@ -139,7 +139,7 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
    {
       DictEntry ent(group, elem, vr, vm, name);
       VirtualEntries.insert(
-         std::map<TagKey, DictEntry>::value_type(tag, ent) );
+         ExtendedTagKeyHT::value_type(tag, ent) );
       entry = &(VirtualEntries.find(tag)->second);
    }
 

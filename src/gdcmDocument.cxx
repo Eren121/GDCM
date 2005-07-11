@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 16:37:40 $
-  Version:   $Revision: 1.262 $
+  Date:      $Date: 2005/07/11 20:44:52 $
+  Version:   $Revision: 1.263 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2102,6 +2102,10 @@ DocEntry *Document::ReadNextDocEntry()
    {
       group = ReadInt16();
       elem  = ReadInt16();
+      if ( group == 41 && 9728 == elem )
+        {
+        std::cout << "bla";
+        }
    }
    catch ( FormatError e )
    {
