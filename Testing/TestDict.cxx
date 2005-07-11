@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/07/11 14:53:15 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ int TestDict(int , char *[])
    std::cout<<"#######################################################\n";
    const int ENTRY_GR = 0x10;
    const int ENTRY_EL = 0x20;
-   std::string key=gdcm::DictEntry::TranslateToKey(ENTRY_GR,ENTRY_EL);
+   gdcm::TagKey key = gdcm::DictEntry::TranslateToKey(ENTRY_GR,ENTRY_EL);
    gdcm::DictEntry *entry=pubDict->GetEntry(ENTRY_GR,ENTRY_EL);
    if(!entry)
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/07/11 14:53:16 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -72,7 +72,7 @@ bool ElementSet::AddEntry(DocEntry *newEntry)
 
    if ( TagHT.count(key) == 1 )
    {
-      gdcmWarningMacro( "Key already present: " << key.c_str());
+      gdcmWarningMacro( "Key already present: " << key );
       return false;
    }
    else
