@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/09 23:47:30 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/07/11 08:20:25 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,17 +89,6 @@ DicomDirSerie *DicomDirStudy::NewSerie()
 } 
 
 /**
- * \brief   adds a new Visit at the beginning of the VisitList
- *          of a partially created DICOMDIR
- */
-DicomDirVisit *DicomDirStudy::NewVisit()
-{
-   DicomDirVisit *st = new DicomDirVisit();
-   Visits.push_back(st);
-   return st;
-} 
-
-/**
  * \brief  Remove all series in the study 
  */
 void DicomDirStudy::ClearSerie()
@@ -114,20 +103,6 @@ void DicomDirStudy::ClearSerie()
 }
 
 /**
- * \brief  Remove all visits in the study 
- */
-void DicomDirStudy::ClearVisit()
-{
-   for(ListDicomDirVisit::iterator cc =  Visits.begin();
-                                   cc != Visits.end();
-                                 ++cc )
-   {
-      delete *cc;
-   }
-   Visits.clear();
-}
-
-/**
  * \brief   Get the first entry while visiting the DicomDirSeries
  * \return  The first DicomDirSerie if found, otherwhise NULL
  */
@@ -136,18 +111,6 @@ DicomDirSerie *DicomDirStudy::GetFirstSerie()
    ItSerie = Series.begin();
    if (ItSerie != Series.end())
       return *ItSerie;
-   return NULL;
-}
-
-/**
- * \brief   Get the first entry while visiting the DicomDirVisit
- * \return  The first DicomDirVisit if found, otherwhise NULL
- */
-DicomDirVisit *DicomDirStudy::GetFirstVisit()
-{
-   ItVisit = Visits.begin();
-   if (ItVisit != Visits.end())
-      return *ItVisit;
    return NULL;
 }
 
@@ -167,21 +130,6 @@ DicomDirSerie *DicomDirStudy::GetNextSerie()
 }  
 
 /**
- * \brief   Get the next entry while visiting the DicomDirVisit
- * \note : meaningfull only if GetFirstEntry already called
- * \return  The next DicomDirVisit if found, otherwhise NULL
- */
-DicomDirVisit *DicomDirStudy::GetNextVisit()
-{
-   gdcmAssertMacro (ItVisit != Visits.end());
-
-   ++ItVisit;
-   if (ItVisit != Visits.end())
-      return *ItVisit;
-   return NULL;
-}
-
-/**
  * \brief   Get the last entry while visiting the DicomDirSeries
  * \return  The last DicomDirSerie if found, otherwhise NULL
  */
@@ -193,6 +141,59 @@ DicomDirSerie *DicomDirStudy::GetLastSerie()
      --ItSerie;
       return *ItSerie;
    }
+   return NULL;
+}
+
+
+/**
+ * \brief   adds a new Visit at the beginning of the VisitList
+ *          of a partially created DICOMDIR
+ */
+DicomDirVisit *DicomDirStudy::NewVisit()
+{
+   DicomDirVisit *st = new DicomDirVisit();
+   Visits.push_back(st);
+   return st;
+} 
+
+/**
+ * \brief  Remove all visits in the study 
+ */
+void DicomDirStudy::ClearVisit()
+{
+   for(ListDicomDirVisit::iterator cc =  Visits.begin();
+                                   cc != Visits.end();
+                                 ++cc )
+   {
+      delete *cc;
+   }
+   Visits.clear();
+}
+
+/**
+ * \brief   Get the first entry while visiting the DicomDirVisit
+ * \return  The first DicomDirVisit if found, otherwhise NULL
+ */
+DicomDirVisit *DicomDirStudy::GetFirstVisit()
+{
+   ItVisit = Visits.begin();
+   if (ItVisit != Visits.end())
+      return *ItVisit;
+   return NULL;
+}
+
+/**
+ * \brief   Get the next entry while visiting the DicomDirVisit
+ * \note : meaningfull only if GetFirstEntry already called
+ * \return  The next DicomDirVisit if found, otherwhise NULL
+ */
+DicomDirVisit *DicomDirStudy::GetNextVisit()
+{
+   gdcmAssertMacro (ItVisit != Visits.end());
+
+   ++ItVisit;
+   if (ItVisit != Visits.end())
+      return *ItVisit;
    return NULL;
 }
 
