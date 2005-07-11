@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 10:13:38 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2005/07/11 12:52:51 $
+  Version:   $Revision: 1.116 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,11 +173,12 @@ protected:
    ///        Probabely, some more to add
    int LoadMode;
    
-   /// Whether the gdcm::Document is already parsed/loaded
-   /// - False from the creation of the gdcm::Document untill 
+   /// \brief Whether the gdcm::Document is already parsed/loaded :
+   /// False from the creation of the gdcm::Document untill 
    ///   gdcm::Document:Load()
    bool IsDocumentAlreadyLoaded; // FIXME : probabely useless now
 
+   /// Whether the gdcm::Document was modified since the last Load()
    bool IsDocumentModified;
 
 private:
