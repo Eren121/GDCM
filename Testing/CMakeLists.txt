@@ -129,6 +129,9 @@ SET(BLACK_LIST
   #I wait to be 100% sure before releasing them. JP
   "rle16sti.dcm"
   "rle16loo.dcm"   
+  # Jasper cannot handle this image, only kakadu so far, unless you patch jasper
+  # but then it breaks other images...
+  "CT_Phillips_JPEG2K_Decompr_Problem.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
