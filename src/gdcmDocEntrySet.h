@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 12:52:51 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/07/11 14:40:40 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@ class BinEntry;
 class SeqEntry;
 class DictEntry;
 
-typedef std::string BaseTagKey;
+typedef TagKey BaseTagKey;
 
 //-----------------------------------------------------------------------------
 /**

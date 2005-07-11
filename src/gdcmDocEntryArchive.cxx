@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/07/11 14:40:40 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,9 +58,9 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
 
    uint16_t group = newEntry->GetDictEntry()->GetGroup();
    uint16_t elem  = newEntry->GetDictEntry()->GetElement();
-   std::string key = DictEntry::TranslateToKey(group,elem);
+   TagKey key = DictEntry::TranslateToKey(group,elem);
 
-   if ( Archive.find(key)==Archive.end() )
+   if ( Archive.find(key) == Archive.end() )
    {
       // Save the old DocEntry if any
       DocEntry *old = ArchFile->GetDocEntry(group, elem);
@@ -86,7 +86,7 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
  */
 bool DocEntryArchive::Push(uint16_t group, uint16_t elem)
 {
-   std::string key = DictEntry::TranslateToKey(group, elem);
+   TagKey key = DictEntry::TranslateToKey(group, elem);
 
    if ( Archive.find(key)==Archive.end() )
    {
@@ -111,7 +111,7 @@ bool DocEntryArchive::Push(uint16_t group, uint16_t elem)
  */
 bool DocEntryArchive::Restore(uint16_t group, uint16_t elem)
 {
-   std::string key=DictEntry::TranslateToKey(group, elem);
+   TagKey key=DictEntry::TranslateToKey(group, elem);
 
    TagDocEntryHT::iterator restoreIt=Archive.find(key);
    if ( restoreIt!=Archive.end() )

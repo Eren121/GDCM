@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:58 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/07/11 14:40:40 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,7 +173,7 @@ void DicomDirElement::Print(std::ostream &os)
    std::ostringstream s;
    std::list<Element>::iterator it;
    //char greltag[10];  //group element tag
-   std::string greltag;
+   TagKey greltag;
 
    s << "Meta Elements :"<<std::endl;
    for (it = DicomDirMetaList.begin(); it != DicomDirMetaList.end(); ++it)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/07/11 14:40:40 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@ public:
  
    /// \brief   sets the key of the current DictEntry
    /// @param k New key to be set.
-   void SetKey(TagName const &k)  { Key = k; }
+   void SetKey(TagKey const &k)  { Key = k; }
  
    /// \brief   returns the VM field of the current DictEntry
    /// @return  The 'Value Multiplicity' field
@@ -88,7 +88,7 @@ public:
  
    /// \brief  Gets the key of the current DictEntry
    /// @return the key.
-   const TagName &GetKey() const { return Key; }
+   const TagKey &GetKey() const { return Key; }
 
 // Key creation
    static TagKey TranslateToKey(uint16_t group, uint16_t elem);
