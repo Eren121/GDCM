@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/05 20:58:27 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/07/11 14:37:53 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
   int prec = jas_image_cmptprec(jasImage, 0);
   int i, j, k;
 
-  // The following should serioulsy be rewritten I cannot belive we need to
+  // The following should serioulsy be rewritten I cannot believe we need to
   // do a per pixel decompression, there should be a way to read a full
   // scanline...
   if (prec == 8)
@@ -100,6 +100,11 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 
   //FIXME
   //delete the jpeg temp buffer
+#if 0
+  std::ofstream rawout("/tmp/jpeg2000.raw");
+  rawout.write((char*)raw,height*width*numcmpts*((prec+4)/8));
+  rawout.close();
+#endif
   delete[] inputdata;
 
   return true;
