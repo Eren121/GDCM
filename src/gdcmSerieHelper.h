@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/03 16:08:16 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/07/11 15:29:04 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ private:
    CoherentFileListmap CoherentFileListHT;
    CoherentFileListmap::iterator ItListHt;
 
-   typedef std::pair<std::string, std::string> Rule;
+   typedef std::pair<TagKey, std::string> Rule;
    typedef std::vector<Rule> SerieRestrictions;
    SerieRestrictions Restrictions;
 };
