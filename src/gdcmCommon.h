@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 16:20:55 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/07/11 18:13:16 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,7 +136,9 @@ inline std::ostream& operator<<(std::ostream& _O, TagKey _val)
 {
   return ( _O << std::right << std::setw(4) << std::setfill('0') << std::hex
       << _val.tab[0] << "|" << std::right << std::setw(4) << 
-      std::setfill('0') << std::hex <<  _val.tab[1]);
+      std::setfill('0') << std::hex <<  _val.tab[1] 
+      // put back defaults:
+      << std::setfill(' ') << std::left << std::dec);
 };
 inline bool operator==(TagKey _self, TagKey _val)
 {
@@ -144,7 +146,14 @@ inline bool operator==(TagKey _self, TagKey _val)
 };
 inline bool operator<(TagKey _self, TagKey _val)
 {
-  return _self.tagkey < _val.tagkey;
+  // This expression is a tad faster but PrintFile output
+  // is more difficult to read
+  //return _self.tagkey < _val.tagkey;
+
+  // More usal order of dicom tags:
+  if( _self.tab[0] == _val.tab[0] )
+    return _self.tab[1] < _val.tab[1];
+  return _self.tab[0] < _val.tab[0];
 };
 #else
 typedef std::string TagKey;

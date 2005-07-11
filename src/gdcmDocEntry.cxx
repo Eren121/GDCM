@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 16:28:04 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/07/11 18:13:16 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -222,11 +222,8 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    vr = GetVR();
    if ( vr==GDCM_UNKNOWN )
       vr="  ";
-   
-   char sKey[10];
-   sprintf(sKey,"%04x|%04x",GetGroup(),GetElement() );
-   // s << sKey;
-   //s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
+
+   s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 
 
    if (PrintLevel >= 2)
    {
