@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 08:19:37 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/07/11 15:05:22 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,6 +116,14 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 /// marks are fully performed.
 
 typedef std::string TagKey;
+#if defined(_MSC_VER) && (_MSC_VER == 1200)
+#include <iostream>
+/* ostream operator for std::string since VS6 does not provide it*/
+inline std::ostream& operator<<(std::ostream& _O, std::string _val)
+{
+  return _O << _val.c_str();
+};
+#endif
 typedef std::string TagName;
 
 enum FileType {
