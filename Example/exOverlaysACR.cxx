@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:54 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/07/11 14:35:46 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,8 @@
 #include "gdcmDocEntry.h"
 
 #include <iostream>
- #include <stdio.h>
+#include <stdio.h> // for fseek... FIXME
+#include <stdlib.h> // for atoi
  
  // WARNING :
  // unfinished : DO NOT to be used as is !
