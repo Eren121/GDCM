@@ -296,3 +296,20 @@ SPI.dic and SIEMENS.dic were generated based on D. Clunie work at:
 http://www.dclunie.com/medical-image-faq/html/part4.html
 
 and spi.tpl siemens.tpl from dicom3tools (20050611 snapshot)
+
+
+---------------------------------------------------
+
+Alright SIEMENS is totally screwed up...
+Let's have a look at:
+[Aristos VB10]
+http://www.medical.siemens.com/siemens/en_INT/rg_marcom_FBAs/files/brochures/DICOM/ax/Aristos_DicomConformanceStatement.pdf
+
+SOMATOM syngo VA50A DICOM Conformance Statement
+http://61.62.116.208/webhd/adams/LinkedDocuments/SENSATION_16.pdf
+
+SOMATOM syngo VA45A DICOM Conformance Statement
+http://61.62.116.208/webhd/adams/LinkedDocuments/EMOTION%206%20DICOM.pdf
+
+Somaris/5 VA70A CT DICOM Conformance Statement
+http://www.petscaninfo.com/zportal/portals/ctimi/prodandserv/dicom_statements/xvi.pdf
