@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:08:12 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/07/12 17:34:27 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ typedef  unsigned int        uint32_t;
 #endif
 
 #include <string>
-#define FASTTAGKEY 1
+#define FASTTAGKEY 0
 
 // FIXME: Should rewrite this:
 #if FASTTAGKEY
