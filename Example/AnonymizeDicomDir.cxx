@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 14:44:09 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/07/12 14:56:48 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
    delete am;  // --- we don't need Argument Manager any longer ---
 
 
-//   Read the input DICOMDIR
+   //   Read the input DICOMDIR
    gdcm::File *f;
    f = new gdcm::File( );
    f->SetLoadMode(0);
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
    {
       std::cout << "No Directory Record Sequence (0004,1220) found" <<std::endl;;
       delete f;
-      return 0;         
+      return 0;
    }
    
    gdcm::SeqEntry *s = dynamic_cast<gdcm::SeqEntry *>(e);
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
      // Telephone
       AnoNoLoad(tmpSI, fp, 0x0010, 0x2154, oss.str()); 
 
-    // Aware use will add here more Entries if he wants to rubb them out
+      // Aware use will add here more Entries if he wants to rubb them out
 
       oss << "";
       patientNumber++;
