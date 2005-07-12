@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 13:55:39 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/07/12 17:08:12 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,6 +51,8 @@ public:
    bool RemoveEntry(DocEntry *EntryToRemove);
    bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
    void ClearEntry();
+   void ClearEntryNoDestroy();
+   void MoveObject(SQItem *source);
   
    DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();

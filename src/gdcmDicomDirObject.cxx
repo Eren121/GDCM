@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 10:29:55 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/07/12 17:08:12 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ DicomDirObject::~DicomDirObject()
  */
 void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
 {
-  // FillObject fills up the SQItem that will be conneected to the right place
+  // FillObject fills up the SQItem that will be connected to the right place
    ListDicomDirMetaElem::const_iterator it;
    uint16_t tmpGr,tmpEl;
    DictEntry *dictEntry;
@@ -73,7 +73,7 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
 
       AddEntry(entry);
    }   
-}   
+}  
 
 //-----------------------------------------------------------------------------
 // Private

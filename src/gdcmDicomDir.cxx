@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 14:58:26 $
-  Version:   $Revision: 1.147 $
+  Date:      $Date: 2005/07/12 17:08:12 $
+  Version:   $Revision: 1.148 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 //  PS 3.3-2003, pages 731-750
 //-----------------------------------------------------------------------------
 #include "gdcmDicomDir.h"
+#include "gdcmDicomDirObject.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirVisit.h"
@@ -817,7 +818,9 @@ void DicomDir::CreateDicomDir()
         continue;
       }
       if ( si )
-         MoveSQItem(si,tmpSI);
+         //MoveSQItem(si,tmpSI); // Old code : Copies each Entry
+                                 //  -and then removes the source-
+         si->MoveObject(tmpSI);  // New code : Copies the List
 
       tmpSI=s->GetNextSQItem();
    }
@@ -1131,7 +1134,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
  * @param src source SQItem
  */
 void DicomDir::MoveSQItem(DocEntrySet *dst,DocEntrySet *src)
-{
+{ 
    DocEntry *entry;
 
    entry = src->GetFirstEntry();

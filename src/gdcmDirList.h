@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 15:07:41 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/07/12 17:08:12 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ typedef std::vector<std::string> DirListType;
 
 //-----------------------------------------------------------------------------
 
-// NOTE: Due to a VC6 'feature' we can not export a std::list in a dll, 
+// NOTE: Due to a VC6 'feature' we cannot export a std::list in a dll, 
 // so GDCM_EXPORT keyword was removed for this class only
 
 /**

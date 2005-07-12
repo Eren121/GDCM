@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 08:43:18 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/07/12 17:08:12 $
+  Version:   $Revision: 1.74 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -196,6 +196,24 @@ void SQItem::ClearEntry()
       delete *cc;
    }
    DocEntries.clear();
+}
+
+/**
+ * \brief  Clear the std::list from given Sequence Item  BUT keep the entries
+ */
+void SQItem::ClearEntryNoDestroy()
+{
+   DocEntries.clear();
+}
+
+
+/**
+ * \brief  Move all the entries from a given Sequence Item 
+ */
+void SQItem::MoveObject(SQItem *source)
+{
+   DocEntries = source->DocEntries;
+   source->ClearEntryNoDestroy();
 }
 
 /**
