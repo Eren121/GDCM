@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 19:07:12 $
-  Version:   $Revision: 1.146 $
+  Date:      $Date: 2005/07/12 14:58:26 $
+  Version:   $Revision: 1.147 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -605,7 +605,8 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
       }
 
    f = new File( );
-   f->SetLoadMode(LoadMode); // we allow user not to load Sequences...
+   f->SetLoadMode(LoadMode); // we allow user not to load Sequences, or Shadow
+                             //             groups, or ......
    f->Load( it->c_str() );
 
 //     if ( !f )

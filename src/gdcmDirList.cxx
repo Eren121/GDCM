@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/07/12 14:58:26 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,7 +129,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    }
 
    // According to POSIX, the dirent structure contains a field char d_name[]
-   // of  unspecified  size, with at most NAME_MAX characters preceding the
+   // of unspecified size, with at most NAME_MAX characters preceeding the
    // terminating null character. Use of other fields will harm the  porta-
    // bility of your programs.
 
@@ -146,7 +146,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
       }
       else if ( S_ISDIR(buf.st_mode) ) //directory?
       {
-         if ( d->d_name[0] != '.' && recursive ) //we are also skipping hidden files
+         if ( d->d_name[0] != '.' && recursive ) //we also skip hidden files
          {
             numberOfFiles += Explore( fileName, recursive);
          }
