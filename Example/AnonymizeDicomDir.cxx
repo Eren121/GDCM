@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:53 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/07/12 14:44:09 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,6 +70,7 @@ void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp,
    fp->write( v.c_str(), lgth );
 }
 
+
 int main(int argc, char *argv[])
 { 
 
@@ -94,12 +95,10 @@ int main(int argc, char *argv[])
  
    char *fileName  = am->ArgMgrWantString("filein",usage); 
 
-   delete am;  // we don't need Argument Manager any longer
+   delete am;  // --- we don't need Argument Manager any longer ---
 
-// ============================================================
+
 //   Read the input DICOMDIR
-// ============================================================
-
    gdcm::File *f;
    f = new gdcm::File( );
    f->SetLoadMode(0);
@@ -112,13 +111,12 @@ int main(int argc, char *argv[])
    }
    std::cout << " ... is readable " << std::endl;
 
-   // Directory record sequence
+   // Look for Directory record sequence
    gdcm::DocEntry *e = f->GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
       std::cout << "No Directory Record Sequence (0004,1220) found" <<std::endl;;
       delete f;
-      delete e;
       return 0;         
    }
    
@@ -127,7 +125,6 @@ int main(int argc, char *argv[])
    {
       std::cout << "Element (0004,1220) is not a Sequence ?!?" <<std::endl;
       delete f;
-      delete e;
       return 0;
    }
 
@@ -154,9 +151,10 @@ int main(int argc, char *argv[])
          continue;
       }
 
-      if( v != "PATIENT " )
+      if( v != "PATIENT " )  // Work only on PATIENT
       {
-         continue;          // Work only on PATIENT
+         tmpSI=s->GetNextSQItem();
+         continue;
       }
 
       oss << patientNumber;      
@@ -172,7 +170,7 @@ int main(int argc, char *argv[])
      // Telephone
       AnoNoLoad(tmpSI, fp, 0x0010, 0x2154, oss.str()); 
 
-    // Aware use will add more Entries he wants to rubb out here
+    // Aware use will add here more Entries if he wants to rubb them out
 
       oss << "";
       patientNumber++;
@@ -183,8 +181,6 @@ int main(int argc, char *argv[])
 
    fp->close();
 
-   delete fp;
-   delete e;   
    delete f;
    return 0;
 }
