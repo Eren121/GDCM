@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:53 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/12 14:55:43 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmFileHelper.h"
 #include "gdcmCommon.h"
 #include "gdcmDebug.h"
+#include "gdcmDirList.h"
 
 #include "gdcmArgMgr.h"
 
@@ -27,15 +28,23 @@
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n AnonymizeNoLoad :\n",
-   " Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable",
-   "          Warning : Warning : the image is overwritten",
-   "                    to preserve image integrity, use a copy.",
-   " usage: AnonymizeNoLoad filein=inputFileName fileout=[debug] ",
-   "        debug    : user wants to run the program in 'debug mode' ",
+   "\n AnonymizeNoLoad :\n",
+   "Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable",
+   "         Warning : Warning : the image is overwritten",
+   "                   to preserve image integrity, use a copy.",
+   "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}", 
+   "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]",
+   "       inputFileName : Name of the (single) file user wants to anonymize",
+   "       inputDirectoryName : user wants to anonymize *all* the files",
+   "                            within the (single Patient!) directory",
+   "       noshadowseq: user doesn't want to load Private Sequences",
+   "       noshadow   : user doesn't want to load Private groups (odd number)",
+   "       noseq      : user doesn't want to load Sequences ",
+   "       debug      : user wants to run the program in 'debug mode' ",
    FINISH_USAGE
 
-   // ----- Initialize Arguments Manager ------   
+   // ----- Initialize Arguments Manager ------
+  
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage")) 
@@ -48,93 +57,171 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
 
-   char *fileName = am->ArgMgrWantString("filein",usage);
+   char *fileName = am->ArgMgrGetString("filein",(char *)0);
+   char *dirName  = am->ArgMgrGetString("dirin",(char *)0);
 
-   int loadMode;
-   if ( am->ArgMgrDefined("noshadow") && am->ArgMgrDefined("noseq") )
-       loadMode = NO_SEQ | NO_SHADOW;  
-   else if ( am->ArgMgrDefined("noshadow") )
-      loadMode = NO_SHADOW;
-   else if ( am->ArgMgrDefined("noseq") )
-      loadMode = NO_SEQ;
-   else
-      loadMode = 0;
-
-   delete am;  // we don't need Argument Manager any longer
-
-   // ============================================================
-   //   Parse the input file.
-   // ============================================================
-
-   gdcm::File *f;
-   f = new gdcm::File( );
-   f->SetLoadMode(loadMode);
-   f->SetFileName( fileName );
-   bool res = f->Load();
-
-   // gdcm::File::IsReadable() is no usable here, because we deal with
-   // any kind of gdcm::Readable *document*
-   // not only gdcm::File (as opposed to gdcm::DicomDir)
-   if ( !res ) 
+   if ( (fileName == 0 && dirName == 0)
+        ||
+      (fileName != 0 && dirName != 0) )
    {
        std::cout <<std::endl
-           << "Sorry, " << fileName <<"  not a gdcm-readable "
-           << "DICOM / ACR Document"
-           << std::endl;
-        delete f;
-        return 1;
+                 << "Either 'filein' or 'dirin' must be present;" << std::endl
+                 << "Not both" << std::endl;
+       delete am;
+       return 0;
+ }
+ 
+   int loadMode = 0x00000000;
+   if ( am->ArgMgrDefined("noshadowseq") )
+      loadMode |= NO_SHADOWSEQ;
+   else 
+   {
+   if ( am->ArgMgrDefined("noshadow") )
+         loadMode |= NO_SHADOW;
+      if ( am->ArgMgrDefined("noseq") )
+         loadMode |= NO_SEQ;
    }
-   std::cout << fileName << " is readable " << std::endl;
 
-   // ============================================================
-   //   No need to load the pixels in memory.
-   //   File will be overwritten
-   // ============================================================
+   delete am;  // ------ we don't need Arguments Manager any longer ------
 
 
-   // ============================================================
-   //  Choose the fields to anonymize.
-   // ============================================================
-   // Institution name 
-   f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
-   // Patient's name 
-   f->AddAnonymizeElement( 0x0010, 0x0010, "Fantomas" );   
-   // Patient's ID
-   f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
-   // Patient's Birthdate
-   f->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
-   // Patient's Adress
-   f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
-   // Patient's Mother's Birth Name
-   f->AddAnonymizeElement( 0x0010, 0x1060,"Vampirella" );   
-   // Study Instance UID
-   f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
-   // Telephone
-   f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
+   if ( fileName != 0 ) // ====== Deal with a single file ======
+   {
 
-  // Aware use will add new fields here
+   // 
+   //   Parse the input file.
+   // 
+      gdcm::File *f;
+      f = new gdcm::File( );
+      f->SetLoadMode(loadMode);
+      f->SetFileName( fileName );
+      bool res = f->Load();
 
-   // ============================================================
-   //   Overwrite the file
-   // ============================================================
+      // gdcm::File::IsReadable() is no usable here, because we deal with
+      // any kind of gdcm::Readable *document*
+      // not only gdcm::File (as opposed to gdcm::DicomDir)
+      if ( !res ) 
+      {
+          std::cout <<std::endl
+              << "Sorry, " << fileName <<"  not a gdcm-readable "
+              << "DICOM / ACR Document"
+              << std::endl;
+           delete f;
+           return 1;
+      }
+      std::cout << fileName << " is readable " << std::endl;
 
-   std::cout <<"Let's AnonymizeNoLoad " << std::endl;;
+      // 
+      //      No need to load the pixels in memory.
+      //      File will be overwritten
+      // 
 
-   // The gdcm::File remains untouched in memory
 
-   f->AnonymizeNoLoad();
+      // 
+      //  Choose the fields to anonymize.
+      // 
 
-   // No need to write the File : modif were done on disc !
-   // File was overwritten ...
+      // Institution name 
+      f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
+      // Patient's name 
+      f->AddAnonymizeElement( 0x0010, 0x0010, "g^Fantomas" );      
+      // Patient's ID
+      f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
+      // Patient's Birthdate
+      f->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
+      // Patient's Adress
+      f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
+      // Patient's Mother's Birth Name
+      f->AddAnonymizeElement( 0x0010, 0x1060,"g^Vampirella" );      
+      // Study Instance UID
+      f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
+      // Telephone
+      f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
 
-   std::cout <<"End AnonymizeNoLoad" << std::endl;
+      // Aware use will add new fields here
 
-   // ============================================================
-   //   Remove the Anonymize list
-   // ============================================================  
-   f->ClearAnonymizeList();
+      // 
+      //      Overwrite the file
+      // 
+
+      std::cout <<"Let's AnonymizeNoLoad " << std::endl;
+
+      // The gdcm::File remains untouched in memory
+
+      f->AnonymizeNoLoad();
+
+      // No need to write the File : modif were done on disc !
+      // File was overwritten ...
+
+      std::cout <<"End AnonymizeNoLoad" << std::endl;
+
+      // 
+      //      Remove the Anonymize list
+      //   
+      f->ClearAnonymizeList();
+ 
+      delete f;
+      return 0;
+
+   }
+   else  // ====== Deal with a (single Patient) Directory ======
+   {
+      std::cout << "dirName [" << dirName << "]" << std::endl;
+      gdcm::DirList dirList(dirName,1); // gets recursively the file list
+      gdcm::DirListType fileList = dirList.GetFilenames();
+      for( gdcm::DirListType::iterator it  = fileList.begin();
+                                 it != fileList.end();
+                                 ++it )
+      {
+
+         gdcm::File *f;
+         f = new gdcm::File( );
+         f->SetLoadMode(loadMode);
+         f->SetFileName( it->c_str() );
+         bool res = f->Load();
+
+         if ( !res )
+         {
+            delete f; 
+            continue;
+         }
+         // 
+         //  Choose the fields to anonymize.
+         // 
+ 
+         // Institution name 
+         f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
+         // Patient's name 
+         f->AddAnonymizeElement( 0x0010, 0x0010, "g^Fantomas" );   
+         // Patient's ID
+         f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
+         // Patient's Birthdate
+         f->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
+         // Patient's Adress
+         f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
+         // Patient's Mother's Birth Name
+         f->AddAnonymizeElement( 0x0010, 0x1060,"g^Vampirella" );   
+         // Study Instance UID
+         // we may not brutaly overwrite it
+         //f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
+         // Telephone
+         f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
+        
+         std::cout <<"Let's AnonymizeNoLoad " << it->c_str() << std::endl;
+
+         // The gdcm::File remains untouched in memory
+
+         f->AnonymizeNoLoad();
+
+         // 
+         //   Remove the Anonymize list
+         //
+
+         f->ClearAnonymizeList();
     
-   delete f;
-   return 0;
+         delete f;         
+        }
+
+     }
 }
 
