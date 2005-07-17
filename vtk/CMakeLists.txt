@@ -68,7 +68,11 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer2
   vtkgdcm
   vtkRendering
 )
-
+ADD_EXECUTABLE(vtkgdcmSerieViewer ${GUI_EXECUTABLE} vtkgdcmSerieViewer.cxx)
+TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer
+  vtkgdcm
+  vtkRendering
+)
 #-----------------------------------------------------------------------------
 SET(vtkWriteDicom_SOURCES
   vtkWriteDicom.cxx
@@ -88,4 +92,4 @@ INSTALL_FILES(/include/gdcm FILES vtkGdcmWriter.h)
 INSTALL_TARGETS(/lib/gdcm/ vtkgdcm)
 INSTALL_TARGETS(/bin/ vtkgdcmViewer)
 INSTALL_TARGETS(/bin/ vtkgdcmViewer2)
-
+INSTALL_TARGETS(/bin/ vtkgdcmSerieViewer)
