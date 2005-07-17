@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 19:07:12 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/07/17 04:28:55 $
+  Version:   $Revision: 1.64 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ class GDCM_EXPORT DicomDir: public Document
 public:
    typedef void Method(void*);
 
-   DicomDir( std::string const &filename, bool parseDir = false );
+   DicomDir( std::string const &filename, bool parseDir = false ); // Deprecated
    DicomDir(); 
                    
    ~DicomDir();
@@ -108,7 +108,7 @@ public:
    void SetEndMethodArgDelete     ( DicomDir::Method *m );
 
    /// GetProgress GetProgress
-   float GetProgress()  { return Progress; };
+   float GetProgress()   { return Progress; };
    /// AbortProgress AbortProgress
    void  AbortProgress() { Abort = true; };
    /// IsAborted IsAborted
