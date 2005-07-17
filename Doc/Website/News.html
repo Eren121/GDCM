@@ -33,9 +33,9 @@ Any contribution is welcome.
           (LOw COmplexity LOssless COmpression for Images) 
           developed at Hewlett-Packard Laboratories] 
      </UL>
-     <LI> gdcm doesn't read yet JPEG2000 encoded files.
+     <LI> gdcm doesn't read yet all JPEG2000 encoded files.
      <UL>
-         But we are working on it.
+         But we are working on it (a lot of troubles with Jasper).
       </UL>
       <LI> gdcm doesn't read yet MPEG2 encoded files.
       <UL>
@@ -124,6 +124,24 @@ Any contribution is welcome.
 
    <LI> New Features
    <UL>
+      <LI> <TT>vtkGdcmReader</TT> can now get the result of
+           <TT>gdcm::SerieHelper</TT> <br>
+            Proceed as follow :<br>
+           <pre>
+           gdcmSerieHelper *sh = new gdcmSerieHelper();
+           sh->SetDirectory(myImageDirectory, true);
+           gdcmFileList *l = s->GetFirstCoherentFileList();
+           s->OrderFileList(l);
+
+           vtkGdcmReader *gr = new vtkGdcmReader();
+           gr->SetCoherentFileList(l);  
+           </pre>
+           This works with a directory that contains only one '<TT>Serie</TT>'
+           (same <TT>Serie UID</TT> for all the images).<br>
+           If it contains more than one <TT>Serie</TT>, you'll have to loop 
+           on the Series, using <TT>GetNextCoherentFileList()</TT>;
+           <br><br>
+
       <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
           are available to allow easy displaying of single/multiframe 
           GreyLevel/RGB/PaletteColor images<br><br>
