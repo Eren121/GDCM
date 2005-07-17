@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/29 16:12:43 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/07/17 04:34:20 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,10 +20,12 @@
 #define __vtkGdcmReader_h
 
 #include "gdcmCommon.h" // To avoid warnings concerning the std
+#include "gdcmFile.h"
 
 #include <vtkImageReader.h>
 #include <list>
 #include <string>
+#include <vector>
 
 //-----------------------------------------------------------------------------
 class vtkLookupTable;
@@ -39,7 +41,8 @@ public:
    virtual void RemoveAllFileName(void);
    virtual void AddFileName(const char *name);
    virtual void SetFileName(const char *name);
-
+   void SetCoherentFileList( std::vector<gdcm::File* > *cfl) {
+                                                      CoherentFileList = cfl; };    
    void SetCheckFileCoherenceLight();
    
    // Description:
@@ -54,7 +57,7 @@ public:
 
 /**
  * \brief Sets the LoadMode as a boolean string. 
- *        NO_SEQ, NO_SHADOW, ... (nothing more, right now)
+ *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ... (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
@@ -71,15 +74,24 @@ protected:
    virtual void BuildFileListFromPattern();
    virtual int CheckFileCoherence();
    virtual int CheckFileCoherenceLight();
-
+   virtual int CheckFileCoherenceAlreadyDone();
 private:
    void RemoveAllInternalFileName(void);
    void AddInternalFileName(const char* name);
 
    //BTX
-   size_t LoadImageInMemory(std::string FileName, unsigned char *Dest,
-                           const unsigned long UpdateProgressTarget,
-                           unsigned long & UpdateProgressCount);
+   size_t LoadImageInMemory(std::string fileName, unsigned char *dest,
+                           const unsigned long updateProgressTarget,
+                           unsigned long &updateProgressCount);
+
+   size_t LoadImageInMemory(gdcm::File *f, unsigned char *dest,
+                           const unsigned long updateProgressTarget,
+                           unsigned long &updateProgressCount);
+
+   size_t DoTheLoadingJob (gdcm::File *f,
+                           unsigned char *dest,
+                           const unsigned long updateProgressTarget,
+                           unsigned long &updateProgressCount);
    //ETX
 
 // Variables
@@ -112,13 +124,17 @@ private:
    // Otherwise, InternalFileNameList correspond to the list of 
    //    files patterned
    std::list<std::string> InternalFileNameList;
+   std::vector<gdcm::File* > *CoherentFileList;
+  
    //ETX
 
    /// \brief Bit string integer (each one considered as a boolean)
    ///        Bit 0 : Skip Sequences,    if possible
    ///        Bit 1 : Skip Shadow Groups if possible
-   ///        Probabely, some more to add
+  ///         Bit 2 : Skip Sequences inside a Shadow Group, if possible
+   ///        Probabely (?), some more to add
    int LoadMode;
+
 };
 
 //-----------------------------------------------------------------------------
