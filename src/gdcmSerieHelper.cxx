@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/07/17 04:27:49 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ SerieHelper::SerieHelper()
    while (l)
    { 
       // For all the files of a File list
-      for (FileList::iterator it  = l->begin();
+      for (gdcm::FileList::iterator it  = l->begin();
                               it != l->end(); 
                             ++it)
       {
@@ -87,7 +87,11 @@ SerieHelper::~SerieHelper()
 void SerieHelper::AddFileName(std::string const &filename)
 {
    // Create a DICOM file
-   File *header = new File( filename ); 
+   File *header = new File ();
+   header->SetLoadMode(LoadMode);
+   header->SetFileName( filename ); 
+   header->Load();
+   //File *header = new File( filename ); // Deprecated old style 
    if ( header->IsReadable() )
    {
       int allrules = 1;
@@ -321,7 +325,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    // Find out if min/max are coherent
    if ( min == max )
      {
-     gdcmWarningMacro( "Looks like all images have the exact same image position...");
+     gdcmWarningMacro( "Looks like all images have the exact same image position."
+                       << "No PositionPatientOrdering sort performed" );
      return false;
      }
 
@@ -345,12 +350,12 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          CoherentFileVector[pos] = *it2;
       else
       {
-         gdcmWarningMacro( "2 files same position");
+         gdcmWarningMacro( "At least 2 files with same position. No PositionPatientOrdering sort performed");
          return false;
       }
    }
 
-   fileList->clear();  // doesn't delete list elements, only node
+   fileList->clear();  // doesn't delete list elements, only nodes
   
    //VC++ don't understand what scope is !! it -> it3
    for (FileVector::const_iterator it3  = CoherentFileVector.begin();
@@ -376,7 +381,7 @@ bool SerieHelper::ImageNumberLessThan(File *file1, File *file2)
  *                                      corresponding to an integer)
  *             within a bona fide serie (i.e image numbers are consecutive)
  * @param fileList Coherent File list (same Serie UID) to sort 
- * @return false if non nona fide stuff encountered
+ * @return false if non bona fide stuff encountered
  */
 bool SerieHelper::ImageNumberOrdering(FileList *fileList) 
 {
@@ -395,8 +400,10 @@ bool SerieHelper::ImageNumberOrdering(FileList *fileList)
 
    // Find out if image numbers are coherent (consecutive)
    if ( min == max || max == 0 || max >= (n+min) )
+   {
+      gdcmWarningMacro( " 'Image numbers' not coherent. No ImageNumberOrdering sort performed.");
       return false;
-
+   }
    std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberLessThan );
 
    return true;
