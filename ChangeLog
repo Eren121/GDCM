@@ -36,7 +36,7 @@ Wed Jun 29 17:58:33 2005 by jpr
      There is now a dictionary per family:
      - dicomV3.dic -> DICOM V3
      - Papyrus.dic -> Papyrus
-     - NIH.dic    -> tas that were never allowed in the main standart
+     - NIH.dic     -> tags that were never allowed in the main standard
 
 Fri Jun 24 12:50:20 2005 CEST by jpr
    gdcmFile.cxx
@@ -109,7 +109,6 @@ Mon Jun 13 17:43:48 2005 by jpr
    Some more oddities dealt with.
    Doesn't work yet with 65536 entries 16 Bits LUT (?!?), with 16 bits pixels.
    Still looking for accurate info on the web about it
-
 
 Fri Jun 10 16:05:38 2005 by jpr
    gdcmDocument.cxx
@@ -229,6 +228,7 @@ Wed Apr 27 11:52:27 2005 by jpr
    Pb of 'Bits Allocated = 12' is now dealt with in
    FileHelper::CheckMandatoryElements, no longer in File::Write.
    Thx to Mathieu for reporting bug.
+	
 2005-04-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Testing/TestAllReadCompareDicom.cxx : update the test printed results and
      description.
@@ -1520,7 +1520,7 @@ Thu Feb 3 18:12:46 2005 by jpr
     gdcmHeader  ->   gdcm::Header
   It would be nice if people keep in mind to no open the namespace, since it
   allows compilation on broken plateform which were defining common symbol in
-  the standart namespace (like LP, Unknown ...)
+  the standard namespace (like LP, Unknown ...)
 
 2004-10-10 Eric Boix <Eric.Boix@creatis.insa-lyon.fr>
   * CLEANUP_ROUND (10) for gdcmPixelConvert (Xanax is my friend stage)
@@ -1557,7 +1557,7 @@ Thu Feb 3 18:12:46 2005 by jpr
     - src/gdcmDocument.[cxx|h] Parse7Fe0 renamed to ComputeRLEInfo.
       This is because Parse7Fe0 used to parse the pixels to compute the
       length. This task was passed over to FindDocEntryLengthOB() a long
-      time ago, EXCEPT I had forgotten the OW case...
+      time ago, EXCEPT I forgot the OW case...
       Hence Parse7Fe0 was no longer necessary. When renaming to ComputeRLEInfo
       we just recylce the code for parsing RLE fragments and computing
       offsets.
@@ -2967,7 +2967,7 @@ Thu Feb 3 18:12:46 2005 by jpr
      * ENH: Generate both user and dev documentation
      * ENH: Should work on windows too
      * ENH: Only one doxygen config.in file is needed 
-     * FIX: make install should be ok now on ùnix plateform
+     * FIX: make install should be ok now on Unix plateform
      * FIX: PATH to dictionary was wrong (missing /)
      * ENH: OpenFile, return true if the file looks like an ACR or DICOM file 
                      
@@ -3042,7 +3042,7 @@ Thu Feb 3 18:12:46 2005 by jpr
       * removed leaks
 
 2003-09-24 Jean-Pierre Roux
-      * The lines are now eigthy characters long.for 
+      * The lines are now eigthy characters long for 
         gdcmHeader.cxx gdcmHeaderHelper.cxx gdcmParse.cxx 
 
 2003-09-22  Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
