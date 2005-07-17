@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/07/17 04:25:12 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,15 +35,19 @@ int TestSerieHelper(int argc, char *argv[])
    //if (argc > 2)
    //   gdcm::Debug::DebugOn();
 
+  
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
 
    s = new gdcm::SerieHelper();
+   s->SetLoadMode(0x00000000);     // Load everything for each File
+   //s->AddRestriction(tagKey, valueToCheck); // Keep only files where
+                                              // restriction is true
    s->SetDirectory(dirName, true); // true : recursive exploration
-   std::cout << " -------------------------------------------Finish parsing :["
+   std::cout << " ---------------------------------------- Finish parsing :["
              << dirName << "]" << std::endl;
 
    s->Print();
-   std::cout << " -----------------------------------------Finish printing (1)"
+   std::cout << " ---------------------------------------- Finish printing (1)"
              << std::endl;
 
    int nbFiles;
@@ -59,11 +63,29 @@ int TestSerieHelper(int argc, char *argv[])
       }
       l = s->GetNextCoherentFileList();
    } 
-   std::cout << " ----------------------------------------------Finish sorting"
+   std::cout << " -------------------------------------------- Finish sorting"
              << std::endl;
    s->Print(); // Prints all the Coherent Files lists (sorted or not)
-   std::cout << " ---------------------------------------------Finish printing"
+   std::cout << " -------------------------------------------- Finish printing"
              << std::endl;
+
+
+   // Only for the first Coherent File List 
+   // ( Why not ? Just an example, for testing )
+   // Display all the file names
+
+   std::string fileName; 
+   l = s->GetFirstCoherentFileList();
+   for (std::vector<gdcm::File* >::iterator it =  l->begin();
+                                            it != l->end();
+                                          ++it)
+   {
+      fileName = (*it)->GetFileName();
+      std::cout << fileName << std::endl;
+      // Remark : vtkGdcmReader users can use this loop to AddFileName(fileName)
+      //          in the right order 
+   } 
+     
 
    delete s;
 
