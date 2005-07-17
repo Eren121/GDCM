@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 15:29:04 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/07/17 04:26:57 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,6 +67,16 @@ public:
    /// of a particular serie
    void AddRestriction(TagKey const &key, std::string const &value);
   
+/**
+ * \brief Sets the LoadMode as a boolean string. 
+ *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ
+ ... (nothing more, right now)
+ *        WARNING : before using NO_SHADOW, be sure *all* your files
+ *        contain accurate values in the 0x0000 element (if any) 
+ *        of *each* Shadow Group. The parser will fail if the size is wrong !
+ * @param   mode Load mode to be used    
+ */
+   void SetLoadMode (int mode) { LoadMode = mode; }
 
 private:
    bool ImagePositionPatientOrdering(FileList *coherentFileList);
@@ -75,12 +85,20 @@ private:
    
    static bool ImageNumberLessThan(File *file1, File *file2);
    static bool FileNameLessThan(File *file1, File *file2);
+
+//Attributes:
    CoherentFileListmap CoherentFileListHT;
    CoherentFileListmap::iterator ItListHt;
 
    typedef std::pair<TagKey, std::string> Rule;
    typedef std::vector<Rule> SerieRestrictions;
    SerieRestrictions Restrictions;
+
+   /// \brief Bit string integer (each one considered as a boolean)
+   ///        Bit 0 : Skip Sequences,    if possible
+   ///        Bit 1 : Skip Shadow Groups if possible
+   ///        Probabely, some more to add
+   int LoadMode;
 };
 
 } // end namespace gdcm
