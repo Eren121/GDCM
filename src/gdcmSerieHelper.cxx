@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:27:49 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/07/18 10:20:20 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,8 @@ void SerieHelper::AddFileName(std::string const &filename)
    if ( header->IsReadable() )
    {
       int allrules = 1;
-      // First step the user has defined s set of rules for the DICOM he is looking for
+      // First step the user has defined a set of rules for the DICOM 
+      // he is looking for.
       // make sure the file correspond to his set of rules:
       for(SerieRestrictions::iterator it = Restrictions.begin();
           it != Restrictions.end();
@@ -112,7 +113,7 @@ void SerieHelper::AddFileName(std::string const &filename)
       }
       if ( allrules ) // all rules are respected:
       {
-         // Alright ! we have a found a DICOM that match the user expectation. 
+         // Allright ! we have a found a DICOM that match the user expectation. 
          // Let's add it !
 
          // 0020 000e UI REL Series Instance UID

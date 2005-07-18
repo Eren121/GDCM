@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:34:27 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/07/18 10:20:20 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,9 +181,19 @@ enum DicomDirType {
    DD_PATIENT,
    DD_STUDY,
    DD_SERIE,
-   DD_IMAGE
+   DD_IMAGE,
+   DD_VISIT
 };
 
+/// \brief comparaison operators 
+enum CompOperators {
+   GDCM_EQUAL = 0,
+   GDCM_DIFFERENT,
+   GDCM_GREATER,
+   GDCM_GREATEROREQUAL,
+   GDCM_LESS,
+   GDCM_LESSOREQUAL
+};
 /**
  * \brief structure, for internal use only
  */  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/05 23:50:19 $
-  Version:   $Revision: 1.156 $
+  Date:      $Date: 2005/07/18 10:20:20 $
+  Version:   $Revision: 1.157 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -297,7 +297,7 @@ std::string Util::GetCurrentTime()
 
 /**
  * \brief  Get both the date and time at the same time to avoid problem 
- * around midnight where two call could be before and after midnight
+ * around midnight where the two calls could be before and after midnight
  */
 std::string Util::GetCurrentDateTime()
 {
@@ -364,7 +364,7 @@ unsigned int Util::GetCurrentProcessID()
 }
 
 /**
- * \brief   tells us if the processor we are working with is BigEndian or not
+ * \brief   tells us whether the processor we are working with is BigEndian or not
  */
 bool Util::IsCurrentProcessorBigEndian()
 {
@@ -379,7 +379,7 @@ bool Util::IsCurrentProcessorBigEndian()
  * \brief Create a /DICOM/ string:
  * It should a of even length (no odd length ever)
  * It can contain as many (if you are reading this from your
- * editor the following character is is backslash followed by zero
+ * editor the following character is backslash followed by zero
  * that needed to be escaped with an extra backslash for doxygen) \\0
  * as you want.
  */
@@ -414,14 +414,14 @@ std::string Util::DicomString(const char *s)
 }
 
 /**
- * \brief Safely compare two Dicom String:
- *        - Both string should be of even length
+ * \brief Safely check the equality of two Dicom String:
+ *        - Both strings should be of even length
  *        - We allow padding of even length string by either a null 
  *          character of a space
  */
 bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 {
-  // s2 is the string from the DICOM reference: 'MONOCHROME1'
+  // s2 is the string from the DICOM reference e.g. : 'MONOCHROME1'
   std::string s1_even = s1; //Never change input parameter
   std::string s2_even = DicomString( s2 );
   if ( s1_even[s1_even.size()-1] == ' ' )
@@ -429,6 +429,41 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
     s1_even[s1_even.size()-1] = '\0'; //replace space character by null
   }
   return s1_even == s2_even;
+}
+
+/**
+ * \brief Safely compare two Dicom String:
+ *        - Both strings should be of even length
+ *        - We allow padding of even length string by either a null 
+ *          character of a space
+ */
+bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
+{
+  // s2 is the string from the DICOM reference e.g. : 'MONOCHROME1'
+  std::string s1_even = s1; //Never change input parameter
+  std::string s2_even = DicomString( s2 );
+  if ( s1_even[s1_even.size()-1] == ' ' )
+  {
+    s1_even[s1_even.size()-1] = '\0'; //replace space character by null
+  }
+  switch (op)
+  {
+     case GDCM_EQUAL :
+        return s1_even == s2_even;
+     case GDCM_DIFFERENT :  
+        return s1_even != s2_even;
+     case GDCM_GREATER :  
+        return s1_even >  s2_even;  
+     case GDCM_GREATEROREQUAL :  
+        return s1_even >= s2_even;
+     case GDCM_LESS :
+        return s1_even <  s2_even;
+     case GDCM_LESSOREQUAL :
+        return s1_even <= s2_even;
+     default :
+        gdcmDebugMacro(" Wrong operator : " << op);
+        return false;
+  }
 }
 
 #ifdef _WIN32
@@ -460,9 +495,10 @@ int GetMacAddrSys ( unsigned char *addr )
 {
 #ifdef _WIN32
    WSADATA WinsockData;
-   if ( (WSAStartup(MAKEWORD(2, 0), &WinsockData)) != 0) 
+   if ( (WSAStartup(MAKEWORD(2, 0), &WinsockData)) != 0 ) 
    {
-      std::cerr << "This program requires Winsock 2.x!" << std::endl;
+      std::cerr << "in Get MAC Adress (internal) : This program requires Winsock 2.x!" 
+             << std::endl;
       return -1;
    }
 
@@ -556,7 +592,8 @@ int GetMacAddrSys ( unsigned char *addr )
                  && (varBind[1].value.asnValue.address.stream[4] == 0x00) )
                {
                    // Ignore all dial-up networking adapters
-                   std::cerr << "Interface #" << j << " is a DUN adapter\n";
+                   std::cerr << "in Get MAC Adress (internal) : Interface #" 
+                             << j << " is a DUN adapter\n";
                    continue;
                }
                if ( (varBind[1].value.asnValue.address.stream[0] == 0x00)
@@ -568,7 +605,8 @@ int GetMacAddrSys ( unsigned char *addr )
                {
                   // Ignore NULL addresses returned by other network
                   // interfaces
-                  std::cerr << "Interface #" << j << " is a NULL address\n";
+                  std::cerr << "in Get MAC Adress (internal) :  Interface #" 
+                            << j << " is a NULL address\n";
                   continue;
                }
                memcpy( addr, varBind[1].value.asnValue.address.stream, 6);
@@ -597,7 +635,7 @@ int GetMacAddrSys ( unsigned char *addr )
 
    if (gethostname(hostname,  MAXHOSTNAMELEN) != 0 )
    {
-      perror("gethostname");
+      perror("in Get MAC Adress (internal) : gethostname");
       return -1;
    }
    phost = gethostbyname(hostname);
@@ -606,7 +644,7 @@ int GetMacAddrSys ( unsigned char *addr )
    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
    if (sock == -1 )
    {
-      perror("sock");
+      perror("in Get MAC Adress (internal) : sock");
       return -1;
    }
    memset(&parpreq, 0, sizeof(struct arpreq));
@@ -619,7 +657,7 @@ int GetMacAddrSys ( unsigned char *addr )
    status = ioctl(sock, SIOCGARP, &parpreq);
    if (status == -1 )
    {
-      perror("SIOCGARP");
+      perror("in Get MAC Adress (internal) : SIOCGARP");
       return -1;
    }
    memcpy(addr, parpreq.arp_ha.sa_data, 6);
@@ -642,7 +680,7 @@ int GetMacAddrSys ( unsigned char *addr )
 // max(sizeof(ifreq), sizeof(ifreq.ifr_name)+ifreq.ifr_addr.sa_len
 // However, under earlier systems, sa_len isn't present, so the size is 
 // just sizeof(struct ifreq)
-// We should investiage the use of SIZEOF_ADDR_IFREQ
+// We should investigate the use of SIZEOF_ADDR_IFREQ
 //
 #ifdef HAVE_SA_LEN
    #ifndef max
@@ -692,7 +730,7 @@ int GetMacAddrSys ( unsigned char *addr )
          continue;
       a = (unsigned char *) &sdlp->sdl_data[sdlp->sdl_nlen];
 #else
-      perror("No way to access hardware");
+      perror("in Get MAC Adress (internal) : No way to access hardware");
       close(sd);
       return -1;
 #endif // AF_LINK
@@ -710,7 +748,7 @@ int GetMacAddrSys ( unsigned char *addr )
    close(sd);
 #endif
    // Not implemented platforms
-   perror("There was a configuration problem on your plateform");
+   perror("in Get MAC Adress (internal) : There was a configuration problem on your plateform");
    memset(addr,0,6);
    return -1;
 #endif //__sun
