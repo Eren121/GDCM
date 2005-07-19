@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:26:57 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/07/19 09:04:58 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,6 +50,8 @@ public:
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
+   void AddGdcmFile(File *header);
+
    void SetDirectory(std::string const &dir, bool recursive=false);
    void OrderFileList(FileList *coherentFileList);
    

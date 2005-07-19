@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/18 10:20:20 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/07/19 09:04:58 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,7 +127,7 @@ void SerieHelper::AddFileName(std::string const &filename)
             // create a std::list in 'uid' position
             CoherentFileListHT[uid] = new FileList;
          }
-         // Current Serie UID and DICOM header seems to match add the file:
+         // Current Serie UID and DICOM header seems to match; add the file:
          CoherentFileListHT[uid]->push_back( header );
       }
       else
@@ -141,6 +141,61 @@ void SerieHelper::AddFileName(std::string const &filename)
       gdcmWarningMacro("Could not read file: " << filename );
       delete header;
    }
+}
+
+/**
+ * \brief add a gdcm::File to the first (and supposed to be unique) list
+ *        of the gdcm::SerieHelper.
+ * \warning : this method should be used by aware users only!
+ *            User is supposed to know the files he want to deal with
+ *           and consider them they belong to the same Serie
+ *           (even if their Serie UID is different)
+ *           user will probabely OrderFileList() this list (actually, ordering
+ *           user choosen gdm::File is the sole interest of this method)
+ *           Moreover, using vtkGdcmReader::SetCoherentFileList() will avoid
+ *           vtkGdcmReader parsing twice the same files. 
+ *           *no* coherence check is performed, but those specified
+ *           by SerieHelper::AddRestriction()
+ * @param   header gdcm::File* of the file to deal with
+ */
+void SerieHelper::AddGdcmFile(File *header)
+{
+      int allrules = 1;
+      // First step the user has defined a set of rules for the DICOM 
+      // he is looking for.
+      // make sure the file correspond to his set of rules:
+      for(SerieRestrictions::iterator it = Restrictions.begin();
+          it != Restrictions.end();
+          ++it)
+      {
+         const Rule &r = *it;
+         const std::string s;// = header->GetEntryValue( r.first );
+         if ( !Util::DicomStringEqual(s, r.second.c_str()) )
+         {
+           // Argh ! This rule is unmatch let's just quit
+           allrules = 0;
+           break;
+         }
+      }
+      if ( allrules ) // all rules are respected:
+      {
+         // Allright ! we have a found a DICOM that match the user expectation. 
+         // Let's add it !
+
+         const std::string &uid = "0";
+         // Serie UID of the gdcm::File* may be different.
+         // User is supposed to know what he wants
+
+         if ( CoherentFileListHT.count(uid) == 0 )
+         {
+            gdcmDebugMacro(" New Serie UID :[" << uid << "]");
+            // create a std::list in 'uid' position
+            CoherentFileListHT[uid] = new FileList;
+         }
+         // Current Serie UID and DICOM header seems to match; add the file:
+         CoherentFileListHT[uid]->push_back( header );
+      }
+         // Even if a rule was unmatch we don't deallocate the gdcm::File:
 }
 /**
  * \brief add a rules for restricting a DICOM file to be in the serie we are
@@ -210,7 +265,7 @@ FileList *SerieHelper::GetFirstCoherentFileList()
 
 /**
  * \brief   Get the next List while visiting the CoherentFileListHT
- * \note : meaningfull only if GetFirstCoherentFileList already called
+ * \note : meaningfull only if GetFirstCoherentFileList() already called
  * @return  The next FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetNextCoherentFileList()
@@ -251,7 +306,7 @@ FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
  * @return false only if the header is bugged !
  */
 bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
-//based on Jolinda's algorithm
+//based on Jolinda Smith's algorithm
 {
    //iop is calculated based on the file file
    float cosines[6];
