@@ -34,7 +34,7 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
        <A HREF="ConformanceSummary.html">gdcm conformance summary</A>
        for more details.
    <LI>Papyrus V2 and V3 file headers are readable; the user will have to use 
-       low level accessors if he wants to get the image pixels -sorry-
+       low level accessors if he wants to get the image pixels -sorry-.
    </LI>
    </UL>
 <LI> gdcm includes a lot of heuristics that allow reading all the 
@@ -59,7 +59,7 @@ Gdcm is yet another C++ library dedicated to reading/parsing and writing
 </LI>
 <LI>gdcm comes with a
    <A HREF="http://public.kitware.com/VTK">VTK</A>
-   shallow wrapper class vtkGdcmReader (refer to
+   shallow wrapper class <TT>vtkGdcmReader</TT> (refer to
    <A HREF="VtkGdcm.html">VtkGdcm</A>)
    to ease the burden of VTK users,
 <LI>gdcm also comes with
@@ -89,8 +89,9 @@ In particular <B>gdcm is not aware</B> of:
 <UL>
 <LI>the Dicom network file exchange protocol (Query/Retrieve),
 </LI>
-<LI>the Dicom media storage formats (well ... it knows about the DICOMDIR
--reading and writing- and its parts PATIENT, STUDY, SERIES, IMAGE)
+<LI>the Dicom media storage formats (well ... it knows about the
+    <TT>DICOMDIR</TT> -reading and writing- and its parts <TT>PATIENT</TT>,
+    <TT>STUDY</TT>, <TT>SERIES</TT>, <TT>IMAGE</TT>)
 </LI>
 <LI>Print, Verification
 </LI>

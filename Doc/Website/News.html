@@ -119,13 +119,29 @@ Any contribution is welcome.
    <UL>    
       <LI>
          <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a> current version.
-      <LI>
+      <br><br>
    </UL>
 
    <LI> New Features
    <UL>
+      <LI> <TT>AnonymizeNoLoad</TT> used with <TT>dirin=inputDirectoryName</TT>
+           anonymizes all the files within the given Directory.
+           <br><br>
+      <LI> <TT>gdcm::SerieHelper()</TT> has a new method 
+           <TT>void AddGdcmFile(File *header)</TT>, that allow aware user to 
+           create a '<TT>FileList</TT>' (actually a 
+           <TT>std::vector< File* > </TT>).<br>
+           The <TT>FileList</TT> created this way will be the 
+           'first one' in the <TT>gdcm::FileHelper()</TT> (retrieve it with 
+           <TT>FileList *GetFirstCoherentFileList()</TT> ).<br>
+           It may be sorted using <TT>OrderFileList</TT>.<br>
+           No 'coherence check' will be performed on this <TT>FileList</TT>
+           before sorting.<br>
+           It may be passed to a <TT>vtkGdcmReader</TT> 
+           (to avoid parsing twice the files)
+           <br><br>
       <LI> <TT>vtkGdcmReader</TT> can now get the result of
-           <TT>gdcm::SerieHelper</TT> <br>
+           <TT>gdcm::SerieHelper</TT> (to avoid parsing twice the files)<br>
             Proceed as follow :<br>
            <pre>
            gdcmSerieHelper *sh = new gdcmSerieHelper();
@@ -134,14 +150,17 @@ Any contribution is welcome.
            s->OrderFileList(l);
 
            vtkGdcmReader *gr = new vtkGdcmReader();
-           gr->SetCoherentFileList(l);  
+           gr->SetCoherentFileList(l);
+           gr->Update();  
            </pre>
            This works with a directory that contains only one '<TT>Serie</TT>'
            (same <TT>Serie UID</TT> for all the images).<br>
            If it contains more than one <TT>Serie</TT>, you'll have to loop 
-           on the Series, using <TT>GetNextCoherentFileList()</TT>;
+           on the Series, using <TT>GetNextCoherentFileList()</TT>;<br>
+           It will be up to the user to delete the <TT>gdcm::File</TT>.
            <br><br>
-
+           See <TT>vtkgdcmSerieViewer</TT> for an example.
+           <br><br>
       <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
           are available to allow easy displaying of single/multiframe 
           GreyLevel/RGB/PaletteColor images<br><br>
@@ -158,7 +177,7 @@ Any contribution is welcome.
            d->Load( );  
            </pre>
  
-           For parsing all the dicom files with a given root directory, use :<br>
+           For parsing all the dicom files within a given root directory, use :<br>
            <pre>
            gdcm::DicomDir *d = new gdcm::DicomDir();
            d->SetDirectoryName(dirName);
@@ -226,12 +245,12 @@ Any contribution is welcome.
             It's no longer up to the user to change the pixels value
       <LI> Writing a 'True Dicom' image after reading an <TT>ACR-NEMA</TT> image 
            does not request any longer from the user to build up 
-            'manually' the Meta Elements group (<TT>Ox0002</TT>)
+           'manually' the Meta Elements group (<TT>Ox0002</TT>)
       <LI> Old '24 Bits' <TT>ACR-NEMA</TT> are now correctly re-written
            in <TT>DICOM V3</TT> mode.
       <LI> Element <TT>0x0000</TT> of <TT>Shadow groups</TT> is always forced to be a
            <TT>ValEntry</TT> and its <TT>VR</TT> is forced to <TT>UL</TT> 
-      <LI>
+      <br><br>
    </UL>
 
    <LI> A.P.I. breaking modifications (since previous version : <TT>1.0</TT>)
