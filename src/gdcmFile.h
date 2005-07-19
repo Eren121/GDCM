@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 14:44:57 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2005/07/19 15:19:26 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #ifndef GDCMFILE_H
 #define GDCMFILE_H
 
+#include "gdcmDebug.h"
 #include "gdcmDocument.h"
 
 namespace gdcm 
@@ -96,7 +97,7 @@ class GDCM_EXPORT File : public Document
 {
 public:
    File();
-   File( std::string const &filename );
+   GDCM_LEGACY(File( std::string const &filename ));
    ~File();
 
    // Loading

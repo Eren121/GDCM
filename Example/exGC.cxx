@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:54 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/07/19 15:19:25 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,7 +119,9 @@ int main(int argc, char *argv[])
    // ------                              without Sequences     -------------
 
  
-   gdcm::FileHelper *copy = new gdcm::FileHelper( output );
+   gdcm::FileHelper *copy = new gdcm::FileHelper( );
+   copy->SetFileName( output );
+   copy->Load();
  
    gdcm::DocEntry *d = f->GetFirstEntry();
    while(d)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGrey2RGB.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:54 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/19 15:19:25 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,9 @@ int main(int argc, char *argv[])
       }
    }
  
-   gdcm::FileHelper *fh = new gdcm::FileHelper( filename );
+   gdcm::FileHelper *fh = new gdcm::FileHelper( );
+   fh->SetFileName( filename );
+   fh->Load();
       
    size_t dataSize    = fh->GetImageDataSize();
    uint8_t *imageData = fh->GetImageData();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 14:36:48 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/07/19 15:19:27 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,8 +19,9 @@
 #ifndef GDCMFILEHELPER_H
 #define GDCMFILEHELPER_H
 
-#include <iostream>
+#include "gdcmDebug.h"
 #include "gdcmBase.h"
+//#include <iostream>
 
 namespace gdcm 
 {
@@ -49,7 +50,7 @@ public:
 public:
    FileHelper( );
    FileHelper( File *header );
-   FileHelper( std::string const &filename );
+   GDCM_LEGACY(FileHelper( std::string const &filename ));
    
    virtual ~FileHelper();
 

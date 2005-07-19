@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 15:49:31 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/07/19 15:19:25 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,9 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    // First, let's create a gdcm::File
    // that will contain all the Dicom fields but the Pixels Element
 
-   gdcm::File *f1= new gdcm::File( filename );
+   gdcm::File *f1= new gdcm::File( );
+   f1->SetFileName( filename );
+   f1->Load();
 
 
    // Ask content to be printed
@@ -255,7 +257,9 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
  
    // ------ User wants write a new image without shadow groups -------------
 
-   gdcm::FileHelper *copy = new gdcm::FileHelper( output );
+   gdcm::FileHelper *copy = new gdcm::FileHelper( );
+   copy->SetFileName( output );
+   copy->Load();
  
    d = f1->GetFirstEntry();
    while(d)

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/07/11 08:30:39 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/07/19 15:19:27 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -145,26 +145,6 @@ FileHelper::FileHelper(File *header)
    Initialize();
 }
 
-/**
- * \brief DEPRECATED : use SetFilename() + Load() methods
- *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (gdcm::File only deals with the ... header)
- *        Opens (in read only and when possible) an existing file and checks
- *        for DICOM compliance. Returns NULL on failure.
- *        It will be up to the user to load the pixels into memory
- * \note  the in-memory representation of all available tags found in
- *        the DICOM header is post-poned to first header information access.
- *        This avoid a double parsing of public part of the header when
- *        one sets an a posteriori shadow dictionary (efficiency can be
- *        seen as a side effect).   
- * @param filename file to be opened for parsing
- */
-FileHelper::FileHelper(std::string const &filename )
-{
-   FileInternal = new File( filename );
-   SelfHeader = true;
-   Initialize();
-}
 
 /**
  * \brief canonical destructor
@@ -1561,5 +1541,28 @@ void FileHelper::Print(std::ostream &os, std::string const &)
    PixelReadConverter->Print(os);
 }
 
+#ifndef GDCM_LEGACY_REMOVE
+/**
+ * \brief 
+ *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
+ *        file (gdcm::File only deals with the ... header)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ *        It will be up to the user to load the pixels into memory
+ * \note  the in-memory representation of all available tags found in
+ *        the DICOM header is post-poned to first header information access.
+ *        This avoid a double parsing of public part of the header when
+ *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        seen as a side effect).   
+ * @param filename file to be opened for parsing
+ * @deprecated  use SetFilename() + Load() methods
+ */
+FileHelper::FileHelper(std::string const &filename )
+{
+   FileInternal = new File( filename );
+   SelfHeader = true;
+   Initialize();
+}
+#endif
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
