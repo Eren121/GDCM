@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/18 10:20:20 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2005/07/19 14:43:48 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,6 +97,8 @@ typedef  unsigned int        uint32_t;
 #include <iostream>
 #endif
 
+
+//-----------------------------------------------------------------------------
 /// \brief namespace for Grass root DiCoM
 namespace gdcm
 {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmConfigure.h.in,v $
   Language:  C++
-  Date:      $Date: 2005/06/07 14:41:46 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/07/19 14:43:46 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,6 +79,11 @@
 #define GDCM_MINOR_VERSION @GDCM_MINOR_VERSION@
 #define GDCM_BUILD_VERSION @GDCM_BUILD_VERSION@
 #define GDCM_VERSION "@GDCM_VERSION@"
+
+/*--------------------------------------------------------------------------*/
+/* GDCM deprecation mechanism                                               */
+#cmakedefine GDCM_LEGACY_REMOVE
+#cmakedefine GDCM_LEGACY_SILENT
 
 
 #endif

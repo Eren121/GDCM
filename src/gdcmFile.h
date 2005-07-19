@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 16:37:41 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2005/07/19 14:44:57 $
+  Version:   $Revision: 1.109 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,7 @@ public:
    ~File();
 
    // Loading
-   bool Load( std::string const &filename );
+   GDCM_LEGACY(bool Load( std::string const &filename ));
    bool Load(); 
    // Standard values and informations contained in the header
    bool IsReadable();
