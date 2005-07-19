@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:36:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/19 15:28:54 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
    while (l)
    { 
       nbFiles = l->size() ;
-      if ( l->size() > 0 ) // Why not ? Just an example, for testing
+      if ( l->size() > 1 )
       {
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
          sh->OrderFileList(l);  // sort the list
@@ -125,15 +125,13 @@ int main(int argc, char *argv[])
       l = sh->GetNextCoherentFileList();
    }
 
-   reader->SetCoherentFileList(l);
+   // Only the first FileList is dealt with (just an example)
+   // (The files will not be parsed twice by the reader)
 
-/*
-   if( argc == 2 )
-      reader->SetFileName( argv[1] );
-   else
-      for(int i=1; i< argc; i++)
-         reader->AddFileName( argv[i] );
-*/
+   //---------------------------------------------------------
+   reader->SetCoherentFileList(l);
+   //---------------------------------------------------------
+
 
 // TODO : allow user to choose Load Mode
 
