@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:26 $
-  Version:   $Revision: 1.251 $
+  Date:      $Date: 2005/07/19 15:25:53 $
+  Version:   $Revision: 1.252 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,27 @@
 //                                   as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
 //
+// Image Position (Patient) (0020,0032) What is it used for?
+// -->
+//  The attribute Patient Orientation (0020,0020) from the General Image Module 
+// is of type 2C and has the condition Required if image does not require 
+// Image Orientation (0020,0037) and Image Position (0020,0032). 
+// However, if the image does require the attributes Image Orientation (0020,0037)
+// and Image Position (0020,0032) then attribute Patient Orientation (0020,0020)
+// should not be present in the images.
+//
+// Remember also :
+// Patient Position (0018,5100) values : HFP   = Head First-Prone
+//                                       HFS   = Head First-Supine
+//                                       HFDR  = Head First-Decubitus Right
+//                                       HFDL = Head First-Decubitus Left
+//                                       FFDR = Feet First-Decubitus Right
+//                                       FFDL = Feet First-Decubitus Left
+//                                       FFP  = Feet First-Prone
+//                                       FFS  = Feet First-Supine
+// CS 2 Patient Orientation (0020 0020)
+//               When the coordinates of the image 
+//               are always present, this field is almost never used
 // ---------------------------------------------------------------
 //
 #include "gdcmFile.h"
