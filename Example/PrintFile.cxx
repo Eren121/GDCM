@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:53 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/07/20 13:39:51 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,10 +181,17 @@ int main(int argc, char *argv[])
    gdcm::File *f = new gdcm::File();
    f->SetLoadMode(loadMode);
    f->SetFileName( fileName );
-   bool res = f->Load();        // just to see
+   bool res = f->Load();
 
    if ( !res )
    {
+      std::cout << "Cannot process file [" << fileName << "]" << std::endl;
+      std::cout << "Either it doesn't exist, or it's read protected " 
+                << std::endl;
+      std::cout << "or it's not a Dicom File, or its 'header' is bugged" 
+                << std::endl;
+      std::cout << "use 'PrintFile filein=... debug' to try to guess the pb"
+                << std::endl;
       delete f;
       return 0;
    }
