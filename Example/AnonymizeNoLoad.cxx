@@ -1,10 +1,10 @@
-/*=========================================================================
+*=========================================================================
                                                                                 
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/13 13:48:56 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/07/20 13:39:00 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,11 +32,14 @@ int main(int argc, char *argv[])
    "Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable",
    "         Warning : Warning : the image is overwritten",
    "                   to preserve image integrity, use a copy.",
-   "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}", 
+   "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}",
+   "                       [rubout=listOfPrivateElementsToRubOut] ", 
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]",
    "       inputFileName : Name of the (single) file user wants to anonymize",
    "       inputDirectoryName : user wants to anonymize *all* the files",
    "                            within the (single Patient!) directory",
+   "       listOfPrivateElementsToRubOut : group,elem (in hexa) of private ",
+   "                           Elements to rub out ",
    "       noshadowseq: user doesn't want to load Private Sequences",
    "       noshadow   : user doesn't want to load Private groups (odd number)",
    "       noseq      : user doesn't want to load Sequences ",
@@ -82,6 +85,11 @@ int main(int argc, char *argv[])
          loadMode |= NO_SEQ;
    }
 
+   int rubOutNb;
+   uint16_t *elemsToRubOut = am->ArgMgrGetXInt16Enum("rubout", &rubOutNb);
+ 
+   std::cout << " ---------------------------- rubOutNb " << rubOutNb
+             << std::endl;
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
 
@@ -137,6 +145,13 @@ int main(int argc, char *argv[])
       f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
       // Telephone
       f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
+
+      for (int ri=0; ri<rubOutNb; ri++)
+      {
+         printf("%04x,%04x\n",elemsToRubOut[2*ri], elemsToRubOut[2*ri+1]);
+         f->AddAnonymizeElement((uint32_t)elemsToRubOut[2*ri], 
+                                (uint32_t)elemsToRubOut[2*ri+1],"*" ); 
+      }
 
       // Aware use will add new fields here
 
@@ -206,7 +221,12 @@ int main(int argc, char *argv[])
          //f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
          // Telephone
          f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
-        
+
+         for (int ri=0; ri<rubOutNb; ri++)
+         {
+            f->AddAnonymizeElement((uint32_t)elemsToRubOut[2*ri], 
+                                   (uint32_t)elemsToRubOut[2*ri+1],"*" ); 
+         }        
          std::cout <<"Let's AnonymizeNoLoad " << it->c_str() << std::endl;
 
          // The gdcm::File remains untouched in memory
