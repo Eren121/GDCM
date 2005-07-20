@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:26 $
-  Version:   $Revision: 1.149 $
+  Date:      $Date: 2005/07/20 14:49:41 $
+  Version:   $Revision: 1.150 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,7 +134,10 @@ DicomDir::DicomDir()
  *                        and wants to explore recursively the directories
  *                      - false if user passed an already built DICOMDIR file
  *                        and wants to use it 
+ * @deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
+ *              or : new DicomDir() + SetFileName(name)
  */
+#ifndef GDCM_LEGACY_REMOVE
 DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Document( )
 {
@@ -147,6 +150,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    SetLoadMode (0x00000000); // concerns only dicom files
    Load( fileName );
 }
+#endif
 
 /**
  * \brief  Canonical destructor 
@@ -168,7 +172,8 @@ DicomDir::~DicomDir()
 // Public
 
 /**
- * \brief   Loader. use SetLoadMode(), SetFileName() before !  
+ * \brief   Loader. use SetFileName(fn) 
+ *                  or SetLoadMode(lm) + SetDirectoryName(dn)  before !  
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
@@ -185,11 +190,13 @@ bool DicomDir::Load( )
     return DoTheLoadingJob( );   
 }
 
+ #ifndef GDCM_LEGACY_REMOVE
 /**
- * \brief   Loader. (DEPRECATED : not to break the API)
+ * \brief   Loader. (DEPRECATED : kept not to break the API)
  * @param   fileName file to be open for parsing
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
+ * @deprecated use SetFileName(n) + Load() instead
  */
 bool DicomDir::Load(std::string const &fileName ) 
 {
@@ -204,6 +211,13 @@ bool DicomDir::Load(std::string const &fileName )
    }
    return DoTheLoadingJob( );
 }
+
+/// DEPRECATED : use SetDirectoryName(dn) instead
+void DicomDir::SetParseDir(bool parseDir)
+{
+   ParseDir = parseDir;
+}
+#endif
 
 /**
  * \brief   Does the Loading Job (internal use only)

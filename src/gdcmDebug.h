@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 14:43:48 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/07/20 14:49:42 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -193,7 +193,11 @@ public:
 //-----------------------------------------------------------------------------
 //
 // Define GDCM_LEGACY macro to mark legacy methods where they are
-// declared in their class.  Example usage:
+// declared in their class.
+// 
+// WARNING : Don't try to use it with 'inline' methods ! 
+//
+//Example usage:
 //
 //   // @deprecated Replaced by MyOtherMethod() as of gdcm 2.0.
 //   GDCM_LEGACY(void MyMethod());

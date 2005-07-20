@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:28:55 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/07/20 14:49:42 $
+  Version:   $Revision: 1.65 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define GDCMDICOMDIR_H
 
 #include "gdcmDocument.h"
+#include "gdcmDebug.h"
 
 #include <list>
 #include <vector>
@@ -36,8 +37,8 @@ class DicomDirVisit;
 class DicomDirImage;
 class SQItem;
 
-typedef std::list<DicomDirPatient *>   ListDicomDirPatient;
-typedef std::vector<Document *>  VectDocument;
+typedef std::list<DicomDirPatient *> ListDicomDirPatient;
+typedef std::vector<Document *> VectDocument;
 
 //-----------------------------------------------------------------------------
 /**
@@ -52,12 +53,11 @@ class GDCM_EXPORT DicomDir: public Document
 public:
    typedef void Method(void*);
 
-   DicomDir( std::string const &filename, bool parseDir = false ); // Deprecated
    DicomDir(); 
-                   
+   GDCM_LEGACY( DicomDir(std::string const &filename, bool parseDir = false) ); 
    ~DicomDir();
 
-   bool Load( std::string const &filename );
+   GDCM_LEGACY( bool Load(std::string const &filename) );
    bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
    
@@ -68,10 +68,10 @@ public:
    /// Accessor to \ref Filename
    virtual void SetFileName(std::string const &fileName) 
                    { ParseDir = false; if (Filename != fileName)
-                               Filename = fileName, IsDocumentModified = true; }
+                              Filename = fileName, IsDocumentModified = true;};
 
    /// DEPRECATED : use SetDirectoryName
-   void SetParseDir(bool parseDir)  { ParseDir = parseDir; };
+   GDCM_LEGACY( void SetParseDir(bool parseDir) );
    
    // Informations contained in the parser
    virtual bool IsReadable();
