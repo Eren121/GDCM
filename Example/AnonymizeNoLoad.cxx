@@ -1,10 +1,10 @@
-*=========================================================================
+/*=========================================================================
                                                                                 
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 13:39:00 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/07/20 14:48:15 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,21 +29,21 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    "\n AnonymizeNoLoad :\n",
-   "Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable",
-   "         Warning : Warning : the image is overwritten",
-   "                   to preserve image integrity, use a copy.",
-   "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}",
-   "                       [rubout=listOfPrivateElementsToRubOut] ", 
-   "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]",
-   "       inputFileName : Name of the (single) file user wants to anonymize",
-   "       inputDirectoryName : user wants to anonymize *all* the files",
-   "                            within the (single Patient!) directory",
-   "       listOfPrivateElementsToRubOut : group,elem (in hexa) of private ",
-   "                           Elements to rub out ",
-   "       noshadowseq: user doesn't want to load Private Sequences",
-   "       noshadow   : user doesn't want to load Private groups (odd number)",
-   "       noseq      : user doesn't want to load Sequences ",
-   "       debug      : user wants to run the program in 'debug mode' ",
+   "Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable ",
+   "         Warning : Warning : the image is overwritten                     ",
+   "                   to preserve image integrity, use a copy.               ",
+   "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}    ",
+   "                       [rubout=listOfPrivateElementsToRubOut]             ", 
+   "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
+   "       inputFileName : Name of the (single) file user wants to anonymize  ",
+   "       inputDirectoryName : user wants to anonymize *all* the files       ",
+   "                            within the (single Patient!) directory        ",
+   "       listOfPrivateElementsToRubOut : group,elem (in hexa) of private    ",
+   "                           Elements to rub out                            ",
+   "       noshadowseq: user doesn't want to load Private Sequences           ",
+   "       noshadow   : user doesn't want to load Private groups (odd number) ",
+   "       noseq      : user doesn't want to load Sequences                   ",
+   "       debug      : user wants to run the program in 'debug mode'         ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------
