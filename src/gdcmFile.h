@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:26 $
-  Version:   $Revision: 1.110 $
+  Date:      $Date: 2005/07/20 13:31:01 $
+  Version:   $Revision: 1.111 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ enum ModalityType {
  * dicom files according to header information e.g. to create a file hierarchy
  * reflecting the Patient/Study/Serie informations, or extracting a given
  * SerieId. Accessing the content (image[s] or volume[s]) is beyond the
- * functionality of this class and belongs to gdmcFile.
+ * functionality of this class and belongs to gdcm::FileHelper.
  * \note  The various entries of the explicit value representation (VR) shall
  *        be managed within a dictionary which is shared by all File
  *        instances.

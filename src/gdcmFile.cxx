@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:25:53 $
-  Version:   $Revision: 1.252 $
+  Date:      $Date: 2005/07/20 13:31:01 $
+  Version:   $Revision: 1.253 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1295,9 +1295,11 @@ void File::AnonymizeNoLoad()
       if ( d == NULL)
          continue;
 
-      if ( dynamic_cast<BinEntry *>(d)
-        || dynamic_cast<SeqEntry *>(d) )
-         continue;
+         if ( dynamic_cast<SeqEntry *>(d) )
+         {
+            gdcmWarningMacro( "You cannot 'Anonymize a SeqEntry ");
+            continue;
+         }
 
       offset = d->GetOffset();
       lgth =   d->GetLength();
@@ -1318,6 +1320,7 @@ void File::AnonymizeNoLoad()
 /**
  * \brief anonymize a File (remove Patient's personal info passed with
  *        AddAnonymizeElement()
+ * \note You cannot Anonymize a BinEntry (to be fixed)
  */
 bool File::AnonymizeFile()
 {
@@ -1356,11 +1359,19 @@ bool File::AnonymizeFile()
          if ( d == NULL)
             continue;
 
-         if ( dynamic_cast<BinEntry *>(d)
-           || dynamic_cast<SeqEntry *>(d) )
+         if ( dynamic_cast<SeqEntry *>(d) )
+         {
+            gdcmWarningMacro( "You cannot 'Anonymize' a SeqEntry ");
             continue;
+         }
 
-         SetValEntry ((*it).Value, (*it).Group, (*it).Elem);
+         if ( dynamic_cast<BinEntry *>(d) )
+         {
+            gdcmWarningMacro( "To 'Anonymize' a BinEntry, better use AnonymizeNoLoad (FIXME) ");
+            continue;
+         }
+         else
+            SetValEntry ((*it).Value, (*it).Group, (*it).Elem);
       }
 }
 
