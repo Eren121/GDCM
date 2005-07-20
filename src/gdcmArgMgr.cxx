@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/22 08:11:23 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/07/20 13:29:42 $
+  Version:   $Revision: 1.11 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ namespace gdcm
       }
    }
 
-   /* Fills an array with the alreadu used parameters ****/
+   /* Fills an array with the already used parameters ****/
    ArgUsed = (char *)calloc (1, ArgCount );
 
    /* Builds the full string with all the parameters  **************/
@@ -117,8 +117,7 @@ ArgMgr::~ArgMgr()
 /**
  * \brief  checks if a parameter exists in the command line
  * @param param  label name
- * @return   true if parameter 'label' exists
- *           Actually, it returns 0 if label is not found
+ * @return   0 if label is not found
  *           else, returns the number of the spot it was found last time.
  */
 int ArgMgr::ArgMgrDefined( const char *param )
@@ -146,7 +145,7 @@ int ArgMgr::ArgMgrDefined( const char *param )
 /**
  * \brief  Gets the parameter value, read on the command line
  * @param param   name of the searched parameter label
- * @return   Value, as a characters string, of the parameter
+ * @return   Value, as a char array, of the parameter
  *            whose label is given.
  */
 char *ArgMgr::ArgMgrValue ( const char *param )
@@ -160,7 +159,7 @@ char *ArgMgr::ArgMgrValue ( const char *param )
 
 /**
  * \brief  Search for the first not yet used label
- * @return Pointer to a char array holding the first non used label
+ * @return Pointer to the char array holding the first non used label
  */
 char *ArgMgr::ArgMgrUnused ( )
 {
@@ -214,7 +213,7 @@ int ArgMgr::ArgMgrUsage(const char **usage )
  * Saves a char. array in a parameter file
  *         whose name is given on command line by : PARAMOUT=???
  *         or, as a default, by ARG_DEFAULT_PARAMOUT
- * @param param  char. array that defines the parameter:
+ * @param param  char. array that defines the parameter
  * @return   Entier correspondant au rang dans la liste de labels
  */
 int ArgMgr::ArgMgrSave ( char *param )
@@ -242,7 +241,7 @@ int ArgMgr::ArgMgrSave ( char *param )
 /**
  * \brief  Gets an int value passed as an argument to a program
  *         (use default value if not found)
- *  EXEMPLE:     int dimx = ArgMgrGetInt ( "DIMX", 256 );
+ *         EXAMPLE:     int dimx = ArgMgrGetInt ( "DIMX", 256 );
  * @param label   label name 
  * @param defaultVal default value
  * @return parameter value
@@ -257,7 +256,7 @@ int ArgMgr::ArgMgrGetInt(const char *label, int defaultVal)
 /**
  * \brief  Gets a float value passed as an argument to a program
  *         (use default value if not found)
- *  EXEMPLE:     float scale = ArgMgrGetFloat ( "SCALE", 0.33 );
+ *         EXAMPLE:     float scale = ArgMgrGetFloat ( "SCALE", 0.33 );
  * @param param   label name 
  * @param defaultVal default value
  * @return parameter value
@@ -272,6 +271,7 @@ float ArgMgr::ArgMgrGetFloat(const char *param, float defaultVal)
 /**
  * \brief  Gets a 'string' value passed as an argument to a program
  *         (use default value if not found)
+ *         EXAMPLE :  char *imageName = ArgMgrGetString( "NAME", "test.dcm" );
  * @param param   label name 
  * @param defaultVal default value
  * @return parameter value
@@ -286,7 +286,7 @@ char *ArgMgr::ArgMgrGetString(const char *param, char *defaultVal)
 /**
  * \brief  Gets a value amongst a set of values
  *         (use default value if not found) 
- *         EXEMPLE:     int nlab = ArgMgrGetLabel("CONFIRM","NO\\YES", 0); 
+ *         EXAMPLE:     int nlab = ArgMgrGetLabel("CONFIRM","NO\\YES", 0); 
  * @param param   label name 
  * @param liste  character Chain describing the various values.
  *               Value are separated by '\\'.
@@ -320,7 +320,7 @@ int ArgMgr::ArgMgrGetLabel (const char *param, char *liste, int val )
 
 /**
  * \brief  Demands a value amongst a set of values (abort if not found)
- *         EXEMPLE:     int nlab = ArgMgrWantLabel("CONFIRM","NO\\YES", usage); 
+ *         EXaMPLE:     int nlab = ArgMgrWantLabel("CONFIRM","NO\\YES", usage); 
  * @param param   label name 
  * @param liste  character Chain describing the various values.
  *               Labels are separated by  '\\'.
@@ -347,7 +347,7 @@ int ArgMgr::ArgMgrWantLabel (const char *param, char *liste, const char **usage 
 /**
  * \brief  Demands an int value passed as an argument to a program
  *         If not found usage is displayed and the prog aborted
- *  EXEMPLE:     int dimx = ArgMgrWantInt ( "DIMX", usage );
+ *  EXAMPLE:     int dimx = ArgMgrWantInt ( "DIMX", usage );
  * @param label   label name 
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
@@ -362,7 +362,7 @@ int ArgMgr::ArgMgrWantInt (const char *label, const char **usage)
 /**
  * \brief  Demands a float value passed as an argument to a program
  *         If not found usage is displayed and the prog aborted
- *  EXEMPLE:     float scale = ArgMgrWantFloat ( "SCALE", usage );
+ *  EXAMPLE:     float scale = ArgMgrWantFloat ( "SCALE", usage );
  * @param label   label name 
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
@@ -377,7 +377,7 @@ float ArgMgr::ArgMgrWantFloat (const char *label, const char **usage)
 /**
  * \brief  Demands a 'string' value passed as an argument to a program
  *         If not found usage is displayed and the prog aborted
- *  EXEMPLE:     char *code = ArgMgrWantString ( "CODE", usage );
+ *  EXAMPLE:     char *code = ArgMgrWantString ( "CODE", usage );
  * @param label   Parameter label
  * @param usage Usage program (displayed if label not found)
  * @return parameter value
@@ -390,11 +390,11 @@ char *ArgMgr::ArgMgrWantString(const char *label, const char **usage)
 }
 
 /**
- * \brief  decodage des elements d'un argument 'ensemble de STRING' de lgr qcq
+ * \brief  decodes and returns an array of 'STRING'
+ *  EXAMPLE:     char **codes = ArgMgrGetListOfString ( "CODES", &nbOfCodes ); 
  * @param label   label name 
- * @param number  nb of found elements
- * @return   Pointer to the array
- *     Pointer NULL if error
+ * @param number  nb of found 'STRINGs'
+ * @return   Pointer to the 'STRING' array; NULL if error
  */
 char **ArgMgr::ArgMgrGetListOfString ( const char *label, int *number )
 {
@@ -421,11 +421,11 @@ char **ArgMgr::ArgMgrGetListOfString ( const char *label, int *number )
 }
 
 /**
- * \brief  decodage des elements d'un argument 'liste d'INTEGER' de lgr qcq
+ * \brief  decodes and returns an array of 'INT'
+ *  EXAMPLE:     int *points = ArgMgrGetListOfInt ( "POINTS", &nbOfPoints );  
  * @param label   label name 
- * @param number  nb of found elements
- * @return   Pointer to the array
- *     Pointer NULL if error
+ * @param number  nb of found INT
+ * @return   Pointer to the INT array; NULL if error
  */
 int *ArgMgr::ArgMgrGetListOfInt ( const char *label, int *number )
 {
@@ -459,11 +459,10 @@ return liste;
 }
 
 /**
- * \brief  decodage des elements d'un argument 'liste de FLOAT' de lgr qcq
+ * \brief  decodes and returns an array of 'FLOAT'
  * @param label   label name 
- * @param number  taille de la liste  trouvee
- * @return   Pointer vers le tableau de lgr 'taille'
- *     NULL if error
+ * @param number  number of found FLOATs
+ * @return   Pointer to the FLOAT array; NULL if error
  */
 float *ArgMgr::ArgMgrGetListOfFloat ( const char *label, int *number )
 {
@@ -497,6 +496,66 @@ return liste;
 }
 
 /**
+ * \brief  decodes and returns an array of 'INT pairs', passed in decimal
+ * @param param   label name 
+ * @param number   nb of found pairs
+ * @return        pointer to the array of 'INT pairs'; NULL if fail
+ */
+int *ArgMgr::ArgMgrGetIntEnum ( const char *param, int *number )
+{
+   char *value = ArgMgrValue(param);
+   int *liste;
+   if (!value) 
+   {
+      *number = 0; 
+      return 0;
+   }
+   liste = IdStrIntEnum(value, number);
+   return liste;
+}
+
+/**
+ * \brief  decodes and returns an array of 'INT16 pairs', passed in hexadecimal
+ * @param param   label name 
+ * @param number   nb of found pairs
+ * @return        pointer to the array of 'INT16 pairs'; NULL if fail
+ */
+uint16_t *ArgMgr::ArgMgrGetXInt16Enum ( const char *param, int *number )
+{
+   char *value = ArgMgrValue(param);
+   uint16_t *liste;
+   if (!value) 
+   {
+      *number = 0; 
+      return 0;
+   }
+   liste = IdStrXInt16Enum(value, number);
+   return liste;
+}
+/**
+ * \brief  decodes and returns an array of 'FLOAT pairs'
+ * @param param   label name 
+ * @param number   nb of found pairs
+ * @return        pointer to the array of 'FLOAT pairs'; NULL if fail
+
+ */
+float *ArgMgr::ArgMgrGetFloatEnum ( const char *param, int *number )
+{
+   char  *value = ArgMgrValue(param);
+   float *liste;
+   if (!value) 
+   {
+      *number = 0; 
+      return 0;
+   }
+   liste = IdStrFloatEnum(value, number);
+   return liste;
+}
+
+// ------------------------ Those are 'service functions' ---------------------
+// ------------------------       internal use only       ---------------------
+
+/**
  * \brief     Counts the nb of occurrences of a given charact within a 'string' 
  * @param chaine     Pointer to the 'string'
  * @param caract     charact to count
@@ -513,10 +572,10 @@ int ArgMgr::IdStrCountChar (char *chaine, int caract)
 }
 
 /**
- * \brief     returns an array of set of 'INT pairs'
- * @param value   char array decribing a set of 'INT pairs' (deb1,fin1, deb2,fin2, ...)
- * @param number   nb of found pairs
- * @return        array of set of 'INT pairs'
+ * \brief     returns an array of 'INT pairs'
+ * @param value  char array decribing a set of 'INT pairs' (f1-l1, f2-l2, ...)
+ * @param number nb of found INT pairs
+ * @return       pointer to the array of 'INT pairs'
  */
 int *ArgMgr::IdStrIntEnum ( char* value, int *number)
 {
@@ -560,12 +619,61 @@ int *ArgMgr::IdStrIntEnum ( char* value, int *number)
    }
    return liste;
 }
- 
+
 /**
- * \brief     returns an array a set of 'FLOAT pairs'
- * @param value   char array decribing a set of 'FLOAT pairs' (deb1,fin1, deb2,fin2, ...)
- * @param number   nb of found pairs
- * @return        array of set of 'FLOAT pairs'
+ * \brief     returns an array of set of 'INT16 pairs', passed in Hexadecimal
+ * @param value  char array decribing a set of 'INT16 pairs' (f1-l1, f2-l2, ...)
+ *               coded in hexadecimal e.g. 0x0008,0x00ac
+ * @param number nb of found pairs
+ * @return        array of set of 'INT16 pairs'
+ */
+uint16_t *ArgMgr::IdStrXInt16Enum ( char *value, int *number)
+{
+   uint16_t *liste;
+   int taille;
+   int i;
+
+   *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
+   taille= *number;
+   liste = (uint16_t *) calloc (1,sizeof(uint16_t)*2*taille );
+   if ( !liste )
+   {
+      return 0;
+   }
+   i=0;
+   while ( taille>0 ) 
+   {
+      liste[i] = (uint16_t) strtol ( value, &value, 16 );
+      if ( *value == '\0' ) 
+      {
+         liste[i+1]=liste[i];
+         return liste;
+      }
+      if ( *(value++) != '-' ) 
+      {
+         liste[i+1]=liste[i];
+         value--;
+       }
+       else
+       {
+          liste[i+1] = (uint16_t) strtol ( value, &value, 16 );
+       }
+       if ( *value == '\0' )
+          return liste;
+       if ( *(value++) != ',' )
+       {
+          free (liste);
+          return 0;
+       }
+       taille --; i+=2;
+   }
+   return liste;
+} 
+/**
+ * \brief     returns an array of 'FLOAT pairs'
+ * @param value  char array decribing a set of 'FLOAT pairs' (f1-l1, f2-l2, ...)
+ * @param number nb of found pairs
+ * @return       pointer to the array of 'FLOAT pairs'; NULL if fail
  */
 float *ArgMgr::IdStrFloatEnum (char *value, int *number)
 {
@@ -604,40 +712,6 @@ float *ArgMgr::IdStrFloatEnum (char *value, int *number)
       }
       taille --; i+=2;
    }
-   return liste;
-}
-
-/**
- * \brief  decodage des elements d'un argument 'paires d'int' de lgr quelconque
- * @param param   label name 
- * @param number  taille de l'ensemble de paires trouvee
- * @return   Pointer vers le tableau de taille '2*nbElem'
- *     Pointer NULL si erreur
- */
-int *ArgMgr::ArgMgrGetIntEnum ( const char *param, int *number )
-{
-   char *value = ArgMgrValue(param);
-   int *liste;
-   if (!value) 
-      return 0;
-   liste = IdStrIntEnum(value, number);
-   return liste;
-}
-
-/**
- * \brief  decodage des elements d'un argument 'paires de float' de lgr quelconque
- * @param param   label name 
- * @param number  taille de l'ensemble de paires trouvee
- * @return   Pointer vers le tableau de taille '2*nbElem'
- *     Pointer NULL si erreur
- */
-float *ArgMgr::ArgMgrGetFloatEnum ( const char *param, int *number )
-{
-   char  *value = ArgMgrValue(param);
-   float *liste;
-   if (!value) 
-      return 0;
-   liste = IdStrFloatEnum(value, number);
    return liste;
 }
 
