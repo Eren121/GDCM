@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 05:00:15 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/07/21 06:39:24 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -245,7 +245,8 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
- * @deprecated use : 
+ * @deprecated use : AddRestriction(uint16_t group, uint16_t elem, 
+ *                                 std::string const &value, int op);
  */
 void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
 {
