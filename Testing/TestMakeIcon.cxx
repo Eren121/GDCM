@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/07/21 14:05:09 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,9 @@ int TestMakeIcon (int argc, char *argv[])
 
    delete f;
 
-   f = new gdcm::File(output);
+   f = new gdcm::File();
+   f->SetFileName(output);
+   f->Load();
    f->Print();
    std::cout << "End of Print" << std::endl;
 
