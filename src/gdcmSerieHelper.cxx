@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 09:04:58 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/07/21 05:00:15 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmSerieHelper.h"
 #include "gdcmDirList.h"
 #include "gdcmFile.h"
+#include "gdcmDictEntry.h" // for TranslateToKey
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 
@@ -91,18 +92,21 @@ void SerieHelper::AddFileName(std::string const &filename)
    header->SetLoadMode(LoadMode);
    header->SetFileName( filename ); 
    header->Load();
-   //File *header = new File( filename ); // Deprecated old style 
+
    if ( header->IsReadable() )
    {
       int allrules = 1;
-      // First step the user has defined a set of rules for the DICOM 
+      // First step the user has defined a set of rules for the DICOM file
       // he is looking for.
       // make sure the file correspond to his set of rules:
+
+/*
       for(SerieRestrictions::iterator it = Restrictions.begin();
           it != Restrictions.end();
           ++it)
       {
          const Rule &r = *it;
+         // doesn't compile (no matching function...).
          const std::string s;// = header->GetEntryValue( r.first );
          if ( !Util::DicomStringEqual(s, r.second.c_str()) )
          {
@@ -111,6 +115,23 @@ void SerieHelper::AddFileName(std::string const &filename)
            break;
          }
       }
+*/
+      // Just keep 'new style' for Rules
+      std::string s;
+      for(SerieExRestrictions::iterator it2 = ExRestrictions.begin();
+          it2 != ExRestrictions.end();
+          ++it2)
+      {
+         const ExRule &r = *it2;
+         s = header->GetEntryValue( r.group, r.elem );
+         if ( !Util::CompareDicomString(s, r.value.c_str(), r.op) )
+         {
+           // Argh ! This rule is unmatch let's just quit
+           allrules = 0;
+           break;
+         }
+      }
+
       if ( allrules ) // all rules are respected:
       {
          // Allright ! we have a found a DICOM that match the user expectation. 
@@ -197,12 +218,34 @@ void SerieHelper::AddGdcmFile(File *header)
       }
          // Even if a rule was unmatch we don't deallocate the gdcm::File:
 }
+
+
 /**
  * \brief add a rules for restricting a DICOM file to be in the serie we are
  * trying to find. For example you can select only the DICOM file from a
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
+ */
+void SerieHelper::AddRestriction(uint16_t group, uint16_t elem, 
+                                 std::string const &value, int op)
+{
+   ExRule r;
+   r.group = group;
+   r.elem  = elem;
+   r.value = value;
+   r.op    = op;
+   ExRestrictions.push_back( r ); 
+}
+
+#ifndef GDCM_LEGACY_REMOVE
+/**
+ * \brief add a rules for restricting a DICOM file to be in the serie we are
+ * trying to find. For example you can select only the DICOM file from a
+ * directory which would have a particular EchoTime==4.0.
+ * This method is a user level, value is not required to be formatted as a DICOM
+ * string
+ * @deprecated use : 
  */
 void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
 {
@@ -211,6 +254,7 @@ void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
    r.second = value;
    Restrictions.push_back( r ); 
 }
+#endif
 
 /**
  * \brief Sets the root Directory

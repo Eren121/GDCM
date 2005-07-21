@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 09:04:58 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/07/21 05:00:30 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,8 @@
 #define GDCMSERIEHELPER_H
 
 #include "gdcmCommon.h" 
-
+#include "gdcmDebug.h"  // for LEGACY
+ 
 #include <vector>
 #include <iostream>
 #include <map>
@@ -67,7 +68,9 @@ public:
 
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
-   void AddRestriction(TagKey const &key, std::string const &value);
+   GDCM_LEGACY( void AddRestriction(TagKey const &key, std::string const &value) );
+   void AddRestriction(uint16_t group, uint16_t elem, 
+                       std::string const &value, int op);
   
 /**
  * \brief Sets the LoadMode as a boolean string. 
@@ -95,6 +98,16 @@ private:
    typedef std::pair<TagKey, std::string> Rule;
    typedef std::vector<Rule> SerieRestrictions;
    SerieRestrictions Restrictions;
+   
+   // New style for (extented) Rules (Moreover old one doesn't compile)
+   typedef struct {
+      uint16_t group;
+      uint16_t elem;
+      std::string value;
+      int op;
+   } ExRule;
+   typedef std::vector<ExRule> SerieExRestrictions;
+   SerieExRestrictions ExRestrictions;
 
    /// \brief Bit string integer (each one considered as a boolean)
    ///        Bit 0 : Skip Sequences,    if possible
