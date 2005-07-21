@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 14:49:42 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/07/21 05:02:11 $
+  Version:   $Revision: 1.66 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,11 +64,11 @@ public:
    /// Sets the root Directory name to parse, recursively
    void SetDirectoryName(std::string const &dirName) 
         { ParseDir = true; if (Filename != dirName)
-                               Filename = dirName, IsDocumentModified = true; };
+                               Filename = dirName, IsDocumentModified = true; }
    /// Accessor to \ref Filename
    virtual void SetFileName(std::string const &fileName) 
                    { ParseDir = false; if (Filename != fileName)
-                              Filename = fileName, IsDocumentModified = true;};
+                              Filename = fileName, IsDocumentModified = true;}
 
    /// DEPRECATED : use SetDirectoryName
    GDCM_LEGACY( void SetParseDir(bool parseDir) );
@@ -79,7 +79,7 @@ public:
    // Meta
    DicomDirMeta *NewMeta();
    /// Returns a pointer to the DicomDirMeta for this DICOMDIR. 
-   DicomDirMeta *GetMeta() { return MetaElems; };
+   DicomDirMeta *GetMeta() { return MetaElems; }
 
    // Patients
    DicomDirPatient *NewPatient();
@@ -108,11 +108,11 @@ public:
    void SetEndMethodArgDelete     ( DicomDir::Method *m );
 
    /// GetProgress GetProgress
-   float GetProgress()   { return Progress; };
+   float GetProgress()   { return Progress; }
    /// AbortProgress AbortProgress
-   void  AbortProgress() { Abort = true; };
+   void  AbortProgress() { Abort = true; }
    /// IsAborted IsAborted
-   bool  IsAborted() { return Abort; };
+   bool  IsAborted() { return Abort; }
 
    // Write
    bool WriteDicomDir(std::string const &fileName);

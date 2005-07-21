@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 14:49:41 $
-  Version:   $Revision: 1.150 $
+  Date:      $Date: 2005/07/21 05:02:11 $
+  Version:   $Revision: 1.151 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,6 +123,7 @@ DicomDir::DicomDir()
    NewMeta();
 }
 
+#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief Constructor Parses recursively the directory and creates the DicomDir
  *        or uses an already built DICOMDIR, depending on 'parseDir' value.
@@ -137,7 +138,6 @@ DicomDir::DicomDir()
  * @deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
  *              or : new DicomDir() + SetFileName(name)
  */
-#ifndef GDCM_LEGACY_REMOVE
 DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Document( )
 {
@@ -212,7 +212,7 @@ bool DicomDir::Load(std::string const &fileName )
    return DoTheLoadingJob( );
 }
 
-/// DEPRECATED : use SetDirectoryName(dn) instead
+/// DEPRECATED : use SetDirectoryName(dname) instead
 void DicomDir::SetParseDir(bool parseDir)
 {
    ParseDir = parseDir;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/18 10:20:20 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/07/21 05:02:12 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,8 @@ public:
    static std::string DicomString(const char *s, size_t l);
    static std::string DicomString(const char *s);
    static bool        DicomStringEqual(const std::string &s1, const char *s2);
-   static bool        CompareDicomString(const std::string &s1, const char *s2, int op);
+   static bool        CompareDicomString(const std::string &s1, 
+                                         const char *s2, int op);
    static std::string GetMACAddress();
 
    static std::string CreateUniqueUID(const std::string &root = "");

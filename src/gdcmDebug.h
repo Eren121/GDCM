@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 14:49:42 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/07/21 05:02:11 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ namespace gdcm
  *             proper input and proper output. 
  *             (should not happen, not user controlled)
  * 
- * A debugging message is only show if the flag is on (DebugFlag)
+ * A debugging message is only shown if the flag is on (DebugFlag)
  * This is static var and can be set at beginning of code:
  *         gdcm::Debug::SetDebugOn();
  */
