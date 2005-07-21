@@ -1,3 +1,189 @@
+Thu Jul 21 06:55:50 2005 by jpr
+   AnonymizeDicomDir.cxx, AnomymizeNoLoad.cxx, PrintFile.cxx, PrintDicomDir.cxx
+   Unify user interface
+
+Thu Jul 21 06:55:30 2005 by jpr
+   exSerieHelper.cxx
+   Add an example of use for SerieHelper
+
+Thu Jul 21 07:00:15 2005 by jpr
+   gdcmSerieHelper.cxx
+   Extend 'Restriction' syntax :
+   void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
+                                    std::string const &value, int op)
+   op belongs to :
+   /// \brief comparaison operators
+   enum CompOperators {
+      GDCM_EQUAL = 0,
+      GDCM_DIFFERENT,
+      GDCM_GREATER,
+      GDCM_GREATEROREQUAL,
+      GDCM_LESS,
+      GDCM_LESSOREQUAL
+   };
+
+Wed Jul 20 15:39:00 2005  by jpr
+   AnonymizeNoLoad.cxx
+   AnonymizeNoLoad user can now ask for anonymization of 'BinEntries'
+   (e.g. Private entries when the TS is Implict VR)
+   AnonymizeNoLoad filein=... rubout=0x0009-0x0001,0x0013-0x1100
+   Thx to Luca Picello for reporting pb and supplying data to fix the bug.
+
+Wed Jul 20 16:49:41 2005 by jpr
+   gdcmFile.cxx
+   Use GDCM_LEGACY for DicomDir, as well
+
+Wed Jul 20 15:31:01 2005 by jpr
+   gdcmFile.cxx
+   We can now anonymize 'BinEntries' as well
+
+Wed Jul 20 15:29:42 2005 by jpr
+   gdcmArgMgr.cxx
+   Add ArgMgrGetXInt16Enum to decode from the command line pairs of unsigned int
+   16, written in hexadecimal.
+   (usefull to allow terminal user to pass the (private) elements he wants to
+   anonymize)
+
+Tue Jul 19 17:25:53 2005  by jpr
+   gdcmFile.cxx
+   Add some comments on the 'Patient Position'
+
+Tue Jul 19 11:04:58 2005 by jpr
+   gdcmSerieHelper.cxx
+   Add SerieHelper::AddGdcmFile(File *header) method.
+    * \brief add a gdcm::File to the first (and supposed to be unique) list
+    *        of the gdcm::SerieHelper.
+    * \warning : this method should be used by aware users only!
+    *            User is supposed to know the files he want to deal with
+    *           and consider them they belong to the same Serie
+    *           (even if their Serie UID is different)
+    *           user will probabely OrderFileList() this list (actually, ordering
+    *           user choosen gdm::File is the sole interest of this method)
+    *           Moreover, using vtkGdcmReader::SetCoherentFileList() will avoid
+    *           vtkGdcmReader parsing twice the same files.
+    *           *no* coherence check is performed, but those specified
+    *           by SerieHelper::AddRestriction()
+
+Mon Jul 18 12:20:20 2005 by jpr
+   gdcmCommon.cxx
+   In order to prepare the future extension of SerieHelper::AddRestriction (key,
+   string, operator)
+   operator = { EQUAL, DIFFERENT, LESS, LESSOREQUAL, GREATER, GREATEROOREQUAL}
+   add method
+   bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
+
+Sun Jul 17 06:27:49 2005 by jpr
+   gdcmSerieHelper.cxx
+   Use new style for Loading files
+
+Tue Jul 12 19:08:12 2005 by jpr
+   gdcmCommon.cxx, gdcmSQItem.cxx
+   To speed up DicomDir, instead of copying -and removing the source afterwards-
+   each entry of the SQItem (found after gdcm::Document parsing) towards
+   the gdcm::Object  belonging to the gdcm::DicomDir, we just copy
+   the chained list itself.
+
+Tue Jul 12 16:55:43 2005 by jpr
+   AnonymizeNoLoad.cxx
+   AnonymizeNoLoad has now one more option :
+   dirin=
+   to give the (single Patient) directory name whose content we want to anonymize.
+
+Mon Jul 11 10:20:25 2005 by jpr
+   gdcmDicomDirStudy.cxx
+   Reorder methods
+
+Fri Jul 8 21:07:12 2005 by jpr
+   gdcmDicomDir...
+   Add the VISIT object within DicomDir
+
+Fri Jul 8 12:15:08 2005 by jpr
+   gdcmDicomDir...
+   Use new style for DicomDir loading
+
+Fri Jul 8 16:36:48 2005 by jpr
+   gdcmFileHelper.cxx
+   To remain unimpared, gdcm::FileHelper class needs also its
+   void FileHelper::SetLoadMode(int loadMode)
+   void FileHelper::SetFileName(std::string const &fileName)
+   bool FileHelper::Load()
+
+Thu Jul 7 19:31:53 2005 by jpr
+   Example/*.cxx
+   Begin of kosherization of Example
+   New 'gdcm2' style.
+
+Thu Jul 7 18:37:40 2005 by jpr
+   gdcmDocument.cxx
+   On the way to gdcm2 ...
+   Now, the stand way to use a file is :
+   gdcm::File *f = new gdcm::File();
+   f->SetLoadMode ( user say here what he wants *not* to load );
+   f->SetFileName("myFile.gdcm");
+   f->Load();
+   Old styles are kept, not to break the C++ API.
+      - gdcm::File *f = new gdcm::File("myFile.gdcm");
+      - f->Load("myFile.gdcm");
+   Due to the syntaxic abilities of Python maybe some troubles will occur
+   (not sure ...)
+
+Thu Jul 7 15:55:39 2005 by jpr
+  gdcmDocument.cxx
+  Comment out the time consuming, never used/useless
+  'Extended tag' stuff for Sequence embedded Entries
+
+Thu Jul 7 15:11:38 2005 by jpr
+  gdcmDocument.cxx
+  Move code lines LTTG so save some CPU time.
+  (hope so)
+
+Tue Jun 7 13:12:10 2005 CEST by jpr
+   Example/*.cxx
+   Use Argument Manager in 'utilities'
+
+Thu Jul 7 12:12:32 2005 by jpr
+   gdcmFile.cxx
+   Due to something stupid in the gdcm::File constructor, the file was parsed 
+   twice when we used old style, e.g :
+   gdcm::File *f = new gdcm::File(fileName);
+   instead of new style, e.g. :
+   gdcm::File *f = new gdcm::File( );
+   f->SetLoadMode ( choose what you want *not* to load here );
+   f->Load( filename );
+
+Wed Jul 6 11:53:43 2005 by jpr
+   TestAllReadCompareDicom.cxx, TestReadWriteReadCompare.cxx
+   Now TestAllReadCompareDicom.cxx TestReadWriteReadCompare.cxx accept a third
+   param, in order not to have to recompile to gdcm::Debug::DebugOn().
+
+Wed Jul 6 17:18:42 2005 by jpr
+   gdcmDocument.cxx
+   According to Mathieu's requirement, Load twice the same file keeps the rseult of
+   the first Load (instead of doing it twice)
+
+Wed Jul 6 11:25:12 2005 by jpr
+   gdcmDocument.cxx
+   - Clean out the Entries if a Document is parsed more than once
+   - Uncomment (usefull) warning messages
+
+Wed Jul 6 10:42:33 2005 by jpr
+   gdcmDocument.cxx
+   - Comment out a for the moment too much verbose warning message.
+   - Delay some statement as late as possible, to save some CPU time when they're
+     useless
+  
+Wed Jul 6 13:01:08 2005 by jpr
+   gdcmFile.cxx
+   Now gdcmFile::Load() returns false if file is not gdcm parsable
+   Only gdcmDocument::Load() did it, before.
+   Thx to Benoit for reporting bug
+
+Sun Jul 3 14:42:04 2005 by jpr
+   gdcmDocument.cxx
+   Should avoid some troubles with 'no length' SQItems within 'true length'
+   Sequences.
+   Thx to Loic Boussel for providing data to fix the bug.
+
 Sun Jul 3 14:42:04 2005 by jpr
    gdcmDocument.cxx
    Should avoid some troubles with 'no length' SQItems within 'true length'
@@ -228,7 +414,7 @@ Wed Apr 27 11:52:27 2005 by jpr
    Pb of 'Bits Allocated = 12' is now dealt with in
    FileHelper::CheckMandatoryElements, no longer in File::Write.
    Thx to Mathieu for reporting bug.
-	
+
 2005-04-26 Benoit Regrain <Benoit.Regrain@creatis.insa-lyon.fr>
    * Testing/TestAllReadCompareDicom.cxx : update the test printed results and
      description.
