@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/06 09:53:43 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/07/21 04:51:26 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,13 +22,15 @@
 //Generated file:
 #include "gdcmDataImages.h"
  
-int CompareInternal(std::string const & filename, std::string const & output)
+int CompareInternal(std::string const &filename, std::string const &output)
 {
    std::cout << "   Testing: " << filename << std::endl;
 
    //////////////// Step 1 (see above description):
 
-   gdcm::File *file = new gdcm::File( filename );
+   gdcm::File *file = new gdcm::File( );
+   file->SetFileName( filename );
+   file->Load ();
    if( !file->IsReadable() )
    {
       std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
@@ -53,17 +55,23 @@ int CompareInternal(std::string const & filename, std::string const & output)
    std::cout << "2...";
  
    //////////////// Step 3:
-   gdcm::FileHelper *reread = new gdcm::FileHelper( output );
-   if( !reread->GetFile()->IsReadable() )
+   gdcm::File *fileout = new gdcm::File();
+   fileout->SetFileName( output );
+   fileout->Load();
+  // gdcm::FileHelper *reread = new gdcm::FileHelper( output ); // deprecated
+  
+   if( !fileout->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
-               << "Test::TestReadWriteReadCompare: Could not reread image "
-               << "written:" << filename << std::endl;
+               << "Test::TestReadWriteReadCompare: Could not parse the newly "
+               << "written image:" << filename << std::endl;
      delete file;
      delete filehelper;
-     delete reread;
      return 1;
    }
+
+   gdcm::FileHelper *reread = new gdcm::FileHelper( fileout );
+
    std::cout << "3...";
    // For the next step:
    int    dataSizeWritten = reread->GetImageDataSize();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/05 18:47:38 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/07/21 04:51:26 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,10 @@ int TestPrintAllDocument(int, char *[])
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
 
-      gdcm::File *e1= new gdcm::File( filename );
+      gdcm::File *e1= new gdcm::File( );
+      e1->SetFileName( filename );
+      e1->Load();
+
       e1->SetPrintLevel(2);
       e1->Print();
       // just to be able to grep the display result, for some usefull info
