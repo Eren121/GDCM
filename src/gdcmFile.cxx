@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 14:49:41 $
-  Version:   $Revision: 1.254 $
+  Date:      $Date: 2005/07/21 14:01:49 $
+  Version:   $Revision: 1.255 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,14 +26,16 @@
 //                                   as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
 //
-// Image Position (Patient) (0020,0032) What is it used for?
+// Image Position (Patient) (0020,0032) VM=3 What is it used for?
 // -->
 //  The attribute Patient Orientation (0020,0020) from the General Image Module 
 // is of type 2C and has the condition Required if image does not require 
 // Image Orientation (0020,0037) and Image Position (0020,0032). 
-// However, if the image does require the attributes Image Orientation (0020,0037)
-// and Image Position (0020,0032) then attribute Patient Orientation (0020,0020)
-// should not be present in the images.
+// However, if the image does require the attributes 
+// - Image Orientation (Patient) (0020,0037), VM=6
+// - Image Position Patient (0020,0032), VM=3
+// then attribute Patient Orientation (0020,0020) should not be present
+//  in the images.
 //
 // Remember also :
 // Patient Position (0018,5100) values : HFP   = Head First-Prone
@@ -44,9 +46,22 @@
 //                                       FFDL = Feet First-Decubitus Left
 //                                       FFP  = Feet First-Prone
 //                                       FFS  = Feet First-Supine
+//                    can also find      SEMIERECT
+//                                       SUPINE
 // CS 2 Patient Orientation (0020 0020)
 //               When the coordinates of the image 
-//               are always present, this field is almost never used
+//               are always present, this field is almost never used.
+//               Better we don't tust it too much ...
+//               Found Values are :      L\P
+//                                       L\FP
+//                                       P\F
+//                                       L\F
+//                                       P\FR
+//                                       R\F
+//
+// (0020|0037) [Image Orientation (Patient)] [1\0\0\0\1\0 ]
+
+                                      
 // ---------------------------------------------------------------
 //
 #include "gdcmFile.h"
@@ -719,7 +734,7 @@ float File::GetZOrigin()
   * @param iop adress of the (6)float array to receive values
   * @return cosines of image orientation patient
   */
-void File::GetImageOrientationPatient( float iop[6] )
+bool File::GetImageOrientationPatient( float iop[6] )
 {
    std::string strImOriPat;
    //iop is supposed to be float[6]
@@ -732,6 +747,7 @@ void File::GetImageOrientationPatient( float iop[6] )
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
          gdcmWarningMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
+         return false;
       }
    }
    //For ACR-NEMA
@@ -742,8 +758,10 @@ void File::GetImageOrientationPatient( float iop[6] )
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
          gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
+         return false;
       }
    }
+   return true;
 }
 
 /**
@@ -1766,6 +1784,178 @@ bool File::Load( std::string const &fileName )
    return DoTheLoadingJob( );
 }
 #endif
+
+// -----------------------------------------------------------------------------------------
+//             THERALYS Algorithm to determine the most similar basic orientation
+//
+//  Transliterated from original Python code.
+//  Kept as close as possible to the original code
+//  in order to speed up any further modif of Python code :-(
+// ------------------------------------------------------------------------------------------
+
+/**
+ * \brief  THERALYS' Algorithm to determine the most similar basic orientation
+ *           (Axial, Coronal, Sagital) of the image
+ * \note Should be run on the first gdcm::File of a 'coherent' Serie
+ * @return orientation code
+ * @return orientation code
+ *   #   0 :   Not Applicable (neither 0020,0037 Image Orientation Patient 
+ *   #                         nor     0020,0032Image Position     found )
+ *   #   1 :   Axial
+ *   #  -1 :   Axial invert
+ *   #   2 :   Coronal
+ *   #  -2 :   Coronal invert
+ *   #   3 :   Sagital
+ *   #  -3 :   Sagital invert
+ *   #   4 :   Heart Axial
+ *   #  -4 :   Heart Axial invert
+ *   #   5 :   Heart Coronal
+ *   #  -5 :   Heart Coronal invert
+ *   #   6 :   Heart Sagital
+ *   #  -6 :   Heart Sagital invert
+ */
+float File::TypeOrientation( )
+{
+   float *iop = new float[6];
+   bool succ = GetImageOrientationPatient( iop );
+   if ( !succ )
+   {
+      delete iop;
+      return 0.;
+   }
+
+   vector3D ori1;
+   vector3D ori2;
+
+   ori1.x = iop[0]; ori1.y = iop[1]; ori1.z = iop[2]; 
+   ori1.x = iop[3]; ori2.y = iop[4]; ori2.z = iop[5];
+
+   // two perpendicular vectors describe one plane
+   float dicPlane[6][2][3] =
+   { {  {1,    0,    0   },{0,       1,     0     }  },       // Axial
+     {  {1,    0,    0   },{0,       0,    -1     }  },       // Coronal
+     {  {0,    1,    0   },{0,       0,    -1     }  },       // Sagittal
+     {  { 0.8, 0.5,  0.0 },{-0.1,    0.1 , -0.95  }  },       // Axial - HEART
+     {  { 0.8, 0.5,  0.0 },{-0.6674, 0.687, 0.1794}  },       // Coronal - HEART
+     {  {-0.1, 0.1, -0.95},{-0.6674, 0.687, 0.1794}  }        // Sagittal - HEART
+   };
+
+   vector3D refA;
+   vector3D refB;
+   int i = 0;
+   Res res;   // [ <result> , <memory of the last succes calcule> ]
+   res.first = 0;
+   res.second = 99999;
+   for (int numDicPlane=0; numDicPlane<6; numDicPlane++)
+   {
+       i = i + 1;
+       // refA=plane[0]
+       refA.x = dicPlane[numDicPlane][0][0]; 
+       refA.y = dicPlane[numDicPlane][0][1]; 
+       refA.z = dicPlane[numDicPlane][0][2];
+       // refB=plane[1]
+       refB.x = dicPlane[numDicPlane][1][0]; 
+       refB.y = dicPlane[numDicPlane][1][1]; 
+       refB.z = dicPlane[numDicPlane][1][2];
+       res=VerfCriterion(  i, CalculLikelyhood2Vec(refA,refB,ori1,ori2), res );
+       res=VerfCriterion( -i, CalculLikelyhood2Vec(refB,refA,ori1,ori2), res );
+   }
+   delete iop;
+   return res.first;
+/*
+//             i=0
+//             res=[0,99999]  ## [ <result> , <memory of the last succes calculus> ]
+//             for plane in dicPlane:
+//                 i=i+1
+//                 refA=plane[0]
+//                 refB=plane[1]
+//                 res=self.VerfCriterion(  i , self.CalculLikelyhood2Vec(refA,refB,ori1,ori2) , res )
+//                 res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
+//             return res[0]
+*/
+
+}
+
+Res File::VerfCriterion(int typeCriterion, float criterionNew, Res res)
+{
+   float type      = res.first;
+   float criterion = res.second;
+   if (criterionNew < criterion)
+   {
+      res.first  = criterionNew;
+      res.second = typeCriterion;
+   }
+/*
+//   type = res[0]
+//   criterion = res[1]
+// #     if criterionNew<0.1 and criterionNew<criterion:
+//   if criterionNew<criterion:
+//      criterion=criterionNew
+//      type=typeCriterion
+//   return [ type , criterion ]
+*/
+   return res;
+} 
+
+float File::CalculLikelyhood2Vec(vector3D refA, vector3D refB, 
+                                 vector3D ori1, vector3D ori2)
+{
+//   # ------------------------- Purpose : -----------------------------------
+//   # - This function determines the orientation similarity of two planes.
+//   #   Each plane is described by two vectors.
+//   # ------------------------- Parameters : --------------------------------
+//   # - <refA>  : - type : vector 3D (float)
+//   # - <refB>  : - type : vector 3D (float)
+//   #             - Description of the first plane
+//   # - <ori1>  : - type : vector 3D (float)
+//   # - <ori2>  : - type : vector 3D (float)
+//   #             - Description of the second plane
+//   # ------------------------- Return : ------------------------------------
+//   #  float :   0 if the planes are perpendicular. While the difference of
+//   #             the orientation between the planes are big more enlarge is
+//   #             the criterion.
+//   # ------------------------- Other : -------------------------------------
+//   #  The calculus is based with vectors normalice
+
+   vector3D ori3 = ProductVectorial(ori1,ori2);
+   vector3D refC = ProductVectorial(refA,refB);
+   float    res  = powf(refC.x-ori3.x, 2.) + 
+                   powf(refC.y-ori3.y, 2.) + 
+                   powf(refC.z-ori3.z, 2.);
+
+/*
+//   ori3=self.ProductVectorial(ori1,ori2)
+//   refC=self.ProductVectorial(refA,refB)
+//   res=math.pow(refC[0]-ori3[0],2) + math.pow(refC[1]-ori3[1],2) + math.pow(refC[2]-ori3[2],2)
+//   return math.sqrt(res)
+*/
+   return sqrt(res);
+}
+
+vector3D File::ProductVectorial(vector3D vec1, vector3D vec2)
+{
+
+//   # ------------------------- Purpose : -----------------------------------
+//   # - Calculus of the poduct vectorial between two vectors 3D
+//   # ------------------------- Parameters : --------------------------------
+//   # - <vec1>  : - type : vector 3D (float)
+//   # - <vec2>  : - type : vector 3D (float)
+//   # ------------------------- Return : ------------------------------------
+//   #  (vec) :    - Vector 3D
+//   # ------------------------- Other : -------------------------------------
+
+   vector3D vec3;
+   vec3.x =    vec1.y*vec3.z - vec1.z*vec2.y;
+   vec3.y = -( vec1.x*vec2.z - vec1.z*vec2.x);
+   vec3.z =    vec1.x*vec2.y - vec1.y*vec2.x;
+/*
+//   vec3=[0,0,0]
+//   vec3[0]=vec1[1]*vec2[2]    - vec1[2]*vec2[1]
+//   vec3[1]=-( vec1[0]*vec2[2] - vec1[2]*vec2[0])
+//   vec3[2]=vec1[0]*vec2[1]    - vec1[1]*vec2[0]
+*/
+   return vec3;
+}
 
 //-----------------------------------------------------------------------------
 // Print

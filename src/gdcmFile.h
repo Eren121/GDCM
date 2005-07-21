@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 13:31:01 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2005/07/21 14:01:50 $
+  Version:   $Revision: 1.112 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,8 +22,21 @@
 #include "gdcmDebug.h"
 #include "gdcmDocument.h"
 
+
+
 namespace gdcm 
 {
+
+
+typedef struct
+{
+   float x;
+   float y;
+   float z;
+} vector3D;
+
+typedef std::pair<float, float> Res;
+
 class RLEFramesInfo;
 class JPEGFragmentsInfo;
 
@@ -122,7 +135,7 @@ public:
    float GetYOrigin();
    float GetZOrigin();
 
-   void GetImageOrientationPatient( float iop[6] );
+   bool GetImageOrientationPatient( float iop[6] );
 
    int GetBitsStored();
    int GetBitsAllocated();
@@ -171,6 +184,8 @@ public:
 
    bool Write(std::string fileName, FileType filetype);
 
+   float TypeOrientation( );
+
 protected:
  
    /// Store the RLE frames info obtained during parsing of pixels.
@@ -197,6 +212,10 @@ private:
    uint32_t ReadTagLength(uint16_t, uint16_t);
    void ReadAndSkipEncapsulatedBasicOffsetTable();
 
+   Res VerfCriterion(int typeCriterion, float criterionNew, Res res);
+   float CalculLikelyhood2Vec(vector3D refA, vector3D refB, 
+                              vector3D ori1, vector3D ori2);
+   vector3D ProductVectorial(vector3D vec1, vector3D vec2);
 };
 } // end namespace gdcm
 
