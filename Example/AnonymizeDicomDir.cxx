@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 14:56:48 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/07/21 04:55:50 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
    // ----- Initialize Arguments Manager ------   
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
   
-   if (am->ArgMgrDefined("usage")) 
+   if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
@@ -95,6 +95,13 @@ int main(int argc, char *argv[])
  
    char *fileName  = am->ArgMgrWantString("filein",usage); 
 
+   // if unused Param we give up
+   if ( am->ArgMgrPrintUnusedLabels() )
+   { 
+      am->ArgMgrUsage(usage);
+      delete am;
+      return 0;
+   }
    delete am;  // --- we don't need Argument Manager any longer ---
 
 

@@ -16,6 +16,7 @@ SET(EXAMPLE_SOURCES
   exGC
   exImageLighten
   exOverlaysACR
+  exSerieHelper
             
 #the following are utilities
   PrintDicomDir

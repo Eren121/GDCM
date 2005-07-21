@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/20 14:48:15 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/07/21 04:55:50 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
    "       inputFileName : Name of the (single) file user wants to anonymize  ",
    "       inputDirectoryName : user wants to anonymize *all* the files       ",
    "                            within the (single Patient!) directory        ",
-   "       listOfPrivateElementsToRubOut : group,elem (in hexa) of private    ",
-   "                           Elements to rub out                            ",
+   "       listOfPrivateElementsToRubOut : group-elem,g2-e2,... (in hexa)     ",
+   "                                       of private Elements to rub out     ",
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
   
-   if (am->ArgMgrDefined("usage")) 
+   if (am->ArgMgrDefined("usage") || argc == 1) 
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
@@ -65,11 +65,12 @@ int main(int argc, char *argv[])
 
    if ( (fileName == 0 && dirName == 0)
         ||
-      (fileName != 0 && dirName != 0) )
+        (fileName != 0 && dirName != 0) )
    {
        std::cout <<std::endl
-                 << "Either 'filein' or 'dirin' must be present;" << std::endl
-                 << "Not both" << std::endl;
+                 << "Either 'filein=' or 'dirin=' must be present;" 
+                 << std::endl << "Not both" << std::endl;
+       am->ArgMgrUsage(usage); // Display 'usage'  
        delete am;
        return 0;
  }
@@ -87,11 +88,16 @@ int main(int argc, char *argv[])
 
    int rubOutNb;
    uint16_t *elemsToRubOut = am->ArgMgrGetXInt16Enum("rubout", &rubOutNb);
- 
-   std::cout << " ---------------------------- rubOutNb " << rubOutNb
-             << std::endl;
-   delete am;  // ------ we don't need Arguments Manager any longer ------
 
+   /* if unused Param we give up */
+   if ( am->ArgMgrPrintUnusedLabels() )
+   {
+      am->ArgMgrUsage(usage);
+      delete am;
+      return 0;
+   } 
+ 
+   delete am;  // ------ we don't need Arguments Manager any longer ------
 
    if ( fileName != 0 ) // ====== Deal with a single file ======
    {
@@ -165,9 +171,8 @@ int main(int argc, char *argv[])
 
       f->AnonymizeNoLoad();
 
-      // No need to write the File : modif were done on disc !
-      // File was overwritten ...
-
+      // No need to write the file : modif were done on disc !
+      //  ( The Dicom file is overwritten )
       std::cout <<"End AnonymizeNoLoad" << std::endl;
 
       // 
@@ -222,6 +227,8 @@ int main(int argc, char *argv[])
          // Telephone
          f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
 
+         // deal with user defined Elements set
+
          for (int ri=0; ri<rubOutNb; ri++)
          {
             f->AddAnonymizeElement((uint32_t)elemsToRubOut[2*ri], 
@@ -230,6 +237,7 @@ int main(int argc, char *argv[])
          std::cout <<"Let's AnonymizeNoLoad " << it->c_str() << std::endl;
 
          // The gdcm::File remains untouched in memory
+         // The Dicom file is overwritten on disc
 
          f->AnonymizeNoLoad();
 

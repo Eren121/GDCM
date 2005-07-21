@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:53 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/21 04:55:50 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,18 +27,18 @@
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n Anonymize :\n",
-   " Anonymize a full gdcm-readable Dicom image",
-   "          Warning : probably segfaults if pixels are not gdcm readable.",
-   "                    Use exAnonymizeNoLoad instead.",
-   " usage: Anonymize filein=inputFileName fileout=anonymizedFileName[debug] ",
-   "        debug    : user wants to run the program in 'debug mode' ",
+   " \n Anonymize :\n                                                         ",
+   " Anonymize a full gdcm-readable Dicom image                               ",
+   "          Warning : probably segfaults if pixels are not gdcm readable.   ",
+   "                    Use exAnonymizeNoLoad instead.                        ",
+   " usage: Anonymize filein=inputFileName fileout=anonymizedFileName[debug]  ",
+   "        debug    : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
   
-   if (am->ArgMgrDefined("usage")) 
+   if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;

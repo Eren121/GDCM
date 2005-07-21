@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 10:15:04 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/07/21 04:55:50 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,14 +48,17 @@ void EndMethod(void *toto) {
 int main(int argc, char *argv[]) 
 {
    START_USAGE(usage)
-   " \n MakeDicomDir :\n",
-   " Explores recursively the given directory, makes the relevant DICOMDIR",
-   "          and writes it as 'NewDICOMDIR'",
-   " usage: MakeDicomDir dirname=rootDirectoryName [noshadowseq][noshadow][noseq] [debug] ",
-   "        noshadowseq: user doesn't want to load Private Sequences",
-   "        noshadow : user doesn't want to load Private groups (odd number)",
-   "        noseq    : user doesn't want to load Sequences ",
-   "        debug    : user wants to run the program in 'debug mode' ",
+   " \n MakeDicomDir :\n                                                      ",
+   " Explores recursively the given directory, makes the relevant DICOMDIR    ",
+   "          and writes it as 'NewDICOMDIR'                                  ",
+   "                                                                          ", 
+   " usage: MakeDicomDir dirname=rootDirectoryName                            ",
+   "        [noshadowseq][noshadow][noseq] [debug]                            ",
+   "                                                                          ",
+   "        noshadowseq: user doesn't want to load Private Sequences          ",
+   "        noshadow : user doesn't want to load Private groups (odd number)  ",
+   "        noseq    : user doesn't want to load Sequences                    ",
+   "        debug    : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
@@ -108,7 +111,7 @@ int main(int argc, char *argv[])
 
    dcmdir->SetLoadMode(loadMode);
    dcmdir->SetDirectoryName(dirName);
-dcmdir->SetParseDir(true);
+   //dcmdir->SetParseDir(true);
    dcmdir->Load();
 
     // ----- Check the result

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 13:54:51 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/07/21 04:55:50 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
    // Initialize Arguments Manager   
    gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
   
-   if (argc == 1) 
+   if (argc == 1 || am->ArgMgrDefined("usage") )
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
