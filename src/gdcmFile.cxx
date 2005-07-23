@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/22 03:33:13 $
-  Version:   $Revision: 1.256 $
+  Date:      $Date: 2005/07/23 01:23:55 $
+  Version:   $Revision: 1.257 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@
 #include <vector>
 #include <stdio.h> //sscanf
 #include <stdlib.h> // for atoi
-#include <math.h> // for powf
+#include <math.h> // for pow
 
 namespace gdcm 
 {
@@ -1920,9 +1920,9 @@ float File::CalculLikelyhood2Vec(vector3D refA, vector3D refB,
 
    vector3D ori3 = ProductVectorial(ori1,ori2);
    vector3D refC = ProductVectorial(refA,refB);
-   float    res  = powf(refC.x-ori3.x, 2.) + 
-                   powf(refC.y-ori3.y, 2.) + 
-                   powf(refC.z-ori3.z, 2.);
+   float    res  = pow(refC.x-ori3.x, 2.) + 
+                   pow(refC.y-ori3.y, 2.) + 
+                   pow(refC.z-ori3.z, 2.);
 
 /*
 //   ori3=self.ProductVectorial(ori1,ori2)
