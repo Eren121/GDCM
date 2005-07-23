@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/23 01:27:57 $
-  Version:   $Revision: 1.258 $
+  Date:      $Date: 2005/07/23 01:54:03 $
+  Version:   $Revision: 1.259 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1764,7 +1764,8 @@ File::File( std::string const &filename )
    RLEInfo  = new RLEFramesInfo;
    JPEGInfo = new JPEGFragmentsInfo;
 
-   Load( filename ); // gdcm::Document is first Loaded, then the 'File part'
+   SetFileName( filename );
+   Load( ); // gdcm::Document is first Loaded, then the 'File part'
 }
 
 /**
