@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/23 01:54:03 $
-  Version:   $Revision: 1.259 $
+  Date:      $Date: 2005/07/23 02:01:37 $
+  Version:   $Revision: 1.260 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1880,7 +1880,6 @@ float File::TypeOrientation( )
 
 Res File::VerfCriterion(int typeCriterion, float criterionNew, Res res)
 {
-   float type      = res.first;
    float criterion = res.second;
    if (criterionNew < criterion)
    {
