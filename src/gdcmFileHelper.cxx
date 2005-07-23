@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/07/19 15:19:27 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/07/23 01:59:21 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1559,7 +1559,9 @@ void FileHelper::Print(std::ostream &os, std::string const &)
  */
 FileHelper::FileHelper(std::string const &filename )
 {
-   FileInternal = new File( filename );
+   FileInternal = new File( );
+   FileInternal->SetFileName( filename );
+   FileInternal->Load();
    SelfHeader = true;
    Initialize();
 }
