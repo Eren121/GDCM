@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/23 01:23:55 $
-  Version:   $Revision: 1.257 $
+  Date:      $Date: 2005/07/23 01:27:57 $
+  Version:   $Revision: 1.258 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1946,7 +1946,7 @@ vector3D File::ProductVectorial(vector3D vec1, vector3D vec2)
 //   # ------------------------- Other : -------------------------------------
 
    vector3D vec3;
-   vec3.x =    vec1.y*vec3.z - vec1.z*vec2.y;
+   vec3.x =    vec1.y*vec2.z - vec1.z*vec2.y;
    vec3.y = -( vec1.x*vec2.z - vec1.z*vec2.x);
    vec3.z =    vec1.x*vec2.y - vec1.y*vec2.x;
 /*
