@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/07/23 02:02:44 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -246,7 +246,9 @@ int WriteSimple(Image &img)
 
 // Step 5 : Read the written image
    std::cout << "5...";
-   gdcm::FileHelper *reread = new gdcm::FileHelper( fileName.str() );
+   gdcm::FileHelper *reread = new gdcm::FileHelper( );
+   reread->SetFileName( fileName.str() );
+   reread->Load();
    if( !reread->GetFile()->IsReadable() )
    {
       std::cerr << "Failed" << std::endl
