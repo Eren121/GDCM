@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 14:01:50 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2005/07/24 00:24:46 $
+  Version:   $Revision: 1.113 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -213,9 +213,9 @@ private:
    void ReadAndSkipEncapsulatedBasicOffsetTable();
 
    Res VerfCriterion(int typeCriterion, float criterionNew, Res res);
-   float CalculLikelyhood2Vec(vector3D refA, vector3D refB, 
-                              vector3D ori1, vector3D ori2);
-   vector3D ProductVectorial(vector3D vec1, vector3D vec2);
+   float CalculLikelyhood2Vec(vector3D const & refA, vector3D const & refB, 
+                              vector3D const & ori1, vector3D const & ori2);
+   vector3D ProductVectorial(vector3D const & vec1, vector3D const & vec2);
 };
 } // end namespace gdcm
 

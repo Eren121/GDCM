@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/23 02:01:37 $
-  Version:   $Revision: 1.260 $
+  Date:      $Date: 2005/07/24 00:24:46 $
+  Version:   $Revision: 1.261 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1878,6 +1878,8 @@ float File::TypeOrientation( )
 
 }
 
+// FIXME. Seriously who wrote that !
+// Haven't you ever heard of so called reference in c++
 Res File::VerfCriterion(int typeCriterion, float criterionNew, Res res)
 {
    float criterion = res.second;
@@ -1898,8 +1900,17 @@ Res File::VerfCriterion(int typeCriterion, float criterionNew, Res res)
    return res;
 } 
 
-float File::CalculLikelyhood2Vec(vector3D refA, vector3D refB, 
-                                 vector3D ori1, vector3D ori2)
+inline double square_dist(vector3D const &v1, vector3D const & v2)
+{
+  double res;
+  res = (v1.x - v2.x)*(v1.x - v2.x) +
+        (v1.y - v2.y)*(v1.y - v2.y) +
+        (v1.z - v2.z)*(v1.z - v2.z);
+  return res;
+}
+
+float File::CalculLikelyhood2Vec(vector3D const & refA, vector3D const &refB, 
+                                 vector3D const & ori1, vector3D const &ori2)
 {
 //   # ------------------------- Purpose : -----------------------------------
 //   # - This function determines the orientation similarity of two planes.
@@ -1920,9 +1931,7 @@ float File::CalculLikelyhood2Vec(vector3D refA, vector3D refB,
 
    vector3D ori3 = ProductVectorial(ori1,ori2);
    vector3D refC = ProductVectorial(refA,refB);
-   float    res  = pow(refC.x-ori3.x, 2.) + 
-                   pow(refC.y-ori3.y, 2.) + 
-                   pow(refC.z-ori3.z, 2.);
+  double res = square_dist(refC, ori3);
 
 /*
 //   ori3=self.ProductVectorial(ori1,ori2)
@@ -1933,7 +1942,7 @@ float File::CalculLikelyhood2Vec(vector3D refA, vector3D refB,
    return sqrt(res);
 }
 
-vector3D File::ProductVectorial(vector3D vec1, vector3D vec2)
+vector3D File::ProductVectorial(vector3D const & vec1, vector3D const & vec2)
 {
 
 //   # ------------------------- Purpose : -----------------------------------
