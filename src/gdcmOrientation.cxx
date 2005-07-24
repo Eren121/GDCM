@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/24 02:34:42 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/07/24 02:49:25 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmOrientation.h"
 #include "gdcmFile.h"
+#include "gdcmDebug.h"
 
 namespace gdcm 
 {
@@ -33,7 +34,6 @@ namespace gdcm
  * \brief  THERALYS' Algorithm to determine the most similar basic orientation
  *           (Axial, Coronal, Sagital) of the image
  * \note Should be run on the first gdcm::File of a 'coherent' Serie
- * @return orientation code
  * @return orientation code
  *   #   0 :   Not Applicable (neither 0020,0037 Image Orientation Patient 
  *   #                         nor     0020,0032Image Position     found )
@@ -56,7 +56,8 @@ double Orientation::TypeOrientation( File *f )
    bool succ = f->GetImageOrientationPatient( iop );
    if ( !succ )
    {
-      return 0.;
+      gdcmErrorMacro( "No Image Orientation (0020,0037) was found in the file, cannot proceed." )
+      return 0;
    }
 
    vector3D ori1;
@@ -67,12 +68,12 @@ double Orientation::TypeOrientation( File *f )
 
    // two perpendicular vectors describe one plane
    double dicPlane[6][2][3] =
-   { {  {1,    0,    0   },{0,       1,     0     }  },       // Axial
-     {  {1,    0,    0   },{0,       0,    -1     }  },       // Coronal
-     {  {0,    1,    0   },{0,       0,    -1     }  },       // Sagittal
-     {  { 0.8, 0.5,  0.0 },{-0.1,    0.1 , -0.95  }  },       // Axial - HEART
-     {  { 0.8, 0.5,  0.0 },{-0.6674, 0.687, 0.1794}  },       // Coronal - HEART
-     {  {-0.1, 0.1, -0.95},{-0.6674, 0.687, 0.1794}  }        // Sagittal - HEART
+   { {  {1,    0,    0   },{0,       1,     0     }  }, // Axial
+     {  {1,    0,    0   },{0,       0,    -1     }  }, // Coronal
+     {  {0,    1,    0   },{0,       0,    -1     }  }, // Sagittal
+     {  { 0.8, 0.5,  0.0 },{-0.1,    0.1 , -0.95  }  }, // Axial - HEART
+     {  { 0.8, 0.5,  0.0 },{-0.6674, 0.687, 0.1794}  }, // Coronal - HEART
+     {  {-0.1, 0.1, -0.95},{-0.6674, 0.687, 0.1794}  }  // Sagittal - HEART
    };
 
    vector3D refA;
@@ -159,7 +160,7 @@ inline double square_dist(vector3D const &v1, vector3D const & v2)
 // The calculus is based with vectors normalice
 double
 Orientation::CalculLikelyhood2Vec(vector3D const & refA, vector3D const & refB, 
-                           vector3D const & ori1, vector3D const & ori2 )
+                                  vector3D const & ori1, vector3D const & ori2 )
 {
 
    vector3D ori3 = ProductVectorial(ori1,ori2);
