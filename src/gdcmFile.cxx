@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/24 00:24:46 $
-  Version:   $Revision: 1.261 $
+  Date:      $Date: 2005/07/24 02:10:48 $
+  Version:   $Revision: 1.262 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,6 +82,7 @@
 
 namespace gdcm 
 {
+
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 
@@ -1788,7 +1789,7 @@ bool File::Load( std::string const &fileName )
 #endif
 
 // -----------------------------------------------------------------------------------------
-//             THERALYS Algorithm to determine the most similar basic orientation
+//  THERALYS Algorithm to determine the most similar basic orientation
 //
 //  Transliterated from original Python code.
 //  Kept as close as possible to the original code
@@ -1816,13 +1817,12 @@ bool File::Load( std::string const &fileName )
  *   #   6 :   Heart Sagital
  *   #  -6 :   Heart Sagital invert
  */
-float File::TypeOrientation( )
+double File::TypeOrientation( )
 {
-   float *iop = new float[6];
+   float iop[6];
    bool succ = GetImageOrientationPatient( iop );
    if ( !succ )
    {
-      delete iop;
       return 0.;
    }
 
@@ -1833,7 +1833,7 @@ float File::TypeOrientation( )
    ori1.x = iop[3]; ori2.y = iop[4]; ori2.z = iop[5];
 
    // two perpendicular vectors describe one plane
-   float dicPlane[6][2][3] =
+   double dicPlane[6][2][3] =
    { {  {1,    0,    0   },{0,       1,     0     }  },       // Axial
      {  {1,    0,    0   },{0,       0,    -1     }  },       // Coronal
      {  {0,    1,    0   },{0,       0,    -1     }  },       // Sagittal
@@ -1850,7 +1850,7 @@ float File::TypeOrientation( )
    res.second = 99999;
    for (int numDicPlane=0; numDicPlane<6; numDicPlane++)
    {
-       i = i + 1;
+       ++i;
        // refA=plane[0]
        refA.x = dicPlane[numDicPlane][0][0]; 
        refA.y = dicPlane[numDicPlane][0][1]; 
@@ -1862,7 +1862,6 @@ float File::TypeOrientation( )
        res=VerfCriterion(  i, CalculLikelyhood2Vec(refA,refB,ori1,ori2), res );
        res=VerfCriterion( -i, CalculLikelyhood2Vec(refB,refA,ori1,ori2), res );
    }
-   delete iop;
    return res.first;
 /*
 //             i=0
@@ -1878,11 +1877,11 @@ float File::TypeOrientation( )
 
 }
 
-// FIXME. Seriously who wrote that !
-// Haven't you ever heard of so called reference in c++
-Res File::VerfCriterion(int typeCriterion, float criterionNew, Res res)
+Res 
+File::VerfCriterion(int typeCriterion, double criterionNew, Res const & in)
 {
-   float criterion = res.second;
+   Res res;
+   double criterion = in.second;
    if (criterionNew < criterion)
    {
       res.first  = criterionNew;
@@ -1909,61 +1908,50 @@ inline double square_dist(vector3D const &v1, vector3D const & v2)
   return res;
 }
 
-float File::CalculLikelyhood2Vec(vector3D const & refA, vector3D const &refB, 
-                                 vector3D const & ori1, vector3D const &ori2)
+//------------------------- Purpose : -----------------------------------
+//- This function determines the orientation similarity of two planes.
+//  Each plane is described by two vectors.
+//------------------------- Parameters : --------------------------------
+//- <refA>  : - type : vector 3D (double)
+//- <refB>  : - type : vector 3D (double)
+//            - Description of the first plane
+//- <ori1>  : - type : vector 3D (double)
+//- <ori2>  : - type : vector 3D (double)
+//            - Description of the second plane
+//------------------------- Return : ------------------------------------
+// double :   0 if the planes are perpendicular. While the difference of
+//            the orientation between the planes are big more enlarge is
+//            the criterion.
+//------------------------- Other : -------------------------------------
+// The calculus is based with vectors normalice
+double
+File::CalculLikelyhood2Vec(vector3D const & refA, vector3D const & refB, 
+                           vector3D const & ori1, vector3D const & ori2 )
 {
-//   # ------------------------- Purpose : -----------------------------------
-//   # - This function determines the orientation similarity of two planes.
-//   #   Each plane is described by two vectors.
-//   # ------------------------- Parameters : --------------------------------
-//   # - <refA>  : - type : vector 3D (float)
-//   # - <refB>  : - type : vector 3D (float)
-//   #             - Description of the first plane
-//   # - <ori1>  : - type : vector 3D (float)
-//   # - <ori2>  : - type : vector 3D (float)
-//   #             - Description of the second plane
-//   # ------------------------- Return : ------------------------------------
-//   #  float :   0 if the planes are perpendicular. While the difference of
-//   #             the orientation between the planes are big more enlarge is
-//   #             the criterion.
-//   # ------------------------- Other : -------------------------------------
-//   #  The calculus is based with vectors normalice
 
    vector3D ori3 = ProductVectorial(ori1,ori2);
    vector3D refC = ProductVectorial(refA,refB);
-  double res = square_dist(refC, ori3);
+   double res = square_dist(refC, ori3);
 
-/*
-//   ori3=self.ProductVectorial(ori1,ori2)
-//   refC=self.ProductVectorial(refA,refB)
-//   res=math.pow(refC[0]-ori3[0],2) + math.pow(refC[1]-ori3[1],2) + math.pow(refC[2]-ori3[2],2)
-//   return math.sqrt(res)
-*/
    return sqrt(res);
 }
 
-vector3D File::ProductVectorial(vector3D const & vec1, vector3D const & vec2)
+//------------------------- Purpose : -----------------------------------
+//- Calculus of the poduct vectorial between two vectors 3D
+//------------------------- Parameters : --------------------------------
+//- <vec1>  : - type : vector 3D (double)
+//- <vec2>  : - type : vector 3D (double)
+//------------------------- Return : ------------------------------------
+// (vec) :    - Vector 3D
+//------------------------- Other : -------------------------------------
+vector3D
+File::ProductVectorial(vector3D const & vec1, vector3D const & vec2)
 {
-
-//   # ------------------------- Purpose : -----------------------------------
-//   # - Calculus of the poduct vectorial between two vectors 3D
-//   # ------------------------- Parameters : --------------------------------
-//   # - <vec1>  : - type : vector 3D (float)
-//   # - <vec2>  : - type : vector 3D (float)
-//   # ------------------------- Return : ------------------------------------
-//   #  (vec) :    - Vector 3D
-//   # ------------------------- Other : -------------------------------------
-
    vector3D vec3;
    vec3.x =    vec1.y*vec2.z - vec1.z*vec2.y;
    vec3.y = -( vec1.x*vec2.z - vec1.z*vec2.x);
    vec3.z =    vec1.x*vec2.y - vec1.y*vec2.x;
-/*
-//   vec3=[0,0,0]
-//   vec3[0]=vec1[1]*vec2[2]    - vec1[2]*vec2[1]
-//   vec3[1]=-( vec1[0]*vec2[2] - vec1[2]*vec2[0])
-//   vec3[2]=vec1[0]*vec2[1]    - vec1[1]*vec2[0]
-*/
+
    return vec3;
 }
 
