@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 05:02:11 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/07/24 00:55:20 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -211,7 +211,13 @@ public:
   // Setup compile-time warnings for uses of deprecated methods if
   // possible on this compiler.
 # if defined(__GNUC__) && !defined(__INTEL_COMPILER) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#if defined(__APPLE__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 3)
+// Seems like there is a bug in APPLE gcc for deprecated attribute and ctor
+// This is fixed in g++ 4.0 (Tiger)
+#  define GDCM_LEGACY(method) method
+#else
 #  define GDCM_LEGACY(method) method __attribute__((deprecated))
+#endif
 # elif defined(_MSC_VER) && _MSC_VER >= 1300
 #  define GDCM_LEGACY(method) __declspec(deprecated) method
 # else
