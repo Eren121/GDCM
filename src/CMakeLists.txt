@@ -63,6 +63,7 @@ SET(libgdcm_la_SOURCES
    gdcmJpeg16.cxx
    gdcmJpeg2000.cxx
    #   gdcmMpeg.cxx
+   gdcmOrientation.cxx
    gdcmPixelReadConvert.cxx
    gdcmPixelWriteConvert.cxx
    gdcmRLEFrame.cxx
