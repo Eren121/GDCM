@@ -200,6 +200,7 @@ CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
 
 INSTALL_FILES(/include .h gdcmConfigure.h)
+INSTALL_FILES(/lib .cmake GDCMBuildSettings  GDCMConfig  GDCMLibraryDepends)
 
 #-----------------------------------------------------------------------------
 # Add the testing directories
