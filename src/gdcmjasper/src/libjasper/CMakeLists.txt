@@ -48,4 +48,4 @@ IF(HAVE_LIBJPEG)
   TARGET_LINK_LIBRARIES(gdcmjasper gdcmjpeg8)
 ENDIF(HAVE_LIBJPEG)
 
-NSTALL_TARGETS(/lib/gdcm/ gdcmjasper)
+INSTALL_TARGETS(/lib/gdcm/ gdcmjasper)
