@@ -23,7 +23,7 @@ MACRO(GDCM_CONVENIENT_LIBRARY)
 ENDMACRO(GDCM_CONVENIENT_LIBRARY)
 
 # Yeah ! I know how come I only did jpeg 8bits... bla bla
-# I'll wait until I actually such beast of jpeg2000 + some
+# I'll wait until I actually see such beast as jpeg2000 + some
 # crazy 16bits lossless jpeg...
 IF(HAVE_LIBJPEG)
   INCLUDE_DIRECTORIES(${GDCM_BINARY_DIR}/src/gdcmjpeg/8)
@@ -48,4 +48,4 @@ IF(HAVE_LIBJPEG)
   TARGET_LINK_LIBRARIES(gdcmjasper gdcmjpeg8)
 ENDIF(HAVE_LIBJPEG)
 
-
+NSTALL_TARGETS(/lib/gdcm/ gdcmjasper)
