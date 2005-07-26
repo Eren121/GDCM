@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:55:50 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/07/26 02:25:25 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,6 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
-
 #include "gdcmArgMgr.h"
 
 #include <iostream>
@@ -130,7 +129,9 @@ int main(int argc, char *argv[])
    delete dcmdir;
 
    // Read from disc the just written DicomDir
-   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir("NewDICOMDIR");
+   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir();
+   newDicomDir->SetFileName( "NewDICOMDIR" );
+   newDicomDir->Load();
    if( !newDicomDir->IsReadable() )
    {
       std::cout<<"          Written DicomDir 'NewDICOMDIR'"
