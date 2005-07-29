@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 06:39:24 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/07/29 15:07:16 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,6 +52,7 @@ SerieHelper::SerieHelper()
       delete l;;
       l = GetNextCoherentFileList();
    }
+   DirectOrder = true;
 }
 
 /**
@@ -218,7 +219,6 @@ void SerieHelper::AddGdcmFile(File *header)
       }
          // Even if a rule was unmatch we don't deallocate the gdcm::File:
 }
-
 
 /**
  * \brief add a rules for restricting a DICOM file to be in the serie we are
@@ -457,13 +457,26 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    }
 
    fileList->clear();  // doesn't delete list elements, only nodes
-  
-   //VC++ don't understand what scope is !! it -> it3
-   for (FileVector::const_iterator it3  = CoherentFileVector.begin();
-        it3 != CoherentFileVector.end(); ++it3)
-   {
-      fileList->push_back( *it3 );
+
+   if (DirectOrder)
+   {  
+      //VC++ don't understand what scope is !! it -> it3
+      for (FileVector::const_iterator it3  = CoherentFileVector.begin();
+           it3 != CoherentFileVector.end(); ++it3)
+      {
+         fileList->push_back( *it3 );
+      }
    }
+   else // user asked for reverse order
+   {
+      FileVector::const_iterator it4;
+      it4 = CoherentFileVector.end();
+      do
+      {
+         it4--;
+         fileList->push_back( *it4 );
+      } while (it4 != CoherentFileVector.begin() );
+   } 
 
    distlist.clear();
    CoherentFileVector.clear();
@@ -476,6 +489,10 @@ bool SerieHelper::ImageNumberLessThan(File *file1, File *file2)
   return file1->GetImageNumber() < file2->GetImageNumber();
 }
 
+bool SerieHelper::ImageNumberGreaterThan(File *file1, File *file2)
+{
+  return file1->GetImageNumber() > file2->GetImageNumber();
+}
 /**
  * \brief sorts the images, according to their Image Number
  * \note Works only on bona fide files  (i.e image number is a character string
@@ -505,7 +522,10 @@ bool SerieHelper::ImageNumberOrdering(FileList *fileList)
       gdcmWarningMacro( " 'Image numbers' not coherent. No ImageNumberOrdering sort performed.");
       return false;
    }
-   std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberLessThan );
+   if (DirectOrder) 
+      std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberLessThan );
+   else
+      std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberGreaterThan );
 
    return true;
 }
@@ -515,6 +535,10 @@ bool SerieHelper::FileNameLessThan(File *file1, File *file2)
   return file1->GetFileName() < file2->GetFileName();
 }
 
+bool SerieHelper::FileNameGreaterThan(File *file1, File *file2)
+{
+  return file1->GetFileName() > file2->GetFileName();
+}
 /**
  * \brief sorts the images, according to their File Name
  * @param fileList Coherent File list (same Serie UID) to sort
@@ -522,7 +546,11 @@ bool SerieHelper::FileNameLessThan(File *file1, File *file2)
  */
 bool SerieHelper::FileNameOrdering(FileList *fileList)
 {
-   std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameLessThan);
+   if (DirectOrder) 
+      std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameLessThan);
+   else
+      std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameGreaterThan);
+
    return true;
 }
 

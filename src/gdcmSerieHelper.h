@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 05:00:30 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/07/29 15:07:16 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,13 +83,21 @@ public:
  */
    void SetLoadMode (int mode) { LoadMode = mode; }
 
+/// Brief User wants the files to be sorted Direct Order (default value)
+   void SetSortOrderToDirect()  { DirectOrder = true;  }
+
+/// Brief User wants the files to be sorted Reverse Order 
+   void SetSortOrderToReverse() { DirectOrder = false; }
+
 private:
    bool ImagePositionPatientOrdering(FileList *coherentFileList);
    bool ImageNumberOrdering(FileList *coherentFileList);
    bool FileNameOrdering(FileList *coherentFileList);
    
    static bool ImageNumberLessThan(File *file1, File *file2);
+   static bool ImageNumberGreaterThan(File *file1, File *file2);
    static bool FileNameLessThan(File *file1, File *file2);
+   static bool FileNameGreaterThan(File *file1, File *file2);
 
 //Attributes:
    CoherentFileListmap CoherentFileListHT;
@@ -114,6 +122,10 @@ private:
    ///        Bit 1 : Skip Shadow Groups if possible
    ///        Probabely, some more to add
    int LoadMode;
+
+   /// \brief whether we want to sort in direct order or not (reverse order).
+   ///        To be used by aware user only
+   bool DirectOrder;
 };
 
 } // end namespace gdcm
