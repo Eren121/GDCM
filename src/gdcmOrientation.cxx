@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/25 03:44:35 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/07/29 15:07:56 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ namespace gdcm
  * \note Should be run on the first gdcm::File of a 'coherent' Serie
  * @return orientation code
  *   #   0 :   Not Applicable (neither 0020,0037 Image Orientation Patient 
- *   #                         nor     0020,0032Image Position     found )
+ *   #                         nor     0020,0032 Image Position    found )
  *   #   1 :   Axial
  *   #  -1 :   Axial invert
  *   #   2 :   Coronal
@@ -109,11 +109,10 @@ double Orientation::TypeOrientation( File *f )
 //                 res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
 //             return res[0]
 */
-
 }
 
 Res 
-Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const & in)
+Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in)
 {
    Res res;
    double criterion = in.second;
@@ -134,7 +133,7 @@ Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const & i
    return res;
 } 
 
-inline double square_dist(vector3D const &v1, vector3D const & v2)
+inline double square_dist(vector3D const &v1, vector3D const &v2)
 {
   double res;
   res = (v1.x - v2.x)*(v1.x - v2.x) +
@@ -160,8 +159,8 @@ inline double square_dist(vector3D const &v1, vector3D const & v2)
 //------------------------- Other : -------------------------------------
 // The calculus is based with vectors normalice
 double
-Orientation::CalculLikelyhood2Vec(vector3D const & refA, vector3D const & refB, 
-                                  vector3D const & ori1, vector3D const & ori2 )
+Orientation::CalculLikelyhood2Vec(vector3D const &refA, vector3D const &refB, 
+                                  vector3D const &ori1, vector3D const &ori2 )
 {
 
    vector3D ori3 = ProductVectorial(ori1,ori2);
