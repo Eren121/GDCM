@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:28:54 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/07/29 15:24:04 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,12 +83,15 @@ public:
 
 int main(int argc, char *argv[])
 {
-   if( argc < 2 )
+   if( argc == 1 )
+   {
+      std::cout << "Usage : vtkgdcmSerieViewer directoryName [reverse] [debug]"
+                << std::endl;
       return 0;
+   }
 
-  if( argc > 2 )
+  if( argc > 3 )
     gdcm::Debug::DebugOn();
-
   
    vtkGdcmReader *reader = vtkGdcmReader::New();
    reader->AllowLookupTableOff();
@@ -97,6 +100,8 @@ int main(int argc, char *argv[])
 
    gdcm::SerieHelper *sh = new gdcm::SerieHelper();
    sh->SetLoadMode(NO_SHADOWSEQ);
+   if (argc > 2)
+      sh->SetSortOrderToReverse();  // just to check
    sh->SetDirectory( argv[1], true);
     
    // Just to see
