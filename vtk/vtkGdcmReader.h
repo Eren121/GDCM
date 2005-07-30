@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:34:20 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/07/30 18:31:25 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 
+typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, gdcm::File *);
+
 //-----------------------------------------------------------------------------
 class vtkLookupTable;
 
@@ -42,9 +44,10 @@ public:
    virtual void AddFileName(const char *name);
    virtual void SetFileName(const char *name);
    void SetCoherentFileList( std::vector<gdcm::File* > *cfl) {
-                                                      CoherentFileList = cfl; };    
+                                                      CoherentFileList = cfl; }    
    void SetCheckFileCoherenceLight();
-   
+   void SetUserFunction (VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
+                        { UserFunction = userFunc; }   
    // Description:
    // If this flag is set and the DICOM reader encounters a dicom file with 
    // lookup table the data will be kept as unsigned chars and a lookuptable 
@@ -131,9 +134,12 @@ private:
    /// \brief Bit string integer (each one considered as a boolean)
    ///        Bit 0 : Skip Sequences,    if possible
    ///        Bit 1 : Skip Shadow Groups if possible
-  ///         Bit 2 : Skip Sequences inside a Shadow Group, if possible
+   ///        Bit 2 : Skip Sequences inside a Shadow Group, if possible
    ///        Probabely (?), some more to add
    int LoadMode;
+
+   /// Pointer to a user suplied function to allow modification of pixel order
+   VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
 
 };
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:34:20 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/07/30 18:31:25 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,8 +18,42 @@
                                                                                 
 //-----------------------------------------------------------------------------
 // //////////////////////////////////////////////////////////////
+//
+//===>  Many users expect from vtkGdcmReader it 'orders' the images
+//     (that's the job of gdcm::SerieHelper ...)
+//     When user *knows* the files with same Serie UID 
+//        have same sizes, same 'pixel' type, same color convention, ...
+//     the right way to proceed is as follow :
+//
+//      gdcm::SerieHelper *sh= new gdcm::SerieHelper();
+//      // if user wants *not* to load some parts of the file headers
+//      sh->SetLoadMode(loadMode);
+//      // if user wants *not* to load some files 
+//      sh->AddRestriction(group, element, value, operator);
+//      sh->AddRestriction( ...
+//      sh->SetDirectory(directoryWithImages);
+//
+//      // if user wants to sort reverse order
+//      sh->SetSortOrderToReverse(); 
+//      // here, we suppose only the first Coherent File List is of interest
+//      gdcm::FileList *l = sh->GetFirstCoherentFileList();
+//      // if user is doesn't trust too much the files with same Serie UID 
+//      if ( !sh->IsCoherent(l) )
+//         return; // not same sizes, same 'pixel' type -> stop
+//      sh->OrderFileList(l);        // sort the list
+//
+//      vtkGdcmReader *reader = vtkGdcmReader::New();
+//      // if user wants to modify pixel order (Mirror, TopDown, 90°Rotate, ...)
+//      // he has to supply the function that does the job 
+//      // (a *very* simple example is given in vtkgdcmSerieViewer.cxx)
+//      reader->SetUserFunction (userSuppliedFunction);
+//      // to pass a 'Coherent File List' as produced by gdcm::SerieHelper
+//      reader->SetCoherentFileList(l); 
+//      reader->Update();
+ 
 // WARNING TODO CLEANME 
-// Actual limitations of this code:
+// Actual limitations of this code 
+//  when a Coherent File List from SerieHelper is not used (bad idea :-(
 //
 // /////// Redundant and unnecessary header parsing
 // In it's current state this code actually parses three times the Dicom
@@ -48,15 +82,15 @@
 //      is compared to this new value to find a modification in the class
 //      parameters
 //  2b/ the core of ExecuteData then needs gdcm::File (which in turns
-//      initialises gdcm::File in the constructor) in order to access
+//      initializes gdcm::File in the constructor) in order to access
 //      the data-image.
 //
 // Possible solution:
 // maintain a list of gdcm::Files (created by say ExecuteInformation) created
 // once and for all accross the life of vtkGdcmFile (it would only load
 // new gdcm::File if the user changes the list). ExecuteData would then use 
-// those gdcm::File and hence avoid calling the construtor:
-//  - advantage: the header of the files would only be parser once.
+// those gdcm::File and hence avoid calling the constructor:
+//  - advantage: the header of the files would only be parsed once.
 //  - drawback: once execute information is called (i.e. on creation of
 //              a vtkGdcmFile) the gdcm::File structure is loaded in memory.
 //              The average size of a gdcm::File being of 100Ko, 
@@ -72,11 +106,7 @@
 // time...
 //
 //
-//===>  Since many users expect from vtkGdcmReader it 'orders' the images
-//     (that's the job of gdcm::SerieHelper), user may now call 
-//      vtkGdcmReader::SetCoherentFileList() to pass a 'Coherent File List'
-//      as produced by gdcm::SerieHelper
-//     See the limitations of gdcm::SerieHelper before ... 
+
 // //////////////////////////////////////////////////////////////
 
 #include "gdcmFileHelper.h"
@@ -92,7 +122,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.73 $");
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.74 $");
 vtkStandardNewMacro(vtkGdcmReader);
 
 //-----------------------------------------------------------------------------
@@ -105,6 +135,7 @@ vtkGdcmReader::vtkGdcmReader()
    this->LoadMode = 0; // Load everything (possible values : NO_SEQ, NO_SHADOW,
                        //                                    NO_SHADOWSEQ)
    this->CoherentFileList = 0;
+   this->UserFunction     = 0;
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -532,7 +563,7 @@ int vtkGdcmReader::CheckFileCoherence()
       {
          vtkErrorMacro(<< "Unable to open file " << filename->c_str());
          vtkErrorMacro(<< "Removing this file from read files: "
-                     << filename->c_str());
+                       << filename->c_str());
          *filename = "GDCM_UNREADABLE";
          continue;
       }
@@ -540,12 +571,11 @@ int vtkGdcmReader::CheckFileCoherence()
 
       // Stage 1.2: check for Gdcm parsability
 
-      //gdcm::File GdcmFile( filename->c_str() );
-
       // to save some parsing time.
       gdcm::File GdcmFile;
       GdcmFile.SetLoadMode( LoadMode );
-      GdcmFile.Load(filename->c_str() );
+      GdcmFile.SetFileName(filename->c_str() );
+      GdcmFile.Load( );
       if (!GdcmFile.IsReadable())
       {
          vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
@@ -564,7 +594,7 @@ int vtkGdcmReader::CheckFileCoherence()
          vtkErrorMacro(<< "Bad File Type for file " << filename->c_str() << "\n"
                        << "   File type found : " << type.c_str() 
                        << " (might be 8U, 8S, 16U, 16S, 32U, 32S) \n"
-                       << "   Removing this file from readed files");
+                       << "   Removing this file from read files");
          *filename = "GDCM_UNREADABLE";
          continue;
       }
@@ -581,9 +611,9 @@ int vtkGdcmReader::CheckFileCoherence()
              || ( type != this->ImageType ) ) 
          {
             vtkErrorMacro(<< "This file is not coherent with previous ones: "
-                           << filename->c_str());
-            vtkErrorMacro(<< "Removing this file from readed files: "
-                           << filename->c_str());
+                          << filename->c_str());
+            vtkErrorMacro(<< "Removing this file from read files: "
+                          << filename->c_str());
             *filename = "GDCM_UNREADABLE";
             continue;
          }
@@ -592,19 +622,19 @@ int vtkGdcmReader::CheckFileCoherence()
          if ( NZ != ReferenceNZ )
          {
             vtkErrorMacro(<< "File is not coherent in Z with previous ones: "
-                           << filename->c_str());
+                          << filename->c_str());
          }
          else
          {
             vtkDebugMacro(<< "File is coherent with previous ones: "
-                           << filename->c_str());
+                          << filename->c_str());
          }
 
          // Stage 2.3: when the file is 'multiframe', notify the caller.
          if (NZ > 1)
          {
             vtkErrorMacro(<< "This file is a 'Multiframe' one: "
-                           << filename->c_str());
+                          << filename->c_str());
          }
 
          // Eventually, this file can be added on the stack. Update the
@@ -746,6 +776,8 @@ size_t vtkGdcmReader::DoTheLoadingJob (gdcm::File *f,
                                        unsigned long &updateProgressCount)
 {
    gdcm::FileHelper *fileH = new gdcm::FileHelper( f );
+   fileH->SetUserFunction( UserFunction );
+
    size_t size;
 
    // If the data structure of vtk for image/volume representation
