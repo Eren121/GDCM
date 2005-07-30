@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:35:00 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/07/30 18:27:00 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,9 +30,13 @@ class File;
 class RLEFramesInfo;
 class JPEGFragmentsInfo;
 
+typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, File *);
+
 /**
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
+ * WARNING : *none* of these functions may be invoked by gdm user
+ *           (internal use only)
  */
 class GDCM_EXPORT PixelReadConvert : public Base
 {
@@ -60,6 +64,8 @@ public:
    bool BuildRGBImage();
    void BuildLUTRGBA();
 
+   void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
+                         { UserFunction = userFunc; }
 private:
    // Use the fp:
    void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp ) 
@@ -111,7 +117,7 @@ private:
    int BitsStored;
    int HighBitPosition;
    int SamplesPerPixel;
-   int PixelSize;
+   //int PixelSize; // useless
    bool PixelSign;
    int SwapCode;
 
@@ -141,6 +147,9 @@ private:
    uint8_t *LutRedData;
    uint8_t *LutGreenData;
    uint8_t *LutBlueData;
+   
+   File *FileInternal; // must be passed to User Function
+   VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
 };
 } // end namespace gdcm
 

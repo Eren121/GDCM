@@ -1,10 +1,10 @@
 /*=========================================================================
-
+ 
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/01 11:25:51 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/07/30 18:27:00 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,6 +52,8 @@ PixelReadConvert::PixelReadConvert()
    LutBlueData  = 0;
    RLEInfo      = 0;
    JPEGInfo     = 0;
+   UserFunction = 0;
+   FileInternal = 0;
 }
 
 /// Canonical Destructor
@@ -109,7 +111,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    YSize           = file->GetYSize();
    ZSize           = file->GetZSize();
    SamplesPerPixel = file->GetSamplesPerPixel();
-   PixelSize       = file->GetPixelSize();
+   //PixelSize       = file->GetPixelSize();  Useless
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
    std::string ts  = file->GetTransferSyntax();
@@ -188,6 +190,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
          gdcmWarningMacro( "Unable to read Blue Palette Color Lookup Table data" );
       }
    }
+   FileInternal = file;   
 
    ComputeRawAndRGBSizes();
 }
@@ -261,7 +264,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    {
       //gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
       //return false;
-      //ReadMPEGFile(fp, Raw, PixelDataLength); // fp has already been seek to start of mpeg
+      // fp has already been seek to start of mpeg
+      //ReadMPEGFile(fp, Raw, PixelDataLength); 
       return true;
    }
    else
@@ -279,6 +283,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    ConvertReorderEndianity();
    ConvertReArrangeBits();
    ConvertFixGreyLevels();
+   if (UserFunction) // user is allowed to Mirror, TopDown, Rotate, .. the image
+      UserFunction( Raw, FileInternal);
    ConvertHandleColor();
 
    return true;

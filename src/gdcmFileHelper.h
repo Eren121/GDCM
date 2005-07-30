@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:27 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/07/30 18:27:00 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,8 @@
 #include "gdcmBase.h"
 //#include <iostream>
 
+
+
 namespace gdcm 
 {
 class File;
@@ -32,6 +34,9 @@ class SeqEntry;
 class PixelReadConvert;
 class PixelWriteConvert;
 class DocEntryArchive;
+
+typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, File *);
+
 //-----------------------------------------------------------------------------
 /**
  * \brief In addition to Dicom header exploration, this class is designed
@@ -63,7 +68,9 @@ public:
    void SetLoadMode(int loadMode);
    void SetFileName(std::string const &fileName);
    bool Load();
-   
+   /// to allow user user to modify pixel order (Mirror, TopDown, 90°Rotate,...)
+   void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
+                        { UserFunction = userFunc; }   
    // File methods
    bool SetValEntry(std::string const &content,
                     uint16_t group, uint16_t elem);
@@ -106,7 +113,7 @@ public:
 
    /// \brief Tells the writer we want to keep 'Grey pixels + Palettes color'
    ///        when possible (as opposed to convert 'Palettes color' to RGB)
-  void SetWriteModeToRaw()            { SetWriteMode(WMODE_RAW);  };
+   void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
    /// \brief Tells the writer we want to write RGB image when possible
    ///        (as opposed to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  };
@@ -177,7 +184,7 @@ private:
    ///  When false the destructor is in charge of deletion.
    bool SelfHeader;
    
-   /// Wether already parsed or not
+   /// Whether already parsed or not
    bool Parsed;
 
    // Utility pixel converter
@@ -195,6 +202,13 @@ private:
    FileMode WriteMode;
    /// \brief (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType WriteType;
+   /// Pointer to a user supplied function to allow modification of pixel order
+   /// (i.e. : Mirror, TopDown, 90°Rotation, ...)
+   /// use as : void userSuppliedMirrorFunction(uint8_t *im, gdcm::File *f)
+   /// NB : the "uint8_t *" type of first param is just for prototyping.
+   /// User will Cast it according what he founds with f->GetPixelType()
+   /// See ctkgdcmSerieViewer for an example
+   VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
 };
 } // end namespace gdcm
 

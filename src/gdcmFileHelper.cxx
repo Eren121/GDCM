@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/07/23 01:59:21 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/07/30 18:27:00 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,6 +122,7 @@ FileHelper::FileHelper( )
 {
    FileInternal = new File( );
    SelfHeader = true;
+   UserFunction = 0;
    Initialize();
 }
 
@@ -142,6 +143,7 @@ FileHelper::FileHelper(File *header)
 {
    FileInternal = header;
    SelfHeader = false;
+   UserFunction = 0;
    Initialize();
 }
 
@@ -1507,6 +1509,8 @@ void FileHelper::Initialize()
  */ 
 uint8_t *FileHelper::GetRaw()
 {
+   PixelReadConverter->SetUserFunction( UserFunction );
+
    uint8_t *raw = PixelReadConverter->GetRaw();
    if ( ! raw )
    {
