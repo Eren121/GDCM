@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/24 02:34:41 $
-  Version:   $Revision: 1.263 $
+  Date:      $Date: 2005/07/30 18:17:08 $
+  Version:   $Revision: 1.264 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -785,8 +785,8 @@ int File::GetBitsStored()
 
 /**
  * \brief   Retrieve the number of Bits Allocated
- *          (8, 12 -compacted ACR-NEMA files-, 16, ...)
- * @return  The encountered number of Bits Allocated, 0 by default.
+ *          (8, 12 -compacted ACR-NEMA files-, 16, 24 -old RGB ACR-NEMA files-,)
+ * @return  The encountered Number of Bits Allocated, 0 by default.
  *          0 means the file is NOT USABLE. The caller has to check it !
  */
 int File::GetBitsAllocated()
@@ -920,8 +920,8 @@ std::string File::GetPixelType()
    }
    else if ( bitsAlloc == "24" )
    {
-      // (in order no to be messed up
-      bitsAlloc = "8";  // by old RGB images)
+      // (in order no to be messed up by old RGB images)
+      bitsAlloc = "8";
    }
 
    std::string sign = GetEntryValue(0x0028, 0x0103);//"Pixel Representation"

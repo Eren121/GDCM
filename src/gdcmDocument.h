@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/17 04:28:55 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2005/07/30 18:19:44 $
+  Version:   $Revision: 1.118 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,8 @@
 
 #define NO_SEQ        0x00000001  // Don't load odd groups
 #define NO_SHADOW     0x00000002  // Don't load Sequences
-#define NO_SHADOWSEQ  0x00000004  // Don't load Sequences if they belong to odd group
+#define NO_SHADOWSEQ  0x00000004  // Don't load Sequences if they belong 
+                                  // to an odd group
                                   // (*exclusive* from NO_SEQ and NO_SHADOW)
 namespace gdcm 
 {
@@ -113,7 +114,7 @@ typedef std::list<Element> ListElements;
  * @param   mode Load mode to be used    
  */
    void SetLoadMode (int mode) { if (LoadMode != mode) 
-                                     LoadMode = mode, IsDocumentModified = true; }
+                                     LoadMode=mode, IsDocumentModified = true; }
 
 protected:
 // Methods
