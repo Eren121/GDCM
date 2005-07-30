@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/29 15:07:16 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/07/30 18:13:24 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,6 +54,7 @@ public:
    void AddGdcmFile(File *header);
 
    void SetDirectory(std::string const &dir, bool recursive=false);
+   bool IsCoherent(FileList *coherentFileList);
    void OrderFileList(FileList *coherentFileList);
    
    /// \brief Gets the FIRST *coherent* File List.

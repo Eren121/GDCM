@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/29 15:07:16 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/07/30 18:13:24 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ namespace gdcm
  */
 SerieHelper::SerieHelper()
 {
-   // For all the File lists of the gdcm::Serie
+   // For all the File lists that may already exist within the gdcm::Serie
    FileList *l = GetFirstCoherentFileList();
    while (l)
    { 
@@ -46,10 +46,10 @@ SerieHelper::SerieHelper()
                               it != l->end(); 
                             ++it)
       {
-         delete *it;
+         delete *it; // remove entry
       }
       l->clear();
-      delete l;;
+      delete l;     // remove the list
       l = GetNextCoherentFileList();
    }
    DirectOrder = true;
@@ -69,10 +69,10 @@ SerieHelper::~SerieHelper()
                               it != l->end(); 
                             ++it)
       {
-         delete *it;
+         delete *it; // remove entry
       }
       l->clear();
-      delete l;
+      delete l;  // remove the list
       l = GetNextCoherentFileList();
    }
 }
@@ -296,6 +296,36 @@ void SerieHelper::OrderFileList(FileList *coherentFileList)
    }
 }
 
+/**
+ * \brief Elementary coherence checking of the files with the same Serie UID
+ * Only sizes and pixel type are checked right now ...
+ */ 
+bool SerieHelper::IsCoherent(FileList *coherentFileList)
+{
+   if(coherentFileList->size() == 1)
+   return true;
+
+   FileList::const_iterator it = coherentFileList->begin();
+
+   int nX = (*it)->GetXSize();
+   int nY = (*it)->GetYSize();
+   int pixelSize = (*it)->GetPixelSize();
+
+   it ++;
+   for ( ;
+         it != coherentFileList->end();
+       ++it)
+   {
+      if ( (*it)->GetXSize() != nX )
+         return false;
+      if ( (*it)->GetYSize() != nY )
+         return false;
+      if ( (*it)->GetPixelSize() != pixelSize )
+         return false;
+      // probabely more is to be checked (?)
+   }
+   return true;
+}
 /**
  * \brief   Get the first List while visiting the CoherentFileListHT
  * @return  The first FileList if found, otherwhise NULL
