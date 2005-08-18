@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 14:43:48 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/08/18 14:34:47 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,11 +140,11 @@ inline std::ostream& operator<<(std::ostream& _O, TagKey _val)
   return (_O << std::hex << std::setw( 4 ) << std::setfill( '0' )
      << _val.tab[0] << '|' << std::setw( 4 ) << std::setfill( '0' )
      << _val.tab[1] << std::setfill( ' ' ) << std::dec);
-};
+}
 inline bool operator==(TagKey _self, TagKey _val)
 {
   return _self.tagkey == _val.tagkey;
-};
+}
 inline bool operator<(TagKey _self, TagKey _val)
 {
   // This expression is a tad faster but PrintFile output
@@ -155,7 +155,7 @@ inline bool operator<(TagKey _self, TagKey _val)
   if( _self.tab[0] == _val.tab[0] )
     return _self.tab[1] < _val.tab[1];
   return _self.tab[0] < _val.tab[0];
-};
+}
 #else
 typedef std::string TagKey;
 #endif
@@ -164,7 +164,7 @@ typedef std::string TagKey;
 inline std::ostream& operator<<(std::ostream& _O, std::string _val)
 {
   return _O << _val.c_str();
-};
+}
 #endif
 typedef std::string TagName;
 
