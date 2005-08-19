@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/18 14:34:47 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2005/08/19 16:31:07 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -208,6 +208,13 @@ struct Element
    /// value (coded as a std::string) of the Element
    std::string Value;
 };
+
+// Provide a simple static GetVersion() function
+
+static const char *GetVersion()
+{
+  return GDCM_VERSION;
+}
 
 } //namespace gdcm
 //-----------------------------------------------------------------------------

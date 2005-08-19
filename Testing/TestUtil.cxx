@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/17 11:14:56 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/08/19 16:31:06 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,8 @@ int TestUtil(int , char *[])
    uint32_t u32 = 0x01020304;
    float flt= 1.0;
    double dbl=1.0;
+
+   std::cout << "This is gdcm version: " << gdcm::GetVersion() << std::endl;
 
    std::cout << "---------- uint16 : " << std::dec <<u16 << " = 0x" 
              << std::hex << u16 << std::endl;
