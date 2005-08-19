@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:27:00 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/08/19 13:15:05 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -283,7 +283,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    ConvertReorderEndianity();
    ConvertReArrangeBits();
    ConvertFixGreyLevels();
-   if (UserFunction) // user is allowed to Mirror, TopDown, Rotate, .. the image
+   if (UserFunction) // user is allowed to Mirror, TopDown, Rotate,...the image
       UserFunction( Raw, FileInternal);
    ConvertHandleColor();
 
@@ -1287,14 +1287,3 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
-
-// NOTES on File internal calls
-// User
-// ---> GetImageData
-//     ---> GetImageDataIntoVector
-//        |---> GetImageDataIntoVectorRaw
-//        | lut intervention
-// User
-// ---> GetImageDataRaw
-//     ---> GetImageDataIntoVectorRaw
-

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:27:00 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/08/19 13:15:05 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ public:
    void SetLoadMode(int loadMode);
    void SetFileName(std::string const &fileName);
    bool Load();
-   /// to allow user user to modify pixel order (Mirror, TopDown, 90°Rotate,...)
+   /// to allow user to modify pixel order (e.g. Mirror, TopDown, 90°Rotate,...)
    void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
                         { UserFunction = userFunc; }   
    // File methods
@@ -89,7 +89,8 @@ public:
 
    uint8_t *GetImageData();
    uint8_t *GetImageDataRaw();
-   size_t GetImageDataIntoVector(void *destination, size_t maxSize);
+
+   GDCM_LEGACY(size_t GetImageDataIntoVector(void *destination,size_t maxSize));
 
    void SetImageData(uint8_t *data, size_t expectedSize);
 
@@ -204,10 +205,10 @@ private:
    FileType WriteType;
    /// Pointer to a user supplied function to allow modification of pixel order
    /// (i.e. : Mirror, TopDown, 90°Rotation, ...)
-   /// use as : void userSuppliedMirrorFunction(uint8_t *im, gdcm::File *f)
+   /// use as : void userSuppliedFunction(uint8_t *im, gdcm::File *f)
    /// NB : the "uint8_t *" type of first param is just for prototyping.
    /// User will Cast it according what he founds with f->GetPixelType()
-   /// See ctkgdcmSerieViewer for an example
+   /// See vtkgdcmSerieViewer for an example
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
 };
 } // end namespace gdcm

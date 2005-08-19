@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/23 01:59:21 $
-  Version:   $Revision: 1.152 $
+  Date:      $Date: 2005/08/19 13:15:05 $
+  Version:   $Revision: 1.153 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,8 @@
 //
 // (Root directory Entity)     PATIENT
 // PATIENT                     STUDY
-// STUDY                       SERIES 
+// STUDY                       SERIES
+// STUDY                       VISIT 
 // SERIES                      IMAGE
 // IMAGE                       /
 //
