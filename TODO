@@ -10,42 +10,6 @@ Details:
 Comments:
 -------------
 
-----------------------------------------------------------------------------
-Description: Rewrite gdcmDebug so that it works
-Date: 2004 Dec 07
-Attributed: Mathieu
-Details:
-Comments:
-----------------------------------------------------------------------------
-Description: Need to fix cygwin + wrong path (passing UNIX path when windows patch expected)
-Date: 2004 Nov 16
-Attributed: Mathieu
-Details:
-Comments:
-----------------------------------------------------------------------------
-Description: Need a test for gdcmHeaderHelper (iterating over gdcmData) for instance
-Date: 2004 Nov 16
-Attributed: Mathieu
-Details:
-Comments: It used to seg fault when a README file was found
-----------------------------------------------------------------------------
-Description:  gdcmJpeg8 is strictly a copy/paste of gdcmJpeg12.cxx.
-Date: 2004 Oct 13
-Attributed: 
-Details:
-We should write the code in a common place, then include this 'cxx' file so 
-the define from gdcm_mangle redefine to the proper one.
-Comments:
-This will be usefull since I may need in the future a 16bits version of this 
-reading
------------------------------------------------------------------------------
-Description: Change jpeg 'exit' call to standard c++ exception using the jpeg 
-             error
-handler
-Date: 2004 Oct 8
-Attributed: 
-Details:
-Comments:
 -----------------------------------------------------------------------------
 Description: Add kwsys as a subdir somewhere in gdcm
 Date: 2004 Oct 8
@@ -53,42 +17,12 @@ Attributed: Mathieu
 Details:
 Comments:
 -----------------------------------------------------------------------------
-Description: ljpeg
-Date: 2004 Oct 8
-Attributed: Mathieu
-Details:
-Comments: ljpeg was rip from medcon and not the official one. medcon tried to
-optimised function using MACRO (doh!), so it make its very unreadable and very
-hard to fix warnings. Should go back to official source, copy proper copyright
-and fix warnings on dashboard
-13/10: update apparently no dicom toolkit use this lib as it is too buggy. 
-We should use the ls-patch for ijg instead. Thus we can safely get rid of that
-lib.
-14/10: PHILIPS_Gyroscan-12-MONO2-Jpeg_Lossless.dcm prove that I was right the 
-old Cornwell lib is buggy and does not read anything.
------------------------------------------------------------------------------
 Description: Extent reading support
 Date: 2004 Oct 8
 Attributed: Mathieu
 Details:
 Comments: All ITK/VTK readers support selecting extent. gdcm should support 
 selecting extent before being inserted into ITK
------------------------------------------------------------------------------
-Description: Generate new UID each time we write DICOM
-Date: 2004 Oct 8
-Attributed: Mathieu
-Details:
-Comments: According to DICOM ref a new UID should be created each we write a
-DICOM images. I guess it should be an option so that we can still use md5sum to
-check dicom file. The proposed way was:
-http://www.creatis.insa-lyon.fr/pipermail/dcmlib/2004-September/000611.html
-
-Bah, comme Win32 pose encore pb:
-  echo "gdcm" | od -b
-  0000000 147 144 143 155 012
-et si on prenait:
- radical + 147.144.143.155 + IP + time()
-
 -----------------------------------------------------------------------------
 Description: gdcmDicomDir and SQItem creation
 Date: 2004 Nov 16
@@ -161,43 +95,6 @@ Comments:
           should be an option defined with a flag (On/Off) in the
           vtkGdcmReader...
 -----------------------------------------------------------------------------
-Description: Fix the Python wrappers
-Date: 2004 Sep 24
-Attributed: no
-Details:
-Comments:
------------------------------------------------------------------------------
-Description: clean up gdcmFile/gdcmHeader relationship
-Date: 2004 Sep 24
-Attributed:
-Details:
- * simplify the API for the user (no need to call GetImageData() before
-   calling Write().
- * avoid memory leaks with with Pixel_Data.
-Comments:
------------------------------------------------------------------------------
-Description: remove all autotools references
-Date: 2004 Sep 24
-Attributed: no
-Details:
-Comments:
------------------------------------------------------------------------------
-Description: introduce namespace "gdcm"
-Date: 2004 Jul 30
-Attributed:
-Details:
-Comments:
-  1/ Problem: using enum with name like 'Unknow' on .Net, or LP on cygwin 
-              causes problems.
-  2/ Question: when introducing the namespace, should we remove the gdcm
-              prefix from classes or keep it ?
------------------------------------------------------------------------------
-Description: complete the doxygen Documentation
-Date: 2004 Sep 24
-Attributed:
-Details:
-Comments:
------------------------------------------------------------------------------
 Description: test the private dictionary part.
 Date: 2004 Sep 24
 Attributed:
@@ -205,58 +102,6 @@ Details:
 Comments:
  * Frog: where can we obtain such a private/dictionary and the corresponding
          Dicom file ? Any examples on-line ?
------------------------------------------------------------------------------
-Description: fix definitively the memory leaks problems.
-Date: 2004 Sep 24
-Attributed:
-Details:
-Comments: There is a nightly dashboard that run valgrind every night
-(zorglub | GDCM-Linux-g++)
------------------------------------------------------------------------------
-Description: test gdcm on a big endian OS.
-Date: 2004 Sep 24
-Attributed:
-Details:
-Comments: There is a nightly dashboard that run on MacOSX each nite
-(midworld.kitwarein | GDCM-DarwinG5-g++ )
------------------------------------------------------------------------------
-Description: More tests !
-Date: 2004 Sep 24
-Attributed:
-Details:
- * an example of new test could be to clone a Dicom image by 
-   copying gdcmDocEntry one after the other
-Comments:
- * look at traversal used in Example/FlatHashTablePrint.cxx
------------------------------------------------------------------------------
-Description: revoir la gestion des resources, win32 permet d'inclure des
-   fichiers texte (=dicomV3.dic) dans une dll ou quelquechose du genre.
-Date: 2004 Sep 24
-Attributed: Mathieu
-Details:
-Comments:
- * Frog: no comprendo !? De plus est-ce portable ?
- * To improve load time it could be usefull to have the dictionary directly in
- 'c++' code or in a more binary format.
- * This will also solve some issues where /dummy/ user did nor set
- GDCM_DICT_PATH properly neither 'make install'
------------------------------------------------------------------------------
-Description: Convert the C-like IO to C++ IO:
-Date: 2004 Jul 30
-Attributed:
-Details:
-   remove all the C-oriented IO references like FILE*, fread...
-   and replace them with the C++ fstream notation.
-   Provide overload of operators << and >> for any gdcm class using file IO.
-Comments:
- * Question: the underlying jpeg libraries (written in C) use the FILE*
-   notation. Is there a way to still use fstream in gdcm, and 
-   build or pass the proper FILE* to jpeg libs ?
- * Binary IO references are available at
-   http://www.angelfire.com/country/aldev0/cpphowto/cpp_BinaryFileIO.html
- * The internal API should be rewritten so that gdcm speaking to jpeg lib is
-   done with stream/string and not directly opened FILE*
- * No stdio.h anymore anywhere tolerated !
 -----------------------------------------------------------------------------
 Description: generate methods based on VM.
 Date: 2004 Jul 30
@@ -295,7 +140,6 @@ Attributed:
 Details: This is to be used for version assertion with gdcmPython
 Comments:
 -----------------------------------------------------------------------------
------------------------------------------------------------------------------
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
   vtk/vtkGdcmHeader.cxx)
@@ -310,17 +154,12 @@ Comments:
   gdcmHeader::SetPubElValLengthByNumber (which is based on 
   gdcmElValSet::SetElValueLengthByNumber) is used nowhere...
 -----------------------------------------------------------------------------
-* Fix the bug in Test/bug1.cxx (see first comment line): Win32 only.
------------------------------------------------------------------------------
 * All (or at least many of) the methods of gdcmHeader whose only arguments
   are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can
   be moved away to ElValue class on condition of transmitting the
   gdcmHeader.fp attribute. This change should be considered since it
   would allow those method to avoid artificial calls to ElValue::GetElement(),
   ElValue::GetVR()...
------------------------------------------------------------------------------
-* Eat leading_trailing_whitespace (found in python/gdcmPython/gdcmi) should
-  be used when parsing the dictionary in C++ !
 -----------------------------------------------------------------------------
 * Group length is not a unique tag in a file. Hence avoid putting it
   in the element values dictionary without doing something smarter
