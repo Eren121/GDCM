@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/07/30 18:27:00 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/08/19 13:12:15 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,7 +122,6 @@ FileHelper::FileHelper( )
 {
    FileInternal = new File( );
    SelfHeader = true;
-   UserFunction = 0;
    Initialize();
 }
 
@@ -143,7 +142,6 @@ FileHelper::FileHelper(File *header)
 {
    FileInternal = header;
    SelfHeader = false;
-   UserFunction = 0;
    Initialize();
 }
 
@@ -368,9 +366,11 @@ uint8_t *FileHelper::GetImageDataRaw ()
    return GetRaw();
 }
 
+#ifndef GDCM_LEGACY_REMOVE
 /**
- * \brief
- *          Read the pixels from disk (uncompress if necessary),
+ * \brief   Useless function, since PixelReadConverter forces us 
+ *          copy the Pixels anyway.  
+ *          Reads the pixels from disk (uncompress if necessary),
  *          Transforms YBR pixels, if any, into RGB pixels
  *          Transforms 3 planes R, G, B, if any, into a single RGB Plane
  *          Transforms single Grey plane + 3 Palettes into a RGB Plane   
@@ -425,6 +425,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
            PixelReadConverter->GetRawSize() );
    return PixelReadConverter->GetRawSize();
 }
+#endif
 
 /**
  * \brief   Points the internal pointer to the callers inData
@@ -1488,6 +1489,8 @@ void FileHelper::RestoreWriteMandatory()
  */
 void FileHelper::Initialize()
 {
+   UserFunction = 0;
+
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
 
@@ -1547,7 +1550,7 @@ void FileHelper::Print(std::ostream &os, std::string const &)
 
 #ifndef GDCM_LEGACY_REMOVE
 /**
- * \brief 
+ * \brief DEPRECATED : use SetFilename() + Load() methods
  *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (gdcm::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
