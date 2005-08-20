@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/08/19 13:12:15 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/08/20 09:04:50 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,32 +42,43 @@
 These lines will be moved to the document-to-be 'User's Guide'
 
 // To read an image, user needs a gdcm::File
-gdcm::File *f1 = new gdcm::File(fileName);
+gdcm::File *f = new gdcm::File(fileName);
+// or (advanced) :
+// user may also decide he doesn't want to load some parts of the header
+gdcm::File *f = new gdcm::File();
+f->SetFileName(fileName);
+   f->SetLoadMode(NO_SEQ);             // or      
+   f->SetLoadMode(NO_SHADOW);          // or
+   f->SetLoadMode(NO_SEQ | NO_SHADOW); // or
+   f->SetLoadMode(NO_SHADOWSEQ);
+f->Load();
+
 // user can now check some values
-std::string v = f1->GetEntryValue(groupNb,ElementNb);
+std::string v = f->GetEntryValue(groupNb,ElementNb);
+
 // to get the pixels, user needs a gdcm::FileHelper
-gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+gdcm::FileHelper *fh = new gdcm::FileHelper(f);
 // user may ask not to convert Palette to RGB
-uint8_t *pixels = fh1->GetImageDataRaw();
-int imageLength = fh1->GetImageDataRawSize();
+uint8_t *pixels = fh->GetImageDataRaw();
+int imageLength = fh->GetImageDataRawSize();
 // He can now use the pixels, create a new image, ...
 uint8_t *userPixels = ...
 
 To re-write the image, user re-uses the gdcm::FileHelper
 
-fh1->SetImageData( userPixels, userPixelsLength);
-fh1->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
+fh->SetImageData( userPixels, userPixelsLength);
+fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
                      // (WriteMode is set)
  
-fh1->SetWriteTypeToDcmExpl(); // he wants Explicit Value Representation
+fh->SetWriteTypeToDcmExpl(); // he wants Explicit Value Representation
                               // Little Endian is the default
                               // no other value is allowed
                                 (-->SetWriteType(ExplicitVR);)
                                    -->WriteType = ExplicitVR;
-fh1->Write(newFileName);      // overwrites the file, if any
+fh->Write(newFileName);      // overwrites the file, if any
 
 // or :
-fh1->WriteDcmExplVR(newFileName);
+fh->WriteDcmExplVR(newFileName);
 
 
 // ----------------------------- WARNING -------------------------
@@ -112,6 +123,7 @@ namespace gdcm
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
+ *        ( GetImageDataSize() + GetImageData() methods)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
@@ -119,7 +131,7 @@ namespace gdcm
  *        seen as a side effect).   
  */
 FileHelper::FileHelper( )
-{
+{ 
    FileInternal = new File( );
    SelfHeader = true;
    Initialize();
@@ -131,6 +143,7 @@ FileHelper::FileHelper( )
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
+ *        ( GetImageDataSize() + GetImageData() methods)
  * \note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
@@ -143,8 +156,41 @@ FileHelper::FileHelper(File *header)
    FileInternal = header;
    SelfHeader = false;
    Initialize();
+   if ( FileInternal->IsReadable() )
+   {
+      PixelReadConverter->GrabInformationsFromFile( FileInternal );
+   }
 }
 
+#ifndef GDCM_LEGACY_REMOVE
+/**
+ * \brief DEPRECATED : use SetFilename() + SetLoadMode() + Load() methods
+ *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
+ *        file (gdcm::File only deals with the ... header)
+ *        Opens (in read only and when possible) an existing file and checks
+ *        for DICOM compliance. Returns NULL on failure.
+ *        It will be up to the user to load the pixels into memory
+ * \note  the in-memory representation of all available tags found in
+ *        the DICOM header is post-poned to first header information access.
+ *        This avoid a double parsing of public part of the header when
+ *        one sets an a posteriori shadow dictionary (efficiency can be
+ *        seen as a side effect).   
+ * @param filename file to be opened for parsing
+ * @deprecated  use SetFilename() + Load() methods
+ */
+FileHelper::FileHelper(std::string const &filename )
+{
+   FileInternal = new File( );
+   FileInternal->SetFileName( filename );
+   FileInternal->Load();
+   SelfHeader = true;
+   Initialize();
+   if ( FileInternal->IsReadable() )
+   {
+      PixelReadConverter->GrabInformationsFromFile( FileInternal );
+   }
+}
+#endif
 
 /**
  * \brief canonical destructor
@@ -205,7 +251,11 @@ void FileHelper::SetFileName(std::string const &fileName)
  */
 bool FileHelper::Load()
 { 
-   return FileInternal->Load();
+   if ( !FileInternal->Load() )
+      return false;
+
+   PixelReadConverter->GrabInformationsFromFile( FileInternal );
+   return true;
 }
 
 /**
@@ -1497,11 +1547,6 @@ void FileHelper::Initialize()
    PixelReadConverter  = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
    Archive = new DocEntryArchive( FileInternal );
-
-   if ( FileInternal->IsReadable() )
-   {
-      PixelReadConverter->GrabInformationsFromFile( FileInternal );
-   }
 }
 
 /**
@@ -1548,30 +1593,5 @@ void FileHelper::Print(std::ostream &os, std::string const &)
    PixelReadConverter->Print(os);
 }
 
-#ifndef GDCM_LEGACY_REMOVE
-/**
- * \brief DEPRECATED : use SetFilename() + Load() methods
- *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (gdcm::File only deals with the ... header)
- *        Opens (in read only and when possible) an existing file and checks
- *        for DICOM compliance. Returns NULL on failure.
- *        It will be up to the user to load the pixels into memory
- * \note  the in-memory representation of all available tags found in
- *        the DICOM header is post-poned to first header information access.
- *        This avoid a double parsing of public part of the header when
- *        one sets an a posteriori shadow dictionary (efficiency can be
- *        seen as a side effect).   
- * @param filename file to be opened for parsing
- * @deprecated  use SetFilename() + Load() methods
- */
-FileHelper::FileHelper(std::string const &filename )
-{
-   FileInternal = new File( );
-   FileInternal->SetFileName( filename );
-   FileInternal->Load();
-   SelfHeader = true;
-   Initialize();
-}
-#endif
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
