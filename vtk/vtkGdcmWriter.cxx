@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 14:40:58 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/08/20 22:29:46 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,8 +31,8 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.22 $");
-vtkStandardNewMacro(vtkGdcmWriter);
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.23 $")
+vtkStandardNewMacro(vtkGdcmWriter)
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:31:25 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/08/20 22:29:46 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,8 +122,8 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.74 $");
-vtkStandardNewMacro(vtkGdcmReader);
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.75 $")
+vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
