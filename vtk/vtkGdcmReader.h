@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:31:25 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/08/22 12:30:36 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,11 @@ public:
    virtual void SetFileName(const char *name);
    void SetCoherentFileList( std::vector<gdcm::File* > *cfl) {
                                                       CoherentFileList = cfl; }    
-   void SetCheckFileCoherenceLight();
+   //void SetCheckFileCoherenceLight();
+   vtkSetMacro(AllowLightChecking, int);
+   vtkGetMacro(AllowLightChecking, int);
+   vtkBooleanMacro(AllowLightChecking, int);
+
    void SetUserFunction (VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
                         { UserFunction = userFunc; }   
    // Description:
@@ -101,7 +105,8 @@ private:
    vtkLookupTable *LookupTable;
    vtkTimeStamp fileTime;
    int AllowLookupTable;
-   bool LightChecking;
+
+   int AllowLightChecking;
 
    //BTX
    // Number of columns of the image/volume to be loaded

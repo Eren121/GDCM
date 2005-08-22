@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/20 22:29:46 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/08/22 12:30:36 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,7 +122,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.75 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.76 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ vtkGdcmReader::vtkGdcmReader()
 {
    this->LookupTable = NULL;
    this->AllowLookupTable = 0;
-   this->LightChecking = false;
+   this->AllowLightChecking = 0;
    this->LoadMode = 0; // Load everything (possible values : NO_SEQ, NO_SHADOW,
                        //                                    NO_SHADOWSEQ)
    this->CoherentFileList = 0;
@@ -204,10 +204,10 @@ void vtkGdcmReader::SetFileName(const char *name)
  * Ask for a 'light' checking -actually : just initializing-
  *if you are 150% sure *all* the files are coherent
  */
-void vtkGdcmReader::SetCheckFileCoherenceLight()
-{
-   LightChecking = true;
-}
+//void vtkGdcmReader::SetCheckFileCoherenceLight()
+//{
+//   LightChecking = true;
+//}
 
 //-----------------------------------------------------------------------------
 // Protected
@@ -220,7 +220,7 @@ void vtkGdcmReader::ExecuteInformation()
    {
       if ( this->CoherentFileList != 0 )
          this->TotalNumberOfPlanes = this->CheckFileCoherenceAlreadyDone();  
-      else if ( this->LightChecking )
+      else if ( this->AllowLightChecking )
          this->TotalNumberOfPlanes = this->CheckFileCoherenceLight();
       else
           this->TotalNumberOfPlanes = this->CheckFileCoherence();
