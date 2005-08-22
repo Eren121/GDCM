@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 15:38:05 $
-  Version:   $Revision: 1.158 $
+  Date:      $Date: 2005/08/22 16:17:54 $
+  Version:   $Revision: 1.159 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -329,14 +329,6 @@ std::string Util::GetCurrentDateTime()
    sprintf(tmpAll,"%s%03ld",tmp,milliseconds);
 
    return tmpAll;
-}
-
-/* 
- * \brief Provide a simple static GetVersion() function
- */
-std::string Util::GetVersion()
-{
-  return GDCM_VERSION;
 }
 
 unsigned int Util::GetCurrentThreadID()

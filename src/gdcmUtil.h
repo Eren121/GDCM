@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 15:38:05 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/08/22 16:17:54 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,9 @@ public:
    static std::string GetCurrentDate();
    static std::string GetCurrentTime();
    static std::string GetCurrentDateTime();
-   static std::string GetVersion();
+   /// Provides a simple static GetVersion() function
+   static std::string GetVersion() 
+                      { return GDCM_VERSION;}
    static unsigned int GetCurrentThreadID();
    static unsigned int GetCurrentProcessID();
    static bool         IsCurrentProcessorBigEndian();
@@ -67,9 +69,9 @@ public:
    static const std::string &GetRootUID();
 
    static const uint8_t *GetFileMetaInformationVersion() 
-                     { return FileMetaInformationVersion;};
+                     { return FileMetaInformationVersion;}
    static void SetFileMetaInformationVersion( uint16_t fmiv )
-                     { FileMetaInformationVersion = (uint8_t *)&fmiv; };
+                     { FileMetaInformationVersion = (uint8_t *)&fmiv; }
 
 private:
    static std::string GetIPAddress(); //Do not expose this method
