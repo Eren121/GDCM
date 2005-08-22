@@ -204,8 +204,8 @@ typedef unsigned long long uint64_t;
 %ignore gdcm::binary_write(std::ostream &,uint32_t const &);
 %ignore gdcm::binary_write(std::ostream &,uint16_t const &);
 
-%ignore gdcm::File::File();
-%ignore gdcm::DicomDir::DicomDir();
+//%ignore gdcm::File::File();
+//%ignore gdcm::DicomDir::DicomDir();
 
 // Ignore all placed in gdcmCommon.h
 %ignore GDCM_UNKNOWN;
