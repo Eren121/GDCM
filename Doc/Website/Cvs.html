@@ -16,7 +16,23 @@ To learn more about CVS and to get the CVS programs, please refer to the
 <A HREF="http://www.cvshome.org/index.html">CVS Home</A>. 
 
 <UL>
-  <LI><B>GENERAL</B>
+  <LI><B>WARNING</B>
+    <UL>
+     To avoid troubles users who choose to work with gdcm CVS version are 
+     strongly recomended to have a look at the 
+     <a href="http://public.kitware.com/dashboard.php?name=gdcm">
+     gdcm dashboard </a> *before* doing a 'cvs update'. <br>
+
+    If there is too much red stuff: then DO NOT update.<br>
+    Wait a few days until gdcm stabilizes. <br>
+    If you like to take risk you can decide to update gdcm if the broken build
+    (red square in 'Build' column) only affect a different plateform than yours.
+     <br>
+    Example: If the dashboard is red *only* for the SunOS, and you are using
+    Windows there is a great chance that it would still work for you (also
+    this is not recommended). 
+  </UL>
+  <LI><B>General</B>
     <UL>
       <LI>Repository server: <tt>:pserver:anonymous@cvs.creatis.insa-lyon.fr:2402/cvs/public</tt>
       <LI>Password is <TT>anonymous</TT>

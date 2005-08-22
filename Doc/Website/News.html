@@ -126,9 +126,14 @@ Any contribution is welcome.
    <UL>
       <LI> <TT>AnonymizeNoLoad</TT> used with <TT>dirin=inputDirectoryName</TT>
            anonymizes all the files within the given Directory.
+           <br>
+           User may also choose extra elements he wants to rub out: <br>
+           <TT>rubout=listOfElementsToRubOut</TT><br>
+           with <tt>listOfElementsToRubOut : group1-elem1,group2-elem2,
+           ...</TT> (in hexa, no space within the list )
            <br><br>
       <LI> <TT>gdcm::SerieHelper()</TT> has a new method 
-           <TT>void AddGdcmFile(File *header)</TT>, that allow aware user to 
+           <TT>void AddGdcmFile(File *header)</TT>, that allows aware user to 
            create a '<TT>FileList</TT>' (actually a 
            <TT>std::vector< File* > </TT>).<br>
            The <TT>FileList</TT> created this way will be the 
