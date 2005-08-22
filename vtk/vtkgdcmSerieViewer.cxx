@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:37:48 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/08/22 12:21:03 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,17 +91,23 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n vtkgdcmSerieViewer : \n",
-   " Display a Serie within a Directory                                       ",
+   " Display a 'Serie' (same Serie UID) within a Directory                    ",
    " You can navigate through the stack by hitting any character key.         ",
-   " usage: vtkgdcmSerieViewer filein=fileName [noshadowseq][noshadow][noseq] ",
+   " usage: vtkgdcmSerieViewer dirname=sourcedirectory                        ",
+   "                           [noshadowseq][noshadow][noseq]                 ",
    "                           [reverse] [{[mirror]|[topdown]|[rotate]}]      ",
    "                           [check][debug]                                 ",
+   "      sourcedirectory : name of the directory holding the images          ",
+   "                        if it holds more than one serie,                  ",
+   "                        only the first one id displayed.                  ",
    "      noshadowseq: user doesn't want to load Private Sequences            ",
    "      noshadow   : user doesn't want to load Private groups (odd number)  ",
    "      noseq      : user doesn't want to load Sequences                    ",
+   "      reverse    : user wants to sort the images reverse order            ",
    "      mirror     : user wants to 'mirror' the images | just some simple   ",
    "      topdown    : user wants to 'topdown' the images| examples of user   ",
    "      rotate     : user wants NOT YET MADE           | supplied functions ",
+   "      check      : user wants to force more coherence checking            ",
    "      debug      : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
 
