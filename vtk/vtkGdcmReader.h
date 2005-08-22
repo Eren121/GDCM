@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 12:30:36 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/08/22 12:38:01 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ public:
    virtual void SetFileName(const char *name);
    void SetCoherentFileList( std::vector<gdcm::File* > *cfl) {
                                                       CoherentFileList = cfl; }    
-   //void SetCheckFileCoherenceLight();
+
    vtkSetMacro(AllowLightChecking, int);
    vtkGetMacro(AllowLightChecking, int);
    vtkBooleanMacro(AllowLightChecking, int);
@@ -70,7 +70,10 @@ public:
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
  * @param   mode Load mode to be used    
  */
-   void SetLoadMode (int mode) { LoadMode = mode; }
+ //  void SetLoadMode (int mode) { LoadMode = mode; }
+   vtkSetMacro(LoadMode, int);
+   vtkGetMacro(LoadMode, int);
+   vtkBooleanMacro(LoadMode, int);
 
 protected:
    vtkGdcmReader();
