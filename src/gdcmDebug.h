@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/01 14:33:29 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/08/22 18:11:34 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -204,7 +204,7 @@ public:
 #if defined(GDCM_LEGACY_REMOVE)
   // Remove legacy methods completely.
 # define GDCM_LEGACY(method)
-#elif defined(GDCM_LEGACY_SILENT) || defined(SWIGPYTHON)
+#elif defined(GDCM_LEGACY_SILENT) || defined(SWIG)
   // Provide legacy methods with no warnings.
 # define GDCM_LEGACY(method) method
 #else
