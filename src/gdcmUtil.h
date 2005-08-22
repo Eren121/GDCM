@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 05:02:12 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/08/22 15:38:05 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,6 +50,7 @@ public:
    static std::string GetCurrentDate();
    static std::string GetCurrentTime();
    static std::string GetCurrentDateTime();
+   static std::string GetVersion();
    static unsigned int GetCurrentThreadID();
    static unsigned int GetCurrentProcessID();
    static bool         IsCurrentProcessorBigEndian();

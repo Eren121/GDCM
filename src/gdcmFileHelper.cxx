@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/08/20 09:04:50 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/08/22 15:38:05 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1241,6 +1241,8 @@ void FileHelper::CheckMandatoryElements()
 
    // 'Implementation Version Name'
       ValEntry *e_0002_0013 = CopyValEntry(0x0002,0x0013);
+      std::string version = "GDCM ";
+      version += Util::GetVersion();
       e_0002_0013->SetValue("GDCM 1.1");
       Archive->Push(e_0002_0013);
 
