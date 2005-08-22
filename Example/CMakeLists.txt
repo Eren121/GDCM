@@ -6,11 +6,8 @@ INCLUDE_DIRECTORIES(
 
 SET(EXAMPLE_SOURCES
 #names starting with 'ex' are examples  
-  exBuildUpDicomDir
   exReadPapyrus
   exReadWriteFile
-  exAnonymize
-  exAnonymizeNoLoad  # without loading the Pixel Data
   exColorToRGB
   exGrey2RGB
   exGC
@@ -22,7 +19,6 @@ SET(EXAMPLE_SOURCES
   PrintDicomDir
   PrintDocument
   PrintFile
-  FindTags
   MakeDicomDir
   AnonymizeDicomDir # without loading it as a gdcm::DicomDir
   Anonymize         # for full gdcm readable files
@@ -34,6 +30,7 @@ SET(EXAMPLE_SOURCES
 #
 # Better you don't use them (not fully checked ...)
  
+  FindTags
   FlatHashTablePrint
   TestCopyDicom
   TestChangeHeader
