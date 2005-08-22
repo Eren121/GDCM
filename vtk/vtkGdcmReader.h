@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 12:38:01 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/08/22 12:43:11 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,15 +43,21 @@ public:
    virtual void RemoveAllFileName(void);
    virtual void AddFileName(const char *name);
    virtual void SetFileName(const char *name);
+
+   //BTX
    void SetCoherentFileList( std::vector<gdcm::File* > *cfl) {
                                                       CoherentFileList = cfl; }    
+   //ETX
 
    vtkSetMacro(AllowLightChecking, int);
    vtkGetMacro(AllowLightChecking, int);
    vtkBooleanMacro(AllowLightChecking, int);
 
+   //BTX
    void SetUserFunction (VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
-                        { UserFunction = userFunc; }   
+                        { UserFunction = userFunc; } 
+   //ETX
+  
    // Description:
    // If this flag is set and the DICOM reader encounters a dicom file with 
    // lookup table the data will be kept as unsigned chars and a lookuptable 
@@ -70,7 +76,6 @@ public:
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
  * @param   mode Load mode to be used    
  */
- //  void SetLoadMode (int mode) { LoadMode = mode; }
    vtkSetMacro(LoadMode, int);
    vtkGetMacro(LoadMode, int);
    vtkBooleanMacro(LoadMode, int);
