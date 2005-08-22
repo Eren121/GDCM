@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:55:50 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/08/22 11:14:27 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,13 +33,13 @@ int main(int argc, char *argv[])
    "         Warning : Warning : the image is overwritten                     ",
    "                   to preserve image integrity, use a copy.               ",
    "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}    ",
-   "                       [rubout=listOfPrivateElementsToRubOut]             ", 
+   "                       [rubout=listOfElementsToRubOut]                    ", 
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "       inputFileName : Name of the (single) file user wants to anonymize  ",
    "       inputDirectoryName : user wants to anonymize *all* the files       ",
    "                            within the (single Patient!) directory        ",
-   "       listOfPrivateElementsToRubOut : group-elem,g2-e2,... (in hexa)     ",
-   "                                       of private Elements to rub out     ",
+   "       listOfElementsToRubOut : group-elem,g2-e2,... (in hexa, no space)  ",
+   "                                of extra Elements to rub out              ",
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
