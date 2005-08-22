@@ -26,7 +26,9 @@ except IndexError:
    printLevel = 1
 
 ### Build the file element list
-file = gdcm.File(fileName)
+file = gdcm.File()
+file.SetFileName(fileName)
+file.Load()
 if not file.IsReadable():
    PrintUse()
    raise RuntimeError,"The '%s' file is not readable with gdcm." % fileName
