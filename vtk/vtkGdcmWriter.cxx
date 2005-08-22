@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/20 22:29:46 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/08/22 12:23:26 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.23 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.24 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 //-----------------------------------------------------------------------------
@@ -165,9 +165,9 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    // FIXME : what do we do when the ScalarType is 
    // VTK_UNSIGNED_INT or VTK_UNSIGNED_LONG
    str.str("");
-   if( image->GetScalarType() == VTK_UNSIGNED_CHAR ||
+   if( image->GetScalarType() == VTK_UNSIGNED_CHAR  ||
        image->GetScalarType() == VTK_UNSIGNED_SHORT ||
-       image->GetScalarType() == VTK_UNSIGNED_INT ||
+       image->GetScalarType() == VTK_UNSIGNED_INT   ||
        image->GetScalarType() == VTK_UNSIGNED_LONG )
    {
       str << "0"; // Unsigned
@@ -190,7 +190,8 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    vtkFloatingPointType *sp = image->GetSpacing();
 
    str.str("");
-   // We are about to enter floating point value. By default ostringstream are smart and don't do fixed point
+   // We are about to enter floating point value. 
+   // By default ostringstream are smart and don't do fixed point
    // thus forcing to fixed point value
    str.setf( std::ios::fixed );
    str << sp[1] << "\\" << sp[0];
