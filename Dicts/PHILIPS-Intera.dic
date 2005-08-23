@@ -25,16 +25,24 @@
 2001 1021 CS 1 SPIR
 2001 1022 FL 1 Water Fat Shift
 2001 1023 DS 1 Flip Angle Philips
-2001 102d SS 1 Number of Slices in Stack
-2001 105f SQ 1-n Stack Sequence
+2001 1025 SH 1 Echo Time Display MR
+2001 102d SS 1 Stack Number of Slices
 2001 1032 FL 1 Stack Radial Angle
 2001 1033 CS 1 Stack Radial Axis
 2001 1035 SS 1 Stack Slice Number
 2001 1036 CS 1 Stack Type
+2001 103f CS 1 Zoom Mode
+2001 105f SQ 1-n Stack Sequence
 2001 1060 SL 1 Number of Stacks
-2001 1081 IS 1 Number of Dynamic Scans
+2001 1063 CS 1 Examination Source
 2001 107b IS 1 Acquisition Number
+2001 1081 IS 1 Number of Dynamic Scans
+
 2005 0010 LO 1 Private Creator Group 2005
 2005 1005 CS 1 Synergy Reconstruction Type
 2005 1020 SL 1 Number of Chemical Shifts
 2005 10a1 CS 1 Syncra Scan Type
+
+2005 1083 SQ 1 Temporary SQ 1
+2005 1402 SQ 1 Temporary SQ 2
+
