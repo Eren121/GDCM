@@ -8,11 +8,16 @@ SET(ALL_DICTS
   Papyrus.dic
   NIH.dic     #the forbidden one...
   SPI.dic
+  #  PHILIPS-Intera.dic # uncomment me if you want
   )
 
 # Better solution
 SET(TEST_DICT_BODY)
 FOREACH(dict ${ALL_DICTS})
+  # Properly set dependencies, therefore `touch Philips-Intera.dic` does not rebuild
+  # but adding/removing a line in Philips-Intera.dic rebuild as expected
+  CONFIGURE_FILE("${GDCM_SOURCE_DIR}/Dicts/${dict}"
+       "${GDCM_BINARY_DIR}/Dicts/${dict}" COPYONLY IMMEDIATE)
   FILE(READ "${GDCM_SOURCE_DIR}/Dicts/${dict}" dict_append)
   SET(TEST_DICT_BODY "${TEST_DICT_BODY}\n${dict_append}")
 ENDFOREACH(dict)
