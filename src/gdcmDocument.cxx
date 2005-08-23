@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/23 12:57:49 $
-  Version:   $Revision: 1.265 $
+  Date:      $Date: 2005/08/23 14:41:59 $
+  Version:   $Revision: 1.266 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1049,7 +1049,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( (delimitor && offset!=132) || 
                 (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
             {
-               if (offset!=132)
+               if (delimitor && offset!=132)
                {
                   gdcmWarningMacro( "in ParseDES : Item found out of a Sequence "
                                   << newValEntry->GetKey()
