@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 15:22:18 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/08/23 12:58:49 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,9 +229,10 @@ void SeqEntry::Print( std::ostream &os, std::string const & )
    if (DelimitorMode)
    {
       for ( int i = 0; i < SQDepthLevel; i++ )
-      {
          os << "   | " ;
-      }
+      os << " --- "  << std::endl;
+      for ( int i = 0; i < SQDepthLevel; i++ )
+         os << "   | " ;
       if (SeqTerm != NULL)
       {
          SeqTerm->SetPrintLevel(PrintLevel);
