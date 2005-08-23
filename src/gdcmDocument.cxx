@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 20:47:00 $
-  Version:   $Revision: 1.264 $
+  Date:      $Date: 2005/08/23 12:57:49 $
+  Version:   $Revision: 1.265 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -921,6 +921,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          break;
       }
 
+      // Uncoment this printf line to be able to 'follow' the DocEntries
+      // when something *very* strange happens
+
+      //printf( "%04x|%04x %s\n",newDocEntry->GetGroup(), 
+      //                     newDocEntry->GetElement(),
+      //                     newDocEntry->GetVR().c_str() );
       used = true;
       newValEntry = dynamic_cast<ValEntry*>(newDocEntry);
       newBinEntry = dynamic_cast<BinEntry*>(newDocEntry);
@@ -963,7 +969,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( !set->AddEntry( newBinEntry ) )
             {
                gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
-                                   << newBinEntry->GetKey() );
+                                   << newBinEntry->GetKey()  
+                                   << " (at offset : " 
+                                   << newBinEntry->GetOffset() << " )" );
                used=false;
             }
             else
@@ -993,31 +1001,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             //                      + newValEntry->GetKey() );
             //}
 
-            if ( LoadMode & NO_SHADOW ) // User asked to skip, if possible, 
-                                        // shadow groups ( if possible :
-                                        // whether element 0x0000 exits)
-            {
-               if ( newValEntry->GetGroup()%2 != 0 )
-               {
-                  if ( newValEntry->GetElement() == 0x0000 )
-                  {
-                     std::string strLgrGroup = newValEntry->GetValue();
-                     int lgrGroup;
-                     if ( strLgrGroup != GDCM_UNFOUND)
-                     {
-                        lgrGroup = atoi(strLgrGroup.c_str());
-                        Fp->seekg(lgrGroup, std::ios::cur);
-                        used = false;
-                        continue;
-                     }
-                  }
-               }
-             }
-
             if ( !set->AddEntry( newValEntry ) )
             {
               gdcmWarningMacro( "in ParseDES : cannot add a ValEntry "
-                                  << newValEntry->GetKey() );  
+                                  << newValEntry->GetKey()
+                                  << " (at offset : " 
+                                  << newValEntry->GetOffset() << " )" );   
               used=false;
             }
             else
@@ -1026,11 +1015,47 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                LoadDocEntry( newValEntry );
             }
 
+            if ( newValEntry->GetElement() == 0x0000 ) // if on group length
+            {
+               if ( newValEntry->GetGroup()%2 != 0 )   // if Shadow Group
+               {
+                  if ( LoadMode & NO_SHADOW ) // if user asked to skip shad.gr
+                  {
+                     std::string strLgrGroup = newValEntry->GetValue();
+                     int lgrGroup;
+                     if ( strLgrGroup != GDCM_UNFOUND)
+                     {
+                        lgrGroup = atoi(strLgrGroup.c_str());
+                        Fp->seekg(lgrGroup, std::ios::cur);
+                        used = false;
+                        RemoveEntry( newDocEntry );
+                        newDocEntry = 0;
+                        continue;
+                     }
+                  }
+               }
+             }
+
             bool delimitor=newValEntry->IsItemDelimitor();
 
-            if ( delimitor || 
+            // FIXME : Brutal patch, waiting till we find a clever way to guess
+            //         if a doc entry is a Sequence, 
+            //          - when it's odd number
+            //          - and the file is Implicit VR Transfert Syntax
+            //
+            // '&& offset!=132' is a very fierce way to guess
+            //          if we are at zero level (Probabely not enough ...).
+            //          We want to go on parsing.
+            if ( (delimitor && offset!=132) || 
                 (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
             {
+               if (offset!=132)
+               {
+                  gdcmWarningMacro( "in ParseDES : Item found out of a Sequence "
+                                  << newValEntry->GetKey()
+                                  << " (at offset : " 
+                                  << newValEntry->GetOffset() << " )" );
+               }
                if ( !used )
                   delete newDocEntry;
                break;
@@ -1111,20 +1136,24 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          if ( !set->AddEntry( newSeqEntry ) )
          {
             gdcmWarningMacro( "in ParseDES : cannot add a SeqEntry "
-                                << newSeqEntry->GetKey() );
+                                << newSeqEntry->GetKey()
+                                << " (at offset : " 
+                                << newSeqEntry->GetOffset() << " )" ); 
             used = false;
          }
  
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if ( !used )
-               delete newDocEntry;
-            break;
+               delete newDocEntry;  
+               break;
          }
       }  // end SeqEntry : VR = "SQ"
 
       if ( !used )
+      {
          delete newDocEntry;
+      }
    }                               // end While
 }
 
@@ -1714,9 +1743,15 @@ void Document::SkipDocEntry(DocEntry *entry)
  */
 void Document::SkipToNextDocEntry(DocEntry *currentDocEntry) 
 {
-   Fp->seekg((long)(currentDocEntry->GetOffset()),     std::ios::beg);
+   int l = currentDocEntry->GetReadLength();
+   if ( l == -1 ) // length = 0xffff shouldn't appear here ...
+                  // ... but PMS imagers happen !
+      return;
+   Fp->seekg((long)(currentDocEntry->GetOffset()), std::ios::beg);
    if (currentDocEntry->GetGroup() != 0xfffe)  // for fffe pb
+   {
       Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
+   }
 }
 
 /**
@@ -2128,7 +2163,9 @@ DocEntry *Document::ReadNextDocEntry()
       {
          DictEntry *dictEntry = GetDictEntry(group,elem);
          if ( dictEntry )
+         {
             realVR = dictEntry->GetVR();
+         }
       }
    }
 
