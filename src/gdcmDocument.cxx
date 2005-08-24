@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:09:13 $
-  Version:   $Revision: 1.267 $
+  Date:      $Date: 2005/08/24 12:51:45 $
+  Version:   $Revision: 1.268 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -919,9 +919,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       // Uncoment this printf line to be able to 'follow' the DocEntries
       // when something *very* strange happens
 
-      printf( "%04x|%04x %s\n",newDocEntry->GetGroup(), 
-                           newDocEntry->GetElement(),
-                           newDocEntry->GetVR().c_str() );
+      //printf( "%04x|%04x %s\n",newDocEntry->GetGroup(), 
+      //                     newDocEntry->GetElement(),
+      //                     newDocEntry->GetVR().c_str() );
 
       if ( !newDocEntry )
       {
