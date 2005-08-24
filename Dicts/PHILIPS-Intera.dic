@@ -79,6 +79,7 @@
 2001 e07b IS 1 Acquisition Number
 2001 e081 IS 1 Number of Dynamic Scans
 
+2005 0000 UL 1 Group Length
 2005 0010 LO 1 Private Creator Group 2005
 2005 1005 CS 1 Synergy Reconstruction Type
 2005 1020 SL 1 Number of Chemical Shifts
