@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:40:40 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/08/24 12:09:13 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,6 +126,7 @@ public:
    bool IsVMUnknown() { return DicomDict->IsVMUnknown(); };
 
    bool IsItemDelimitor();
+   bool IsItemStarter();
    bool IsSequenceDelimitor();   
    
    virtual void Copy(DocEntry *e);

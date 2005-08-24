@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/23 12:58:49 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/08/24 12:09:12 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,6 +173,15 @@ uint32_t DocEntry::GetFullLength()
 bool DocEntry::IsItemDelimitor()
 {
    return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
+}
+
+/**
+ * \brief   tells us if entry is the first one of an Item 
+ *          (fffe,e000) 
+ */
+bool DocEntry::IsItemStarter()
+{
+   return (GetGroup() == 0xfffe && GetElement() == 0xe000);
 }
 
 /**

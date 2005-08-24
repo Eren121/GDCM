@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 20:47:00 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/08/24 12:09:13 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,7 @@ bool ElementSet::RemoveEntry( DocEntry *entryToRemove)
       return true;
    }
 
-   gdcmWarningMacro( "Key not present");
+   gdcmWarningMacro( "Key not present : " << key);
    return false ;
 }
 
@@ -115,7 +115,7 @@ bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
       return true;
    }
 
-   gdcmWarningMacro( "Key not present");
+   gdcmWarningMacro( "Key not present " << key);
    return false ;
 }
 

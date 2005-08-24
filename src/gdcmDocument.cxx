@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/23 14:41:59 $
-  Version:   $Revision: 1.266 $
+  Date:      $Date: 2005/08/24 12:09:13 $
+  Version:   $Revision: 1.267 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -906,7 +906,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    VRKey vr;
    bool used;
    bool delim_mode_intern = delim_mode;
-
+   bool first = true;
    while (true)
    {
       if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
@@ -916,17 +916,31 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
       newDocEntry = ReadNextDocEntry( );
 
+      // Uncoment this printf line to be able to 'follow' the DocEntries
+      // when something *very* strange happens
+
+      printf( "%04x|%04x %s\n",newDocEntry->GetGroup(), 
+                           newDocEntry->GetElement(),
+                           newDocEntry->GetVR().c_str() );
+
       if ( !newDocEntry )
       {
          break;
       }
 
-      // Uncoment this printf line to be able to 'follow' the DocEntries
-      // when something *very* strange happens
-
-      //printf( "%04x|%04x %s\n",newDocEntry->GetGroup(), 
-      //                     newDocEntry->GetElement(),
-      //                     newDocEntry->GetVR().c_str() );
+       // an Item Starter found elsewhere but the first postition
+       // of a SeqEntry  means previous entry was a Sequence
+       // but we didn't get it (private Sequence + Implicit VR)
+       // we have to backtrack.
+      if ( !first && newDocEntry->IsItemStarter() )
+      {
+         newDocEntry = Backtrack(newDocEntry); 
+      }
+      else
+      { 
+         PreviousDocEntry = newDocEntry; 
+      }
+ 
       used = true;
       newValEntry = dynamic_cast<ValEntry*>(newDocEntry);
       newBinEntry = dynamic_cast<BinEntry*>(newDocEntry);
@@ -1038,24 +1052,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             bool delimitor=newValEntry->IsItemDelimitor();
 
-            // FIXME : Brutal patch, waiting till we find a clever way to guess
-            //         if a doc entry is a Sequence, 
-            //          - when it's odd number
-            //          - and the file is Implicit VR Transfert Syntax
-            //
-            // '&& offset!=132' is a very fierce way to guess
-            //          if we are at zero level (Probabely not enough ...).
-            //          We want to go on parsing.
-            if ( (delimitor && offset!=132) || 
+            if ( (delimitor) || 
                 (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
             {
-               if (delimitor && offset!=132)
-               {
-                  gdcmWarningMacro( "in ParseDES : Item found out of a Sequence "
-                                  << newValEntry->GetKey()
-                                  << " (at offset : " 
-                                  << newValEntry->GetOffset() << " )" );
-               }
                if ( !used )
                   delete newDocEntry;
                break;
@@ -1154,6 +1153,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       {
          delete newDocEntry;
       }
+      first = false;
    }                               // end While
 }
 
@@ -1231,6 +1231,41 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          break;
       }
    }
+}
+
+/**
+ * \brief   When a private Sequence + Implicit VR is encountered
+ *           we cannot guess it's a Sequence till we find the first
+ *           Item Starter. We then backtrack to do the job.
+ * @param   docEntry Item Starter that warned us 
+ */
+DocEntry *Document::Backtrack(DocEntry *docEntry)
+{
+   // delete the Item Starter, built erroneously out of any Sequence
+   // it's not yet in the HTable/chained list
+   delete docEntry;
+
+   // Get all info we can from PreviousDocEntry
+   uint16_t group = PreviousDocEntry->GetGroup();
+   uint16_t elem  = PreviousDocEntry->GetElement();
+   uint32_t lgt   = PreviousDocEntry->GetLength();
+   long offset    = PreviousDocEntry->GetOffset();
+
+   gdcmWarningMacro( "Backtrack :" << std::hex << group 
+                                   << "|" << elem
+                                   << " at offset " << offset );
+   RemoveEntry( PreviousDocEntry );
+
+   // forge the Seq Entry
+   DocEntry *newEntry = NewSeqEntry(group, elem);
+   newEntry->SetLength(lgt);
+   newEntry->SetOffset(offset);
+
+   // Move back to the beginning of the Sequence
+   Fp->seekg( 0, std::ios::beg);
+   Fp->seekg(offset, std::ios::cur);
+
+return newEntry;
 }
 
 /**
@@ -2207,7 +2242,7 @@ DocEntry *Document::ReadNextDocEntry()
    }
 
    newEntry->SetOffset(Fp->tellg());  
-
+   
    return newEntry;
 }
 

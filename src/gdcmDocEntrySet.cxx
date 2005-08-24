@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/08/24 12:09:13 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,10 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
-
+DocEntrySet::DocEntrySet() 
+{ 
+   PreviousDocEntry = 0;
+}
 //-----------------------------------------------------------------------------
 // Public
 /**
