@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/23 12:58:49 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/08/24 03:42:40 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -228,10 +228,11 @@ void SeqEntry::Print( std::ostream &os, std::string const & )
    // at end, print the sequence terminator item, if any
    if (DelimitorMode)
    {
-      for ( int i = 0; i < SQDepthLevel; i++ )
+      int i;
+      for ( i = 0; i < SQDepthLevel; i++ )
          os << "   | " ;
       os << " --- "  << std::endl;
-      for ( int i = 0; i < SQDepthLevel; i++ )
+      for ( i = 0; i < SQDepthLevel; i++ )
          os << "   | " ;
       if (SeqTerm != NULL)
       {
