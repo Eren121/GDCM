@@ -1,3 +1,87 @@
+Thu Aug 25 16:59:49 2005 by jpr
+   gdcmBinEntry.cxx
+   Now Print displays the BinEntry Content (if it's printable, and loaded)
+   Usefull for a lot od Implicit VR 'Bin'Entry (if we knew there VR, they wouldn't
+   be Bin ...)
+   Appreciate the difference having a look at PrintFile result for
+   gdcmData/SIEMENS_MAGNETOM-12-MONO2-FileSeq0.dcm.
+
+Thu Aug 25 16:55:47 2005 by jpr
+   gdcmUtil.cxx
+   Add methods to check the 'printability' of a bin area
+
+Thu Aug 25 15:45:40 2005  by jpr
+  gdcmBinEntry.cxx 
+  According to Mathieu's suggestion, Print now display FL BinEntries in a human
+  readable form
+
+Thu Aug 25 15:12:43 2005 by jpr
+   gdcmDocEntry.cxx
+   According to Mathieu's suggestion, *all* the elements 0x000
+   are now named 'Group Length' (even if they belong to a Shadow Group')
+
+Wed Aug 24 14:09:13 2005 by jpr
+  gdcmDocEntry.cxx,h, gdcmDocEntrySet.cxx,h
+  Removal of QD patch for Private Sequence + Immplicit VR.
+   Add a clean solution (Backtracking if an Item Starter is found
+    out of any SQItem)
+
+Tue Aug 23 14:57:49 2005 by jpr
+   gdcmDocument.cxx
+   Brutal patch, waiting till we find a clever way to guess
+   if a doc entry is a Sequence,
+        - when it's odd number
+		  - and the file is Implicit VR Transfert Syntax
+It solves temporarily some Philips Medical Systems image problems
+
+Mon Aug 22 18:17:54 200 by jpr
+   gdcmUtil.cxx
+   Save a *few* microseconds at run time : inline method Util::GetVersion()
+   ;-)
+
+Tue Aug 23 14:58:49 2005 by jpr
+   gdcmSeqEntry.cxx, gdcmDocEntry.cxx
+   Improve 'Print' methods
+
+Sat Aug 20 11:10:24 2005by jpr
+   TestWriteSimple.cxx
+   Use new style FileHelper contructor
+
+Sat Aug 20 11:04:50 2005 by jpr
+   gdcmFileHelper.cxx
+   FileHelper::Initialize() doesn't call GrabInformationFromFile(),
+   in order not to do the job twice when using new style FileHelper Constructor.
+
+Fri Aug 19 18:31:07 2005 by malaterre
+  gdcmCommon.h
+  ENH: Provide a GetVersion function, apparently need for python
+
+Fri Aug 19 15:12:15 2005 by jpr
+   gdcmFileHelper.cxx
+   Initialize UserFunction pointer to 0, even for 'deprecated' form 
+	of constructor.
+
+Sat Jul 30 20:27:00 2005 by jpr
+   gdcmFileHelper.cxx, gdcmPixelReadConvertor.cxx
+      User is now allowed to pass a Pointer to a function of his own
+      to allow modification of pixel order (i.e. : Mirror, TopDown, )
+      to gdcm::FileHeleper, using SetUserFunction(userSuppliedFunction)
+      described as : void userSuppliedFunction(uint8_t *im, gdcm::File *f);
+      NB : the "uint8_t *" type of first param is just for prototyping.
+        User will Cast it according what he founds with f->GetPixelType()
+        See ctkgdcmSerieViewer for an example
+
+Sat Jul 30 20:13:24 2005 by jpr
+   gdcmSerieHelper.cxx
+   Add SerieHelper::IsCoherent() method to allow checking that the files with same
+   Serie UID have the same sizes and pixel type.
+	
+Fri Jul 29 17:07:16 2005 by jpr
+   gdcmSerieHelper.cxx
+   User may now use
+      SetSortOrderToDirect() or SetSortOrderToReverse()
+   to choose the ways the File* will be sorted.
+
 Thu Jul 21 06:55:50 2005 by jpr
    AnonymizeDicomDir.cxx, AnomymizeNoLoad.cxx, PrintFile.cxx, PrintDicomDir.cxx
    Unify user interface
