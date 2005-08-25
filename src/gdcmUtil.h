@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 16:17:54 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/08/25 14:55:47 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,6 +44,9 @@ public:
                                       const std::string &subStr);       
 
    static std::string CreateCleanString(std::string const &s);
+   static std::string CreateCleanString(uint8_t *s, int l);
+   static bool IsCleanString(std::string const &s);
+   static bool IsCleanArea(uint8_t *s, int l);
    static std::string NormalizePath(std::string const &name);
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);

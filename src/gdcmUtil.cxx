@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 16:17:54 $
-  Version:   $Revision: 1.159 $
+  Date:      $Date: 2005/08/25 14:55:47 $
+  Version:   $Revision: 1.160 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -180,6 +180,41 @@ int Util::CountSubstring (const std::string &str,
 }
 
 /**
+ * \brief  Checks whether a 'string' is printable or not (in order
+ *         to avoid corrupting the terminal of invocation when printing)
+ * @param s string to check
+ */
+bool Util::IsCleanString(std::string const &s)
+{
+  std::cout<< std::endl << s << std::endl;
+   for(unsigned int i=0; i<s.size(); i++)
+   {
+      std::cout<< std::endl << i << " : " << (unsigned char)s[i] << std::endl;
+      if (!isprint((unsigned char)s[i]) )
+      {
+         return false;
+      }
+   }
+return true;   
+}
+
+/**
+ * \brief  Checks whether an 'area' is printable or not (in order
+ *         to avoid corrupting the terminal of invocation when printing)
+ * @param s string to check
+ */
+bool Util::IsCleanArea(uint8_t *s, int l)
+{
+   for( int i=0; i<l; i++)
+   {
+      if (!isprint((unsigned char)s[i]) )
+      {
+         return false;
+      }
+   }
+   return true;   
+}
+/**
  * \brief  Weed out a string from the non-printable characters (in order
  *         to avoid corrupting the terminal of invocation when printing)
  * @param s string to remove non printable characters from
@@ -210,6 +245,30 @@ std::string Util::CreateCleanString(std::string const &s)
    return str;
 }
 
+/**
+ * \brief  Weed out a string from the non-printable characters (in order
+ *         to avoid corrupting the terminal of invocation when printing)
+ * @param s string to remove non printable characters from
+ */
+std::string Util::CreateCleanString(uint8_t *s, int l)
+{
+   std::string str;
+
+   for( int i=0; i<l; i++)
+   {
+      if (!isprint((unsigned char)s[i]) )
+      {
+         str = str + '.';
+      }
+   else
+      {
+         str = str + (char )s[i];
+      }
+   }
+
+
+   return str;
+}
 /**
  * \brief   Add a SEPARATOR to the end of the name is necessary
  * @param   pathname file/directory name to normalize 
