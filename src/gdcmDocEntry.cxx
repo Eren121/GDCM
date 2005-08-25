@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:09:12 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/08/25 13:12:43 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -265,13 +265,19 @@ void DocEntry::Print(std::ostream &os, std::string const & )
 
    s << "[" << vr  << "] ";
 
+   std::string name;
+   if ( GetElement() == 0x0000 )
+      name = "Group Length";
+   else
+      name = GetName();
+
    if (PrintLevel >= 1)
    {
       s.setf(std::ios::left);
-      s << std::setw(66-GetName().length()) << " ";
+      s << std::setw(66-name.length()) << " ";
    }
     
-   s << "[" << GetName()<< "]";
+   s << "[" << name << "]";
    os << s.str();      
 }
 
