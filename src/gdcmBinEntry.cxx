@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/03/02 17:15:52 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/08/25 13:45:40 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -143,8 +143,24 @@ void BinEntry::Print(std::ostream &os, std::string const & )
    void* binArea = GetBinArea();
    if (binArea)
    {
-      s << " [" << GetValue()
-        << "; length = " << GetLength() << "]";
+      if ( GetVR() == "FL" )
+      {
+         int l = GetReadLength()/4 - 1;
+         float *beg = (float *)GetBinArea();
+         s << " [" << *beg;
+         if ( l!= 0)
+            for (int i=0;i<l;i++)
+            {
+               beg++;
+               s << "\\" << *beg;
+            }
+            s << "]";
+      }
+      else
+      {
+         s << " [" << GetValue()
+           << "; length = " << GetLength() << "]";
+      }
    }
    else
    {
