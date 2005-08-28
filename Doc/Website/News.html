@@ -24,29 +24,33 @@ Any contribution is welcome.
 <UL>
 <LI> Decoders   
    <UL>
-      <LI> gdcm doesn't read yet JPEG-LS encoded files.
+      <LI> gdcm doesn't read yet <TT>JPEG-LS</TT> encoded files.
       <UL>
-          We said 'JPEG-LS', not Lossless Jpeg ...<br>
-          [JPEG-LS is the basis for new lossless/near-lossless compression
-          standard for continuous-tone images intended for JPEG2000. 
+          We said '<TT>JPEG-LS</TT>', not Lossless Jpeg ...<br>
+          [<TT>JPEG-LS</TT> is the basis for new lossless/near-lossless compression
+          standard for continuous-tone images intended for <TT>JPEG2000</TT>. 
           The standard is based on the LOCO-I algorithm 
           (LOw COmplexity LOssless COmpression for Images) 
           developed at Hewlett-Packard Laboratories] 
      </UL>
-     <LI> gdcm doesn't read yet all JPEG2000 encoded files.
+     <LI> gdcm doesn't read yet all <TT>JPEG2000</TT> encoded files.
      <UL>
          But we are working on it (a lot of troubles with Jasper).
       </UL>
-      <LI> gdcm doesn't read yet MPEG2 encoded files.
+      <LI> gdcm doesn't read yet <TT>MPEG2</TT> encoded files.
       <UL>
           But we are working on it.
       </UL>
    </UL>
-<LI>Reader
+   <LI>Reader
    <UL>
       <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
            to load a given list of <TT>DocEntries</TT> 
            (to save CPU time and RAM space)
+      <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he wants
+           to force the loading of a given list of <TT>DocEntries</TT>, 
+           even if there length exceeds the current 
+           <TT>MAX_SIZE_LOAD_ELEMENT_VALUE</TT>.
       <LI> Allow 'frame by frame' reading (should be helpfull for huge 
            multiframe images)
       <LI> Allow subvolume selection / frames selection before reading.
@@ -121,7 +125,7 @@ Any contribution is welcome.
          <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a> current version.
       <br><br>
    </UL>
-
+   <LI> <A HREF="News.html#missing">Missing Features</a>
    <LI> New Features
    <UL>
       <LI> <TT>AnonymizeNoLoad</TT> used with <TT>dirin=inputDirectoryName</TT>
@@ -219,7 +223,6 @@ Any contribution is welcome.
             <br>
         <LI> User is now allowed to tell <TT>gdcm::DicomDir</TT> constructor 
             he doesn't want to deal with <TT>SeqEntry</TT> 
-            he doesn't want to deal with <TT>SeqEntry</TT> 
             (every time it's possible) <br> and/or he doesn't 
             want to deal with <TT>Shadow groups</TT> (every time it's
             possible) <br> or he doesn't 
@@ -261,7 +264,7 @@ Any contribution is welcome.
    <LI> A.P.I. breaking modifications (since previous version : <TT>1.0</TT>)
    <UL>    
       <LI> NEVER more API breaking modifications !!!
-
+      <br><br>
    </UL>
 
    <LI> Known bugs
@@ -270,6 +273,8 @@ Any contribution is welcome.
            causes troubles, when there are some <TT>SQ</TT> belonging to a 
            <TT>Shadow Group</TT>. <br>
            Better you use <TT>Explicit Value Representation</TT> writting mode ...
+      <LI> Troubles on 'Big endian' processors (i.e. Apple/Motorola, SunSparc
+           ...) when writting 16 Bits images.
    </UL>
 
 </UL>
