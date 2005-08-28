@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PatchHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/28 17:10:49 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/08/28 17:27:00 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 // and re-write with a right value.
 // This program does the job by brutally overwritting the wrong values.
 // It may be usefull to save a set of images ...
-// (It dosn't allow to *add* a missing field) 
+// (It doesn't allow to *add* a missing field) 
 // ------------------------------------------------------------------------
 
 // global variables will be seen inside any function.
