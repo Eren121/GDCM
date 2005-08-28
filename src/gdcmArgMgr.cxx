@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:18:44 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/08/28 16:56:05 $
+  Version:   $Revision: 1.13 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,10 +117,10 @@ ArgMgr::~ArgMgr()
 /**
  * \brief  checks if a parameter exists in the command line
  * @param param  label name
- * @return   false if label is not found
- *           true  if label is not found
+ * @return   0 if label is not found
+ *           else, returns the number of the spot it was found last time.
  */
-bool ArgMgr::ArgMgrDefined( const char *param )
+int ArgMgr::ArgMgrDefined( const char *param )
 {
   int i, trouve ;
   char *temp;
@@ -134,12 +134,12 @@ bool ArgMgr::ArgMgrDefined( const char *param )
       for ( int j=1; j<i; j++)
       {                     
          if ( (!ArgUsed[j])&&(!strcmp(ArgLab[i],ArgLab[j])) )
-            ArgUsed[j] = true ;
+            ArgUsed[j] = i ;
       }
-      return true ;
+      return i ;
     }
   }
-  return false ;
+  return 0 ;
 }
 
 /**

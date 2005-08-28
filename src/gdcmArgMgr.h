@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:18:44 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/08/28 16:56:05 $
+  Version:   $Revision: 1.10 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ public:
    ArgMgr(int argc, char **argv);
    ~ArgMgr();
 
-   bool   ArgMgrDefined           (const char *param);  // Checks if Param is defined
+   int    ArgMgrDefined           (const char *param);  // Checks if Param is defined
    char  *ArgMgrValue             (const char *param);  // Returns Param value 
    char  *ArgMgrUnused            (void);               // Returns a never used arg.
    int    ArgMgrSave              (char *);             // Save of parameters out
