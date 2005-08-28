@@ -23,8 +23,9 @@ SET(EXAMPLE_SOURCES
   AnonymizeDicomDir # without loading it as a gdcm::DicomDir
   Anonymize         # for full gdcm readable files
   AnonymizeNoLoad   # without loading the Pixel Data 
+  PatchHeader
   ReWrite
-  
+
 #the following will be transformed into 'examples', or 'utilities'
 #              or will be removed
 #
