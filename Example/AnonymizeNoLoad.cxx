@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 11:14:27 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/08/28 17:26:31 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,12 +28,12 @@
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   "\n AnonymizeNoLoad :\n",
+   "\n AnonymizeNoLoad :\n                                                    ",
    "Anonymize a gdcm-readable Dicom image even if pixels aren't gdcm readable ",
    "         Warning : Warning : the image is overwritten                     ",
    "                   to preserve image integrity, use a copy.               ",
    "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}    ",
-   "                       [rubout=listOfElementsToRubOut]                    ", 
+   "                       [rubout=listOfElementsToRubOut]                    ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "       inputFileName : Name of the (single) file user wants to anonymize  ",
    "       inputDirectoryName : user wants to anonymize *all* the files       ",
@@ -99,22 +99,21 @@ int main(int argc, char *argv[])
  
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
+   gdcm::File *f;
    if ( fileName != 0 ) // ====== Deal with a single file ======
    {
 
    // 
    //   Parse the input file.
    // 
-      gdcm::File *f;
       f = new gdcm::File( );
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
-      bool res = f->Load();
 
       // gdcm::File::IsReadable() is no usable here, because we deal with
       // any kind of gdcm::Readable *document*
       // not only gdcm::File (as opposed to gdcm::DicomDir)
-      if ( !res ) 
+      if ( !f->Load() ) 
       {
           std::cout <<std::endl
               << "Sorry, " << fileName <<"  not a gdcm-readable "
@@ -193,14 +192,11 @@ int main(int argc, char *argv[])
                                  it != fileList.end();
                                  ++it )
       {
-
-         gdcm::File *f;
          f = new gdcm::File( );
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
-         bool res = f->Load();
 
-         if ( !res )
+         if ( !f->Load() )
          {
             delete f; 
             continue;
