@@ -131,7 +131,7 @@
 0008 1050 PN 1-n Performing Physician's Name
 0008 1052 SQ 1 Performing Physician Identification Sequence
 0008 1060 PN 1-n Name of Physician(s) Reading Study
-0008 1062 SQ 1-n Physician(s) Reading Study Identification Sequence
+0008 1062 SQ 1 Physician(s) Reading Study Identification Sequence
 0008 1070 PN 1-n Operators' Name
 0008 1072 SQ 1 Operator Identification Sequence
 0008 1080 LO 1-n Admitting Diagnoses Description
