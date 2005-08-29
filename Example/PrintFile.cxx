@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/28 17:02:34 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/08/29 12:25:37 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,6 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmFile.h"
+#include "gdcmDocument.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmBinEntry.h"
@@ -121,11 +122,14 @@ int main(int argc, char *argv[])
 {
 
    START_USAGE(usage)
-   " \n PrintFile : \n                                                       ",
-   " Display the header of a ACR-NEMA/PAPYRUS/DICOM File                     ",
-   " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]", 
+   " \n PrintFile : \n                                                        ",
+   " Display the header of a ACR-NEMA/PAPYRUS/DICOM File                      ",
+   " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]",
+   "                       [forceload=listOfElementsToForceLoad]              ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
-   "        level = 0,1,2 : depending on the amount of details user wants to see",
+   "      level = 0,1,2 : depending on the amount of details user wants to see",
+   "      listOfElementsToForceLOad : group-elem,g2-e2,... (in hexa, no space)",
+   "                                of Elements to load whatever their length ",
    "        noshadowseq: user doesn't want to load Private Sequences          ",
    "        noshadow   : user doesn't want to load Private groups (odd number)",
    "        noseq      : user doesn't want to load Sequences                  ",
@@ -174,6 +178,10 @@ int main(int argc, char *argv[])
 
    int level = am->ArgMgrGetInt("level", 2);
 
+   int forceLoadNb;
+   uint16_t *elemsToForceLoad 
+                        = am->ArgMgrGetXInt16Enum("forceload", &forceLoadNb);
+
    bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
 
    /* if unused Param we give up */
@@ -197,6 +205,13 @@ int main(int argc, char *argv[])
       gdcm::File *f = new gdcm::File();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
+
+      for (int ri=0; ri<forceLoadNb; ri++)
+      {
+         f->AddForceLoadElement((uint32_t)elemsToForceLoad[2*ri], 
+                                (uint32_t)elemsToForceLoad[2*ri+1] ); 
+      }
+
       bool res = f->Load();
 
       if ( !res )
@@ -363,6 +378,13 @@ int main(int argc, char *argv[])
          f = new gdcm::File();
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
+
+         for (int ri=0; ri<forceLoadNb; ri++)
+         {
+            printf("%04x,%04x\n",elemsToForceLoad[2*ri], elemsToForceLoad[2*ri+1]);
+            f->AddForceLoadElement((uint32_t)elemsToForceLoad[2*ri], 
+                                   (uint32_t)elemsToForceLoad[2*ri+1]); 
+         }
          res = f->Load();
 
          if ( !res )
