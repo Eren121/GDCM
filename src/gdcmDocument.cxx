@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:51:45 $
-  Version:   $Revision: 1.268 $
+  Date:      $Date: 2005/08/29 09:41:22 $
+  Version:   $Revision: 1.269 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -965,7 +965,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
-            if ( dynamic_cast< Document* > ( set ) )
+            if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
             {
                newBinEntry->SetKey( newBinEntry->GetKey() );
             }
@@ -1000,7 +1000,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
-            if ( dynamic_cast< Document* > ( set ) )
+            if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
             {
                newValEntry->SetKey( newValEntry->GetKey() );
             }
@@ -1048,7 +1048,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      }
                   }
                }
-             }
+            }
 
             bool delimitor=newValEntry->IsItemDelimitor();
 
@@ -1108,7 +1108,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // is a Document, then we are building the first depth level.
          // Hence the SeqEntry we are building simply has a depth
          // level of one:
-         if ( dynamic_cast< Document* > ( set ) )
+//         SQItem *parentSQItem = dynamic_cast< SQItem* > ( set );
+         if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( 1 );
             newSeqEntry->SetKey( newSeqEntry->GetKey() );
@@ -1118,7 +1119,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // we are building, is one level deeper:
 
          // time waste hunting
-         if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
+         else if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( parentSQItem->GetDepthLevel() + 1 );
 
@@ -1141,7 +1142,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             used = false;
          }
  
-         if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
+        if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if ( !used )
                delete newDocEntry;  

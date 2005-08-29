@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/19 13:15:05 $
-  Version:   $Revision: 1.153 $
+  Date:      $Date: 2005/08/29 09:41:22 $
+  Version:   $Revision: 1.154 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -189,10 +189,10 @@ bool DicomDir::Load( )
       if ( ! this->Document::Load( ) )
          return false;
    }
-    return DoTheLoadingJob( );   
+   return DoTheLoadingJob( );   
 }
 
- #ifndef GDCM_LEGACY_REMOVE
+#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief   Loader. (DEPRECATED : kept not to break the API)
  * @param   fileName file to be open for parsing
