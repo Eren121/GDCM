@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 13:05:01 $
-  Version:   $Revision: 1.270 $
+  Date:      $Date: 2005/08/29 14:02:03 $
+  Version:   $Revision: 1.271 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -719,7 +719,9 @@ void Document::LoadEntryBinArea(BinEntry *elem)
    uint8_t *a = new uint8_t[l];
    if ( !a )
    {
-      gdcmWarningMacro( "Cannot allocate BinEntry content");
+      gdcmWarningMacro(  "Cannot allocate BinEntry content for : "
+                       << std::hex << elem->GetGroup() 
+                       << "|" << elem->GetElement() );
       return;
    }
 
@@ -1008,10 +1010,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             // When "this" is a Document the Key is simply of the
             // form ( group, elem )...
-            if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
-            {
-               newBinEntry->SetKey( newBinEntry->GetKey() );
-            }
+            //if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
+            //{
+            //   newBinEntry->SetKey( newBinEntry->GetKey() );
+            //}
             // but when "this" is a SQItem, we are inserting this new
             // valEntry in a sequence item, and the key has the
             // generalized form (refer to \ref BaseTagKey):
@@ -1043,10 +1045,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
             // When "set" is a Document, then we are at the top of the
             // hierarchy and the Key is simply of the form ( group, elem )...
-            if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
-            {
-               newValEntry->SetKey( newValEntry->GetKey() );
-            }
+            //if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
+            //{
+            //   newValEntry->SetKey( newValEntry->GetKey() );
+            //}
             // ...but when "set" is a SQItem, we are inserting this new
             // valEntry in a sequence item. Hence the key has the
             // generalized form (refer to \ref BaseTagKey):
@@ -1152,10 +1154,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // Hence the SeqEntry we are building simply has a depth
          // level of one:
 //         SQItem *parentSQItem = dynamic_cast< SQItem* > ( set );
-         if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
+        if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( 1 );
-            newSeqEntry->SetKey( newSeqEntry->GetKey() );
+         //   newSeqEntry->SetKey( newSeqEntry->GetKey() );
          }
          // But when "set" is already a SQItem, we are building a nested
          // sequence, and hence the depth level of the new SeqEntry
