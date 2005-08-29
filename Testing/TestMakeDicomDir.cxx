@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:51:26 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/08/29 12:29:48 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ int TestMakeDicomDir(int argc, char *argv[])
    dcmdir->SetDirectoryName(dirName);
    dcmdir->Load( );
 
-   dcmdir->SetStartMethod(StartMethod, (void *) NULL);
+   dcmdir->SetStartMethod(StartMethod);
    dcmdir->SetEndMethod(EndMethod);
    
    if ( !dcmdir->GetFirstPatient() ) 

@@ -12,6 +12,14 @@ def PrintUse():
    print ""
    print ""
 
+### Progress methods
+def startMethod():
+   print "Start"
+def progressMethod():
+   print "Progress",dicomdir.GetProgress()
+def endMethod():
+   print "End"
+
 ### Get filename from command line or default it
 try:
    fileName = sys.argv[1]
@@ -27,6 +35,11 @@ except IndexError:
 
 ### Build the DicomDir element list
 dicomdir = gdcm.DicomDir()
+
+dicomdir.SetStartMethod(startMethod)
+dicomdir.SetProgressMethod(progressMethod)
+dicomdir.SetEndMethod(endMethod)
+
 dicomdir.SetFileName(fileName)
 dicomdir.Load()
 if not dicomdir.IsReadable():
@@ -59,4 +72,18 @@ while(patient):
          serie=study.GetNextSerie()
       study=patient.GetNextStudy()
    patient=dicomdir.GetNextPatient()
+
+dicomdir.SetDirectoryName(os.path.dirname(fileName))
+dicomdir.Load()
+if not dicomdir.IsReadable():
+   PrintUse()
+   raise RuntimeError,"The '%s' DicomDir is not readable with gdcm." % fileName
+
+print "DICOMDIR -->",fileName
+print "##############################################################"
+print "## Display all the elements and their respective values"
+print "## found in the ", fileName, " file."
+print "##############################################################"
+dicomdir.SetPrintLevel(-1)
+dicomdir.Print()
 

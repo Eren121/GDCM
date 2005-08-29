@@ -128,9 +128,7 @@ typedef unsigned long long uint64_t;
 // Note: Uses gdcmPythonVoidFunc and gdcmPythonVoidFuncArgDelete defined
 //       in the Swig verbatim section of this gdcm.i i.e. in the above section
 //       enclosed within the %{ ... %} scope operator ).
-%typemap(python, in) ( gdcm::DicomDir::Method *, 
-                       void * = NULL, 
-                       gdcm::DicomDir::Method * = NULL )
+%typemap(python, in) (void(*method)(void *),void *arg,void(*argDelete)(void *))
 {
 	if($input!=Py_None)
 	{
@@ -205,8 +203,9 @@ typedef unsigned long long uint64_t;
 %ignore gdcm::binary_write(std::ostream &,uint32_t const &);
 %ignore gdcm::binary_write(std::ostream &,uint16_t const &);
 
-//%ignore gdcm::File::File();
-//%ignore gdcm::DicomDir::DicomDir();
+%ignore gdcm::DicomDir::SetStartMethod(DicomDir::Method *method,void *arg = NULL);
+%ignore gdcm::DicomDir::SetProgressMethod(DicomDir::Method *method,void *arg = NULL);
+%ignore gdcm::DicomDir::SetEndMethod(DicomDir::Method *method,void *arg = NULL);
 
 // Ignore all placed in gdcmCommon.h
 %ignore GDCM_UNKNOWN;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 05:02:11 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/08/29 12:29:50 $
+  Version:   $Revision: 1.67 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,17 +95,25 @@ public:
    //       following method declarations. Refer to gdcmPython/gdcm.i
    //       for the reasons of this unnecessary notation at C++ level.
    void SetStartMethod(    DicomDir::Method *method,
-                           void *arg = NULL,
-                           DicomDir::Method *argDelete = NULL );
-   void SetProgressMethod( DicomDir::Method *method, 
-                           void *arg = NULL,
-                           DicomDir::Method *argDelete = NULL );
+                           void *arg = NULL );
+   void SetProgressMethod( DicomDir::Method *method,
+                           void *arg = NULL );
    void SetEndMethod(      DicomDir::Method *method,
-                           void *arg = NULL, 
-                           DicomDir::Method *argDelete = NULL );
-   void SetStartMethodArgDelete   ( DicomDir::Method *m );
-   void SetProgressMethodArgDelete( DicomDir::Method *m );
-   void SetEndMethodArgDelete     ( DicomDir::Method *m );
+                           void *arg = NULL );
+   // Note: replace DicomDir::Method *method to void(*method)(void *) to
+   //       avoid wrapping problems with the typemap conversions
+   void SetStartMethod(    void(*method)(void *), // DicomDir::Method *method
+                           void *arg,
+                           void(*argDelete)(void *));
+   void SetProgressMethod( void(*method)(void *), // DicomDir::Method *method
+                           void *arg,
+                           void(*argDelete)(void *));
+   void SetEndMethod(      void(*method)(void *), // DicomDir::Method *method
+                           void *arg, 
+                           void(*argDelete)(void *));
+   void SetStartMethodArgDelete   ( DicomDir::Method *method );
+   void SetProgressMethodArgDelete( DicomDir::Method *method );
+   void SetEndMethodArgDelete     ( DicomDir::Method *method );
 
    /// GetProgress GetProgress
    float GetProgress()   { return Progress; }

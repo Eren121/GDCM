@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/26 02:25:25 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/08/29 12:29:47 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
    dcmdir = new gdcm::DicomDir( );
 
-   dcmdir->SetStartMethod(StartMethod, (void *) NULL);
+   dcmdir->SetStartMethod(StartMethod);
    dcmdir->SetEndMethod(EndMethod);
 
    dcmdir->SetLoadMode(loadMode);

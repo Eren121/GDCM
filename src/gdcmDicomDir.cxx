@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 09:41:22 $
-  Version:   $Revision: 1.154 $
+  Date:      $Date: 2005/08/29 12:29:50 $
+  Version:   $Revision: 1.155 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,9 +159,9 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
  */
 DicomDir::~DicomDir() 
 {
-   SetStartMethod(NULL);
-   SetProgressMethod(NULL);
-   SetEndMethod(NULL);
+   SetStartMethod(NULL,NULL,NULL);
+   SetProgressMethod(NULL,NULL,NULL);
+   SetEndMethod(NULL,NULL,NULL);
 
    ClearPatient();
    if ( MetaElems )
@@ -404,6 +404,21 @@ void DicomDir::ParseDirectory()
    CreateDicomDir();
 }
 
+void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg )
+{
+   SetStartMethod(method,arg,NULL);
+}
+
+void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg )
+{
+   SetProgressMethod(method,arg,NULL);
+}
+
+void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg )
+{
+   SetEndMethod(method,arg,NULL);
+}
+
 /**
  * \brief   Set the start method to call when the parsing of the
  *          directory starts.
@@ -621,10 +636,10 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
          break;
       }
 
-   f = new File( );
-   f->SetLoadMode(LoadMode); // we allow user not to load Sequences, or Shadow
-                             //             groups, or ......
-   f->SetFileName( it->c_str() );
+      f = new File( );
+      f->SetLoadMode(LoadMode); // we allow user not to load Sequences, or Shadow
+                              //             groups, or ......
+      f->SetFileName( it->c_str() );
    /*int res = */f->Load( );
 
 //     if ( !f )
