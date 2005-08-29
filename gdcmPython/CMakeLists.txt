@@ -38,12 +38,12 @@ SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
 #SET(CMAKE_CXX_FLAGS "")
 # I guess I need to put them back on the this file:
 SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-                            GENERATED
-                            PROPERTIES COMPILE_FLAGS "")
-ADD_DEPENDENCIES(
-  ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-  ${GDCM_SOURCE_DIR}/gdcmConfigure.h
-  )
+                            PROPERTIES COMPILE_FLAGS "" GENERATED 1)
+
+#ADD_DEPENDENCIES(
+#  ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+#  ${GDCM_SOURCE_DIR}/gdcmConfigure.h
+#  )
 
 INSTALL_TARGETS(/lib/gdcm/ _gdcm)
 
