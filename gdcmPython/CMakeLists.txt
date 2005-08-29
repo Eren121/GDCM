@@ -37,8 +37,9 @@ SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
 # Get rid of -Wall / -W / -pedantic if exist
 #SET(CMAKE_CXX_FLAGS "")
 # I guess I need to put them back on the this file:
-#SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-#                            PROPERTIES COMPILE_FLAGS "")
+SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
+                            GENERATED
+                            PROPERTIES COMPILE_FLAGS "")
 ADD_DEPENDENCIES(
   ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
   ${GDCM_SOURCE_DIR}/gdcmConfigure.h
