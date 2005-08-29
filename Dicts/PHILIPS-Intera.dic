@@ -33,7 +33,7 @@
 2001 1035 SS 1 Stack Slice Number
 2001 1036 CS 1 Stack Type
 2001 103f CS 1 Zoom Mode
-2001 105f SQ 1-n Stack Sequence
+2001 105f SQ 1 Stack Sequence
 2001 1060 SL 1 Number of Stacks
 2001 1063 CS 1 Examination Source
 2001 107b IS 1 Acquisition Number
@@ -73,7 +73,7 @@
 2001 e035 SS 1 Stack Slice Number
 2001 e036 CS 1 Stack Type
 2001 e03f CS 1 Zoom Mode
-2001 e05f SQ 1-n Stack Sequence
+2001 e05f SQ 1 Stack Sequence
 2001 e060 SL 1 Number of Stacks
 2001 e063 CS 1 Examination Source
 2001 e07b IS 1 Acquisition Number
