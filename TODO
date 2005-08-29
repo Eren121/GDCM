@@ -11,6 +11,17 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: Add testing of valid dictionary
+Date: 2005 Aug 29
+Attributed: Mathieu
+Details:
+It is potentially possible that user modify the dictionary that gdcm provide
+and this is also possible that the dictionary generated from pdf is buggy
+(see 2001,xx5F. VR = SQ, VM = 1-n, from 
+www.medical.philips.com/main/company/connectivity/assets/docs/dicomcs/mr91.pdf)
+Therefore gdcm should check for any typo, and report it (if possible)
+Comments:
+-----------------------------------------------------------------------------
 Description: Add kwsys as a subdir somewhere in gdcm
 Date: 2004 Oct 8
 Attributed: Mathieu
