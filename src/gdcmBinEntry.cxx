@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/25 14:59:49 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/08/29 13:05:01 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -170,7 +170,7 @@ void BinEntry::Print(std::ostream &os, std::string const & )
             s << "]";
       }
       else
-      {
+      { 
          if ( Util::IsCleanArea( GetBinArea(),GetLength()  ) )
          {
             std::string cleanString = 
@@ -181,8 +181,7 @@ void BinEntry::Print(std::ostream &os, std::string const & )
          {
             s << " [" << GetValue()
               << "; length = " << GetLength() << "]";
-         }
- 
+         } 
       }
    }
    else

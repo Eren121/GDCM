@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/24 02:34:42 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2005/08/29 13:05:02 $
+  Version:   $Revision: 1.116 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,7 +167,7 @@ public:
    void AddAnonymizeElement (uint16_t group, uint16_t elem, 
                              std::string const &value);
    /// Clears the list of elements to be anonymized
-   void ClearAnonymizeList() { AnonymizeList.clear(); }      
+   void ClearAnonymizeList() { UserAnonymizeList.clear(); }      
    void AnonymizeNoLoad();
    /// Replace patient's own information by info from the Anonymization list
    bool AnonymizeFile();

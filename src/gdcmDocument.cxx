@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 09:41:22 $
-  Version:   $Revision: 1.269 $
+  Date:      $Date: 2005/08/29 13:05:01 $
+  Version:   $Revision: 1.270 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -258,6 +258,37 @@ bool Document::DoTheLoadingDocumentJob(  )
      }      
    }
 
+   // Force Loading some more elements if user asked to.
+
+   gdcm::DocEntry *d;
+   for (ListElements::iterator it = UserForceLoadList.begin();  
+                               it != UserForceLoadList.end();
+                             ++it)
+   {
+      d = GetDocEntry( (*it).Group, (*it).Elem);
+
+      if ( d == NULL)
+         continue;
+
+      if ( dynamic_cast<BinEntry *>(d) )
+      {
+         LoadDocEntry(d, true);
+         continue;
+      }
+
+      if ( dynamic_cast<BinEntry *>(d) )
+      {
+         LoadEntryBinArea((*it).Group, (*it).Elem);
+         continue;
+      }
+ 
+      if ( dynamic_cast<SeqEntry *>(d) )
+      {
+         gdcmWarningMacro( "You cannot 'ForceLoad' a SeqEntry ");
+         continue;
+      }
+   }
+
    CloseFile(); 
   
    // ----------------------------
@@ -283,10 +314,22 @@ bool Document::DoTheLoadingDocumentJob(  )
          SetValEntry(rows   , 0x0028, 0x0011);
    }
    // --- End of ACR-LibIDO kludge --- 
-
    return true;
 }
 
+
+/**
+ * \brief Adds a new element we want to load anyway
+ * @param   group  Group number of the target tag.
+ * @param   elem Element number of the target tag.
+ */
+void Document::AddForceLoadElement (uint16_t group, uint16_t elem) 
+{ 
+   Element el;
+   el.Group = group;
+   el.Elem  = elem;
+   UserForceLoadList.push_back(el); 
+}
 /**
  * \brief   Get the public dictionary used
  */
@@ -1270,11 +1313,13 @@ return newEntry;
 }
 
 /**
- * \brief   Loads the element content if its length doesn't exceed
- *          the value specified with Document::SetMaxSizeLoadEntry()
+ * \brief   Loads (or not) the element content depending if its length exceeds
+ *          or not the value specified with Document::SetMaxSizeLoadEntry()
  * @param   entry Header Entry (Dicom Element) to be dealt with
+ * @param  forceLoad wheter we want to load its content even if its length 
+ *         exceeds the value specified with Document::SetMaxSizeLoadEntry()
  */
-void Document::LoadDocEntry(DocEntry *entry)
+void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 {
    uint16_t group  = entry->GetGroup();
    std::string  vr = entry->GetVR();
@@ -1304,37 +1349,41 @@ void Document::LoadDocEntry(DocEntry *entry)
    // the element content and it's length.
 
    std::ostringstream s;
-   if (length > MaxSizeLoadEntry)
-   {
-      if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
-      {  
-         s << GDCM_NOTLOADED;
-         s << " Ad.:" << (long)entry->GetOffset();
-         s << " x(" << std::hex << entry->GetOffset() << ")";
-         s << std::dec;
-         s << " Lgt:"  << entry->GetLength();
-         s << " x(" << std::hex << entry->GetLength() << ")";
-         binEntryPtr->SetValue(s.str());
-      }
-      else if (ValEntry *valEntryPtr = dynamic_cast< ValEntry* >(entry) )
-      {
-         s << GDCM_NOTLOADED;  
-         s << " Address:" << (long)entry->GetOffset();
-         s << " Length:"  << entry->GetLength();
-         s << " x(" << std::hex << entry->GetLength() << ")";
-         valEntryPtr->SetValue(s.str());
-      }
-      else
-      {
-         // fusible
-         gdcmErrorMacro( "MaxSizeLoadEntry exceeded, neither a BinEntry "
-                      << "nor a ValEntry ?! Should never print that !" );
-      }
 
-      // to be sure we are at the end of the value ...
-      Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
-                std::ios::beg);
-      return;
+   if (!forceLoad)
+   {
+      if (length > MaxSizeLoadEntry)
+      {
+         if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
+         {  
+            s << GDCM_NOTLOADED;
+            s << " Ad.:" << (long)entry->GetOffset();
+            s << " x(" << std::hex << entry->GetOffset() << ")";
+            s << std::dec;
+            s << " Lgt:"  << entry->GetLength();
+            s << " x(" << std::hex << entry->GetLength() << ")";
+            binEntryPtr->SetValue(s.str());
+         }
+         else if (ValEntry *valEntryPtr = dynamic_cast< ValEntry* >(entry) )
+         {
+            s << GDCM_NOTLOADED;  
+            s << " Address:" << (long)entry->GetOffset();
+            s << " Length:"  << entry->GetLength();
+            s << " x(" << std::hex << entry->GetLength() << ")";
+            valEntryPtr->SetValue(s.str());
+         }
+         else
+         {
+            // fusible
+            gdcmErrorMacro( "MaxSizeLoadEntry exceeded, neither a BinEntry "
+                         << "nor a ValEntry ?! Should never print that !" );
+         }
+
+         // to be sure we are at the end of the value ...
+         Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
+                   std::ios::beg);
+         return;
+      }
    }
 
    // When we find a BinEntry not very much can be done :

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:09:13 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2005/08/29 13:05:01 $
+  Version:   $Revision: 1.120 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,6 +100,7 @@ typedef std::list<Element> ListElements;
    virtual void LoadEntryBinArea(BinEntry *entry);
 
    void LoadDocEntrySafe(DocEntry *entry);
+   void AddForceLoadElement(uint16_t group, uint16_t elem);
  
 // Ordering of Documents
    bool operator<(Document &document);
@@ -166,8 +167,11 @@ protected:
    /// are NOT loaded.
    static const unsigned int MAX_SIZE_LOAD_ELEMENT_VALUE;
 
-   /// List of elements to Anonymize
-   ListElements AnonymizeList;
+   /// User supplied list of elements to Anonymize
+   ListElements UserAnonymizeList;
+
+   /// User supplied list of elements to force Load
+   ListElements UserForceLoadList;
 
    /// \brief Bit string integer (each one considered as a boolean)
    ///        Bit 0 : Skip Sequences,    if possible
@@ -191,7 +195,7 @@ private:
    void ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
    void ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);
 
-   void LoadDocEntry         (DocEntry *e);
+   void LoadDocEntry         (DocEntry *e, bool forceLoad = false);
    void FindDocEntryLength   (DocEntry *e) throw ( FormatError );
    uint32_t FindDocEntryLengthOBOrOW() throw( FormatUnexpected );
    std::string FindDocEntryVR();

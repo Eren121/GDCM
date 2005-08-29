@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:17:08 $
-  Version:   $Revision: 1.264 $
+  Date:      $Date: 2005/08/29 13:05:01 $
+  Version:   $Revision: 1.265 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1289,7 +1289,7 @@ void File::AddAnonymizeElement (uint16_t group, uint16_t elem,
    el.Group = group;
    el.Elem  = elem;
    el.Value = value;
-   AnonymizeList.push_back(el); 
+   UserAnonymizeList.push_back(el); 
 }
 
 /**
@@ -1305,8 +1305,8 @@ void File::AnonymizeNoLoad()
    uint32_t lgth;
    uint32_t valLgth = 0;
    std::string *spaces;
-   for (ListElements::iterator it = AnonymizeList.begin();  
-                               it != AnonymizeList.end();
+   for (ListElements::iterator it = UserAnonymizeList.begin();  
+                               it != UserAnonymizeList.end();
                              ++it)
    { 
       d = GetDocEntry( (*it).Group, (*it).Elem);
@@ -1314,11 +1314,11 @@ void File::AnonymizeNoLoad()
       if ( d == NULL)
          continue;
 
-         if ( dynamic_cast<SeqEntry *>(d) )
-         {
-            gdcmWarningMacro( "You cannot 'Anonymize a SeqEntry ");
-            continue;
-         }
+      if ( dynamic_cast<SeqEntry *>(d) )
+      {
+         gdcmWarningMacro( "You cannot 'Anonymize' a SeqEntry ");
+         continue;
+      }
 
       offset = d->GetOffset();
       lgth =   d->GetLength();
@@ -1344,7 +1344,7 @@ void File::AnonymizeNoLoad()
 bool File::AnonymizeFile()
 {
    // If Anonymisation list is empty, let's perform some basic anonymization
-   if ( AnonymizeList.begin() == AnonymizeList.end() )
+   if ( UserAnonymizeList.begin() == UserAnonymizeList.end() )
    {
       // If exist, replace by spaces
       SetValEntry ("  ",0x0010, 0x2154); // Telephone   
@@ -1362,15 +1362,15 @@ bool File::AnonymizeFile()
          }
          else
          {
-            SetValEntry("anonymised", 0x0010, 0x0010);
+            SetValEntry("anonymized", 0x0010, 0x0010);
          }
       }
    }
    else
    {
       gdcm::DocEntry *d;
-      for (ListElements::iterator it = AnonymizeList.begin();  
-                                  it != AnonymizeList.end();
+      for (ListElements::iterator it = UserAnonymizeList.begin();  
+                                  it != UserAnonymizeList.end();
                                 ++it)
       {  
          d = GetDocEntry( (*it).Group, (*it).Elem);
