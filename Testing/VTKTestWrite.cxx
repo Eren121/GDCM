@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:31:15 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/08/30 08:27:04 $
+  Version:   $Revision: 1.10 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,8 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
+#include "gdcmDebug.h"
+
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
 #endif
@@ -52,13 +54,17 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
    vtkGdcmReader *origin = vtkGdcmReader::New();
    origin->SetFileName( filename.c_str() );
    origin->Update();
-
+  
+   std::cout << "1 ...";
+   
    // Write the image
    vtkGdcmWriter *writer = vtkGdcmWriter::New();
    writer->SetFileName( "TestWrite.dcm" );
    writer->SetInput(origin->GetOutput());
+   std::cout << "2' ...",
    writer->Write();
 
+   std::cout << "2'' ...";
    origin->Delete();
    writer->Delete();
 
@@ -67,6 +73,7 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
    reader->SetFileName( "TestWrite.dcm" );
    reader->Update();
 
+   std::cout << "3 ...";
    double range[2];
    reader->GetOutput()->GetScalarRange(range);
    int dim[3];
@@ -83,7 +90,7 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
       viewer->SetSize(dim[0], dim[1]);
       if(dim[2] != 1)
       {
-         //For multifame dicom, take a snapshot of the center slice (+/- 1)
+         //For multiframe dicom, take a snapshot of the center slice (+/- 1)
          viewer->SetZSlice( dim[2] / 2 );
       }
       else
@@ -96,6 +103,7 @@ int VTKWriteTest(vtkTesting *t,vtkImageViewer *viewer,
       viewer->SetInput(NULL);
    }
 
+   std::cout << std::endl;
    //----------------------------------------------------------------------
    // Transform the image to be RGB unsigned char, due to the requests in
    // vtkTesting processing
@@ -194,6 +202,8 @@ int VTKTestWrite(int argc, char *argv[])
          show = true;
       }
    }
+
+//   gdcm::Debug::DebugOn();
 
    int ret = 0;
    vtkTesting *t = vtkTesting::New();
