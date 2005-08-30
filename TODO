@@ -11,6 +11,16 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: gdcm::SerieHelper / UID / set of rules
+Date: 2005 Aug 30
+Attributed: Mathieu
+Details:
+  gdcm::SerieHelper now offer a mechanism to add rules to sub select image 
+as we iterate over them within a subdirectory structure. But what if UID was too
+restrictive ? Therefore UID subselection become only a good default rule, which
+should ideally be removed when user need a specific task.
+Comments:
+-----------------------------------------------------------------------------
 Description: Add testing of valid dictionary
 Date: 2005 Aug 29
 Attributed: Mathieu
@@ -26,6 +36,10 @@ Description: Add kwsys as a subdir somewhere in gdcm
 Date: 2004 Oct 8
 Attributed: Mathieu
 Details:
+  kwsys is a lightweight library developped by kitware, used in project like
+ITK, VTK, CMake and ParaView. It runs and compile on almost any plateform with c++
+compiler. And it provide a cross plateform approach to any kind of system call
+(executing a process, killing a process, realpath, filename/directory management ...)
 Comments:
    * jpr : what does 'kwsys' stand for?
 -----------------------------------------------------------------------------
