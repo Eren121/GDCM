@@ -38,19 +38,13 @@ Any contribution is welcome.
          But we are working on it (a lot of troubles with Jasper).
       </UL>
       <LI> gdcm doesn't read yet <TT>MPEG2</TT> encoded files.
-      <UL>
-          But we are working on it.
-      </UL>
+
    </UL>
    <LI>Reader
    <UL>
       <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he just wants 
            to load a given list of <TT>DocEntries</TT> 
            (to save CPU time and RAM space)
-      <LI> Allow user to tell <TT>gdcm::Document</TT> constructor he wants
-           to force the loading of a given list of <TT>DocEntries</TT>, 
-           even if there length exceeds the current 
-           <TT>MAX_SIZE_LOAD_ELEMENT_VALUE</TT>.
       <LI> Allow 'frame by frame' reading (should be helpfull for huge 
            multiframe images)
       <LI> Allow subvolume selection / frames selection before reading.
@@ -128,6 +122,89 @@ Any contribution is welcome.
    <LI> <A HREF="News.html#missing">Missing Features</a>
    <LI> New Features
    <UL>
+      <LI><TT>
+          void Document::AddForceLoadElement(uint16_t group, uint16_t elem);
+           </TT><br>
+           allows user to tell <TT>gdcm::Document</TT> Loader he wants
+           to force the loading of a given set of <TT>DocEntries</TT>, 
+           even if their length exceeds the current 
+           <TT>MAX_SIZE_LOAD_ELEMENT_VALUE</TT>.
+            <br><br>
+       <LI>
+         Many users expect from <TT>vtkGdcmReader</TT> it 'orders' the images
+         (that's the job of <TT>gdcm::SerieHelper</TT> ...)<br>
+         When user <b>knows</b> the files with same Serie UID
+         have same sizes, same 'pixel' type, same color convention, ...
+         the right way to proceed is as follow :
+    <pre>
+        gdcm::SerieHelper *sh= new gdcm::SerieHelper();
+   //      if user wants *not* to load some parts of the file headers
+        sh->SetLoadMode(loadMode);
+
+   //      if user wants *not* to load some files
+        sh->AddRestriction(group, element, value, operator);
+        sh->AddRestriction( ...
+        sh->SetDirectory(directoryWithImages);
+
+   //      if user wants to sort reverse order
+        sh->SetSortOrderToReverse();
+   //      or
+   //      if user *knows* how to order his files
+        sh->SetUserLessThanFunction(userSuppliedComparisonFunction);
+  
+   //      here, we suppose only the first Coherent File List is of interest
+        gdcm::FileList *l = sh->GetFirstCoherentFileList();
+
+   //      if user is doesn't trust too much the files with same Serie UID
+        if ( !sh->IsCoherent(l) )
+           return; // not same sizes, or not same 'pixel type' -> stop
+
+        sh->OrderFileList(l);        // sort the list
+
+        vtkGdcmReader *reader = vtkGdcmReader::New();
+   //      if user wants to modify pixel order (Mirror, TopDown, ...)
+   //      he has to supply the function that does the job
+   //      (a *very* simple example is given in vtkgdcmSerieViewer.cxx)
+        reader->SetUserFunction (userSuppliedFunction);
+
+   //      to pass a 'Coherent File List' as produced by gdcm::SerieHelper
+        reader->SetCoherentFileList(l);
+        reader->Update();
+   </pre>
+   You can see a full example in <TT>vtk/vtkgdcmSerieViewer.cxx</TT><br>
+   e.g.<br>
+
+   <TT>vtkgdcmSerieViewer dirname=Dentist  mirror</TT><br>
+   <TT>vtkgdcmSerieViewer dirname=Dentist  reverse</TT><br>
+   <TT>vtkgdcmSerieViewer dirname=Dentist  reverse topdown</TT><br> 
+   </pre>
+      <br>
+
+      <LI> <TT>vtkGdcmReader::SetUserFunction (userSuppliedFunction)</TT><br>
+          with :<br>
+          <TT>void userSuppliedFunction(uint8_t *imageData, File *f);</TT><br>
+          allows user to reorganize the pixels of each image just after reading
+          it (to mirror, or topdown the image, for instance)<br>
+          Note : <TT>uint8_t *</TT> doesn't mean it works only on 8 Bits images.
+          <br> It's for prototyping. Feel free to cast it.
+          <br><br>  
+      <LI> <TT>
+          SerieHelper::SetUserLessThanFunction(userSuppliedComparisonFunction)
+          </TT><br> with : <br>
+          <TT>bool userSuppliedComparisonFunction(File *, File *);</TT><br>
+          allows user -when he knows more about his files than gdcm does-
+          to give his own comparison function. 
+     <LI> <TT>SerieHelper::SetSortOrderToReverse</TT> allows user to ask
+         to sort the Files reverse order.
+     <LI> <TT>SerieHelper::AddRestriction</TT> has now a new constructor<br>
+          <TT>AddRestriction(group, element, value, operator);</TT><br>
+          allows user to exclude some files from the sorting, according to
+          any comparison operator <br>
+          (<TT>GDCM_EQUAL</TT>, <TT>GDCM_DIFFERENT</TT>, 
+          <TT>GDCM_GREATER</TT>, <TT>GDCM_GREATEROREQUAL</TT>, 
+          <TT>GDCM_LESS</TT>, <TT>GDCM_LESSOREQUAL</TT>), not only on the
+          equality.
+           <br><br>
       <LI> <TT>AnonymizeNoLoad</TT> used with <TT>dirin=inputDirectoryName</TT>
            anonymizes all the files within the given Directory.
            <br>
@@ -202,11 +279,13 @@ Any contribution is welcome.
            <br> 
       <LI> User is now allowed to tell <TT>gdcm::Document</TT> constructor 
             he doesn't want to deal with <TT>SeqEntry</TT> 
-            (every time it's possible) <br> and/or he doesn't 
-            want to deal with <TT>Shadow groups</TT> (every time it's
-            possible) <br> or he doesn't 
-            want to deal with <TT>SeqEntry</TT> that belong to a <TT>Shadow group</TT>  (every time it's
-            possible)<br>
+            (every time it's possible, i.e for 'true length' Sequences) <br>
+            and/or he doesn't want to deal with <TT>Shadow groups</TT> 
+            (every time it's possible i.e. when element <TT>0x0000</TT>
+            exists for this Group) <br> 
+            or he doesn't want to deal with <TT>SeqEntry</TT> that belong to a 
+            <TT>Shadow group</TT>  (every time it's possible 
+            -'true length' Sequence-)<br>
             use : <br>
             <pre>
             gdcm::File *f = new gdcm::File();
@@ -222,13 +301,15 @@ Any contribution is welcome.
             gdcm::File *f = new gdcm::File(fileName);</TT> <br>
             <br>
         <LI> User is now allowed to tell <TT>gdcm::DicomDir</TT> constructor 
-            he doesn't want to deal with <TT>SeqEntry</TT> 
-            (every time it's possible) <br> and/or he doesn't 
-            want to deal with <TT>Shadow groups</TT> (every time it's
-            possible) <br> or he doesn't 
-            want to deal with <TT>SeqEntry</TT> that belong to a <TT>Shadow group</TT>  (every time it's
-            possible)<br> when he parses all the Dicom files within a given
-            directory
+             he doesn't want to deal with <TT>SeqEntry</TT> 
+            (every time it's possible, i.e for 'true length' Sequences) <br>
+            and/or he doesn't want to deal with <TT>Shadow groups</TT> 
+            (every time it's possible i.e. when element <TT>0x0000</TT>
+            exists for this Group) <br> 
+            or he doesn't want to deal with <TT>SeqEntry</TT> that belong to a 
+            <TT>Shadow group</TT>  (every time it's possible 
+            -'true length' Sequence-)<br>
+            when he parses all the Dicom files within a given directory.<br>
             use : <br>
             <pre>
             gdcm::DicomDir *f = new gdcm::DicomDir();
@@ -247,13 +328,16 @@ Any contribution is welcome.
 
    <LI> Bug fixes
    <UL>
+      <LI> No more trouble when the 'endianess' switches within Sequences.
+      <LI> No more trouble with 'no length Sequences' belonging to a
+           <TT>Shadow Group</TT> when they are 'Implicit VR'.
       <LI> The difference between <TT>MONOCHROME1</TT> (low values = bright,
             high values = dark) and <TT>MONOCHROME2</TT> (low values = dark,
             high values = bright) is now taken into account.<br> 
             It's no longer up to the user to change the pixels value
       <LI> Writing a 'True Dicom' image after reading an <TT>ACR-NEMA</TT> image 
            does not request any longer from the user to build up 
-           'manually' the Meta Elements group (<TT>Ox0002</TT>)
+           'manually' the Meta Elements group (<TT>0x0002</TT>)
       <LI> Old '24 Bits' <TT>ACR-NEMA</TT> are now correctly re-written
            in <TT>DICOM V3</TT> mode.
       <LI> Element <TT>0x0000</TT> of <TT>Shadow groups</TT> is always forced to be a
@@ -275,6 +359,7 @@ Any contribution is welcome.
            Better you use <TT>Explicit Value Representation</TT> writting mode ...
       <LI> Troubles on 'Big endian' processors (i.e. Apple/Motorola, SunSparc
            ...) when writting 16 Bits images.
+      <LI> Troubles on 64-bits processors.
    </UL>
 
 </UL>
