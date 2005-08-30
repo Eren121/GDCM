@@ -15,7 +15,7 @@ Description: Add testing of valid dictionary
 Date: 2005 Aug 29
 Attributed: Mathieu
 Details:
-It is potentially possible that user modify the dictionary that gdcm provide
+It is potentially possible that user modifies the dictionary that gdcm provides
 and this is also possible that the dictionary generated from pdf is buggy
 (see 2001,xx5F. VR = SQ, VM = 1-n, from 
 www.medical.philips.com/main/company/connectivity/assets/docs/dicomcs/mr91.pdf)
@@ -27,6 +27,7 @@ Date: 2004 Oct 8
 Attributed: Mathieu
 Details:
 Comments:
+   * jpr : what does 'kwsys' stand for?
 -----------------------------------------------------------------------------
 Description: Extent reading support
 Date: 2004 Oct 8
@@ -38,13 +39,14 @@ selecting extent before being inserted into ITK
 Description: gdcmDicomDir and SQItem creation
 Date: 2004 Nov 16
 Attributed:
-Details: DicomDir creates some SQItem (by new). After that, it creates
+Details: DicomDir creates some SQItem (by new). Then, it creates
   the corresponding DicomDirPatient, etc. using the content of the SQItem
   (the content is composed with some DocEntry's that can't be destroyed).
   So, if the SQItem is deleted, then it's content is deleted to. But the 
   DicomDirPatient, etc. use the content of the SQItem. Then, the SQItem can't
   be deleted, and when have memory leaks
-
+Comments : 
+   * JPR : Fixed
 -----------------------------------------------------------------------------
 Description: [BUG] Better handling of unfound Dicom dictionary.
              When gdcm doesn't find the Dicom dictionary (because it's
@@ -93,7 +95,7 @@ Details: vtkGdcmReader::CheckFileCoherence() sets the DataOrigin[i]
          possible any how). This plane normal could be extracted from 
          the "orientation" info of the gdcmHeader ( refer to
          grep "Orientation" Dicts/dicomV3.dic).
-         Problem exhibiting this defect: cine loop on a pile of images
+         Problem exhibiting this defect: cine loop on a stack of images
                whose Origin is correct, but whose normal is not set will
                plainly suck !
 Comments:
@@ -113,6 +115,10 @@ Details:
 Comments:
  * Frog: where can we obtain such a private/dictionary and the corresponding
          Dicom file ? Any examples on-line ?
+ * jpr : some are in gdcm/Dicts (built from pdf documents found on constructors'
+        www sites.
+        When we check them against existing images, we see the are uncomplete
+        and unaccurate ...
 -----------------------------------------------------------------------------
 Description: generate methods based on VM.
 Date: 2004 Jul 30
@@ -141,15 +147,21 @@ Date: 2004 9 7
 Attributed:
 Details: in order to promote gdcm make a list (on the web pages)
          of images successfully parsed based on a constructor/model ordering
-Comments: * frog: gdcmData only lists pathological images. How to collect
-    the ones gdcm works smoothly with (hopefully gdcmData is a small
-    subset of what we would like).        
+Comments:
+ * frog: gdcmData only lists pathological images. How to collect
+         the ones gdcm works smoothly with (hopefully gdcmData is a small
+         subset of what we would like).
+  * jpr : gdcmData contains images that caus*ed* us some troubles.  
+          the aim of gdcm is to read *all* the images, from *all* the
+          constructors and *all* the models.
+          Better we do a 'gdcm Dicom Hall of Shame' with bugged header images,
+          explaining *why* the header is bugged.         
 -----------------------------------------------------------------------------
 Description: Add a GetVersion() global function.
 Date: 2003 july 7
 Attributed:
 Details: This is to be used for version assertion with gdcmPython
-Comments:
+Comments: Done (August 2005)
 -----------------------------------------------------------------------------
 * vtk/vtkGdcmHeader.cxx: if speed becomes a concern some changes can
   be made at the cost of memory consumption (refer to header of 
@@ -164,6 +176,10 @@ Comments:
   gdcmElValSet::GetElValueByNumber except for the returned code.
   gdcmHeader::SetPubElValLengthByNumber (which is based on 
   gdcmElValSet::SetElValueLengthByNumber) is used nowhere...
+Comments:
+   * jpr : all the methods SetxxxByName were trashed.
+           all the methods SetxxxByNumber were renamed
+           A general method clean out was performed
 -----------------------------------------------------------------------------
 * All (or at least many of) the methods of gdcmHeader whose only arguments
   are an ElValue* (e.g.  FindLength, FindVR, LoadElementValue...) can
@@ -178,15 +194,15 @@ Comments:
    so we can related a length to a group).
 -----------------------------------------------------------------------------
 * GetPubElValByNumber doit faire la difference entre chaine vide 
-  et chaine pas touve''. Eventuellement raiser une exception ?
+  et chaine pas trouve'e. Eventuellement raiser une exception ?
 -----------------------------------------------------------------------------
 * gdcmHeader::LoadElements only loads the element whose length is
   below the specified size. When accessing the value of such an element
   the content is unfound ! Find a decent way of loading the value on
   explicit demand.
 -----------------------------------------------------------------------------
-* JPR: fournir une method qui ne fait que lire les elements passes en arguments
-  sous forme d'une liste.
+* JPR: supply a method that only reads/loads (?) the Dicom elements 
+  given as a list(?).
 -----------------------------------------------------------------------------
 * JPR: gdcmHeader::CheckSwap() dans le cas ACR pas propre, degager tout de
   suite si on a deduit que c'en est pas...
