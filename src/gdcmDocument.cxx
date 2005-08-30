@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:33 $
-  Version:   $Revision: 1.272 $
+  Date:      $Date: 2005/08/30 15:13:09 $
+  Version:   $Revision: 1.273 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,7 @@ Document::Document()
    Group0002Parsed = false;
    IsDocumentAlreadyLoaded = false;
    IsDocumentModified = true;
-   LoadMode = GDCM_LD_ALL; // default : load everything, later
+   LoadMode = LD_ALL; // default : load everything, later
    SetFileName("");
 }
 
@@ -81,7 +81,7 @@ Document::Document( std::string const &fileName )
    SwapCode = 1234;
    Filetype = ExplicitVR;
    Group0002Parsed = false;
-   LoadMode = GDCM_LD_ALL; // Load everything, later
+   LoadMode = LD_ALL; // Load everything, later
 
    // Load will set it to true if sucessfull
    IsDocumentAlreadyLoaded = false;

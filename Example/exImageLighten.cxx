@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exImageLighten.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:28 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/08/30 15:13:06 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
    std::cout << argv[1] << std::endl;
 
    gdcm::File *f = new gdcm::File();
-   f->SetLoadMode( GDCM_LD_ALL);
+   f->SetLoadMode( gdcm::LD_ALL);
    f->SetFileName( fileName );
    bool res = f->Load();        
 

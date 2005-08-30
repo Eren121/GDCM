@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:35 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/08/30 15:13:10 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
          reader->AddFileName( argv[i] );
 
 // TODO : allow user to choose Load Mode
-   reader->SetLoadMode(GDCM_LD_NOSHADOWSEQ);  
+   reader->SetLoadMode(gdcm::LD_NOSHADOWSEQ);  
    reader->Update();
 
    //print debug info:

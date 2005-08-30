@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:28 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/08/30 15:13:05 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -165,15 +165,15 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
  
-   int loadMode = GDCM_LD_ALL;
+   int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= GDCM_LD_NOSHADOWSEQ;
+      loadMode |= gdcm::LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= GDCM_LD_NOSHADOW;
+         loadMode |= gdcm::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= GDCM_LD_NOSEQ;
+         loadMode |= gdcm::LD_NOSEQ;
    }
 
    int level = am->ArgMgrGetInt("level", 2);

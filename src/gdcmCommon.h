@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:32 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2005/08/30 15:13:09 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -197,20 +197,15 @@ enum CompOperators {
    GDCM_LESSOREQUAL
 };
 
-// Loading mode
-#define GDCM_LD_ALL         0x00000000
-#define GDCM_LD_NOSEQ       0x00000001
-#define GDCM_LD_NOSHADOW    0x00000002
-#define GDCM_LD_NOSHADOWSEQ 0x00000004
-
+/// \brief Loading mode
 enum LodModeType
 {
-   LD_ALL         = GDCM_LD_ALL, // Load all
-   LD_NOSEQ       = GDCM_LD_NOSEQ, // Don't load odd groups
-   LD_NOSHADOW    = GDCM_LD_NOSHADOW, // Don't load Sequences
-   LD_NOSHADOWSEQ = GDCM_LD_NOSHADOWSEQ // Don't load Sequences if they belong 
-                                                   // to an odd group
-                                                   // (*exclusive* from LD_NOSEQ and LD_NOSHADOW)
+   LD_ALL         = 0x00000000, // Load all
+   LD_NOSEQ       = 0x00000001, // Don't load Sequences
+   LD_NOSHADOW    = 0x00000002, // Don't load odd groups
+   LD_NOSHADOWSEQ = 0x00000004  // Don't load Sequences if they belong 
+                                // to an odd group
+                                // (*exclusive* from LD_NOSEQ and LD_NOSHADOW)
 };
 
 /**

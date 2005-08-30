@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:28 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/08/30 15:13:05 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
       gdcm::Debug::DebugOn(); 
 
    if (argc > 4)
-      e1->SetLoadMode(GDCM_LD_NOSEQ | GDCM_LD_NOSHADOW);
+      e1->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    e1->SetFileName( fileName.c_str() );
    e1->Load( );
 
