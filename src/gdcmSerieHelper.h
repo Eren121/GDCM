@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:13:24 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/08/30 08:12:40 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,8 @@ namespace gdcm
 {
 class File;
 typedef std::vector<File* > FileList;
+
+typedef bool (*BOOL_FUNCTION_PFILE_PFILE_POINTER)(File *, File *);
 
 //-----------------------------------------------------------------------------
 /**
@@ -76,7 +78,7 @@ public:
 /**
  * \brief Sets the LoadMode as a boolean string. 
  *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ
- ... (nothing more, right now)
+ *        (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
@@ -90,7 +92,11 @@ public:
 /// Brief User wants the files to be sorted Reverse Order 
    void SetSortOrderToReverse() { DirectOrder = false; }
 
+   /// to allow user to give is own comparison function
+   void SetUserLessThanFunction( BOOL_FUNCTION_PFILE_PFILE_POINTER userFunc ) 
+                        { UserLessThanFunction = userFunc; }   
 private:
+   bool UserOrdering(FileList *coherentFileList);
    bool ImagePositionPatientOrdering(FileList *coherentFileList);
    bool ImageNumberOrdering(FileList *coherentFileList);
    bool FileNameOrdering(FileList *coherentFileList);
@@ -127,6 +133,10 @@ private:
    /// \brief whether we want to sort in direct order or not (reverse order).
    ///        To be used by aware user only
    bool DirectOrder;
+
+   /// \brief If user knows more about his images than gdcm does,
+   ///        he may supply his own comparison function.
+   /*static*/ BOOL_FUNCTION_PFILE_PFILE_POINTER UserLessThanFunction;
 };
 
 } // end namespace gdcm

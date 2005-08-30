@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:13:24 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/08/30 08:12:40 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,8 @@ namespace gdcm
  */
 SerieHelper::SerieHelper()
 {
+   UserLessThanFunction = 0;
+
    // For all the File lists that may already exist within the gdcm::Serie
    FileList *l = GetFirstCoherentFileList();
    while (l)
@@ -282,7 +284,13 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
  */
 void SerieHelper::OrderFileList(FileList *coherentFileList)
 {
-   if ( ImagePositionPatientOrdering( coherentFileList ) )
+
+   if ( SerieHelper::UserLessThanFunction )
+   {
+      UserOrdering( coherentFileList );
+      return; 
+   }
+   else if ( ImagePositionPatientOrdering( coherentFileList ) )
    {
       return ;
    }
@@ -584,6 +592,21 @@ bool SerieHelper::FileNameOrdering(FileList *fileList)
    return true;
 }
 
+/**
+ * \brief sorts the images, according to user supplied function
+ * \note Only Direct ordering is allowed
+ * @param fileList Coherent File list (same Serie UID) to sort
+ * @return false only if the header is bugged !
+ */
+bool SerieHelper::UserOrdering(FileList *fileList)
+{
+   if (DirectOrder) 
+      std::sort(fileList->begin(), fileList->end(), SerieHelper::UserLessThanFunction);
+   else
+      gdcmWarningMacro( " Only Direct ordering allowed "
+                     << "when user function is supplied");
+   return true;
+}
 //-----------------------------------------------------------------------------
 // Print
 /**
