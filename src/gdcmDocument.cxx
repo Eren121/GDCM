@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:09 $
-  Version:   $Revision: 1.273 $
+  Date:      $Date: 2005/08/30 15:34:35 $
+  Version:   $Revision: 1.274 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,8 +95,7 @@ Document::Document( std::string const &fileName )
  */
 Document::~Document ()
 {
-   RefPubDict = NULL;
-   RefShaDict = NULL;
+   CloseFile();
 }
 
 //-----------------------------------------------------------------------------
