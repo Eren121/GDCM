@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 13:05:01 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2005/08/30 14:40:33 $
+  Version:   $Revision: 1.121 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,11 +28,6 @@
 #include <list>
 #include <fstream>
 
-#define NO_SEQ        0x00000001  // Don't load odd groups
-#define NO_SHADOW     0x00000002  // Don't load Sequences
-#define NO_SHADOWSEQ  0x00000004  // Don't load Sequences if they belong 
-                                  // to an odd group
-                                  // (*exclusive* from NO_SEQ and NO_SHADOW)
 namespace gdcm 
 {
 class ValEntry;
@@ -107,7 +102,7 @@ typedef std::list<Element> ListElements;
 
 /**
  * \brief Sets the LoadMode as a boolean string. 
- *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ
+ *        LD_NOSEQ, LD_NOSHADOW, LD_NOSHADOWSEQ
  ... (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/08/22 15:38:05 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/08/30 14:40:33 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,10 +47,10 @@ gdcm::File *f = new gdcm::File(fileName);
 // user may also decide he doesn't want to load some parts of the header
 gdcm::File *f = new gdcm::File();
 f->SetFileName(fileName);
-   f->SetLoadMode(NO_SEQ);             // or      
-   f->SetLoadMode(NO_SHADOW);          // or
-   f->SetLoadMode(NO_SEQ | NO_SHADOW); // or
-   f->SetLoadMode(NO_SHADOWSEQ);
+   f->SetLoadMode(LD_NOSEQ);             // or      
+   f->SetLoadMode(LD_NOSHADOW);          // or
+   f->SetLoadMode(LD_NOSEQ | LD_NOSHADOW); // or
+   f->SetLoadMode(LD_NOSHADOWSEQ);
 f->Load();
 
 // user can now check some values

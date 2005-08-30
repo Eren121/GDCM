@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintTime.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 12:02:02 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/08/30 14:40:28 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ int main(int, char *[])
       std::cout << "-----------Not Readable " << std::endl;
       delete e1;
       e1= new gdcm::File( );
-      e1->SetLoadMode( NO_SEQ | NO_SHADOW );
+      e1->SetLoadMode( GDCM_LD_NOSEQ | GDCM_LD_NOSHADOW );
       r3 = times(&tms3);
       e1->SetFileName( filename );
       e1->Load( );
@@ -120,7 +120,7 @@ int main(int, char *[])
         filename += gdcmDataImages[i];
 
         e1= new gdcm::File( );
-        e1->SetLoadMode( NO_SEQ | NO_SHADOW );
+        e1->SetLoadMode( GDCM_LD_NOSEQ | GDCM_LD_NOSHADOW );
         e1->SetFileName( filename );
         e1->Load( );
         if (!e1->IsReadable())

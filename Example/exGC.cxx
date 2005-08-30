@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:25 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/08/30 14:40:28 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
    std::cout << argv[1] << std::endl;
 
    gdcm::File *f = new gdcm::File();
-   f->SetLoadMode( 0x00000000);
+   f->SetLoadMode( GDCM_LD_ALL);
    f->SetFileName( fileName );
    bool res = f->Load();        
 

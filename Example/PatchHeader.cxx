@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PatchHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/28 17:27:00 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/08/30 14:40:28 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,16 +50,16 @@ uint16_t bitsstored;
 uint16_t highbit;
 uint16_t pixelrepresentation;
 
-bool bsamplesperpixel;
-bool bplanarconfiguration;
-bool bsize;
-bool brows;
-bool bcolumns;
-bool bplanes;
-bool bbitsallocated;
-bool bbitsstored;
-bool bhighbit;
-bool bpixelrepresentation;
+int bsamplesperpixel;
+int bplanarconfiguration;
+int bsize;
+int brows;
+int bcolumns;
+int bplanes;
+int bbitsallocated;
+int bbitsstored;
+int bhighbit;
+int bpixelrepresentation;
 
 void update()
 {
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
        return 0;
     }
 
-bsamplesperpixel = am->ArgMgrDefined("samplesperpixel");
+   bsamplesperpixel = am->ArgMgrDefined("samplesperpixel");
    if ( bsamplesperpixel )
       samplesperpixel = am->ArgMgrWantInt("samplesperpixel",usage);
 
@@ -264,15 +264,15 @@ bsamplesperpixel = am->ArgMgrDefined("samplesperpixel");
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
  
-   int loadMode = 0x00000000;
+   int loadMode = GDCM_LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= NO_SHADOWSEQ;
+      loadMode |= GDCM_LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= NO_SHADOW;
+         loadMode |= GDCM_LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= NO_SEQ;
+         loadMode |= GDCM_LD_NOSEQ;
    }
 
    /* if unused Param we give up */

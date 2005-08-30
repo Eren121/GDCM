@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 14:02:03 $
-  Version:   $Revision: 1.271 $
+  Date:      $Date: 2005/08/30 14:40:33 $
+  Version:   $Revision: 1.272 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,7 @@ Document::Document()
    Group0002Parsed = false;
    IsDocumentAlreadyLoaded = false;
    IsDocumentModified = true;
-   LoadMode = 0x00000000; // default : load everything, later
+   LoadMode = GDCM_LD_ALL; // default : load everything, later
    SetFileName("");
 }
 
@@ -81,7 +81,7 @@ Document::Document( std::string const &fileName )
    SwapCode = 1234;
    Filetype = ExplicitVR;
    Group0002Parsed = false;
-   LoadMode = 0x00000000; // Load everything, later
+   LoadMode = GDCM_LD_ALL; // Load everything, later
 
    // Load will set it to true if sucessfull
    IsDocumentAlreadyLoaded = false;
@@ -1078,7 +1078,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             {
                if ( newValEntry->GetGroup()%2 != 0 )   // if Shadow Group
                {
-                  if ( LoadMode & NO_SHADOW ) // if user asked to skip shad.gr
+                  if ( LoadMode & LD_NOSHADOW ) // if user asked to skip shad.gr
                   {
                      std::string strLgrGroup = newValEntry->GetValue();
                      int lgrGroup;
@@ -1126,7 +1126,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
          }
 
-         if ( (LoadMode & NO_SHADOWSEQ) && ! delim_mode_intern )
+         if ( (LoadMode & LD_NOSHADOWSEQ) && ! delim_mode_intern )
          { 
            // User asked to skip SeQuences *only* if they belong to Shadow Group
             if ( newDocEntry->GetGroup()%2 != 0 )
@@ -1136,7 +1136,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                 continue;  
             } 
          } 
-         if ( (LoadMode & NO_SEQ) && ! delim_mode_intern ) 
+         if ( (LoadMode & LD_NOSEQ) && ! delim_mode_intern ) 
          {
            // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);

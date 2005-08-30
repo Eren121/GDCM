@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:35:46 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/08/30 14:40:28 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
    f = new gdcm::File( );
 
-   f->SetLoadMode(NO_SEQ | NO_SHADOW);
+   f->SetLoadMode(GDCM_LD_NOSEQ | GDCM_LD_NOSHADOW);
    f->SetFileName( fileName );
    bool res = f->Load();  
 

@@ -220,6 +220,11 @@ typedef unsigned long long uint64_t;
 %constant const char *NOTLOADED = "gdcm::NotLoaded";
 %constant const char *UNREAD    = "gdcm::UnRead";
 
+/*%constant unsigned int LD_ALL         = 0x00000000;
+%constant unsigned int LD_NOSEQ       = 0x00000001;
+%constant unsigned int LD_NOSHADOW    = 0x00000002;
+%constant unsigned int LD_NOSHADOWSEQ = 0x00000004;*/
+
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"

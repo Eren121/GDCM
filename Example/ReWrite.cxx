@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:55:50 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/08/30 14:40:28 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,15 +68,15 @@ int main(int argc, char *argv[])
 
    char *mode = am->ArgMgrGetString("mode",(char *)"X");
 
-   int loadMode = 0x00000000;
+   int loadMode = GDCM_LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= NO_SHADOWSEQ;
+      loadMode |= GDCM_LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= NO_SHADOW;
+         loadMode |= GDCM_LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= NO_SEQ;
+         loadMode |= GDCM_LD_NOSEQ;
    }
 
    bool rgb = ( 0 != am->ArgMgrDefined("RGB") );

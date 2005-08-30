@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 12:30:36 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/08/30 14:40:35 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,79 +50,26 @@
 //      // to pass a 'Coherent File List' as produced by gdcm::SerieHelper
 //      reader->SetCoherentFileList(l); 
 //      reader->Update();
- 
+//
 // WARNING TODO CLEANME 
 // Actual limitations of this code 
 //  when a Coherent File List from SerieHelper is not used (bad idea :-(
 //
-// /////// Redundant and unnecessary header parsing
-// In it's current state this code actually parses three times the Dicom
-// header of a file before the corresponding image gets loaded in the
-// ad-hoc vtkData !
-// Here is the process:
-//  1/ First loading happens in ExecuteInformation which, in order to
-//     positionate the vtk extents, calls CheckFileCoherence. The purpose
-//     of CheckFileCoherence is to make sure all the images in the future
-//     stack are "homogenous" (same size, same representation...).
-//     This can only be achieved by parsing all the Dicom headers...
-//     --> to avoid loosing too much time :
-//     If user is 150% sure *all* the files are coherent, that is to say :
-//     they may be open, they are gdcm-readable, they have the same sizes,
-//     they have the same 'pixel' type, they are single frame, 
-//     they have the same color convention ...
-//     he may use SetCheckFileCoherenceLight() to request a 'light' coherence
-//     checking
-//  2/ ExecuteData is then responsible for the next two loadings - 2 ?!?-:
-//  2a/ ExecuteData calls AllocateOutputData that in turn seems to 
-//      (indirectely call) ExecuteInformation which ends up in a second
-//      header parsing
-//      This is fixed by adding a test at the beginning of ExecuteInformation
-//      on the modification of the object instance. If a modification have been
-//      made (method Modified() ), the MTime value is increased. The fileTime
-//      is compared to this new value to find a modification in the class
-//      parameters
-//  2b/ the core of ExecuteData then needs gdcm::File (which in turns
-//      initializes gdcm::File in the constructor) in order to access
-//      the data-image.
-//
-// Possible solution:
-// maintain a list of gdcm::Files (created by say ExecuteInformation) created
-// once and for all accross the life of vtkGdcmFile (it would only load
-// new gdcm::File if the user changes the list). ExecuteData would then use 
-// those gdcm::File and hence avoid calling the constructor:
-//  - advantage: the header of the files would only be parsed once.
-//  - drawback: once execute information is called (i.e. on creation of
-//              a vtkGdcmFile) the gdcm::File structure is loaded in memory.
-//              The average size of a gdcm::File being of 100Ko, 
-//              if oneloads 10 stacks of images with say 200 images each,
-//              you end-up with a loss of 200Mo...
-//
-// /////// Never unallocated memory:
-// ExecuteData allocates space for the pixel data [which will get pointed
-// by the vtkPointData() through the call
-// data->GetPointData()->GetScalars()->SetVoidArray(mem, StackNumPixels, 0);]
-// This data is never "freed" neither in the destructor nor when the
-// filename list is extended, ExecuteData is called a second (or third)
-// time...
-//
-//
-
 // //////////////////////////////////////////////////////////////
 
 #include "gdcmFileHelper.h"
 #include "gdcmFile.h"
-#include "gdcmDocument.h"  // for NO_SEQ
 
 #include "vtkGdcmReader.h"
 #include "gdcmDebug.h"
+#include "gdcmCommon.h"
 
-//#include <stdio.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.76 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.77 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -130,12 +77,17 @@ vtkStandardNewMacro(vtkGdcmReader)
 vtkGdcmReader::vtkGdcmReader()
 {
    this->LookupTable = NULL;
-   this->AllowLookupTable = 0;
-   this->AllowLightChecking = 0;
-   this->LoadMode = 0; // Load everything (possible values : NO_SEQ, NO_SHADOW,
-                       //                                    NO_SHADOWSEQ)
+   this->AllowLookupTable = false;
+   this->AllowLightChecking = false;
+   this->LoadMode = GDCM_LD_ALL; // Load everything (possible values : 
+                                 //  - LD_NOSEQ, 
+                                 //  - LD_NOSHADOW,
+                                 //  - LD_NOSHADOWSEQ)
    this->CoherentFileList = 0;
    this->UserFunction     = 0;
+
+   this->OwnFile=true;
+   this->Execution=false;
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -179,10 +131,7 @@ void vtkGdcmReader::AddFileName(const char* name)
 {
    // We need to bypass the const pointer [since list<>.push_bash() only
    // takes a char* (but not a const char*)] by making a local copy:
-   char *LocalName = new char[strlen(name) + 1];
-   strcpy(LocalName, name);
-   this->FileNameList.push_back(LocalName);
-   delete[] LocalName;
+   this->FileNameList.push_back(name);
    this->Modified();
 }
 
@@ -200,15 +149,6 @@ void vtkGdcmReader::SetFileName(const char *name)
    this->Modified();
 }
 
-/*
- * Ask for a 'light' checking -actually : just initializing-
- *if you are 150% sure *all* the files are coherent
- */
-//void vtkGdcmReader::SetCheckFileCoherenceLight()
-//{
-//   LightChecking = true;
-//}
-
 //-----------------------------------------------------------------------------
 // Protected
 /*
@@ -216,25 +156,35 @@ void vtkGdcmReader::SetFileName(const char *name)
  */
 void vtkGdcmReader::ExecuteInformation()
 {
+   if(this->Execution)
+      return;
+
+   this->Execution=true;
+   this->RemoveAllInternalFile();
    if(this->MTime>this->fileTime)
    {
+      this->TotalNumberOfPlanes = 0;
+
       if ( this->CoherentFileList != 0 )
-         this->TotalNumberOfPlanes = this->CheckFileCoherenceAlreadyDone();  
-      else if ( this->AllowLightChecking )
-         this->TotalNumberOfPlanes = this->CheckFileCoherenceLight();
+      {
+         this->UpdateFileInformation();
+      }
       else
-          this->TotalNumberOfPlanes = this->CheckFileCoherence();
+      {
+         this->BuildFileListFromPattern();
+         this->LoadFileInformation();
+      }
 
       if ( this->TotalNumberOfPlanes == 0)
       {
          vtkErrorMacro(<< "File set is not coherent. Exiting...");
          return;
       }
-      
+
       // if the user has not set the extent, but has set the VOI
       // set the z axis extent to the VOI z axis
       if (this->DataExtent[4]==0 && this->DataExtent[5] == 0 &&
-      (this->DataVOI[4] || this->DataVOI[5]))
+         (this->DataVOI[4] || this->DataVOI[5]))
       {
          this->DataExtent[4] = this->DataVOI[4];
          this->DataExtent[5] = this->DataVOI[5];
@@ -317,6 +267,12 @@ void vtkGdcmReader::ExecuteInformation()
    }
 
    this->Superclass::ExecuteInformation();
+
+   this->GetOutput()->SetUpdateExtentToWholeExtent();
+   this->BuildData(this->GetOutput());
+
+   this->Execution=false;
+   this->RemoveAllInternalFile();
 }
  
 /*
@@ -328,7 +284,10 @@ void vtkGdcmReader::ExecuteInformation()
  */
 void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 {
-   if ( CoherentFileList != 0 )   // When a list of names is passed
+   vtkImageData *data=vtkImageData::SafeDownCast(output);
+   data->SetExtent(this->DataExtent);
+
+/*   if ( CoherentFileList != 0 )   // When a list of names is passed
    {
       if (this->CoherentFileList->empty())
       {
@@ -341,11 +300,13 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       vtkErrorMacro(<< "A least a valid FileName must be specified.");
       return;
    }
+*/
+}
 
-   // FIXME : extraneous parsing of header is made when allocating OuputData
-   //         --> ?!?
+void vtkGdcmReader::BuildData(vtkDataObject *output)
+{
    vtkImageData *data = this->AllocateOutputData(output);
-   data->SetExtent(this->DataExtent);
+
    data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");
 
    // Test if output has valid extent
@@ -371,68 +332,18 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 
       // Filling the allocated memory space with each image/volume:
 
+      size_t size = this->NumColumns * this->NumLines * this->NumPlanes
+                  * data->GetScalarSize() * this->NumComponents;
       unsigned char *Dest = (unsigned char *)data->GetScalarPointer();
-
-      if ( CoherentFileList == 0 )   // When a list of names is passed
-      {         
-         for (std::list<std::string>::iterator filename  = InternalFileNameList.begin();
-              filename != InternalFileNameList.end();
-              ++filename)
-         { 
-            // Images that were tagged as unreadable in CheckFileCoherence()
-            // are substituted with a black image to let the caller visually
-            // notice something wrong is going on:
-            if (*filename != "GDCM_UNREADABLE")
-            {
-               // Update progress related for good files is made in LoadImageInMemory
-               Dest += this->LoadImageInMemory(*filename, Dest,
-                                               UpdateProgressTarget,
-                                               UpdateProgressCount);
-            } 
-            else 
-            {
-               // We insert a black image in the stack for the user to be aware that
-               // this image/volume couldn't be loaded. We simply skip one image
-               // size:
-               Dest += this->NumColumns * this->NumLines * this->PixelSize;
-
-               // Update progress related for bad files:
-               UpdateProgressCount += this->NumLines;
-               if (UpdateProgressTarget > 0)
-               {
-                  if (!(UpdateProgressCount%UpdateProgressTarget))
-                  {
-                     this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
-                  }
-               }
-            } // Else, file not loadable
-         } // Loop on files
-
-      }
-      else  // when a Coherent File List is passed
+      for (std::vector<gdcm::File* >::iterator it =  InternalFileList.begin();
+                                               it != InternalFileList.end();
+                                             ++it)
       {
-         for (std::vector<gdcm::File* >::iterator it =  CoherentFileList->begin();
-                                                  it != CoherentFileList->end();
-                                                ++it)
-         {
-     
-            //std::cout <<"----------------- " << (*it)->GetFileName() << std::endl;
-
-             Dest += this->LoadImageInMemory(*it, Dest,
-                                             UpdateProgressTarget,
-                                             UpdateProgressCount); 
-             // Update progress related for bad files:
-             UpdateProgressCount += this->NumLines;
-             if (UpdateProgressTarget > 0)
-             {
-                if (!(UpdateProgressCount%UpdateProgressTarget))
-                {
-                   this->UpdateProgress(UpdateProgressCount/(50.0*UpdateProgressTarget));
-                }
-              }
-           } // Loop on files 
-
-      } 
+         this->LoadImageInMemory(*it, Dest,
+                                 UpdateProgressTarget,
+                                 UpdateProgressCount); 
+         Dest += size;
+      }
    }
 }
 
@@ -448,6 +359,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
 {
    this->RemoveAllInternalFileName();
 
+   // Test miscellanous cases
    if ((! this->FileNameList.empty()) && this->FileName )
    {
       vtkErrorMacro(<< "Both AddFileName and SetFileName schemes were used");
@@ -469,6 +381,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
       return;
    }
 
+   // Create the InternalFileNameList
    if (! this->FileNameList.empty()  )
    {
       vtkDebugMacro(<< "Using the AddFileName specified files");
@@ -503,6 +416,151 @@ void vtkGdcmReader::BuildFileListFromPattern()
    }
 }
 
+/**
+ * Load all the files and set it in the InternalFileList
+ * For each file, the readability and the coherence of image caracteristics 
+ * are tested. If an image doesn't agree the required specifications, it
+ * isn't considered and no data will be set for the planes corresponding
+ * to this image
+ *
+ * The source of this work is the list of file name generated by the
+ * BuildFileListFromPattern method
+ */
+void vtkGdcmReader::LoadFileInformation()
+{
+   gdcm::File *file;
+   bool foundReference=false;
+   std::string type;
+
+   this->OwnFile=true;
+   for (std::list<std::string>::iterator filename = InternalFileNameList.begin();
+        filename != InternalFileNameList.end();
+        ++filename)
+   {
+      // check for file readability
+      FILE *fp;
+      fp = fopen(filename->c_str(),"rb");
+      if (!fp)
+      {
+         vtkErrorMacro(<< "Unable to open file " << filename->c_str());
+         vtkErrorMacro(<< "Removing this file from read files: "
+                       << filename->c_str());
+         file = NULL;
+         InternalFileList.push_back(file);
+         continue;
+      }
+      fclose(fp);
+
+      // Read the file
+      file=new gdcm::File();
+      file->SetLoadMode( LoadMode );
+      file->SetFileName(filename->c_str() );
+      file->Load();
+
+      // Test the Dicom file readability
+      if(!file->IsReadable())
+      {
+         vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
+         vtkErrorMacro(<< "Removing this file from read files: "
+                        << filename->c_str());
+         delete file;
+         file=NULL;
+         InternalFileList.push_back(file);
+         continue;
+      }
+
+      // Test the Pixel Type recognition
+      type = file->GetPixelType();
+      if (   (type !=  "8U") && (type !=  "8S")
+          && (type != "16U") && (type != "16S")
+          && (type != "32U") && (type != "32S") )
+      {
+         vtkErrorMacro(<< "Bad File Type for file " << filename->c_str() << "\n"
+                       << "   File type found : " << type.c_str() 
+                       << " (might be 8U, 8S, 16U, 16S, 32U, 32S) \n"
+                       << "   Removing this file from read files");
+         delete file;
+         file=NULL;
+         InternalFileList.push_back(file);
+         continue;
+      }
+
+      // Test the image informations
+      if(!foundReference)
+      {
+         foundReference = true;
+         GetFileInformation(file);
+
+         vtkDebugMacro(<< "This file taken as coherence reference:"
+                        << filename->c_str());
+         vtkDebugMacro(<< "Image dimensions of reference file as read from Gdcm:" 
+                        << this->NumColumns << " " << this->NumLines << " " 
+                        << this->NumPlanes);
+      }
+      else if(!TestFileInformation(file))
+      {
+         delete file;
+         file=NULL;
+      }
+
+      InternalFileList.push_back(file);
+   }
+}
+
+/**
+ * Update the file informations.
+ * This works exactly like LoadFileInformation, but the source of work
+ * is the list of coherent files
+ */
+void vtkGdcmReader::UpdateFileInformation()
+{
+   this->InternalFileList=*(this->CoherentFileList);
+   this->OwnFile=false;
+
+   for(gdcmFileList::iterator it=InternalFileList.begin();
+                              it!=InternalFileList.end();
+                              ++it)
+   {
+      if( *it != NULL)
+      {
+         GetFileInformation(*it);
+         break;
+      }
+   }
+}
+
+/**
+ * Get the informations from a file.
+ * These informations are required to specify the output image
+ * caracteristics
+ */
+void vtkGdcmReader::GetFileInformation(gdcm::File *file)
+{
+   // Get the image caracteristics
+   this->NumColumns = file->GetXSize();
+   this->NumLines   = file->GetYSize();
+   this->NumPlanes  = file->GetZSize();
+   this->TotalNumberOfPlanes = this->NumPlanes*InternalFileNameList.size();
+
+   this->ImageType = file->GetPixelType();
+   this->PixelSize = file->GetPixelSize();
+
+   this->DataSpacing[0] = file->GetXSpacing();
+   this->DataSpacing[1] = file->GetYSpacing();
+   this->DataSpacing[2] = file->GetZSpacing();
+
+   // Get the image data caracteristics
+   if( file->HasLUT() && this->AllowLookupTable )
+   {
+      // I could raise an error is AllowLookupTable is on and HasLUT() off
+      this->NumComponents = file->GetNumberOfScalarComponentsRaw();
+   }
+   else
+   {
+      this->NumComponents = file->GetNumberOfScalarComponents(); //rgb or mono
+   }
+}
+
 /*
  * When more than one filename is specified (i.e. we expect loading
  * a stack or volume) we need to check that the corresponding images/volumes
@@ -519,188 +577,72 @@ void vtkGdcmReader::BuildFileListFromPattern()
  *   This method returns the total number of planar images to be loaded
  * (i.e. an image represents one plane, but a volume represents many planes)
  */
-int vtkGdcmReader::CheckFileCoherence()
+/**
+ * Test the coherent informations of the file with the reference informations
+ * used as image caracteristics. The tested informations are :
+ * - they all share the same X dimensions
+ * - they all share the same Y dimensions
+ * - they all share the same Z dimensions
+ * - they all share the same number of components
+ * - they all share the same ImageType ( 8 bit signed, or unsigned...)
+ *
+ * \return True if the file match, False otherwise
+ */
+bool vtkGdcmReader::TestFileInformation(gdcm::File *file)
 {
-   int ReturnedTotalNumberOfPlanes = 0;   // The returned value.
+   int numColumns = file->GetXSize();
+   int numLines   = file->GetYSize();
+   int numPlanes  = file->GetZSize();
+   int pixelSize  = file->GetPixelSize();
+   int numComponents;
 
-   this->BuildFileListFromPattern();
-   if (this->InternalFileNameList.empty())
+   if( file->HasLUT() && this->AllowLookupTable )
+      numComponents = file->GetNumberOfScalarComponentsRaw();
+   else
+      numComponents = file->GetNumberOfScalarComponents(); //rgb or mono
+
+   if( numColumns != this->NumColumns )
    {
-      vtkErrorMacro(<< "FileNames are not set.");
-      return 0;
+      vtkErrorMacro(<< "File X value doesn't match with the previous ones: "
+                    << file->GetFileName().c_str()
+                    << ". Found " << numColumns << ", must be "
+                    << this->NumColumns);
+      return false;
+   }
+   if( numLines != this->NumLines )
+   {
+      vtkErrorMacro(<< "File y value doesn't match with the previous ones: "
+                    << file->GetFileName().c_str()
+                    << ". Found " << numLines << ", must be "
+                    << this->NumLines);
+      return false;
+   }
+   if( numPlanes != this->NumPlanes )
+   {
+      vtkErrorMacro(<< "File z value doesn't match with the previous ones: "
+                    << file->GetFileName().c_str()
+                    << ". Found " << numPlanes << ", must be "
+                    << this->NumPlanes);
+      return false;
+   }
+   if( numComponents != this->NumComponents )
+   {
+      vtkErrorMacro(<< "File Components count doesn't match with the previous ones: "
+                    << file->GetFileName().c_str()
+                    << ". Found " << numComponents << ", must be "
+                    << this->NumComponents);
+      return false;
+   }
+   if( pixelSize != this->PixelSize )
+   {
+      vtkErrorMacro(<< "File pixel size doesn't match with the previous ones: "
+                    << file->GetFileName().c_str()
+                    << ". Found " << pixelSize << ", must be "
+                    << this->PixelSize);
+      return false;
    }
 
-   bool FoundReferenceFile = false;
-   int  ReferenceNZ = 0;
-
-   // Loop on the filenames:
-   // - check for their existence and gdcm "parsability"
-   // - get the coherence check done:
-   for (std::list<std::string>::iterator filename = InternalFileNameList.begin();
-        filename != InternalFileNameList.end();
-        ++filename)
-   {
-      // The file is always added in the number of planes
-      //  - If file doesn't exist, it will be replaced by a black plane in the 
-      //    ExecuteData method
-      //  - If file has more than 1 plane, other planes will be added later to
-      //    to the ReturnedTotalNumberOfPlanes variable counter
-      ReturnedTotalNumberOfPlanes += 1;
-
-      /////// Stage 0: check for file name:
-
-      // fixme : how can the filename be equal to "GDCM_UNREADABLE"
-      //         right now ?!?
-
-      if(*filename == std::string("GDCM_UNREADABLE"))
-         continue;
-
-      /////// Stage 1: check for file readability:
-      // Stage 1.1: check for file existence.
-      FILE *fp;
-      fp = fopen(filename->c_str(),"rb");
-      if (!fp)
-      {
-         vtkErrorMacro(<< "Unable to open file " << filename->c_str());
-         vtkErrorMacro(<< "Removing this file from read files: "
-                       << filename->c_str());
-         *filename = "GDCM_UNREADABLE";
-         continue;
-      }
-      fclose(fp);
-
-      // Stage 1.2: check for Gdcm parsability
-
-      // to save some parsing time.
-      gdcm::File GdcmFile;
-      GdcmFile.SetLoadMode( LoadMode );
-      GdcmFile.SetFileName(filename->c_str() );
-      GdcmFile.Load( );
-      if (!GdcmFile.IsReadable())
-      {
-         vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
-         vtkErrorMacro(<< "Removing this file from read files: "
-                        << filename->c_str());
-         *filename = "GDCM_UNREADABLE";
-         continue;
-      }
-
-      // Stage 1.3: further gdcm compatibility on PixelType
-      std::string type = GdcmFile.GetPixelType();
-      if (   (type !=  "8U") && (type !=  "8S")
-          && (type != "16U") && (type != "16S")
-          && (type != "32U") && (type != "32S") )
-      {
-         vtkErrorMacro(<< "Bad File Type for file " << filename->c_str() << "\n"
-                       << "   File type found : " << type.c_str() 
-                       << " (might be 8U, 8S, 16U, 16S, 32U, 32S) \n"
-                       << "   Removing this file from read files");
-         *filename = "GDCM_UNREADABLE";
-         continue;
-      }
-
-      // Stage 2: check coherence of the set of files
-      int NX = GdcmFile.GetXSize();
-      int NY = GdcmFile.GetYSize();
-      int NZ = GdcmFile.GetZSize();
-      if (FoundReferenceFile) 
-      {
-         // Stage 2.1: mandatory coherence stage:
-         if (   ( NX   != this->NumColumns )
-             || ( NY   != this->NumLines )
-             || ( type != this->ImageType ) ) 
-         {
-            vtkErrorMacro(<< "This file is not coherent with previous ones: "
-                          << filename->c_str());
-            vtkErrorMacro(<< "Removing this file from read files: "
-                          << filename->c_str());
-            *filename = "GDCM_UNREADABLE";
-            continue;
-         }
-
-         // Stage 2.2: optional coherence stage
-         if ( NZ != ReferenceNZ )
-         {
-            vtkErrorMacro(<< "File is not coherent in Z with previous ones: "
-                          << filename->c_str());
-         }
-         else
-         {
-            vtkDebugMacro(<< "File is coherent with previous ones: "
-                          << filename->c_str());
-         }
-
-         // Stage 2.3: when the file is 'multiframe', notify the caller.
-         if (NZ > 1)
-         {
-            vtkErrorMacro(<< "This file is a 'Multiframe' one: "
-                          << filename->c_str());
-         }
-
-         // Eventually, this file can be added on the stack. Update the
-         // full size of the stack
-         vtkDebugMacro("Number of planes added to the stack: " << NZ);
-         ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
-         continue;
-
-      } 
-      else 
-      {
-         // We didn't have a workable reference file yet. 
-         // Set this one as the reference.
-         FoundReferenceFile = true;
-         vtkDebugMacro(<< "This file taken as coherence reference:"
-                       << filename->c_str());
-         vtkDebugMacro(<< "Image dimensions of reference file as read from Gdcm:" 
-                       << NX << " " << NY << " " << NZ);
-         vtkDebugMacro(<< "Number of planes added to the stack: " << NZ);
-         // Set aside the size of the image
-         this->NumColumns = NX;
-         this->NumLines   = NY;
-         ReferenceNZ      = NZ;
-         ReturnedTotalNumberOfPlanes += NZ - 1; // First plane already added
-         this->ImageType = type;
-         this->PixelSize = GdcmFile.GetPixelSize();
-
-         if( GdcmFile.HasLUT() && this->AllowLookupTable )
-         {
-            // I could raise an error is AllowLookupTable is on and HasLUT() off
-            this->NumComponents = GdcmFile.GetNumberOfScalarComponentsRaw();
-         }
-         else
-         {
-            this->NumComponents = GdcmFile.GetNumberOfScalarComponents(); //rgb or mono
-         }             
-         //Set image spacing
-         this->DataSpacing[0] = GdcmFile.GetXSpacing();
-         this->DataSpacing[1] = GdcmFile.GetYSpacing();
-         this->DataSpacing[2] = GdcmFile.GetZSpacing();
-      }
-   } // End of loop on filename
-
-   ///////// The files we CANNOT load are flaged. On debugging purposes
-   // count the loadable number of files and display their number:
-   int NumberCoherentFiles = 0;
-   for (std::list<std::string>::iterator it = InternalFileNameList.begin();
-        it != InternalFileNameList.end();
-        ++it)
-   {
-      if (*it != "GDCM_UNREADABLE")
-      {
-         NumberCoherentFiles++;
-      }
-   }
-   vtkDebugMacro(<< "Number of coherent files: " << NumberCoherentFiles);
-
-   if (ReturnedTotalNumberOfPlanes == 0)
-   {
-      vtkErrorMacro(<< "No loadable file.");
-   }
-
-   vtkDebugMacro(<< "Total number of planes on the stack: "
-                  << ReturnedTotalNumberOfPlanes);
-   
-   return ReturnedTotalNumberOfPlanes;
+   return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -725,28 +667,41 @@ void vtkGdcmReader::AddInternalFileName(const char *name)
 }
 
 /*
- * Loads the contents of the image/volume contained by gdcm::File* f at
- * the Dest memory address. Returns the size of the data loaded.
+ * Remove all file names to the internal list of images to read.
  */
-size_t vtkGdcmReader::LoadImageInMemory(
-             gdcm::File *f, 
-             unsigned char *dest,
-             const unsigned long updateProgressTarget,
-             unsigned long &updateProgressCount)
+void vtkGdcmReader::RemoveAllInternalFile(void)
 {
-  // vtkDebugMacro(<< "Copying to memory image [" << f->GetFileName() << "]");
+   if(this->OwnFile)
+   {
+      for(gdcmFileList::iterator it=InternalFileList.begin();
+                                 it!=InternalFileList.end();
+                                 ++it)
+      {
+         delete (*it);
+      }
+   }
+   this->InternalFileList.clear();
+}
 
-   return DoTheLoadingJob (f,
-                           dest,
-                           updateProgressTarget,
-                           updateProgressCount);
+void vtkGdcmReader::IncrementProgress(const unsigned long updateProgressTarget,
+                                      unsigned long &updateProgressCount)
+{
+   // Update progress related for bad files:
+   updateProgressCount += this->NumLines;
+   if (updateProgressTarget > 0)
+   {
+      if (!(updateProgressCount%updateProgressTarget))
+      {
+         this->UpdateProgress(updateProgressCount/(50.0*updateProgressTarget));
+      }
+   }
 }
 
 /*
  * Loads the contents of the image/volume contained by char *fileName at
  * the dest memory address. Returns the size of the data loaded.
  */
-size_t vtkGdcmReader::LoadImageInMemory(
+/*void vtkGdcmReader::LoadImageInMemory(
              std::string fileName, 
              unsigned char *dest,
              const unsigned long updateProgressTarget,
@@ -760,24 +715,42 @@ size_t vtkGdcmReader::LoadImageInMemory(
    f->SetFileName( fileName.c_str() );
    f->Load( );
 
-   return DoTheLoadingJob (f,
-                           dest,
-                           updateProgressTarget,
-                           updateProgressCount);
+   LoadImageInMemory(f,dest,
+                     updateProgressTarget,
+                     updateProgressCount);
    delete f;
-}
+}*/
 
 /*
- *  Service method for LoadImageInMemory
-*/
-size_t vtkGdcmReader::DoTheLoadingJob (gdcm::File *f,
-                                       unsigned char *dest,
-                                       const unsigned long updateProgressTarget,
-                                       unsigned long &updateProgressCount)
+ * Loads the contents of the image/volume contained by gdcm::File* f at
+ * the Dest memory address. Returns the size of the data loaded.
+ * \ param f File to consider. NULL if the file must be skiped
+ * \remarks Assume that if (f != NULL) then its caracteristics match
+ * with the previous ones
+ */
+void vtkGdcmReader::LoadImageInMemory(
+             gdcm::File *f, 
+             unsigned char *dest,
+             const unsigned long updateProgressTarget,
+             unsigned long &updateProgressCount)
 {
+   if(!f)
+      return;
+
    gdcm::FileHelper *fileH = new gdcm::FileHelper( f );
    fileH->SetUserFunction( UserFunction );
 
+   int numColumns = f->GetXSize();
+   int numLines   = f->GetYSize();
+   int numPlanes  = f->GetZSize();
+   int numComponents;
+
+   if( f->HasLUT() && this->AllowLookupTable )
+      numComponents = f->GetNumberOfScalarComponentsRaw();
+   else
+      numComponents = f->GetNumberOfScalarComponents(); //rgb or mono
+
+   vtkDebugMacro(<< "Copying to memory image [" << f->GetFileName().c_str() << "]");
    size_t size;
 
    // If the data structure of vtk for image/volume representation
@@ -787,10 +760,7 @@ size_t vtkGdcmReader::DoTheLoadingJob (gdcm::File *f,
    // line comes first (for some axis related reasons?). Hence we need
    // to load the image line by line, starting from the end.
 
-   int numColumns = fileH->GetFile()->GetXSize();
-   int numLines   = fileH->GetFile()->GetYSize();
-   int numPlanes  = fileH->GetFile()->GetZSize();
-   int lineSize   = NumComponents * numColumns * fileH->GetFile()->GetPixelSize();
+   int lineSize   = NumComponents * numColumns * f->GetPixelSize();
    int planeSize  = lineSize * numLines;
 
    unsigned char *src;
@@ -844,118 +814,8 @@ size_t vtkGdcmReader::DoTheLoadingJob (gdcm::File *f,
       }
       dst += 2 * planeSize;
    }
-   delete fileH;   
-   return size;
+
+   delete fileH;
 }
 
-// -------------------------------------------------------------------------
-
-// We assume the use *does* know all the files whose names 
-//  are in InternalFileNameList exist, may be open, are gdcm-readable
-//  have the same sizes, have the same 'pixel' type, are single frame
-//  have the same color convention, ..., anything else ? 
-
-int vtkGdcmReader::CheckFileCoherenceLight()
-{
-   std::list<std::string>::iterator filename = InternalFileNameList.begin();
-
-   gdcm::File GdcmFile;
-   GdcmFile.SetLoadMode( LoadMode );
-   GdcmFile.SetFileName(filename->c_str() );   
-   GdcmFile.Load( );
-
-   if (!GdcmFile.IsReadable())
-   {
-      vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
-      vtkErrorMacro(<< "you should try vtkGdcmReader::CheckFileCoherence "
-                    << "instead of vtkGdcmReader::CheckFileCoherenceLight");
-      return 0;
-   }
-   int NX           = GdcmFile.GetXSize();
-   int NY           = GdcmFile.GetYSize();
-   // CheckFileCoherenceLight should be called *only* when user knows
-   // he deals with single frames files.
-   // Z size is then the number of files.
-   int NZ           = InternalFileNameList.size();
-   std::string type = GdcmFile.GetPixelType();
-   vtkDebugMacro(<< "The first file is taken as reference: "
-                 << filename->c_str());
-   vtkDebugMacro(<< "Image dimensions of reference file as read from Gdcm:" 
-                 << NX << " " << NY << " " << NZ);
-   vtkDebugMacro(<< "Number of planes added to the stack: " << NZ);
-   // Set aside the size of the image
-   this->NumColumns = NX;
-   this->NumLines   = NY;
-   this->ImageType  = type;
-   this->PixelSize  = GdcmFile.GetPixelSize();
-
-   if( GdcmFile.HasLUT() && this->AllowLookupTable )
-   {
-      // I could raise an error is AllowLookupTable is on and HasLUT() off
-      this->NumComponents = GdcmFile.GetNumberOfScalarComponentsRaw();
-   }
-   else
-   {
-      this->NumComponents = GdcmFile.GetNumberOfScalarComponents(); //rgb or mono
-   }
-       
-   //Set image spacing
-   this->DataSpacing[0] = GdcmFile.GetXSpacing();
-   this->DataSpacing[1] = GdcmFile.GetYSpacing();
-   this->DataSpacing[2] = GdcmFile.GetZSpacing();
-
-   return InternalFileNameList.size();
-}
-
-// We assume the use *does* know all the files whose names 
-//  are in InternalFileNameList exist, may be open, are gdcm-readable
-//  have the same sizes, have the same 'pixel' type, are single frame
-//  have the same color convention, ..., anything else ? 
-
-int vtkGdcmReader::CheckFileCoherenceAlreadyDone()
-{
-   if ( CoherentFileList->empty() )
-   {
-      vtkErrorMacro(<< "Coherent File List is empty ");
-      return 0;
-   }
-
-   gdcm::File *gdcmFile = (*CoherentFileList)[0];
-
-   int NX           = gdcmFile->GetXSize();
-   int NY           = gdcmFile->GetYSize();
-   // CheckFileCoherenceLight should be called *only* when user knows
-   // he deals with single frames files.
-   // Z size is then the number of files.
-   // --> TODO : loop on the File* to get NZ of each one !
-   int NZ           = CoherentFileList->size();
-   std::string type = gdcmFile->GetPixelType();
-   //vtkDebugMacro(<< "The first file is taken as reference: "
-   //              << (*CoherentFileList)[0]->GetFileName() );
-   vtkDebugMacro(<< "Image dimensions of reference file as read from Gdcm:" 
-                 << NX << " " << NY << " " << NZ);
-   vtkDebugMacro(<< "Number of planes added to the stack: " << NZ);
-   // Set aside the size of the image
-   this->NumColumns = NX;
-   this->NumLines   = NY;
-   this->ImageType  = type;
-   this->PixelSize  = gdcmFile->GetPixelSize();
-
-   if( gdcmFile->HasLUT() && this->AllowLookupTable )
-   {
-      // I could raise an error is AllowLookupTable is on and HasLUT() off
-      this->NumComponents = gdcmFile->GetNumberOfScalarComponentsRaw();
-   }
-   else
-   {
-      this->NumComponents = gdcmFile->GetNumberOfScalarComponents(); //rgb or mono
-   }
-       
-   //Set image spacing
-   this->DataSpacing[0] = gdcmFile->GetXSpacing();
-   this->DataSpacing[1] = gdcmFile->GetYSpacing();
-   this->DataSpacing[2] = gdcmFile->GetZSpacing();
-
-   return NZ;
-}
 //-----------------------------------------------------------------------------

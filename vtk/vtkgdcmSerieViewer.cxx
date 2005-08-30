@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 12:21:03 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/08/30 14:40:35 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,24 +124,24 @@ int main(int argc, char *argv[])
 
    char *dirName = am->ArgMgrWantString("dirname",usage);
 
-   int loadMode = 0x00000000;
+   int loadMode = GDCM_LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= NO_SHADOWSEQ;
+      loadMode |= GDCM_LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= NO_SHADOW;
+         loadMode |= GDCM_LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= NO_SEQ;
+         loadMode |= GDCM_LD_NOSEQ;
    }
 
-   bool reverse = am->ArgMgrDefined("reverse");
+   int reverse = am->ArgMgrDefined("reverse");
 
-   bool mirror  = am->ArgMgrDefined("mirror");
-   bool topdown = am->ArgMgrDefined("topdown");
-   bool rotate  = am->ArgMgrDefined("rotate");
+   int mirror  = am->ArgMgrDefined("mirror");
+   int topdown = am->ArgMgrDefined("topdown");
+   int rotate  = am->ArgMgrDefined("rotate");
 
-  bool check   = am->ArgMgrDefined("check");
+   int check   = am->ArgMgrDefined("check");
 
    if ( (int)mirror + (int)topdown + (int)rotate > 1)
    {
