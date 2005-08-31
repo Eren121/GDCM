@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:09 $
-  Version:   $Revision: 1.157 $
+  Date:      $Date: 2005/08/31 09:29:12 $
+  Version:   $Revision: 1.158 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -523,7 +523,7 @@ void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
  * @return false only when fail to open
  */
  
-bool DicomDir::WriteDicomDir(std::string const &fileName) 
+bool DicomDir::Write(std::string const &fileName) 
 {  
    int i;
    uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
@@ -575,7 +575,7 @@ bool DicomDir::WriteDicomDir(std::string const &fileName)
  * @return true 
  */
  
-bool DicomDir::AnonymizeDicomDir() 
+bool DicomDir::Anonymize() 
 {
    ValEntry *v;
    // Something clever to be found to forge the Patient names
