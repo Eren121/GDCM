@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:25:25 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/08/31 08:28:32 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.79 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.80 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -540,7 +540,11 @@ void vtkGdcmReader::GetFileInformation(gdcm::File *file)
    this->NumColumns = file->GetXSize();
    this->NumLines   = file->GetYSize();
    this->NumPlanes  = file->GetZSize();
-   this->TotalNumberOfPlanes = this->NumPlanes*InternalFileNameList.size();
+
+   if (CoherentFileList == 0)
+      this->TotalNumberOfPlanes = this->NumPlanes*InternalFileNameList.size();
+   else
+      this->TotalNumberOfPlanes = this->NumPlanes*CoherentFileList->size();
 
    this->ImageType = file->GetPixelType();
    this->PixelSize = file->GetPixelSize();
@@ -611,7 +615,7 @@ bool vtkGdcmReader::TestFileInformation(gdcm::File *file)
    }
    if( numLines != this->NumLines )
    {
-      vtkErrorMacro(<< "File y value doesn't match with the previous ones: "
+      vtkErrorMacro(<< "File Y value doesn't match with the previous ones: "
                     << file->GetFileName().c_str()
                     << ". Found " << numLines << ", must be "
                     << this->NumLines);
@@ -619,7 +623,7 @@ bool vtkGdcmReader::TestFileInformation(gdcm::File *file)
    }
    if( numPlanes != this->NumPlanes )
    {
-      vtkErrorMacro(<< "File z value doesn't match with the previous ones: "
+      vtkErrorMacro(<< "File Z value doesn't match with the previous ones: "
                     << file->GetFileName().c_str()
                     << ". Found " << numPlanes << ", must be "
                     << this->NumPlanes);
