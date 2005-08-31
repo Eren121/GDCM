@@ -29,7 +29,7 @@ SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
 
 # Get rid of -Wall / -W / -pedantic if exist
 SET(CMAKE_CXX_FLAGS "")
-# I guess I need to put them back on the this file:
+# I guess I need to put them back on this file:
 SET_SOURCE_FILES_PROPERTIES(
   ${swig_generated_file_fullname}
   PROPERTIES COMPILE_FLAGS "")
