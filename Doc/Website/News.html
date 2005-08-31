@@ -122,6 +122,13 @@ Any contribution is welcome.
    <LI> <A HREF="News.html#missing">Missing Features</a>
    <LI> New Features
    <UL>
+      <LI>
+          (Not a great one ...)  
+         Stupid method names : <br><TT>DicomDir::WriteDicomDir()</TT>
+         and <TT>DicomDir::AnonymizeDicomDir()</TT> <br>replaced by : <br>
+         <TT>DicomDir::Write()</TT>
+          and <TT>DicomDir::Anonymize()</TT>
+          <br><br> 
       <LI><TT>
           void Document::AddForceLoadElement(uint16_t group, uint16_t elem);
            </TT><br>
@@ -129,7 +136,7 @@ Any contribution is welcome.
            to force the loading of a given set of <TT>DocEntries</TT>, 
            even if their length exceeds the current 
            <TT>MAX_SIZE_LOAD_ELEMENT_VALUE</TT>.
-            <br><br>
+           <br><br>
        <LI>
          Many users expect from <TT>vtkGdcmReader</TT> it 'orders' the images
          (that's the job of <TT>gdcm::SerieHelper</TT> ...)<br>
@@ -146,13 +153,15 @@ Any contribution is welcome.
         sh->AddRestriction( ...
         sh->SetDirectory(directoryWithImages);
 
-   //      if user wants to sort reverse order
-        sh->SetSortOrderToReverse();
-   //      or
    //      if user *knows* how to order his files
         sh->SetUserLessThanFunction(userSuppliedComparisonFunction);
-  
+   //      or/and
+   //      if user wants to sort reverse order
+        sh->SetSortOrderToReverse();
+   
    //      here, we suppose only the first Coherent File List is of interest
+   //      Just iterate using sh->NexttCoherentFileList()
+   //      if you want to get all of them
         gdcm::FileList *l = sh->GetFirstCoherentFileList();
 
    //      if user is doesn't trust too much the files with same Serie UID
