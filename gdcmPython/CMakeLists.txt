@@ -18,32 +18,21 @@ SET(CMAKE_SWIG_FLAGS "-outdir ${GDCM_BINARY_DIR}/gdcmPython")
 SEPARATE_ARGUMENTS(CMAKE_SWIG_FLAGS)
 
 FIND_PACKAGE(SWIG REQUIRED)
-INCLUDE(${SWIG_USE_FILE})
+IF(SWIG_FOUND)
+  INCLUDE(${SWIG_USE_FILE})
+ENDIF(SWIG_FOUND)
+
 
 SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
-# Setting SWIG_FLAGS to "-includeall" at the following line looks like
-# a bad idea since swig tries to recursively include all the referenced
-# files, "including" the C++ <sstream>, <list>, <map>... Of course swig
-# has no way of finding the path to those files (unless it is told by
-# cmake) since they are related to the compiler installation layout.
-# Anyhow, since this inclusion recursion is not necessary, just don't
-# do it.
-# Note: apparently the line is required in order to avoid a NOTFOUND
-#       as argument of swig on invocation of make.
-SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "")
-SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx
+SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx, or gdcmPYTHON_wrap.cxx
 SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
 
 # Get rid of -Wall / -W / -pedantic if exist
-#SET(CMAKE_CXX_FLAGS "")
+SET(CMAKE_CXX_FLAGS "")
 # I guess I need to put them back on the this file:
-SET_SOURCE_FILES_PROPERTIES(${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-                            PROPERTIES COMPILE_FLAGS "" GENERATED 1)
-
-#ADD_DEPENDENCIES(
-#  ${GDCM_BINARY_DIR}/gdcmPython/gdcm_wrap.cxx
-#  ${GDCM_SOURCE_DIR}/gdcmConfigure.h
-#  )
+SET_SOURCE_FILES_PROPERTIES(
+  ${swig_generated_file_fullname}
+  PROPERTIES COMPILE_FLAGS "")
 
 INSTALL_TARGETS(/lib/gdcm/ _gdcm)
 
