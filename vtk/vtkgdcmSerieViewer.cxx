@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:10 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/08/31 08:37:53 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,16 +15,17 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-// This example illustrates how the vtkGdcmReader vtk class can be
-// used in order to:
-//  * produce a simple (vtk based) Dicom image STACK VIEWER.
-//  * dump the stack considered as a volume in a vtkStructuredPoints
-//    vtk file: the vtk gdcm wrappers can be seen as a simple way to convert
-//    a stack of Dicom images into a native vtk volume.
-//
+// This example illustrates how the vtkGdcmReader vtk class can 
+// use the result of gdcm::SerieHelper constructor and check
+// the various Setters :
+//     SerieHelper::SetOrderToReverse, 
+//     SerieHelper::SetUserLessThanFunction
+//     SerieHelper::SetLoadMode
+//     vtkGdcmReader::SetUserFunction
+//     vtkGdcmReader::SetCoherentFileList
 // Usage:
 //  * the Directory name that contains the Dicom images constituting the stack 
-//    should be given as command line argument,
+//    should be given as command line argument (keyword : dirname=),
 //  * you can navigate through the stack by hitting any character key,
 //  * the produced vtk file is named "foo.vtk" (in the invocation directory).
 // 
@@ -42,13 +43,21 @@
 #include "gdcmDocument.h"  // for NO_SHADOWSEQ
 #include "gdcmSerieHelper.h"
 #include "gdcmDebug.h"
+#include "gdcmValEntry.h"
+
 #include "gdcmArgMgr.h" // for Argument Manager functions
+#include <string.h>     // for strcmp
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
 #endif
 
 void userSuppliedMirrorFunction (uint8_t *im, gdcm::File *f);
 void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f);
+bool userSuppliedLessThanFunction(gdcm::File *f, gdcm::File *f);
+bool userSuppliedLessThanFunction2(gdcm::File *f, gdcm::File *f);
+
+int orderNb;
+uint16_t *elemsToOrderOn;
 
 //----------------------------------------------------------------------------
 // Callback for the interaction
@@ -96,7 +105,7 @@ int main(int argc, char *argv[])
    " usage: vtkgdcmSerieViewer dirname=sourcedirectory                        ",
    "                           [noshadowseq][noshadow][noseq]                 ",
    "                           [reverse] [{[mirror]|[topdown]|[rotate]}]      ",
-   "                           [check][debug]                                 ",
+   "                           [order=] [check][debug]                        ",
    "      sourcedirectory : name of the directory holding the images          ",
    "                        if it holds more than one serie,                  ",
    "                        only the first one id displayed.                  ",
@@ -106,8 +115,13 @@ int main(int argc, char *argv[])
    "      reverse    : user wants to sort the images reverse order            ",
    "      mirror     : user wants to 'mirror' the images | just some simple   ",
    "      topdown    : user wants to 'topdown' the images| examples of user   ",
-   "      rotate     : user wants NOT YET MADE           | supplied functions ",
+   "      rotate     : NOT YET MADE (useless?)           | supplied functions ",
    "      check      : user wants to force more coherence checking            ",
+   "      order=     : group1-elem1,group2-elem2,... (in hexa, no space)      ",
+   "                   if we want to use them as a sort criterium             ",
+   "                   Right now : ValEntries only -just an example-          ",
+   "        or                                                                ",
+   "      order=     : order=name if we want to sort on file name (why not ?) ",
    "      debug      : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
 
@@ -141,15 +155,26 @@ int main(int argc, char *argv[])
    int topdown = am->ArgMgrDefined("topdown");
    int rotate  = am->ArgMgrDefined("rotate");
 
-   int check   = am->ArgMgrDefined("check");
-
-   if ( (int)mirror + (int)topdown + (int)rotate > 1)
+   if ( mirror && topdown )
    {
-      std::cout << "mirror *OR* topDown *OR* rotate !"
+      std::cout << "mirror *OR* topDown !"
                 << std::endl;
       delete am;
       return 0;
    }
+   if ( rotate )
+   {
+      std::cout << "'rotate' undealt with -> ignored !"
+                << std::endl;
+   }
+
+   int check   = am->ArgMgrDefined("check");
+  
+  // ArgMgrGetString *does* return a char *, and takes char * as params !
+  // what must I do to avoid warning on gcc?
+   bool bname = ( strcmp(am->ArgMgrGetString("order", "not found"),"name")==0 );
+   if (bname)
+      elemsToOrderOn = am->ArgMgrGetXInt16Enum("order", &orderNb);
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
@@ -166,8 +191,6 @@ int main(int argc, char *argv[])
 
    // ----------------------- End Arguments Manager ----------------------
   
-   // ------------ to check Coherent File List as a parameter
-
    gdcm::SerieHelper *sh = new gdcm::SerieHelper();
    sh->SetLoadMode(loadMode);
    if (reverse)
@@ -184,6 +207,12 @@ int main(int argc, char *argv[])
       std::cout << "Oops! No CoherentFileList found ?!?" << std::endl;
       return 0;
    }
+
+   if (bname)
+     sh->SetUserLessThanFunction(userSuppliedLessThanFunction2);
+   else if (orderNb != 0)
+      sh->SetUserLessThanFunction(userSuppliedLessThanFunction);
+
    while (l)
    { 
       nbFiles = l->size() ;
@@ -405,6 +434,68 @@ void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f)
    return;
 }
 
+// --------------------------------------------------------
+// This is just a *very* simple example of user supplied 'LessThan' function
+// It's *not* part of gdcm.
+//
+// Note : orderNb and elemsToOrderOn are here global variables.
+// Within a 'normal' function they would't be any orderNb and elemsToOrderOn var
+// User *knows* on what field(s) he wants to compare; 
+// He just writes a decent function.
+// Here, we want to get info from the command line Argument Manager.
+//
+// Warning : it's up to 'vtkgdcmSerieViewer' user to find a suitable data set !
+// --------------------------------------------------------
 
 
+bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2)
+{
+   // for *this* user supplied function, I supposed only ValEntries are checked.
+// 
+   std::string s1, s2;
+   gdcm::ValEntry *e1,*e2;
+   for (int ri=0; ri<orderNb; ri++)
+   {
+      std::cout << std::hex << elemsToOrderOn[2*ri] << "|" 
+                            << elemsToOrderOn[2*ri+1]
+                            << std::endl;
+ 
+      e1= f1->gdcm::Document::GetValEntry( elemsToOrderOn[2*ri],
+                                 elemsToOrderOn[2*ri+1]);
 
+      e2= f2->gdcm::Document::GetValEntry( elemsToOrderOn[2*ri],
+                                 elemsToOrderOn[2*ri+1]);
+      if(!e2 || !e2)
+      {
+         std::cout << std::hex << elemsToOrderOn[2*ri] << "|"
+                              << elemsToOrderOn[2*ri+1]
+                              << " not found" << std::endl;
+         continue;
+      }
+      s1 = e1->gdcm::ValEntry::GetValue();      
+      s2 = e2->gdcm::ValEntry::GetValue();
+      std::cout << "[" << s1 << "] vs [" << s2 << "]" << std::endl;
+      if ( s1 < s2 ) 
+         return true;
+      else if (s1 == s2 )
+         continue;
+      else 
+         return false;
+   }
+   return false; // all fields equal
+}
+
+// --------------------------------------------------------
+// This is just an other *very* simple example of user supplied 'LessThan'
+// function
+// It's *not* part of gdcm.
+//
+// Warning : it's up to 'vtkgdcmSerieViewer' user to find a suitable data set !
+// --------------------------------------------------------
+
+bool userSuppliedLessThanFunction2(gdcm::File *f1, gdcm::File *f2)
+{
+   std::cout << "[" << f1->GetFileName() << "] vs [" 
+                    << f2->GetFileName() << "]" << std::endl;
+   return f1->GetFileName() < f2->GetFileName();
+}
