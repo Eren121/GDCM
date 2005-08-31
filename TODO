@@ -11,6 +11,15 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: Add testing of valid dictionary
+Date: 2005 Aug 31
+Attributed: Mathieu
+Details:
+Since that now private/shadow dictionary are available
+it would be nice to start implementing an automatic mode of loading
+those dictionary as we read the public one.
+Comments:
+-----------------------------------------------------------------------------
 Description: gdcm::SerieHelper / UID / set of rules
 Date: 2005 Aug 30
 Attributed: Mathieu
