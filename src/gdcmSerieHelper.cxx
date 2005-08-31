@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:15:34 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/08/31 16:24:19 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,6 +229,10 @@ void SerieHelper::AddGdcmFile(File *header)
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
+ * @param   group  Group number of the target tag.
+ * @param   elem Element number of the target tag.
+ * @param value value to be checked to exclude File
+ * @param op  operator we want to use to check
  */
 void SerieHelper::AddRestriction(uint16_t group, uint16_t elem, 
                                  std::string const &value, int op)
@@ -248,6 +252,9 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
+ * @param   group  Group number of the target tag.
+ * @param   elem Element number of the target tag.
+ * @param value value to be checked to exclude File 
  * @deprecated use : AddRestriction(uint16_t group, uint16_t elem, 
  *                                 std::string const &value, int op);
  */

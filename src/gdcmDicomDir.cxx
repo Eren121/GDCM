@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 09:29:12 $
-  Version:   $Revision: 1.158 $
+  Date:      $Date: 2005/08/31 16:24:19 $
+  Version:   $Revision: 1.159 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -215,6 +215,11 @@ bool DicomDir::Load(std::string const &fileName )
 }
 
 /// DEPRECATED : use SetDirectoryName(dname) instead
+/**
+ * \brief   Loader. (DEPRECATED : kept not to break the API)
+ * @param   paseDir Parse Dir
+ * @deprecated use SetDirectoryName(dname) instead
+ */
 void DicomDir::SetParseDir(bool parseDir)
 {
    ParseDir = parseDir;
