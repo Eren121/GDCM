@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/25 14:55:47 $
-  Version:   $Revision: 1.160 $
+  Date:      $Date: 2005/08/31 15:54:50 $
+  Version:   $Revision: 1.161 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -201,7 +201,8 @@ return true;
 /**
  * \brief  Checks whether an 'area' is printable or not (in order
  *         to avoid corrupting the terminal of invocation when printing)
- * @param s string to check
+ * @param s area to check (uint8_t is just for prototyping. feel free to cast)
+ * @param l area length to check
  */
 bool Util::IsCleanArea(uint8_t *s, int l)
 {
@@ -217,7 +218,8 @@ bool Util::IsCleanArea(uint8_t *s, int l)
 /**
  * \brief  Weed out a string from the non-printable characters (in order
  *         to avoid corrupting the terminal of invocation when printing)
- * @param s string to remove non printable characters from
+ * @param s area to check (uint8_t is just for prototyping. feel free to cast)
+ * @param l area length to check
  */
 std::string Util::CreateCleanString(std::string const &s)
 {
@@ -248,7 +250,8 @@ std::string Util::CreateCleanString(std::string const &s)
 /**
  * \brief  Weed out a string from the non-printable characters (in order
  *         to avoid corrupting the terminal of invocation when printing)
- * @param s string to remove non printable characters from
+ * @param s area to process (uint8_t is just for prototyping. feel free to cast)
+ * @param l area length to check
  */
 std::string Util::CreateCleanString(uint8_t *s, int l)
 {

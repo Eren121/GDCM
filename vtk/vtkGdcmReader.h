@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:35 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/08/31 15:54:51 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,8 +68,9 @@ public:
 
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
-/**
- * \brief Sets the LoadMode as a boolean string. 
+// FIXME : HOW to doxygen a VTM macro?
+/*
+ * \ brief Sets the LoadMode as a boolean string. 
  *        gdcm.LD_NOSEQ, gdcm.LD_NOSHADOW, gdcm.LD_NOSHADOWSEQ... 
  *        (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
