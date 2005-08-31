@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 08:37:53 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/08/31 09:01:59 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,8 +53,8 @@
 
 void userSuppliedMirrorFunction (uint8_t *im, gdcm::File *f);
 void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f);
-bool userSuppliedLessThanFunction(gdcm::File *f, gdcm::File *f);
-bool userSuppliedLessThanFunction2(gdcm::File *f, gdcm::File *f);
+bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2);
+bool userSuppliedLessThanFunction2(gdcm::File *f1, gdcm::File *f2);
 
 int orderNb;
 uint16_t *elemsToOrderOn;
