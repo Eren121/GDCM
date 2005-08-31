@@ -18,7 +18,9 @@ Details:
 Since that now private/shadow dictionary are available
 it would be nice to start implementing an automatic mode of loading
 those dictionary as we read the public one.
-Comments:
+Comments: It shouldn't be too difficult to 'manualy' ask memory merging 
+          of a Private Dict into the public one (I can do it soon).
+			 Automatic recognition of the Private Dict to be used seems hopeless.
 -----------------------------------------------------------------------------
 Description: gdcm::SerieHelper / UID / set of rules
 Date: 2005 Aug 30
