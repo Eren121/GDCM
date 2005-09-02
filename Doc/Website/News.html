@@ -123,6 +123,26 @@ Any contribution is welcome.
    <LI> <A HREF="News.html#missing">Missing Features</a>
    <LI> New Features
    <UL>
+      <LI> Add the methods
+         <TT>gdcm::Dict:AddDict(std::string fullPathPrivateDictionaryFileName)</TT>
+         <br>and<br> 
+        <TT>gdcm::Dict::RemoveDict(std::string fullPathPrivateDictionaryFileName)</TT>
+       <br>
+       to allow user to choose the 'Private Dictionary' he wants to work with.
+       <br>
+      One can dream about a better API;<br>
+      This one allow right now anybody to see very easyly if the use 
+      of a given private dicom dictionary is of any help or not.
+      <br><br>
+      <LI>
+      <TT>PrintFile</TT> has now a new command line argument manager option :<br>
+          <TT>dict=fullPathNamePricateDictionaryFile</TT><br>
+          to allow user to see with no extra coding what differences 
+          makes the use or not of a private Dicom Dictionary.<br>
+           e.g. : use it as follow <br>
+          <TT>PrintFile filein=myGEdicomFile.dcm 
+          dict=/user/userName/gdcm/Dicts/GEMS-Advance.dic</TT>
+         <br><br> 
       <LI>
           (Not a great one ...)  
          Stupid method names : <br><TT>DicomDir::WriteDicomDir()</TT>
