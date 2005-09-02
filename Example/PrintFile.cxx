@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:05 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/09/02 07:06:23 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,8 @@
 #include "gdcmFileHelper.h"
 #include "gdcmDebug.h"
 #include "gdcmDirList.h"
-
+#include "gdcmGlobal.h"
+#include "gdcmDictSet.h"
 #include "gdcmArgMgr.h"
 
 #include <iostream>
@@ -126,15 +127,17 @@ int main(int argc, char *argv[])
    " Display the header of a ACR-NEMA/PAPYRUS/DICOM File                      ",
    " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]",
    "                       [forceload=listOfElementsToForceLoad]              ",
+   "                       [dict= privateDirectory]                           ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "      level = 0,1,2 : depending on the amount of details user wants to see",
-   "      listOfElementsToForceLOad : group-elem,g2-e2,... (in hexa, no space)",
+   "      listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)",
    "                                of Elements to load whatever their length ",
-   "        noshadowseq: user doesn't want to load Private Sequences          ",
-   "        noshadow   : user doesn't want to load Private groups (odd number)",
-   "        noseq      : user doesn't want to load Sequences                  ",
-   "        debug      : user wants to run the program in 'debug mode'        ",
-   "        showlut :user wants to display the Palette Color (as an int array)",
+   "      privateDirectory : source file full path name of Shadow Group elems ",
+   "      noshadowseq: user doesn't want to load Private Sequences            ",
+   "      noshadow   : user doesn't want to load Private groups (odd number)  ",
+   "      noseq      : user doesn't want to load Sequences                    ",
+   "      debug      : user wants to run the program in 'debug mode'          ",
+   "      showlut :user wants to display the Palette Color (as an int array)  ",
    FINISH_USAGE
 
    // Initialize Arguments Manager   
@@ -180,9 +183,17 @@ int main(int argc, char *argv[])
 
    int forceLoadNb;
    uint16_t *elemsToForceLoad 
-                        = am->ArgMgrGetXInt16Enum("forceload", &forceLoadNb);
+                           = am->ArgMgrGetXInt16Enum("forceload", &forceLoadNb);
 
    bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
+
+   bool ddict = am->ArgMgrDefined("dict");
+   char *dict;
+
+   if (ddict)
+   {
+     dict = am->ArgMgrGetString("dict",(char *)0);
+   }
 
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -195,6 +206,12 @@ int main(int argc, char *argv[])
    delete am;  // we don't need Argument Manager any longer
 
    // ----------- End Arguments Manager ---------
+
+
+   if (ddict)
+   {
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddDict(dict);   
+   }
 
    if ( fileName != 0 ) // ====== Deal with a single file ======
    { 
@@ -213,7 +230,6 @@ int main(int argc, char *argv[])
       }
 
       bool res = f->Load();
-
       if ( !res )
       {
          std::cout << "Cannot process file [" << fileName << "]" << std::endl;
