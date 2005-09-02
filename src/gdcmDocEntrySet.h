@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:09:13 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,7 @@ public:
    /// Canonical Constructor
    DocEntrySet();
    /// Canonical Destructor
-   virtual ~DocEntrySet() {};
+   virtual ~DocEntrySet() {}
 
    /// \brief write any type of entry to the entry set
    virtual void WriteContent (std::ofstream *fp, FileType filetype) = 0;

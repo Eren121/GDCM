@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/21 17:47:19 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,7 @@ public:
    DocEntry *GetNextEntry();
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
    /// Tells us if the ElementSet contains no entry
-   bool IsEmpty() { return TagHT.empty(); };
+   bool IsEmpty() { return TagHT.empty(); }
 
 protected:
 

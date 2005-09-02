@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/01 18:37:31 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,8 +49,9 @@ public:
    RLEFrame() { NumberOfFragments = 0; }
    void Print( std::ostream &os = std::cout, std::string indent = "" );
 
-   void SetNumberOfFragments(unsigned int number) { NumberOfFragments = number; };   
-   unsigned int GetNumberOfFragments() { return NumberOfFragments; };
+   void SetNumberOfFragments(unsigned int number) 
+                                       { NumberOfFragments = number; }   
+   unsigned int GetNumberOfFragments() { return NumberOfFragments; }
    void SetOffset(unsigned int id, long offset);
    long GetOffset(unsigned int id);
    void SetLength(unsigned int id, long length);

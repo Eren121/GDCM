@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/11 16:36:52 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,23 +47,19 @@ public:
    /**
     * \brief virtual destructor makes this class dynamic
     */
-   virtual ~Exception() throw() {};
+   virtual ~Exception() throw() {}
 
    /// exception caught within exception class: print error message and die
    static void fatal(const char *from) throw();
 
    /// returns error message
-   const std::string &getError() const throw() {
-      return Error;
-   }
+   const std::string &getError() const throw() { return Error;}
 
    /// try to discover this (dynamic) class name
    virtual std::string getName() const throw();
 
    /// returns exception name string (overloads std::exception::what)
-   virtual const char *what() const throw() {
-      return (const char *) *this;
-   }
+   virtual const char *what() const throw() { return (const char *) *this;}
 
    /// returns exception name string
    operator const char *() const throw();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:08:12 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,41 +81,41 @@ public:
     *          related to the META Elements of a DICOMDIR.
     */
    ListDicomDirMetaElem const &GetDicomDirMetaElements() const
-      { return DicomDirMetaList; };
+      { return DicomDirMetaList; }
 
    /**
     * \brief   returns a reference to the chained List 
     *          related to the PATIENT Elements of a DICOMDIR.
     */      
    ListDicomDirPatientElem const &GetDicomDirPatientElements() const
-      { return DicomDirPatientList; };
+      { return DicomDirPatientList; }
 
    /**
     * \brief   returns a reference to the chained List 
     *          related to the STUDY Elements of a DICOMDIR.
     */      
    ListDicomDirStudyElem const &GetDicomDirStudyElements() const
-      { return DicomDirStudyList; };
+      { return DicomDirStudyList; }
 
    /**
     * \brief   returns a reference to the chained List 
     *          related to the VISIT Elements of a DICOMDIR.
     */      
    ListDicomDirVisitElem const &GetDicomDirVisitElements() const
-      { return DicomDirVisitList; };
+      { return DicomDirVisitList; }
    /**
     * \brief   returns a reference to the chained List 
     *          related to the SERIE Elements of a DICOMDIR.
     */
    ListDicomDirSerieElem const &GetDicomDirSerieElements() const
-      { return DicomDirSerieList; };
+      { return DicomDirSerieList; }
 
    /**
     * \brief   returns a reference to the chained List 
     *          related to the IMAGE Elements of a DICOMDIR.
     */
    ListDicomDirImageElem const &GetDicomDirImageElements() const
-      { return DicomDirImageList; };
+      { return DicomDirImageList; }
 
    // Public method to add an element
    bool AddEntry(DicomDirType type, Element const &elem);

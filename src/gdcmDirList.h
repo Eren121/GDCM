@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:08:12 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,7 @@ public :
    std::string const &GetDirName() const { return DirName; }
 
    /// Return the file names
-   DirListType const &GetFilenames() const { return Filenames; };
+   DirListType const &GetFilenames() const { return Filenames; }
 
    static bool IsDirectory(std::string const &dirName);
 

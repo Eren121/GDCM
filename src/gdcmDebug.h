@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 18:11:34 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,18 +55,18 @@ public:
    static void SetDebugFlag (bool flag);
    static bool GetDebugFlag ();
    /// \brief Sets the Debug Flag to true
-   static void DebugOn  () { SetDebugFlag(true);  };
+   static void DebugOn  () { SetDebugFlag(true);  }
    /// \brief Sets the Debug Flag to false
-   static void DebugOff () { SetDebugFlag(false); };
+   static void DebugOff () { SetDebugFlag(false); }
 
    /// \brief This is a global flag that controls if debug are redirected
    ///        to a file or not
    static void SetDebugToFile (bool flag);
    static bool GetDebugToFile ();
    /// \brief Next debug messages will be sent in the debug file
-   static void DebugToFileOn  () { SetDebugToFile(true);  };
+   static void DebugToFileOn  () { SetDebugToFile(true);  }
    /// \brief Next debug messages will be sent in the standard output
-   static void DebugToFileOff () { SetDebugToFile(false); };
+   static void DebugToFileOff () { SetDebugToFile(false); }
 
    static void SetDebugFilename (std::string const &filename);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/19 13:15:05 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ public:
    void SetLoadMode(int loadMode);
    void SetFileName(std::string const &fileName);
    bool Load();
-   /// to allow user to modify pixel order (e.g. Mirror, TopDown, 90°Rotate,...)
+   /// to allow user to modify pixel order (e.g. Mirror, TopDown,...)
    void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
                         { UserFunction = userFunc; }   
    // File methods
@@ -114,31 +114,31 @@ public:
 
    /// \brief Tells the writer we want to keep 'Grey pixels + Palettes color'
    ///        when possible (as opposed to convert 'Palettes color' to RGB)
-   void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  };
+   void SetWriteModeToRaw()           { SetWriteMode(WMODE_RAW);  }
    /// \brief Tells the writer we want to write RGB image when possible
    ///        (as opposed to 'Grey pixels + Palettes color')
-   void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  };
+   void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  }
    /// \brief Sets the Write Mode ( )
-   void SetWriteMode(FileMode mode)   { WriteMode = mode;         };
+   void SetWriteMode(FileMode mode)   { WriteMode = mode;         }
    /// \brief Gets the Write Mode ( )
-   FileMode GetWriteMode()            { return WriteMode;         };
+   FileMode GetWriteMode()            { return WriteMode;         }
 
    // Write format
 
    /// \brief Tells the writer we want to write as Implicit VR
-   void SetWriteTypeToDcmImplVR()     { SetWriteType(ImplicitVR); };
+   void SetWriteTypeToDcmImplVR()     { SetWriteType(ImplicitVR); }
    /// \brief Tells the writer we want to write as Explicit VR
-   void SetWriteTypeToDcmExplVR()     { SetWriteType(ExplicitVR); };
+   void SetWriteTypeToDcmExplVR()     { SetWriteType(ExplicitVR); }
    /// \brief Tells the writer we want to write as ACR-NEMA
-   void SetWriteTypeToAcr()           { SetWriteType(ACR);        };
+   void SetWriteTypeToAcr()           { SetWriteType(ACR);        }
    /// \brief Tells the writer we want to write as LibIDO
-   void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); };
+   void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); }
    /// \brief Tells the writer which format we want to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
-   void SetWriteType(FileType format) { WriteType = format;       };
+   void SetWriteType(FileType format) { WriteType = format;       }
    /// \brief Gets the format we talled the write we wanted to write
    ///   (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
-   FileType GetWriteType()            { return WriteType;         };
+   FileType GetWriteType()            { return WriteType;         }
 
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianness"

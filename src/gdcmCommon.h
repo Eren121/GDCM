@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:09 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,9 +54,10 @@
    // Old system only have this
    #include <inttypes.h>   // For uint8_t uint16_t and uint32_t
 #else
-// Broken plateform do not respect C99 and do not provide those typedef
-// Special case for recent borland compiler, comes with stdint.h
-#if defined(_MSC_VER) || defined(__BORLANDC__) && (__BORLANDC__ < 0x0560)  || defined(__MINGW32__)
+// Broken plateforms do not respect C99 and do not provide those typedef
+// Special case for recent Borland compiler, comes with stdint.h
+#if defined(_MSC_VER) || defined(__BORLANDC__) && (__BORLANDC__ < 0x0560)  \
+                      || defined(__MINGW32__)
 typedef  signed char         int8_t;
 typedef  signed short        int16_t;
 typedef  signed int          int32_t;
@@ -120,8 +121,8 @@ GDCM_EXPORT extern const std::string GDCM_BINLOADED;
 GDCM_EXPORT extern const std::string GDCM_NOTLOADED;
 GDCM_EXPORT extern const std::string GDCM_UNREAD;
 
-/// \brief TagKey is made to hold the standard Dicom Tag (Group number, Element
-/// number)
+/// \brief TagKey is made to hold the standard Dicom Tag 
+///               (Group number, Element number)
 /// Instead of using the two '16 bits integers' as the Hask Table key, we
 /// converted into a string (e.g. 0x0018,0x0050 converted into "0018|0050")
 /// It appears to be a huge waste of time.
@@ -204,7 +205,7 @@ enum LodModeType
    LD_NOSEQ       = 0x00000001, // Don't load Sequences
    LD_NOSHADOW    = 0x00000002, // Don't load odd groups
    LD_NOSHADOWSEQ = 0x00000004  // Don't load Sequences if they belong 
-                                // to an odd group
+                                //            to an odd group
                                 // (*exclusive* from LD_NOSEQ and LD_NOSHADOW)
 };
 

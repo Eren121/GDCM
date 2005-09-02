@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:16:19 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,10 +42,10 @@ public:
 
    /// \brief Sets the print level for the Dicom Header Elements
    /// \note 0 for Light Print; 1 for 'medium' Print, 2 for Heavy Print
-   void SetPrintLevel(int level) { PrintLevel = level; };
+   void SetPrintLevel(int level) { PrintLevel = level; }
 
    /// \brief Gets the print level for the Dicom Entries
-   int GetPrintLevel() { return PrintLevel; };
+   int GetPrintLevel() { return PrintLevel; }
 
 protected:
    /// \brief Amount of printed details for each Dicom Entries :

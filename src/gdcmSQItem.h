@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:08:12 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,12 +59,12 @@ public:
 
    DocEntry *GetDocEntry(uint16_t group, uint16_t elem);
 
-   bool IsEmpty() { return DocEntries.empty(); };
+   bool IsEmpty() { return DocEntries.empty(); }
 
    /// \brief   returns the ordinal position of a given SQItem
-   int GetSQItemNumber() { return SQItemNumber; };
+   int GetSQItemNumber() { return SQItemNumber; }
    /// \brief   Sets the ordinal position of a given SQItem
-   void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; };
+   void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; }
 
    ///  \brief Accessor on \ref SQDepthLevel.
    int GetDepthLevel() { return SQDepthLevel; }                                                                             

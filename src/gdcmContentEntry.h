@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmContentEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 16:18:48 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,10 +40,11 @@ public:
    virtual void WriteContent(std::ofstream *fp, FileType filetype) = 0;
 
    /// Sets the value (string) of the current Dicom entry
-   virtual void SetValue(std::string const &val) { Value = val; };
-   /// \brief Returns the 'Value' (e.g. "Dupond Marcel") converted 
+   virtual void SetValue(std::string const &val) { Value = val; }
+   /// \brief Returns the 'Value' (e.g. "Dupond^Marcel") converted 
    /// into a 'string', event if it's physically stored on disk as an integer
-   std::string const &GetValue() const { return Value; };
+   /// (e.g. : 0x000c returned as "12")
+   std::string const &GetValue() const { return Value; }
 
    void Copy(DocEntry *doc);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/29 20:50:07 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,8 +41,8 @@ class File;
 class GDCM_EXPORT Orientation : public Base
 {
 public:
-  Orientation() {};
-  ~Orientation() {};
+  Orientation() {}
+  ~Orientation() {}
 
    double TypeOrientation( File* file );
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 08:20:25 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ public:
    // 'Serie' methods
    DicomDirSerie *NewSerie();
    /// Adds a gdcm::DicomDirSerie to a gdcm::DicomDirStudy
-   void AddSerie(DicomDirSerie *obj) { Series.push_back(obj); };
+   void AddSerie(DicomDirSerie *obj) { Series.push_back(obj); }
    void ClearSerie();
    DicomDirSerie *GetFirstSerie();
    DicomDirSerie *GetNextSerie();
@@ -61,7 +61,7 @@ public:
    // 'Visit' methods
    DicomDirVisit *NewVisit();
    /// Adds a gdcm::DicomDirVisit to a gdcm::DicomDirStudy
-   void AddVisit(DicomDirVisit *obj) { Visits.push_back(obj); };
+   void AddVisit(DicomDirVisit *obj) { Visits.push_back(obj); }
    void ClearVisit();
    DicomDirVisit *GetFirstVisit();
    DicomDirVisit *GetNextVisit();

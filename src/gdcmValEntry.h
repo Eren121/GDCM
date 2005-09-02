@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/03/22 11:39:04 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/09/02 07:10:03 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ public:
 
    /// \brief returns the size threshold above which an element value 
    ///        will NOT be *printed* in order no to polute the screen output
-   static long GetMaxSizePrintEntry() { return ValEntry::MaxSizePrintEntry; };
+   static long GetMaxSizePrintEntry() { return ValEntry::MaxSizePrintEntry; }
 
    static void SetMaxSizePrintEntry(long);
 
