@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/05/11 15:01:47 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/09/02 07:00:04 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,6 +49,8 @@ public:
    Dict(std::string const &filename);
    ~Dict();
 
+   bool AddDict(std::string const &filename);
+   bool RemoveDict(std::string const &filename);
 // Print
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
@@ -67,6 +69,8 @@ public:
    DictEntry *GetNextEntry();
 
 private:
+   void DoTheLoadingJob(std::ifstream &ifs);
+
    /// ASCII file holding the Dictionnary
    std::string Filename;
 

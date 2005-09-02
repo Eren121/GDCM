@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:53:16 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/09/02 07:00:04 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-/// \brief auto generate function, to fill up the Dicom Dictionnary,
+/// \brief auto generated function, to fill up the Dicom Dictionnary,
 ///       if relevant file is not found on user's disk
 void FillDefaultDataDict(Dict *d);
 
@@ -47,11 +47,6 @@ Dict::Dict( )
  */
 Dict::Dict(std::string const &filename)
 {
-   uint16_t group;
-   uint16_t element;
-   TagName vr;
-   TagName vm;
-   TagName name;
 
    std::ifstream from( filename.c_str() );
    if ( !from )
@@ -62,22 +57,8 @@ Dict::Dict(std::string const &filename)
    }
    else
    {
-      while (!from.eof() && from)
-      {
-         from >> std::hex;
-         from >> group;
-         from >> element;
-         from >> vr;
-         from >> vm;
-         from >> std::ws;  //remove white space
-         std::getline(from, name);
-   
-         const DictEntry newEntry(group, element, vr, vm, name);
-         AddEntry(newEntry);
-      }
-
+      DoTheLoadingJob(from);
       Filename = filename;
-      from.close();
    }
 }
 
@@ -91,6 +72,67 @@ Dict::~Dict()
 
 //-----------------------------------------------------------------------------
 // Public
+
+/**
+ * \brief   Add a all the entries held in a source dictionary
+ * \note it concerns only Private Dictionnary
+ * @param   filename from which to build the dictionary.
+ */
+bool Dict::AddDict(std::string const &filename)
+{
+
+   std::ifstream from( filename.c_str() );
+   if ( !from )
+   {
+      gdcmWarningMacro( "Can't open dictionary" << filename.c_str());
+      return false;
+   }
+   else
+   {
+      DoTheLoadingJob(from);
+      return true;
+   }
+}
+
+
+/**
+ * \brief   Removes from the current Dicom Dict all the entries held in a source dictionary
+ * \note it concerns only Private Dictionnary
+ * @param   filename from which we read the entries to remove.
+ */
+bool Dict::RemoveDict(std::string const &filename)
+{
+   std::ifstream from( filename.c_str() );
+   if ( !from )
+   {
+      gdcmWarningMacro( "Can't open dictionary" << filename.c_str());
+      return false;
+   }
+   else
+   {
+      uint16_t group;
+      uint16_t elem;
+      TagName vr;
+      TagName vm;
+      TagName name;
+
+      while (!from.eof() && from)
+      {
+         from >> std::hex;
+         from >> group;
+         from >> elem;
+         from >> vr;
+         from >> vm;
+        // from >> std::ws;  //remove white space
+         std::getline(from, name);
+ 
+        RemoveEntry(DictEntry::TranslateToKey(group, elem));
+      }
+      from.close();
+      return true;
+   }
+}
+
 /**
  * \brief  adds a new Dicom Dictionary Entry 
  * @param   newEntry entry to add 
@@ -229,7 +271,33 @@ DictEntry *Dict::GetNextEntry()
 
 //-----------------------------------------------------------------------------
 // Private
+/**
+ * \brief Add all the dictionary entries from an already open source file 
+ * @param from input stream to read from.
+ */
+void Dict::DoTheLoadingJob(std::ifstream &from)
+{
+   uint16_t group;
+   uint16_t elem;
+   TagName vr;
+   TagName vm;
+   TagName name;
 
+   while (!from.eof() && from)
+   {
+      from >> std::hex;
+      from >> group;
+      from >> elem;
+      from >> vr;
+      from >> vm;
+      from >> std::ws;  //remove white space
+      std::getline(from, name);
+ 
+      const DictEntry newEntry(group, elem, vr, vm, name);
+      AddEntry(newEntry);
+   }
+   from.close();
+}
 //-----------------------------------------------------------------------------
 // Print
 /**
