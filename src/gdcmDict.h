@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:00:04 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/09/03 18:24:10 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include "gdcmDictEntry.h"
 
 #include <iostream>
+#include <fstream> // for ifstream
 #include <list>
 #include <map>
 
