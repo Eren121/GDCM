@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/04 15:34:40 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/09/04 15:43:12 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 
    bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
 
-   bool ddict = am->ArgMgrDefined("dict");
+   bool ddict = am->ArgMgrDefined("dict") ? true : false;
    char *dict = 0;
 
    if (ddict)
