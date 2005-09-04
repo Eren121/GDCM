@@ -60,7 +60,7 @@
 
 
 
-char *disclaimer = "\
+char disclaimer[] = "\
 This program is Copyright (c) University of British Columbia.\n\
 All rights reserved. It may be freely redistributed in its\n\
 entirety provided that this copyright notice is not removed.\n\
@@ -104,13 +104,13 @@ int bpp,    /* bits per sample */
 
 
 /* define color mode strings */
-char *plane_int_string = "plane by plane",
-   *line_int_string = "line intlv",
-   *pixel_int_string = "sample intlv";
+char plane_int_string[] = "plane by plane",
+   line_int_string[] = "line intlv",
+   pixel_int_string[] = "sample intlv";
 
 
 /* function to print out error messages */
-void error(char *msg) {
+void error(const char *msg) {
   fprintf(stderr, msg);
   exit(-1);
 }
@@ -326,7 +326,7 @@ void check_compatibility(jpeg_ls_header *head_frame, jpeg_ls_header *head_scan, 
 
 /* for writing disclaimer to command line in DOS */
 
-char *ttyfilename = "CON";
+char ttyfilename[] = "CON";
 
 #define PAUSE  20
 

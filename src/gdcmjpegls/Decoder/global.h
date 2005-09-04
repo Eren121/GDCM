@@ -91,10 +91,6 @@
 
 #define DEFAULT_COLOR_MODE LINE_INT
 
-extern char  *plane_int_string,
-      *line_int_string,
-      *pixel_int_string;
-
 
 #ifndef BIG_ENDIAN
 #define BIG_ENDIAN  1
@@ -150,8 +146,6 @@ extern int  sampling[MAX_COMPONENTS];
 #define  LEFTMARGIN  2
 #define RIGHTMARGIN  1
 
-
-extern char *disclaimer;
 
 
 /* alphabet size */
@@ -334,7 +328,7 @@ extern int  N[TOT_CONTEXTS],
 /****** Function prototypes */
 
 /* global.c */
-void error(char *msg);
+void error(const char *msg);
 void *safealloc(size_t size);
 void *safecalloc(size_t numels, size_t size);
 double get_utime();
