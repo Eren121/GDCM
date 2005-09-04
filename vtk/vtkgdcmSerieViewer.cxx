@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 09:01:59 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/09/04 15:40:25 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -170,9 +170,8 @@ int main(int argc, char *argv[])
 
    int check   = am->ArgMgrDefined("check");
   
-  // ArgMgrGetString *does* return a char *, and takes char * as params !
-  // what must I do to avoid warning on gcc?
-   bool bname = ( strcmp(am->ArgMgrGetString("order", "not found"),"name")==0 );
+   // This is so ugly, a cstring is NOT a char * (god damit!)
+   bool bname = ( strcmp(am->ArgMgrGetString("order", (char*)"not found"),"name")==0 );
    if (bname)
       elemsToOrderOn = am->ArgMgrGetXInt16Enum("order", &orderNb);
 
