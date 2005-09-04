@@ -58,7 +58,12 @@
 #define  PGMNAME PGMPREFIX "d"
 #define  EPGMNAME PGMPREFIX "e"
 
-static char *banner="\n\
+/* define color mode strings */
+char plane_int_string[] = "plane by plane",
+   line_int_string[] = "line intlv",
+   pixel_int_string[] = "sample intlv";
+
+static char banner[]="\n\
 =============================================\n\
 SPMG/JPEG-LS DECOMPRESSOR " JPEGLSVERSION "\n\
 =============================================\n\
@@ -302,9 +307,9 @@ void closebuffers(int multi)
 /* command line argument parsing */
 int initialize(int argc, char *argv[])
 {
-  char *infilename = NULL,
-    *outfilename = OUTFILE ".out",
-    *c_outfilename[MAX_COMPONENTS],
+  char *infilename = NULL;
+  const char *outfilename = OUTFILE ".out";
+  char *c_outfilename[MAX_COMPONENTS],
     *color_mode_string;
   int i, max_samp_columns, max_samp_rows, mk, n_s,
     end_of_seek=0,

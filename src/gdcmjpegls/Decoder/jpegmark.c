@@ -64,7 +64,7 @@
 #endif
 
 void
-check_range(int param, char *name, int low, int high)
+check_range(int param, const char *name, int low, int high)
 {
     if ( param < low || param > high ) {
   fprintf(stderr,"Allowed range for %s is [%d..%d]: got %d\n",

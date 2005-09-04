@@ -103,10 +103,6 @@ int bpp,    /* bits per sample */
     limit_reduce;  /* reduction on above for EOR states */
 
 
-/* define color mode strings */
-char plane_int_string[] = "plane by plane",
-   line_int_string[] = "line intlv",
-   pixel_int_string[] = "sample intlv";
 
 
 /* function to print out error messages */
