@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/04 15:43:12 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/09/05 08:31:25 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
          loadMode |= gdcm::LD_NOSEQ;
    }
 
-   int level = am->ArgMgrGetInt("level", 2);
+   int level = am->ArgMgrGetInt("level", 1);
 
    int forceLoadNb;
    uint16_t *elemsToForceLoad 
@@ -391,6 +391,8 @@ int main(int argc, char *argv[])
                                  it != fileList.end();
                                  ++it )
       {
+         std::cout << std::endl<<" Start processing :[" << it->c_str() << "]"
+                   << std::endl;
          f = new gdcm::File();
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
