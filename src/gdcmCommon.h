@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2005/09/05 08:28:02 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -167,8 +167,12 @@ inline std::ostream& operator<<(std::ostream& _O, std::string _val)
   return _O << _val.c_str();
 }
 #endif
+
+/// \brief TagName is made to hold the 'non hexa" fields (VR, VM, Name) 
+///        of Dicom Entries
 typedef std::string TagName;
 
+/// \brief various types of a DICOM file (for internal use only)
 enum FileType {
    Unknown = 0,
    ExplicitVR, // DicomDir is in this case. Except when it's ImplicitVR !...
@@ -188,7 +192,7 @@ enum DicomDirType {
    DD_VISIT
 };
 
-/// \brief comparison operators 
+/// \brief comparison operators (as used in SerieHelper::AddRestriction() )
 enum CompOperators {
    GDCM_EQUAL = 0,
    GDCM_DIFFERENT,
