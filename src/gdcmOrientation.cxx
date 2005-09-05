@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/29 15:07:56 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/09/05 08:25:01 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,20 +36,20 @@ namespace gdcm
  *           (Axial, Coronal, Sagital) of the image
  * \note Should be run on the first gdcm::File of a 'coherent' Serie
  * @return orientation code
- *   #   0 :   Not Applicable (neither 0020,0037 Image Orientation Patient 
- *   #                         nor     0020,0032 Image Position    found )
- *   #   1 :   Axial
- *   #  -1 :   Axial invert
- *   #   2 :   Coronal
- *   #  -2 :   Coronal invert
- *   #   3 :   Sagital
- *   #  -3 :   Sagital invert
- *   #   4 :   Heart Axial
- *   #  -4 :   Heart Axial invert
- *   #   5 :   Heart Coronal
- *   #  -5 :   Heart Coronal invert
- *   #   6 :   Heart Sagital
- *   #  -6 :   Heart Sagital invert
+ *   #   0 : Not Applicable (neither 0020,0037 Image Orientation Patient 
+ *   #                       nor     0020,0032 Image Position           found)
+ *   #   1 : Axial
+ *   #  -1 : Axial invert
+ *   #   2 : Coronal
+ *   #  -2 : Coronal invert
+ *   #   3 : Sagital
+ *   #  -3 : Sagital invert
+ *   #   4 : Heart Axial
+ *   #  -4 : Heart Axial invert
+ *   #   5 : Heart Coronal
+ *   #  -5 : Heart Coronal invert
+ *   #   6 : Heart Sagital
+ *   #  -6 : Heart Sagital invert
  */
 double Orientation::TypeOrientation( File *f )
 {
@@ -57,7 +57,7 @@ double Orientation::TypeOrientation( File *f )
    bool succ = f->GetImageOrientationPatient( iop );
    if ( !succ )
    {
-      gdcmErrorMacro( "No Image Orientation (0020,0037) was found in the file, cannot proceed." )
+      gdcmErrorMacro( "No Image Orientation (0020,0037) found in the file, cannot proceed." )
       return 0;
    }
 
@@ -99,15 +99,15 @@ double Orientation::TypeOrientation( File *f )
    }
    return res.first;
 /*
-//             i=0
-//             res=[0,99999]  ## [ <result> , <memory of the last succes calculus> ]
-//             for plane in dicPlane:
-//                 i=i+1
-//                 refA=plane[0]
-//                 refB=plane[1]
-//                 res=self.VerfCriterion(  i , self.CalculLikelyhood2Vec(refA,refB,ori1,ori2) , res )
-//                 res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
-//             return res[0]
+//  i=0
+//  res=[0,99999]  ## [ <result> , <memory of the last succes calculus> ]
+//  for plane in dicPlane:
+//      i=i+1
+//      refA=plane[0]
+//      refB=plane[1]
+//      res=self.VerfCriterion(  i , self.CalculLikelyhood2Vec(refA,refB,ori1,ori2) , res )
+//      res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
+//  return res[0]
 */
 }
 

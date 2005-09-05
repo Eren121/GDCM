@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/09/05 08:25:01 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,13 +44,13 @@ public:
   Orientation() {}
   ~Orientation() {}
 
-   double TypeOrientation( File* file );
+  double TypeOrientation( File *file );
 
 private:
-   Res VerfCriterion(int typeCriterion, double criterionNew, Res const & res);
-   double CalculLikelyhood2Vec(vector3D const & refA, vector3D const & refB, 
-                               vector3D const & ori1, vector3D const & ori2);
-   vector3D ProductVectorial(vector3D const & vec1, vector3D const & vec2);
+   Res VerfCriterion(int typeCriterion, double criterionNew, Res const &res);
+   double CalculLikelyhood2Vec(vector3D const &refA, vector3D const &refB, 
+                               vector3D const &ori1, vector3D const &ori2);
+   vector3D ProductVectorial(vector3D const &vec1, vector3D const &vec2);
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
