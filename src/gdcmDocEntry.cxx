@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/28 16:57:36 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/09/05 08:32:57 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -262,6 +262,8 @@ void DocEntry::Print(std::ostream &os, std::string const & )
       s << st << " ";
       s << std::setw(8) << o; 
    }
+   if (PrintLevel >= 1)
+      s << " ";
 
    s << "[" << vr  << "] ";
 
