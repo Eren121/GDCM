@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 13:05:01 $
-  Version:   $Revision: 1.265 $
+  Date:      $Date: 2005/09/05 08:20:08 $
+  Version:   $Revision: 1.266 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,20 +38,42 @@
 //  in the images.
 //
 // Remember also :
-// Patient Position (0018,5100) values : HFP   = Head First-Prone
-//                                       HFS   = Head First-Supine
-//                                       HFDR  = Head First-Decubitus Right
-//                                       HFDL = Head First-Decubitus Left
-//                                       FFDR = Feet First-Decubitus Right
-//                                       FFDL = Feet First-Decubitus Left
-//                                       FFP  = Feet First-Prone
-//                                       FFS  = Feet First-Supine
-//                    can also find      SEMIERECT
-//                                       SUPINE
+// Patient Position (0018,5100) values :
+
+//  HFS   = Head First-Supine, where increasing (positive axis direction) :
+//     X -> to the direction pointed to by the patient's oustretched left arm
+//     Y -> to the anterior-to-posterior direction in the patient's body
+//     Z -> to the feet-to-head direction in the patient's body
+
+//  HFP   = Head First-Prone, where increasing (positive axis direction) :
+//     X -> to the direction pointed to by the patient's oustretched left arm
+//     Y -> to the anterior-to-posterior direction in the patient's body
+//     Z -> to the feet-to-head direction in the patient's body
+
+//  FFS  = Feet First-Supine, where increasing (positive axis direction) :
+//     X -> to the direction pointed to by the patient's oustretched left arm
+//     Y -> to the anterior-to-posterion direction in the patient's body
+//     Z -> to the feet-to-head direction in the patient's body
+
+//  FFP  = Feet First-Prone, where increasing (positive axis direction) :
+//     X -> to the direction pointed to by the patient's oustretched left arm
+//     Y -> to the posterior-to-anterior direction in the patient's body
+//     Z -> to the feet-to-head direction in the patient's body
+
+// HFDR = Head First-Decubitus Right
+// HFDL = Head First-Decubitus Left
+// FFDR = Feet First-Decubitus Right
+// FFDL = Feet First-Decubitus Left
+
+//  we can also find      
+
+// SEMIERECT
+// SUPINE
+
 // CS 2 Patient Orientation (0020 0020)
 //               When the coordinates of the image 
 //               are always present, this field is almost never used.
-//               Better we don't tust it too much ...
+//               Better we don't trust it too much ...
 //               Found Values are :      L\P
 //                                       L\FP
 //                                       P\F
@@ -76,7 +98,7 @@
 #include "gdcmJPEGFragmentsInfo.h"
 
 #include <vector>
-#include <stdio.h> //sscanf
+#include <stdio.h>  //sscanf
 #include <stdlib.h> // for atoi
 
 namespace gdcm 
