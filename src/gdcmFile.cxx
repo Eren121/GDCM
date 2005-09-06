@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/05 08:20:08 $
-  Version:   $Revision: 1.266 $
+  Date:      $Date: 2005/09/06 15:32:13 $
+  Version:   $Revision: 1.267 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,19 +71,20 @@
 // SUPINE
 
 // CS 2 Patient Orientation (0020 0020)
-//               When the coordinates of the image 
-//               are always present, this field is almost never used.
-//               Better we don't trust it too much ...
-//               Found Values are :      L\P
-//                                       L\FP
-//                                       P\F
-//                                       L\F
-//                                       P\FR
-//                                       R\F
+//    When the coordinates of the image 
+//    are always present, this field is almost never used.
+//    Better we don't trust it too much ...
+//    Found Values are :
+//     L\P
+//     L\FP
+//     P\F
+//     L\F
+//     P\FR
+//     R\F
 //
 // (0020|0037) [Image Orientation (Patient)] [1\0\0\0\1\0 ]
 
-                                      
+               
 // ---------------------------------------------------------------
 //
 #include "gdcmFile.h"
