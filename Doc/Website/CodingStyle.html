@@ -71,7 +71,11 @@
    Local variables begin in lowercase. There is more flexibility in the
    naming of local variables although they still should convey some
    semantics.
-                                                                                
+ - Naming function parameters:
+   Function parameters begin in lowercase. There is more flexibility in the
+   naming of function parameters although they still should convey some
+   semantics.
+                                                                                 
 * Classes:
  - Don't use the inline keyword when defining an inline function
    within a class definition.
@@ -84,6 +88,11 @@
       {
          GroupPixel = groupPixel;
       }
+ - Don't use trailing ';' in inline function definition.
+   use :
+   void A::SetGroupPixel( int groupPixel ){GroupPixel = groupPixel;}
+     NOT
+   void A::SetGroupPixel( int groupPixel ){GroupPixel = groupPixel;};
  - Do not repeat the virtual keyword when overriding virtual base methods
    in declaration of subclasses:
      class A
@@ -189,7 +198,7 @@
    The Doxygen open-source system is used to generate on-line documentation.
    Doxygen requires the embedding of simple comments in the code which is in
    turn extracted and formatted into documentation. See
-      http://www.stack.nl/ dimitri/doxygen/
+      http://www.stack.nl/~dimitri/doxygen/
    for more information about Doxygen.
  - Documenting a class:
    Classes should be documented using the class and brief doxygen commands,
@@ -212,7 +221,7 @@
          bool Readable = false;
                                                                                 
          /// \brief The number of lines of the image as interpreted from
-         /// the various elements encountered at header parsing.
+         ///        the various elements encountered at header parsing.
          int NumberOfLines = -1;
                                                                                 
          /// Predicate implemented as accessor around \ref Readable.
