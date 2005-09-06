@@ -24,15 +24,18 @@ ENDIF(SWIG_FOUND)
 
 
 SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
+# BUG: This is only needed with cmake <= 2.0.5
+SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "")
+# END OF BUG
 SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx, or gdcmPYTHON_wrap.cxx
 SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
 
 # Get rid of -Wall / -W / -pedantic if exist
 SET(CMAKE_CXX_FLAGS "")
 # I guess I need to put them back on this file:
-SET_SOURCE_FILES_PROPERTIES(
-  ${swig_generated_file_fullname}
-  PROPERTIES COMPILE_FLAGS "")
+#SET_SOURCE_FILES_PROPERTIES(
+#  ${swig_generated_file_fullname}
+#  PROPERTIES COMPILE_FLAGS "")
 
 INSTALL_TARGETS(/lib/gdcm/ _gdcm)
 
