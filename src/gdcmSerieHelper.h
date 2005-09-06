@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 16:47:04 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/09/06 16:48:24 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,14 +77,9 @@ public:
   
 /**
  * \brief Sets the LoadMode as a boolean string. 
-<<<<<<< gdcmSerieHelper.h
  *        LD_NOSEQ, LD_NOSHADOW, LD_NOSHADOWSEQ
- ... (nothing more, right now)
-=======
- *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ
- *        (nothing more, right now)
->>>>>>> 1.17
- *        WARNING : before using NO_SHADOW, be sure *all* your files
+ *        ... (nothing more, right now)
+ *        WARNING : before using LD_NOSHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
  * @param   mode Load mode to be used    
