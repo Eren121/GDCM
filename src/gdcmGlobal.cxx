@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/06 12:37:58 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/09/06 15:31:17 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ const std::string GDCM_UNFOUND   = "gdcm::Unfound";
 const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
 const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
 const std::string GDCM_UNREAD    = "gdcm::UnRead";
-
+const std::string GDCM_NOTASCII  = "gdcm::NotAscii";
 //-----------------------------------------------------------------------------
 DictSet         *Global::Dicts     = (DictSet *)0;
 VR              *Global::ValRes    = (VR *)0;
