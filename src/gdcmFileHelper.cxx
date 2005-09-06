@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/08/30 15:36:18 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/09/06 15:34:29 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1591,8 +1591,11 @@ void FileHelper::Print(std::ostream &os, std::string const &)
    FileInternal->SetPrintLevel(PrintLevel);
    FileInternal->Print(os);
 
-   PixelReadConverter->SetPrintLevel(PrintLevel);
-   PixelReadConverter->Print(os);
+   if ( FileInternal->IsReadable() )
+   {
+      PixelReadConverter->SetPrintLevel(PrintLevel);
+      PixelReadConverter->Print(os);
+   }
 }
 
 //-----------------------------------------------------------------------------
