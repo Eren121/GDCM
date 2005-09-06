@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/09/06 15:36:02 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,14 +82,6 @@ VR::~VR()
 
 //-----------------------------------------------------------------------------
 // Public
-/**
- * \brief   Get the count for an element
- * @param   key key to count
- */
-int VR::Count(VRKey const &key) 
-{
-   return vr.count(key);
-}
 
 /**
  * \brief   Simple predicate that checks whether the given argument
@@ -98,8 +90,12 @@ int VR::Count(VRKey const &key)
  */
 bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 {
-   if ( tested == GDCM_UNKNOWN)
-      return true;
+   //if ( tested == GDCM_UNKNOWN)
+   //{
+   //std::cout << "---------- never used --------------" << tested 
+   //          << std::endl;
+   //   return true;
+   //}
 
    if ( IsVROfStringRepresentable(tested) )
       return false;
@@ -118,6 +114,8 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
+
+/*
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
@@ -134,23 +132,17 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested == "TM" ||
           tested == "UI" ||
           tested == "UL" ||
-          tested == "UN" ||
-          tested == "US";
-}
+          tested == "US" ||
+          tested == "UT";
+*/
+   // Should be quicker 
 
-/**
- * \brief   Simple predicate that checks whether the given argument
- *          corresponds to the Value Representation of a \ref SeqEntry
- * @param   tested value representation to check for.
- */
-bool VR::IsVROfSequence(VRKey const &tested)
-{
-   return tested == "SQ";
-}
+   return tested != "FL" &&
+          tested != "FD" &&
+          tested != "OB" &&
+          tested != "OW" &&
+          tested != "SQ" ;
 
-bool VR::IsValidVR(VRKey const &key)
-{
-   return vr.find(key) != vr.end();
 }
 
 //-----------------------------------------------------------------------------
