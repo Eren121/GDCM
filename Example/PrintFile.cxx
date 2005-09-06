@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/05 08:31:25 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/09/06 11:10:03 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -259,7 +259,8 @@ int main(int argc, char *argv[])
       nX=f->GetXSize();
       nY=f->GetYSize();
       nZ=f->GetZSize();
-      std::cout << " DIMX=" << nX << " DIMY=" << nY << " DIMZ=" << nZ << std::endl;
+      std::cout << " DIMX=" << nX << " DIMY=" << nY << " DIMZ=" << nZ 
+                << std::endl;
 
       pixelType    = f->GetPixelType();
       sPP          = f->GetSamplesPerPixel();
@@ -370,11 +371,30 @@ int main(int argc, char *argv[])
          std::cout << "Try LUT Data "<< std::endl;
          ShowLutData(f);
       }
+
+      if( !f->gdcm::Document::IsReadable())
+     {
+         std::cout <<std::endl<<fileName<<" is NOT 'gdcm parsable'"<<std::endl;
+      }
      
       if (f->IsReadable())
          std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
-      else
-         std::cout <<std::endl<<fileName<<" is NOT Readable"<<std::endl;
+      else if ( f->GetSeqEntry(0x0041,0x1010) )
+      {
+         std::cout <<std::endl<<fileName<<" looks like a 'PAPYRUS image' file"
+                   <<std::endl;
+      }
+      else if ( f->GetSeqEntry(0x0004,0x1220) )
+      {
+         std::cout <<std::endl<<fileName<<" looks like a 'DICOMDIR file'"
+                   <<std::endl;
+      }
+      else 
+      {
+         std::cout <<std::endl<<fileName<<" doesn't look like an image file "
+             <<std::endl; 
+      }
+ 
       std::cout<<std::flush;
       delete f;
       delete fh;
@@ -399,7 +419,8 @@ int main(int argc, char *argv[])
 
          for (int ri=0; ri<forceLoadNb; ri++)
          {
-            printf("%04x,%04x\n",elemsToForceLoad[2*ri], elemsToForceLoad[2*ri+1]);
+            printf("%04x,%04x\n",elemsToForceLoad[2*ri], 
+                                 elemsToForceLoad[2*ri+1]);
             f->AddForceLoadElement((uint32_t)elemsToForceLoad[2*ri], 
                                    (uint32_t)elemsToForceLoad[2*ri+1]); 
          }
@@ -413,8 +434,9 @@ int main(int argc, char *argv[])
                       << std::endl;
             std::cout << "or it's not a Dicom File, or its 'header' is bugged" 
                       << std::endl;
-            std::cout << "use 'PrintFile filein=... debug' to try to guess the pb"
-                   << std::endl;
+            std::cout << "use 'PrintFile filein=... debug' "
+                      << "to try to guess the pb"
+                      << std::endl;
             delete f;
             continue;
          }
