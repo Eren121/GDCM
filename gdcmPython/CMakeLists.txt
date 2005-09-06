@@ -129,25 +129,7 @@ ELSE(WIN32)
        "${CMAKE_INSTALL_PREFIX}/lib/gdcm\n"
   )
 ENDIF(WIN32)
-FIND_PATH(PYTHON_INSTALL "site-packages"
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.2\\InstallPath]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.1\\InstallPath]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.0\\InstallPath]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\1.6\\InstallPath]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\1.5\\InstallPath]
-    /usr/lib/python2.4
-    /usr/lib/python2.3
-    /usr/lib/python2.2
-    /usr/lib/python2.1
-    /usr/lib/python2.0
-    /usr/lib/python1.6
-    /usr/lib/python1.5
-)
-STRING(REGEX REPLACE "/usr(.*)/config.*" "\\1" PYTHON_INSTALL ${PYTHON_LIBRARY})
 
-INSTALL_FILES(${PYTHON_INSTALL}/site-packages "\\.pth$")
 INSTALL_FILES(/lib/gdcm/gdcmPython "\\.py$")
 INSTALL_FILES(/lib/gdcm/gdcmPython FILES "gdcm.py")
 
