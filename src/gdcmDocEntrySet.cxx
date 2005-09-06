@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:09:13 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/09/06 15:28:49 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,7 @@
 #include "gdcmSeqEntry.h"
 #include "gdcmValEntry.h"
 #include "gdcmBinEntry.h"
+#include "gdcmUtil.h"
 
 namespace gdcm 
 {
@@ -41,7 +42,7 @@ DocEntrySet::DocEntrySet()
  * @param   group  Group number of the searched tag.
  * @param   elem Element number of the searched tag.
  * @return  Corresponding element value when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
+ *          and the string GDCM_UNFOUND otherwise.
  */
 std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
 {
@@ -63,6 +64,34 @@ void *DocEntrySet::GetEntryBinArea(uint16_t group, uint16_t elem)
    if ( entry )
       return entry->GetBinArea();
    return 0;
+}
+
+/**
+ * \brief   Return the value of the BinEntry if it's "std::string representable"
+ * @param   group  Group number of the searched tag.
+ * @param   elem Element number of the searched tag.
+ * @return  Corresponding element value when it's "std::string representable"
+ *          and the string GDCM_NOTASCII otherwise.
+ */
+std::string DocEntrySet::GetEntryForcedAsciiValue(uint16_t group, uint16_t elem)
+{
+   DocEntry *d = GetDocEntry(group,elem);
+   if ( !d )
+      return GDCM_UNFOUND;
+
+   if (ValEntry *v = dynamic_cast<ValEntry *>(d))
+      return v->GetValue();
+
+   if (BinEntry *b = dynamic_cast<BinEntry *>(d))
+   {
+      uint8_t *a = b->GetBinArea();
+      if (!b)
+         return GDCM_NOTLOADED;
+         // TODO : unify those two methods.
+      if (Util::IsCleanArea(a, b->GetLength()) )
+         return  Util::CreateCleanString(a, b->GetLength());
+   }
+   return GDCM_NOTASCII;
 }
 
 /**

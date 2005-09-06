@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/09/06 15:28:49 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,10 +81,11 @@ public:
    virtual DocEntry *GetNextEntry()=0;
 
    virtual std::string GetEntryValue(uint16_t group, uint16_t elem);
-   virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);   
+   virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);
+   
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
-
+   virtual std::string GetEntryForcedAsciiValue(uint16_t group, uint16_t elem);
    /// \brief Gets any type of DocEntry, identified by its (group,elem)
    virtual DocEntry *GetDocEntry(uint16_t group, uint16_t elem) = 0;
    /// \brief Gets a ValEntry, identified by its (group, elem)

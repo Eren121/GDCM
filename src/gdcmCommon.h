@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/05 08:28:02 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2005/09/06 15:28:49 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,8 @@ GDCM_EXPORT extern const std::string GDCM_UNFOUND;
 GDCM_EXPORT extern const std::string GDCM_BINLOADED;
 GDCM_EXPORT extern const std::string GDCM_NOTLOADED;
 GDCM_EXPORT extern const std::string GDCM_UNREAD;
-
+GDCM_EXPORT extern const std::string GDCM_NOTASCII;
+;
 /// \brief TagKey is made to hold the standard Dicom Tag 
 ///               (Group number, Element number)
 /// Instead of using the two '16 bits integers' as the Hask Table key, we
