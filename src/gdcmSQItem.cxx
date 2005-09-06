@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:08:12 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/09/06 17:15:25 $
+  Version:   $Revision: 1.75 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,9 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
       // we just *always* ignore spurious fffe|0000 tag ! 
       if ( (*it)->GetGroup() == 0xfffe && (*it)->GetElement() == 0x0000 )
       {
-         break; // FIXME : continue; ?!?
+          break; // FIXME : break or continue; ?!?  
+                 // --> makes no difference since the only bugged file we have
+                 // contains 'impossible tag' fffe|0000 in last position !                            
       }
 
       (*it)->WriteContent(fp, filetype);
