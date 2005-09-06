@@ -106,6 +106,7 @@ http://www.gehealthcare.com/euen/interoperability/docs/2288567_100r3_0.pdf
 
 I was searching for 0043 1039, I could only find:
 http://www.gehealthcare.com/it_solutions/connectivity/pdf/hispeed_np.pdf
+ok -> http://www.gehealthcare.com/usen/interoperability/dicom/docs/hispeed_np.pdf
 but the link points nowhere, the document describes:
 HiSpeed LX/i, FX/i, DX/i, DX/iB 2.00/2.01/2.02 CONFORMANCE STATEMENT for DICOM v3.0
 
@@ -113,12 +114,15 @@ HiSpeed LX/i, FX/i, DX/i, DX/iB 2.00/2.01/2.02 CONFORMANCE STATEMENT for DICOM v
 
 
 0043 1060 was found at: http://www.gehealthcare.com/it_solutions/connectivity/pdf/2246181r25.pdf
+ok -> http://www.gehealthcare.com/usen/interoperability/dicom/docs/2246181r25.pdf
 0043 1060 IS 8 slop_int_10...slop_int_17
 
 I would also need:
 Signa Horizon Lx DICOM CONFORMANCE STATEMENT for DICOM v3.0
 grrrr: Vas flags 0043 1032 SS 1 in http://www.vitalcom.com/it_solutions/connectivity/pdf/2317752r3.pdf
+ok: -> www.gehealthcare.com/usen/interoperability/dicom/docs/2317752r3.pdf
 but 0043 1032 SS 1 Raw data type http://www.vitalcom.com/it_solutions/connectivity/pdf/2171143r25.pdf
+ok -> www.gehealthcare.com/usen/interoperability/dicom/docs/2171143r25.pdf
 
 Adding a page from : http://www.vitalcom.com/it_solutions/connectivity/pdf/2317752r3.pdf
  
@@ -201,6 +205,7 @@ Scanner Table Entry + Gradient Coil Selected (0043,106f) DS 3 or 4
 Notes from:
 PathSpeedtm PACS Version 8.0 CONFORMANCE STATEMENT for DICOM V3.0
 http://www.gehealthcare.com/it_solutions/connectivity/pdf/iis_fp_10282r1.pdf
+ok -> www.gehealthcare.com/usen/interoperability/dicom/docs/iis_fp_10282r1.pdf
 
 See GE_ImageThumbnails
 --------------------------------------------------
@@ -276,6 +281,7 @@ http://www.gehealthcare.com/usen/interoperability/dicom/docs/2261302_100r1.pdf
 For GEMS-Advantx.dic
 [EchoPAC PC version 4 CONFORMANCE STATEMENT for DICOM]
 http://www.gehealthcare.com/it_solutions/connectivity/pdf/EP250409r06.pdf
+ok -> www.gehealthcare.com/usen/interoperability/dicom/docs/EP250409r06.pdf
 http://www.gehealthcare.com/usen/xr/dicom/docs/2142506_100r01_ps.pdf
 
 
