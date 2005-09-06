@@ -17,7 +17,6 @@ SET(EXAMPLE_SOURCES
             
 #the following are utilities
   PrintDicomDir
-  PrintDocument
   PrintFile
   MakeDicomDir
   AnonymizeDicomDir # without loading it as a gdcm::DicomDir
