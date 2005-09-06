@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:07 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/09/06 11:16:04 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,6 +106,7 @@ int WriteSimple(Image &img)
    fileName << "TestWriteSimple";
 
 // Step 1 : Create the header of the image
+
    std::cout << "        1...";
    gdcm::File *fileToBuild = new gdcm::File();
    std::ostringstream str;
@@ -154,12 +155,14 @@ int WriteSimple(Image &img)
    switch (img.writeMode)
    {
       case 'a' :
-         fileName << ".ACR"; break; 
+         fileName << ".ACR";  break; 
       case 'e' :
          fileName << ".EXPL"; break; 
       case 'i' :
          fileName << ".IMPL"; break;
-} 
+   } 
+
+   std::cout << "[" << fileName.str() << "]...";
 
    // Set the samples per pixel
    str.str("");
@@ -221,7 +224,7 @@ int WriteSimple(Image &img)
          break;
 
       default :
-         std::cout << "Failed\n"
+         std::cout << "Failed for [" << fileName.str() << "]\n"
                    << "        Write mode '"<<img.writeMode<<"' is undefined\n";
 
          delete fileH;
@@ -232,7 +235,7 @@ int WriteSimple(Image &img)
 
    if( !fileH->Write(fileName.str()) )
    {
-      std::cout << "Failed\n"
+      std::cout << "Failed for [" << fileName.str() << "]\n"
                 << "           File in unwrittable\n";
 
       delete fileH;
@@ -260,7 +263,7 @@ int WriteSimple(Image &img)
    if( !reread->GetFile()->IsReadable() )
    {
       std::cerr << "Failed" << std::endl
-                << "Could not read written image : " << fileName << std::endl;
+                << "Could not read written image : " << fileName.str() << std::endl;
       delete fileToBuild;
       delete fileH;
       delete reread;
@@ -293,7 +296,7 @@ int WriteSimple(Image &img)
        fileToBuild->GetYSize() != reread->GetFile()->GetYSize() ||
        fileToBuild->GetZSize() != reread->GetFile()->GetZSize())
    {
-      std::cout << "Failed" << std::endl
+      std::cout << "Failed for [" << fileName.str() << "]" << std::endl
          << "        X Size differs: "
          << "X: " << fileToBuild->GetXSize() << " # " 
                   << reread->GetFile()->GetXSize() << " | "
