@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 15:36:02 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/09/07 10:39:45 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,7 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
 
-/*
+
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
@@ -134,15 +134,15 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested == "UL" ||
           tested == "US" ||
           tested == "UT";
-*/
-   // Should be quicker 
 
+   // Should be quicker --> But it doesn't work : revert to old code
+/*
    return tested != "FL" &&
           tested != "FD" &&
           tested != "OB" &&
           tested != "OW" &&
           tested != "SQ" ;
-
+*/
 }
 
 //-----------------------------------------------------------------------------
