@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/05 08:32:57 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/09/07 08:52:58 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,13 +75,15 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write( *fp, group); //group number
    binary_write( *fp, el);    //element number
 
-   if ( filetype == ExplicitVR )
+   // Dicom V3 group 0x0002 is *always* Explicit VR !
+   if ( filetype == ExplicitVR || group == 0x0002 )
    {
       // Special case of delimiters:
       if (group == 0xfffe)
       {
          // Delimiters have NO Value Representation
          // Hence we skip writing the VR.
+         //
          // In order to avoid further troubles, we choose to write them
          // as 'no-length' Item Delimitors (we pad by writing 0xffffffff)
          // We shall force the end of a given Item by writting 
@@ -97,17 +99,24 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
 
       if (vr == GDCM_UNKNOWN)
       {
-         // Unknown was 'written'
-         // deal with Little Endian            
-         binary_write(*fp, shortLgr);
-         binary_write(*fp, z);
+         // GDCM_UNKNOWN was stored in the Entry VR;
+         // deal with Entry as if TS were Implicit VR
+ 
+         // FIXME : troubles expected on big endian processors :
+         // let lgth = 0x00001234
+         // we write 34 12 00 00 on little endian proc (OK)
+         // we write 12 34 00 00 on big endian proc (KO)          
+         //binary_write(*fp, shortLgr);
+         //binary_write(*fp, z);
+
+binary_write(*fp, lgth);
       }
       else
       {
          binary_write(*fp, vr);
          gdcmAssertMacro( vr.size() == 2 );
                   
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UN") )
+         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") /*|| (vr == "UN")*/ )
          {
             binary_write(*fp, z);
             if (vr == "SQ")
@@ -237,7 +246,7 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    if (PrintLevel >= 2)
    {
       s << " lg : ";
-      lgth = GetReadLength(); // ReadLength, as opposed to Length
+      lgth = GetReadLength(); // ReadLength, as opposed to (usable) Length
       if (lgth == 0xffffffff)
       {
          st = " ffff ";
