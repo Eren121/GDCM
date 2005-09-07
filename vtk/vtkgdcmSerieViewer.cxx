@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/04 15:40:25 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/09/07 08:21:28 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -337,6 +337,7 @@ int main(int argc, char *argv[])
    }                                    \
    if (nx%2 != 0)                       \
    {                                    \
+      i = nx / 2;                       \
       for (j=0;j<ny;j++)                \
       {                                 \
         imj = (ty *)im  +j*nx;          \
