@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:55:22 $
-  Version:   $Revision: 1.275 $
+  Date:      $Date: 2005/09/07 10:42:30 $
+  Version:   $Revision: 1.276 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -266,10 +266,18 @@ bool Document::DoTheLoadingDocumentJob(  )
    {
       d = GetDocEntry( (*it).Group, (*it).Elem);
 
+      gdcmWarningMacro( "Force Load " << std::hex 
+                       << (*it).Group << "|" <<(*it).Elem );
+  
       if ( d == NULL)
+      {
+         gdcmWarningMacro( "You asked toForce Load "  << std::hex
+                          << (*it).Group <<"|"<< (*it).Elem
+                          << " that doesn't exist" );
          continue;
+      }
 
-      if ( dynamic_cast<BinEntry *>(d) )
+      if ( dynamic_cast<ValEntry *>(d) )
       {
          LoadDocEntry(d, true);
          continue;
@@ -283,7 +291,8 @@ bool Document::DoTheLoadingDocumentJob(  )
  
       if ( dynamic_cast<SeqEntry *>(d) )
       {
-         gdcmWarningMacro( "You cannot 'ForceLoad' a SeqEntry ");
+         gdcmWarningMacro( "You cannot 'ForceLoad' a SeqEntry :" << std::hex
+                           << (*it).Group <<"|"<< (*it).Elem );
          continue;
       }
    }
