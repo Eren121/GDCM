@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:25 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/09/07 08:33:29 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,9 +92,11 @@ int main(int argc, char *argv[])
       copy->SetFileName( output );
       copy->Load();
 
-      size_t dataSize = original->GetImageDataSize();
-      uint8_t *imageData = original->GetImageData();
-      (void)imageData;
+      size_t dataSize;
+      uint8_t *imageData;
+      dataSize = original->GetImageDataSize();
+      imageData = original->GetImageData();
+      (void)imageData; // no enough to avoid warning on 'Golgot'
       (void)dataSize;
   
       //First of all copy the header field by field
