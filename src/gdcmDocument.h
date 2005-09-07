@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 14:40:33 $
-  Version:   $Revision: 1.121 $
+  Date:      $Date: 2005/09/07 08:55:23 $
+  Version:   $Revision: 1.122 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,7 +124,7 @@ protected:
    uint16_t ReadInt16() throw ( FormatError );
    uint32_t ReadInt32() throw ( FormatError );
    void     SkipBytes(uint32_t);
-   int ComputeGroup0002Length( FileType filetype );
+   int ComputeGroup0002Length( );
 
 // Variables
    /// Refering underlying filename.

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/09/06 15:34:29 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/09/07 08:55:23 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,7 @@ fh1->Write(newFileName);
       (checks user given pixels length)
    FileInternal->Write(fileName,WriteType)
    fp = opens file(fileName);
-   ComputeGroup0002Length(writetype);
+   ComputeGroup0002Length( );
    BitsAllocated 12->16
       RemoveEntryNoDestroy(palettes, etc)
       Document::WriteContent(fp, writetype);

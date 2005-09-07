@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:34:35 $
-  Version:   $Revision: 1.274 $
+  Date:      $Date: 2005/09/07 08:55:22 $
+  Version:   $Revision: 1.275 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -594,14 +594,14 @@ std::ifstream *Document::OpenFile()
        zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
    {
       std::string msg = Util::Format(
-        "ACR/DICOM starting at the begining of the file:(%04x)\n", zero);
+        "ACR/DICOM starting at the beginning of the file:(%04x)\n", zero);
       gdcmWarningMacro( msg.c_str() );
       return Fp;
    }
  
    //-- DICOM --
    Fp->seekg(126L, std::ios::cur);
-   char dicm[4] = {' ',' ',' ',' '};
+   char dicm[4]; // = {' ',' ',' ',' '};
    Fp->read(dicm,  (size_t)4);
    if ( Fp->eof() )
    {
@@ -645,11 +645,7 @@ bool Document::CloseFile()
  */
 void Document::WriteContent(std::ofstream *fp, FileType filetype)
 {
-   // \TODO move the following lines (and a lot of others, to be written)
-   // to a future function CheckAndCorrectHeader  
-
-   // (necessary if user wants to write a DICOM V3 file
-   // starting from an ACR-NEMA (V2) Header
+   // Skip if user wants to write an ACR-NEMA file
 
    if ( filetype == ImplicitVR || filetype == ExplicitVR )
    {
@@ -877,9 +873,8 @@ void Document::SkipBytes(uint32_t nBytes)
 
 /**
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
- * @param filetype Type of the File to be written 
  */
-int Document::ComputeGroup0002Length( FileType filetype ) 
+int Document::ComputeGroup0002Length( /*FileType filetype*/ ) 
 {
    uint16_t gr;
    std::string vr;
@@ -900,15 +895,19 @@ int Document::ComputeGroup0002Length( FileType filetype )
          if ( entry->GetElement() != 0x0000 )
          {
             vr = entry->GetVR();
+
+            // FIXME : group 0x0002 is *always* Explicit VR!
  
-            if ( filetype == ExplicitVR )
-            {
-               if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") || (vr == "UT") ) 
+            //if ( filetype == ExplicitVR )
+            //{
+            //   if ( (vr == "OB") || (vr == "OW") || (vr == "UT") || (vr == "SQ") )
+            // (no SQ, OW, UT in group 0x0002;)
+               if ( vr == "OB" ) 
                {
                   // explicit VR AND OB, OW, SQ, UT : 4 more bytes
                   groupLength +=  4;
                }
-            }
+            //}
             groupLength += 2 + 2 + 4 + entry->GetLength();   
          }
       }
@@ -1497,7 +1496,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 }
 
 /**
- * \brief  Find the value Length of the passed Header Entry
+ * \brief  Find the value Length of the passed Doc Entry
  * @param  entry Header Entry whose length of the value shall be loaded. 
  */
 void Document::FindDocEntryLength( DocEntry *entry )
@@ -1508,7 +1507,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
    
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
    {
-      if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" || vr == "UN" ) 
+      if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" 
+                                                           /*|| vr == "UN"*/ )
       {
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
@@ -1530,6 +1530,9 @@ void Document::FindDocEntryLength( DocEntry *entry )
                // chance to get the pixels by deciding the element goes
                // until the end of the file. Hence we artificially fix the
                // the length and proceed.
+               gdcmWarningMacro( " Computing the length failed for " << 
+                                   entry->GetKey() <<" in " <<GetFileName());
+
                long currentPosition = Fp->tellg();
                Fp->seekg(0L,std::ios::end);
 
