@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:27:52 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/09/07 08:49:58 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,13 +124,13 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize,
 
    if ( !Util::IsCurrentProcessorBigEndian() )
    { 
-      a = copyRaw;         // begining of 'low bytes'
-      b = a + pixelNumber; // begining of 'hight bytes'
+      a = copyRaw;         // beginning of 'low bytes'
+      b = a + pixelNumber; // beginning of 'hight bytes'
    }
    else
    {
-      b = copyRaw;         // begining of 'low bytes'
-      a = b + pixelNumber; // begining of 'hight bytes'
+      b = copyRaw;         // beginning of 'low bytes'
+      a = b + pixelNumber; // beginning of 'hight bytes'
    } 
 
    // Re order bytes
@@ -142,7 +142,6 @@ bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize,
          *(x++) = *(a++);
       }
    }
-
 
    delete[] copyRaw;
 
