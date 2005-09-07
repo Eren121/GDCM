@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 08:28:32 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/09/07 08:45:52 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.80 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.81 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -753,7 +753,7 @@ void vtkGdcmReader::LoadImageInMemory(
       numComponents = f->GetNumberOfScalarComponentsRaw();
    else
       numComponents = f->GetNumberOfScalarComponents(); //rgb or mono
-
+   vtkDebugMacro(<< "numComponents:" << numComponents);
    vtkDebugMacro(<< "Copying to memory image [" << f->GetFileName().c_str() << "]");
    size_t size;
 
