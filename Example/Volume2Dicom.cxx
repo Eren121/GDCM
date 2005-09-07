@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 12:02:02 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/09/07 08:35:20 $
+  Version:   $Revision: 1.8 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@
    #define stat _stat
 #endif
 
-const unsigned int Dimension = 3;
+//const unsigned int Dimension = 3;
 
 void gdcmwrite(const char *inputfile, std::string directory);
 void GetFileDateAndTime(const char *inputfile, 
