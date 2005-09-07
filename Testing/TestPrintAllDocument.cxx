@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:51:26 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/09/07 08:48:28 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,13 @@ int TestPrintAllDocument(int, char *[])
       //std::cout << s.str() << gdcmDataImages[i];
 
       std::cout << gdcmDataImages[i];
-      for (j=0; j<60-strlen(gdcmDataImages[i]); j++)
+
+      unsigned int nbSpaces;
+      if (strlen(gdcmDataImages[i]) <= 60)
+         nbSpaces = 60-strlen(gdcmDataImages[i]);
+      else
+         nbSpaces = 0;
+      for (j=0; j<nbSpaces; j++)
          std::cout << " ";    
 
       pixelType = e1->GetPixelType();
@@ -77,13 +83,14 @@ int TestPrintAllDocument(int, char *[])
          std::cout << " ";
       std::cout << " Smpl.P.Pix.="          << e1->GetSamplesPerPixel()
                 << " Plan.Config.="         << e1->GetPlanarConfiguration();
-      photomInterp =  e1->GetEntryValue(0x0028,0x0004);
-               
+ 
+      photomInterp =  e1->GetEntryValue(0x0028,0x0004);               
       std::cout << " Photom.Interp.="       << photomInterp;
       for (j=0; j<l-photomInterp.length(); j++)
          std::cout << " ";
  
       std::cout << " TransferSyntaxName= [" << e1->GetTransferSyntaxName() << "]" ;
+
       swapC = e1->GetSwapCode();
       if ( swapC != 1234 )
           std::cout << " SwapCode = "       << e1->GetSwapCode(); 
@@ -104,7 +111,6 @@ int TestPrintAllDocument(int, char *[])
          delete e1;
          return 1;
       }
-
       delete e1;
       i++;
    }
