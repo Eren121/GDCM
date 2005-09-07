@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 14:12:23 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/09/07 15:19:37 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -180,7 +180,7 @@ void BinEntry::Print(std::ostream &os, std::string const & )
          else
          {
             //s << " [" << GetValue()
-            s << " [" << "gdcm::Loaded;OA "
+            s << " [" << GDCM_BINLOADED << ";"
               << "length = " << GetLength() << "]";
          } 
       }
