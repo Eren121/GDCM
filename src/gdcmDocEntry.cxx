@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:52:58 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/09/07 14:12:23 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -109,7 +109,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          //binary_write(*fp, shortLgr);
          //binary_write(*fp, z);
 
-binary_write(*fp, lgth);
+         binary_write(*fp, lgth);
       }
       else
       {

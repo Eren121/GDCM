@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 10:42:30 $
-  Version:   $Revision: 1.276 $
+  Date:      $Date: 2005/09/07 14:12:23 $
+  Version:   $Revision: 1.277 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -264,10 +264,10 @@ bool Document::DoTheLoadingDocumentJob(  )
                                it != UserForceLoadList.end();
                              ++it)
    {
-      d = GetDocEntry( (*it).Group, (*it).Elem);
-
       gdcmWarningMacro( "Force Load " << std::hex 
                        << (*it).Group << "|" <<(*it).Elem );
+  
+      d = GetDocEntry( (*it).Group, (*it).Elem);
   
       if ( d == NULL)
       {
@@ -283,9 +283,11 @@ bool Document::DoTheLoadingDocumentJob(  )
          continue;
       }
 
-      if ( dynamic_cast<BinEntry *>(d) )
+      BinEntry *b = dynamic_cast<BinEntry *>(d);
+      if ( b )
       {
-         LoadEntryBinArea((*it).Group, (*it).Elem);
+         LoadEntryBinArea(b);
+         b->SetValue(GDCM_BINLOADED);
          continue;
       }
  
@@ -693,12 +695,18 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
    // Search the corresponding DocEntry
    DocEntry *docElement = GetDocEntry(group, elem);
    if ( !docElement )
+   {
+      gdcmWarningMacro(std::hex << group << "|" << elem 
+                       <<  "doesn't exist" );
       return;
-
+   }
    BinEntry *binElement = dynamic_cast<BinEntry *>(docElement);
    if ( !binElement )
+   {
+      gdcmWarningMacro(std::hex << group << "|" << elem 
+                       <<  "is NOT a BinEntry");
       return;
-
+   }
    LoadEntryBinArea(binElement);
 }
 
@@ -1325,8 +1333,6 @@ return newEntry;
  * \brief   Loads (or not) the element content depending if its length exceeds
  *          or not the value specified with Document::SetMaxSizeLoadEntry()
  * @param   entry Header Entry (Dicom Element) to be dealt with
- * @param  forceLoad wheter we want to load its content even if its length 
- *         exceeds the value specified with Document::SetMaxSizeLoadEntry()
  */
 void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 {

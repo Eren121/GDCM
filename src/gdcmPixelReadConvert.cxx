@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/19 13:15:05 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/09/07 14:12:23 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -950,15 +950,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
             // nmask : to propagate sign bit on negative values
             int16_t nmask = (int16_t)0x8000;  
             nmask = nmask >> ( BitsAllocated - BitsStored - 1 );
-/*
-std::cout  << "BitsStored "     << BitsStored 
-           << " BitsAllocated " << BitsAllocated 
-           << std::endl;
-std::cout  << std::hex  << "pmask " << pmask
-           << " smask " << smask
-           << " nmask " << nmask
-           << std::endl;
-*/ 
+ 
             for(int i = 0; i<l; i++)
             {
                *deb = *deb >> (BitsStored - HighBitPosition - 1);
