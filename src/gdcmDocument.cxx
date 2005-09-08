@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 14:12:23 $
-  Version:   $Revision: 1.277 $
+  Date:      $Date: 2005/09/08 15:10:46 $
+  Version:   $Revision: 1.278 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1103,7 +1103,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                         Fp->seekg(lgrGroup, std::ios::cur);
                         used = false;
                         RemoveEntry( newDocEntry );
-                        newDocEntry = 0;
+                        // bcc 5.5 is right "assigned a value that's never used"
+                        // newDocEntry = 0;
                         continue;
                      }
                   }
@@ -2175,7 +2176,7 @@ bool Document::CheckSwap()
                Filetype = ACR;
                return true;
             default :
-               gdcmWarningMacro( "ACR/NEMA unfound swap info (Really hopeless !)");
+               gdcmWarningMacro("ACR/NEMA unfound swap info (Really hopeless !)");
                Filetype = Unknown;
                return false;
          }
@@ -2208,7 +2209,7 @@ void Document::SwitchByteSwapCode()
 }
 
 /**
- * \brief  during parsing, Header Elements too long are not loaded in memory 
+ * \brief  during parsing, Header Elements too long are not loaded in memory
  * @param newSize new size
  */
 void Document::SetMaxSizeLoadEntry(long newSize) 
