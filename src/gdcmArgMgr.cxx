@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/28 16:56:05 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/09/08 14:00:39 $
+  Version:   $Revision: 1.14 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,12 +122,13 @@ ArgMgr::~ArgMgr()
  */
 int ArgMgr::ArgMgrDefined( const char *param )
 {
-  int i, trouve ;
+  int i;
+  bool trouve;
   char *temp;
   temp = Majuscule ( param ) ;
   for ( trouve = false, i = ArgCount-1; i>0; i-- )
   { 
-    trouve = ! strcmp( ArgLab[i], temp ) ;
+    trouve = ( strcmp( ArgLab[i], temp )==0 ) ;
     if ( trouve )
     {
       ArgUsed[i] = true ;           
