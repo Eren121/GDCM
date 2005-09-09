@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 11:10:03 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/09/09 07:18:02 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -372,7 +372,9 @@ int main(int argc, char *argv[])
          ShowLutData(f);
       }
 
-      if( !f->gdcm::Document::IsReadable())
+      //if( !f->gdcm::Document::IsReadable())
+      // Try downcast to please MSVC
+     if ( !((gdcm::Document *)f)->IsReadable() )
      {
          std::cout <<std::endl<<fileName<<" is NOT 'gdcm parsable'"<<std::endl;
       }
