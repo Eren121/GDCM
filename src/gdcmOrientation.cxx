@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/05 08:25:01 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/09/13 18:32:54 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@ double Orientation::TypeOrientation( File *f )
    vector3D ori2;
 
    ori1.x = iop[0]; ori1.y = iop[1]; ori1.z = iop[2]; 
-   ori1.x = iop[3]; ori2.y = iop[4]; ori2.z = iop[5];
+   ori2.x = iop[3]; ori2.y = iop[4]; ori2.z = iop[5];
 
    // two perpendicular vectors describe one plane
    double dicPlane[6][2][3] =
