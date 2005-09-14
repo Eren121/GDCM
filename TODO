@@ -11,6 +11,15 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: Make sure that that gdcm lib can be dlopen'ed/dlclose
+Date: 2005 Sep 14
+Attributed: Mathieu
+Details:
+  As reported in ITK mailing list, the global symbols are completely
+  skrewed up in gdcm, preventing one to dlopen/dlclose gdcm lib. 
+  -> Need to add a nighlty test
+  -> Need to write the code :(
+-----------------------------------------------------------------------------
 Description: Add testing of valid dictionary
 Date: 2005 Aug 31
 Attributed: Mathieu
