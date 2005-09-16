@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/08 15:09:08 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/09/16 17:19:27 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.82 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.83 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -771,7 +771,8 @@ void vtkGdcmReader::LoadImageInMemory(
    
    if( fileH->GetFile()->HasLUT() && AllowLookupTable )
    {
-      size               = fileH->GetImageDataSize();
+      // to avoid bcc 5.5 w
+      /*size               = */ fileH->GetImageDataSize(); 
       src                = (unsigned char*) fileH->GetImageDataRaw();
       unsigned char *lut = (unsigned char*) fileH->GetLutRGBA();
 

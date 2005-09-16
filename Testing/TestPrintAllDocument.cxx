@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:48:28 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/09/16 17:19:24 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
 #include "gdcmSeqEntry.h" 
 #include "gdcmSQItem.h" 
 #include "gdcmValEntry.h" 
-
+#include "gdcmOrientation.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip> // for std::ios::left, ...
@@ -55,12 +55,12 @@ int TestPrintAllDocument(int, char *[])
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
 
-      gdcm::File *e1= new gdcm::File( );
-      e1->SetFileName( filename );
-      e1->Load();
+      gdcm::File *f= new gdcm::File( );
+      f->SetFileName( filename );
+      f->Load();
 
-      e1->SetPrintLevel(2);
-      e1->Print();
+      f->SetPrintLevel(2);
+      f->Print();
       // just to be able to grep the display result, for some usefull info
  
       //s.setf(std::ios::left);
@@ -77,29 +77,39 @@ int TestPrintAllDocument(int, char *[])
       for (j=0; j<nbSpaces; j++)
          std::cout << " ";    
 
-      pixelType = e1->GetPixelType();
+      pixelType = f->GetPixelType();
       std::cout << " pixelType="            << pixelType;
       if ( pixelType == "8U" || pixelType == "8S" )
          std::cout << " ";
-      std::cout << " Smpl.P.Pix.="          << e1->GetSamplesPerPixel()
-                << " Plan.Config.="         << e1->GetPlanarConfiguration();
+      std::cout << " Smpl.P.Pix.="          << f->GetSamplesPerPixel()
+                << " Plan.Config.="         << f->GetPlanarConfiguration();
  
-      photomInterp =  e1->GetEntryValue(0x0028,0x0004);               
+      photomInterp =  f->GetEntryValue(0x0028,0x0004);               
       std::cout << " Photom.Interp.="       << photomInterp;
       for (j=0; j<l-photomInterp.length(); j++)
          std::cout << " ";
  
-      std::cout << " TransferSyntaxName= [" << e1->GetTransferSyntaxName() << "]" ;
+      std::cout << " TransferSyntaxName= [" << f->GetTransferSyntaxName() << "]" ;
 
-      swapC = e1->GetSwapCode();
+      swapC = f->GetSwapCode();
       if ( swapC != 1234 )
-          std::cout << " SwapCode = "       << e1->GetSwapCode(); 
-      if ( e1->CheckIfEntryExist(0x0088,0x0200) )
+          std::cout << " SwapCode = "       << f->GetSwapCode(); 
+      if ( f->CheckIfEntryExist(0x0088,0x0200) )
           std::cout << " Icon Image Sequence";
 
-       std::cout << std::endl;
-   
-      if( e1->IsReadable() )
+      std::cout << std::endl;
+
+      std::string strImageOrientationPatient = 
+                                          f->GetEntryValue(0x0020,0x0037);
+      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
+      {
+         gdcm::Orientation o;
+         double orient = o.TypeOrientation( f );
+         std::cout << " ---------------------- Orientation " << orient
+                   << std::endl;
+      }
+
+      if( f->IsReadable() )
       {
          std::cout <<filename << " is Readable" 
                    << std::endl << std::endl;
@@ -108,10 +118,10 @@ int TestPrintAllDocument(int, char *[])
       {
          std::cout << filename << " is NOT Readable" 
                    << std::endl << std::endl;
-         delete e1;
+         delete f;
          return 1;
       }
-      delete e1;
+      delete f;
       i++;
    }
    return 0;

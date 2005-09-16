@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/08 15:10:46 $
-  Version:   $Revision: 1.278 $
+  Date:      $Date: 2005/09/16 17:19:26 $
+  Version:   $Revision: 1.279 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -964,9 +964,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    BinEntry *newBinEntry;
    SeqEntry *newSeqEntry;
    VRKey vr;
-   bool used;
+   bool used; // will be set to false when something wrong happens to an Entry.
+              // (Entry will then be deleted)
    bool delim_mode_intern = delim_mode;
-   bool first = true;
+   bool first = true;  
    while (true)
    {
       if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
@@ -1111,7 +1112,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                }
             }
 
-            bool delimitor=newValEntry->IsItemDelimitor();
+            bool delimitor = newValEntry->IsItemDelimitor();
 
             if ( (delimitor) || 
                 (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )

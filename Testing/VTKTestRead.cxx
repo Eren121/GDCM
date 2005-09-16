@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/09 15:31:15 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/09/16 17:19:24 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
                 std::string const &filename, 
                 std::string const &referenceFileName)
 {
-   int retVal = 0;  //by default this is an error
+   int retVal; // = 0; (to avoid bcc5.5 warnings)
 
    t->CleanArguments();
    t->AddArgument("-D");
