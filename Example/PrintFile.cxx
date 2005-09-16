@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/09 07:18:02 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/09/16 16:45:33 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmDictSet.h"
 #include "gdcmArgMgr.h"
-
+#include "gdcmOrientation.h"
 #include <iostream>
 
 
@@ -298,6 +298,15 @@ int main(int argc, char *argv[])
       //std::cout << "Y spacing " << f->GetYSpacing() << std::endl;
       //std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
 
+      std::string strImageOrientationPatient = 
+                                      f->GetEntryValue(0x0020,0x0037);
+      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
+      {
+         gdcm::Orientation o;
+         double orient = o.TypeOrientation( f );
+         std::cout << " ---------------------- Orientation " << orient
+                   << std::endl;
+      }
       // Display the LUT as an int array (for debugging purpose)
       if ( f->HasLUT() && showlut )
       {
