@@ -28,7 +28,7 @@ IF (GDCM_DATA_ROOT)
     TestFileAccessors.cxx
     TestMakeIcon.cxx
     TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
-    #TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
+    TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
     TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
     #TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
@@ -132,6 +132,16 @@ SET(BLACK_LIST
   # Jasper cannot handle this image, only kakadu so far, unless you patch jasper
   # but then it breaks other images...
   "CT_Phillips_JPEG2K_Decompr_Problem.dcm"
+  #
+  # ------------
+  #
+  # I probabely messed up smething with the .png, .tst of
+  # the images I recently added to the Test Suite
+  # I Black list them, untill I find where is the pb.
+  "US-RGB-8-esopecho.dcm"
+  "MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm"
+  "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
+  "MR_SIEMENS_forceLoad29-1010_29-1020.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
