@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmConfigure.h.in,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 14:43:46 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/09/19 18:55:12 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,11 @@
 
 /* Hardcode the path to GDCM_DATA_ROOT */
 #define GDCM_DATA_ROOT "@GDCM_DATA_ROOT@"
+
+/* Usefull in particular for loadshared where the full path
+ * to the lib is needed */
+#define GDCM_EXECUTABLE_OUTPUT_PATH "@EXECUTABLE_OUTPUT_PATH@"
+#define GDCM_LIBRARY_OUTPUT_PATH    "@LIBRARY_OUTPUT_PATH@"
 
 /* For older gcc / broken plateform */
 #cmakedefine GDCM_NO_ANSI_STRING_STREAM
