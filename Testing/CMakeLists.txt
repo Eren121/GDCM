@@ -181,3 +181,17 @@ FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h"
 FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataSeqImages.h"
   "const char * const gdcmDataSeqImages[] = { ${GDCM_DATA_SEQ_IMAGES}\n0 };\n" 
 )
+
+#-----------------------------------------------------------------------------
+# Trying to solve a bizarre problem when loading shared lib if gdcm is static
+# Therefore I disable the test when building SHAREDLIBS
+IF(UNIX AND NOT GDCM_BUILD_SHARED_LIBS)
+  ADD_LIBRARY(dynmodule MODULE dynmodule.cxx)
+  TARGET_LINK_LIBRARIES(dynmodule gdcm)
+  ADD_EXECUTABLE(loadmodule loadmodule.cxx )
+  TARGET_LINK_LIBRARIES(loadmodule gdcm -ldl)
+  ADD_TEST(loadmodule ${CXX_TEST_PATH}/loadmodule)
+ENDIF(UNIX AND NOT GDCM_BUILD_SHARED_LIBS)
+
+
+
