@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/16 16:47:56 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/09/19 09:48:27 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,12 @@ double Orientation::TypeOrientation( File *f )
       gdcmErrorMacro( "No Image Orientation (0020,0037) found in the file, cannot proceed." )
       return 0;
    }
-
+/*
+std::cout << " iop : ";
+for(int i=0;i<6;i++)
+   std::cout << iop[i] << "  ";
+std::cout << std::endl;
+*/
    vector3D ori1;
    vector3D ori2;
 
@@ -118,8 +123,8 @@ Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in
    double criterion = in.second;
    if (criterionNew < criterion)
    {
-      res.first  = criterionNew;
-      res.second = typeCriterion;
+      res.first  = typeCriterion;;
+      res.second = criterionNew;
    }
 /*
 //   type = res[0]
@@ -195,7 +200,7 @@ Orientation::ProductVectorial(vector3D const & vec1, vector3D const & vec2)
 
 
 // ---------------------------------------------------------------------------
-// Here is the original code, in Python, kindly supllied by THERALYS
+// Here is the original Python code, kindly supplied by THERALYS
 //
 // C++ code doesn't give good results
 // --> FIXME
@@ -260,7 +265,7 @@ try:
       res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
    return res[0]
 
-except KeyError:
+   except KeyError:
    return 0
 
 
