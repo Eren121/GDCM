@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 14:13:41 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/09/20 15:11:19 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,7 +128,7 @@ Res
 Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in)
 {
    Res res;
-   double type = in.first;
+//   double type = in.first;
    double criterion = in.second;
    if (/*criterionNew < 0.1 && */criterionNew < criterion)
    {

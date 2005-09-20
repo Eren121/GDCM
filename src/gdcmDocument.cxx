@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 09:07:56 $
-  Version:   $Revision: 1.280 $
+  Date:      $Date: 2005/09/20 15:11:19 $
+  Version:   $Revision: 1.281 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1691,7 +1691,7 @@ std::string Document::FindDocEntryVR()
  *            and the taken VR. If they are different, the header entry is 
  *            updated with the new VR.
  * @param     vr    Dicom Value Representation
- * @return    false if the VR is incorrect of if the VR isn't referenced
+ * @return    false if the VR is incorrect or if the VR isn't referenced
  *            otherwise, it returns true
 */
 bool Document::CheckDocEntryVR(VRKey vr)
@@ -2264,7 +2264,15 @@ DocEntry *Document::ReadNextDocEntry()
    if ( vr == GDCM_UNKNOWN )
    {
       if ( elem == 0x0000 ) // Group Length
+      {
          realVR = "UL";     // must be UL
+      }
+      else if (group%2 == 1 &&  (elem >= 0x0010 && elem <=0x00ff ))
+      {  
+      //DICOM PS 3-5 7.8.1 a) states that those 
+      //(gggg-0010->00FF where gggg is odd) attributes have to be LO
+         realVR= "LO";
+      }
       else
       {
          DictEntry *dictEntry = GetDictEntry(group,elem);
@@ -2279,9 +2287,9 @@ DocEntry *Document::ReadNextDocEntry()
    if ( Global::GetVR()->IsVROfSequence(realVR) )
       newEntry = NewSeqEntry(group, elem);
    else if ( Global::GetVR()->IsVROfStringRepresentable(realVR) )
-      newEntry = NewValEntry(group, elem,vr);
+      newEntry = NewValEntry(group, elem, vr);
    else
-      newEntry = NewBinEntry(group, elem,vr);
+      newEntry = NewBinEntry(group, elem, vr);
 
    if ( vr == GDCM_UNKNOWN )
    {
