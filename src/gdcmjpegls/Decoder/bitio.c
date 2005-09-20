@@ -54,7 +54,7 @@
 #include <string.h> /* for memset */
 
 
-extern int zeroLUT[];     /* lookup table to find number of leading zeroes */
+/*extern int zeroLUT[];  */   /* lookup table to find number of leading zeroes */
 
 extern FILE *in, *out;
 
@@ -78,7 +78,7 @@ int zeroLUT[256];      /* table to find out number of leading zeros */
 /* BIT I/O variables */
 dword reg; /* BIT buffer for input/output */
 int bits;  /* number of bits free in bit buffer (on output) */
-     /* (number of bits free)-8 in bit buffer (on input)*/
+           /* (number of bits free)-8 in bit buffer (on input)*/
 
 
 /****************************************************************************
