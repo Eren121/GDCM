@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:55:23 $
-  Version:   $Revision: 1.268 $
+  Date:      $Date: 2005/09/20 09:07:56 $
+  Version:   $Revision: 1.269 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1685,7 +1685,7 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
       itemTagGroup = ReadInt16();
       itemTagElem  = ReadInt16();
    }
-   catch ( FormatError e )
+   catch ( FormatError /*e*/ )
    {
       //std::cerr << e << std::endl;
       return false;

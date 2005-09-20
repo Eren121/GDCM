@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/16 17:19:26 $
-  Version:   $Revision: 1.279 $
+  Date:      $Date: 2005/09/20 09:07:56 $
+  Version:   $Revision: 1.280 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2244,7 +2244,7 @@ DocEntry *Document::ReadNextDocEntry()
       group = ReadInt16();
       elem  = ReadInt16();
    }
-   catch ( FormatError e )
+   catch ( FormatError )
    {
       // We reached the EOF (or an error occured) therefore 
       // header parsing has to be considered as finished.
@@ -2305,7 +2305,7 @@ DocEntry *Document::ReadNextDocEntry()
    {
       FindDocEntryLength(newEntry);
    }
-   catch ( FormatError e )
+   catch ( FormatError )
    {
       // Call it quits
       delete newEntry;
