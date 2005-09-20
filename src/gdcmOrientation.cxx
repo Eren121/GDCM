@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/19 09:48:27 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/09/20 14:13:41 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,9 +74,9 @@ std::cout << std::endl;
 
    // two perpendicular vectors describe one plane
    double dicPlane[6][2][3] =
-   { {  {1,    0,    0   },{0,       1,     0     }  }, // Axial
-     {  {1,    0,    0   },{0,       0,    -1     }  }, // Coronal
-     {  {0,    1,    0   },{0,       0,    -1     }  }, // Sagittal
+   { {  { 1,   0,    0   },{ 0,      1,     0     }  }, // Axial
+     {  { 1,   0,    0   },{ 0,      0,    -1     }  }, // Coronal
+     {  { 0,   1,    0   },{ 0,      0,    -1     }  }, // Sagittal
      {  { 0.8, 0.5,  0.0 },{-0.1,    0.1 , -0.95  }  }, // Axial - HEART
      {  { 0.8, 0.5,  0.0 },{-0.6674, 0.687, 0.1794}  }, // Coronal - HEART
      {  {-0.1, 0.1, -0.95},{-0.6674, 0.687, 0.1794}  }  // Sagittal - HEART
@@ -88,6 +88,10 @@ std::cout << std::endl;
    Res res;   // [ <result> , <memory of the last succes calcule> ]
    res.first = 0;
    res.second = 99999;
+
+ std::cout << "-------------- res : " << res.first << "|" << res.second 
+           << std::endl;
+
    for (int numDicPlane=0; numDicPlane<6; numDicPlane++)
    {
        ++i;
@@ -100,7 +104,11 @@ std::cout << std::endl;
        refB.y = dicPlane[numDicPlane][1][1]; 
        refB.z = dicPlane[numDicPlane][1][2];
        res=VerfCriterion(  i, CalculLikelyhood2Vec(refA,refB,ori1,ori2), res );
+ std::cout << "-------------- res : " << res.first << "|" << res.second 
+           << std::endl;
        res=VerfCriterion( -i, CalculLikelyhood2Vec(refB,refA,ori1,ori2), res );
+ std::cout << "-------------- res : " << res.first << "|" << res.second 
+           << std::endl;
    }
    return res.first;
 /*
@@ -120,10 +128,11 @@ Res
 Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in)
 {
    Res res;
+   double type = in.first;
    double criterion = in.second;
-   if (criterionNew < criterion)
+   if (/*criterionNew < 0.1 && */criterionNew < criterion)
    {
-      res.first  = typeCriterion;;
+      res.first  = typeCriterion;
       res.second = criterionNew;
    }
 /*
@@ -184,7 +193,7 @@ Orientation::CalculLikelyhood2Vec(vector3D const &refA, vector3D const &refB,
 // (vec) :    - Vector 3D
 //------------------------- Other : -------------------------------------
 vector3D
-Orientation::ProductVectorial(vector3D const & vec1, vector3D const & vec2)
+Orientation::ProductVectorial(vector3D const &vec1, vector3D const &vec2)
 {
    vector3D vec3;
    vec3.x =    vec1.y*vec2.z - vec1.z*vec2.y;
