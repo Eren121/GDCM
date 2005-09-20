@@ -55,6 +55,10 @@
 #include <string.h>
 #include "jpegmark.h"
 
+
+void usage();
+
+
 #define  PGMNAME PGMPREFIX "d"
 #define  EPGMNAME PGMPREFIX "e"
 
@@ -105,8 +109,6 @@ int bpp16;            /* Indicates if 16 bits per pixel mode or not */
 int lutmax;            /* lutmax is either 256 or 4501 */
 
 
-
-
 /* reset */
 #ifndef FIXRESET
 int  RESET;
@@ -122,9 +124,6 @@ int     alpha,     /* alphabet size */
 #ifdef POW2
 int     highmask;
 #endif
-
-
-void usage();
 
 
 
@@ -1450,7 +1449,7 @@ int main (int argc, char *argv[]) {
   }
 
   if (head_scan[0]->need_table)
-    fprintf(msgfile,"A mapping table was used which had %i entries of %i bytes each.\n",head_scan[0]->MAXTAB, head_scan[0]->Wt);
+    fprintf(msgfile,"A mapping table was used which had %d entries of %g bytes each.\n",head_scan[0]->MAXTAB, head_scan[0]->Wt);
 
   if (got_restart)
     fprintf(msgfile,"Restart markers were found with a restart interval of %i.\n",restart_interval);
