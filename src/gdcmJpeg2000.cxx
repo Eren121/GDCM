@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 18:10:29 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/09/20 09:24:10 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
     }
 
   // Decode the image. 
-  jas_image_t *jasImage = NULL;
+  jas_image_t *jasImage /* = NULL*/; // Useless assignation
   if (!(jasImage = jas_image_decode(jasStream, fmtid, 0))) 
     {
     gdcmErrorMacro("cannot decode image");
