@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/02 18:09:36 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/09/20 09:09:43 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,11 +128,11 @@ int TS::Count(TSKey const &key)
    return TsMap.count(key);
 }
 
-/// \brief returns the human reabable value of a Transfer Synatx string 
+/// \brief returns the human readable value of a Transfer Syntax string 
 TSAtr const &TS::GetValue(TSKey const &key) 
 {
    // First thing clean up the string 
-   // (sometime the transfer syntax is padded with spaces)
+   // (sometimes the transfer syntax is padded with spaces)
    std::string copy = key;
    while ( copy.size() && !isdigit((unsigned char)copy[copy.size()-1]) )
    {
@@ -149,8 +149,8 @@ TSAtr const &TS::GetValue(TSKey const &key)
 /**
  * \brief   Determines if the key passed corresponds to a 'Transfer Syntax'
  *          as defined in DICOM (and stored in gdcm::TS class)
- * @return  True when key is an actual 'Transfer Syntax'. False in all
- *          other cases.
+ * @return  True when key is an actual 'Transfer Syntax'. 
+ *          False in all other cases.
  */
 bool TS::IsTransferSyntax(TSKey const &key)
 {
@@ -161,8 +161,8 @@ bool TS::IsTransferSyntax(TSKey const &key)
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a Run Length Encoding Lossless one
- * @return  True when Run Length Encoding Lossless found. False in all
- *          other cases.
+ * @return  True when Run Length Encoding Lossless found. 
+ *          False in all other cases.
  */
 bool TS::IsRLELossless(TSKey const &key)
 {
@@ -181,8 +181,8 @@ bool TS::IsRLELossless(TSKey const &key)
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a 'classical' JPEG Lossless one
- * @return  True when 'classical' Lossless found. False in all
- *          other cases.
+ * @return  True when 'classical' Lossless found. 
+ *          False in all other cases.
  */
 bool TS::IsJPEGLossless(TSKey const &key)
 {
@@ -203,8 +203,8 @@ bool TS::IsJPEGLossless(TSKey const &key)
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a 'classical' JPEG Lossy one
- * @return  True when 'classical' Lossy found. False in all
- *          other cases.
+ * @return  True when 'classical' Lossy found. 
+ *          False in all other cases.
  */
 bool TS::IsJPEGLossy(TSKey const &key)
 {
@@ -226,8 +226,8 @@ bool TS::IsJPEGLossy(TSKey const &key)
 /**
  * \brief   Determines if the Transfer Syntax was already encountered
  *          and if it corresponds to a JPEG2000 one
- * @return  True when JPEG2000 (Lossly or LossLess) found. False in all
- *          other cases.
+ * @return  True when JPEG2000 (Lossly or LossLess) found. 
+ *          False in all other cases.
  */
 bool TS::IsJPEG2000(TSKey const &key)
 {
