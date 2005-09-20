@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/16 17:19:27 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2005/09/20 08:50:57 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.83 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.84 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -755,7 +755,7 @@ void vtkGdcmReader::LoadImageInMemory(
       numComponents = f->GetNumberOfScalarComponents(); //rgb or mono
    vtkDebugMacro(<< "numComponents:" << numComponents);
    vtkDebugMacro(<< "Copying to memory image [" << f->GetFileName().c_str() << "]");
-   size_t size;
+   //size_t size;
 
    // If the data structure of vtk for image/volume representation
    // were straigthforwards the following would be enough:
