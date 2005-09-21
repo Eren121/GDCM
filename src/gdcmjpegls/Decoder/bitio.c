@@ -56,7 +56,7 @@
 
 /*extern int zeroLUT[];  */   /* lookup table to find number of leading zeroes */
 
-extern FILE *in, *out;
+/*extern FILE *in, *out; */
 
 byte negbuff[BUFSIZE+4];    /* byte I/O buffer, allowing for 4 "negative" 
                    locations  */
