@@ -1449,7 +1449,7 @@ int main (int argc, char *argv[]) {
   }
 
   if (head_scan[0]->need_table)
-    fprintf(msgfile,"A mapping table was used which had %d entries of %g bytes each.\n",head_scan[0]->MAXTAB, head_scan[0]->Wt);
+    fprintf(msgfile,"A mapping table was used which had %d entries of %d bytes each.\n",head_scan[0]->MAXTAB, head_scan[0]->Wt);
 
   if (got_restart)
     fprintf(msgfile,"Restart markers were found with a restart interval of %i.\n",restart_interval);
