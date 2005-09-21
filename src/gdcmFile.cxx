@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/21 16:53:59 $
-  Version:   $Revision: 1.270 $
+  Date:      $Date: 2005/09/21 17:16:15 $
+  Version:   $Revision: 1.271 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -758,7 +758,7 @@ float File::GetZOrigin()
   * (needed to organize DICOM files based on their x,y,z position)
   * @param iop adress of the (6)float array to receive values
   * @return true when one of the tag is found
-  *         false when nothong is found
+  *         false when nothing is found
   */
 bool File::GetImageOrientationPatient( float iop[6] )
 {
