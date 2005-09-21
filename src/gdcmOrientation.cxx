@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 15:11:19 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/09/21 16:39:53 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -203,9 +203,6 @@ Orientation::ProductVectorial(vector3D const &vec1, vector3D const &vec2)
    return vec3;
 }
 
-} // end namespace gdcm
-
-
 
 
 // ---------------------------------------------------------------------------
@@ -345,3 +342,140 @@ try:
       return dic
 
 */
+
+
+// ------------------------------------------------------------------------
+/*
+2.2.2 Orientation of DICOM images
+
+
+http://www.dclunie.com/medical-image-faq/html/part2.html#DICOMOrientation
+says :
+
+A question that is frequently asked in comp.protocols.dicom is how to determine
+ which side of an image is which (e.g. left, right) and so on. 
+ The short answer is that for projection radiographs this is specified 
+ explicitly using the Patient Orientation attribute, and for cross-sectional 
+ images it needs to be derived from the Image Orientation (Patient) direction 
+ cosines. In the standard these are explained as follows:
+
+    * "C.7.6.1.1.1 Patient Orientation. 
+                The Patient Orientation (0020,0020) relative to the image 
+                plane shall be specified by two values that designate the 
+                anatomical direction of the positive row axis (left to right)
+                and the positive column axis (top to bottom). 
+                The first entry is the direction of the rows, given by the 
+                direction of the last pixel in the first row from the first 
+                pixel in that row. 
+                The second entry is the direction of the columns, given by 
+                the direction of the last pixel in the first column from the
+                first pixel in that column. 
+                Anatomical direction shall be designated by the capital 
+                letters: A (anterior), P (posterior), R (right),L (left), 
+                H (head), F (foot). 
+                Each value of the orientation attribute shall contain at 
+                least one of these characters. 
+                If refinements in the orientation descriptions are to be 
+                specified, then they shall be designated by one or two 
+                additional letters in each value. 
+                Within each value, the letters shall be ordered with the 
+                principal orientation designated in the first character."
+ 
+    * "C.7.6.2.1.1 Image Position And Image Orientation. 
+                The Image Position (0020,0032) specifies the x, y, and z 
+                coordinates of the upper left hand corner of the image; 
+                it is the center of the first voxel transmitted. 
+                Image Orientation (0020,0037) specifies the direction 
+                cosines of the first row and the first column with respect to
+                the patient. These Attributes shall be provided as a pair. 
+                Row value for the x, y, and z axes respectively followed by 
+                the Column value for the x, y, and z axes respectively. 
+                The direction of the axes is defined fully by the patient's 
+                orientation. 
+                The x-axis is increasing to the left hand sid of the patient.
+                The y-axis is increasing to the posterior side of the patient
+                The z-axis is increasing toward the head of the patient. 
+                The patient based coordinate system is a right handed system,
+                i.e. the vector cross product of a unit vector along the 
+                positive x-axis and a unit vector along the positive y-axis
+                is equal to a unit vector along the positive z-axis." 
+
+Some simple code to take one of the direction cosines (vectors) from the 
+Image Orientation (Patient) attribute and generate strings equivalent to one 
+of the values of Patient Orientation looks like this (noting that if the vector
+is not aligned exactly with one of the major axes, the resulting string will 
+have multiple letters in as described under "refinements" in C.7.6.1.1.1): 
+
+*/
+
+/**
+ * \brief computes the Patient Orientation relative to the image plane
+ *          from the 'Image Orientation (Patient)'
+ *          The first entry is the direction of the rows, given by the 
+ *          direction of the last pixel in the first row from the first 
+ *          pixel in that row. 
+ *          The second entry is the direction of the columns, given by 
+ *          the direction of the last pixel in the first column from the
+ *          first pixel in that column. 
+ *          Anatomical direction is designated by the capital 
+ *          letters: A (anterior), P (posterior), R (right),L (left), 
+ *          H (head), F (foot).
+ *          Refinements in the orientation descriptions are designated 
+ *          by one or two additional letters in each value.   
+ * @return orientation string as "rawOrientation\columnsOrientation"
+ */
+std::string Orientation::GetOrientation ( File *f )
+{
+   float iop[6];
+   if ( !f->GetImageOrientationPatient( iop ) )
+   return GDCM_UNFOUND;
+
+   std::string orientation;
+   orientation = GetSingleOrientation ( iop ) 
+               + "\\" 
+               + GetSingleOrientation ( iop + 3 );
+   return orientation;
+}
+
+
+std::string Orientation::GetSingleOrientation ( float *iop)
+{
+   std::string orientation;
+
+   char orientationX = iop[0] < 0 ? 'R' : 'L';
+   char orientationY = iop[1] < 0 ? 'A' : 'P';
+   char orientationZ = iop[2] < 0 ? 'F' : 'H';
+
+   double absX = iop[0];
+   if (absX < 0) absX = -absX;
+      double absY = iop[1];
+   if (absY < 0) absY = -absY;
+      double absZ = iop[2];
+   if (absZ < 0) absZ = -absZ;
+
+   for (int i=0; i<3; ++i) 
+   {
+      if (absX>.0001 && absX>absY && absX>absZ) 
+      {
+         orientation = orientation + orientationX;
+         absX=0;
+       }
+       else if (absY>.0001 && absY>absX && absY>absZ) 
+       {
+          orientation = orientation + orientationY;
+          absY=0;
+       }
+       else if (absZ>.0001 && absZ>absX && absZ>absY) 
+       {
+           orientation = orientation + orientationZ;
+           absZ=0;
+       }
+       else 
+          break;
+     }
+   return orientation;
+} 
+
+
+
+} // end namespace gdcm
