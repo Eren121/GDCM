@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:33:29 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/09/21 13:05:40 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,10 +73,12 @@ int main(int argc, char *argv[])
 
       if( FileExists( output.c_str() ) )
       {
-         std::cerr << "Don't try to cheat, I am removing the file anyway" << std::endl;
+         std::cerr << "Don't try to cheat, I am removing the file anyway" 
+                   << std::endl;
          if( !RemoveFile( output.c_str() ) )
          {
-            std::cerr << "Ouch, the file exist, but I cannot remove it" << std::endl;
+            std::cerr << "Ouch, the file exist, but I cannot remove it" 
+                      << std::endl;
             return 1;
          }
       }
@@ -92,12 +94,12 @@ int main(int argc, char *argv[])
       copy->SetFileName( output );
       copy->Load();
 
-      size_t dataSize;
+      //size_t dataSize;
       uint8_t *imageData;
-      dataSize = original->GetImageDataSize();
+      //dataSize = original->GetImageDataSize();// just an accesor :useless here
       imageData = original->GetImageData();
       (void)imageData; // no enough to avoid warning on 'Golgot'
-      (void)dataSize;
+      //(void)dataSize;
   
       //First of all copy the header field by field
 
@@ -132,7 +134,8 @@ int main(int argc, char *argv[])
       //copy->SetImageData(imageData, dataSize);
 
       std::cout << "--- Copy ----------------------" << std::endl;
-      std::cout <<std::endl << "DO NOT care about Offset"  <<std::endl<<std::endl;; 
+      std::cout <<std::endl << "DO NOT care about Offset"  
+                <<std::endl << std::endl;; 
       copy->GetFile()->Print();
       std::cout << "--- ---- ----------------------" << std::endl;
    
