@@ -36,7 +36,6 @@ SET(EXAMPLE_SOURCES
   TestChangeHeader
   TestFromScratch
   TestWrite
-  TestWriteSimple
   Volume2Dicom
   WriteDicomSimple
   WriteRead
