@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/09/21 09:44:59 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,8 +70,8 @@ void PixelWriteConvert::SetUserData(uint8_t *data, size_t size)
 
 /**
  * \brief   Get Data (UserData or ReadData)
- * @return  data data data (uint8_t is for prototyping. if your data is not uint8_t
- *                     just cast the returned pointer)
+ * @return  data (uint8_t is for prototyping. if your data is 
+ *                    *not* uint8_t, just cast the returned pointer)
  */
 uint8_t *PixelWriteConvert::GetData()
 {

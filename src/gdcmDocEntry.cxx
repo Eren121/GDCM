@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 14:12:23 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/09/21 09:44:59 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          //
          // In order to avoid further troubles, we choose to write them
          // as 'no-length' Item Delimitors (we pad by writing 0xffffffff)
-         // We shall force the end of a given Item by writting 
+         // We shall force the end of a given SeqItem by writting 
          //  a Item Delimitation Item (fffe, e00d)
 
          uint32_t ff = 0xffffffff;
@@ -94,7 +94,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          return;
       }
 
-      uint16_t z = 0;
+      uint16_t zero = 0;
       uint16_t shortLgr = (uint16_t)lgth;
 
       if (vr == GDCM_UNKNOWN)
@@ -107,7 +107,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          // we write 34 12 00 00 on little endian proc (OK)
          // we write 12 34 00 00 on big endian proc (KO)          
          //binary_write(*fp, shortLgr);
-         //binary_write(*fp, z);
+         //binary_write(*fp, zero);
 
          binary_write(*fp, lgth);
       }
@@ -118,7 +118,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") /*|| (vr == "UN")*/ )
          {
-            binary_write(*fp, z);
+            binary_write(*fp, zero);
             if (vr == "SQ")
             {
                // we set SQ length to ffffffff

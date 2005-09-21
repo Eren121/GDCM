@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 15:19:37 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/09/21 09:44:59 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,18 +73,30 @@ BinEntry::~BinEntry()
 void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
 { 
    DocEntry::WriteContent(fp, filetype);
-   uint8_t* binArea8 = BinArea; //safe notation
+   uint8_t *binArea8 = BinArea; //safe notation
    size_t lgr = GetLength();
    if (BinArea) // the binArea was *actually* loaded
    {
-   /// \todo  Probably, the same operation should be done if we wanted 
-   ///        to write image with Big Endian Transfer Syntax, 
-   ///        while working on Little Endian Processor
+
+   //  The same operation should be done if we wanted 
+   //  to write image with Big Endian Transfer Syntax, 
+   //  while working on Little Endian Processor
+   // --> forget Big Endian Transfer Syntax writting!
+   //     Next DICOM version will give it up ...
+
+   // -->
+   // --> FIXME 
+   // -->
+   // The stuff looks nice, but it's probably bugged,
+   // since troubles occur on big endian processors (SunSparc, Motorola)
+   // while reading the pixels of a 
+   // gdcm-written Little-Endian 16 bits per pixel image
 
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
-      /// \todo FIXME Right now, we only care of Pixels element
+
+      /// \todo FIXME : Right now, we only care of Pixels element
       ///       we should deal with *all* the BinEntries
-      ///       well not really since we are not interpreting values read...
+      ///       Well, not really since we are not interpreting values read...
 
       // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
       // -value forced while Reading process-
