@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/21 09:42:19 $
-  Version:   $Revision: 1.282 $
+  Date:      $Date: 2005/09/21 16:53:59 $
+  Version:   $Revision: 1.283 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1156,7 +1156,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( newDocEntry->GetGroup()%2 != 0 )
             {
                 Fp->seekg( l, std::ios::cur);
-                used = false;
+                //used = false; // never used
                 continue;  
             } 
          } 
@@ -1164,7 +1164,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
            // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);
-            used = false;
+            //used = false; // never used
             continue;
          }
          // delay the dynamic cast as late as possible
@@ -1211,7 +1211,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             used = false;
          }
  
-        if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
+         if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if ( !used )
                delete newDocEntry;  

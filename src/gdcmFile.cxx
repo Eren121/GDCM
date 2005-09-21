@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 09:07:56 $
-  Version:   $Revision: 1.269 $
+  Date:      $Date: 2005/09/21 16:53:59 $
+  Version:   $Revision: 1.270 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -754,9 +754,11 @@ float File::GetZOrigin()
 
 /**
   * \brief gets the info from 0020,0037 : Image Orientation Patient
+  *                   or from 0020 0035 : Image Orientation (RET)
   * (needed to organize DICOM files based on their x,y,z position)
   * @param iop adress of the (6)float array to receive values
-  * @return cosines of image orientation patient
+  * @return true when one of the tag is found
+  *         false when nothong is found
   */
 bool File::GetImageOrientationPatient( float iop[6] )
 {
@@ -770,7 +772,8 @@ bool File::GetImageOrientationPatient( float iop[6] )
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         gdcmWarningMacro( "Wrong Image Orientation Patient (0020,0037). Less than 6 values were found." );
+         gdcmWarningMacro( "Wrong Image Orientation Patient (0020,0037)."
+                        << " Less than 6 values were found." );
          return false;
       }
    }
@@ -781,12 +784,15 @@ bool File::GetImageOrientationPatient( float iop[6] )
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). Less than 6 values were found." );
+         gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). "
+                        << "Less than 6 values were found." );
          return false;
       }
    }
    return true;
 }
+
+
 
 /**
  * \brief   Retrieve the number of Bits Stored (actually used)
