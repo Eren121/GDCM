@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 15:11:19 $
-  Version:   $Revision: 1.281 $
+  Date:      $Date: 2005/09/21 09:42:19 $
+  Version:   $Revision: 1.282 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -648,11 +648,10 @@ bool Document::CloseFile()
 }
 
 /**
- * \brief Writes in a file all the Header Entries (Dicom Elements) 
+ * \brief Writes in a file all the Entries (Dicom Elements) 
  * @param fp file pointer on an already open file (actually: Output File Stream)
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
- * @return Always true.
  */
 void Document::WriteContent(std::ofstream *fp, FileType filetype)
 {
@@ -977,6 +976,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
       newDocEntry = ReadNextDocEntry( );
 
+      // FIXME :
+      // Private tag, in IMplicit VR are defaulted as a BinEntry,
+      // Very often they are only composed of Printable characters, 
+      // and could be defaulted as a ValEntry.
+      // It's too late to do the Job
+      // (we should check the value, but we know it after LoadDocEntry ...)
+      // --> in next gdcm major release let's unify ValEntry and BinEntry !
+
       // Uncoment this printf line to be able to 'follow' the DocEntries
       // when something *very* strange happens
 
@@ -989,7 +996,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          break;
       }
 
-       // an Item Starter found elsewhere but the first postition
+       // an Item Starter found elsewhere but the first position
        // of a SeqEntry  means previous entry was a Sequence
        // but we didn't get it (private Sequence + Implicit VR)
        // we have to backtrack.
@@ -2269,9 +2276,9 @@ DocEntry *Document::ReadNextDocEntry()
       }
       else if (group%2 == 1 &&  (elem >= 0x0010 && elem <=0x00ff ))
       {  
-      //DICOM PS 3-5 7.8.1 a) states that those 
-      //(gggg-0010->00FF where gggg is odd) attributes have to be LO
-         realVR= "LO";
+      // DICOM PS 3-5 7.8.1 a) states that those 
+      // (gggg-0010->00FF where gggg is odd) attributes have to be LO
+         realVR = "LO";
       }
       else
       {
@@ -2287,9 +2294,9 @@ DocEntry *Document::ReadNextDocEntry()
    if ( Global::GetVR()->IsVROfSequence(realVR) )
       newEntry = NewSeqEntry(group, elem);
    else if ( Global::GetVR()->IsVROfStringRepresentable(realVR) )
-      newEntry = NewValEntry(group, elem, vr);
+      newEntry = NewValEntry(group, elem, realVR);
    else
-      newEntry = NewBinEntry(group, elem, vr);
+      newEntry = NewBinEntry(group, elem, realVR);
 
    if ( vr == GDCM_UNKNOWN )
    {
