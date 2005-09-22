@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestLoadAllDocumentsNoPrivNoSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/22 08:41:27 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/09/22 14:42:37 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,8 +47,8 @@ int TestLoadAllDocumentsNoPrivNoSeq(int, char *[])
    //int swapC;
    //unsigned int j;
    std::string pixelType, photomInterp;
-   int l;
-   l = strlen("PALETTE COLOR ");
+   //int l;
+   //l = strlen("PALETTE COLOR ");
    while( gdcmDataImages[i] != 0 )
    {
       std::string filename = GDCM_DATA_ROOT;
