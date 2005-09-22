@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/21 16:39:53 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/09/22 14:41:25 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -354,13 +354,13 @@ says :
 
 A question that is frequently asked in comp.protocols.dicom is how to determine
  which side of an image is which (e.g. left, right) and so on. 
- The short answer is that for projection radiographs this is specified 
- explicitly using the Patient Orientation attribute, and for cross-sectional 
- images it needs to be derived from the Image Orientation (Patient) direction 
+ The short answer is that for projection radiographs this is specified
+ explicitly using the "Patient Orientation" attribute, and for cross-sectional
+ images it needs to be derived from the "Image Orientation (Patient)" direction
  cosines. In the standard these are explained as follows:
 
     * "C.7.6.1.1.1 Patient Orientation. 
-                The Patient Orientation (0020,0020) relative to the image 
+                The Patient Orientation (0020,0020) relative to the image
                 plane shall be specified by two values that designate the 
                 anatomical direction of the positive row axis (left to right)
                 and the positive column axis (top to bottom). 
@@ -382,18 +382,19 @@ A question that is frequently asked in comp.protocols.dicom is how to determine
                 principal orientation designated in the first character."
  
     * "C.7.6.2.1.1 Image Position And Image Orientation. 
-                The Image Position (0020,0032) specifies the x, y, and z 
-                coordinates of the upper left hand corner of the image; 
+                The "Image Position (Patient)" (0020,0032) specifies the x, y, 
+                and z coordinates of the upper left hand corner of the image; 
                 it is the center of the first voxel transmitted. 
-                Image Orientation (0020,0037) specifies the direction 
-                cosines of the first row and the first column with respect to
-                the patient. These Attributes shall be provided as a pair. 
+                The "Image Orientation (Patient)" (0020,0037) specifies the 
+                direction cosines of the first row and the first column 
+                with respect to the patient. 
+                These Attributes shall be provided as a pair. 
                 Row value for the x, y, and z axes respectively followed by 
                 the Column value for the x, y, and z axes respectively. 
                 The direction of the axes is defined fully by the patient's 
                 orientation. 
-                The x-axis is increasing to the left hand sid of the patient.
-                The y-axis is increasing to the posterior side of the patient
+                The x-axis is increasing to the left hand side of the patient.
+                The y-axis is increasing to the posterior side of the patient.
                 The z-axis is increasing toward the head of the patient. 
                 The patient based coordinate system is a right handed system,
                 i.e. the vector cross product of a unit vector along the 
@@ -421,7 +422,8 @@ have multiple letters in as described under "refinements" in C.7.6.1.1.1):
  *          letters: A (anterior), P (posterior), R (right),L (left), 
  *          H (head), F (foot).
  *          Refinements in the orientation descriptions are designated 
- *          by one or two additional letters in each value.   
+ *          by one or two additional letters in each value.
+ *          Use it when "Patient Orientation" (0020,0020) is not found 
  * @return orientation string as "rawOrientation\columnsOrientation"
  */
 std::string Orientation::GetOrientation ( File *f )

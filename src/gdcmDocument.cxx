@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/21 16:53:59 $
-  Version:   $Revision: 1.283 $
+  Date:      $Date: 2005/09/22 14:41:24 $
+  Version:   $Revision: 1.284 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1109,8 +1109,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      {
                         lgrGroup = atoi(strLgrGroup.c_str());
                         Fp->seekg(lgrGroup, std::ios::cur);
-                        used = false;
-                        RemoveEntry( newDocEntry );
+                        //used = false;  // never used
+                        RemoveEntry( newDocEntry );  // Remove and delete
                         // bcc 5.5 is right "assigned a value that's never used"
                         // newDocEntry = 0;
                         continue;
@@ -1156,6 +1156,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( newDocEntry->GetGroup()%2 != 0 )
             {
                 Fp->seekg( l, std::ios::cur);
+                RemoveEntry( newDocEntry );  // Remove and delete
                 //used = false; // never used
                 continue;  
             } 
@@ -1165,6 +1166,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
            // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);
             //used = false; // never used
+            RemoveEntry( newDocEntry );  // Remove and delete
             continue;
          }
          // delay the dynamic cast as late as possible
