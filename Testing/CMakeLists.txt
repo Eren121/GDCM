@@ -27,6 +27,7 @@ IF (GDCM_DATA_ROOT)
   SET(TEST_SOURCES ${TEST_SOURCES}
     TestFileAccessors.cxx
     TestMakeIcon.cxx
+    TestLoadAllDocumentsNoPrivNoSeq.cxx # includes generated gdcmDataImages.h
     TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
     #TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
     TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
