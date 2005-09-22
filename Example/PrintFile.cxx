@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/16 16:45:33 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/09/22 14:45:11 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -300,13 +300,19 @@ int main(int argc, char *argv[])
 
       std::string strImageOrientationPatient = 
                                       f->GetEntryValue(0x0020,0x0037);
+      gdcm::Orientation o;
+
       if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
       {
-         gdcm::Orientation o;
          double orient = o.TypeOrientation( f );
-         std::cout << " ---------------------- Orientation " << orient
+         std::cout << " ---------------------- Type Orientation " << orient
                    << std::endl;
       }
+
+      std::string ori = o.GetOrientation ( f );
+      if (ori != gdcm::GDCM_UNFOUND )
+         std::cout << "Orientation [" << ori << "]" << std::endl;
+
       // Display the LUT as an int array (for debugging purpose)
       if ( f->HasLUT() && showlut )
       {
@@ -456,6 +462,10 @@ int main(int argc, char *argv[])
          fh->SetPrintLevel( level );
 
          fh->Print();
+         gdcm::Orientation o;
+         std::string ori = o.GetOrientation ( f );
+         if (ori != gdcm::GDCM_UNFOUND )
+            std::cout << "Orientation [" << ori << "]" << std::endl;
 
          if (f->IsReadable())
             std::cout <<std::endl<<it->c_str()<<" is Readable"<<std::endl;
