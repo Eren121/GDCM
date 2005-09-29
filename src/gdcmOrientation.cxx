@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/22 14:41:25 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/09/29 14:23:58 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,9 +89,6 @@ std::cout << std::endl;
    res.first = 0;
    res.second = 99999;
 
- std::cout << "-------------- res : " << res.first << "|" << res.second 
-           << std::endl;
-
    for (int numDicPlane=0; numDicPlane<6; numDicPlane++)
    {
        ++i;
@@ -104,11 +101,7 @@ std::cout << std::endl;
        refB.y = dicPlane[numDicPlane][1][1]; 
        refB.z = dicPlane[numDicPlane][1][2];
        res=VerfCriterion(  i, CalculLikelyhood2Vec(refA,refB,ori1,ori2), res );
- std::cout << "-------------- res : " << res.first << "|" << res.second 
-           << std::endl;
        res=VerfCriterion( -i, CalculLikelyhood2Vec(refB,refA,ori1,ori2), res );
- std::cout << "-------------- res : " << res.first << "|" << res.second 
-           << std::endl;
    }
    return res.first;
 /*
@@ -128,13 +121,16 @@ Res
 Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in)
 {
    Res res;
-//   double type = in.first;
+   double type = in.first;
    double criterion = in.second;
    if (/*criterionNew < 0.1 && */criterionNew < criterion)
    {
-      res.first  = typeCriterion;
-      res.second = criterionNew;
+      type      = typeCriterion;
+      criterion = criterionNew;
    }
+   res.first  = type;
+   res.second = criterion;
+   return res;
 /*
 //   type = res[0]
 //   criterion = res[1]
@@ -144,7 +140,7 @@ Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in
 //      type=typeCriterion
 //   return [ type , criterion ]
 */
-   return res;
+
 } 
 
 inline double square_dist(vector3D const &v1, vector3D const &v2)
