@@ -14,7 +14,8 @@ SET(EXAMPLE_SOURCES
   exImageLighten
   exOverlaysACR
   exSerieHelper
-            
+  exExtractDicomTags
+              
 #the following are utilities
   PrintDicomDir
   PrintFile
