@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/30 10:27:22 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/09/30 17:42:17 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -318,25 +318,29 @@ int main(int argc, char *argv[])
 
       std::string strPatientPosition = 
                                       f->GetEntryValue(0x0018,0x5100);
-      if ( strPatientPosition != gdcm::GDCM_UNFOUND )  
+      if ( strPatientPosition != gdcm::GDCM_UNFOUND 
+        && strPatientPosition != "" )  
             std::cout << "PatientPosition (0x0010,0x5100)= [" 
                       << strPatientPosition << "]" << std::endl;
  
      std::string strPatientOrientation = 
                                       f->GetEntryValue(0x0020,0x0020);
-      if ( strPatientOrientation != gdcm::GDCM_UNFOUND )  
+      if ( strPatientOrientation != gdcm::GDCM_UNFOUND
+        && strPatientOrientation != "")  
          std::cout << "PatientOrientation (0x0020,0x0020)= [" 
                    << strPatientOrientation << "]" << std::endl;
 
       std::string strImageOrientationPatient = 
                                       f->GetEntryValue(0x0020,0x0037);  
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )  
+      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND
+        && strImageOrientationPatient != "" )  
          std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
                    << strImageOrientationPatient << "]" << std::endl;
 
       std::string strImageOrientationRET = 
                                       f->GetEntryValue(0x0020,0x0035);
-      if ( strImageOrientationRET != gdcm::GDCM_UNFOUND )  
+      if ( strImageOrientationRET != gdcm::GDCM_UNFOUND
+        && strImageOrientationRET != "" )  
          std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
                    << strImageOrientationRET << "]" << std::endl;
 
@@ -384,7 +388,7 @@ int main(int argc, char *argv[])
                   int length;   // LUT length in Bytes
                   int deb;      // Subscript of the first Lut Value
                   int nbits;    // Lut item size (in Bits)
-                  int nbRead;    // nb of items in LUT descriptor (must be = 3)
+                  int nbRead;   // nb of items in LUT descriptor (must be = 3)
 
                   nbRead = sscanf( lutDescriptor.c_str(),
                                     "%d\\%d\\%d",
