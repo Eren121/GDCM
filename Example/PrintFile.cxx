@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/22 14:45:11 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/09/30 10:27:22 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -207,7 +207,22 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
-
+   std::string tabOrientation[13] = { 
+       "Not Applicable",
+       "Axial",
+       "Coronal",
+       "Sagital",
+       "Heart Axial",
+       "Heart Coronal",
+       "Heart Sagital",
+       "Axial invert",
+       "Coronal invert",
+       "Sagital invert",
+       "Heart Axial invert",
+       "Heart Coronal invert",
+       "Heart Sagital invert"
+   };
+ 
    if (ddict)
    {
       gdcm::Global::GetDicts()->GetDefaultPubDict()->AddDict(dict);   
@@ -292,26 +307,61 @@ int main(int argc, char *argv[])
       std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
                 << std::endl;
       std::cout << " SwapCode= " << f->GetSwapCode() << std::endl;
-
+      std::cout << " ------" << std::endl;
       //std::cout << "\n\n" << std::endl; 
       //std::cout << "X spacing " << f->GetXSpacing() << std::endl;
       //std::cout << "Y spacing " << f->GetYSpacing() << std::endl;
       //std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
 
+      // Lets's get and print some usefull fields about 'Orientation'
+      // ------------------------------------------------------------
+
+      std::string strPatientPosition = 
+                                      f->GetEntryValue(0x0018,0x5100);
+      if ( strPatientPosition != gdcm::GDCM_UNFOUND )  
+            std::cout << "PatientPosition (0x0010,0x5100)= [" 
+                      << strPatientPosition << "]" << std::endl;
+ 
+     std::string strPatientOrientation = 
+                                      f->GetEntryValue(0x0020,0x0020);
+      if ( strPatientOrientation != gdcm::GDCM_UNFOUND )  
+         std::cout << "PatientOrientation (0x0020,0x0020)= [" 
+                   << strPatientOrientation << "]" << std::endl;
+
       std::string strImageOrientationPatient = 
-                                      f->GetEntryValue(0x0020,0x0037);
+                                      f->GetEntryValue(0x0020,0x0037);  
+      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )  
+         std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
+                   << strImageOrientationPatient << "]" << std::endl;
+
+      std::string strImageOrientationRET = 
+                                      f->GetEntryValue(0x0020,0x0035);
+      if ( strImageOrientationRET != gdcm::GDCM_UNFOUND )  
+         std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
+                   << strImageOrientationRET << "]" << std::endl;
+
+      // Let's compute 'user friendly' results about 'Orientation'
+      // ---------------------------------------------------------
+ 
       gdcm::Orientation o;
 
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
+      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
+           strImageOrientationRET     != gdcm::GDCM_UNFOUND )
       {
+  
          double orient = o.TypeOrientation( f );
-         std::cout << " ---------------------- Type Orientation " << orient
-                   << std::endl;
+         int k = (int)orient;
+         if (k < 0) 
+            k = -k + 6;
+ 
+         std::cout << "TypeOrientation = " << orient << " (-> " 
+                   << tabOrientation[k] << " )" << std::endl;
       }
 
       std::string ori = o.GetOrientation ( f );
-      if (ori != gdcm::GDCM_UNFOUND )
+      if (ori != "\\" )
          std::cout << "Orientation [" << ori << "]" << std::endl;
+
 
       // Display the LUT as an int array (for debugging purpose)
       if ( f->HasLUT() && showlut )
@@ -465,8 +515,16 @@ int main(int argc, char *argv[])
          gdcm::Orientation o;
          std::string ori = o.GetOrientation ( f );
          if (ori != gdcm::GDCM_UNFOUND )
-            std::cout << "Orientation [" << ori << "]" << std::endl;
+            std::cout << "- Orientation [" << ori << "]" << std::endl;
 
+         double d = o.TypeOrientation( f );
+         int k = (int)d;
+         if (k < 0) 
+            k = -k + 6;
+ 
+         std::cout << "TypeOrientation = " << d << " (-> " 
+                   << tabOrientation[k] << std::endl;
+        
          if (f->IsReadable())
             std::cout <<std::endl<<it->c_str()<<" is Readable"<<std::endl;
          else
