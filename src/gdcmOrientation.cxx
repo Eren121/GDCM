@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/29 14:23:58 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/09/30 17:45:01 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -475,5 +475,210 @@ std::string Orientation::GetSingleOrientation ( float *iop)
 } 
 
 
+/*-------------------------------------------------------------------
+
+Some more stuff, from XMedcon
+
+---> Personal remark from JPRx :
+--> patient_position (0x0018,0x5100) can be "HFS ", "FFS ", "HFP ", "FFP " 
+--> the cosines may ahave any value -1< <+1, for MR images !
+
+enum patient_slice_orientation_type
+  {
+    patient_slice_orientation_unknown = 0,
+    supine_headfirst_transaxial,
+    supine_headfirst_sagittal,
+    supine_headfirst_coronal,
+    supine_feetfirst_transaxial,
+    supine_feetfirst_sagittal,
+    supine_feetfirst_coronal,
+    prone_headfirst_transaxial,
+    prone_headfirst_sagittal,
+    prone_headfirst_coronal,
+    prone_feetfirst_transaxial,
+    prone_feetfirst_sagittal,
+    prone_feetfirst_coronal
+  };
+
+void GetImageOrientationPatient(gdcm::File &h,F32 image_orientation_patient[6])
+{
+  h.GetImageOrientationPatient(image_orientation_patient);
+}
+
+#if 0
+//
+// this is all completely cribbed from the xmedcon library, since
+// we're trying to do what it does, mostly.
+patient_slice_orientation_type
+GetPatSliceOrient(gdcm::File &h)
+{
+  F32 image_orientation_patient[6];
+
+  // protected, do it the hard way
+  //  h.GetImageOrientationPatient(image_orientation_patient);
+  GetImageOrientationPatient(h,image_orientation_patient);
+
+  enum { headfirst, feetfirst } patient_orientation;
+  enum { supine, prone } patient_rotation;
+  enum { transaxial, sagittal, coronal } slice_orientation;
+
+  std::string patient_position = h.GetEntryByNumber(0x0018,0x5100);
+  if(patient_position == "gdcm::Unfound")
+    {
+    patient_position = "HF";
+    }
+  if(patient_position.find("HF") != std::string::npos)
+    {
+    patient_orientation = headfirst;
+    }
+  else if(patient_position.find("FF") != std::string::npos)
+    {
+    patient_orientation = feetfirst;
+    }
+
+  if(patient_position.find("S") != std::string::npos)
+    {
+    patient_rotation = supine;
+    }
+  else if(patient_position.find("P") != std::string::npos)
+    {
+    patient_rotation = prone;
+    }
+
+  if((image_orientation_patient[0] == 1 || image_orientation_patient[0] == -1) &&
+     (image_orientation_patient[4] == +1 || image_orientation_patient[4] == -1))
+    {
+    slice_orientation = transaxial;
+    }
+  else if((image_orientation_patient[1] == 1 || image_orientation_patient[1] == -1) &&
+          (image_orientation_patient[5] == +1 || image_orientation_patient[5] == -1))
+    {
+    slice_orientation = sagittal;
+    }
+  else if((image_orientation_patient[0] == 1 || image_orientation_patient[0] == -1) &&
+          (image_orientation_patient[5] == +1 || image_orientation_patient[5] == -1))
+    {
+    slice_orientation = coronal;
+    }
+  //
+  // combine results
+  patient_slice_orientation_type patient_slice_orientation = 
+    patient_slice_orientation_unknown;
+  switch (patient_rotation) 
+    {
+    case supine:
+      switch (patient_orientation) 
+        {
+        case headfirst:
+          switch (slice_orientation) 
+            {
+            case transaxial:
+              patient_slice_orientation = supine_headfirst_transaxial;
+              break;
+            case sagittal:
+              patient_slice_orientation = supine_headfirst_sagittal;
+              break;
+            case coronal:
+              patient_slice_orientation = supine_headfirst_coronal;
+              break;
+            }
+          break;
+        case feetfirst:
+          switch (slice_orientation) 
+            {
+            case transaxial:
+              patient_slice_orientation = supine_feetfirst_transaxial;
+              break;
+            case sagittal:
+              patient_slice_orientation = supine_feetfirst_sagittal;
+              break;
+            case coronal:
+              patient_slice_orientation = supine_feetfirst_coronal;
+              break;
+            }
+          break;
+        }
+      break;
+    case prone:
+      switch (patient_orientation) 
+        {
+        case headfirst:
+          switch (slice_orientation) 
+            {
+            case transaxial:
+              patient_slice_orientation = prone_headfirst_transaxial;
+              break;
+            case sagittal:
+              patient_slice_orientation = prone_headfirst_sagittal;
+              break;
+            case coronal:
+              patient_slice_orientation = prone_headfirst_coronal;
+              break;
+            }
+          break;
+        case feetfirst:
+          switch (slice_orientation) 
+            {
+            case transaxial:
+              patient_slice_orientation = prone_feetfirst_transaxial;
+              break;
+            case sagittal:
+              patient_slice_orientation = prone_feetfirst_sagittal;
+              break;
+            case coronal:
+              patient_slice_orientation = prone_feetfirst_coronal;
+              break;
+            }
+          break;
+        }
+      break;
+    }
+  if(patient_slice_orientation != patient_slice_orientation_unknown)
+    return patient_slice_orientation;
+  //
+  // this is what xmedcon does
+  if ((image_orientation_patient[0] == +1)   &&
+      (image_orientation_patient[4] == +1))   
+    patient_slice_orientation = supine_headfirst_transaxial;
+  else if ((image_orientation_patient[0] == -1)   &&
+           (image_orientation_patient[4] == +1))   
+    patient_slice_orientation = supine_feetfirst_transaxial;
+  else if ((image_orientation_patient[0] == -1)   &&
+           (image_orientation_patient[4] == -1))   
+    patient_slice_orientation = prone_headfirst_transaxial;
+  else if ((image_orientation_patient[0] == +1)   &&
+           (image_orientation_patient[4] == -1))   
+    patient_slice_orientation = prone_feetfirst_transaxial;
+
+  else if ((image_orientation_patient[1] == +1)   &&
+           (image_orientation_patient[5] == -1))   
+    patient_slice_orientation = supine_headfirst_sagittal;
+  else if ((image_orientation_patient[1] == +1)   &&
+           (image_orientation_patient[5] == +1))   
+    patient_slice_orientation = supine_feetfirst_sagittal;
+  else if ((image_orientation_patient[1] == -1)   &&
+           (image_orientation_patient[5] == -1))   
+    patient_slice_orientation = prone_headfirst_sagittal;
+  else if ((image_orientation_patient[1] == -1)   &&
+           (image_orientation_patient[5] == +1))   
+    patient_slice_orientation = prone_feetfirst_sagittal;
+
+  else if ((image_orientation_patient[0] == +1)   &&
+           (image_orientation_patient[5] == -1))   
+    patient_slice_orientation = supine_headfirst_coronal;
+  else if ((image_orientation_patient[0] == -1)   &&
+           (image_orientation_patient[5] == +1))   
+    patient_slice_orientation = supine_feetfirst_coronal;
+  else if ((image_orientation_patient[0] == -1)   &&
+           (image_orientation_patient[5] == -1))   
+    patient_slice_orientation = prone_headfirst_coronal;
+  else if ((image_orientation_patient[0] == +1)   &&
+           (image_orientation_patient[5] == +1))   
+    patient_slice_orientation = prone_feetfirst_coronal;
+  return patient_slice_orientation;
+}
+#else
+
+-------------------------------------------------------------------------*/
 
 } // end namespace gdcm
