@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/30 17:45:01 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/10/01 19:39:16 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,21 +51,42 @@ namespace gdcm
  *   #   6 : Heart Sagital
  *   #  -6 : Heart Sagital invert
  */
-double Orientation::TypeOrientation( File *f )
+
+static const char  *OrientationTypeStrings[] = { 
+  "Not Applicable",
+  "Axial",
+  "Coronal",
+  "Sagital",
+  "Heart Axial",
+  "Heart Coronal",
+  "Heart Sagital",
+  "Axial invert",
+  "Coronal invert",
+  "Sagital invert",
+  "Heart Axial invert",
+  "Heart Coronal invert",
+  "Heart Sagital invert",
+  NULL
+};
+
+const char* Orientation::GetOrientationTypeString(OrientationType const o)
+{
+  int k = (int)o;
+  if (k < 0) 
+       k = -k + 6;
+
+  return OrientationTypeStrings[k];
+}
+
+OrientationType Orientation::GetOrientationType( File *f )
 {
    float iop[6];
    bool succ = f->GetImageOrientationPatient( iop );
    if ( !succ )
    {
-      gdcmErrorMacro( "No Image Orientation (0020,0037) found in the file, cannot proceed." )
-      return 0;
+      gdcmErrorMacro( "No Image Orientation (0020,0037)/(0020,0032) found in the file, cannot proceed." )
+      return NotApplicable;
    }
-/*
-std::cout << " iop : ";
-for(int i=0;i<6;i++)
-   std::cout << iop[i] << "  ";
-std::cout << std::endl;
-*/
    vector3D ori1;
    vector3D ori2;
 
@@ -103,18 +124,8 @@ std::cout << std::endl;
        res=VerfCriterion(  i, CalculLikelyhood2Vec(refA,refB,ori1,ori2), res );
        res=VerfCriterion( -i, CalculLikelyhood2Vec(refB,refA,ori1,ori2), res );
    }
-   return res.first;
-/*
-//  i=0
-//  res=[0,99999]  ## [ <result> , <memory of the last succes calculus> ]
-//  for plane in dicPlane:
-//      i=i+1
-//      refA=plane[0]
-//      refB=plane[1]
-//      res=self.VerfCriterion(  i , self.CalculLikelyhood2Vec(refA,refB,ori1,ori2) , res )
-//      res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
-//  return res[0]
-*/
+   gdcmAssertMacro( res.first <= 6 && res.first >= -6);
+   return (OrientationType)res.first;
 }
 
 Res 
@@ -131,16 +142,6 @@ Orientation::VerfCriterion(int typeCriterion, double criterionNew, Res const &in
    res.first  = type;
    res.second = criterion;
    return res;
-/*
-//   type = res[0]
-//   criterion = res[1]
-// #     if criterionNew<0.1 and criterionNew<criterion:
-//   if criterionNew<criterion:
-//      criterion=criterionNew
-//      type=typeCriterion
-//   return [ type , criterion ]
-*/
-
 } 
 
 inline double square_dist(vector3D const &v1, vector3D const &v2)

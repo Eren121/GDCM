@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/30 17:42:17 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/10/01 19:39:14 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -207,21 +207,6 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
-   std::string tabOrientation[13] = { 
-       "Not Applicable",
-       "Axial",
-       "Coronal",
-       "Sagital",
-       "Heart Axial",
-       "Heart Coronal",
-       "Heart Sagital",
-       "Axial invert",
-       "Coronal invert",
-       "Sagital invert",
-       "Heart Axial invert",
-       "Heart Coronal invert",
-       "Heart Sagital invert"
-   };
  
    if (ddict)
    {
@@ -353,13 +338,10 @@ int main(int argc, char *argv[])
            strImageOrientationRET     != gdcm::GDCM_UNFOUND )
       {
   
-         double orient = o.TypeOrientation( f );
-         int k = (int)orient;
-         if (k < 0) 
-            k = -k + 6;
+         gdcm::OrientationType orient = o.GetOrientationType( f );
  
          std::cout << "TypeOrientation = " << orient << " (-> " 
-                   << tabOrientation[k] << " )" << std::endl;
+                   << o.GetOrientationTypeString(orient) << " )" << std::endl;
       }
 
       std::string ori = o.GetOrientation ( f );
@@ -521,13 +503,10 @@ int main(int argc, char *argv[])
          if (ori != gdcm::GDCM_UNFOUND )
             std::cout << "- Orientation [" << ori << "]" << std::endl;
 
-         double d = o.TypeOrientation( f );
-         int k = (int)d;
-         if (k < 0) 
-            k = -k + 6;
+         gdcm::OrientationType d = o.GetOrientationType( f );
  
          std::cout << "TypeOrientation = " << d << " (-> " 
-                   << tabOrientation[k] << std::endl;
+                   << o.GetOrientationTypeString(d) << std::endl;
         
          if (f->IsReadable())
             std::cout <<std::endl<<it->c_str()<<" is Readable"<<std::endl;

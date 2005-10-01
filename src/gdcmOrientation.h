@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/01 15:51:42 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/01 19:39:16 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,15 +76,33 @@ class File;
  * You'll probabely have 3 letters for X axis and  Y axis, and the image remains *perfectly* sagital !
  * The values are given within the 'imager referential', better than within the 'Patient Referential' ...
  */
+typedef enum {
+   NotApplicable = 0,
+   Axial = 1,
+   AxialInvert = -1,
+   Coronal = 2,
+   CoronalInvert = -2,
+   Sagital = 3,
+   SagitalInvert = -3,
+   HeartAxial = 4,
+   HeartAxialInvert = -4,
+   HeartCoronal = 5,
+   HeartCoronalInvert = -5,
+   HeartSagital = 6,
+   HeartSagitalInvert = -6
+} OrientationType;
+
 class GDCM_EXPORT Orientation : public Base
 {
 public:
   Orientation() {}
   ~Orientation() {}
 
-  double TypeOrientation( File *file );
+  OrientationType GetOrientationType( File *file );
   std::string GetOrientation ( File *file );  
   
+  static const char* GetOrientationTypeString(OrientationType const o);
+
 private:
    Res VerfCriterion(int typeCriterion, double criterionNew, Res const &res);
    double CalculLikelyhood2Vec(vector3D const &refA, vector3D const &refB, 
