@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/01 19:39:16 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/10/03 14:54:16 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,8 +124,11 @@ OrientationType Orientation::GetOrientationType( File *f )
        res=VerfCriterion(  i, CalculLikelyhood2Vec(refA,refB,ori1,ori2), res );
        res=VerfCriterion( -i, CalculLikelyhood2Vec(refB,refA,ori1,ori2), res );
    }
-   gdcmAssertMacro( res.first <= 6 && res.first >= -6);
-   return (OrientationType)res.first;
+   // res thought looks like is a float value, but is indeed an int
+   // try casting it to int first then enum value to please VS7:
+   int int_res = (int)res.first;
+   gdcmAssertMacro( int_res <= 6 && int_res >= -6);
+   return (OrientationType)int_res;
 }
 
 Res 
