@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/22 14:41:24 $
-  Version:   $Revision: 1.284 $
+  Date:      $Date: 2005/10/03 16:08:07 $
+  Version:   $Revision: 1.285 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -966,7 +966,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    bool used; // will be set to false when something wrong happens to an Entry.
               // (Entry will then be deleted)
    bool delim_mode_intern = delim_mode;
-   bool first = true;  
+   bool first = true;
+   gdcmWarningMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
+                     << " at offset " << std::hex << offset ); 
    while (true)
    {
       if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
@@ -1200,9 +1202,17 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
          if ( l != 0 )
          {  // Don't try to parse zero-length sequences
+
+            gdcmWarningMacro( "Entry in ParseSQ, delim " << delim_mode_intern
+                               << " at offset " << std::hex
+                               << newDocEntry->GetOffset() );
+
             ParseSQ( newSeqEntry, 
                      newDocEntry->GetOffset(),
                      l, delim_mode_intern);
+
+            gdcmWarningMacro( "Exit from ParseSQ, delim " << delim_mode_intern);
+ 
          }
          if ( !set->AddEntry( newSeqEntry ) )
          {
@@ -1227,6 +1237,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       }
       first = false;
    }                               // end While
+   gdcmWarningMacro( "Exit from ParseDES, delim-mode " << delim_mode );
 }
 
 /**
@@ -2359,6 +2370,22 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
      // end of reversed endian group
      reversedEndian--;
      SwitchByteSwapCode();
+   }
+   else if (group == 0xfeff && elem == 0xdde0) 
+   {
+     // reversed Sequence Terminator found
+     // probabely a bug in the header !
+     // Do what you want, it breaks !
+     //reversedEndian--;
+     //SwitchByteSwapCode();
+     gdcmWarningMacro( "Should never get here! reversed Sequence Terminator!" ); 
+     // fix the tag
+      group = 0xfffe;
+      elem  = 0xe0dd;  
+   }
+   else if (group == 0xfffe && elem == 0xe0dd) 
+   {
+      gdcmWarningMacro( "Straight Sequence Terminator." );  
    }
 }
 
