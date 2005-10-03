@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/01 19:39:16 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/03 16:09:27 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ class File;
  *
  * Example #1:
  * Imagine the patient, in "HFS" position.
- * Sagital images are requested.
+ * Full body sagital images are requested.
  * All the cosines will be -1, 0, or +1;
  * "Patient Orientation" (deduced) will be "A/F".
  * Positive X axis is oriented 'towards patient's nose
@@ -65,16 +65,16 @@ class File;
  *
  * Example #2:
  * Imagine now that patient has a stiffneck and his head is *turned* 30 degrees towards the left.
- * Sagital images are requested.
+ * Head sagital images are requested.
  * One of the cosines will be almost 0.5
  * Deduced "Patient Orientation" will be "AL\F"
  * (main X axis orientation is towards patient's nose, and a little bit towards the left)
- * but the image is *perfectly* sagital !
+ * but the image looks *perfectly* sagital (for the head, not for the patient) !
  *
  * Imagine the patient's stiffneck causes head to be *bended* 30 degrees towards the left AND *turned* left.
  * Sagital images are requested...
  * You'll probabely have 3 letters for X axis and  Y axis, and the image remains *perfectly* sagital !
- * The values are given within the 'imager referential', better than within the 'Patient Referential' ...
+ * The values are given within the 'Patient referential', *not* within the 'Organ referential' ...
  */
 typedef enum {
    NotApplicable = 0,
