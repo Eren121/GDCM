@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 15:28:49 $
-  Version:   $Revision: 1.163 $
+  Date:      $Date: 2005/10/06 18:49:30 $
+  Version:   $Revision: 1.164 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -939,9 +939,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    uint16_t swap;
-   //swap = ((( val << 8 ) & 0xff00 ) | (( val >> 8 ) & 0x00ff ) );
-   //save CPU time
-   swap = ( val << 8 |  val >> 8  );
+   swap = ( val << 8 | val >> 8 );
 
    return os.write(reinterpret_cast<const char*>(&swap), 2);
 #else
@@ -958,9 +956,6 @@ std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
    uint32_t swap;
-//   swap = ( ((val<<24) & 0xff000000) | ((val<<8)  & 0x00ff0000) | 
-//            ((val>>8)  & 0x0000ff00) | ((val>>24) & 0x000000ff) );
-// save CPU time
    swap = (  (val<<24)               | ((val<<8)  & 0x00ff0000) | 
             ((val>>8)  & 0x0000ff00) |  (val>>24)               );
    return os.write(reinterpret_cast<const char*>(&swap), 4);
