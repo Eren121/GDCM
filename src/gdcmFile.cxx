@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/06 18:54:49 $
-  Version:   $Revision: 1.272 $
+  Date:      $Date: 2005/10/06 19:26:00 $
+  Version:   $Revision: 1.273 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -894,6 +894,7 @@ int File::GetPixelSize()
    // (in order no to be messed up by old ACR-NEMA RGB images)
    //   if (File::GetEntryValue(0x0028,0x0100) == "24")
    //      return 3;
+   assert( !(GetEntryValue(0x0028,0x0100) == "24") );
 
    std::string pixelType = GetPixelType();
    if ( pixelType ==  "8U" || pixelType == "8S" )
@@ -1667,15 +1668,22 @@ void File::ComputeJPEGFragmentInfo()
    { 
       // Since we have read the basic offset table, let's check the value were correct
       // or else produce a warning:
+      // A.4 Transfer syntaxes for encapsulation of encoded pixel data:
+      // When the Item Value is present, the Basic Offset Table Item Value shall contain
+      // concatenated 32-bit unsigned integer values that are byte offsets to the first
+      // byte of the Item Tag of the first fragment for each frame in the Sequence of
+      // Items. These offsets are measured from the first byte of the first Item Tag
+      // following the Basic Offset Table item (See Table A.4-2).
+
       if ( BasicOffsetTableItemValue )
         {
         // If a BasicOffsetTableItemValue was read
         uint32_t individualLength = BasicOffsetTableItemValue[i];
-        std::cerr << individualLength << " == " << sum << std::endl;
-        assert( individualLength == sum ); // REMOVE that if this is a problem
+        //assert( individualLength == sum ); // Seems like 00191113.dcm is off by one ??
         if( individualLength != sum )
           {
-          gdcmWarningMacro( "BasicOffsetTableItemValue differs from the fragment lenght" );
+          gdcmWarningMacro( "BasicOffsetTableItemValue differs from the fragment lenght:" <<
+              individualLength << " != " << sum );
           }
         sum += fragmentLength + 8;
         i++;
