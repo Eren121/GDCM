@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/29 13:05:02 $
-  Version:   $Revision: 1.116 $
+  Date:      $Date: 2005/10/06 18:54:50 $
+  Version:   $Revision: 1.117 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -198,7 +198,8 @@ private:
    void ComputeJPEGFragmentInfo();
    bool     ReadTag(uint16_t, uint16_t);
    uint32_t ReadTagLength(uint16_t, uint16_t);
-   void ReadAndSkipEncapsulatedBasicOffsetTable();
+   void ReadEncapsulatedBasicOffsetTable();
+   uint32_t *BasicOffsetTableItemValue;
 
 };
 } // end namespace gdcm

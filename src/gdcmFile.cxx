@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/21 17:16:15 $
-  Version:   $Revision: 1.271 $
+  Date:      $Date: 2005/10/06 18:54:49 $
+  Version:   $Revision: 1.272 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,6 +118,7 @@ File::File():
    JPEGInfo = new JPEGFragmentsInfo;
    GrPixel  = 0x7fe0;  // to avoid further troubles
    NumPixel = 0x0010;
+   BasicOffsetTableItemValue = 0;
 }
 
 
@@ -130,6 +131,7 @@ File::~File ()
       delete RLEInfo;
    if ( JPEGInfo )
       delete JPEGInfo;
+   delete[] BasicOffsetTableItemValue;
 }
 
 //-----------------------------------------------------------------------------
@@ -1554,7 +1556,7 @@ void File::ComputeRLEInfo()
    //    - the first item in the sequence of items before the encoded pixel
    //      data stream shall be basic offset table item. The basic offset table
    //      item value, however, is not required to be present"
-   ReadAndSkipEncapsulatedBasicOffsetTable();
+   ReadEncapsulatedBasicOffsetTable();
 
    // Encapsulated RLE Compressed Images (see PS 3.5-2003, Annex G)
    // Loop on the individual frame[s] and store the information
@@ -1564,8 +1566,24 @@ void File::ComputeRLEInfo()
    //       - when more than one frame are present, then we are in 
    //         the case of a multi-frame image.
    long frameLength;
+   int i=0;
+   uint32_t sum = 0;
    while ( (frameLength = ReadTagLength(0xfffe, 0xe000)) != 0 )
    { 
+      // Since we have read the basic offset table, let's check the value were correct
+      // or else produce a warning:
+      if ( BasicOffsetTableItemValue )
+        {
+        // If a BasicOffsetTableItemValue was read
+        uint32_t individualLength = BasicOffsetTableItemValue[i];
+        assert( individualLength == sum ); // REMOVE that if this is a problem
+        if( individualLength != sum )
+          {
+          gdcmWarningMacro( "BasicOffsetTableItemValue differs from the fragment lenght" );
+          }
+        sum += frameLength + 8;
+        i++;
+        }
       // Parse the RLE Header and store the corresponding RLE Segment
       // Offset Table information on fragments of this current Frame.
       // Note that the fragment pixels themselves are not loaded
@@ -1638,22 +1656,39 @@ void File::ComputeJPEGFragmentInfo()
       return;
    }
 
-   ReadAndSkipEncapsulatedBasicOffsetTable();
+   ReadEncapsulatedBasicOffsetTable();
 
    // Loop on the fragments[s] and store the parsed information in a
    // JPEGInfo.
    long fragmentLength;
+   int i=0;
+   uint32_t sum = 0;
    while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) != 0 )
    { 
+      // Since we have read the basic offset table, let's check the value were correct
+      // or else produce a warning:
+      if ( BasicOffsetTableItemValue )
+        {
+        // If a BasicOffsetTableItemValue was read
+        uint32_t individualLength = BasicOffsetTableItemValue[i];
+        std::cerr << individualLength << " == " << sum << std::endl;
+        assert( individualLength == sum ); // REMOVE that if this is a problem
+        if( individualLength != sum )
+          {
+          gdcmWarningMacro( "BasicOffsetTableItemValue differs from the fragment lenght" );
+          }
+        sum += fragmentLength + 8;
+        i++;
+        }
+
       long fragmentOffset = Fp->tellg();
+      // Store the collected info
+      JPEGFragment *newFragment = new JPEGFragment;
+      newFragment->SetOffset(fragmentOffset);
+      newFragment->SetLength(fragmentLength);
+      JPEGInfo->AddFragment(newFragment);
 
-       // Store the collected info
-       JPEGFragment *newFragment = new JPEGFragment;
-       newFragment->SetOffset(fragmentOffset);
-       newFragment->SetLength(fragmentLength);
-       JPEGInfo->AddFragment(newFragment);
-
-       SkipBytes(fragmentLength);
+      SkipBytes(fragmentLength);
    }
 
    // Make sure that  we encounter a 'Sequence Delimiter Item'
@@ -1749,7 +1784,7 @@ uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
  * \brief When parsing the Pixel Data of an encapsulated file, read
  *        the basic offset table (when present, and BTW dump it).
  */
-void File::ReadAndSkipEncapsulatedBasicOffsetTable()
+void File::ReadEncapsulatedBasicOffsetTable()
 {
    //// Read the Basic Offset Table Item Tag length...
    uint32_t itemLength = ReadTagLength(0xfffe, 0xe000);
@@ -1762,20 +1797,20 @@ void File::ReadAndSkipEncapsulatedBasicOffsetTable()
    //          lengths, but we won't bother with such fuses for the time being.
    if ( itemLength != 0 )
    {
-      char *basicOffsetTableItemValue = new char[itemLength + 1];
-      Fp->read(basicOffsetTableItemValue, itemLength);
+      char *charBasicOffsetTableItemValue = new char[itemLength];
+      Fp->read(charBasicOffsetTableItemValue, itemLength);
+      unsigned int nbEntries = itemLength/4;
+      assert( nbEntries*4 == itemLength); // Make sure this is a multiple
+      BasicOffsetTableItemValue = new uint32_t[nbEntries];
 
-#ifdef GDCM_DEBUG
-      for (unsigned int i=0; i < itemLength; i += 4 )
+      for (unsigned int i=0; i < nbEntries; i++ )
       {
-         uint32_t individualLength = str2num( &basicOffsetTableItemValue[i],
-                                              uint32_t);
-         gdcmWarningMacro( "Read one length: " << 
-                          std::hex << individualLength );
+         BasicOffsetTableItemValue[i] = *((uint32_t*)(&charBasicOffsetTableItemValue[4*i]));
+         gdcmWarningMacro( "Read one length for: " << 
+                          std::hex << BasicOffsetTableItemValue[i] );
       }
-#endif //GDCM_DEBUG
 
-      delete[] basicOffsetTableItemValue;
+      delete[] charBasicOffsetTableItemValue;
    }
 }
 
