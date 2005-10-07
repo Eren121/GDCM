@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/09/07 08:55:23 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/10/07 09:54:53 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1485,7 +1485,17 @@ void FileHelper::CheckMandatoryElements()
       e_0008_0090->SetValue("");
       Archive->Push(e_0008_0090);
    }
- 
+
+    // Pixel Spacing : defaulted to 1.0\1.0
+   ValEntry *e_0028_0030 = FileInternal->GetValEntry(0x0028, 0x0030);
+   if ( !e_0028_0030 )
+   {
+      e_0028_0030 = new ValEntry(
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0028, 0x0030) );
+      e_0028_0030->SetValue("1.0\\1.0");
+      Archive->Push(e_0028_0030);
+   }  
+   
    // Remove some inconstencies (probably some more will be added)
 
    // if (0028 0008)Number of Frames exists
