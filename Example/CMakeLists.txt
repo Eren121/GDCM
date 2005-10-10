@@ -14,6 +14,7 @@ SET(EXAMPLE_SOURCES
   exImageLighten
   exOverlaysACR
   exCurveData
+  exExtractTag
   exSerieHelper
   exExtractDicomTags
               
