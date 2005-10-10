@@ -138,7 +138,7 @@ SET(BLACK_LIST
   #
   # I probabely messed up smething with the .png, .tst of
   # the images I recently added to the Test Suite
-  # I Black list them, untill I find where is the pb.
+  # I Black list them, until I find where is the pb.
   "US-RGB-8-esopecho.dcm"
   "MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm"
   "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
