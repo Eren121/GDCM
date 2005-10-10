@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/10 20:02:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/10 20:42:33 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,39 @@
 #include "gdcmDebug.h"
 #include "gdcmDocEntry.h"
 #include "gdcmBinEntry.h"
+
+static const char* TypeOfDataArrays[13][2] = {
+    { "TAC" , "time activity curve" },
+    { "PROF" , "image profile" },
+    { "HIST" , "histogram" },
+    { "ROI" , "polygraphic region of interest" },
+    { "TABL" , "table of values" },
+    { "FILT" , "filter kernel" },
+    { "POLY" , "poly line" },
+    { "ECG" , "ecg data" },
+    { "PRESSURE" , "pressure data" },
+    { "FLOW" , "flow data" },
+    { "PHYSIO" , "physio data" },
+    { "RESP" , "Respiration trace" },
+    NULL
+};
+
+// Part 3, C.10.2.1.1 Type of data
+// Convert from acronym to full description
+const char *ConvertTypeOfData(std::string const &type)
+{
+  const char **p = *TypeOfDataArrays;
+  while(*p != NULL)
+    {
+    if( p[0] == type ) // std::string== operator
+      {
+      // ok we found it:
+      return p[1];
+      }
+    p+=2;
+    }
+  return NULL;
+}
 
 // Helper function
 template<class DataValueRepresentation>
@@ -124,6 +157,7 @@ int main(int argc, char *argv[])
  //* V 5004|0020 [CS]                  [Type of Data] [PHYSIO]
    std::string data_type = f->GetEntryValue(0x5004,0x0020);
    std::cout << "Type of Data: " << data_type << std::endl;
+   std::cout << " this is thus a : " << ConvertTypeOfData(data_type) << std::endl;
  //* V 5004|0022 [LO]             [Curve Description] []
    std::string curve_desc = f->GetEntryValue(0x5004,0x0022);
    std::cout << "Curve Description: " << curve_desc << std::endl;
