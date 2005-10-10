@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/06 19:26:00 $
-  Version:   $Revision: 1.273 $
+  Date:      $Date: 2005/10/10 22:25:05 $
+  Version:   $Revision: 1.274 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1814,6 +1814,12 @@ void File::ReadEncapsulatedBasicOffsetTable()
       for (unsigned int i=0; i < nbEntries; i++ )
       {
          BasicOffsetTableItemValue[i] = *((uint32_t*)(&charBasicOffsetTableItemValue[4*i]));
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
+         uint32_t val = BasicOffsetTableItemValue[i];
+         BasicOffsetTableItemValue[i] 
+           = (  (val<<24)               | ((val<<8)  & 0x00ff0000) | 
+              ((val>>8)  & 0x0000ff00) |  (val>>24)               );
+#endif
          gdcmWarningMacro( "Read one length for: " << 
                           std::hex << BasicOffsetTableItemValue[i] );
       }
