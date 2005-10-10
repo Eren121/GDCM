@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/03 16:08:07 $
-  Version:   $Revision: 1.285 $
+  Date:      $Date: 2005/10/10 10:49:24 $
+  Version:   $Revision: 1.286 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1355,6 +1355,7 @@ return newEntry;
  * \brief   Loads (or not) the element content depending if its length exceeds
  *          or not the value specified with Document::SetMaxSizeLoadEntry()
  * @param   entry Header Entry (Dicom Element) to be dealt with
+ * @param forceLoad whether you want to force loading of 'long' elements
  */
 void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 {
