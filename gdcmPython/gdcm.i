@@ -214,6 +214,7 @@ typedef unsigned long long uint64_t;
 %ignore GDCM_NOTLOADED;
 %ignore GDCM_UNREAD;
 %ignore GDCM_NOTASCII;
+%ignore GDCM_PIXELDATA;
 
 %constant const char *UNKNOWN       = "gdcm::Unknown";
 %constant const char *UNFOUND       = "gdcm::Unfound";
@@ -221,7 +222,7 @@ typedef unsigned long long uint64_t;
 %constant const char *NOTLOADED     = "gdcm::NotLoaded";
 %constant const char *UNREAD        = "gdcm::UnRead";
 %constant const char *GDCM_NOTASCII = "gdcm::NotAscii";
-
+%constant const char *GDCM_PIXELDATA = "gdcm::Pixel Data to be loaded";
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
