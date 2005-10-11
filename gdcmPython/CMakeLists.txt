@@ -130,6 +130,15 @@ ELSE(WIN32)
   )
 ENDIF(WIN32)
 
+FIND_PATH(PYTHON_DIR "site-packages"
+   /usr/lib/python2.4
+   /usr/lib/python2.3
+   /usr/lib/python2.2
+   /usr/lib/python2.1
+) 
+STRING(REGEX REPLACE "/usr" "" PYTHON_DIR ${PYTHON_DIR})
+
+INSTALL_FILES(${PYTHON_DIR}/site-packages "gdcmPython.pth")
 INSTALL_FILES(/lib/gdcm/gdcmPython "\\.py$")
 INSTALL_FILES(/lib/gdcm/gdcmPython FILES "gdcm.py")
 
