@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBinEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/11 08:55:58 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/10/11 14:48:19 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -109,7 +109,8 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
       // -->        since I've no access for the moment to a big endian proc :-(
       // -->        I comment them out, to see the result on the dash board 
       // -->     
-      /*     
+      
+      // --> Revert to initial code : TestWriteSimple hangs on Darwin :-(     
       if (GetGroup() == 0x7fe0 && GetVR() == "OW")
       {  
          uint16_t *binArea16 = (uint16_t*)binArea8;
@@ -120,15 +121,15 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
          // For any other VR, BinEntry is re-written as-is
          binary_write (*fp, binArea8, lgr );
       }
-      */
-      
+            
       //-->
       // -->
       // -->  WARNING      
       // -->         remove the following line, an uncomment the previous ones, 
       // -->         if it doesn't work better
       // -->     
-      binary_write ( *fp, binArea8, lgr ); // Elem value
+      /*binary_write ( *fp, binArea8, lgr ); // Elem value*/
+      
 #else
       binary_write ( *fp, binArea8, lgr ); // Elem value
 #endif //GDCM_WORDS_BIGENDIAN
@@ -137,6 +138,11 @@ void BinEntry::WriteContent(std::ofstream *fp, FileType filetype)
    else
    {
       // nothing was loaded, but we need to skip space on disc
+      
+      //  --> WARNING : nothing is written; 
+      //  --> the initial data (on the the source image) is lost
+      //  --> user is *not* informed !
+      
       fp->seekp(lgr, std::ios::cur);
    }
 }
