@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/24 12:09:13 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/10/11 08:24:10 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -194,6 +194,14 @@ DocEntry *ElementSet::GetDocEntry(uint16_t group, uint16_t elem)
   */ 
 void ElementSet::Print(std::ostream &os, std::string const & )
 {
+   // Let's change the 'warning value' for Pixel Data,
+   // to avoid human reader to be confused by 'gdcm::NotLoaded'.   
+   gdcm::BinEntry *pixelElement = GetBinEntry(0x7fe0,0x0010);
+   if ( pixelElement != 0 )
+   {
+      pixelElement->SetValue( gdcm::GDCM_PIXELDATA);
+   }      
+
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
       DocEntry *entry = i->second;
