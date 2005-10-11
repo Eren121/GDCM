@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/10 10:49:24 $
-  Version:   $Revision: 1.286 $
+  Date:      $Date: 2005/10/11 14:38:05 $
+  Version:   $Revision: 1.287 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1515,15 +1515,19 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
          return;
       }
 
-      if ( vr == "UI" )
-      {
-         // Because of correspondance with the VR dic
-         valEntry->SetValue(newValue);
-      }
-      else
-      {
-         valEntry->SetValue(newValue);
-      }
+//      if ( vr == "UI" )
+//      {
+//         // Because of correspondance with the VR dic
+//         valEntry->SetValue(newValue);
+//      }
+//      else
+//      {
+//         valEntry->SetValue(newValue);
+//      }
+
+// Anybody remembers the genesis of strange previous (commented out) code?
+      valEntry->SetValue(newValue);
+
    }
    else
    {
