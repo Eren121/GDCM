@@ -113,7 +113,7 @@ IF(GDCM_SIZEOF___INT64)
       MESSAGE(STATUS "Checking whether long long and __int64 are the same type")
       TRY_COMPILE(GDCM_TYPE_SAME_LONG_LONG_AND___INT64
         ${GDCMJASPER_BINARY_DIR}
-        ${GDCMJASPER_SOURCE_DIR}/gdcmTestCompareTypes.cxx
+        ${GDCMJASPER_BINARY_DIR}/gdcmTestCompareTypes.cxx
         COMPILE_DEFINITIONS
         -DGDCM_TEST_COMPARE_TYPE_1=TYPE_LONG_LONG
         -DGDCM_TEST_COMPARE_TYPE_2=__int64
