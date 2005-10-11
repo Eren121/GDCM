@@ -130,6 +130,9 @@ ELSE(WIN32)
   )
 ENDIF(WIN32)
 
+# Install a python path file in site-packages that tells
+# python where to find the gdcmPython module
+IF(UNIX)
 FIND_PATH(PYTHON_DIR "site-packages"
    /usr/lib/python2.4
    /usr/lib/python2.3
@@ -141,6 +144,7 @@ STRING(REGEX REPLACE "/usr" "" PYTHON_DIR ${PYTHON_DIR})
 INSTALL_FILES(${PYTHON_DIR}/site-packages "gdcmPython.pth")
 INSTALL_FILES(/lib/gdcm/gdcmPython "\\.py$")
 INSTALL_FILES(/lib/gdcm/gdcmPython FILES "gdcm.py")
+ENDIF(UNIX)
 
 #-----------------------------------------------------------------------------
 # Add test from demo subdir:
