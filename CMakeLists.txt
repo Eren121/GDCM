@@ -53,8 +53,6 @@ SET(GDCM_INCLUDE_DIRS
   )
 SET(GDCM_LIBRARY_DIRS ${LIBRARY_OUTPUT_PATH})
 SET(GDCM_LIBRARY_DEPENDS_FILE ${GDCM_BINARY_DIR}/GDCMLibraryDepends.cmake)
-CONFIGURE_FILE(${GDCM_SOURCE_DIR}/GDCMConfig.cmake.in
-               ${GDCM_BINARY_DIR}/GDCMConfig.cmake @ONLY IMMEDIATE)
 
 # For installed GDCM:
 SET(GDCM_USE_FILE ${CMAKE_INSTALL_PREFIX}/lib/GDCM-${GDCM_VERSION}/GDCMUse.cmake)
@@ -62,7 +60,7 @@ SET(GDCM_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include/GDCM-${GDCM_VERSION})
 SET(GDCM_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/lib/GDCM-${GDCM_VERSION})
 SET(GDCM_LIBRARY_DEPENDS_FILE ${CMAKE_INSTALL_PREFIX}/lib/GDCM-${GDCM_VERSION}/GDCMLibraryDepends.cmake)
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/GDCMConfig.cmake.in
-               ${GDCM_BINARY_DIR}/Utilities/GDCMConfig.cmake @ONLY IMMEDIATE)
+               ${GDCM_BINARY_DIR}/GDCMConfig.cmake @ONLY IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Test if compiler defines the pseudo-macro __FUNCTION__
