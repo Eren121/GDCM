@@ -59,7 +59,7 @@ IF (GDCM_DATA_ROOT)
       INCLUDE(${VTK_USE_FILE})
 
       INCLUDE_DIRECTORIES(
-        ${GDCM_SOURCE_DIR}/vtk/
+        ${GDCM_SOURCE_DIR}/vtk
       )
       SET(TEST_SOURCES ${TEST_SOURCES}
         VTKTestRead.cxx
