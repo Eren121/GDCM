@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 14:12:23 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/10/13 07:14:45 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,6 +152,9 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutGreenDescriptor = file->GetEntryValue( 0x0028, 0x1102 );
       LutBlueDescriptor  = file->GetEntryValue( 0x0028, 0x1103 );
    
+      // The following comment is probabely meaningless, since LUT are *always*
+      // loaded at parsing time, whatever their length is.
+         
       // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
       // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
       // Document::Document() ], the loading of the value (content) of a
@@ -535,7 +538,13 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
  */
 void PixelReadConvert::BuildLUTRGBA()
 {
+
+   // Note to code reviewers :
+   // The problem is *much more* complicated, since a lot of manufacturers
+   // Don't follow the norm :
+   // have a look at David Clunie's remark at the end of this .cxx file.
    if ( LutRGBA )
+   
    {
       return;
    }
@@ -1279,3 +1288,161 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
+
+// Note to developpers :
+// Here is a very detailled post from David Clunie, on the troubles caused 
+// 'non standard' LUT and LUT description
+// We shall have to take it into accound in our code.
+// Some day ...
+
+
+/*
+Subject: Problem with VOI LUTs in Agfa and Fuji CR and GE DX images, was Re: VOI LUT issues
+Date: Sun, 06 Feb 2005 17:13:40 GMT
+From: David Clunie <dclunie@dclunie.com>
+Reply-To: dclunie@dclunie.com
+Newsgroups: comp.protocols.dicom
+References: <1107553502.040221.189550@o13g2000cwo.googlegroups.com>
+
+> THE LUT that comes with [my] image claims to be 16-bit, but none of the
+> values goes higher than 4095.  That being said, though, none of my
+> original pixel values goes higher than that, either.  I have read
+> elsewhere on this group that when that happens you are supposed to
+> adjust the LUT.  Can someone be more specific?  There was a thread from
+> 2002 where Marco and David were mentioning doing precisely that.
+>
+> Thanks
+>
+> -carlos rodriguez
+
+
+You have encountered the well known "we know what the standard says but
+we are going to ignore it and do what we have been doing for almost
+a decade regardless" CR vendor bug. Agfa started this, but they are not
+the only vendor doing this now; GE and Fuji may have joined the club.
+
+Sadly, one needs to look at the LUT Data, figure out what the maximum
+value actually encoded is, and find the next highest power of 2 (e.g.
+212 in this case), to figure out what the range of the data is
+supposed to be. I have assumed that if the maximum value in the LUT
+data is less than a power of 2 minus 1 (e.g. 0xebc) then the intent
+of the vendor was not to use the maximum available grayscale range
+of the display (e.g. the maximum is 0xfff in this case). An alternative
+would be to scale to the actual maximum rather than a power of two.
+
+Very irritating, and in theory not totally reliable if one really
+intended the full 16 bits and only used, say 15, but that is extremely
+unlikely since everything would be too dark, and this heuristic
+seems to work OK.
+
+There has never been anything in the standard that describes having
+to go through these convolutions. Since the only value in the
+standard that describes the bit depth of the LUT values is LUT
+Descriptor value 3 and that is (usually) always required to be
+either 8 or 16, it mystifies me how the creators' of these images
+imagine that the receiver is going to divine the range that is intended. Further, the standard is quite explicit that this 3rd
+value defines the range of LUT values, but as far as I am aware, all
+the vendors are ignoring the standard and indeed sending a third value
+of 16 in all cases.
+
+This problem is not confined to CR, and is also seen with DX products.
+
+Typically I have seen:
+
+- Agfa CR, which usually (always ?) sends LUTs, values up to 0x0fff
+- Fuji CR, which occasionally send LUTs, values up to 0x03ff
+- GE DX, for presentation, which always have LUTs, up to 0x3fff
+
+Swissray, Siemens, Philips, Canon and Kodak never seem to send VOI LUTs
+at this point (which is a whole other problem). Note that the presence
+or absence of a VOI LUT as opposed to window values may be configurable
+on the modality in some cases, and I have just looked at what I happen
+to have received from a myriad of sites over whose configuration I have
+no control. This may be why the majority of Fuji images have no VOI LUTs,
+but a few do (or it may be the Siemens system that these Fuji images went
+through that perhaps added it). I do have some test Hologic DX images that
+are not from a clinical site that do actually get this right (a value
+of 12 for the third value and a max of 0xfff).
+
+Since almost every vendor that I have encountered that encodes LUTs
+makes this mistake, perhaps it is time to amend the standard to warn
+implementor's of receivers and/or sanction this bad behavior. We have
+talked about this in the past in WG 6 but so far everyone has been
+reluctant to write into the standard such a comment. Maybe it is time
+to try again, since if one is not aware of this problem, one cannot
+effectively implement display using VOI LUTs, and there is a vast
+installed base to contend with.
+
+I did not check presentation states, in which VOI LUTs could also be
+encountered, for the prevalence of this mistake, nor did I look at the
+encoding of Modality LUT's, which are unusual. Nor did I check digital
+mammography images. I would be interested to hear from anyone who has.
+
+David
+
+PS. The following older thread in this newsgroup discusses this:
+
+"http://groups-beta.google.com/group/comp.protocols.dicom/browse_frm/t hread/6a033444802a35fc/0f0a9a1e35c1468e?q=voi+lut&_done=%2Fgroup%2Fcom p.protocols.dicom%2Fsearch%3Fgroup%3Dcomp.protocols.dicom%26q%3Dvoi+lu t%26qt_g%3D1%26searchnow%3DSearch+this+group%26&_doneTitle=Back+to+Sea rch&&d#0f0a9a1e35c1468e"
+
+PPS. From a historical perspective, the following may be of interest.
+
+In the original standard in 1993, all that was said about this was a
+reference to the corresponding such where Modality LUTs are described
+that said:
+
+"The third value specifies the number of bits for each entry in the
+LUT Data. It shall take the value 8 or 16. The LUT Data shall be stored
+in a format equivalent to 8 or 16 bits allocated and high bit equal
+1-bits allocated."
+
+Since the high bit hint was not apparently explicit enough, a very
+early CP, CP 15 (submitted by Agfa as it happens), replaced this with:
+
+"The third value conveys the range of LUT entry values. It shall take
+the value 8 or 16, corresponding with the LUT entry value range of
+256 or 65536.
+
+Note:    The third value is not required for describing the
+    LUT data and is only included for informational usage
+    and for maintaining compatibility with ACRNEMA 2.0.
+
+The LUT Data contains the LUT entry values."
+
+That is how it read in the 1996, 1998 and 1999 editions.
+
+By the 2000 edition, Supplement 33 that introduced presentation states
+extensively reworked this entire section and tried to explain this in
+different words:
+
+"The output range is from 0 to 2^n-1 where n is the third value of LUT
+Descriptor. This range is always unsigned."
+
+and also added a note to spell out what the output range meant in the
+VOI LUT section:
+
+"9. The output of the Window Center/Width or VOI LUT transformation
+is either implicitly scaled to the full range of the display device
+if there is no succeeding transformation defined, or implicitly scaled
+to the full input range of the succeeding transformation step (such as
+the Presentation LUT), if present. See C.11.6.1."
+
+It still reads this way in the 2004 edition.
+
+Note that LUTs in other applications than the general VOI LUT allow for
+values other than 8 or 16 in the third value of LUT descriptor to permit
+ranges other than 0 to 255 or 65535.
+
+In addition, the DX Image Module specializes the VOI LUT
+attributes as follows, in PS 3.3 section C.8.11.3.1.5 (added in Sup 32):
+
+"The third value specifies the number of bits for each entry in the LUT
+Data (analogous to ìbits storedî). It shall be between 10-16. The LUT
+Data shall be stored in a format equivalent to 16 ìbits allocatedî and
+ìhigh bitî equal to ìbits storedî - 1. The third value conveys the range
+of LUT entry values. These unsigned LUT entry values shall range between
+0 and 2^n-1, where n is the third value of the LUT Descriptor."
+
+So in the case of the GE DX for presentation images, the third value of
+LUT descriptor is allowed to be and probably should be 14 rather than 16.
+
+*/
