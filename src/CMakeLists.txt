@@ -2,14 +2,6 @@
 # Rebuild gdcm whenever a file starting with gdcm* is modified
 INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 
-# Build jpeg lib first:
-#IF (WIN32)
-#  IF (BUILD_SHARED_LIBS)
-#    ADD_DEFINITIONS(-DJPEGDLL)
-#  ELSE (BUILD_SHARED_LIBS)
-#    ADD_DEFINITIONS(-DJPEGSTATIC)
-#  ENDIF (BUILD_SHARED_LIBS)
-#ENDIF (WIN32)
 SUBDIRS(
   gdcmjpeg
   #gdcmmpeg2
@@ -79,7 +71,7 @@ SET(libgdcm_la_SOURCES
    ${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx
    )
 
-ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES} )
+ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES})
 TARGET_LINK_LIBRARIES(gdcm 
   gdcmjpeg8 
   gdcmjpeg12
