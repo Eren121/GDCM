@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/10 20:42:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/16 17:07:05 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ static const char* TypeOfDataArrays[13][2] = {
     { "FLOW" , "flow data" },
     { "PHYSIO" , "physio data" },
     { "RESP" , "Respiration trace" },
-    NULL
+    { NULL, NULL }
 };
 
 // Part 3, C.10.2.1.1 Type of data
