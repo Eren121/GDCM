@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:07 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/17 09:55:36 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,8 +51,8 @@ int TestSerieHelper(int argc, char *argv[])
              << std::endl;
 
    int nbFiles;
-   // For all the Coherent Files lists of the gdcm::Serie
-   gdcm::FileList *l = s->GetFirstCoherentFileList();
+   // For all the SingleSerieUID filesets of the gdcm::Serie
+   gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet();
    while (l)
    { 
       nbFiles = l->size() ;
@@ -61,21 +61,21 @@ int TestSerieHelper(int argc, char *argv[])
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
          s->OrderFileList(l);  // sort the list
       }
-      l = s->GetNextCoherentFileList();
+      l = s->GetNextSingleSerieUIDFileSet();
    } 
    std::cout << " -------------------------------------------- Finish sorting"
              << std::endl;
-   s->Print(); // Prints all the Coherent Files lists (sorted or not)
+   s->Print(); // Prints all the SingleSerieUID filesets (sorted or not)
    std::cout << " -------------------------------------------- Finish printing"
              << std::endl;
 
 
-   // Only for the first Coherent File List 
+   // Only for the first SingleSerieUID fileset 
    // ( Why not ? Just an example, for testing )
    // Display all the file names
 
    std::string fileName; 
-   l = s->GetFirstCoherentFileList();
+   l = s->GetFirstSingleSerieUIDFileSet();
    for (std::vector<gdcm::File* >::iterator it =  l->begin();
                                             it != l->end();
                                           ++it)
