@@ -37,7 +37,6 @@ SET(EXAMPLE_SOURCES
   FlatHashTablePrint
   TestCopyDicom
   TestChangeHeader
-  TestFromScratch
   Volume2Dicom
   WriteDicomSimple
   WriteRead

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/22 14:45:11 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/10/17 10:41:59 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
       //dataSize = original->GetImageDataSize();// just an accesor :useless here
       
       imageData = original->GetImageData(); // VERY important : 
-                                      // brings pixels in memory !
+                                      // brings pixels into memory !
       //(void)imageData; // not enough to avoid warning with icc compiler
       //(void)dataSize; //  not enough to avoid warning on 'Golgot'
   
@@ -144,7 +144,11 @@ int main(int argc, char *argv[])
       std::cout << "--- ---- ----------------------" << std::endl;
    
       copy->WriteDcmExplVR( output );
+      
 
+      delete fileOr;   // File
+      delete original; // FileHelper
+      delete copy;     // FileHelper
       return 0;
 }
 
