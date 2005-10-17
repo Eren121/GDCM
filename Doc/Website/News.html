@@ -77,7 +77,7 @@ Any contribution is welcome.
       <LI> Full <TT>Icon Image</TT> management (Read and Write) 
       <LI> Full <TT>Overlays</TT> management (Read and Write) <br>
            both for '<TT>ACR-NEMA</TT> style' (using groups <TT>0x6000</TT> 
-            and nexts) and '<TT>DICOM V3</TT> style' (using Sequences)
+            and next) and '<TT>DICOM V3</TT> style' (using Sequences)
    </UL>
 <LI> <TT>DICOMDIR</TT> 
     <UL>
@@ -129,45 +129,45 @@ Any contribution is welcome.
    <UL>
       <LI> Add the methods
          <TT>gdcm::Dict:AddDict(std::string fullPathPrivateDictionaryFileName)</TT>
-         <br>and<br> 
+        <br>and<br> 
         <TT>gdcm::Dict::RemoveDict(std::string fullPathPrivateDictionaryFileName)</TT>
-       <br>
-       to allow user to choose the 'Private Dictionary' he wants to work with.
-       <br>
-      One can dream about a better API;<br>
-      This one allow right now anybody to see very easyly if the use 
-      of a given private dicom dictionary is of any help or not.
-      <br><br>
+        <br>
+        to allow user to choose the 'Private Dictionary' he wants to work with.
+        <br>
+        One can dream about a better API;<br>
+        This one allow right now anybody to see very easyly if the use 
+        of a given private dicom dictionary is of any help or not.
+        <br><br>
       <LI>
       <TT>PrintFile</TT> has now a new command line argument manager option :<br>
-          <TT>dict=fullPathNamePricateDictionaryFile</TT><br>
+          <TT>dict=fullPathNamePrivateDictionaryFile</TT><br>
           to allow user to see with no extra coding what differences 
           makes the use or not of a private Dicom Dictionary.<br>
-           e.g. : use it as follow <br>
+          e.g. : use it as follow <br>
           <TT>PrintFile filein=myGEdicomFile.dcm 
           dict=/user/userName/gdcm/Dicts/GEMS-Advance.dic</TT>
-         <br><br> 
+          <br><br> 
       <LI>
           (Not a great one ...)  
-         Stupid method names : <br><TT>DicomDir::WriteDicomDir()</TT>
-         and <TT>DicomDir::AnonymizeDicomDir()</TT> <br>replaced by : <br>
-         <TT>DicomDir::Write()</TT>
+          Stupid method names : <br><TT>DicomDir::WriteDicomDir()</TT>
+          and <TT>DicomDir::AnonymizeDicomDir()</TT> <br>replaced by : <br>
+          <TT>DicomDir::Write()</TT>
           and <TT>DicomDir::Anonymize()</TT>
           <br><br> 
       <LI><TT>
           void Document::AddForceLoadElement(uint16_t group, uint16_t elem);
-           </TT><br>
-           allows user to tell <TT>gdcm::Document</TT> Loader he wants
-           to force the loading of a given set of <TT>DocEntries</TT>, 
-           even if their length exceeds the current 
-           <TT>MAX_SIZE_LOAD_ELEMENT_VALUE</TT>.
-           <br><br>
+          </TT><br>
+          allows user to tell <TT>gdcm::Document</TT> Loader he wants
+          to force the loading of a given set of <TT>DocEntries</TT>, 
+          even if their length exceeds the current 
+          <TT>MAX_SIZE_LOAD_ELEMENT_VALUE</TT>.
+          <br><br>
        <LI>
-         Many users expect from <TT>vtkGdcmReader</TT> it 'orders' the images
-         (that's the job of <TT>gdcm::SerieHelper</TT> ...)<br>
-         When user <b>knows</b> the files with same Serie UID
-         have same sizes, same 'pixel' type, same color convention, ...
-         the right way to proceed is as follow :
+          Many users expect from <TT>vtkGdcmReader</TT> it 'orders' the images
+          (that's the job of <TT>gdcm::SerieHelper</TT> ...)<br>
+          When user <b>knows</b> the files with same Serie UID
+          have same sizes, same 'pixel' type, same color convention, ...
+          the right way to proceed is as follow :
     <pre>
         gdcm::SerieHelper *sh= new gdcm::SerieHelper();
    //      if user wants *not* to load some parts of the file headers
@@ -184,10 +184,10 @@ Any contribution is welcome.
    //      if user wants to sort reverse order
         sh->SetSortOrderToReverse();
    
-   //      here, we suppose only the first Coherent File List is of interest
-   //      Just iterate using sh->NexttCoherentFileList()
+   //      here, we suppose only the first 'Single SerieUID' Fileset is of interest
+   //      Just iterate using sh->NextSingleSerieUIDFileSet()
    //      if you want to get all of them
-        gdcm::FileList *l = sh->GetFirstCoherentFileList();
+        gdcm::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
 
    //      if user is doesn't trust too much the files with same Serie UID
         if ( !sh->IsCoherent(l) )
@@ -201,7 +201,7 @@ Any contribution is welcome.
    //      (a *very* simple example is given in vtkgdcmSerieViewer.cxx)
         reader->SetUserFunction (userSuppliedFunction);
 
-   //      to pass a 'Coherent File List' as produced by gdcm::SerieHelper
+   //      to pass a 'Single SerieUID' Fileset as produced by gdcm::SerieHelper
         reader->SetCoherentFileList(l);
         reader->Update();
    </pre>
@@ -215,29 +215,29 @@ Any contribution is welcome.
       <br>
 
       <LI> <TT>vtkGdcmReader::SetUserFunction (userSuppliedFunction)</TT><br>
-          with :<br>
-          <TT>void userSuppliedFunction(uint8_t *imageData, File *f);</TT><br>
-          allows user to reorganize the pixels of each image just after reading
-          it (to mirror, or topdown the image, for instance)<br>
-          Note : <TT>uint8_t *</TT> doesn't mean it works only on 8 Bits images.
-          <br> It's for prototyping. Feel free to cast it.
-          <br><br>  
+           with :<br>
+           <TT>void userSuppliedFunction(uint8_t *imageData, File *f);</TT><br>
+           allows user to reorganize the pixels of each image just after reading
+           it (to mirror, or topdown the image, for instance)<br>
+           Note : <TT>uint8_t *</TT> doesn't mean it works only on 8 Bits images.
+           <br> It's for prototyping. Feel free to cast it.
+           <br><br>  
       <LI> <TT>
-          SerieHelper::SetUserLessThanFunction(userSuppliedComparisonFunction)
-          </TT><br> with : <br>
-          <TT>bool userSuppliedComparisonFunction(File *, File *);</TT><br>
-          allows user -when he knows more about his files than gdcm does-
-          to give his own comparison function. 
-     <LI> <TT>SerieHelper::SetSortOrderToReverse</TT> allows user to ask
-         to sort the Files reverse order.
-     <LI> <TT>SerieHelper::AddRestriction</TT> has now a new constructor<br>
-          <TT>AddRestriction(group, element, value, operator);</TT><br>
-          allows user to exclude some files from the sorting, according to
-          any comparison operator <br>
-          (<TT>GDCM_EQUAL</TT>, <TT>GDCM_DIFFERENT</TT>, 
-          <TT>GDCM_GREATER</TT>, <TT>GDCM_GREATEROREQUAL</TT>, 
-          <TT>GDCM_LESS</TT>, <TT>GDCM_LESSOREQUAL</TT>), not only on the
-          equality.
+           SerieHelper::SetUserLessThanFunction(userSuppliedComparisonFunction)
+           </TT><br> with : <br>
+           <TT>bool userSuppliedComparisonFunction(File *, File *);</TT><br>
+           allows user -when he knows more about his files than gdcm does-
+           to give his own comparison function. 
+      <LI> <TT>SerieHelper::SetSortOrderToReverse</TT> allows user to ask
+           to sort the Files reverse order.
+      <LI> <TT>SerieHelper::AddRestriction</TT> has now a new constructor<br>
+           <TT>AddRestriction(group, element, value, operator);</TT><br>
+           allows user to exclude some files from the sorting, according to
+           any comparison operator <br>
+           (<TT>GDCM_EQUAL</TT>, <TT>GDCM_DIFFERENT</TT>, 
+           <TT>GDCM_GREATER</TT>, <TT>GDCM_GREATEROREQUAL</TT>, 
+           <TT>GDCM_LESS</TT>, <TT>GDCM_LESSOREQUAL</TT>), not only on the
+           equality.
            <br><br>
       <LI> <TT>AnonymizeNoLoad</TT> used with <TT>dirin=inputDirectoryName</TT>
            anonymizes all the files within the given Directory.
@@ -281,9 +281,9 @@ Any contribution is welcome.
            <br><br>
            See <TT>vtkgdcmSerieViewer</TT> for an example.
            <br><br>
-      <LI>Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
-          are available to allow easy displaying of single/multiframe 
-          GreyLevel/RGB/PaletteColor images<br><br>
+      <LI> Both <TT>vtkgdcmViewer</TT> and <TT>vtkgdcmViewer2</TT> 
+           are available to allow easy displaying of single/multiframe 
+           GreyLevel/RGB/PaletteColor images<br><br>
       <LI> <TT>DICOMDIR</TT> anonymiser (<TT>Load</TT> and <TT>Noload</TT> mode)
            <br><br>
       <LI> Because the <TT>gdcm::DicomDir::Load()</TT> method may be used
@@ -312,17 +312,17 @@ Any contribution is welcome.
            </TT>
            <br> 
       <LI> User is now allowed to tell <TT>gdcm::Document</TT> constructor 
-            he doesn't want to deal with <TT>SeqEntry</TT> 
-            (every time it's possible, i.e for 'true length' Sequences) <br>
-            and/or he doesn't want to deal with <TT>Shadow groups</TT> 
-            (every time it's possible i.e. when element <TT>0x0000</TT>
-            exists for this Group) <br> 
-            or he doesn't want to deal with <TT>SeqEntry</TT> that belong to a 
-            <TT>Shadow group</TT>  (every time it's possible 
-            -'true length' Sequence-)<br>
-            use : <br>
-            <pre>
-            gdcm::File *f = new gdcm::File();
+           he doesn't want to deal with <TT>SeqEntry</TT> 
+           (every time it's possible, i.e for 'true length' Sequences) <br>
+           and/or he doesn't want to deal with <TT>Shadow groups</TT> 
+           (every time it's possible i.e. when element <TT>0x0000</TT>
+           exists for this Group) <br> 
+           or he doesn't want to deal with <TT>SeqEntry</TT> that belong to a 
+           <TT>Shadow group</TT>  (every time it's possible 
+           -'true length' Sequence-)<br>
+           use : <br>
+           <pre>
+           gdcm::File *f = new gdcm::File();
                   f->SetLoadMode(NO_SEQ);            | depending on what
                   f->SetLoadMode(NO_SHADOW);         | you want *not* 
                   f->SetLoadMode(NO_SEQ | NO_SHADOW);| to load from the
@@ -336,23 +336,23 @@ Any contribution is welcome.
             <br>
         <LI> User is now allowed to tell <TT>gdcm::DicomDir</TT> constructor 
              he doesn't want to deal with <TT>SeqEntry</TT> 
-            (every time it's possible, i.e for 'true length' Sequences) <br>
-            and/or he doesn't want to deal with <TT>Shadow groups</TT> 
-            (every time it's possible i.e. when element <TT>0x0000</TT>
-            exists for this Group) <br> 
-            or he doesn't want to deal with <TT>SeqEntry</TT> that belong to a 
-            <TT>Shadow group</TT>  (every time it's possible 
-            -'true length' Sequence-)<br>
-            when he parses all the Dicom files within a given directory.<br>
-            use : <br>
-            <pre>
-            gdcm::DicomDir *f = new gdcm::DicomDir();
+             (every time it's possible, i.e for 'true length' Sequences) <br>
+             and/or he doesn't want to deal with <TT>Shadow groups</TT> 
+             (every time it's possible i.e. when element <TT>0x0000</TT>
+             exists for this Group) <br> 
+             or he doesn't want to deal with <TT>SeqEntry</TT> that belong to a 
+             <TT>Shadow group</TT>  (every time it's possible 
+             -'true length' Sequence-)<br>
+             when he parses all the Dicom files within a given directory.<br>
+             use : <br>
+             <pre>
+             gdcm::DicomDir *f = new gdcm::DicomDir();
                   f->SetLoadMode(NO_SEQ);            | depending on what
                   f->SetLoadMode(NO_SHADOW);         | you want *not* 
                   f->SetLoadMode(NO_SEQ | NO_SHADOW);| to load from the files
                   f->SetLoadMode(NO_SHADOWSEQ);      | within the root directory 
-            f->SetDirectoryName(rootDirectoryName);
-            f->Load( );
+             f->SetDirectoryName(rootDirectoryName);
+             f->Load( );
             </pre>
             <b>Don't</b> use any longer old deprecated style: <br>
             <TT>
