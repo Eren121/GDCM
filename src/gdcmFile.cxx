@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/10 22:25:05 $
-  Version:   $Revision: 1.274 $
+  Date:      $Date: 2005/10/17 14:26:44 $
+  Version:   $Revision: 1.275 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -486,9 +486,8 @@ float File::GetXSpacing()
 
          if ( xspacing == 0.0 )
             xspacing = 1.0;
-
-         return xspacing;
       }  
+      return xspacing;
    }
 
    const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
@@ -511,15 +510,14 @@ float File::GetXSpacing()
 
       if ( xspacing == 0.0 )
          xspacing = 1.0;
-
-      return xspacing;
    }
+   return xspacing;
 
    // to avoid troubles with David Clunie's-like images (at least one)
-   if ( xspacing == 0. && yspacing == 0.)
-      return 1.;
+   if ( xspacing == 0.0 && yspacing == 0.0)
+      return 1.0;
 
-   if ( xspacing == 0.)
+   if ( xspacing == 0.0)
    {
       gdcmWarningMacro("gdcmData/CT-MONO2-8-abdo.dcm-like problem");
       // seems to be a bug in the header ...
@@ -538,7 +536,7 @@ float File::GetXSpacing()
   */
 float File::GetYSpacing()
 {
-   float yspacing = 1.;
+   float yspacing = 1.0;
    int nbValues;
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
@@ -594,7 +592,18 @@ float File::GetZSpacing()
    //   It only concerns the MRI guys, not people wanting to visualize volumes
    //   If Spacing Between Slices is missing, 
    //   we suppose slices joint together
+
+   // --->
+   // ---> Warning :
+   // --->
    
+  //
+  // For *Dicom* images, ZSpacing should be calculated using 
+  // XOrigin, YOrigin, ZOrigin (of the top left image corner)
+  // of 2 consecutive images, and the Orientation
+  // 
+  // Computing ZSpacing on a single image is not really meaningfull !
+  
    const std::string &strSpacingBSlices = GetEntryValue(0x0018,0x0088);
 
    if ( strSpacingBSlices == GDCM_UNFOUND )
@@ -604,7 +613,7 @@ float File::GetZSpacing()
       if ( strSliceThickness == GDCM_UNFOUND )
       {
          gdcmWarningMacro("Unfound Slice Thickness (0018,0050)");
-         return 1.;
+         return 1.0;
       }
       else
       {
@@ -616,7 +625,11 @@ float File::GetZSpacing()
       }
    }
    //else
-   return (float)atof( strSpacingBSlices.c_str() );
+   
+   float zsp = (float)atof( strSpacingBSlices.c_str());
+   if (zsp == 0.0) // last change not to break further computations ...
+      zsp = 1.0;
+   return zsp;
 }
 
 /**
@@ -637,13 +650,13 @@ float File::GetXOrigin()
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
-         return 0.;
+         return 0.0;
       }
    }
 
    if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
    {
-      return 0.;
+      return 0.0;
    }
 
    return xImPos;
