@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/11 14:38:05 $
-  Version:   $Revision: 1.287 $
+  Date:      $Date: 2005/10/17 14:55:01 $
+  Version:   $Revision: 1.288 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1550,7 +1550,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
    {
       if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" 
-                                                           /*|| vr == "UN"*/ )
+                                                           || vr == "UN" )
       {
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
