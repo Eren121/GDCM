@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 16:24:19 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/10/17 09:52:41 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,7 @@
 
 #include <math.h>
 #include <vector>
+#include <map>
 #include <algorithm>
 
 namespace gdcm 
@@ -38,23 +39,8 @@ namespace gdcm
  */
 SerieHelper::SerieHelper()
 {
+   ClearAll();
    UserLessThanFunction = 0;
-
-   // For all the File lists that may already exist within the gdcm::Serie
-   FileList *l = GetFirstCoherentFileList();
-   while (l)
-   { 
-      // For all the files of a File list
-      for (gdcm::FileList::iterator it  = l->begin();
-                              it != l->end(); 
-                            ++it)
-      {
-         delete *it; // remove entry
-      }
-      l->clear();
-      delete l;     // remove the list
-      l = GetNextCoherentFileList();
-   }
    DirectOrder = true;
 }
 
@@ -63,20 +49,29 @@ SerieHelper::SerieHelper()
  */
 SerieHelper::~SerieHelper()
 {
-   // For all the Coherent File lists of the gdcm::Serie
-   FileList *l = GetFirstCoherentFileList();
+   ClearAll();
+}
+
+/**
+ * \brief  - Preventively, clear everything at constructor time.
+ *         - use it at destructor time.
+ */
+void SerieHelper::ClearAll()
+{
+   // For all the 'Single SerieUID' Filesets that may already exist 
+   FileList *l = GetFirstSingleSerieUIDFileSet();
    while (l)
    { 
-      // For all the files of a Coherent File list
-      for (FileList::iterator it  = l->begin();
-                              it != l->end(); 
-                            ++it)
+      // For all the gdcm::File of a File set
+      for (gdcm::FileList::iterator it  = l->begin();
+                                    it != l->end(); 
+                                  ++it)
       {
-         delete *it; // remove entry
+         delete *it; // remove each entry
       }
       l->clear();
-      delete l;  // remove the list
-      l = GetNextCoherentFileList();
+      delete l;     // remove the container
+      l = GetNextSingleSerieUIDFileSet();
    }
 }
 
@@ -86,7 +81,7 @@ SerieHelper::~SerieHelper()
 
 // Public
 /**
- * \brief add a gdcm::File to the list corresponding to its Serie UID
+ * \brief add a gdcm::File to the Fileset corresponding to its Serie UID
  * @param   filename Name of the file to deal with
  */
 void SerieHelper::AddFileName(std::string const &filename)
@@ -100,27 +95,10 @@ void SerieHelper::AddFileName(std::string const &filename)
    if ( header->IsReadable() )
    {
       int allrules = 1;
-      // First step the user has defined a set of rules for the DICOM file
+      // First step : the user defined a set of rules for the DICOM file
       // he is looking for.
-      // make sure the file correspond to his set of rules:
+      // Make sure the file corresponds to his set of rules:
 
-/*
-      for(SerieRestrictions::iterator it = Restrictions.begin();
-          it != Restrictions.end();
-          ++it)
-      {
-         const Rule &r = *it;
-         // doesn't compile (no matching function...).
-         const std::string s;// = header->GetEntryValue( r.first );
-         if ( !Util::DicomStringEqual(s, r.second.c_str()) )
-         {
-           // Argh ! This rule is unmatch let's just quit
-           allrules = 0;
-           break;
-         }
-      }
-*/
-      // Just keep 'new style' for Rules
       std::string s;
       for(SerieExRestrictions::iterator it2 = ExRestrictions.begin();
           it2 != ExRestrictions.end();
@@ -130,7 +108,7 @@ void SerieHelper::AddFileName(std::string const &filename)
          s = header->GetEntryValue( r.group, r.elem );
          if ( !Util::CompareDicomString(s, r.value.c_str(), r.op) )
          {
-           // Argh ! This rule is unmatch let's just quit
+           // Argh ! This rule is unmatched; let's just quit
            allrules = 0;
            break;
          }
@@ -138,26 +116,26 @@ void SerieHelper::AddFileName(std::string const &filename)
 
       if ( allrules ) // all rules are respected:
       {
-         // Allright ! we have a found a DICOM that match the user expectation. 
-         // Let's add it !
+         // Allright! we have a found a DICOM that matches the user expectation. 
+         // Let's add it!
 
          // 0020 000e UI REL Series Instance UID
          const std::string &uid = header->GetEntryValue (0x0020, 0x000e);
          // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
          // no need here to do anything special
 
-         if ( CoherentFileListHT.count(uid) == 0 )
+         if ( SingleSerieUIDFileSetHT.count(uid) == 0 )
          {
             gdcmDebugMacro(" New Serie UID :[" << uid << "]");
             // create a std::list in 'uid' position
-            CoherentFileListHT[uid] = new FileList;
+            SingleSerieUIDFileSetHT[uid] = new FileList;
          }
          // Current Serie UID and DICOM header seems to match; add the file:
-         CoherentFileListHT[uid]->push_back( header );
+         SingleSerieUIDFileSetHT[uid]->push_back( header );
       }
       else
       {
-         // at least one rule was unmatch we need to deallocate the file:
+         // at least one rule was unmatched we need to deallocate the file:
          delete header;
       }
    }
@@ -169,9 +147,12 @@ void SerieHelper::AddFileName(std::string const &filename)
 }
 
 /**
- * \brief add a gdcm::File to the first (and supposed to be unique) list
+ * \brief add a gdcm::File to the first (and supposed to be unique) file set
  *        of the gdcm::SerieHelper.
  * \warning : this method should be used by aware users only!
+ *           Passing a gdcm::File* has the same effect than passing a file name!
+ * \TODO : decide which one is wrong (the method, or the commentary)!
+ *           the following comment doesn't match the method :-(
  *            User is supposed to know the files he want to deal with
  *           and consider them they belong to the same Serie
  *           (even if their Serie UID is different)
@@ -189,9 +170,9 @@ void SerieHelper::AddGdcmFile(File *header)
       // First step the user has defined a set of rules for the DICOM 
       // he is looking for.
       // make sure the file correspond to his set of rules:
-      for(SerieRestrictions::iterator it = Restrictions.begin();
-          it != Restrictions.end();
-          ++it)
+      for(SerieRestrictions::iterator it =  Restrictions.begin();
+                                      it != Restrictions.end();
+                                    ++it)
       {
          const Rule &r = *it;
          const std::string s;// = header->GetEntryValue( r.first );
@@ -211,14 +192,14 @@ void SerieHelper::AddGdcmFile(File *header)
          // Serie UID of the gdcm::File* may be different.
          // User is supposed to know what he wants
 
-         if ( CoherentFileListHT.count(uid) == 0 )
+         if ( SingleSerieUIDFileSetHT.count(uid) == 0 )
          {
             gdcmDebugMacro(" New Serie UID :[" << uid << "]");
             // create a std::list in 'uid' position
-            CoherentFileListHT[uid] = new FileList;
+            SingleSerieUIDFileSetHT[uid] = new FileList;
          }
          // Current Serie UID and DICOM header seems to match; add the file:
-         CoherentFileListHT[uid]->push_back( header );
+         SingleSerieUIDFileSetHT[uid]->push_back( header );
       }
          // Even if a rule was unmatch we don't deallocate the gdcm::File:
 }
@@ -270,7 +251,7 @@ void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
 /**
  * \brief Sets the root Directory
  * @param   dir Name of the directory to deal with
- * @param recursive whether we want explore recursively the Directory
+ * @param recursive whether we want explore recursively the root Directory
  */
 void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
 {
@@ -285,30 +266,31 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
 }
 
 /**
- * \brief Sorts the given File List
+ * \brief Sorts the given Fileset
  * \warning This could be implemented in a 'Strategy Pattern' approach
  *          But as I don't know how to do it, I leave it this way
- *          BTW, this is also a Strategy, I don't know this is the best approach :)
+ *          BTW, this is also a Strategy, I don't know this is 
+ *          the best approach :)
  */
-void SerieHelper::OrderFileList(FileList *coherentFileList)
+void SerieHelper::OrderFileList(FileList *fileSet)
 {
 
    if ( SerieHelper::UserLessThanFunction )
    {
-      UserOrdering( coherentFileList );
+      UserOrdering( fileSet );
       return; 
    }
-   else if ( ImagePositionPatientOrdering( coherentFileList ) )
+   else if ( ImagePositionPatientOrdering( fileSet ) )
    {
       return ;
    }
-   else if ( ImageNumberOrdering(coherentFileList ) )
+   else if ( ImageNumberOrdering(fileSet ) )
    {
       return ;
    }
    else  
    {
-      FileNameOrdering(coherentFileList );
+      FileNameOrdering(fileSet );
    }
 }
 
@@ -316,12 +298,12 @@ void SerieHelper::OrderFileList(FileList *coherentFileList)
  * \brief Elementary coherence checking of the files with the same Serie UID
  * Only sizes and pixel type are checked right now ...
  */ 
-bool SerieHelper::IsCoherent(FileList *coherentFileList)
+bool SerieHelper::IsCoherent(FileList *fileSet)
 {
-   if(coherentFileList->size() == 1)
+   if(fileSet->size() == 1)
    return true;
 
-   FileList::const_iterator it = coherentFileList->begin();
+   FileList::const_iterator it = fileSet->begin();
 
    int nX = (*it)->GetXSize();
    int nY = (*it)->GetYSize();
@@ -329,7 +311,7 @@ bool SerieHelper::IsCoherent(FileList *coherentFileList)
 
    it ++;
    for ( ;
-         it != coherentFileList->end();
+         it != fileSet->end();
        ++it)
    {
       if ( (*it)->GetXSize() != nX )
@@ -342,43 +324,252 @@ bool SerieHelper::IsCoherent(FileList *coherentFileList)
    }
    return true;
 }
+
+#ifndef GDCM_LEGACY_REMOVE
 /**
- * \brief   Get the first List while visiting the CoherentFileListHT
+ * \brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
+ *          Warning : 'coherent' means here they have the same Serie UID
  * @return  The first FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetFirstCoherentFileList()
 {
-   ItListHt = CoherentFileListHT.begin();
-   if ( ItListHt != CoherentFileListHT.end() )
-      return ItListHt->second;
+   ItFileSetHt = SingleSerieUIDFileSetHT.begin();
+   if ( ItFileSetHt != SingleSerieUIDFileSetHT.end() )
+      return ItFileSetHt->second;
    return NULL;
 }
 
 /**
- * \brief   Get the next List while visiting the CoherentFileListHT
- * \note : meaningfull only if GetFirstCoherentFileList() already called
+ * \brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
+ *          Warning : 'coherent' means here they have the same Serie UID
+ * \note : meaningfull only if GetFirstCoherentFileList() already called 
  * @return  The next FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetNextCoherentFileList()
 {
-   gdcmAssertMacro (ItListHt != CoherentFileListHT.end());
+   gdcmAssertMacro (ItFileSetHt != SingleSerieUIDFileSetHT.end());
   
-   ++ItListHt;
-   if ( ItListHt != CoherentFileListHT.end() )
-      return ItListHt->second;
+   ++ItFileSetHt;
+   if ( ItFileSetHt != SingleSerieUIDFileSetHT.end() )
+      return ItFileSetHt->second;
    return NULL;
 }
 
 /**
- * \brief   Get the Coherent Files list according to its Serie UID
+ * \brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
+  *          Warning : 'coherent' means here they have the same Serie UID
  * @param SerieUID SerieUID
- * \return  pointer to the Coherent Files list if found, otherwhise NULL
+ * \return  pointer to the FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {
-   if ( CoherentFileListHT.count(SerieUID) == 0 )
+   if ( SingleSerieUIDFileSetHT.count(SerieUID) == 0 )
       return 0;     
-   return CoherentFileListHT[SerieUID];
+   return SingleSerieUIDFileSetHT[SerieUID];
+}
+#endif
+
+
+/**
+ * \brief   Get the first Fileset while visiting the SingleSerieUIDFileSetmap
+ * @return  The first FileList (SingleSerieUIDFileSet) if found, otherwhise 0
+ */
+FileList *SerieHelper::GetFirstSingleSerieUIDFileSet()
+{
+   ItFileSetHt = SingleSerieUIDFileSetHT.begin();
+   if ( ItFileSetHt != SingleSerieUIDFileSetHT.end() )
+      return ItFileSetHt->second;
+   return NULL;
+}
+
+/**
+ * \brief   Get the next Fileset while visiting the SingleSerieUIDFileSetmap
+ * \note : meaningfull only if GetNextSingleSerieUIDFileSet() already called 
+ * @return  The next FileList (SingleSerieUIDFileSet) if found, otherwhise 0
+ */
+FileList *SerieHelper::GetNextSingleSerieUIDFileSet()
+{
+   gdcmAssertMacro (ItFileSetHt != SingleSerieUIDFileSetHT.end());
+  
+   ++ItFileSetHt;
+   if ( ItFileSetHt != SingleSerieUIDFileSetHT.end() )
+      return ItFileSetHt->second;
+   return NULL;
+}
+
+/**
+ * \brief   Get the SingleSerieUIDFileSet according to its Serie UID
+ * @param SerieUID SerieUID to retrieve
+ * \return pointer to the FileList (SingleSerieUIDFileSet) if found, otherwhise 0
+ */
+FileList *SerieHelper::GetSingleSerieUIDFileSet(std::string SerieUID)
+{
+   if ( SingleSerieUIDFileSetHT.count(SerieUID) == 0 )
+      return 0;     
+   return SingleSerieUIDFileSetHT[SerieUID];
+}
+
+/**
+ * \brief   Splits a Single SerieUID Fileset according to the Orientations
+ * @param fileSet File Set to be splitted
+ * \return  std::map of 'Xcoherent' File sets
+ */
+
+XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
+{
+   XCoherentFileSetmap CoherentFileSet;
+
+   int nb = fileSet->size();
+   if (nb == 0 )
+      return CoherentFileSet;
+   float iop[6];
+   std::ostringstream ossOrient;
+   std::string strOrient;
+   
+   FileList::const_iterator it = fileSet->begin();
+   it ++;
+   for ( ;
+         it != fileSet->end();
+       ++it)
+   {     
+      // Information is in :      
+      // 0020 0037 : Image Orientation (Patient) or
+      // 0020 0035 : Image Orientation (RET)
+
+      // Let's build again the 'cosines' string, to be sure of it's format      
+      (*it)->GetImageOrientationPatient(iop);
+      ossOrient << iop[0];      
+      for (int i = 1; i < 6; i++)
+      {
+        ossOrient << "\\";
+        ossOrient << iop[i]; 
+      }      
+      strOrient = ossOrient.str();
+      
+      if ( CoherentFileSet.count(strOrient) == 0 )
+      {
+         gdcmDebugMacro(" New Orientation :[" << strOrient << "]");
+         // create a File set in 'orientation' position
+         CoherentFileSet[strOrient] = new FileList;
+      }
+      // Current Orientation and DICOM header match; add the file:
+      CoherentFileSet[strOrient]->push_back( (*it) );
+   }   
+   return CoherentFileSet;
+}
+
+/**
+ * \brief   Splits a Single SerieUID Fileset according to the Positions
+ * @param fileSet File Set to be splitted
+ * \return  std::map of 'Xcoherent' File sets
+ */
+
+XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
+{
+   XCoherentFileSetmap CoherentFileSet;
+
+   int nb = fileSet->size();
+   if (nb == 0 )
+      return CoherentFileSet;
+   float pos[3];
+   std::string strImPos;  // read on disc
+   std::ostringstream ossPosition;
+   std::string strPosition; // re computed
+   FileList::const_iterator it = fileSet->begin();
+   it ++;
+   for ( ;
+         it != fileSet->end();
+       ++it)
+   {     
+      // Information is in :      
+      // 0020,0032 : Image Position Patient
+      // 0020,0030 : Image Position (RET)
+
+      std::string strImPos = (*it)->GetEntryValue(0x0020,0x0032);
+      if ( strImPos == GDCM_UNFOUND)
+      {
+         gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
+         strImPos = (*it)->GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
+         if ( strImPos == GDCM_UNFOUND )
+         {
+            gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
+            // User wants to split on the 'Position'
+            // No 'Position' info found.
+            // We return an empty Htable !
+            return CoherentFileSet;
+         }  
+      }
+
+      if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", 
+                                              &pos[0], &pos[1], &pos[2]) != 3 )
+      {
+            gdcmWarningMacro( "Wrong number for Position : ["
+                       << strImPos << "]" );
+             return CoherentFileSet;
+      }
+
+      // Let's build again the 'position' string, to be sure of it's format      
+
+      ossPosition << pos[0];      
+      for (int i = 1; i < 3; i++)
+      {
+        ossPosition << "\\";
+        ossPosition << pos[i]; 
+      }      
+      strPosition = ossPosition.str();
+      
+      if ( CoherentFileSet.count(strPosition) == 0 )
+      {
+         gdcmDebugMacro(" New Position :[" << strPosition << "]");
+         // create a File set in 'position' position
+         CoherentFileSet[strPosition] = new FileList;
+      }
+      // Current Position and DICOM header match; add the file:
+      CoherentFileSet[strPosition]->push_back( (*it) );
+   }   
+   return CoherentFileSet;
+}
+
+/**
+ * \brief   Splits a SingleSerieUID File set Coherent according to the
+ *          value of a given Tag
+ * @param fileSet File Set to be splitted
+ * \return  std::map of 'Xcoherent' File sets
+ */
+
+XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet, 
+                                               uint16_t group, uint16_t element)
+{
+   XCoherentFileSetmap CoherentFileSet;
+
+   int nb = fileSet->size();
+   if (nb == 0 )
+      return CoherentFileSet;
+
+   std::string strTagValue;  // read on disc
+
+   FileList::const_iterator it = fileSet->begin();
+   it ++;
+   for ( ;
+         it != fileSet->end();
+       ++it)
+   {     
+      // Information is in :      
+      // 0020,0032 : Image Position Patient
+      // 0020,0030 : Image Position (RET)
+
+      std::string strTagValue = (*it)->GetEntryValue(group,element);
+      
+      if ( CoherentFileSet.count(strTagValue) == 0 )
+      {
+         gdcmDebugMacro(" New Tag Value :[" << strTagValue << "]");
+         // create a File set in 'position' position
+         CoherentFileSet[strTagValue] = new FileList;
+      }
+      // Current Tag value and DICOM header match; add the file:
+      CoherentFileSet[strTagValue]->push_back( (*it) );
+   }   
+   return CoherentFileSet;
 }
 
 //-----------------------------------------------------------------------------
@@ -420,8 +611,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       
          // You only have to do this once for all slices in the volume. Next, 
          // for each slice, calculate the distance along the slice normal 
-         // using the IPP tag ("dist" is initialized to zero before reading 
-         // the first slice) :
+         // using the IPP ("Image Position Patient") tag.
+         // ("dist" is initialized to zero before reading the first slice) :
          normal[0] = cosines[1]*cosines[5] - cosines[2]*cosines[4];
          normal[1] = cosines[2]*cosines[3] - cosines[0]*cosines[5];
          normal[2] = cosines[0]*cosines[4] - cosines[1]*cosines[3];
@@ -471,11 +662,11 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 
    // Find out if min/max are coherent
    if ( min == max )
-     {
-     gdcmWarningMacro( "Looks like all images have the exact same image position."
-                       << "No PositionPatientOrdering sort performed" );
+   {
+     gdcmWarningMacro("Looks like all images have the exact same image position"
+                      << ". No PositionPatientOrdering sort performed" );
      return false;
-     }
+   }
 
    float step = (max - min)/(n - 1);
    int pos;
@@ -497,7 +688,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          CoherentFileVector[pos] = *it2;
       else
       {
-         gdcmWarningMacro( "At least 2 files with same position. No PositionPatientOrdering sort performed");
+         gdcmWarningMacro( "At least 2 files with same position."
+                        << " No PositionPatientOrdering sort performed");
          return false;
       }
    }
@@ -539,6 +731,7 @@ bool SerieHelper::ImageNumberGreaterThan(File *file1, File *file2)
 {
   return file1->GetImageNumber() > file2->GetImageNumber();
 }
+
 /**
  * \brief sorts the images, according to their Image Number
  * \note Works only on bona fide files  (i.e image number is a character string
@@ -565,13 +758,16 @@ bool SerieHelper::ImageNumberOrdering(FileList *fileList)
    // Find out if image numbers are coherent (consecutive)
    if ( min == max || max == 0 || max >= (n+min) )
    {
-      gdcmWarningMacro( " 'Image numbers' not coherent. No ImageNumberOrdering sort performed.");
+      gdcmWarningMacro( " 'Image numbers' not coherent. "
+                        << " No ImageNumberOrdering sort performed.");
       return false;
    }
    if (DirectOrder) 
-      std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberLessThan );
+      std::sort(fileList->begin(), fileList->end(), 
+                                          SerieHelper::ImageNumberLessThan );
    else
-      std::sort(fileList->begin(), fileList->end(), SerieHelper::ImageNumberGreaterThan );
+      std::sort(fileList->begin(), fileList->end(),
+                                          SerieHelper::ImageNumberGreaterThan );
 
    return true;
 }
@@ -593,9 +789,11 @@ bool SerieHelper::FileNameGreaterThan(File *file1, File *file2)
 bool SerieHelper::FileNameOrdering(FileList *fileList)
 {
    if (DirectOrder) 
-      std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameLessThan);
+      std::sort(fileList->begin(), fileList->end(), 
+                                       SerieHelper::FileNameLessThan);
    else
-      std::sort(fileList->begin(), fileList->end(), SerieHelper::FileNameGreaterThan);
+      std::sort(fileList->begin(), fileList->end(), 
+                                       SerieHelper::FileNameGreaterThan);
 
    return true;
 }
@@ -607,7 +805,8 @@ bool SerieHelper::FileNameOrdering(FileList *fileList)
  */
 bool SerieHelper::UserOrdering(FileList *fileList)
 {
-   std::sort(fileList->begin(), fileList->end(), SerieHelper::UserLessThanFunction);
+   std::sort(fileList->begin(), fileList->end(), 
+                                    SerieHelper::UserLessThanFunction);
    if (!DirectOrder) 
    {
       std::reverse(fileList->begin(), fileList->end());
@@ -623,17 +822,17 @@ bool SerieHelper::UserOrdering(FileList *fileList)
 void SerieHelper::Print(std::ostream &os, std::string const &indent)
 {
    // For all the Coherent File lists of the gdcm::Serie
-   CoherentFileListmap::iterator itl = CoherentFileListHT.begin();
-   if ( itl == CoherentFileListHT.end() )
+   SingleSerieUIDFileSetmap::iterator itl = SingleSerieUIDFileSetHT.begin();
+   if ( itl == SingleSerieUIDFileSetHT.end() )
    {
-      gdcmWarningMacro( "No Coherent File list found" );
+      gdcmWarningMacro( "No SingleSerieUID File set found" );
       return;
    }
-   while (itl != CoherentFileListHT.end())
+   while (itl != SingleSerieUIDFileSetHT.end())
    { 
       os << "Serie UID :[" << itl->first << "]" << std::endl;
 
-      // For all the files of a Coherent File list
+      // For all the files of a SingleSerieUID File set
       for (FileList::iterator it =  (itl->second)->begin();
                                   it != (itl->second)->end(); 
                                 ++it)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 16:48:24 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/10/17 09:52:41 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,12 @@ namespace gdcm
 {
 class File;
 typedef std::vector<File* > FileList;
-
+   /// XCoherent stands for 'Extra Coherent', 
+   /// (The name 'Coherent' would be enough but it was used before;
+   /// I don't want to put a bomb in the code)
+   /// Any 'better name' is welcome !
+typedef std::map<std::string, FileList *> XCoherentFileSetmap;
+   
 typedef bool (*BOOL_FUNCTION_PFILE_PFILE_POINTER)(File *, File *);
 
 //-----------------------------------------------------------------------------
@@ -38,15 +43,24 @@ typedef bool (*BOOL_FUNCTION_PFILE_PFILE_POINTER)(File *, File *);
  * \brief  
  * - This class should be used for a stack of 2D dicom images.
  *   It allows to explore (recursively or not) a directory and 
- *   makes a set of 'Coherent Files' list (coherent : same Serie UID)
- *   It allows to sort any of the Coherent File list on the image position
+ *   makes a set of 'Coherent Files' lists (coherent : same SerieUID)
+ *   It allows :
+ *   - to sort any of the Coherent File list on the image position.
+ *   - to split any of the Single SerieUID Filesets (better use this name than
+ *   'Coherent File List' : it's NOT a std::list, files are NOT coherent ...)
+ *    into several XCoherent Filesets 
+ *   XCoherent stands for 'Extra Coherent' (same orientation, or same position)
  */
 class GDCM_EXPORT SerieHelper 
 {
 public:
-   typedef std::map<std::string, FileList *> CoherentFileListmap;
-   typedef std::vector<File* > FileVector;
+   // SingleSerieUIDFileSetmap replaces the former CoherentFileListmap
+   // ( List were actually std::vectors, and wher no coherent at all :
+   //   They were only Single SeriesInstanceUID File sets)
+   typedef std::map<std::string, FileList *> SingleSerieUIDFileSetmap;
 
+   typedef std::vector<File* > FileVector;
+   
    SerieHelper();
    ~SerieHelper();
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
@@ -56,25 +70,30 @@ public:
    void AddGdcmFile(File *header);
 
    void SetDirectory(std::string const &dir, bool recursive=false);
-   bool IsCoherent(FileList *coherentFileList);
-   void OrderFileList(FileList *coherentFileList);
+   bool IsCoherent(FileList *fileSet);
+   void OrderFileList(FileList *fileSet);
    
-   /// \brief Gets the FIRST *coherent* File List.
+   /// \brief Gets the FIRST Single SerieUID Fileset.
    ///        Deprecated; kept not to break the API
    /// \note Caller must call OrderFileList first
-   /// @return the (first) *coherent* File List
-   const FileList &GetFileList() { return *CoherentFileListHT.begin()->second; }
+   /// @return the (first) Single SerieUID Fileset
+   const FileList &GetFileList()
+                           { return *SingleSerieUIDFileSetHT.begin()->second; }
   
-   FileList *GetFirstCoherentFileList();
-   FileList *GetNextCoherentFileList();
-   FileList *GetCoherentFileList(std::string serieUID);
+   GDCM_LEGACY(   FileList *GetFirstCoherentFileList()  );
+   GDCM_LEGACY(   FileList *GetNextCoherentFileList()   );
+   GDCM_LEGACY(   FileList *GetCoherentFileList(std::string serieUID)  );
+
+   FileList *GetFirstSingleSerieUIDFileSet();
+   FileList *GetNextSingleSerieUIDFileSet();
+   FileList *GetSingleSerieUIDFileSet(std::string serieUID);
 
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
    GDCM_LEGACY( void AddRestriction(TagKey const &key, std::string const &value) );
    void AddRestriction(uint16_t group, uint16_t elem, 
                        std::string const &value, int op);
-  
+ 
 /**
  * \brief Sets the LoadMode as a boolean string. 
  *        LD_NOSEQ, LD_NOSHADOW, LD_NOSHADOWSEQ
@@ -94,12 +113,18 @@ public:
 
    /// to allow user to give is own comparison function
    void SetUserLessThanFunction( BOOL_FUNCTION_PFILE_PFILE_POINTER userFunc ) 
-                        { UserLessThanFunction = userFunc; }   
+                        { UserLessThanFunction = userFunc; }  
+
+   XCoherentFileSetmap SplitOnOrientation(FileList *fileSet); 
+   XCoherentFileSetmap SplitOnPosition(FileList *fileSet); 
+   XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
+                                                 uint16_t group, uint16_t element);
 private:
-   bool UserOrdering(FileList *coherentFileList);
-   bool ImagePositionPatientOrdering(FileList *coherentFileList);
-   bool ImageNumberOrdering(FileList *coherentFileList);
-   bool FileNameOrdering(FileList *coherentFileList);
+   void ClearAll();
+   bool UserOrdering(FileList *fileSet);
+   bool ImagePositionPatientOrdering(FileList *fileSet);
+   bool ImageNumberOrdering(FileList *fileSet);
+   bool FileNameOrdering(FileList *fileSet);
    
    static bool ImageNumberLessThan(File *file1, File *file2);
    static bool ImageNumberGreaterThan(File *file1, File *file2);
@@ -107,9 +132,10 @@ private:
    static bool FileNameGreaterThan(File *file1, File *file2);
 
 //Attributes:
-   CoherentFileListmap CoherentFileListHT;
-   CoherentFileListmap::iterator ItListHt;
-
+   
+   SingleSerieUIDFileSetmap SingleSerieUIDFileSetHT;
+   SingleSerieUIDFileSetmap::iterator ItFileSetHt;
+   
    typedef std::pair<TagKey, std::string> Rule;
    typedef std::vector<Rule> SerieRestrictions;
    SerieRestrictions Restrictions;
