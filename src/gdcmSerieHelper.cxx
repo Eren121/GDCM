@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 15:05:44 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/10/17 15:45:38 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -486,7 +486,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
       // 0020,0032 : Image Position Patient
       // 0020,0030 : Image Position (RET)
 
-      std::string strImPos = (*it)->GetEntryValue(0x0020,0x0032);
+      strImPos = (*it)->GetEntryValue(0x0020,0x0032);
       if ( strImPos == GDCM_UNFOUND)
       {
          gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
@@ -559,7 +559,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       // 0020,0032 : Image Position Patient
       // 0020,0030 : Image Position (RET)
 
-      std::string strTagValue = (*it)->GetEntryValue(group,element);
+      strTagValue = (*it)->GetEntryValue(group,element);
       
       if ( CoherentFileSet.count(strTagValue) == 0 )
       {
