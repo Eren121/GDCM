@@ -215,6 +215,7 @@ typedef unsigned long long uint64_t;
 %ignore GDCM_UNREAD;
 %ignore GDCM_NOTASCII;
 %ignore GDCM_PIXELDATA;
+%ignore GDCM_LEGACY;
 
 %constant const char *UNKNOWN       = "gdcm::Unknown";
 %constant const char *UNFOUND       = "gdcm::Unfound";
