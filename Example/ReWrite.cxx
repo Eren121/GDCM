@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:05 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/10/17 10:29:32 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -196,6 +196,33 @@ int main(int argc, char *argv[])
       std::cout << "WriteRaw" << std::endl;
       fh->WriteRawData(outputFileName);
       break;
+ 
+ // Just for fun :
+ // Write a 'Videon inverse' version of the file/
+ // *Not* described, on purpose,  in the USAGE  
+   
+  case 'V' :
+  case 'v' :
+
+     if ( fh->GetFile()->GetBitsAllocated() == 8)
+     {
+        std::cout << "videoinv for 8 bits" << std::endl;
+        for (int i=0; i<dataSize; i++) 
+        {
+           ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
+        }
+     }
+     else
+     {
+        std::cout << "videoinv for 16 bits" << std::endl;    
+        for (int i=0; i<dataSize/2; i++) 
+        {
+           ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
+        }
+     }
+     std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
+     fh->WriteDcmExplVR(outputFileName);
+     break;      
 
    }
    delete f;
