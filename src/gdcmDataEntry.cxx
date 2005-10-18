@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 10:19:27 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/18 18:42:51 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -327,7 +327,7 @@ std::string const &DataEntry::GetString() const
    {
       uint16_t *data=(uint16_t *)BinArea;
 
-      for (int i=0; i < GetValueCount(); i++)
+      for (unsigned int i=0; i < GetValueCount(); i++)
       {
          if( i!=0 )
             s << '\\';
@@ -340,7 +340,7 @@ std::string const &DataEntry::GetString() const
    {
       uint32_t *data=(uint32_t *)BinArea;
 
-      for (int i=0; i < GetValueCount(); i++)
+      for (unsigned int i=0; i < GetValueCount(); i++)
       {
          if( i!=0 )
             s << '\\';
@@ -352,7 +352,7 @@ std::string const &DataEntry::GetString() const
    {
       float *data=(float *)BinArea;
 
-      for (int i=0; i < GetValueCount(); i++)
+      for (unsigned int i=0; i < GetValueCount(); i++)
       {
          if( i!=0 )
             s << '\\';
@@ -364,7 +364,7 @@ std::string const &DataEntry::GetString() const
    {
       double *data=(double *)BinArea;
 
-      for (int i=0; i < GetValueCount(); i++)
+      for (unsigned int i=0; i < GetValueCount(); i++)
       {
          if( i!=0 )
             s << '\\';
