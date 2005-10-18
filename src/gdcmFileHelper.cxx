@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/18 18:39:49 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/10/18 19:54:27 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -709,6 +709,7 @@ bool FileHelper::Write(std::string const &fileName)
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
       case JPEG:
+         SetWriteFileTypeToJPEG();
          std::cerr << "Writting as JPEG" << std::endl;
          break;
    }
@@ -1015,6 +1016,17 @@ void FileHelper::SetWriteFileTypeToACR()
 /**
  * \brief Sets in the File the TransferSyntax to 'Explicit VR Little Endian"   
  */ 
+void FileHelper::SetWriteFileTypeToJPEG()
+{
+   std::string ts = Util::DicomString( 
+      Global::GetTS()->GetSpecialTransferSyntax(TS::JPEGBaselineProcess1) );
+
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010);
+   tss->SetString(ts);
+
+   Archive->Push(tss);
+}
+
 void FileHelper::SetWriteFileTypeToExplicitVR()
 {
    std::string ts = Util::DicomString( 

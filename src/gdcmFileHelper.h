@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 18:39:49 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/10/18 19:54:27 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,6 +155,7 @@ protected:
    void RestoreWrite();
 
    void SetWriteFileTypeToACR();
+   void SetWriteFileTypeToJPEG();
    void SetWriteFileTypeToExplicitVR();
    void SetWriteFileTypeToImplicitVR();
    void RestoreWriteFileType();

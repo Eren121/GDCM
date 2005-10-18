@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.277 $
+  Date:      $Date: 2005/10/18 19:54:26 $
+  Version:   $Revision: 1.278 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1761,14 +1761,18 @@ bool File::Write(std::string fileName, FileType writetype)
       e0000->SetString(sLen.str());
    }
 
-   int i_lgPix = GetEntryLength(GrPixel, NumPixel);
-   if (i_lgPix != -2)
-   {
-      // no (GrPixel, NumPixel) element
-      std::string s_lgPix = Util::Format("%d", i_lgPix+12);
-      s_lgPix = Util::DicomString( s_lgPix.c_str() );
-      InsertEntryString(s_lgPix,GrPixel, 0x0000);
-   }
+   // Derma?.dcm does not have it...let's remove it  FIXME FIXME
+   if( writetype != JPEG )
+     {
+     int i_lgPix = GetEntryLength(GrPixel, NumPixel);
+     if (i_lgPix != -2)
+       {
+       // no (GrPixel, NumPixel) element
+       std::string s_lgPix = Util::Format("%d", i_lgPix+12);
+       s_lgPix = Util::DicomString( s_lgPix.c_str() );
+       InsertEntryString(s_lgPix,GrPixel, 0x0000);
+       }
+     }
 
    Document::WriteContent(fp, writetype);
 

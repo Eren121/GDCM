@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/10/18 19:54:26 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write( *fp, el);    //element number
 
    // Dicom V3 group 0x0002 is *always* Explicit VR !
-   if ( filetype == ExplicitVR || group == 0x0002 )
+   if ( filetype == ExplicitVR || filetype == JPEG || group == 0x0002 )
    {
       // Special case of delimiters:
       if (group == 0xfffe)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 19:06:28 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/18 19:54:25 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -210,12 +210,6 @@ int main(int argc, char *argv[])
    }
    std::streambuf* sb = of->rdbuf();
    (void)sb;
-   //of->close();
-   std::ofstream out("/tmp/jpeg2.jpg");
-   //out.write( of->str(), of
-   out << of->str(); //faster than going through str()
-   //out.rdbuf( *sb );
-   out.close();
 
 
 
@@ -265,10 +259,6 @@ int main(int argc, char *argv[])
    str << samplesPerPixel; //img.components;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
-   str.str("");
-   str << "1.2.840.10008.1.2.4.50";
-   fileToBuild->InsertEntryString(str.str(),0x0002,0x0010); // Transfer Syntax UID
-
 // Step 2 : Create the output image
 //   std::cout << "2...";
 //   if( img.componentSize%8 > 0 )
@@ -278,14 +268,16 @@ int main(int argc, char *argv[])
    size_t size = xsize * ysize * 1 /*Z*/ 
                * samplesPerPixel /* * img.componentSize / 8*/;
 
-   //uint8_t *imageData = new uint8_t[size];
+   uint8_t *imageData = new uint8_t[size];
    gdcm::FileHelper *fileH = new gdcm::FileHelper(fileToBuild);
    //fileH->SetImageData(imageData,size);
    assert( size == testedDataSize );
    size = of->str().size();
    //size = sb->in_avail();
    std::cerr << "Size JPEG:" << size << std::endl;
-   fileH->SetImageData((uint8_t*)of->str().c_str(), size);
+   //fileH->SetImageData((uint8_t*)of->str().c_str(), size);
+   memcpy(imageData, of->str().c_str(), size);
+   fileH->SetImageData(imageData, size);
    //str::string *s = of->str();
    //fileH->SetWriteTypeToDcmExplVR();
    fileH->SetWriteTypeToJPEG(  );
@@ -294,6 +286,15 @@ int main(int argc, char *argv[])
      {
      std::cerr << "Badddd" << std::endl;
      }
+   //of->close();
+   std::ofstream out("/tmp/jpeg2.jpg");
+   //out.write( of->str(), of
+   //out << of->str(); //rdbuf is faster than going through str()
+   out.write( (char*)imageData, size);
+   std::cerr << "JPEG marker is: " << imageData[6] << imageData[7] << 
+     imageData[8] << imageData[9] << std::endl;
+   //out.rdbuf( *sb );
+   out.close();
 
    delete of;
    delete f;

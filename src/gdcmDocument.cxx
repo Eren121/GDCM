@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 14:37:18 $
-  Version:   $Revision: 1.295 $
+  Date:      $Date: 2005/10/18 19:54:26 $
+  Version:   $Revision: 1.296 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -604,7 +604,8 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
 {
    // Skip if user wants to write an ACR-NEMA file
 
-   if ( filetype == ImplicitVR || filetype == ExplicitVR )
+   if ( filetype == ImplicitVR || filetype == ExplicitVR ||
+     filetype == JPEG )
    {
       // writing Dicom File Preamble
       char filePreamble[128];
