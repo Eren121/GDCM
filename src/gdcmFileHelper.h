@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/10/18 18:39:49 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,8 +21,6 @@
 
 #include "gdcmDebug.h"
 #include "gdcmBase.h"
-//#include <iostream>
-
 
 
 namespace gdcm 
@@ -132,6 +130,7 @@ public:
    void SetWriteTypeToAcr()           { SetWriteType(ACR);        }
    /// \brief Tells the writer we want to write as LibIDO
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); }
+   void SetWriteTypeToJPEG()     { SetWriteType(JPEG); }
    /// \brief Tells the writer which format we want to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    void SetWriteType(FileType format) { WriteType = format;       }

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/10/18 18:39:49 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -708,6 +708,9 @@ bool FileHelper::Write(std::string const &fileName)
          SetWriteFileTypeToACR();
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
+      case JPEG:
+         std::cerr << "Writting as JPEG" << std::endl;
+         break;
    }
    CheckMandatoryElements();
 
@@ -741,6 +744,7 @@ bool FileHelper::Write(std::string const &fileName)
    }
 
    bool check = CheckWriteIntegrity(); // verifies length
+   if (WriteType == JPEG ) check = true;
    if (check)
    {
       check = FileInternal->Write(fileName,WriteType);

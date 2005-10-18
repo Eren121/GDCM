@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:27 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2005/10/18 18:39:49 $
+  Version:   $Revision: 1.96 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,7 +117,8 @@ enum FileType {
    ExplicitVR, // DicomDir is in this case. Except when it's ImplicitVR !...
    ImplicitVR,
    ACR,
-   ACR_LIBIDO
+   ACR_LIBIDO,
+   JPEG
 };
 
 /// \brief type of the elements composing a DICOMDIR (for internal use only)
