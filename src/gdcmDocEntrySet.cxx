@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 15:28:49 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,9 +23,9 @@
 #include "gdcmGlobal.h"
 #include "gdcmDocEntry.h"
 #include "gdcmSeqEntry.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 #include "gdcmUtil.h"
+#include "gdcmDataEntry.h"
+#include "gdcmVR.h"
 
 namespace gdcm 
 {
@@ -44,11 +44,19 @@ DocEntrySet::DocEntrySet()
  * @return  Corresponding element value when it exists,
  *          and the string GDCM_UNFOUND otherwise.
  */
-std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
+std::string DocEntrySet::GetEntryString(uint16_t group, uint16_t elem)
 {
-   ContentEntry *entry = dynamic_cast<ContentEntry *>(GetDocEntry(group,elem));
+   DataEntry *entry = dynamic_cast<DataEntry *>(GetDocEntry(group,elem));
    if ( entry )
-      return entry->GetValue();
+   {
+      if( entry->IsNotLoaded() )
+         return GDCM_NOTLOADED;
+      if( entry->IsUnfound() )
+         return GDCM_UNFOUND;
+      if( entry->IsUnread() )
+         return GDCM_UNREAD;
+      return entry->GetString();
+   }
    return GDCM_UNFOUND;
 }
 
@@ -60,14 +68,14 @@ std::string DocEntrySet::GetEntryValue(uint16_t group, uint16_t elem)
  */
 void *DocEntrySet::GetEntryBinArea(uint16_t group, uint16_t elem) 
 {
-   BinEntry *entry = GetBinEntry(group, elem);
+   DataEntry *entry = GetDataEntry(group, elem);
    if ( entry )
       return entry->GetBinArea();
    return 0;
 }
 
 /**
- * \brief   Return the value of the BinEntry if it's "std::string representable"
+ * \brief   Return the value of the DataEntry if it's "std::string representable"
  * @param   group  Group number of the searched tag.
  * @param   elem Element number of the searched tag.
  * @return  Corresponding element value when it's "std::string representable"
@@ -79,17 +87,24 @@ std::string DocEntrySet::GetEntryForcedAsciiValue(uint16_t group, uint16_t elem)
    if ( !d )
       return GDCM_UNFOUND;
 
-   if (ValEntry *v = dynamic_cast<ValEntry *>(d))
-      return v->GetValue();
-
-   if (BinEntry *b = dynamic_cast<BinEntry *>(d))
+   DataEntry *de = dynamic_cast<DataEntry *>(d);
+   if ( de )
    {
-      uint8_t *a = b->GetBinArea();
-      if (!b)
+      if( de->IsNotLoaded() )
          return GDCM_NOTLOADED;
-         // TODO : unify those two methods.
-      if (Util::IsCleanArea(a, b->GetLength()) )
-         return  Util::CreateCleanString(a, b->GetLength());
+      if( de->IsUnfound() )
+         return GDCM_UNFOUND;
+      if( de->IsUnread() )
+         return GDCM_UNREAD;
+   }
+
+   if( Global::GetVR()->IsVROfStringRepresentable( de->GetVR() ) )
+      return de->GetString();
+   else
+   {
+      uint8_t *a = de->GetBinArea();
+      if( Util::IsCleanArea(a, de->GetLength()) )
+         return  Util::CreateCleanString(a, de->GetLength());
    }
    return GDCM_NOTASCII;
 }
@@ -134,39 +149,18 @@ std::string DocEntrySet::GetEntryVR(uint16_t group, uint16_t elem)
 /**
  * \brief  Same as \ref Document::GetDocEntry except it only
  *         returns a result when the corresponding entry is of type
- *         ValEntry.
+ *         DataEntry.
  * @param   group  Group number of the searched Dicom Element 
  * @param   elem Element number of the searched Dicom Element  
- * @return When present, the corresponding ValEntry. 
+ * @return When present, the corresponding DataEntry. 
  */
-ValEntry *DocEntrySet::GetValEntry(uint16_t group, uint16_t elem)
+DataEntry *DocEntrySet::GetDataEntry(uint16_t group, uint16_t elem)
 {
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
       return NULL;
 
-   return dynamic_cast<ValEntry*>(currentEntry);
-}
-
-/**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         BinEntry.
- * @param   group  Group number of the searched Dicom Element
- * @param   elem Element number of the searched Dicom Element
- * @return When present, the corresponding BinEntry. 
- */
-BinEntry *DocEntrySet::GetBinEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *currentEntry = GetDocEntry(group, elem);
-   if ( !currentEntry )
-   {
-      gdcmWarningMacro( "No corresponding BinEntry " << std::hex << group <<
-                         "," << elem);
-      return NULL;
-   }
-
-   return dynamic_cast<BinEntry*>(currentEntry);
+   return dynamic_cast<DataEntry*>(currentEntry);
 }
 
 /**
@@ -198,17 +192,17 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool DocEntrySet::SetValEntry(std::string const &content, 
-                              uint16_t group, uint16_t elem) 
+bool DocEntrySet::SetEntryString(std::string const &content, 
+                                 uint16_t group, uint16_t elem) 
 {
-   ValEntry *entry = GetValEntry(group, elem);
+   DataEntry *entry = GetDataEntry(group, elem);
    if (!entry )
    {
-      gdcmWarningMacro( "No corresponding ValEntry " << std::hex << group <<
+      gdcmWarningMacro( "No corresponding DataEntry " << std::hex << group <<
                          "," << elem << " element (try promotion first).");
       return false;
    }
-   return SetValEntry(content,entry);
+   return SetEntryString(content,entry);
 }
 
 /**
@@ -220,18 +214,18 @@ bool DocEntrySet::SetValEntry(std::string const &content,
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
  */
-bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth, 
-                              uint16_t group, uint16_t elem) 
+bool DocEntrySet::SetEntryBinArea(uint8_t *content, int lgth, 
+                                  uint16_t group, uint16_t elem) 
 {
-   BinEntry *entry = GetBinEntry(group, elem);
+   DataEntry *entry = GetDataEntry(group, elem);
    if (!entry )
    {
-      gdcmWarningMacro( "No corresponding ValEntry " << std::hex << group <<
+      gdcmWarningMacro( "No corresponding DataEntry " << std::hex << group <<
                         "," << elem << " element (try promotion first).");
       return false;
    }
 
-   return SetBinEntry(content,lgth,entry);
+   return SetEntryBinArea(content,lgth,entry);
 } 
 
 /**
@@ -240,30 +234,29 @@ bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth,
  * @param  content new value (string) to substitute with
  * @param  entry Entry to be modified
  */
-bool DocEntrySet::SetValEntry(std::string const &content, ValEntry *entry)
+bool DocEntrySet::SetEntryString(std::string const &content, DataEntry *entry)
 {
    if (entry)
    {
-      entry->SetValue(content);
+      entry->SetString(content);
       return true;
    }
    return false;
 }
 
 /**
- * \brief   Accesses an existing BinEntry (i.e. a Dicom Element)
+ * \brief   Accesses an existing DataEntry (i.e. a Dicom Element)
  *          and modifies it's content with the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param  entry Entry to be modified 
  * @param  lgth new value length
  */
-bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth, BinEntry *entry)
+bool DocEntrySet::SetEntryBinArea(uint8_t *content, int lgth, DataEntry *entry)
 {
    if (entry)
    {
-      entry->SetBinArea(content);  
       entry->SetLength(lgth);
-      entry->SetValue(GDCM_BINLOADED);
+      entry->SetBinArea(content);  
       return true;
    }
    return false;
@@ -279,51 +272,50 @@ bool DocEntrySet::SetBinEntry(uint8_t *content, int lgth, BinEntry *entry)
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */ 
-ValEntry *DocEntrySet::InsertValEntry(std::string const &value, 
-                                      uint16_t group, uint16_t elem,
-                                      TagName const &vr )
+DataEntry *DocEntrySet::InsertEntryString(std::string const &value, 
+                                             uint16_t group, uint16_t elem,
+                                             TagName const &vr )
 {
-   ValEntry *valEntry = 0;
+   DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
    
    if (currentEntry)
    {
-      valEntry = dynamic_cast<ValEntry *>(currentEntry);
+      dataEntry = dynamic_cast<DataEntry *>(currentEntry);
 
       // Verify the VR
-      if ( valEntry )
-         if ( valEntry->GetVR()!=vr )
-            valEntry = NULL;
+      if ( dataEntry )
+         if ( dataEntry->GetVR()!=vr )
+            dataEntry = NULL;
 
-      // if currentEntry doesn't correspond to the requested valEntry
-      if ( !valEntry)
+      // if currentEntry doesn't correspond to the requested dataEntry
+      if ( !dataEntry)
       {
          if ( !RemoveEntry(currentEntry) )
          {
             gdcmWarningMacro( "Removal of previous DocEntry failed.");
-
             return NULL;
          }
       }
    }
 
-   // Create a new valEntry if necessary
-   if ( !valEntry )
+   // Create a new dataEntry if necessary
+   if ( !dataEntry )
    {
-      valEntry = NewValEntry( group, elem, vr );
+      dataEntry = NewDataEntry( group, elem, vr );
 
-      if ( !AddEntry(valEntry) )
+      if ( !AddEntry(dataEntry) )
       {
          gdcmWarningMacro("AddEntry failed although this is a creation.");
 
-         delete valEntry;
+         delete dataEntry;
          return NULL;
       }
    }
 
-   // Set the binEntry value
-   SetValEntry(value, valEntry); // The std::string value
-   return valEntry;
+   // Set the dataEntry value
+   SetEntryString(value, dataEntry); // The std::string value
+   return dataEntry;
 }
 
 /**
@@ -338,50 +330,49 @@ ValEntry *DocEntrySet::InsertValEntry(std::string const &value,
  * \return  pointer to the modified/created Header Entry (NULL when creation
  *          failed).
  */
-BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth, 
-                                      uint16_t group, uint16_t elem,
-                                      TagName const &vr )
+DataEntry *DocEntrySet::InsertEntryBinArea(uint8_t *binArea, int lgth, 
+                                              uint16_t group, uint16_t elem,
+                                              TagName const &vr )
 {
-   BinEntry *binEntry = 0;
+   DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
 
    // Verify the currentEntry
    if (currentEntry)
    {
-      binEntry = dynamic_cast<BinEntry *>(currentEntry);
+      dataEntry = dynamic_cast<DataEntry *>(currentEntry);
 
       // Verify the VR
-      if ( binEntry )
-         if ( binEntry->GetVR()!=vr )
-            binEntry = NULL;
+      if ( dataEntry )
+         if ( dataEntry->GetVR()!=vr )
+            dataEntry = NULL;
 
-      // if currentEntry doesn't correspond to the requested valEntry
-      if ( !binEntry)
+      // if currentEntry doesn't correspond to the requested dataEntry
+      if ( !dataEntry)
       {
          if ( !RemoveEntry(currentEntry) )
          {
             gdcmWarningMacro( "Removal of previous DocEntry failed.");
-
             return NULL;
          }
       }
    }
 
-   // Create a new binEntry if necessary
-   if ( !binEntry)
+   // Create a new dataEntry if necessary
+   if ( !dataEntry)
    {
-      binEntry = NewBinEntry(group, elem, vr);
+      dataEntry = NewDataEntry(group, elem, vr);
 
-      if ( !AddEntry(binEntry) )
+      if ( !AddEntry(dataEntry) )
       {
          gdcmWarningMacro( "AddEntry failed although this is a creation.");
 
-         delete binEntry;
+         delete dataEntry;
          return NULL;
       }
    }
 
-   // Set the binEntry value
+   // Set the dataEntry value
    uint8_t *tmpArea;
    if ( lgth>0 && binArea )
    {
@@ -392,7 +383,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
    {
       tmpArea = 0;
    }
-   if ( !SetBinEntry(tmpArea,lgth,binEntry) )
+   if ( !SetEntryBinArea(tmpArea,lgth,dataEntry) )
    {
       if ( tmpArea )
       {
@@ -400,7 +391,7 @@ BinEntry *DocEntrySet::InsertBinEntry(uint8_t *binArea, int lgth,
       }
    }
 
-   return binEntry;
+   return dataEntry;
 }  
 
 /**
@@ -474,40 +465,16 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
  * @param   elem  Element number of the new Entry
  * @param   vr    V(alue) R(epresentation) of the new Entry 
  */
-ValEntry *DocEntrySet::NewValEntry(uint16_t group,uint16_t elem,
+DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
                                    TagName const &vr) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, vr);
    gdcmAssertMacro(dictEntry);
 
-   ValEntry *newEntry = new ValEntry(dictEntry);
+   DataEntry *newEntry = new DataEntry(dictEntry);
    if (!newEntry) 
    {
-      gdcmWarningMacro( "Failed to allocate ValEntry");
-      return 0;
-   }
-   return newEntry;
-}
-
-
-/**
- * \brief   Build a new Bin Entry from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
- * @param   group Group   number of the new Entry
- * @param   elem  Element number of the new Entry
- * @param   vr    V(alue) R(epresentation) of the new Entry 
- */
-BinEntry *DocEntrySet::NewBinEntry(uint16_t group, uint16_t elem,
-                                   TagName const &vr) 
-{
-   DictEntry *dictEntry = GetDictEntry(group, elem, vr);
-   gdcmAssertMacro(dictEntry);
-
-   BinEntry *newEntry = new BinEntry(dictEntry);
-   if (!newEntry) 
-   {
-      gdcmWarningMacro( "Failed to allocate BinEntry");
+      gdcmWarningMacro( "Failed to allocate DataEntry");
       return 0;
    }
    return newEntry;

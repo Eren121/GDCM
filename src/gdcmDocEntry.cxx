@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/21 09:44:59 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ DocEntry::DocEntry(DictEntry *in)
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   Writes the common part of any ValEntry, BinEntry, SeqEntry
+ * \brief   Writes the common part of any DataEntry, SeqEntry
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
@@ -223,7 +223,7 @@ void DocEntry::Copy(DocEntry *doc)
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
+ * \brief   Prints the common part of DataEntry, SeqEntry
  * @param   os ostream we want to print in
  * @param indent Indentation string to be prepended during printing
  */

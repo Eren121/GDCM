@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,8 +28,6 @@
 namespace gdcm 
 {
 class File;
-class ValEntry;
-class BinEntry;
 class SeqEntry;
 
 //-----------------------------------------------------------------------------
@@ -52,10 +50,10 @@ public:
    DictEntry * GetDictEntry() { return DicomDict; } 
 
    /// Returns the Dicom Group number of the current Dicom entry
-   uint16_t      GetGroup()     { return DicomDict->GetGroup();  }
+   const uint16_t &GetGroup() const   { return DicomDict->GetGroup();  }
 
    /// Returns the Dicom Element number of the current Dicom entry
-   uint16_t      GetElement()   { return DicomDict->GetElement();}
+   const uint16_t &GetElement() const { return DicomDict->GetElement();}
 
    /// Set the 'key' of the current Dicom entry
    void  SetKey( TagKey const &key ) { Key = key; }
@@ -83,7 +81,7 @@ public:
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom entry
    /// \warning offset of the *value*, not of the Dicom entry
-   size_t GetOffset() { return Offset; }
+   const size_t &GetOffset() const { return Offset; }
 
    /// \brief Sets only 'Read Length' (*not* 'Usable Length') of the current
    /// Dicom entry
@@ -92,15 +90,15 @@ public:
    /// \warning this value is the one stored in the Dicom header but not
    ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
    ///          the usable length is set to zero)
-   uint32_t GetReadLength() { return ReadLength; }
+   const uint32_t &GetReadLength() const { return ReadLength; }
 
    /// \brief Sets both 'Read Length' and 'Usable Length' of the current
    /// Dicom entry
-   void SetLength(uint32_t l) { Length = l; }
+   virtual void SetLength(uint32_t l) { Length = l; }
    /// \brief Returns the actual value length of the current Dicom entry
    /// \warning this value is not *always* the one stored in the Dicom header
    ///          in case of well knowned bugs
-   uint32_t GetLength() { return Length; }
+   const uint32_t &GetLength() const { return Length; }
 
    uint32_t GetFullLength();
 
@@ -115,15 +113,15 @@ public:
  
    /// \brief Tells us if the current Dicom entry was checked as ImplicitVr
    /// @return true if the current Dicom entry was checked as ImplicitVr
-   bool IsImplicitVR() { return ImplicitVR; }
+   bool IsImplicitVR() const { return ImplicitVR; }
 
    /// \brief Tells us if the VR of the current Dicom entry is Unknown
    /// @return true if the VR is unknown
-   bool IsVRUnknown() { return DicomDict->IsVRUnknown(); }
+   bool IsVRUnknown() const { return DicomDict->IsVRUnknown(); }
 
    /// \brief Tells us if the VM of the current Dicom entry is Unknown
    /// @return true if the VM is unknown
-   bool IsVMUnknown() { return DicomDict->IsVMUnknown(); }
+   bool IsVMUnknown() const { return DicomDict->IsVMUnknown(); }
 
    bool IsItemDelimitor();
    bool IsItemStarter();

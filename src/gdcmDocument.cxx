@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 14:55:01 $
-  Version:   $Revision: 1.288 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.289 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,6 @@
 =========================================================================*/
 
 #include "gdcmDocument.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
@@ -27,6 +25,7 @@
 #include "gdcmDictSet.h"
 #include "gdcmDocEntrySet.h"
 #include "gdcmSQItem.h"
+#include "gdcmDataEntry.h"
 
 #include <vector>
 #include <iomanip>
@@ -137,21 +136,6 @@ bool Document::DoTheLoadingDocumentJob(  )
    if ( ! IsDocumentModified ) // Nothing to do !
       return true;
 
- //     if ( Filename == fileName )
- //     {
- //        gdcmWarningMacro( "The file was already parsed inside this "
- //                       << "gdcm::Document (its name is: "
- //                       << Filename.c_str() );
- //        return true;
- //     }
-  
-   //gdcmWarningMacro( "A file was already parsed inside this "
-   //                  << "gdcm::Document (previous name was: "
-   //                  << Filename.c_str() << ". New name is :"
-   //                  << fileName );
-     // clean out the Entries, if already parsed
-     // (probabely a mistake from the user)
- 
    ClearEntry();
 
    Fp = 0;
@@ -204,7 +188,7 @@ bool Document::DoTheLoadingDocumentJob(  )
    
    // Load 'non string' values
       
-   std::string PhotometricInterpretation = GetEntryValue(0x0028,0x0004);   
+   std::string PhotometricInterpretation = GetEntryString(0x0028,0x0004);   
    if ( PhotometricInterpretation == "PALETTE COLOR " )
    {
    // FIXME
@@ -217,16 +201,16 @@ bool Document::DoTheLoadingDocumentJob(  )
       /// defined as having an US Value Representation in the public
       /// dictionary. BUT the semantics implied by the three following
       /// lines state that the corresponding tag contents are in fact
-      /// the ones of a BinEntry.
+      /// the ones of a DataEntry.
       /// In order to fix things "Quick and Dirty" the dictionary was
       /// altered on PURPOSE but now contains a WRONG value.
       /// In order to fix things and restore the dictionary to its
       /// correct value, one needs to decided of the semantics by deciding
       /// whether the following tags are either :
-      /// - multivaluated US, and hence loaded as ValEntry, but afterwards
-      ///   also used as BinEntry, which requires the proper conversion,
-      /// - OW, and hence loaded as BinEntry, but afterwards also used
-      ///   as ValEntry, which requires the proper conversion.
+      /// - multivaluated US, and hence loaded as DataEntry, but afterwards
+      ///   also used as DataEntry, which requires the proper conversion,
+      /// - OW, and hence loaded as DataEntry, but afterwards also used
+      ///   as DataEntry, which requires the proper conversion.
       LoadEntryBinArea(0x0028,0x1201);  // R    LUT
       LoadEntryBinArea(0x0028,0x1202);  // G    LUT
       LoadEntryBinArea(0x0028,0x1203);  // B    LUT
@@ -246,12 +230,12 @@ bool Document::DoTheLoadingDocumentJob(  )
       SQItem *sqi= modLutSeq->GetFirstSQItem();
       if ( sqi != 0 )
       {
-         BinEntry *b = sqi->GetBinEntry(0x0028,0x3006);
-         if ( b != 0 )
+         DataEntry *dataEntry = sqi->GetDataEntry(0x0028,0x3006);
+         if ( dataEntry != 0 )
          {
-            if ( b->GetLength() != 0 )
+            if ( dataEntry->GetLength() != 0 )
             {
-               LoadEntryBinArea(b);    //LUT Data (CTX dependent)
+               LoadEntryBinArea(dataEntry);    //LUT Data (CTX dependent)
             }   
         }
      }      
@@ -277,26 +261,7 @@ bool Document::DoTheLoadingDocumentJob(  )
          continue;
       }
 
-      if ( dynamic_cast<ValEntry *>(d) )
-      {
-         LoadDocEntry(d, true);
-         continue;
-      }
-
-      BinEntry *b = dynamic_cast<BinEntry *>(d);
-      if ( b )
-      {
-         LoadEntryBinArea(b);
-         b->SetValue(GDCM_BINLOADED);
-         continue;
-      }
- 
-      if ( dynamic_cast<SeqEntry *>(d) )
-      {
-         gdcmWarningMacro( "You cannot 'ForceLoad' a SeqEntry :" << std::hex
-                           << (*it).Group <<"|"<< (*it).Elem );
-         continue;
-      }
+      LoadDocEntry(d, true);
    }
 
    CloseFile(); 
@@ -312,16 +277,16 @@ bool Document::DoTheLoadingDocumentJob(  )
    // we switch lineNumber and columnNumber
    //
    std::string RecCode;
-   RecCode = GetEntryValue(0x0008, 0x0010); // recognition code (RET)
+   RecCode = GetEntryString(0x0008, 0x0010); // recognition code (RET)
    if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
        RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
                                           // with "little-endian strings"
    {
          Filetype = ACR_LIBIDO; 
-         std::string rows    = GetEntryValue(0x0028, 0x0010);
-         std::string columns = GetEntryValue(0x0028, 0x0011);
-         SetValEntry(columns, 0x0028, 0x0010);
-         SetValEntry(rows   , 0x0028, 0x0011);
+         std::string rows    = GetEntryString(0x0028, 0x0010);
+         std::string columns = GetEntryString(0x0028, 0x0011);
+         SetEntryString(columns, 0x0028, 0x0010);
+         SetEntryString(rows   , 0x0028, 0x0011);
    }
    // --- End of ACR-LibIDO kludge --- 
    return true;
@@ -457,9 +422,9 @@ std::string Document::GetTransferSyntax()
    // The entry might be present but not loaded (parsing and loading
    // happen at different stages): try loading and proceed with check...
    LoadDocEntrySafe(entry);
-   if (ValEntry *valEntry = dynamic_cast< ValEntry* >(entry) )
+   if (DataEntry *dataEntry = dynamic_cast<DataEntry *>(entry) )
    {
-      std::string transfer = valEntry->GetValue();
+      std::string transfer = dataEntry->GetString();
       // The actual transfer (as read from disk) might be padded. We
       // first need to remove the potential padding. We can make the
       // weak assumption that padding was not executed with digits...
@@ -471,6 +436,11 @@ std::string Document::GetTransferSyntax()
       while ( !isdigit((unsigned char)transfer[transfer.length()-1]) )
       {
          transfer.erase(transfer.length()-1, 1);
+         if  ( transfer.length() == 0 )
+         {
+            // for brain damaged headers
+            return GDCM_UNKNOWN;
+         }
       }
       return transfer;
    }
@@ -484,7 +454,7 @@ std::string Document::GetTransferSyntax()
 std::string Document::GetTransferSyntaxName()
 {
    // use the TS (TS : Transfer Syntax)
-   std::string transferSyntax = GetEntryValue(0x0002,0x0010);
+   std::string transferSyntax = GetEntryString(0x0002,0x0010);
 
    if ( (transferSyntax.find(GDCM_NOTLOADED) < transferSyntax.length()) )
    {
@@ -692,21 +662,21 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
 void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 {
    // Search the corresponding DocEntry
-   DocEntry *docElement = GetDocEntry(group, elem);
-   if ( !docElement )
+   DocEntry *docEntry = GetDocEntry(group, elem);
+   if ( !docEntry )
    {
       gdcmWarningMacro(std::hex << group << "|" << elem 
                        <<  "doesn't exist" );
       return;
    }
-   BinEntry *binElement = dynamic_cast<BinEntry *>(docElement);
-   if ( !binElement )
+   DataEntry *dataEntry = dynamic_cast<DataEntry *>(docEntry);
+   if ( !dataEntry )
    {
       gdcmWarningMacro(std::hex << group << "|" << elem 
-                       <<  "is NOT a BinEntry");
+                       <<  "is NOT a DataEntry");
       return;
    }
-   LoadEntryBinArea(binElement);
+   LoadEntryBinArea(dataEntry);
 }
 
 /**
@@ -714,36 +684,70 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
  *        when a string is not suitable
  * @param elem  Entry whose binArea is going to be loaded
  */
-void Document::LoadEntryBinArea(BinEntry *elem) 
+void Document::LoadEntryBinArea(DataEntry *entry) 
 {
-   if (elem->GetBinArea() )
+   if( entry->GetBinArea() )
       return;
 
    bool openFile = !Fp;
    if ( openFile )
       OpenFile();
 
-   size_t o =(size_t)elem->GetOffset();
+   size_t o =(size_t)entry->GetOffset();
    Fp->seekg(o, std::ios::beg);
 
-   size_t l = elem->GetLength();
-   uint8_t *a = new uint8_t[l];
-   if ( !a )
+   size_t l = entry->GetLength();
+   uint8_t *data = new uint8_t[l];
+   if ( !data )
    {
-      gdcmWarningMacro(  "Cannot allocate BinEntry content for : "
-                       << std::hex << elem->GetGroup() 
-                       << "|" << elem->GetElement() );
+      gdcmWarningMacro(  "Cannot allocate DataEntry content for : "
+                       << std::hex << entry->GetGroup() 
+                       << "|" << entry->GetElement() );
       return;
    }
 
-   Fp->read((char*)a, l);
+   // Read the datas
+   Fp->read((char*)data, l);
    if ( Fp->fail() || Fp->eof() )
    {
-      delete[] a;
+      delete[] data;
+      entry->SetState(DataEntry::STATE_UNREAD);
       return;
    }
 
-   elem->SetBinArea(a);
+   // Swap the data content if necessary
+   uint32_t i;
+   unsigned short vrLgth = Global::GetVR()->GetAtomicElementLength(entry->GetVR());
+   if( entry->GetVR() == "OW" )
+      vrLgth = 1;
+
+   switch(vrLgth)
+   {
+      case 2:
+      {
+         uint16_t *data16 = (uint16_t *)data;
+         for(i=0;i<l/vrLgth;i++)
+            data16[i] = SwapShort(data16[i]);
+         break;
+      }
+      case 4:
+      {
+         uint32_t *data32 = (uint32_t *)data;
+         for(i=0;i<l/vrLgth;i++)
+            data32[i] = SwapLong(data32[i]);
+         break;
+      }
+      case 8:
+      {
+         gdcmWarningMacro("Can't swap 64 bits datas");
+/*         uint64_t *data64 = (uint64_t *)data;
+         for(i=0;i<l/vrLgth;i++)
+            data64[i] = SwapLongLong(data64[i]);*/
+         break;
+      }
+   }
+   
+   entry->SetBinArea(data);
 
    if ( openFile )
       CloseFile();
@@ -775,8 +779,8 @@ void Document::LoadDocEntrySafe(DocEntry *entry)
 bool Document::operator<(Document &document)
 {
    // Patient Name
-   std::string s1 = GetEntryValue(0x0010,0x0010);
-   std::string s2 = document.GetEntryValue(0x0010,0x0010);
+   std::string s1 = GetEntryString(0x0010,0x0010);
+   std::string s2 = document.GetEntryString(0x0010,0x0010);
    if (s1 < s2)
    {
       return true;
@@ -788,8 +792,8 @@ bool Document::operator<(Document &document)
    else
    {
       // Patient ID
-      s1 = GetEntryValue(0x0010,0x0020);
-      s2 = document.GetEntryValue(0x0010,0x0020);
+      s1 = GetEntryString(0x0010,0x0020);
+      s2 = document.GetEntryString(0x0010,0x0020);
       if ( s1 < s2 )
       {
          return true;
@@ -801,8 +805,8 @@ bool Document::operator<(Document &document)
       else
       {
          // Study Instance UID
-         s1 = GetEntryValue(0x0020,0x000d);
-         s2 = document.GetEntryValue(0x0020,0x000d);
+         s1 = GetEntryString(0x0020,0x000d);
+         s2 = document.GetEntryString(0x0020,0x000d);
          if ( s1 < s2 )
          {
             return true;
@@ -814,8 +818,8 @@ bool Document::operator<(Document &document)
          else
          {
             // Serie Instance UID
-            s1 = GetEntryValue(0x0020,0x000e);
-            s2 = document.GetEntryValue(0x0020,0x000e);    
+            s1 = GetEntryString(0x0020,0x000e);
+            s2 = document.GetEntryString(0x0020,0x000e);    
             if ( s1 < s2 )
             {
                return true;
@@ -959,8 +963,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                         long l_max, bool delim_mode)
 {
    DocEntry *newDocEntry;
-   ValEntry *newValEntry;
-   BinEntry *newBinEntry;
+   DataEntry *newDataEntry;
    SeqEntry *newSeqEntry;
    VRKey vr;
    bool used; // will be set to false when something wrong happens to an Entry.
@@ -979,12 +982,11 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       newDocEntry = ReadNextDocEntry( );
 
       // FIXME :
-      // Private tag, in IMplicit VR are defaulted as a BinEntry,
+      // Private tag, in IMplicit VR are defaulted as a DataEntry,
       // Very often they are only composed of Printable characters, 
-      // and could be defaulted as a ValEntry.
+      // and could be defaulted as a DataEntry.
       // It's too late to do the Job
       // (we should check the value, but we know it after LoadDocEntry ...)
-      // --> in next gdcm major release let's unify ValEntry and BinEntry !
 
       // Uncoment this printf line to be able to 'follow' the DocEntries
       // when something *very* strange happens
@@ -1012,124 +1014,66 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       }
  
       used = true;
-      newValEntry = dynamic_cast<ValEntry*>(newDocEntry);
-      newBinEntry = dynamic_cast<BinEntry*>(newDocEntry);
+      newDataEntry = dynamic_cast<DataEntry*>(newDocEntry);
 
-      if ( newValEntry || newBinEntry )  
+      if ( newDataEntry )  
       {
-       //////////////////////////// ContentEntry
-         if ( newBinEntry )
+         //////////////////////////// DataEntry
+         vr = newDocEntry->GetVR();
+         if ( Filetype == ExplicitVR && 
+               !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
+         { 
+               ////// No DataEntry: should mean UNKOWN VR
+               gdcmWarningMacro( std::hex << newDocEntry->GetGroup() 
+                                 << "|" << newDocEntry->GetElement()
+                                 << " : No DataEntry." 
+                                 "Probably unknown VR.");
+         }
+
+         if ( !set->AddEntry( newDataEntry ) )
          {
-            vr = newDocEntry->GetVR();
-            if ( Filetype == ExplicitVR && 
-                 !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
-            { 
-                ////// Neither ValEntry NOR BinEntry: should mean UNKOWN VR
-                gdcmWarningMacro( std::hex << newDocEntry->GetGroup() 
-                                  << "|" << newDocEntry->GetElement()
-                                  << " : Neither Valentry, nor BinEntry." 
-                                  "Probably unknown VR.");
-            }
-
-         //////////////////// BinEntry or UNKOWN VR:
-
-            // When "this" is a Document the Key is simply of the
-            // form ( group, elem )...
-            //if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
-            //{
-            //   newBinEntry->SetKey( newBinEntry->GetKey() );
-            //}
-            // but when "this" is a SQItem, we are inserting this new
-            // valEntry in a sequence item, and the key has the
-            // generalized form (refer to \ref BaseTagKey):
-
-            // time waste hunting
-            //if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
-            //{
-            //   newBinEntry->SetKey(  parentSQItem->GetBaseTagKey()
-            //                       + newBinEntry->GetKey() );
-            //}
-           
-            if ( !set->AddEntry( newBinEntry ) )
-            {
-               gdcmWarningMacro( "in ParseDES : cannot add a BinEntry "
-                                   << newBinEntry->GetKey()  
-                                   << " (at offset : " 
-                                   << newBinEntry->GetOffset() << " )" );
-               used=false;
-            }
-            else
-            {
-               // Load only if we can add (not a duplicate key)
-               LoadDocEntry( newBinEntry );
-            }
-         }  // end BinEntry
+            gdcmWarningMacro( "in ParseDES : cannot add a DataEntry "
+                                 << newDataEntry->GetKey()  
+                                 << " (at offset : " 
+                                 << newDataEntry->GetOffset() << " )" );
+            used=false;
+         }
          else
          {
-         /////////////////////// ValEntry
+            // Load only if we can add (not a duplicate key)
+            LoadDocEntry( newDataEntry );
+         }
 
-            // When "set" is a Document, then we are at the top of the
-            // hierarchy and the Key is simply of the form ( group, elem )...
-            //if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
-            //{
-            //   newValEntry->SetKey( newValEntry->GetKey() );
-            //}
-            // ...but when "set" is a SQItem, we are inserting this new
-            // valEntry in a sequence item. Hence the key has the
-            // generalized form (refer to \ref BaseTagKey):
-
-            // time waste hunting
-            //if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
-            //{
-            //   newValEntry->SetKey(  parentSQItem->GetBaseTagKey()
-            //                      + newValEntry->GetKey() );
-            //}
-
-            if ( !set->AddEntry( newValEntry ) )
+         if ( newDataEntry->GetElement() == 0x0000 ) // if on group length
+         {
+            if ( newDataEntry->GetGroup()%2 != 0 )   // if Shadow Group
             {
-              gdcmWarningMacro( "in ParseDES : cannot add a ValEntry "
-                                  << newValEntry->GetKey()
-                                  << " (at offset : " 
-                                  << newValEntry->GetOffset() << " )" );   
-              used=false;
-            }
-            else
-            {
-               // Load only if we can add (not a duplicate key)
-               LoadDocEntry( newValEntry );
-            }
-
-            if ( newValEntry->GetElement() == 0x0000 ) // if on group length
-            {
-               if ( newValEntry->GetGroup()%2 != 0 )   // if Shadow Group
+               if ( LoadMode & LD_NOSHADOW ) // if user asked to skip shad.gr
                {
-                  if ( LoadMode & LD_NOSHADOW ) // if user asked to skip shad.gr
+                  std::string strLgrGroup = newDataEntry->GetString();
+                  int lgrGroup;
+                  if ( newDataEntry->IsUnfound() )
                   {
-                     std::string strLgrGroup = newValEntry->GetValue();
-                     int lgrGroup;
-                     if ( strLgrGroup != GDCM_UNFOUND)
-                     {
-                        lgrGroup = atoi(strLgrGroup.c_str());
-                        Fp->seekg(lgrGroup, std::ios::cur);
-                        //used = false;  // never used
-                        RemoveEntry( newDocEntry );  // Remove and delete
-                        // bcc 5.5 is right "assigned a value that's never used"
-                        // newDocEntry = 0;
-                        continue;
-                     }
+                     lgrGroup = atoi(strLgrGroup.c_str());
+                     Fp->seekg(lgrGroup, std::ios::cur);
+                     //used = false;  // never used
+                     RemoveEntry( newDocEntry );  // Remove and delete
+                     // bcc 5.5 is right "assigned a value that's never used"
+                     // newDocEntry = 0;
+                     continue;
                   }
                }
             }
+         }
 
-            bool delimitor = newValEntry->IsItemDelimitor();
+         bool delimitor = newDataEntry->IsItemDelimitor();
 
-            if ( (delimitor) || 
-                (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
-            {
-               if ( !used )
-                  delete newDocEntry;
-               break;
-            }
+         if ( (delimitor) || 
+               (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
+         {
+            if ( !used )
+               delete newDocEntry;
+            break;
          }
 
          // Just to make sure we are at the beginning of next entry.
@@ -1277,14 +1221,6 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       }
       // create the current SQItem
       SQItem *itemSQ = new SQItem( seqEntry->GetDepthLevel() );
-/*
-      std::ostringstream newBase;
-      newBase << seqEntry->GetKey()
-              << "/"
-              << SQItemNumber
-              << "#";
-      itemSQ->SetBaseTagKey( newBase.str() );
-*/
       unsigned int l = newDocEntry->GetReadLength();
       
       if ( l == 0xffffffff )
@@ -1348,7 +1284,7 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    Fp->seekg( 0, std::ios::beg);
    Fp->seekg(offset, std::ios::cur);
 
-return newEntry;
+   return newEntry;
 }
 
 /**
@@ -1369,16 +1305,22 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
-   if ( group == 0xfffe )
+   if ( group == 0xfffe || vr == "SQ" )
    {
       // NO more value field for SQ !
+      return;
+   }
+
+   DataEntry *dataEntryPtr = dynamic_cast< DataEntry* >(entry);
+   if( !dataEntryPtr )
+   {
       return;
    }
 
    // When the length is zero things are easy:
    if ( length == 0 )
    {
-      ((ValEntry *)entry)->SetValue("");
+      dataEntryPtr->SetBinArea(NULL,true);
       return;
    }
 
@@ -1392,30 +1334,8 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    {
       if (length > MaxSizeLoadEntry)
       {
-         if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
-         {  
-            s << GDCM_NOTLOADED;
-            s << " Ad.:" << (long)entry->GetOffset();
-            s << " x(" << std::hex << entry->GetOffset() << ")";
-            s << std::dec;
-            s << " Lgt:"  << entry->GetLength();
-            s << " x(" << std::hex << entry->GetLength() << ")";
-            binEntryPtr->SetValue(s.str());
-         }
-         else if (ValEntry *valEntryPtr = dynamic_cast< ValEntry* >(entry) )
-         {
-            s << GDCM_NOTLOADED;  
-            s << " Address:" << (long)entry->GetOffset();
-            s << " Length:"  << entry->GetLength();
-            s << " x(" << std::hex << entry->GetLength() << ")";
-            valEntryPtr->SetValue(s.str());
-         }
-         else
-         {
-            // fusible
-            gdcmErrorMacro( "MaxSizeLoadEntry exceeded, neither a BinEntry "
-                         << "nor a ValEntry ?! Should never print that !" );
-         }
+         dataEntryPtr->SetBinArea(NULL,true);
+         dataEntryPtr->SetState(DataEntry::STATE_NOTLOADED);
 
          // to be sure we are at the end of the value ...
          Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
@@ -1424,117 +1344,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
       }
    }
 
-   // When we find a BinEntry not very much can be done :
-   if (BinEntry *binEntryPtr = dynamic_cast< BinEntry* >(entry) )
-   {
-      s << GDCM_BINLOADED;
-      binEntryPtr->SetValue(s.str());
-      LoadEntryBinArea(binEntryPtr); // last one, not to erase length !
-      return;
-   }
-
-   if ( IsDocEntryAnInteger(entry) )
-   {   
-      uint32_t NewInt;
-      int nbInt;
-      // When short integer(s) are expected, read and convert the following 
-      // (n * 2) characters properly i.e. consider them as short integers as
-      // opposed to strings.
-      // Elements with Value Multiplicity > 1
-      // contain a set of integers (not a single one)       
-      if (vr == "US" || vr == "SS")
-      {
-         nbInt = length / 2;
-         NewInt = ReadInt16();
-         s << NewInt;
-         if (nbInt > 1)
-         {
-            for (int i=1; i < nbInt; i++)
-            {
-               s << '\\';
-               NewInt = ReadInt16();
-               s << NewInt;
-            }
-         }
-      }
-      // See above comment on multiple integers (mutatis mutandis).
-      else if (vr == "UL" || vr == "SL")
-      {
-         nbInt = length / 4;
-         NewInt = ReadInt32();
-         s << NewInt;
-         if (nbInt > 1)
-         {
-            for (int i=1; i < nbInt; i++)
-            {
-               s << '\\';
-               NewInt = ReadInt32();
-               s << NewInt;
-            }
-         }
-      }
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-      s << std::ends; // to avoid oddities on Solaris
-#endif //GDCM_NO_ANSI_STRING_STREAM
-
-      ((ValEntry *)entry)->SetValue(s.str());
-      return;
-   }
-   
-  // FIXME: We need an additional byte for storing \0 that is not on disk
-   char *str = new char[length+1];
-   Fp->read(str, (size_t)length);
-   str[length] = '\0'; //this is only useful when length is odd
-   // Special DicomString call to properly handle \0 and even length
-   std::string newValue;
-   if ( length % 2 )
-   {
-      newValue = Util::DicomString(str, length+1);
-      gdcmWarningMacro("Warning: bad length: " << length <<
-                       " For string :" <<  newValue.c_str()); 
-      // Since we change the length of string update it length
-      //entry->SetReadLength(length+1);
-   }
-   else
-   {
-      newValue = Util::DicomString(str, length);
-   }
-   delete[] str;
-
-   if ( ValEntry *valEntry = dynamic_cast<ValEntry* >(entry) )
-   {
-      if ( Fp->fail() || Fp->eof())
-      {
-         if ( Fp->fail() )
-            gdcmWarningMacro("--> fail");
-
-         gdcmWarningMacro("Unread element value " << valEntry->GetKey() 
-                          << " lgt : " << valEntry->GetReadLength() 
-                          << " at " << std::hex << valEntry->GetOffset());
-         valEntry->SetValue(GDCM_UNREAD);
-         return;
-      }
-
-//      if ( vr == "UI" )
-//      {
-//         // Because of correspondance with the VR dic
-//         valEntry->SetValue(newValue);
-//      }
-//      else
-//      {
-//         valEntry->SetValue(newValue);
-//      }
-
-// Anybody remembers the genesis of strange previous (commented out) code?
-      valEntry->SetValue(newValue);
-
-   }
-   else
-   {
-      gdcmWarningMacro("Should have a ValEntry, here ! " << valEntry->GetKey() 
-                          << " lgt : " << valEntry->GetReadLength() 
-                          << " at " << std::hex << valEntry->GetOffset());
-   }
+   LoadEntryBinArea(dataEntryPtr); // last one, not to erase length !
 }
 
 /**
@@ -1725,136 +1535,6 @@ bool Document::CheckDocEntryVR(VRKey vr)
       return false;
 
    return true; 
-}
-
-/**
- * \brief   Get the transformed value of the header entry. The VR value 
- *          is used to define the transformation to operate on the value
- * \warning NOT end user intended method !
- * @param   entry entry to tranform
- * @return  Transformed entry value
- */
-std::string Document::GetDocEntryValue(DocEntry *entry)
-{
-   if ( IsDocEntryAnInteger(entry) && entry->IsImplicitVR() )
-   {
-      std::string val = ((ValEntry *)entry)->GetValue();
-      std::string vr  = entry->GetVR();
-      uint32_t length = entry->GetLength();
-      std::ostringstream s;
-      int nbInt;
-
-      // When short integer(s) are expected, read and convert the following 
-      // n * 2 bytes properly i.e. as a multivaluated strings
-      // (each single value is separated fromthe next one by '\'
-      // as usual for standard multivaluated filels
-      // Elements with Value Multiplicity > 1
-      // contain a set of short integers (not a single one) 
-   
-      if ( vr == "US" || vr == "SS" )
-      {
-         uint16_t newInt16;
-
-         nbInt = length / 2;
-         for (int i=0; i < nbInt; i++) 
-         {
-            if ( i != 0 )
-            {
-               s << '\\';
-            }
-            newInt16 = ( val[2*i+0] & 0xFF ) + ( ( val[2*i+1] & 0xFF ) << 8);
-            newInt16 = SwapShort( newInt16 );
-            s << newInt16;
-         }
-      }
-
-      // When integer(s) are expected, read and convert the following 
-      // n * 4 bytes properly i.e. as a multivaluated strings
-      // (each single value is separated fromthe next one by '\'
-      // as usual for standard multivaluated filels
-      // Elements with Value Multiplicity > 1
-      // contain a set of integers (not a single one) 
-      else if ( vr == "UL" || vr == "SL" )
-      {
-         uint32_t newInt32;
-
-         nbInt = length / 4;
-         for (int i=0; i < nbInt; i++) 
-         {
-            if ( i != 0)
-            {
-               s << '\\';
-            }
-            newInt32 = ( val[4*i+0] & 0xFF )
-                    + (( val[4*i+1] & 0xFF ) <<  8 )
-                    + (( val[4*i+2] & 0xFF ) << 16 )
-                    + (( val[4*i+3] & 0xFF ) << 24 );
-            newInt32 = SwapLong( newInt32 );
-            s << newInt32;
-         }
-      }
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-      s << std::ends; // to avoid oddities on Solaris
-#endif //GDCM_NO_ANSI_STRING_STREAM
-      return s.str();
-   }
-   return ((ValEntry *)entry)->GetValue();
-}
-
-/**
- * \brief   Get the reverse transformed value of the header entry. The VR 
- *          value is used to define the reverse transformation to operate on
- *          the value
- * \warning NOT end user intended method !
- * @param   entry Entry to reverse transform
- * @return  Reverse transformed entry value
- */
-std::string Document::GetDocEntryUnvalue(DocEntry *entry)
-{
-   if ( IsDocEntryAnInteger(entry) && entry->IsImplicitVR() )
-   {
-      std::string vr = entry->GetVR();
-      std::vector<std::string> tokens;
-      std::ostringstream s;
-
-      if ( vr == "US" || vr == "SS" ) 
-      {
-         uint16_t newInt16;
-
-         tokens.erase( tokens.begin(), tokens.end()); // clean any previous value
-         Util::Tokenize (((ValEntry *)entry)->GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size(); i++) 
-         {
-            newInt16 = atoi(tokens[i].c_str());
-            s << (  newInt16        & 0xFF ) 
-              << (( newInt16 >> 8 ) & 0xFF );
-         }
-         tokens.clear();
-      }
-      if ( vr == "UL" || vr == "SL")
-      {
-         uint32_t newInt32;
-
-         tokens.erase(tokens.begin(),tokens.end()); // clean any previous value
-         Util::Tokenize (((ValEntry *)entry)->GetValue(), tokens, "\\");
-         for (unsigned int i=0; i<tokens.size();i++) 
-         {
-            newInt32 = atoi(tokens[i].c_str());
-            s << (char)(  newInt32         & 0xFF ) 
-              << (char)(( newInt32 >>  8 ) & 0xFF )
-              << (char)(( newInt32 >> 16 ) & 0xFF )
-              << (char)(( newInt32 >> 24 ) & 0xFF );
-         }
-         tokens.clear();
-      }
-
-#ifdef GDCM_NO_ANSI_STRING_STREAM
-      s << std::ends; // to avoid oddities on Solaris
-#endif //GDCM_NO_ANSI_STRING_STREAM
-      return s.str();
-   }
-
-   return ((ValEntry *)entry)->GetValue();
 }
 
 /**
@@ -2311,10 +1991,11 @@ DocEntry *Document::ReadNextDocEntry()
    DocEntry *newEntry;
    if ( Global::GetVR()->IsVROfSequence(realVR) )
       newEntry = NewSeqEntry(group, elem);
-   else if ( Global::GetVR()->IsVROfStringRepresentable(realVR) )
-      newEntry = NewValEntry(group, elem, realVR);
-   else
-      newEntry = NewBinEntry(group, elem, realVR);
+   else 
+   {
+      newEntry = NewDataEntry(group, elem, realVR);
+      static_cast<DataEntry *>(newEntry)->SetState(DataEntry::STATE_NOTLOADED);
+   }
 
    if ( vr == GDCM_UNKNOWN )
    {

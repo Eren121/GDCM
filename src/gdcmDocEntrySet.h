@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 15:28:49 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,8 +26,7 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 class DocEntry;
-class ValEntry;
-class BinEntry;
+class DataEntry;
 class SeqEntry;
 class DictEntry;
 
@@ -80,32 +79,30 @@ public:
    /// Gets the next entry of any type of set
    virtual DocEntry *GetNextEntry()=0;
 
-   virtual std::string GetEntryValue(uint16_t group, uint16_t elem);
+   virtual std::string GetEntryString(uint16_t group, uint16_t elem);
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);
-   
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
    virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
    virtual std::string GetEntryForcedAsciiValue(uint16_t group, uint16_t elem);
+
    /// \brief Gets any type of DocEntry, identified by its (group,elem)
    virtual DocEntry *GetDocEntry(uint16_t group, uint16_t elem) = 0;
-   /// \brief Gets a ValEntry, identified by its (group, elem)
-   ValEntry *GetValEntry(uint16_t group, uint16_t elem);
-   /// \brief Gets a BinEntry, identified by its (group,elem)
-   BinEntry *GetBinEntry(uint16_t group, uint16_t elem);
+   /// \brief Gets a DataEntry, identified by its (group, elem)
+   DataEntry *GetDataEntry(uint16_t group, uint16_t elem);
    /// \brief Gets a SeqEntry, identified by its (group,elem)
    SeqEntry *GetSeqEntry(uint16_t group, uint16_t elem);
 
-   bool SetValEntry(std::string const &content,
-                            uint16_t group, uint16_t elem);
-   bool SetBinEntry(uint8_t *content, int lgth,
-                            uint16_t group, uint16_t elem);
-   bool SetValEntry(std::string const &content, ValEntry *entry);
-   bool SetBinEntry(uint8_t *content, int lgth, BinEntry *entry);
+   bool SetEntryString(std::string const &content,
+                       uint16_t group, uint16_t elem);
+   bool SetEntryBinArea(uint8_t *content, int lgth,
+                        uint16_t group, uint16_t elem);
+   bool SetEntryString(std::string const &content, DataEntry *entry);
+   bool SetEntryBinArea(uint8_t *content, int lgth, DataEntry *entry);
 
-   ValEntry *InsertValEntry(std::string const &value,
-                                    uint16_t group, uint16_t elem,
-                                    TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *InsertBinEntry(uint8_t *binArea, int lgth,
+   DataEntry *InsertEntryString(std::string const &value,
+                                   uint16_t group, uint16_t elem,
+                                   TagName const &vr = GDCM_UNKNOWN);
+   DataEntry *InsertEntryBinArea(uint8_t *binArea, int lgth,
                                     uint16_t group, uint16_t elem,
                                     TagName const &vr = GDCM_UNKNOWN);
    SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
@@ -114,9 +111,7 @@ public:
    virtual bool CheckIfEntryExist(uint16_t group, uint16_t elem);
 
 // DocEntry  related utilities 
-   ValEntry *NewValEntry(uint16_t group,uint16_t elem,
-                         TagName const &vr = GDCM_UNKNOWN);
-   BinEntry *NewBinEntry(uint16_t group, uint16_t elem,
+   DataEntry *NewDataEntry(uint16_t group,uint16_t elem,
                          TagName const &vr = GDCM_UNKNOWN);
    SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
 

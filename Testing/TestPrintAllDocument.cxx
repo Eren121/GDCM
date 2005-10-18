@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/01 19:39:15 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,14 +24,12 @@
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
 #include "gdcmCommon.h"
-#include "gdcmBinEntry.h"  
 #include "gdcmDocEntry.h" 
 #include "gdcmDocEntrySet.h"           
 #include "gdcmDocument.h"          
 #include "gdcmElementSet.h"        
 #include "gdcmSeqEntry.h" 
 #include "gdcmSQItem.h" 
-#include "gdcmValEntry.h" 
 #include "gdcmOrientation.h"
 #include <fstream>
 #include <iostream>
@@ -84,7 +82,7 @@ int TestPrintAllDocument(int, char *[])
       std::cout << " Smpl.P.Pix.="          << f->GetSamplesPerPixel()
                 << " Plan.Config.="         << f->GetPlanarConfiguration();
  
-      photomInterp =  f->GetEntryValue(0x0028,0x0004);               
+      photomInterp =  f->GetEntryString(0x0028,0x0004);               
       std::cout << " Photom.Interp.="       << photomInterp;
       for (j=0; j<l-photomInterp.length(); j++)
          std::cout << " ";
@@ -100,7 +98,7 @@ int TestPrintAllDocument(int, char *[])
       std::cout << std::endl;
 
       std::string strImageOrientationPatient = 
-                                          f->GetEntryValue(0x0020,0x0037);
+                                          f->GetEntryString(0x0020,0x0037);
       if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
       {
          gdcm::Orientation o;

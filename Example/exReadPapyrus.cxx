@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/07 17:31:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,8 +18,7 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmDebug.h"
@@ -178,12 +177,12 @@ int main(int argc, char *argv[])
 //  Modality, Transfer Syntax, Study Date, Study Time
 // Patient Name, Media Storage SOP Instance UID, etc
 
-   MediaStSOPinstUID   =  f->GetEntryValue(0x0002,0x0002);
-   TransferSyntax      =  f->GetEntryValue(0x0002,0x0010);
-   StudyDate           = sqi->GetEntryValue(0x0008,0x0020);
-   StudyTime           = sqi->GetEntryValue(0x0008,0x0030);
-   Modality            = sqi->GetEntryValue(0x0008,0x0060);
-   PatientName         = sqi->GetEntryValue(0x0010,0x0010);
+   MediaStSOPinstUID   =  f->GetEntryString(0x0002,0x0002);
+   TransferSyntax      =  f->GetEntryString(0x0002,0x0010);
+   StudyDate           = sqi->GetEntryString(0x0008,0x0020);
+   StudyTime           = sqi->GetEntryString(0x0008,0x0030);
+   Modality            = sqi->GetEntryString(0x0008,0x0060);
+   PatientName         = sqi->GetEntryString(0x0010,0x0010);
 
    std::cout << "TransferSyntax " << TransferSyntax << std::endl;
 
@@ -198,17 +197,17 @@ int main(int argc, char *argv[])
 
    // we brutally suppose all the images within a Papyrus file
    // have the same caracteristics.
-   // if you're aware they have not, just move the GetEntryValue
+   // if you're aware they have not, just move the GetEntryString
    // inside the loop
 
    // Get caracteristics of the first image
-   SamplesPerPixel     = sqi->GetEntryValue(0x0028,0x0002);
-   Rows                = sqi->GetEntryValue(0x0028,0x0010);
-   Columns             = sqi->GetEntryValue(0x0028,0x0011);
-   BitsAllocated       = sqi->GetEntryValue(0x0028,0x0100);
-   BitsStored          = sqi->GetEntryValue(0x0028,0x0101);
-   HighBit             = sqi->GetEntryValue(0x0028,0x0102);
-   PixelRepresentation = sqi->GetEntryValue(0x0028,0x0103);
+   SamplesPerPixel     = sqi->GetEntryString(0x0028,0x0002);
+   Rows                = sqi->GetEntryString(0x0028,0x0010);
+   Columns             = sqi->GetEntryString(0x0028,0x0011);
+   BitsAllocated       = sqi->GetEntryString(0x0028,0x0100);
+   BitsStored          = sqi->GetEntryString(0x0028,0x0101);
+   HighBit             = sqi->GetEntryString(0x0028,0x0102);
+   PixelRepresentation = sqi->GetEntryString(0x0028,0x0103);
 
    // just convert those needed to compute PixelArea length
    int iRows            = (uint32_t) atoi( Rows.c_str() );
@@ -225,7 +224,7 @@ int main(int argc, char *argv[])
    //  allocate enough room to get the pixels of all images.
    uint8_t *PixelArea = new uint8_t[lgrImage*nbImages];
    uint8_t *currentPosition = PixelArea;
-   gdcm::BinEntry *pixels;
+   gdcm::DataEntry *pixels;
 
    // declare and open the file
    std::ifstream *Fp;
@@ -247,7 +246,7 @@ int main(int argc, char *argv[])
    while (sqi)
    {
       std::cout << "One more image read. Keep waiting" << std::endl;
-      Rows = sqi->GetEntryValue(0x0028,0x0010);
+      Rows = sqi->GetEntryString(0x0028,0x0010);
       // minimum integrity check
       if (Rows != previousRows)
       {
@@ -255,7 +254,7 @@ int main(int argc, char *argv[])
          return 1;
       }
       // get the images pixels
-      pixels = sqi->GetBinEntry(0x7fe0,0x0010);
+      pixels = sqi->GetDataEntry(0x7fe0,0x0010);
       offset = pixels->GetOffset();
       // perform a fseek, on offset length on the 'right' length
       Fp->seekg(offset, std::ios::beg);
@@ -274,23 +273,23 @@ int main(int argc, char *argv[])
 
    gdcm::File *n = new gdcm::File();
 
-   n->InsertValEntry(MediaStSOPinstUID,  0x0002,0x0002);
+   n->InsertEntryString(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
   // since using Papyrus one (Implicit VR Little Endian) is a mess
-   //n->InsertValEntry(TransferSyntax,     0x0002,0x0010);
-   n->InsertValEntry(StudyDate,          0x0008,0x0020);
-   n->InsertValEntry(StudyTime,          0x0008,0x0030);
-   n->InsertValEntry(Modality,           0x0008,0x0060);
-   n->InsertValEntry(PatientName,        0x0010,0x0010);
+   //n->InsertEntryString(TransferSyntax,     0x0002,0x0010);
+   n->InsertEntryString(StudyDate,          0x0008,0x0020);
+   n->InsertEntryString(StudyTime,          0x0008,0x0030);
+   n->InsertEntryString(Modality,           0x0008,0x0060);
+   n->InsertEntryString(PatientName,        0x0010,0x0010);
 
-   n->InsertValEntry(SamplesPerPixel,    0x0028,0x0002);
-   n->InsertValEntry(NumberOfFrames,     0x0028,0x0008);
-   n->InsertValEntry(Rows,               0x0028,0x0010);
-   n->InsertValEntry(Columns,            0x0028,0x0011);
-   n->InsertValEntry(BitsAllocated,      0x0028,0x0100);
-   n->InsertValEntry(BitsStored,         0x0028,0x0101);
-   n->InsertValEntry(HighBit,            0x0028,0x0102);
-   n->InsertValEntry(PixelRepresentation,0x0028,0x0103);
+   n->InsertEntryString(SamplesPerPixel,    0x0028,0x0002);
+   n->InsertEntryString(NumberOfFrames,     0x0028,0x0008);
+   n->InsertEntryString(Rows,               0x0028,0x0010);
+   n->InsertEntryString(Columns,            0x0028,0x0011);
+   n->InsertEntryString(BitsAllocated,      0x0028,0x0100);
+   n->InsertEntryString(BitsStored,         0x0028,0x0101);
+   n->InsertEntryString(HighBit,            0x0028,0x0102);
+   n->InsertEntryString(PixelRepresentation,0x0028,0x0103);
 
    // create the file
    gdcm::FileHelper *file = new gdcm::FileHelper(n);

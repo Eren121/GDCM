@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 12:02:02 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/10/18 08:35:43 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,39 +63,39 @@ int main(int argc, char *argv[])
    // Set the image size
    str.str("");
    str << SIZE_X;
-   header->InsertValEntry(str.str(),0x0028,0x0011); // Columns
+   header->InsertEntryString(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << SIZE_Y;
-   header->InsertValEntry(str.str(),0x0028,0x0010); // Rows
+   header->InsertEntryString(str.str(),0x0028,0x0010); // Rows
 
    // Set the pixel type
    str.str("");
    str << COMPONENT_SIZE * 8;
-   header->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
-   header->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
+   header->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
+   header->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << ( COMPONENT_SIZE * 8 ) - 1;
-   header->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
+   header->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << "0"; // Unsigned
-   header->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
+   header->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << COMPONENT;
-   header->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
+   header->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
    // Set the Window / Level
    str.str("");
    str << COLOR_WINDOW;
-   header->InsertValEntry(str.str(),0x0028,0x1051); // Window Width
+   header->InsertEntryString(str.str(),0x0028,0x1051); // Window Width
    str.str("");
    str << COLOR_LEVEL;
-   header->InsertValEntry(str.str(),0x0028,0x1050); // Window Center
+   header->InsertEntryString(str.str(),0x0028,0x1050); // Window Center
 
    if( !header->IsReadable() )
    {

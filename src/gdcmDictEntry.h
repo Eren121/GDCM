@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:40:40 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,19 +54,19 @@ public:
 
    /// \brief tells if the V(alue) R(epresentation) is known (?!)
    /// @return 
-   bool IsVRUnknown() { return VR == GDCM_UNKNOWN; }
+   bool IsVRUnknown() const { return VR == GDCM_UNKNOWN; }
 
    /// \brief tells if the V(alue) M(ultiplicity) is known (?!)
    /// @return 
-   bool IsVMUnknown() { return VM == GDCM_UNKNOWN; }
+   bool IsVMUnknown() const { return VM == GDCM_UNKNOWN; }
 
    /// \brief  Returns the Dicom Group Number of the current DictEntry
    /// @return the Dicom Group Number
-   uint16_t GetGroup() { return Group; }
+   const uint16_t &GetGroup() const { return Group; }
   
    /// \brief  Returns the Dicom Element Number of the current DictEntry
    /// @return the Dicom Element Number
-   uint16_t GetElement() { return Element; }
+   const uint16_t &GetElement() const { return Element; }
  
    /// \brief  Returns the Dicom Value Representation of the current
    ///         DictEntry

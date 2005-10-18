@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestLoadAllDocumentsNoPrivNoSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/22 14:42:37 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,15 +24,14 @@
 #include "gdcmFile.h"
 #include "gdcmUtil.h"
 #include "gdcmCommon.h"
-#include "gdcmBinEntry.h"  
 #include "gdcmDocEntry.h" 
 #include "gdcmDocEntrySet.h"           
 #include "gdcmDocument.h"          
 #include "gdcmElementSet.h"        
 #include "gdcmSeqEntry.h" 
 #include "gdcmSQItem.h" 
-#include "gdcmValEntry.h" 
 #include "gdcmOrientation.h"
+
 #include <fstream>
 #include <iostream>
 #include <iomanip> // for std::ios::left, ...

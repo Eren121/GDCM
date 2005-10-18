@@ -1,3 +1,18 @@
+Mon Oct 18 10:27:49 2005 by regrain
+   * Minor coding-style clean up
+   * Replace the ContentEntry and its derived classes (BinEntry and ValEntry)
+     by the DataEntry. This unique entry considers all datas like binary datas.
+     Some methods are added to interpret - at fly - the binary datas.
+     Due to this important change, some methods of the DocEntrySet, concerning
+     the BinEntry and ValEntry classes, are erased ; and new methods for the
+     DataEntry class are created.
+     Some methods to set the ValEntry or the BinEntry are renamed to
+     correspond to the new DataEntry, like for example :
+      - SetValEntry -> SetEntryString
+      - SetBinEntry -> SetEntryBinArea
+     This change will remove all useless creation of the string when working
+     directly on values.
+
 Thu Aug 25 16:59:49 2005 by jpr
    gdcmBinEntry.cxx
    Now Print displays the BinEntry Content (if it's printable, and loaded)

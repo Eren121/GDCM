@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractDicomTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/29 08:49:27 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,8 +18,6 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmDebug.h"
@@ -132,26 +130,26 @@ int main(int argc, char *argv[])
 //  Modality, Transfer Syntax, Study Date, Study Time
 // Patient Name, Media Storage SOP Instance UID, etc
 
-   MediaStSOPinstUID   = f->GetEntryValue(0x0002,0x0002);
-   TransferSyntax      = f->GetEntryValue(0x0002,0x0010);
-   StudyDate           = f->GetEntryValue(0x0008,0x0020);
-   StudyTime           = f->GetEntryValue(0x0008,0x0030);
-   PatientName         = f->GetEntryValue(0x0010,0x0010);
-   PatientID           = f->GetEntryValue(0x0010,0x0020);  //patientid
-   PatientSex          = f->GetEntryValue(0x0010,0x0040);  //sexe
-   SOPInstanceUID      = f->GetEntryValue(0x0008,0x0018);  //imageid = SOPinsUID
-   StudyInstanceUID    = f->GetEntryValue(0x0020,0x000d);  //STUInsUID                                              [Study Instance UID] [1.2.840.113680.1.103.56887.1017329008.714317]
-   SeriesInstanceUID   = f->GetEntryValue(0x0020,0x000e);  //SerInsUID
-   AcquistionDate      = f->GetEntryValue(0x0008,0x0022);
-   AcquisitionTime     = f->GetEntryValue(0x0008,0x0032);
-   AcquisitionDateTime = f->GetEntryValue(0x0008,0x002a);
+   MediaStSOPinstUID   = f->GetEntryString(0x0002,0x0002);
+   TransferSyntax      = f->GetEntryString(0x0002,0x0010);
+   StudyDate           = f->GetEntryString(0x0008,0x0020);
+   StudyTime           = f->GetEntryString(0x0008,0x0030);
+   PatientName         = f->GetEntryString(0x0010,0x0010);
+   PatientID           = f->GetEntryString(0x0010,0x0020);  //patientid
+   PatientSex          = f->GetEntryString(0x0010,0x0040);  //sexe
+   SOPInstanceUID      = f->GetEntryString(0x0008,0x0018);  //imageid = SOPinsUID
+   StudyInstanceUID    = f->GetEntryString(0x0020,0x000d);  //STUInsUID                                              [Study Instance UID] [1.2.840.113680.1.103.56887.1017329008.714317]
+   SeriesInstanceUID   = f->GetEntryString(0x0020,0x000e);  //SerInsUID
+   AcquistionDate      = f->GetEntryString(0x0008,0x0022);
+   AcquisitionTime     = f->GetEntryString(0x0008,0x0032);
+   AcquisitionDateTime = f->GetEntryString(0x0008,0x002a);
 
 
-   Modality            = f->GetEntryValue(0x0008,0x0060);  //modality
-   InstitutionName     = f->GetEntryValue(0x0008,0x0080);  //hospital
+   Modality            = f->GetEntryString(0x0008,0x0060);  //modality
+   InstitutionName     = f->GetEntryString(0x0008,0x0080);  //hospital
    // always empty :-(
    InstitutionalDepartmentName     
-                     = f->GetEntryValue(0x0008,0x1040);  //departement
+                     = f->GetEntryString(0x0008,0x1040);  //departement
 
    // Radiologist :
    // 0008|0090  [Referring Physician's Name]
@@ -162,7 +160,7 @@ int main(int argc, char *argv[])
 
    // --> I'll have to ask people working on PACS which one they use. JPRx
 
-   ProtocolName = f->GetEntryValue(0x0018,0x1030); 
+   ProtocolName = f->GetEntryString(0x0018,0x1030); 
   
    // --> Big trouble with nz (mb of planes) and nt (number of 'times')
    // --> that belong to LibIDO, not to DICOM.
@@ -183,15 +181,15 @@ int main(int argc, char *argv[])
    std::string PixelRepresentation;
    std::string PixelType;
    
-   SamplesPerPixel     = f->GetEntryValue(0x0028,0x0002);  // 3 -> RGB
-   Rows                = f->GetEntryValue(0x0028,0x0010);  //ny
-   Columns             = f->GetEntryValue(0x0028,0x0011);  //nx
-   Planes              = f->GetEntryValue(0x0028,0x0012);  //nz
+   SamplesPerPixel     = f->GetEntryString(0x0028,0x0002);  // 3 -> RGB
+   Rows                = f->GetEntryString(0x0028,0x0010);  //ny
+   Columns             = f->GetEntryString(0x0028,0x0011);  //nx
+   Planes              = f->GetEntryString(0x0028,0x0012);  //nz
 
-   BitsAllocated       = f->GetEntryValue(0x0028,0x0100);
-   BitsStored          = f->GetEntryValue(0x0028,0x0101);
-   HighBit             = f->GetEntryValue(0x0028,0x0102);
-   PixelRepresentation = f->GetEntryValue(0x0028,0x0103);
+   BitsAllocated       = f->GetEntryString(0x0028,0x0100);
+   BitsStored          = f->GetEntryString(0x0028,0x0101);
+   HighBit             = f->GetEntryString(0x0028,0x0102);
+   PixelRepresentation = f->GetEntryString(0x0028,0x0103);
 
    PixelType           = f->GetPixelType();                //type 
 /*

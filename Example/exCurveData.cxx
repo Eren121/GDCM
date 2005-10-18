@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/16 17:07:05 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/18 08:35:43 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #include "gdcmCommon.h"
 #include "gdcmDebug.h"
 #include "gdcmDocEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 
 static const char* TypeOfDataArrays[13][2] = {
     { "TAC" , "time activity curve" },
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 // ============================================================
 
    //* B 5004|3000 [OW]                    [Curve Data] [gdcm::Binary data loaded;length = 1938]
-   std::string curve_data_str = f->GetEntryValue(0x5004, 0x3000);
+   std::string curve_data_str = f->GetEntryString(0x5004, 0x3000);
    if (curve_data_str == gdcm::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Curve Data" << std::endl;
@@ -142,27 +142,27 @@ int main(int argc, char *argv[])
 // ============================================================
   std::istringstream convert;
  //* V 5004|0005 [US]              [Curve Dimensions] [1] x(1)
-   std::string curve_dim_str = f->GetEntryValue(0x5004,0x0005);
+   std::string curve_dim_str = f->GetEntryString(0x5004,0x0005);
    unsigned short curve_dim;
    convert.str(curve_dim_str);
    convert >> curve_dim;
    std::cout << "Curve Dimensions: " << curve_dim << std::endl;
  //* V 5004|0010 [US]              [Number of Points] [969] x(3c9)
-   std::string num_points_str = f->GetEntryValue(0x5004,0x0010);
+   std::string num_points_str = f->GetEntryString(0x5004,0x0010);
    unsigned short num_points;
    convert.clear(); //important
    convert.str(num_points_str);
    convert >> num_points;
    std::cout << "Number of Points: " << num_points << std::endl;
  //* V 5004|0020 [CS]                  [Type of Data] [PHYSIO]
-   std::string data_type = f->GetEntryValue(0x5004,0x0020);
+   std::string data_type = f->GetEntryString(0x5004,0x0020);
    std::cout << "Type of Data: " << data_type << std::endl;
    std::cout << " this is thus a : " << ConvertTypeOfData(data_type) << std::endl;
  //* V 5004|0022 [LO]             [Curve Description] []
-   std::string curve_desc = f->GetEntryValue(0x5004,0x0022);
+   std::string curve_desc = f->GetEntryString(0x5004,0x0022);
    std::cout << "Curve Description: " << curve_desc << std::endl;
  //* V 5004|0103 [US]     [Data Value Representation] [0] x(0)
-   std::string data_rep_str = f->GetEntryValue(0x5004,0x0103);
+   std::string data_rep_str = f->GetEntryString(0x5004,0x0103);
    unsigned short data_rep;
    convert.clear(); //important
    convert.str(data_rep_str);
@@ -170,33 +170,33 @@ int main(int argc, char *argv[])
 
 
    gdcm::DocEntry *pCurveDataDoc = f->GetDocEntry(0x5004, 0x3000);
-   gdcm::BinEntry *pCurveData = dynamic_cast<gdcm::BinEntry*>(pCurveDataDoc);
+   gdcm::DataEntry *pCurveData = dynamic_cast<gdcm::DataEntry *>(pCurveDataDoc);
    uint8_t *curve_data = pCurveData->GetBinArea();
    
    // From Part3, C.10.2.1.2 Data value representation (p668)
    size_t sz;
    switch( data_rep)
-     {
-   case 0:
-     sz = PrintCurveData((unsigned short*)(curve_data), num_points);
-     break;
-   case 1:
-     sz = PrintCurveData((signed short*)(curve_data), num_points);
-     break;
-   case 2:
-     sz = PrintCurveData((float*)(curve_data), num_points);
-     break;
-   case 3:
-     sz = PrintCurveData((double*)(curve_data), num_points);
-     break;
-   case 4:
-     sz = PrintCurveData((signed long*)(curve_data), num_points);
-     break;
-   default:
-     std::cerr << "Error don't know the type: " << data_rep_str << std::endl;
-     delete f;
-     return 1;
-     }
+   {
+      case 0:
+         sz = PrintCurveData((unsigned short*)(curve_data), num_points);
+         break;
+      case 1:
+         sz = PrintCurveData((signed short*)(curve_data), num_points);
+         break;
+      case 2:
+         sz = PrintCurveData((float*)(curve_data), num_points);
+         break;
+      case 3:
+         sz = PrintCurveData((double*)(curve_data), num_points);
+         break;
+      case 4:
+         sz = PrintCurveData((signed long*)(curve_data), num_points);
+         break;
+      default:
+         std::cerr << "Error don't know the type: " << data_rep_str << std::endl;
+         delete f;
+         return 1;
+   }
    // Just to make sure that values read are consistant and we won't read out of bound data:
    assert( sz*num_points == pCurveData->GetLength());
 

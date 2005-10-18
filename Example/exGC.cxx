@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:06 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,8 +19,7 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmSeqEntry.h"
 
 #include <stdlib.h> // for exit
@@ -132,17 +131,11 @@ int main(int argc, char *argv[])
            && !( d->GetGroup()%2 ) )
       { 
 
-         if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
+         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
          {              
-            copy->GetFile()->InsertBinEntry( b->GetBinArea(),b->GetLength(),
-                                             b->GetGroup(),b->GetElement(),
-                                             b->GetVR() );
-         }
-         else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
-         {   
-             copy->GetFile()->InsertValEntry( v->GetValue(),
-                                              v->GetGroup(),v->GetElement(),
-                                              v->GetVR() ); 
+            copy->GetFile()->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
+                                                 de->GetGroup(),de->GetElement(),
+                                                 de->GetVR() );
          }
          else
          {

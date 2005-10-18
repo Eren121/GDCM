@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
  */
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
-#include "gdcmValEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 
@@ -42,7 +42,7 @@ int CompareImages(FileList &list, bool sameSerie, bool sameStudy)
    if( sameSerie )
       sameStudy = true;
 
-   gdcm::ValEntry *entry;
+   gdcm::DataEntry *entry;
    std::map<std::string, int> instUID;
    std::map<std::string, int> mediaUID;
    std::map<std::string, int> serieUID;
@@ -52,33 +52,33 @@ int CompareImages(FileList &list, bool sameSerie, bool sameStudy)
    for(it=list.begin();it!=list.end();++it)
    {
       // SOP Instance UID
-      entry=(*it)->GetValEntry(0x0008, 0x0018);
+      entry=(*it)->GetDataEntry(0x0008, 0x0018);
       if( entry )
-         if( instUID.find(entry->GetValue())!=instUID.end() )
-            instUID[entry->GetValue()]++;
+         if( instUID.find(entry->GetString())!=instUID.end() )
+            instUID[entry->GetString()]++;
          else
-            instUID[entry->GetValue()]=1;
+            instUID[entry->GetString()]=1;
       // Media Storage SOP Instance UID
-      entry=(*it)->GetValEntry(0x0002,0x0003);
+      entry=(*it)->GetDataEntry(0x0002,0x0003);
       if( entry )
-         if( mediaUID.find(entry->GetValue())!=mediaUID.end() )
-            mediaUID[entry->GetValue()]++;
+         if( mediaUID.find(entry->GetString())!=mediaUID.end() )
+            mediaUID[entry->GetString()]++;
          else
-            mediaUID[entry->GetValue()]=1;
+            mediaUID[entry->GetString()]=1;
       // Series Instance UID
-      entry=(*it)->GetValEntry(0x0020,0x000e);
+      entry=(*it)->GetDataEntry(0x0020,0x000e);
       if( entry )
-         if( serieUID.find(entry->GetValue())!=serieUID.end() )
-            serieUID[entry->GetValue()]++;
+         if( serieUID.find(entry->GetString())!=serieUID.end() )
+            serieUID[entry->GetString()]++;
          else
-            serieUID[entry->GetValue()]=1;
+            serieUID[entry->GetString()]=1;
       // Study Instance UID
-      entry=(*it)->GetValEntry(0x0020,0x000d);
+      entry=(*it)->GetDataEntry(0x0020,0x000d);
       if( entry )
-         if( studyUID.find(entry->GetValue())!=studyUID.end() )
-            studyUID[entry->GetValue()]++;
+         if( studyUID.find(entry->GetString())!=studyUID.end() )
+            studyUID[entry->GetString()]++;
          else
-            studyUID[entry->GetValue()]=1;
+            studyUID[entry->GetString()]=1;
    }
 
    if( sameSerie )
@@ -152,19 +152,19 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
    std::ostringstream str;
 
    // Set the image size
-   file->InsertValEntry("256",0x0028,0x0011); // Columns
-   file->InsertValEntry("256",0x0028,0x0010); // Rows
+   file->InsertEntryString("256",0x0028,0x0011); // Columns
+   file->InsertEntryString("256",0x0028,0x0010); // Rows
 
    // Set the pixel type
-   file->InsertValEntry("8",0x0028,0x0100); // Bits Allocated
-   file->InsertValEntry("8",0x0028,0x0101); // Bits Stored
-   file->InsertValEntry("7",0x0028,0x0102); // High Bit
+   file->InsertEntryString("8",0x0028,0x0100); // Bits Allocated
+   file->InsertEntryString("8",0x0028,0x0101); // Bits Stored
+   file->InsertEntryString("7",0x0028,0x0102); // High Bit
 
    // Set the pixel representation
-   file->InsertValEntry("0",0x0028,0x0103); // Pixel Representation
+   file->InsertEntryString("0",0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
-   file->InsertValEntry("1",0x0028,0x0002); // Samples per Pixel
+   file->InsertEntryString("1",0x0028,0x0002); // Samples per Pixel
 
    // The so called 'prepared image', built ex nihilo just before,
    // has NO Pixel Element yet.
@@ -252,10 +252,10 @@ int TestImageSet(int argc, char *argv[])
       // It's up to the user to initialize Serie UID and Study UID
       // Study Instance UID
       studyUID = gdcm::Util::CreateUniqueUID();
-      file->InsertValEntry(studyUID, 0x0020, 0x000d);
+      file->InsertEntryString(studyUID, 0x0020, 0x000d);
       // Series Instance UID
       serieUID = gdcm::Util::CreateUniqueUID();
-      file->InsertValEntry(serieUID, 0x0020, 0x000e);
+      file->InsertEntryString(serieUID, 0x0020, 0x000e);
 
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
@@ -287,8 +287,8 @@ int TestImageSet(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
-      file->InsertValEntry(studyUID, 0x0020, 0x000d);
-      file->InsertValEntry(serieUID, 0x0020, 0x000e);
+      file->InsertEntryString(studyUID, 0x0020, 0x000d);
+      file->InsertEntryString(serieUID, 0x0020, 0x000e);
 
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
@@ -319,9 +319,9 @@ int TestImageSet(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = new gdcm::File();
-      file->InsertValEntry(studyUID, 0x0020, 0x000d);
+      file->InsertEntryString(studyUID, 0x0020, 0x000d);
       serieUID = gdcm::Util::CreateUniqueUID();
-      file->InsertValEntry(serieUID, 0x0020, 0x000e);
+      file->InsertEntryString(serieUID, 0x0020, 0x000e);
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {

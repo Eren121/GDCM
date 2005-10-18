@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/10 21:57:57 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #include "gdcmCommon.h"
 #include "gdcmDebug.h"
 #include "gdcmDocEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 
 #include <iomanip>
 
@@ -29,11 +29,11 @@ int main(int argc, char *argv[])
    gdcm::File *f;
  
    if( argc < 5 )
-     {
-     std::cerr << "Usage :" << argv[0] << " input.dcm  group element outputfile" << std::endl;
-     std::cerr << "  Ex: " << argv[0] << " /tmp/bla.dcm 0029 2110 /tmp/out.raw" << std::endl;
-     return 1;
-     }
+   {
+      std::cerr << "Usage :" << argv[0] << " input.dcm  group element outputfile" << std::endl;
+      std::cerr << "  Ex: " << argv[0] << " /tmp/bla.dcm 0029 2110 /tmp/out.raw" << std::endl;
+      return 1;
+   }
    std::string fileName = argv[1];
 
    std::cout << fileName << std::endl;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
    convert >> std::hex >> elem;
    std::cout << "Extracting tag: (0x" << std::hex << std::setw(4) << std::setfill('0')
      << group << ",0x" << std::setw(4) << std::setfill('0') << elem << ")" << std::endl;
-   std::string dicom_tag_value = f->GetEntryValue(group, elem);
+   std::string dicom_tag_value = f->GetEntryString(group, elem);
    if (dicom_tag_value == gdcm::GDCM_UNFOUND)
    {
      gdcm::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
@@ -82,22 +82,22 @@ int main(int argc, char *argv[])
    }
 
    gdcm::DocEntry *dicom_tag_doc = f->GetDocEntry(group, elem);
-   gdcm::BinEntry *dicom_tag = dynamic_cast<gdcm::BinEntry*>(dicom_tag_doc);
+   gdcm::DataEntry *dicom_tag = dynamic_cast<gdcm::DataEntry *>(dicom_tag_doc);
    if( !dicom_tag )
-     {
-     std::cerr << "Sorry BinEntry only please" << std::endl; //TODO support ValEntry
-     delete f;
-     return 1;
-     }
+   {
+      std::cerr << "Sorry DataEntry only please" << std::endl;
+      delete f;
+      return 1;
+   }
 
    // Write out the data as a file:
    std::ofstream o(argv[4]);
    if( !o )
-     {
-     std::cerr << "Problem opening file: " << argv[4] << std::endl;
-     delete f;
-     return 1;
-     }
+   {
+      std::cerr << "Problem opening file: " << argv[4] << std::endl;
+      delete f;
+      return 1;
+   }
    o.write((char*)dicom_tag->GetBinArea(), dicom_tag->GetLength());
    o.close();
 

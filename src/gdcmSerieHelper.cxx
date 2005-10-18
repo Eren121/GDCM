@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 15:45:38 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ void SerieHelper::AddFileName(std::string const &filename)
           ++it2)
       {
          const ExRule &r = *it2;
-         s = header->GetEntryValue( r.group, r.elem );
+         s = header->GetEntryString( r.group, r.elem );
          if ( !Util::CompareDicomString(s, r.value.c_str(), r.op) )
          {
            // Argh ! This rule is unmatched; let's just quit
@@ -121,7 +121,7 @@ void SerieHelper::AddFileName(std::string const &filename)
          // Let's add it!
 
          // 0020 000e UI REL Series Instance UID
-         const std::string &uid = header->GetEntryValue (0x0020, 0x000e);
+         const std::string &uid = header->GetEntryString(0x0020, 0x000e);
          // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
          // no need here to do anything special
 
@@ -486,11 +486,11 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
       // 0020,0032 : Image Position Patient
       // 0020,0030 : Image Position (RET)
 
-      strImPos = (*it)->GetEntryValue(0x0020,0x0032);
+      strImPos = (*it)->GetEntryString(0x0020,0x0032);
       if ( strImPos == GDCM_UNFOUND)
       {
          gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
-         strImPos = (*it)->GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
+         strImPos = (*it)->GetEntryString(0x0020,0x0030); // For ACR-NEMA images
          if ( strImPos == GDCM_UNFOUND )
          {
             gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -559,7 +559,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       // 0020,0032 : Image Position Patient
       // 0020,0030 : Image Position (RET)
 
-      strTagValue = (*it)->GetEntryValue(group,element);
+      strTagValue = (*it)->GetEntryString(group,element);
       
       if ( CoherentFileSet.count(strTagValue) == 0 )
       {
@@ -569,7 +569,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       }
       // Current Tag value and DICOM header match; add the file:
       CoherentFileSet[strTagValue]->push_back( (*it) );
-   }   
+   }
    return CoherentFileSet;
 }
 

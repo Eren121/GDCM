@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:25 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,8 +19,7 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmSeqEntry.h"
 
 #include <stdlib.h> // for exit
@@ -80,7 +79,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
              << "--- Display only human readable values -----------------------"
              << std::endl;
 
-   gdcm::ValEntry *valEntry;
+   gdcm::DataEntry *dataEntry;
    std::string value;
    std::string vr;   // value representation
    std::string vm;   // value multiplicity
@@ -93,34 +92,31 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
       // We skip SeqEntries, since user cannot do much with them
       if ( !(dynamic_cast<gdcm::SeqEntry*>(d))
       // We skip Shadow Groups, since nobody knows what they mean
-           && !( d->GetGroup()%2 )
-     // we skip BinEntries, since their content is not human-readable
-           && !dynamic_cast<gdcm::BinEntry*>(d) )
+           && !( d->GetGroup()%2 ) )
      {      
          // If user just 'wants to see'
          //d->Print();
          //std::cout << std::endl;
 
          // If user wants to get info about the entry
-         // (he is sure, here that DocEntry is a ValEntry)
-         valEntry = dynamic_cast<gdcm::ValEntry*>(d);
+         // (he is sure, here that DocEntry is a DataEntry)
+         dataEntry = dynamic_cast<gdcm::DataEntry *>(d);
          // Let's be carefull -maybe he commented out some previous line-
-         if (!valEntry)
+         if (!dataEntry)
             continue;
 
-         value  = valEntry->GetValue();
-         vr     = valEntry->GetVR();
+         value  = dataEntry->GetString();
+         vr     = dataEntry->GetVR();
          // user wants really to know everything about entry!
-         vm     = valEntry->GetVM();
-         name   = valEntry->GetName();
+         vm     = dataEntry->GetVM();
+         name   = dataEntry->GetName();
 
          std::cout //<< std::hex << group << "," << elem 
-          << valEntry->GetKey()
-               << "     VR :[" << vr    << "] VM : [" << vm 
+             << dataEntry->GetKey()
+             << "     VR :[" << vr    << "] VM : [" << vm 
              << "] name : [" << name  << "]"
              << " value : [" << value << "]" 
- 
-              << std::endl;
+             << std::endl;
       }
       d = f1->GetNextEntry();
    }
@@ -197,21 +193,21 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
              << std::endl;
    // ------ User is aware, and wants to get fields with no accesor --------
 
-   std::cout << "Manufacturer :["     << f1->GetEntryValue(0x0008,0x0070)
+   std::cout << "Manufacturer :["     << f1->GetEntryString(0x0008,0x0070)
              << "]" << std::endl; 
-   std::cout << "Institution :["      << f1->GetEntryValue(0x0008,0x0080)
+   std::cout << "Institution :["      << f1->GetEntryString(0x0008,0x0080)
              << "]" << std::endl;
-   std::cout << "Patient's name :["   << f1->GetEntryValue(0x0010,0x0010)
+   std::cout << "Patient's name :["   << f1->GetEntryString(0x0010,0x0010)
              << "]" << std::endl;
-   std::cout << "Physician's name :[" << f1->GetEntryValue(0x0008,0x0090)
+   std::cout << "Physician's name :[" << f1->GetEntryString(0x0008,0x0090)
              << "]" << std::endl; 
-   std::cout << "Study Date :["       << f1->GetEntryValue(0x0008,0x0020)
+   std::cout << "Study Date :["       << f1->GetEntryString(0x0008,0x0020)
              << "]" << std::endl; 
-   std::cout << "Study inst UID :["   << f1->GetEntryValue(0x0020,0x000d)
+   std::cout << "Study inst UID :["   << f1->GetEntryString(0x0020,0x000d)
              << "]" << std::endl;
-   std::cout << "Serie inst UID :["   << f1->GetEntryValue(0x0020,0x000e)
+   std::cout << "Serie inst UID :["   << f1->GetEntryString(0x0020,0x000e)
              << "]" << std::endl;
-   std::cout << "Frame ref UID :["   << f1->GetEntryValue(0x0020,0x0052)
+   std::cout << "Frame ref UID :["   << f1->GetEntryString(0x0020,0x0052)
              << "]" << std::endl;
  
    // User wants to get info about the 'real world' vs image
@@ -270,17 +266,11 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
            && !( d->GetGroup()%2 ) )
       { 
 
-         if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
+         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
          {              
-            copy->GetFile()->InsertBinEntry( b->GetBinArea(),b->GetLength(),
-                                             b->GetGroup(),b->GetElement(),
-                                             b->GetVR() );
-         }
-         else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
-         {   
-             copy->GetFile()->InsertValEntry( v->GetValue(),
-                                              v->GetGroup(),v->GetElement(),
-                                              v->GetVR() ); 
+            copy->GetFile()->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
+                                                 de->GetGroup(),de->GetElement(),
+                                                 de->GetVR() );
          }
          else
          {

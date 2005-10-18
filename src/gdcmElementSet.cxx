@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/11 08:24:10 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,9 +18,8 @@
 
 #include "gdcmElementSet.h"
 #include "gdcmDebug.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
+#include "gdcmDataEntry.h"
 
 namespace gdcm 
 {
@@ -196,11 +195,11 @@ void ElementSet::Print(std::ostream &os, std::string const & )
 {
    // Let's change the 'warning value' for Pixel Data,
    // to avoid human reader to be confused by 'gdcm::NotLoaded'.   
-   gdcm::BinEntry *pixelElement = GetBinEntry(0x7fe0,0x0010);
+   DataEntry *pixelElement = GetDataEntry(0x7fe0,0x0010);
    if ( pixelElement != 0 )
    {
-      pixelElement->SetValue( gdcm::GDCM_PIXELDATA);
-   }      
+      pixelElement->SetFlag( DataEntry::FLAG_PIXELDATA );
+   }
 
    for( TagDocEntryHT::const_iterator i = TagHT.begin(); i != TagHT.end(); ++i)
    {
@@ -209,7 +208,7 @@ void ElementSet::Print(std::ostream &os, std::string const & )
       entry->SetPrintLevel(PrintLevel);
       entry->Print(os);   
 
-      if ( dynamic_cast<SeqEntry*>(entry) )
+      if ( dynamic_cast<SeqEntry *>(entry) )
       {
          // Avoid the newline for a sequence:
          continue;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllPrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:07 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,14 +25,12 @@
 #include "gdcmFileHelper.h"
 #include "gdcmUtil.h"
 #include "gdcmCommon.h"
-#include "gdcmBinEntry.h"  
 #include "gdcmDocEntry.h" 
 #include "gdcmDocEntrySet.h"           
 #include "gdcmDocument.h"          
 #include "gdcmElementSet.h"        
 #include "gdcmSeqEntry.h" 
 #include "gdcmSQItem.h" 
-#include "gdcmValEntry.h" 
 
 #include <iostream>
 

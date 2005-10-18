@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 09:29:11 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 #include "gdcmDocEntry.h"
-#include "gdcmValEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirStudy.h"
@@ -48,12 +48,12 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
        return 1; 
       }
       // skip SeqEntries (I don't want to deal with 'recursion pbs' here)
-      if ( !dynamic_cast<gdcm::ValEntry*>(e1) ||
-           !dynamic_cast<gdcm::ValEntry*>(e2) )
+      if ( !dynamic_cast<gdcm::DataEntry *>(e1) ||
+           !dynamic_cast<gdcm::DataEntry *>(e2) )
          continue;
 
       // a value is read as GDCM_UNFOUND 
-      if ( ((gdcm::ValEntry*)e1)->GetValue() == gdcm::GDCM_UNFOUND )
+      if ( ((gdcm::DataEntry *)e1)->GetString() == gdcm::GDCM_UNFOUND )
       {
          std::cout << "for gdcm source DicomDir : element (" << std::hex 
                    << e1->GetGroup() << "," <<e1->GetElement() 
@@ -63,16 +63,16 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
       }
 
       // values differ in source file and destination file
-      if ( ((gdcm::ValEntry*)e1)->GetValue() != 
-           ((gdcm::ValEntry*)e2)->GetValue() )
+      if ( ((gdcm::DataEntry *)e1)->GetString() != 
+           ((gdcm::DataEntry *)e2)->GetString() )
       {
  
          // serious trouble : values differ in source and destination file
          std::cout << "for gdcm DicomDir element (" << std::hex 
                    << e2->GetGroup() << "," <<e2->GetElement() 
                    << ") values differ [" 
-                   << ((gdcm::ValEntry*)e1)->GetValue() << "] != [" 
-                   << ((gdcm::ValEntry*)e2)->GetValue() << "]"
+                   << ((gdcm::DataEntry *)e1)->GetString() << "] != [" 
+                   << ((gdcm::DataEntry *)e2)->GetString() << "]"
                    << std::endl;
           return 1;
       }
@@ -144,26 +144,26 @@ int TestDicomDir(int argc, char *argv[])
    pa1 = dicomdir->GetFirstPatient(); 
    while ( pa1 ) 
    {  // we process all the PATIENT of this DICOMDIR 
-      std::cout << pa1->GetEntryValue(0x0010, 0x0010) << std::endl; // Patient's Name
+      std::cout << pa1->GetEntryString(0x0010, 0x0010) << std::endl; // Patient's Name
 
       st1 = pa1->GetFirstStudy();
       while ( st1 ) 
       { // we process all the STUDY of this patient
-         std::cout << "--- "<< st1->GetEntryValue(0x0008, 0x1030) // Study Description
+         std::cout << "--- "<< st1->GetEntryString(0x0008, 0x1030) // Study Description
          << std::endl;  
-         std::cout << " Stud.ID:[" << st1->GetEntryValue(0x0020, 0x0010) // Study ID
+         std::cout << " Stud.ID:[" << st1->GetEntryString(0x0020, 0x0010) // Study ID
          << "]"; 
 
          se1 = st1->GetFirstSerie();
          while ( se1 ) 
          { // we process all the SERIES of this study
-            std::cout << "--- --- "<< se1->GetEntryValue(0x0008, 0x103e) << std::endl;      // Serie Description
-            std::cout << " Ser.nb:["         <<  se1->GetEntryValue(0x0020, 0x0011);        // Series number
-            std::cout << "] Mod.:["          <<  se1->GetEntryValue(0x0008, 0x0060) << "]"; // Modality
+            std::cout << "--- --- "<< se1->GetEntryString(0x0008, 0x103e) << std::endl;      // Serie Description
+            std::cout << " Ser.nb:["         <<  se1->GetEntryString(0x0020, 0x0011);        // Series number
+            std::cout << "] Mod.:["          <<  se1->GetEntryString(0x0008, 0x0060) << "]"; // Modality
 
             im1 = se1->GetFirstImage();
             while ( im1 ) { // we process all the IMAGE of this serie
-               std::cout << "--- --- --- "<< im1->GetEntryValue(0x0004, 0x1500) << std::endl; // File name
+               std::cout << "--- --- --- "<< im1->GetEntryString(0x0004, 0x1500) << std::endl; // File name
                im1 = se1->GetNextImage();   
             }
             se1 = st1->GetNextSerie();   
@@ -228,7 +228,7 @@ int TestDicomDir(int argc, char *argv[])
       }
   
       // just to allow human reader to be sure ...
-      std::cout << pa2->GetEntryValue(0x0010, 0x0010) 
+      std::cout << pa2->GetEntryString(0x0010, 0x0010) 
                 << std::endl; // Patient's Name
  
       st1 = pa1->GetFirstStudy();
@@ -244,10 +244,10 @@ int TestDicomDir(int argc, char *argv[])
          }
 
          // just to allow human reader to be sure ...
-         std::cout << "--- "<< st2->GetEntryValue(0x0008, 0x1030);
+         std::cout << "--- "<< st2->GetEntryString(0x0008, 0x1030);
          // << std::endl;    // Study Description
          std::cout << " Stud.ID:["          
-                   << st2->GetEntryValue(0x0020, 0x0010)
+                   << st2->GetEntryString(0x0020, 0x0010)
                    << "]" << std::endl; // Study ID
   
          se1 = st1->GetFirstSerie();
@@ -257,9 +257,9 @@ int TestDicomDir(int argc, char *argv[])
          { // we process all the SERIE of this study
             if ( CompareSQItem(se2,se1) == 1 )
               return 1; 
-            std::cout << "--- --- " << se2->GetEntryValue(0x0008, 0x103e);      // Serie Description
-            std::cout << " Ser.nb:["<< se2->GetEntryValue(0x0020, 0x0011);        // Series number
-            std::cout << "] Mod.:[" << se2->GetEntryValue(0x0008, 0x0060) << "]" << std::endl; // Modality
+            std::cout << "--- --- " << se2->GetEntryString(0x0008, 0x103e);      // Serie Description
+            std::cout << " Ser.nb:["<< se2->GetEntryString(0x0020, 0x0011);        // Series number
+            std::cout << "] Mod.:[" << se2->GetEntryString(0x0008, 0x0060) << "]" << std::endl; // Modality
             im1 = se1->GetFirstImage();
             im2 = se2->GetFirstImage();
 

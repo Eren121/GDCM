@@ -67,7 +67,7 @@ while(patient):
          image=serie.GetFirstImage()
          while(image):
             print "         Image"
-            print "         ---",image.GetValEntry(0x0004,0x1500).GetValue()
+            print "         ---",image.GetDataEntry(0x0004,0x1500).GetValue()
             image=serie.GetNextImage()
          serie=study.GetNextSerie()
       study=patient.GetNextStudy()

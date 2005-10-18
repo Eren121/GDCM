@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/18 08:35:51 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,8 +18,7 @@
 
 #include "gdcmValidator.h"
 #include "gdcmElementSet.h"
-#include "gdcmBinEntry.h"
-#include "gdcmValEntry.h"
+#include "gdcmDataEntry.h"
 
 #include <sstream>
 
@@ -34,11 +33,11 @@ Validator::~Validator()
 {
 }
 
-// Function to compare the VM found while parsing d->GetValue()
+// Function to compare the VM found while parsing d->GetString()
 // compare to the one from the dictionary
-bool CheckVM(ValEntry *v)
+bool CheckVM(DataEntry *entry)
 {
-  const std::string &s = v->GetValue();
+  const std::string &s = entry->GetString();
   std::string::size_type n = s.find("\\");
   if ( n == s.npos ) // none found
   {
@@ -48,7 +47,7 @@ bool CheckVM(ValEntry *v)
 
   unsigned int m;
   std::istringstream os;
-  os.str( v->GetVM());
+  os.str( entry->GetVM());
   os >> m;
 
   return n == m;
@@ -57,22 +56,15 @@ bool CheckVM(ValEntry *v)
 void Validator::SetInput(ElementSet *input)
 {
   // berk for now SetInput do two things at the same time
-  gdcm::DocEntry *d=input->GetFirstEntry();
+  DocEntry *d=input->GetFirstEntry();
   while(d)
   {
-    if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
-    {
-//      copyH->InsertBinEntry( b->GetBinArea(),b->GetLength(),
-//        b->GetGroup(),b->GetElement(),
-//        b->GetVR() );
-        (void)b;
-    }
-    else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
+    if ( DataEntry *v = dynamic_cast<DataEntry *>(d) )
     {   
       if ( !CheckVM(v) )
       {
         std::cout << "Rah this DICOM contains one wrong tag:" << 
-        v->GetValue() << " " <<
+        v->GetString() << " " <<
         v->GetGroup() << "," << v->GetElement() << "," <<
         v->GetVR() << " " << v->GetVM() << " " << v->GetName() << std::endl;
       }

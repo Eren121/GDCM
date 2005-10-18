@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 12:02:02 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/10/18 08:35:43 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,14 +55,14 @@ int main(int argc, char *argv[])
    int dataSize = h->GetImageDataSize();
    std::cout << "---> pourFindTaggs : dataSize " << dataSize << std::endl;
 
-   h->SetValEntry(RecCode ,0x0008,0x0010);
-   h->SetValEntry(ManufacturerName ,0x0008,0x0070);
+   h->SetEntryString(RecCode ,0x0008,0x0010);
+   h->SetEntryString(ManufacturerName ,0x0008,0x0070);
 
 // ImagePositionPatient
-   ImagePositionPatient = h->GetFile()->GetEntryValue(0x0020,0x0032);
+   ImagePositionPatient = h->GetFile()->GetEntryString(0x0020,0x0032);
 
 // Image Position (RET)
-   h->SetValEntry(ImagePositionPatient, 0x0020,0x0030);
+   h->SetEntryString(ImagePositionPatient, 0x0020,0x0030);
 
    sscanf(ImagePositionPatient.c_str(), "%f%c%f%c%f", &x,&c,&y,&c,&z);
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 // Location
    std::string zizi = gdcm::Util::Format("%f",l);
    Location = gdcm::Util::DicomString(zizi.c_str());
-   h->SetValEntry(Location, 0x0020,0x0050);
+   h->SetEntryString(Location, 0x0020,0x0050);
 
 // sinon, la longueur du champ est erronée (?!?) 
 // Probable sac de noeud entre strlen(xxx.c_str()) et xxx.length()
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
    zizi = gdcm::Util::Format("%d",0x7FE0);
    ImageLocation = gdcm::Util::DicomString(zizi.c_str());
-//h->SetValEntry(Location, 0x0028,0x0200);
+//h->SetEntryString(Location, 0x0028,0x0200);
 //h->GetFile()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
 
 // void *imageData= h->GetImageData();

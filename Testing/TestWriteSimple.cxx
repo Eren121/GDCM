@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/11 14:24:29 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,6 +99,8 @@ Image Images [] = {
    {0,   0,   1,  1, 8, 8,  0, 'i'} // to find the end
 };
 
+const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
+
 int WriteSimple(Image &img)
 {
    std::ostringstream fileName;
@@ -114,16 +116,16 @@ int WriteSimple(Image &img)
    // Set the image size
    str.str("");
    str << img.sizeX;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0011); // Columns
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0011); // Columns
    str.str("");
    str << img.sizeY;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0010); // Rows
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0010); // Rows
 
    if(img.sizeZ>1)
    {
       str.str("");
       str << img.sizeZ;
-      fileToBuild->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
+      fileToBuild->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    fileName << "-" << img.sizeX << "-" << img.sizeY << "-" << img.sizeZ;
@@ -131,20 +133,20 @@ int WriteSimple(Image &img)
    // Set the pixel type
    str.str("");
    str << img.componentSize;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
 
    str.str("");
    str << img.componentUse;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << ( img.componentSize - 1 );
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << img.sign;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
 
    fileName << "-" << img.componentSize;
    if(img.sign == 0)
@@ -167,7 +169,7 @@ int WriteSimple(Image &img)
    // Set the samples per pixel
    str.str("");
    str << img.components;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
 // Step 2 : Create the output image
    std::cout << "2...";
@@ -236,7 +238,7 @@ int WriteSimple(Image &img)
    if( !fileH->Write(fileName.str()) )
    {
       std::cout << "Failed for [" << fileName.str() << "]\n"
-                << "           File in unwrittable\n";
+                << "           File is unwrittable\n";
 
       delete fileH;
       delete fileToBuild;
@@ -331,6 +333,23 @@ int WriteSimple(Image &img)
    {
       std::cout << "Failed" << std::endl
                 << "        Pixel differ (as expanded in memory)." << std::endl;
+      std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
+                  << " pixels differing (pos : test - ref) :" 
+                  << std::endl;
+      int i;
+      unsigned int j;
+      for(i=0, j=0;i<dataSizeWritten && j<MAX_NUMBER_OF_DIFFERENCE;i++)
+      {
+         if(imageDataWritten[i]!=imageData[i])
+            {
+            std::cout << std::hex << "(" << i << " : " 
+                        << std::hex << (int)(imageDataWritten[i]) << " - "
+                        << std::hex << (int)(imageData[i]) << ") "
+                        << std::dec;
+            ++j;
+            }
+      }
+      std::cout << std::endl;
       delete fileToBuild;
       delete fileH;
       delete reread;
@@ -359,7 +378,7 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-   // gdcm::Debug::DebugOn();
+   //gdcm::Debug::DebugOn();
        
    int ret=0;
    int i=0;

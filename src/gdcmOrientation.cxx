@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/03 14:54:16 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -336,7 +336,7 @@ try:
       val=image.GetFirstEntry()
       dic={}
       while(val):
-         if isinstance(val,gdcm.ValEntryPtr):
+         if isinstance(val,gdcm.DataEntryPtr):
             dic[val.GetName()]=val.GetValue()
          val=image.GetNextEntry()
       return dic

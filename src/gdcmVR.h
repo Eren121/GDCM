@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/06 15:36:03 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/10/18 08:35:51 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,6 +57,8 @@ public:
    bool IsVROfSequence(VRKey const &tested) { return tested == "SQ"; }
 
    bool IsValidVR(VRKey const &key) { return vr.find(key) != vr.end(); }
+
+   unsigned short GetAtomicElementLength(VRKey const &vr);
 
 private:
    VRHT vr;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 12:23:26 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/10/18 08:35:55 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.24 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.25 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 //-----------------------------------------------------------------------------
@@ -137,29 +137,29 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 
    str.str("");
    str << dim[0];
-   file->InsertValEntry(str.str(),0x0028,0x0011); // Columns
+   file->InsertEntryString(str.str(),0x0028,0x0011); // Columns
 
    str.str("");
    str << dim[1];
-   file->InsertValEntry(str.str(),0x0028,0x0010); // Rows
+   file->InsertEntryString(str.str(),0x0028,0x0010); // Rows
 
    if(dim[2]>1)
    {
       str.str("");
       str << dim[2];
       //file->Insert(str.str(),0x0028,0x0012); // Planes
-      file->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
+      file->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
    }
 
    // Pixel type
    str.str("");
    str << image->GetScalarSize()*8;
-   file->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
-   file->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
+   file->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
+   file->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << image->GetScalarSize()*8-1;
-   file->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
+   file->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
 
    // Pixel Repr
    // FIXME : what do we do when the ScalarType is 
@@ -176,12 +176,12 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    {
       str << "1"; // Signed
    }
-   file->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
+   file->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Samples per pixel
    str.str("");
    str << image->GetNumberOfScalarComponents();
-   file->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
+   file->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
    /// \todo : Spacing Between Slices is meaningfull ONLY for CT an MR modality
    ///       We should perform some checkings before forcing the Entry creation
@@ -195,10 +195,10 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    // thus forcing to fixed point value
    str.setf( std::ios::fixed );
    str << sp[1] << "\\" << sp[0];
-   file->InsertValEntry(str.str(),0x0028,0x0030); // Pixel Spacing
+   file->InsertEntryString(str.str(),0x0028,0x0030); // Pixel Spacing
    str.str("");
    str << sp[2];
-   file->InsertValEntry(str.str(),0x0018,0x0088); // Spacing Between Slices
+   file->InsertEntryString(str.str(),0x0018,0x0088); // Spacing Between Slices
 
    // Origin
    vtkFloatingPointType *org = image->GetOrigin();
@@ -208,7 +208,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 
    str.str("");
    str << org[0] << "\\" << org[1] << "\\" << org[2];
-   file->InsertValEntry(str.str(),0x0020,0x0032); // Image Position Patient
+   file->InsertEntryString(str.str(),0x0020,0x0032); // Image Position Patient
    str.unsetf( std::ios::fixed ); //done with floating point values
 
    // Window / Level
@@ -216,10 +216,10 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 
    str.str("");
    str << rng[1]-rng[0];
-   file->InsertValEntry(str.str(),0x0028,0x1051); // Window Width
+   file->InsertEntryString(str.str(),0x0028,0x1051); // Window Width
    str.str("");
    str << (rng[1]+rng[0])/2.0;
-   file->InsertValEntry(str.str(),0x0028,0x1050); // Window Center
+   file->InsertEntryString(str.str(),0x0028,0x1050); // Window Center
 
    // Pixels
    unsigned char *data;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:21:28 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/10/18 08:35:55 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@
 #include "gdcmDocument.h"  // for NO_SHADOWSEQ
 #include "gdcmSerieHelper.h"
 #include "gdcmDebug.h"
-#include "gdcmValEntry.h"
+#include "gdcmDataEntry.h"
 
 #include "gdcmArgMgr.h" // for Argument Manager functions
 #include <string.h>     // for strcmp
@@ -453,17 +453,17 @@ bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2)
    // for *this* user supplied function, I supposed only ValEntries are checked.
 // 
    std::string s1, s2;
-   gdcm::ValEntry *e1,*e2;
+   gdcm::DataEntry *e1,*e2;
    for (int ri=0; ri<orderNb; ri++)
    {
       std::cout << std::hex << elemsToOrderOn[2*ri] << "|" 
                             << elemsToOrderOn[2*ri+1]
                             << std::endl;
  
-      e1= f1->gdcm::Document::GetValEntry( elemsToOrderOn[2*ri],
+      e1= f1->gdcm::Document::GetDataEntry( elemsToOrderOn[2*ri],
                                  elemsToOrderOn[2*ri+1]);
 
-      e2= f2->gdcm::Document::GetValEntry( elemsToOrderOn[2*ri],
+      e2= f2->gdcm::Document::GetDataEntry( elemsToOrderOn[2*ri],
                                  elemsToOrderOn[2*ri+1]);
       if(!e2 || !e2)
       {
@@ -472,8 +472,8 @@ bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2)
                               << " not found" << std::endl;
          continue;
       }
-      s1 = e1->gdcm::ValEntry::GetValue();      
-      s2 = e2->gdcm::ValEntry::GetValue();
+      s1 = e1->GetString();      
+      s2 = e2->GetString();
       std::cout << "[" << s1 << "] vs [" << s2 << "]" << std::endl;
       if ( s1 < s2 ) 
          return true;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:55:23 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.123 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,8 +30,6 @@
 
 namespace gdcm 
 {
-class ValEntry;
-class BinEntry;
 class SeqEntry;
 class Dict;
 
@@ -92,7 +90,7 @@ typedef std::list<Element> ListElements;
 
 // Content entries
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
-   virtual void LoadEntryBinArea(BinEntry *entry);
+   virtual void LoadEntryBinArea(DataEntry *entry);
 
    void LoadDocEntrySafe(DocEntry *entry);
    void AddForceLoadElement(uint16_t group, uint16_t elem);
@@ -195,9 +193,6 @@ private:
    uint32_t FindDocEntryLengthOBOrOW() throw( FormatUnexpected );
    std::string FindDocEntryVR();
    bool CheckDocEntryVR      (VRKey k);
-
-   std::string GetDocEntryValue  (DocEntry *entry);
-   std::string GetDocEntryUnvalue(DocEntry *entry);
 
    void SkipDocEntry          (DocEntry *entry);
    void SkipToNextDocEntry    (DocEntry *entry);

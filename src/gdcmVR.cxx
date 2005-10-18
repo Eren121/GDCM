@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 14:12:23 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/10/18 08:35:51 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ VR::~VR()
 
 /**
  * \brief   Simple predicate that checks whether the given argument
- *          corresponds to the Value Representation of a \ref BinEntry .
+ *          corresponds to the Value Representation of a \ref DataEntry .
  * @param   tested value representation to check for.
  */
 bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
@@ -108,14 +108,12 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 
 /**
  * \brief   Simple predicate that checks whether the given argument
- *          corresponds to the Value Representation of a \ref ValEntry
- *          but NOT a \ref BinEntry.
+ *          corresponds to the Value Representation of a representable
+ *          string.
  * @param   tested value representation to be checked.
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
-
-
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
@@ -144,6 +142,26 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested != "AT" && // Attribute Tag ?!?
           tested != "SQ" ;
 */
+}
+
+unsigned short VR::GetAtomicElementLength(VRKey const &vr)
+{
+   // Unsigned & signed short
+   if( vr == "US" || vr == "SS" )
+      return 2;
+   // Unsigned & signed long
+   if( vr == "UL" || vr == "SL" )
+      return 4;
+   // Float
+   if( vr == "FL" )
+      return 4;
+   // Double
+   if( vr == "FD" )
+      return 8;
+   // Word string
+   if( vr == "OW" )
+      return 2;
+   return 1;
 }
 
 //-----------------------------------------------------------------------------

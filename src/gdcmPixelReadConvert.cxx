@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/13 07:14:45 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -148,9 +148,9 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    if ( HasLUT )
    {
       // Just in case some access to a File element requires disk access.
-      LutRedDescriptor   = file->GetEntryValue( 0x0028, 0x1101 );
-      LutGreenDescriptor = file->GetEntryValue( 0x0028, 0x1102 );
-      LutBlueDescriptor  = file->GetEntryValue( 0x0028, 0x1103 );
+      LutRedDescriptor   = file->GetEntryString( 0x0028, 0x1101 );
+      LutGreenDescriptor = file->GetEntryString( 0x0028, 0x1102 );
+      LutBlueDescriptor  = file->GetEntryString( 0x0028, 0x1103 );
    
       // The following comment is probabely meaningless, since LUT are *always*
       // loaded at parsing time, whatever their length is.
@@ -164,7 +164,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       // \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
       //       We should NOT bypass the [Bin|Val]Entry class. Instead
       //       an access to an UNLOADED content of a [Bin|Val]Entry occurence
-      //       (e.g. BinEntry::GetBinArea()) should force disk access from
+      //       (e.g. DataEntry::GetBinArea()) should force disk access from
       //       within the [Bin|Val]Entry class itself. The only problem
       //       is that the [Bin|Val]Entry is unaware of the FILE* is was
       //       parsed from. Fix that. FIXME.

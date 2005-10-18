@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcm.h,v $
   Language:  C++
-  Date:      $Date: 2005/03/09 11:16:11 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,8 +33,7 @@
 #include "gdcmFileHelper.h"
 #include "gdcmSerieHelper.h"
 
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmSeqEntry.h"
 
 #include "gdcmUtil.h"

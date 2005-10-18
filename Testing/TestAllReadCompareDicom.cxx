@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:07 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -485,10 +485,12 @@ int InternalTest(std::string const &filename,
                    << "        Scalar size: " << tested->GetFile()->GetPixelSize() << " # " 
                    << reference->GetScalarSize() << std::endl
                    << "        Number of scalar: " << tested->GetFile()->GetNumberOfScalarComponents() << " # " 
-                   << reference->GetNumberOfComponents() << std::endl;
+                   << reference->GetNumberOfComponents() << std::endl
+                   << "        Pixel type: " << tested->GetFile()->GetPixelType() << std::endl;
          delete reference;
          delete tested;
          delete f;
+         return 1;
       }
 
       // Test the data size

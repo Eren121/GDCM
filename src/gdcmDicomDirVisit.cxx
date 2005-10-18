@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirVisit.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 19:07:12 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 #include "gdcmDicomDirVisit.h"
-#include "gdcmValEntry.h"
 #include "gdcmGlobal.h"
+#include "gdcmDataEntry.h"
 
 namespace gdcm 
 {
@@ -72,7 +72,8 @@ void DicomDirVisit::Print(std::ostream &os, std::string const & )
    {
       if ( (*i)->GetGroup() == 0x0004 && (*i)->GetElement() == 0x1500 )
       {
-         os << (dynamic_cast<ValEntry *>(*i))->GetValue(); //FIXME // ????
+         if( dynamic_cast<DataEntry *>(*i) )
+            os << (dynamic_cast<DataEntry *>(*i))->GetString();
       }
    }
    os << std::endl;

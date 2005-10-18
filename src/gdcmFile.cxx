@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 14:26:44 $
-  Version:   $Revision: 1.275 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.276 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,11 +92,10 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include "gdcmTS.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmRLEFramesInfo.h"
 #include "gdcmJPEGFragmentsInfo.h"
+#include "gdcmDataEntry.h"
 
 #include <vector>
 #include <stdio.h>  //sscanf
@@ -168,7 +167,7 @@ bool File::DoTheLoadingJob( )
    // Note: this IS the right place for the code
  
    // Image Location
-   const std::string &imgLocation = GetEntryValue(0x0028, 0x0200);
+   const std::string &imgLocation = GetEntryString(0x0028, 0x0200);
    if ( imgLocation == GDCM_UNFOUND )
    {
       // default value
@@ -213,11 +212,11 @@ bool File::DoTheLoadingJob( )
          ComputeJPEGFragmentInfo();
       CloseFile();
 
-      // Create a new BinEntry to change the DictEntry
+      // Create a new DataEntry to change the DictEntry
       // The changed DictEntry will have 
       // - a correct PixelVR OB or OW)
       // - the name to "Pixel Data"
-      BinEntry *oldEntry = dynamic_cast<BinEntry *>(entry);
+      DataEntry *oldEntry = dynamic_cast<DataEntry *>(entry);
       if (oldEntry)
       {
          std::string PixelVR;
@@ -234,7 +233,7 @@ bool File::DoTheLoadingJob( )
             DictEntry* newDict = NewVirtualDictEntry(GrPixel,NumPixel,
                                                      PixelVR,"1","Pixel Data");
 
-            BinEntry *newEntry = new BinEntry(newDict);
+            DataEntry *newEntry = new DataEntry(newDict);
             newEntry->Copy(entry);
             newEntry->SetBinArea(oldEntry->GetBinArea(),oldEntry->IsSelfArea());
             oldEntry->SetSelfArea(false);
@@ -261,7 +260,7 @@ bool File::IsReadable()
       return false;
    }
 
-   const std::string &res = GetEntryValue(0x0028, 0x0005);
+   const std::string &res = GetEntryString(0x0028, 0x0005);
    if ( res != GDCM_UNFOUND && atoi(res.c_str()) > 4 )
    {
       gdcmWarningMacro("Wrong Image Dimensions" << res);
@@ -318,7 +317,7 @@ bool File::IsReadable()
 int File::GetImageNumber()
 {
    //0020 0013 : Image Number
-   std::string strImNumber = GetEntryValue(0x0020,0x0013);
+   std::string strImNumber = GetEntryString(0x0020,0x0013);
    if ( strImNumber != GDCM_UNFOUND )
    {
       return atoi( strImNumber.c_str() );
@@ -333,7 +332,7 @@ int File::GetImageNumber()
 ModalityType File::GetModality()
 {
    // 0008 0060 : Modality
-   std::string strModality = GetEntryValue(0x0008,0x0060);
+   std::string strModality = GetEntryString(0x0008,0x0060);
    if ( strModality != GDCM_UNFOUND )
    {
            if ( strModality.find("AU")  < strModality.length()) return AU;
@@ -398,12 +397,10 @@ ModalityType File::GetModality()
  */
 int File::GetXSize()
 {
-   const std::string &strSize = GetEntryValue(0x0028,0x0011);
-   if ( strSize == GDCM_UNFOUND )
-   {
-      return 0;
-   }
-   return atoi( strSize.c_str() );
+   DataEntry *entry = GetDataEntry(0x0028,0x0011);
+   if( entry )
+      return (int)entry->GetValue(0);
+   return 0;
 }
 
 /**
@@ -414,11 +411,10 @@ int File::GetXSize()
  */
 int File::GetYSize()
 {
-   const std::string &strSize = GetEntryValue(0x0028,0x0010);
-   if ( strSize != GDCM_UNFOUND )
-   {
-      return atoi( strSize.c_str() );
-   }
+   DataEntry *entry = GetDataEntry(0x0028,0x0010);
+   if( entry )
+      return (int)entry->GetValue(0);
+
    if ( IsDicomV3() )
    {
       return 0;
@@ -442,18 +438,14 @@ int File::GetZSize()
 {
    // Both  DicomV3 and ACR/Nema consider the "Number of Frames"
    // as the third dimension.
-   const std::string &strSize = GetEntryValue(0x0028,0x0008);
-   if ( strSize != GDCM_UNFOUND )
-   {
-      return atoi( strSize.c_str() );
-   }
+   DataEntry *entry = GetDataEntry(0x0028,0x0008);
+   if( entry )
+      return (int)entry->GetValue(0);
 
    // We then consider the "Planes" entry as the third dimension 
-   const std::string &strSize2 = GetEntryValue(0x0028,0x0012);
-   if ( strSize2 != GDCM_UNFOUND )
-   {
-      return atoi( strSize2.c_str() );
-   }
+   entry = GetDataEntry(0x0028,0x0012);
+   if( entry )
+      return (int)entry->GetValue(0);
    return 1;
 }
 
@@ -466,12 +458,31 @@ int File::GetZSize()
 float File::GetXSpacing()
 {
    float xspacing = 1.0;
-   float yspacing = 1.0;
-   int nbValues;
+   uint32_t nbValue;
 
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
-   const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
+   DataEntry *entry = GetDataEntry(0x0018,0x1164);
+   if( entry )
+   {
+      nbValue = entry->GetValueCount();
+      if( nbValue >= 3 )
+         xspacing = (float)entry->GetValue(2);
+      if( nbValue >= 2 )
+         xspacing = (float)entry->GetValue(1);
+      else
+         xspacing = (float)entry->GetValue(0);
+
+      if ( xspacing == 0.0 )
+         xspacing = 1.0;
+      return xspacing;
+   }
+   else
+   {
+      gdcmWarningMacro( "Unfound Pixel Spacing (0018,1164)" );
+   }
+
+/*   const std::string &strImagerPixelSpacing = GetEntryString(0x0018,0x1164);
    if ( strImagerPixelSpacing != GDCM_UNFOUND )
    {
       if ( ( nbValues = sscanf( strImagerPixelSpacing.c_str(), 
@@ -488,10 +499,29 @@ float File::GetXSpacing()
             xspacing = 1.0;
       }  
       return xspacing;
+   }*/
+
+   entry = GetDataEntry(0x0028,0x0030);
+   if( entry )
+   {
+      nbValue = entry->GetValueCount();
+      if( nbValue >= 3 )
+         xspacing = (float)entry->GetValue(2);
+      if( nbValue >= 2 )
+         xspacing = (float)entry->GetValue(1);
+      else
+         xspacing = (float)entry->GetValue(0);
+
+      if ( xspacing == 0.0 )
+         xspacing = 1.0;
+      return xspacing;
+   }
+   else
+   {
+      gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
    }
 
-   const std::string &strSpacing = GetEntryValue(0x0028,0x0030);
-
+/*   const std::string &strSpacing = GetEntryString(0x0028,0x0030);
    if ( strSpacing == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
@@ -510,11 +540,12 @@ float File::GetXSpacing()
 
       if ( xspacing == 0.0 )
          xspacing = 1.0;
-   }
    return xspacing;
 
+   }*/
+
    // to avoid troubles with David Clunie's-like images (at least one)
-   if ( xspacing == 0.0 && yspacing == 0.0)
+/*   if ( xspacing == 0.0 && yspacing == 0.0)
       return 1.0;
 
    if ( xspacing == 0.0)
@@ -524,7 +555,7 @@ float File::GetXSpacing()
       nbValues = sscanf( strSpacing.c_str(), "%f \\0\\%f ", &yspacing, &xspacing);
       gdcmAssertMacro( nbValues == 2 );
    }
-
+*/
    return xspacing;
 }
 
@@ -537,10 +568,22 @@ float File::GetXSpacing()
 float File::GetYSpacing()
 {
    float yspacing = 1.0;
-   int nbValues;
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
-   const std::string &strImagerPixelSpacing = GetEntryValue(0x0018,0x1164);
+   DataEntry *entry = GetDataEntry(0x0018,0x1164);
+   if( entry )
+   {
+      yspacing = (float)entry->GetValue(0);
+
+      if ( yspacing == 0.0 )
+         yspacing = 1.0;
+      return yspacing;
+   }
+   else
+   {
+      gdcmWarningMacro( "Unfound Pixel Spacing (0018,1164)" );
+   }
+/*   const std::string &strImagerPixelSpacing = GetEntryString(0x0018,0x1164);
    if ( strImagerPixelSpacing != GDCM_UNFOUND )
    {
       nbValues = sscanf( strImagerPixelSpacing.c_str(), "%f", &yspacing);
@@ -553,9 +596,22 @@ float File::GetYSpacing()
             yspacing = 1.0;
 
       return yspacing;  
-   }
+   }*/
 
-   std::string strSpacing = GetEntryValue(0x0028,0x0030);  
+   entry = GetDataEntry(0x0028,0x0030);
+   if( entry )
+   {
+      yspacing = (float)entry->GetValue(0);
+
+      if ( yspacing == 0.0 )
+         yspacing = 1.0;
+      return yspacing;
+   }
+   else
+   {
+      gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
+   }
+/*   std::string strSpacing = GetEntryString(0x0028,0x0030);  
    if ( strSpacing == GDCM_UNFOUND )
    {
       gdcmWarningMacro("Unfound Pixel Spacing (0028,0030)");
@@ -570,7 +626,7 @@ float File::GetYSpacing()
       yspacing = 1.0;
 
    if ( yspacing == 0.0 )
-      yspacing = 1.0;
+      yspacing = 1.0;*/
 
    return yspacing;
 } 
@@ -583,6 +639,17 @@ float File::GetYSpacing()
  */
 float File::GetZSpacing()
 {
+   // --->
+   // ---> Warning :
+   // --->
+  // For *Dicom* images, ZSpacing should be calculated using 
+  // XOrigin, YOrigin, ZOrigin (of the top left image corner)
+  // of 2 consecutive images, and the Orientation
+  // 
+  // Computing ZSpacing on a single image is not really meaningfull !
+
+   float zspacing = 1.0f;
+
    // Spacing Between Slices : distance between the middle of 2 slices
    // Slices may be :
    //   jointives     (Spacing between Slices = Slice Thickness)
@@ -592,24 +659,41 @@ float File::GetZSpacing()
    //   It only concerns the MRI guys, not people wanting to visualize volumes
    //   If Spacing Between Slices is missing, 
    //   we suppose slices joint together
+   DataEntry *entry = GetDataEntry(0x0018,0x0088);
+   if( entry )
+   {
+      zspacing = (float)entry->GetValue(0);
 
-   // --->
-   // ---> Warning :
-   // --->
-   
-  //
-  // For *Dicom* images, ZSpacing should be calculated using 
-  // XOrigin, YOrigin, ZOrigin (of the top left image corner)
-  // of 2 consecutive images, and the Orientation
-  // 
-  // Computing ZSpacing on a single image is not really meaningfull !
-  
-   const std::string &strSpacingBSlices = GetEntryValue(0x0018,0x0088);
+      if ( zspacing == 0.0 )
+         zspacing = 1.0;
+      return zspacing;
+   }
+   else
+      gdcmWarningMacro("Unfound Spacing Between Slices (0018,0088)");
 
+   // if no 'Spacing Between Slices' is found, 
+   // we assume slices join together
+   // (no overlapping, no interslice gap)
+   // if they don't, we're fucked up
+   entry = GetDataEntry(0x0018,0x0050);
+   if( entry )
+   {
+      zspacing = (float)entry->GetValue(0);
+
+      if ( zspacing == 0.0 )
+         zspacing = 1.0;
+      return zspacing;
+   }
+   else
+      gdcmWarningMacro("Unfound Slice Thickness (0018,0050)");
+
+   return zspacing;
+
+/*   const std::string &strSpacingBSlices = GetEntryString(0x0018,0x0088);
    if ( strSpacingBSlices == GDCM_UNFOUND )
    {
       gdcmWarningMacro("Unfound Spacing Between Slices (0018,0088)");
-      const std::string &strSliceThickness = GetEntryValue(0x0018,0x0050);       
+      const std::string &strSliceThickness = GetEntryString(0x0018,0x0050);       
       if ( strSliceThickness == GDCM_UNFOUND )
       {
          gdcmWarningMacro("Unfound Slice Thickness (0018,0050)");
@@ -624,12 +708,11 @@ float File::GetZSpacing()
          return (float)atof( strSliceThickness.c_str() );
       }
    }
-   //else
    
    float zsp = (float)atof( strSpacingBSlices.c_str());
    if (zsp == 0.0) // last change not to break further computations ...
       zsp = 1.0;
-   return zsp;
+   return zsp;*/
 }
 
 /**
@@ -640,13 +723,27 @@ float File::GetZSpacing()
  */
 float File::GetXOrigin()
 {
-   float xImPos, yImPos, zImPos;  
-   std::string strImPos = GetEntryValue(0x0020,0x0032);
+   DataEntry *entry = GetDataEntry(0x0020,0x0032);
+   if( !entry )
+   {
+      gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
+      entry = GetDataEntry(0x0020,0x0030);
+      if( !entry )
+      {
+         gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
+         return 0.0f;
+      }
+   }
 
+   if( entry->GetValueCount() == 3 )
+      return (float)entry->GetValue(0);
+   return 0.0f;
+
+/*   std::string strImPos = GetEntryString(0x0020,0x0032);
    if ( strImPos == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
+      strImPos = GetEntryString(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -659,7 +756,7 @@ float File::GetXOrigin()
       return 0.0;
    }
 
-   return xImPos;
+   return xImPos;*/
 }
 
 /**
@@ -670,13 +767,28 @@ float File::GetXOrigin()
  */
 float File::GetYOrigin()
 {
-   float xImPos, yImPos, zImPos;
-   std::string strImPos = GetEntryValue(0x0020,0x0032);
+   DataEntry *entry = GetDataEntry(0x0020,0x0032);
+   if( !entry )
+   {
+      gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
+      entry = GetDataEntry(0x0020,0x0030);
+      if( !entry )
+      {
+         gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
+         return 0.0f;
+      }
+   }
+
+   if( entry->GetValueCount() == 3 )
+      return (float)entry->GetValue(1);
+   return 0.0f;
+/*   float xImPos, yImPos, zImPos;
+   std::string strImPos = GetEntryString(0x0020,0x0032);
 
    if ( strImPos == GDCM_UNFOUND)
    {
       gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
+      strImPos = GetEntryString(0x0020,0x0030); // For ACR-NEMA images
       if ( strImPos == GDCM_UNFOUND )
       {
          gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
@@ -689,7 +801,7 @@ float File::GetYOrigin()
       return 0.;
    }
 
-   return yImPos;
+   return yImPos;*/
 }
 
 /**
@@ -702,8 +814,16 @@ float File::GetYOrigin()
  */
 float File::GetZOrigin()
 {
-   float xImPos, yImPos, zImPos; 
-   std::string strImPos = GetEntryValue(0x0020,0x0032);
+   DataEntry *entry = GetDataEntry(0x0020,0x0032);
+   if( entry )
+   {
+      if( entry->GetValueCount() == 3 )
+         return (float)entry->GetValue(0);
+      gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)");
+      return 0.0f;
+   }
+/*   float xImPos, yImPos, zImPos; 
+   std::string strImPos = GetEntryString(0x0020,0x0032);
 
    if ( strImPos != GDCM_UNFOUND )
    {
@@ -716,9 +836,17 @@ float File::GetZOrigin()
       {
          return zImPos;
       }
-   }
+   }*/
 
-   strImPos = GetEntryValue(0x0020,0x0030); // For ACR-NEMA images
+   entry = GetDataEntry(0x0020,0x0030);
+   if( entry )
+   {
+      if( entry->GetValueCount() == 3 )
+         return (float)entry->GetValue(0);
+      gdcmWarningMacro( "Wrong Image Position (RET) (0020,0030)");
+      return 0.0f;
+   }
+/*   strImPos = GetEntryString(0x0020,0x0030); // For ACR-NEMA images
    if ( strImPos != GDCM_UNFOUND )
    {
       if ( sscanf( strImPos.c_str(), 
@@ -731,10 +859,18 @@ float File::GetZOrigin()
       {
          return zImPos;
       }
-   }
+   }*/
 
    // for *very* old ACR-NEMA images
-   std::string strSliceLocation = GetEntryValue(0x0020,0x1041);
+   entry = GetDataEntry(0x0020,0x1041);
+   if( entry )
+   {
+      if( entry->GetValueCount() == 1 )
+         return (float)entry->GetValue(0);
+      gdcmWarningMacro( "Wrong Slice Location (0020,1041)");
+      return 0.0f;
+   }
+/*   std::string strSliceLocation = GetEntryString(0x0020,0x1041);
    if ( strSliceLocation != GDCM_UNFOUND )
    {
       if ( sscanf( strSliceLocation.c_str(), "%f ", &zImPos) != 1)
@@ -747,9 +883,18 @@ float File::GetZOrigin()
          return zImPos;
       }
    }
-   gdcmWarningMacro( "Unfound Slice Location (0020,1041)");
+   gdcmWarningMacro( "Unfound Slice Location (0020,1041)");*/
 
-   std::string strLocation = GetEntryValue(0x0020,0x0050);
+   entry = GetDataEntry(0x0020,0x0050);
+   if( entry )
+   {
+      gdcmWarningMacro( "Unfound Location (0020,0050)");
+      if( entry->GetValueCount() == 1 )
+         return (float)entry->GetValue(0);
+      gdcmWarningMacro( "Wrong Location (0020,0050)");
+      return 0.0f;
+   }
+/*   std::string strLocation = GetEntryString(0x0020,0x0050);
    if ( strLocation != GDCM_UNFOUND )
    {
       if ( sscanf( strLocation.c_str(), "%f ", &zImPos) != 1 )
@@ -762,7 +907,7 @@ float File::GetZOrigin()
          return zImPos;
       }
    }
-   gdcmWarningMacro( "Unfound Location (0020,0050)");  
+   gdcmWarningMacro( "Unfound Location (0020,0050)");*/
 
    return 0.; // Hopeless
 }
@@ -782,7 +927,7 @@ bool File::GetImageOrientationPatient( float iop[6] )
    iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
-   if ( (strImOriPat = GetEntryValue(0x0020,0x0037)) != GDCM_UNFOUND )
+   if ( (strImOriPat = GetEntryString(0x0020,0x0037)) != GDCM_UNFOUND )
    {
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
@@ -794,7 +939,7 @@ bool File::GetImageOrientationPatient( float iop[6] )
    }
    //For ACR-NEMA
    // 0020 0035 DS REL Image Orientation (RET)
-   else if ( (strImOriPat = GetEntryValue(0x0020,0x0035)) != GDCM_UNFOUND )
+   else if ( (strImOriPat = GetEntryString(0x0020,0x0035)) != GDCM_UNFOUND )
    {
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
@@ -817,14 +962,22 @@ bool File::GetImageOrientationPatient( float iop[6] )
  */
 int File::GetBitsStored()
 {
-   std::string strSize = GetEntryValue( 0x0028, 0x0101 );
+   DataEntry *entry = GetDataEntry(0x0028,0x0101);
+   if( !entry )
+   {
+      gdcmWarningMacro("(0028,0101) is supposed to be mandatory");
+      return 0;
+   }
+   return (int)entry->GetValue(0);
+
+/*   std::string strSize = GetEntryString( 0x0028, 0x0101 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmWarningMacro("(0028,0101) is supposed to be mandatory");
       return 0;  // It's supposed to be mandatory
                  // the caller will have to check
    }
-   return atoi( strSize.c_str() );
+   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -835,14 +988,22 @@ int File::GetBitsStored()
  */
 int File::GetBitsAllocated()
 {
-   std::string strSize = GetEntryValue(0x0028,0x0100);
+   DataEntry *entry = GetDataEntry(0x0028,0x0100);
+   if( !entry )
+   {
+      gdcmWarningMacro("(0028,0100) is supposed to be mandatory");
+      return 0;
+   }
+   return (int)entry->GetValue(0);
+
+/*   std::string strSize = GetEntryString(0x0028,0x0100);
    if ( strSize == GDCM_UNFOUND  )
    {
       gdcmWarningMacro( "(0028,0100) is supposed to be mandatory");
       return 0; // It's supposed to be mandatory
                 // the caller will have to check
    }
-   return atoi( strSize.c_str() );
+   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -853,13 +1014,21 @@ int File::GetBitsAllocated()
  */
 int File::GetHighBitPosition()
 {
-   std::string strSize = GetEntryValue( 0x0028, 0x0102 );
+   DataEntry *entry = GetDataEntry(0x0028,0x0102);
+   if( !entry )
+   {
+      gdcmWarningMacro("(0028,0102) is supposed to be mandatory");
+      return 0;
+   }
+   return (int)entry->GetValue(0);
+
+/*   std::string strSize = GetEntryString( 0x0028, 0x0102 );
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "(0028,0102) is supposed to be mandatory");
       return 0;
    }
-   return atoi( strSize.c_str() );
+   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -870,14 +1039,23 @@ int File::GetHighBitPosition()
  */
 int File::GetSamplesPerPixel()
 {
-   const std::string &strSize = GetEntryValue(0x0028,0x0002);
+   DataEntry *entry = GetDataEntry(0x0028,0x0002);
+   if( !entry )
+   {
+      gdcmWarningMacro("(0028,0002) is supposed to be mandatory");
+      return 1; // Well, it's supposed to be mandatory ...
+                // but sometimes it's missing : *we* assume Gray pixels
+   }
+   return (int)entry->GetValue(0);
+
+/*   const std::string &strSize = GetEntryString(0x0028,0x0002);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "(0028,0002) is supposed to be mandatory");
       return 1; // Well, it's supposed to be mandatory ...
                 // but sometimes it's missing : *we* assume Gray pixels
    }
-   return atoi( strSize.c_str() );
+   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -887,13 +1065,21 @@ int File::GetSamplesPerPixel()
  */
 int File::GetPlanarConfiguration()
 {
-   std::string strSize = GetEntryValue(0x0028,0x0006);
+   DataEntry *entry = GetDataEntry(0x0028,0x0006);
+   if( !entry )
+   {
+      gdcmWarningMacro( "Not found : Planar Configuration (0028,0006)");
+      return 0;
+   }
+   return (int)entry->GetValue(0);
+
+/*   std::string strSize = GetEntryString(0x0028,0x0006);
    if ( strSize == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "Not found : Planar Configuration (0028,0006)");
       return 0;
    }
-   return atoi( strSize.c_str() );
+   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -905,9 +1091,7 @@ int File::GetPixelSize()
 {
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old ACR-NEMA RGB images)
-   //   if (File::GetEntryValue(0x0028,0x0100) == "24")
-   //      return 3;
-   assert( !(GetEntryValue(0x0028,0x0100) == "24") );
+   assert( !(GetEntryString(0x0028,0x0100) == "24") );
 
    std::string pixelType = GetPixelType();
    if ( pixelType ==  "8U" || pixelType == "8S" )
@@ -926,7 +1110,7 @@ int File::GetPixelSize()
    {
       return 8;
    }
-   gdcmWarningMacro( "Unknown pixel type");
+   gdcmWarningMacro( "Unknown pixel type: " << pixelType);
    return 0;
 }
 
@@ -947,7 +1131,7 @@ int File::GetPixelSize()
  */
 std::string File::GetPixelType()
 {
-   std::string bitsAlloc = GetEntryValue(0x0028, 0x0100); // Bits Allocated
+   std::string bitsAlloc = GetEntryString(0x0028, 0x0100); // Bits Allocated
    if ( bitsAlloc == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "Missing  Bits Allocated (0028,0100)");
@@ -969,7 +1153,39 @@ std::string File::GetPixelType()
       bitsAlloc = "8";
    }
 
-   std::string sign = GetEntryValue(0x0028, 0x0103);//"Pixel Representation"
+   std::string sign;
+   if( IsSignedPixelData() )
+   {
+      sign = "S";
+   }
+   else
+   {
+      sign = "U";
+   }
+
+/*   std::string bitsAlloc = GetEntryString(0x0028, 0x0100); // Bits Allocated
+   if ( bitsAlloc == GDCM_UNFOUND )
+   {
+      gdcmWarningMacro( "Missing  Bits Allocated (0028,0100)");
+      bitsAlloc = "16"; // default and arbitrary value, not to polute the output
+   }
+
+   if ( bitsAlloc == "64" )
+   {
+      return "FD";
+   }
+   else if ( bitsAlloc == "12" )
+   {
+      // It will be unpacked
+      bitsAlloc = "16";
+   }
+   else if ( bitsAlloc == "24" )
+   {
+      // (in order no to be messed up by old RGB images)
+      bitsAlloc = "8";
+   }
+
+   std::string sign = GetEntryString(0x0028, 0x0103);//"Pixel Representation"
 
    if (sign == GDCM_UNFOUND )
    {
@@ -983,7 +1199,7 @@ std::string File::GetPixelType()
    else
    {
       sign = "S";
-   }
+   }*/
    return bitsAlloc + sign;
 }
 
@@ -997,7 +1213,14 @@ std::string File::GetPixelType()
  */
 bool File::IsSignedPixelData()
 {
-   std::string strSign = GetEntryValue( 0x0028, 0x0103 );
+   DataEntry *entry = GetDataEntry(0x0028, 0x0103);//"Pixel Representation"
+   if( !entry )
+   {
+      gdcmWarningMacro( "Missing Pixel Representation (0028,0103)");
+      return false;
+   }
+   return entry->GetValue(0) != 0;
+/*   std::string strSign = GetEntryString( 0x0028, 0x0103 );
    if ( strSign == GDCM_UNFOUND )
    {
       gdcmWarningMacro( "(0028,0103) is supposed to be mandatory");
@@ -1008,7 +1231,7 @@ bool File::IsSignedPixelData()
    {
       return false;
    }
-   return true;
+   return true;*/
 }
 
 /**
@@ -1018,7 +1241,7 @@ bool File::IsSignedPixelData()
  */
 bool File::IsMonochrome()
 {
-   const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   const std::string &PhotometricInterp = GetEntryString( 0x0028, 0x0004 );
    if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1")
       || Util::DicomStringEqual(PhotometricInterp, "MONOCHROME2") )
    {
@@ -1038,7 +1261,7 @@ bool File::IsMonochrome()
  */
 bool File::IsMonochrome1()
 {
-   const std::string &PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   const std::string &PhotometricInterp = GetEntryString( 0x0028, 0x0004 );
    if (  Util::DicomStringEqual(PhotometricInterp, "MONOCHROME1") )
    {
       return true;
@@ -1057,7 +1280,7 @@ bool File::IsMonochrome1()
  */
 bool File::IsPaletteColor()
 {
-   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntryString( 0x0028, 0x0004 );
    if (   PhotometricInterp == "PALETTE COLOR " )
    {
       return true;
@@ -1076,7 +1299,7 @@ bool File::IsPaletteColor()
  */
 bool File::IsYBRFull()
 {
-   std::string PhotometricInterp = GetEntryValue( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntryString( 0x0028, 0x0004 );
    if (   PhotometricInterp == "YBR_FULL" )
    {
       return true;
@@ -1150,7 +1373,7 @@ int File::GetLUTNbits()
    //Just hope Lookup Table Desc-Red = Lookup Table Desc-Red
    //                                = Lookup Table Desc-Blue
    // Consistency already checked in GetLUTLength
-   std::string lutDescription = GetEntryValue(0x0028,0x1101);
+   std::string lutDescription = GetEntryString(0x0028,0x1101);
    if ( lutDescription == GDCM_UNFOUND )
    {
       return 0;
@@ -1173,9 +1396,18 @@ int File::GetLUTNbits()
  */
 float File::GetRescaleIntercept()
 {
-   float resInter = 0.;
+   // 0028 1052 DS IMG Rescale Intercept
+   DataEntry *entry = GetDataEntry(0x0028, 0x1052);
+   if( !entry )
+   {
+      gdcmWarningMacro( "Missing Rescale Intercept (0028,1052)");
+      return 0.0f;
+   }
+   return (float)entry->GetValue(0);
+
+/*   float resInter = 0.;
    /// 0028 1052 DS IMG Rescale Intercept
-   const std::string &strRescInter = GetEntryValue(0x0028,0x1052);
+   const std::string &strRescInter = GetEntryString(0x0028,0x1052);
    if ( strRescInter != GDCM_UNFOUND )
    {
       if ( sscanf( strRescInter.c_str(), "%f ", &resInter) != 1 )
@@ -1185,7 +1417,7 @@ float File::GetRescaleIntercept()
       }
    }
 
-   return resInter;
+   return resInter;*/
 }
 
 /**
@@ -1194,9 +1426,17 @@ float File::GetRescaleIntercept()
  */
 float File::GetRescaleSlope()
 {
-   float resSlope = 1.;
+   // 0028 1053 DS IMG Rescale Slope
+   DataEntry *entry = GetDataEntry(0x0028, 0x1053);
+   if( !entry )
+   {
+      gdcmWarningMacro( "Missing Rescale Slope (0028,1053)");
+      return 1.0f;
+   }
+   return (float)entry->GetValue(0);
+/*   float resSlope = 1.;
    //0028 1053 DS IMG Rescale Slope
-   std::string strRescSlope = GetEntryValue(0x0028,0x1053);
+   std::string strRescSlope = GetEntryString(0x0028,0x1053);
    if ( strRescSlope != GDCM_UNFOUND )
    {
       if ( sscanf( strRescSlope.c_str(), "%f ", &resSlope) != 1 )
@@ -1206,7 +1446,7 @@ float File::GetRescaleSlope()
       }
    }
 
-   return resSlope;
+   return resSlope;*/
 }
 
 /**
@@ -1222,15 +1462,15 @@ int File::GetNumberOfScalarComponents()
    {
       return 3;
    }
-      
+
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   if ( GetEntryValue(0x0028,0x0100) == "24" )
+   if ( GetEntryString(0x0028,0x0100) == "24" )
    {
       return 3;
    }
-       
-   std::string strPhotometricInterpretation = GetEntryValue(0x0028,0x0004);
+
+   std::string strPhotometricInterpretation = GetEntryString(0x0028,0x0004);
 
    if ( ( strPhotometricInterpretation == "PALETTE COLOR ") )
    {
@@ -1270,7 +1510,7 @@ int File::GetNumberOfScalarComponentsRaw()
 {
    // 0028 0100 US IMG Bits Allocated
    // (in order no to be messed up by old RGB images)
-   if ( File::GetEntryValue(0x0028,0x0100) == "24" )
+   if ( File::GetEntryString(0x0028,0x0100) == "24" )
    {
       return 3;
    }
@@ -1384,7 +1624,7 @@ void File::AnonymizeNoLoad()
 /**
  * \brief anonymize a File (remove Patient's personal info passed with
  *        AddAnonymizeElement()
- * \note You cannot Anonymize a BinEntry (to be fixed)
+ * \note You cannot Anonymize a DataEntry (to be fixed)
  */
 bool File::AnonymizeFile()
 {
@@ -1392,22 +1632,22 @@ bool File::AnonymizeFile()
    if ( UserAnonymizeList.begin() == UserAnonymizeList.end() )
    {
       // If exist, replace by spaces
-      SetValEntry ("  ",0x0010, 0x2154); // Telephone   
-      SetValEntry ("  ",0x0010, 0x1040); // Adress
-      SetValEntry ("  ",0x0010, 0x0020); // Patient ID
+      SetEntryString("  ",0x0010, 0x2154); // Telephone   
+      SetEntryString("  ",0x0010, 0x1040); // Adress
+      SetEntryString("  ",0x0010, 0x0020); // Patient ID
 
-      DocEntry* patientNameHE = GetDocEntry (0x0010, 0x0010);
+      DocEntry *patientNameHE = GetDocEntry (0x0010, 0x0010);
   
       if ( patientNameHE ) // we replace it by Study Instance UID (why not ?)
       {
-         std::string studyInstanceUID =  GetEntryValue (0x0020, 0x000d);
+         std::string studyInstanceUID =  GetEntryString (0x0020, 0x000d);
          if ( studyInstanceUID != GDCM_UNFOUND )
          {
-            SetValEntry(studyInstanceUID, 0x0010, 0x0010);
+            SetEntryString(studyInstanceUID, 0x0010, 0x0010);
          }
          else
          {
-            SetValEntry("anonymized", 0x0010, 0x0010);
+            SetEntryString("anonymized", 0x0010, 0x0010);
          }
       }
    }
@@ -1429,13 +1669,13 @@ bool File::AnonymizeFile()
             continue;
          }
 
-         if ( dynamic_cast<BinEntry *>(d) )
+         if ( dynamic_cast<DataEntry *>(d) )
          {
-            gdcmWarningMacro( "To 'Anonymize' a BinEntry, better use AnonymizeNoLoad (FIXME) ");
+            gdcmWarningMacro( "To 'Anonymize' a DataEntry, better use AnonymizeNoLoad (FIXME) ");
             continue;
          }
          else
-            SetValEntry ((*it).Value, (*it).Group, (*it).Elem);
+            SetEntryString ((*it).Value, (*it).Group, (*it).Elem);
       }
 }
 
@@ -1513,12 +1753,12 @@ bool File::Write(std::string fileName, FileType writetype)
    }
 
    // Entry : 0002|0000 = group length -> recalculated
-   ValEntry*e0000 = GetValEntry(0x0002,0x0000);
+   DataEntry *e0000 = GetDataEntry(0x0002,0x0000);
    if ( e0000 )
    {
       std::ostringstream sLen;
       sLen << ComputeGroup0002Length( );
-      e0000->SetValue(sLen.str());
+      e0000->SetString(sLen.str());
    }
 
    int i_lgPix = GetEntryLength(GrPixel, NumPixel);
@@ -1527,7 +1767,7 @@ bool File::Write(std::string fileName, FileType writetype)
       // no (GrPixel, NumPixel) element
       std::string s_lgPix = Util::Format("%d", i_lgPix+12);
       s_lgPix = Util::DicomString( s_lgPix.c_str() );
-      InsertValEntry(s_lgPix,GrPixel, 0x0000);
+      InsertEntryString(s_lgPix,GrPixel, 0x0000);
    }
 
    Document::WriteContent(fp, writetype);

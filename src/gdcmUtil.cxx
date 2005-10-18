@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/06 18:49:30 $
-  Version:   $Revision: 1.164 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.165 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -186,7 +186,7 @@ int Util::CountSubstring (const std::string &str,
  */
 bool Util::IsCleanString(std::string const &s)
 {
-  std::cout<< std::endl << s << std::endl;
+   std::cout<< std::endl << s << std::endl;
    for(unsigned int i=0; i<s.size(); i++)
    {
       //std::cout<< std::endl << i << " : " << (unsigned char)s[i] << std::endl;
@@ -195,7 +195,7 @@ bool Util::IsCleanString(std::string const &s)
          return false;
       }
    }
-return true;   
+   return true;   
 }
 
 /**

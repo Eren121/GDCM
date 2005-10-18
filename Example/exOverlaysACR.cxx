@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:06 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
       delete f;
       return 0;
    }
-   std::string s1 = f->GetEntryValue(0x6000, 0x0102);
+   std::string s1 = f->GetEntryString(0x6000, 0x0102);
    if (s1 == gdcm::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Overlay " << std::endl;
@@ -199,11 +199,11 @@ int main(int argc, char *argv[])
    gdcm::FileHelper *fh = 0;
 
       
-while ( (strOvlBitPosition = f->GetEntryValue(currentOvlGroup, 0x0102)) 
+while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102)) 
           != gdcm::GDCM_UNFOUND )
 {
 
-      strOverlayLocation = f->GetEntryValue(currentOvlGroup, 0x0200);
+      strOverlayLocation = f->GetEntryString(currentOvlGroup, 0x0200);
       if ( strOverlayLocation != gdcm::GDCM_UNFOUND )
       {
          overlayLocation = atoi(strOverlayLocation.c_str());
@@ -241,18 +241,18 @@ while ( (strOvlBitPosition = f->GetEntryValue(currentOvlGroup, 0x0102))
 
       str.str("");
       str << nx;
-      fileToBuild->InsertValEntry(str.str(),0x0028,0x0011); // Columns
+      fileToBuild->InsertEntryString(str.str(),0x0028,0x0011); // Columns
       str.str("");
       str << ny;
-      fileToBuild->InsertValEntry(str.str(),0x0028,0x0010); // Rows
+      fileToBuild->InsertEntryString(str.str(),0x0028,0x0010); // Rows
 
-      fileToBuild->InsertValEntry("8",0x0028,0x0100); // Bits Allocated
-      fileToBuild->InsertValEntry("8",0x0028,0x0101); // Bits Stored
-      fileToBuild->InsertValEntry("7",0x0028,0x0102); // High Bit
-      fileToBuild->InsertValEntry("0",0x0028,0x0103); // Pixel Representation
-      fileToBuild->InsertValEntry("1",0x0028,0x0002); // Samples per Pixel
+      fileToBuild->InsertEntryString("8",0x0028,0x0100); // Bits Allocated
+      fileToBuild->InsertEntryString("8",0x0028,0x0101); // Bits Stored
+      fileToBuild->InsertEntryString("7",0x0028,0x0102); // High Bit
+      fileToBuild->InsertEntryString("0",0x0028,0x0103); // Pixel Representation
+      fileToBuild->InsertEntryString("1",0x0028,0x0002); // Samples per Pixel
 
-      fileToBuild->InsertValEntry("MONOCHROME2 ",0x0028,0x0004);
+      fileToBuild->InsertEntryString("MONOCHROME2 ",0x0028,0x0004);
       // Other mandatory fields will be set automatically,
       // just before Write(), by FileHelper::CheckMandatoryElements()
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:51:26 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,8 @@ int CompareInternal(std::string const &filename, std::string const &output)
    file->Load ();
    if( !file->IsReadable() )
    {
-      std::cerr << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
+      std::cout << "Failed" << std::endl
+                << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
                 << filename << std::endl;
       delete file;
       return 1;
@@ -59,10 +60,10 @@ int CompareInternal(std::string const &filename, std::string const &output)
    fileout->SetFileName( output );
    fileout->Load();
   // gdcm::FileHelper *reread = new gdcm::FileHelper( output ); // deprecated
-  
+
    if( !fileout->IsReadable() )
    {
-     std::cerr << "Failed" << std::endl
+     std::cout << "Failed" << std::endl
                << "Test::TestReadWriteReadCompare: Could not parse the newly "
                << "written image:" << filename << std::endl;
      delete file;
@@ -144,7 +145,7 @@ int TestReadWriteReadCompare(int argc, char *argv[])
    }
    else if( argc > 4 || argc == 2 )
    {
-      std::cerr << "Please read the manual" << std::endl;
+      std::cout << "Please read the manual" << std::endl;
    }
    else
    {

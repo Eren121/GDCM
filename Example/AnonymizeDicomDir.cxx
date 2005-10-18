@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 04:55:50 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/18 08:35:43 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 #include "gdcmSQItem.h"
 #include "gdcmSeqEntry.h"
-#include "gdcmValEntry.h"
+#include "gdcmDataEntry.h"
 
 #include "gdcmDocument.h"
 #include "gdcmFile.h"
@@ -55,7 +55,7 @@ void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp,
    if ( d == NULL)
       return;
 
-   if ( ! dynamic_cast<gdcm::ValEntry *>(d) )
+   if ( ! dynamic_cast<gdcm::DataEntry *>(d) )
       return;
 
    offset = d->GetOffset();
@@ -148,13 +148,13 @@ int main(int argc, char *argv[])
    while(tmpSI)
    {
       d = tmpSI->GetDocEntry(0x0004, 0x1430); // Directory Record Type
-      if ( gdcm::ValEntry* valEntry = dynamic_cast<gdcm::ValEntry *>(d) )
+      if ( gdcm::DataEntry *dataEntry = dynamic_cast<gdcm::DataEntry *>(d) )
       {
-         v = valEntry->GetValue();
+         v = dataEntry->GetString();
       }
       else
       {
-         std::cout << "(0004,1430) not a ValEntry ?!?" << std::endl;
+         std::cout << "(0004,1430) not a DataEntry ?!?" << std::endl;
          continue;
       }
 

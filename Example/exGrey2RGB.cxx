@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGrey2RGB.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/19 15:19:25 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/18 08:35:44 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,8 +18,6 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 #include "gdcmDebug.h"
 
 #ifndef _WIN32
@@ -90,7 +88,7 @@ int main(int argc, char *argv[])
 
    uint8_t *imageDataRGB = new uint8_t[dataSize*3];
 
-   if (fh->GetFile()->GetEntryValue(0x0028,0x0100) == "8" )
+   if (fh->GetFile()->GetEntryString(0x0028,0x0100) == "8" )
    {
       for (unsigned int i=0;i<dataSize;i++)
       {
@@ -110,11 +108,11 @@ int main(int argc, char *argv[])
       }
    }
    // Samples Per Pixel  
-   fh->GetFile()->InsertValEntry( "3 " ,0x0028,0x0002);
+   fh->GetFile()->InsertEntryString( "3 " ,0x0028,0x0002);
    // Photometric Interpretation
-   fh->GetFile()->InsertValEntry( "RGB ",0x0028,0x0004 );
+   fh->GetFile()->InsertEntryString( "RGB ",0x0028,0x0004 );
    // Planar Configuration
-   fh->GetFile()->InsertValEntry( "1 ",0x0028,0x0006 );
+   fh->GetFile()->InsertEntryString( "1 ",0x0028,0x0006 );
 
    // TODO  : free existing PixelData first !
 

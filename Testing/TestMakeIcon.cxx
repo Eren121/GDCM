@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/21 14:05:09 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,10 +20,9 @@
 #include "gdcmCommon.h"
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
+#include "gdcmDataEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
 
 // 0088 0200 SQ 1 Icon Image Sequence 
 
@@ -73,16 +72,16 @@ int TestMakeIcon (int argc, char *argv[])
 
    uint16_t binVal[3]={0x52f7,0xf358,0xad9b};
  
-   sqi->InsertValEntry( "MONOCHROME2", 0x0028,0x0004);
-   sqi->InsertValEntry( "128", 0x0028,0x0010);
-   sqi->InsertValEntry( "8",   0x0028,0x0100);
-   sqi->InsertValEntry( "8",   0x0028,0x0101);
-   sqi->InsertValEntry( "7",   0x0028,0x0102);
-   sqi->InsertValEntry( "0",   0x0028,0x0103);
-   sqi->InsertBinEntry(  (uint8_t *)binVal, 3*2, 0x0005,0x0010,"OW");
-   sqi->InsertBinEntry(  pixels, lgth, 0x7fe0,0x0010);
+   sqi->InsertEntryString( "MONOCHROME2", 0x0028,0x0004);
+   sqi->InsertEntryString( "128", 0x0028,0x0010);
+   sqi->InsertEntryString( "8",   0x0028,0x0100);
+   sqi->InsertEntryString( "8",   0x0028,0x0101);
+   sqi->InsertEntryString( "7",   0x0028,0x0102);
+   sqi->InsertEntryString( "0",   0x0028,0x0103);
+   sqi->InsertEntryBinArea(  (uint8_t *)binVal, 3*2, 0x0005,0x0010,"OW");
+   sqi->InsertEntryBinArea(  pixels, lgth, 0x7fe0,0x0010);
    // just to see if it's stored a the right place
-   sqi->InsertValEntry( "128", 0x0028,0x0011);
+   sqi->InsertEntryString( "128", 0x0028,0x0011);
     
    fh->WriteDcmExplVR(output);
 
@@ -119,19 +118,19 @@ int TestMakeIcon (int argc, char *argv[])
    std::cout << "First Item found" << std::endl;
 
    // Test for entry 0028|0010
-   if ( !sqi->GetValEntry(0x0028,0x0010) )
+   if ( !sqi->GetDataEntry(0x0028,0x0010) )
    {
-      std::cout << "ValEntry 0028|0010 not found" << std::endl
+      std::cout << "GetDataEntry 0028|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->ValEntry 0028|0010 found" << std::endl;
-   if ( sqi->GetValEntry(0x0028,0x0010)->GetValue() != "128" )
+   std::cout << "First Item ->DataEntry 0028|0010 found" << std::endl;
+   if ( sqi->GetDataEntry(0x0028,0x0010)->GetString() != "128" )
    {
       std::cout << "Value 0028|0010 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0028,0x0010)->GetValue()
+                << "Read : " << sqi->GetDataEntry(0x0028,0x0010)->GetString()
                 << " - Expected : 128" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -140,19 +139,19 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0028|0011
-   if ( !sqi->GetValEntry(0x0028,0x0011) )
+   if ( !sqi->GetDataEntry(0x0028,0x0011) )
    {
-      std::cout << "ValEntry 0028|0011 not found" << std::endl
+      std::cout << "GetDataEntry 0028|0011 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->ValEntry 0028|0011 found" << std::endl;
-   if ( sqi->GetValEntry(0x0028,0x0011)->GetValue() != "128" )
+   std::cout << "First Item ->DataEntry 0028|0011 found" << std::endl;
+   if ( sqi->GetDataEntry(0x0028,0x0011)->GetString() != "128" )
    {
       std::cout << "Value 0028|0011 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0028,0x0011)->GetValue()
+                << "Read : " << sqi->GetDataEntry(0x0028,0x0011)->GetString()
                 << " - Expected : 128" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -161,19 +160,19 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0028|0100
-   if ( !sqi->GetValEntry(0x0028,0x0100) )
+   if ( !sqi->GetDataEntry(0x0028,0x0100) )
    {
-      std::cout << "ValEntry 0028|0100 not found" << std::endl
+      std::cout << "GetDataEntry 0028|0100 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->ValEntry 0028|0100 found" << std::endl;
-   if ( sqi->GetValEntry(0x0028,0x0100)->GetValue() != "8" )
+   std::cout << "First Item ->DataEntry 0028|0100 found" << std::endl;
+   if ( sqi->GetDataEntry(0x0028,0x0100)->GetString() != "8" )
    {
       std::cout << "Value 0028|0100 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0028,0x0100)->GetValue()
+                << "Read : " << sqi->GetDataEntry(0x0028,0x0100)->GetString()
                 << " - Expected : 8" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -182,19 +181,19 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0028|0101
-   if ( !sqi->GetValEntry(0x0028,0x0101) )
+   if ( !sqi->GetDataEntry(0x0028,0x0101) )
    {
-      std::cout << "ValEntry 0028|0101 not found" << std::endl
+      std::cout << "GetDataEntry 0028|0101 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->ValEntry 0028|0101 found" << std::endl;
-   if ( sqi->GetValEntry(0x0028,0x0101)->GetValue() != "8" )
+   std::cout << "First Item ->DataEntry 0028|0101 found" << std::endl;
+   if ( sqi->GetDataEntry(0x0028,0x0101)->GetString() != "8" )
    {
       std::cout << "Value 0028|0101 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0028,0x0101)->GetValue()
+                << "Read : " << sqi->GetDataEntry(0x0028,0x0101)->GetString()
                 << " - Expected : 8" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -203,19 +202,19 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0028|0102
-   if ( !sqi->GetValEntry(0x0028,0x0102) )
+   if ( !sqi->GetDataEntry(0x0028,0x0102) )
    {
-      std::cout << "ValEntry 0028|0102 not found" << std::endl
+      std::cout << "DataEntry 0028|0102 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->ValEntry 0028|0102 found" << std::endl;
-   if ( sqi->GetValEntry(0x0028,0x0102)->GetValue() != "7" )
+   std::cout << "First Item ->DataEntry 0028|0102 found" << std::endl;
+   if ( sqi->GetDataEntry(0x0028,0x0102)->GetString() != "7" )
    {
       std::cout << "Value 0028|0102 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0028,0x0102)->GetValue()
+                << "Read : " << sqi->GetDataEntry(0x0028,0x0102)->GetString()
                 << " - Expected : 7" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -224,19 +223,19 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0028|0103
-   if ( !sqi->GetValEntry(0x0028,0x0103) )
+   if ( !sqi->GetDataEntry(0x0028,0x0103) )
    {
-      std::cout << "ValEntry 0028|0010 not found" << std::endl
+      std::cout << "GetDataEntry 0028|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->ValEntry 0028|0103 found" << std::endl;
-   if ( sqi->GetValEntry(0x0028,0x0103)->GetValue() != "0" )
+   std::cout << "First Item ->DataEntry 0028|0103 found" << std::endl;
+   if ( sqi->GetDataEntry(0x0028,0x0103)->GetString() != "0" )
    {
       std::cout << "Value 0028|0103 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0028,0x0103)->GetValue()
+                << "Read : " << sqi->GetDataEntry(0x0028,0x0103)->GetString()
                 << " - Expected : 0" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -245,19 +244,19 @@ int TestMakeIcon (int argc, char *argv[])
    }
 
    // Test for entry 0005|0010
-   if ( !sqi->GetBinEntry(0x0005,0x0010) )
+   if ( !sqi->GetDataEntry(0x0005,0x0010) )
    {
-      std::cout << "BinEntry 0005|0010 not found" << std::endl
+      std::cout << "GetDataEntry 0005|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "First Item ->BinEntry 0005|0010 found" << std::endl;
-   if( sqi->GetBinEntry(0x0005,0x0010)->GetLength() != 6 )
+   std::cout << "First Item ->GetDataEntry 0005|0010 found" << std::endl;
+   if( sqi->GetDataEntry(0x0005,0x0010)->GetLength() != 6 )
    {
-      std::cout << "BinEntry size 0005|0010 don't match" << std::endl
-                << "Read : " << sqi->GetValEntry(0x0005,0x0010)->GetLength()
+      std::cout << "GetDataEntry size 0005|0010 don't match" << std::endl
+                << "Read : " << sqi->GetDataEntry(0x0005,0x0010)->GetLength()
                 << " - Expected : 6" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
@@ -265,17 +264,17 @@ int TestMakeIcon (int argc, char *argv[])
       return 1;
    }
 
-   std::cout << "Length BinEntry 0005|0010 OK" << std::endl;
+   std::cout << "Length GetDataEntry 0005|0010 OK" << std::endl;
 
-   if( memcmp(sqi->GetBinEntry(0x0005,0x0010)->GetBinArea(),binVal,6)!=0 )
+   if( memcmp(sqi->GetDataEntry(0x0005,0x0010)->GetBinArea(),binVal,6)!=0 )
    {
-      std::cout << "Value 0005|0010 don't match (BinEntry)" << std::endl
+      std::cout << "Value 0005|0010 don't match (DataEntry)" << std::endl
                 << "   ... Failed" << std::endl;
       delete fh;
       delete f;
       return 1;
    }
-   std::cout << "Value BinEntry 0005|0010 OK" << std::endl;
+   std::cout << "Value DataEntry 0005|0010 OK" << std::endl;
 
    delete fh;
    delete f;

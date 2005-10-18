@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,7 @@
 =========================================================================*/
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -55,17 +54,11 @@ int CopyDicom(std::string const &filename,
       gdcm::DocEntry *d=originalH->GetFirstEntry();
       while(d)
       {
-         if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
-         {
-            copyH->InsertBinEntry( b->GetBinArea(),b->GetLength(),
-                                   b->GetGroup(),b->GetElement(),
-                                   b->GetVR() );
-         }
-         else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
-         {   
-             copyH->InsertValEntry( v->GetValue(),
-                                    v->GetGroup(),v->GetElement(),
-                                    v->GetVR() ); 
+         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
+         {              
+            copyH->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
+                                       de->GetGroup(),de->GetElement(),
+                                       de->GetVR() );
          }
          else
          {
@@ -82,7 +75,7 @@ int CopyDicom(std::string const &filename,
       uint8_t *imageData = original->GetImageData();
 
       // Useless to set the image data, because it's already made when
-      // copying the corresponding BinEntry that contains the pixel data
+      // copying the corresponding DataEntry that contains the pixel data
       copy->SetImageData(imageData, dataSize);
 
       //////////////// Step 3:

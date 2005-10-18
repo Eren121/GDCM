@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 17:08:12 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,8 +19,8 @@
 #include "gdcmDicomDirObject.h"
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
-#include "gdcmValEntry.h"
 #include "gdcmDictSet.h"
+#include "gdcmDataEntry.h"
 
 namespace gdcm 
 {
@@ -59,7 +59,7 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
    ListDicomDirMetaElem::const_iterator it;
    uint16_t tmpGr,tmpEl;
    DictEntry *dictEntry;
-   ValEntry *entry;
+   DataEntry *entry;
       
    // for all the Elements found in they own part of the DicomDir dict.     
    for(it = elemList.begin(); it != elemList.end(); ++it)
@@ -67,9 +67,9 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
       tmpGr = it->Group;
       tmpEl = it->Elem;
       dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetEntry(tmpGr,tmpEl);
-      entry = new ValEntry(dictEntry);
+      entry = new DataEntry(dictEntry);
       entry->SetOffset(0); // just to avoid further missprinting
-      entry->SetValue(it->Value);
+      entry->SetString(it->Value);
 
       AddEntry(entry);
    }   

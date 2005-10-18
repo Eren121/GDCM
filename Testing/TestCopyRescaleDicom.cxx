@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/10/18 08:35:46 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,7 @@
 =========================================================================*/
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
+#include "gdcmDataEntry.h"
 
 #include <time.h>
 #include <sys/times.h>
@@ -89,17 +88,11 @@ int CopyRescaleDicom(std::string const &filename,
    gdcm::DocEntry *d = originalF.GetFirstEntry();
    while(d)
    {
-      if ( gdcm::BinEntry *b = dynamic_cast<gdcm::BinEntry*>(d) )
-      {
-         copyF.InsertBinEntry( b->GetBinArea(),b->GetLength(),
-                               b->GetGroup(),b->GetElement(),
-                               b->GetVR() );
-      }
-      else if ( gdcm::ValEntry *v = dynamic_cast<gdcm::ValEntry*>(d) )
-      {   
-          copyF.InsertValEntry( v->GetValue(),
-                                v->GetGroup(),v->GetElement(),
-                                v->GetVR() ); 
+      if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
+      {              
+         copyF.InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
+                                   de->GetGroup(),de->GetElement(),
+                                   de->GetVR() );
       }
       else
       {
@@ -121,10 +114,10 @@ int CopyRescaleDicom(std::string const &filename,
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyF.InsertValEntry( "8", 0x0028, 0x0100); // Bits Allocated
-      copyF.InsertValEntry( "8", 0x0028, 0x0101); // Bits Stored
-      copyF.InsertValEntry( "7", 0x0028, 0x0102); // High Bit
-      copyF.InsertValEntry( "0", 0x0028, 0x0103); // Pixel Representation
+      copyF.InsertEntryString( "8", 0x0028, 0x0100); // Bits Allocated
+      copyF.InsertEntryString( "8", 0x0028, 0x0101); // Bits Stored
+      copyF.InsertEntryString( "7", 0x0028, 0x0102); // High Bit
+      copyF.InsertEntryString( "0", 0x0028, 0x0103); // Pixel Representation
 
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;

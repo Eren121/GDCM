@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 16:24:19 $
-  Version:   $Revision: 1.159 $
+  Date:      $Date: 2005/10/18 08:35:49 $
+  Version:   $Revision: 1.160 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 #include "gdcmFile.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
-#include "gdcmValEntry.h"
+#include "gdcmDataEntry.h"
 
 #include <fstream>
 #include <string>
@@ -582,7 +582,7 @@ bool DicomDir::Write(std::string const &fileName)
  
 bool DicomDir::Anonymize() 
 {
-   ValEntry *v;
+   DataEntry *v;
    // Something clever to be found to forge the Patient names
    std::ostringstream s;
    int i = 1;
@@ -591,22 +591,22 @@ bool DicomDir::Anonymize()
                                    ++cc)
    {
       s << i;
-      v = (*cc)->GetValEntry(0x0010, 0x0010) ; // Patient's Name
+      v = (*cc)->GetDataEntry(0x0010, 0x0010) ; // Patient's Name
       if (v)
       {
-         v->SetValue(s.str());
+         v->SetString(s.str());
       }
 
-      v = (*cc)->GetValEntry(0x0010, 0x0020) ; // Patient ID
+      v = (*cc)->GetDataEntry(0x0010, 0x0020) ; // Patient ID
       if (v)
       {
-         v->SetValue(" ");
+         v->SetString(" ");
       }
 
-      v = (*cc)->GetValEntry(0x0010, 0x0030) ; // Patient's BirthDate
+      v = (*cc)->GetDataEntry(0x0010, 0x0030) ; // Patient's BirthDate
       if (v)
       {
-         v->SetValue(" ");
+         v->SetString(" ");
       }
       s << "";
       i++;
@@ -778,13 +778,13 @@ void DicomDir::CreateDicomDir()
    while(tmpSI)
    {
       d = tmpSI->GetDocEntry(0x0004, 0x1430); // Directory Record Type
-      if ( ValEntry* valEntry = dynamic_cast<ValEntry *>(d) )
+      if ( DataEntry *dataEntry = dynamic_cast<DataEntry *>(d) )
       {
-         v = valEntry->GetValue();
+         v = dataEntry->GetString();
       }
       else
       {
-         gdcmWarningMacro( "(0004,1430) not a ValEntry ?!?");
+         gdcmWarningMacro( "(0004,1430) not a DataEntry ?!?");
          continue;
       }
 
@@ -981,12 +981,12 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
                                    ++it )
    {
       // get the current file characteristics
-      patCurName         = (*it)->GetEntryValue(0x0010,0x0010);
-      patCurID           = (*it)->GetEntryValue(0x0010,0x0011);
-      studCurInstanceUID = (*it)->GetEntryValue(0x0020,0x000d);
-      studCurID          = (*it)->GetEntryValue(0x0020,0x0010);
-      serCurInstanceUID  = (*it)->GetEntryValue(0x0020,0x000e);
-      serCurID           = (*it)->GetEntryValue(0x0020,0x0011);
+      patCurName         = (*it)->GetEntryString(0x0010,0x0010);
+      patCurID           = (*it)->GetEntryString(0x0010,0x0011);
+      studCurInstanceUID = (*it)->GetEntryString(0x0020,0x000d);
+      studCurID          = (*it)->GetEntryString(0x0020,0x0010);
+      serCurInstanceUID  = (*it)->GetEntryString(0x0020,0x000e);
+      serCurID           = (*it)->GetEntryString(0x0020,0x0011);
 
       if ( patCurName != patPrevName || patCurID != patPrevID || first )
       {
@@ -1037,7 +1037,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    ListDicomDirElem::const_iterator it;
    uint16_t tmpGr, tmpEl;
    DictEntry *dictEntry;
-   ValEntry *entry;
+   DataEntry *entry;
    std::string val;
    SQItem *si;
 
@@ -1109,7 +1109,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       tmpEl     = it->Elem;
       dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
 
-      entry     = new ValEntry( dictEntry ); // Be sure it's never a BinEntry !
+      entry     = new DataEntry( dictEntry ); // Be sure it's never a DataEntry !
 
       entry->SetOffset(0); // just to avoid further missprinting
 
@@ -1117,7 +1117,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       {
          // NULL when we Build Up (ex nihilo) a DICOMDIR
          //   or when we add the META elems
-         val = header->GetEntryValue(tmpGr, tmpEl);
+         val = header->GetEntryString(tmpGr, tmpEl);
       }
       else
       {
@@ -1154,7 +1154,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
             val = it->Value;
       }
 
-      entry->SetValue( val ); // troubles expected when vr=SQ ...
+      entry->SetString( val ); // troubles expected when vr=SQ ...
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {

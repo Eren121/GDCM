@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,8 +27,6 @@
 
 namespace gdcm 
 {
-class ValEntry;
-class BinEntry;
 class SeqEntry;
 
 typedef std::map<TagKey, DocEntry *> TagDocEntryHT;
@@ -71,8 +69,6 @@ private:
    TagDocEntryHT TagHT;
    /// iterator, used to visit the TagHT variable
    TagDocEntryHT::iterator ItTagHT;
-   /// iterator, used to visit the TagHT variable, seeking only for ValEntries
-   TagDocEntryHT::iterator ItValEntryTagHT;
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

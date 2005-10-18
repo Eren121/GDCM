@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,8 +28,7 @@
 namespace gdcm 
 {
 class File;
-class ValEntry;
-class BinEntry;
+class DataEntry;
 class SeqEntry;
 class PixelReadConvert;
 class PixelWriteConvert;
@@ -72,15 +71,15 @@ public:
    void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
                         { UserFunction = userFunc; }   
    // File methods
-   bool SetValEntry(std::string const &content,
-                    uint16_t group, uint16_t elem);
-   bool SetBinEntry(uint8_t *content, int lgth,
-                    uint16_t group, uint16_t elem);
+   bool SetEntryString(std::string const &content,
+                           uint16_t group, uint16_t elem);
+   bool SetEntryBinArea(uint8_t *content, int lgth,
+                            uint16_t group, uint16_t elem);
 
-   ValEntry *InsertValEntry(std::string const &content,
-                            uint16_t group, uint16_t elem);
-   BinEntry *InsertBinEntry(uint8_t *binArea, int lgth,
-                            uint16_t group, uint16_t elem);
+   DataEntry *InsertEntryString(std::string const &content,
+                                       uint16_t group, uint16_t elem);
+   DataEntry *InsertEntryBinArea(uint8_t *binArea, int lgth,
+                                        uint16_t group, uint16_t elem);
    SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
 
    // File helpers
@@ -165,10 +164,12 @@ protected:
    void SetWriteToNoLibido();
    void RestoreWriteOfLibido();
 
-   ValEntry *CopyValEntry(uint16_t group, uint16_t elem);
-   BinEntry *CopyBinEntry(uint16_t group, uint16_t elem, 
-                          const std::string &vr);
+   DataEntry *CopyDataEntry(uint16_t group, uint16_t elem, 
+                               const TagName &vr = GDCM_UNKNOWN);
    void CheckMandatoryElements();
+   void CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
+   void SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
+   void CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
    void RestoreWriteMandatory();
 
 private:

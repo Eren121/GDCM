@@ -15,6 +15,7 @@ SET(TEST_SOURCES
   TestVR.cxx
   TestDictGroupName.cxx
   TestDict.cxx
+  TestDataEntry.cxx
   TestWriteSimple.cxx
   TestImageSet.cxx
   TestDicomDirElement.cxx
@@ -145,6 +146,9 @@ SET(BLACK_LIST
   "MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm"
   "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
   "MR_SIEMENS_forceLoad29-1010_29-1020.dcm"
+  # An element contains a value of 4, but no data follows
+  # So, the next (group, elem) is not correctly read
+  "gdcm-MR-PHILIPS-16-Multi-Seq.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence

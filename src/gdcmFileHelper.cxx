@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/07 09:54:53 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/10/18 08:35:50 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,11 +23,9 @@
 #include "gdcmDocument.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
-#include "gdcmBinEntry.h"
-#include "gdcmValEntry.h"
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
-#include "gdcmContentEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmFile.h"
 #include "gdcmPixelReadConvert.h"
 #include "gdcmPixelWriteConvert.h"
@@ -267,10 +265,10 @@ bool FileHelper::Load()
  * @param   elem element number of the Dicom Element to modify
  * \return  false if DocEntry not found
  */
-bool FileHelper::SetValEntry(std::string const &content,
-                             uint16_t group, uint16_t elem)
+bool FileHelper::SetEntryString(std::string const &content,
+                                    uint16_t group, uint16_t elem)
 { 
-   return FileInternal->SetValEntry(content, group, elem);
+   return FileInternal->SetEntryString(content, group, elem);
 }
 
 
@@ -284,10 +282,10 @@ bool FileHelper::SetValEntry(std::string const &content,
  * @param   elem element number of the Dicom Element to modify
  * \return  false if DocEntry not found
  */
-bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
-                             uint16_t group, uint16_t elem)
+bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
+                                     uint16_t group, uint16_t elem)
 {
-   return FileInternal->SetBinEntry(content, lgth, group, elem);
+   return FileInternal->SetEntryBinArea(content, lgth, group, elem);
 }
 
 /**
@@ -299,10 +297,10 @@ bool FileHelper::SetBinEntry(uint8_t *content, int lgth,
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */ 
-ValEntry *FileHelper::InsertValEntry(std::string const &content,
-                                     uint16_t group, uint16_t elem)
+DataEntry *FileHelper::InsertEntryString(std::string const &content,
+                                                uint16_t group, uint16_t elem)
 {
-   return FileInternal->InsertValEntry(content, group, elem);
+   return FileInternal->InsertEntryString(content, group, elem);
 }
 
 /**
@@ -316,10 +314,10 @@ ValEntry *FileHelper::InsertValEntry(std::string const &content,
  * \return  pointer to the modified/created Dicom entry (NULL when creation
  *          failed).
  */
-BinEntry *FileHelper::InsertBinEntry(uint8_t *binArea, int lgth,
-                                     uint16_t group, uint16_t elem)
+DataEntry *FileHelper::InsertEntryBinArea(uint8_t *binArea, int lgth,
+                                                 uint16_t group, uint16_t elem)
 {
-   return FileInternal->InsertBinEntry(binArea, lgth, group, elem);
+   return FileInternal->InsertEntryBinArea(binArea, lgth, group, elem);
 }
 
 /**
@@ -705,8 +703,8 @@ bool FileHelper::Write(std::string const &fileName)
       // and forgets to create any Entry belonging to group 0008
       // (shame on him !)
       // We add Recognition Code (RET)
-        if ( ! FileInternal->GetValEntry(0x0008, 0x0010) )
-            FileInternal->InsertValEntry("", 0x0008, 0x0010);
+        if ( ! FileInternal->GetDataEntry(0x0008, 0x0010) )
+            FileInternal->InsertEntryString("", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
@@ -816,7 +814,8 @@ bool FileHelper::CheckWriteIntegrity()
             }
             break;
       }
-   }   
+   }
+
    return true;
 }
 
@@ -834,14 +833,14 @@ void FileHelper::SetWriteToRaw()
    } 
    else
    {
-      ValEntry *photInt = CopyValEntry(0x0028,0x0004);
+      DataEntry *photInt = CopyDataEntry(0x0028,0x0004);
       if (FileInternal->HasLUT() )
       {
-         photInt->SetValue("PALETTE COLOR ");
+         photInt->SetString("PALETTE COLOR ");
       }
       else
       {
-         photInt->SetValue("MONOCHROME2 ");
+         photInt->SetString("MONOCHROME2 ");
       }
 
       PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
@@ -852,9 +851,9 @@ void FileHelper::SetWriteToRaw()
          vr = "OW";
       if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
-      BinEntry *pixel = 
-         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
-      pixel->SetValue(GDCM_BINLOADED);
+      DataEntry *pixel = 
+         CopyDataEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
+      pixel->SetFlag(DataEntry::FLAG_PIXELDATA);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
 
@@ -876,14 +875,14 @@ void FileHelper::SetWriteToRGB()
    {
       PixelReadConverter->BuildRGBImage();
       
-      ValEntry *spp = CopyValEntry(0x0028,0x0002);
-      spp->SetValue("3 ");
+      DataEntry *spp = CopyDataEntry(0x0028,0x0002);
+      spp->SetString("3 ");
 
-      ValEntry *planConfig = CopyValEntry(0x0028,0x0006);
-      planConfig->SetValue("0 ");
+      DataEntry *planConfig = CopyDataEntry(0x0028,0x0006);
+      planConfig->SetString("0 ");
 
-      ValEntry *photInt = CopyValEntry(0x0028,0x0004);
-      photInt->SetValue("RGB ");
+      DataEntry *photInt = CopyDataEntry(0x0028,0x0004);
+      photInt->SetString("RGB ");
 
       if ( PixelReadConverter->GetRGB() )
       {
@@ -901,9 +900,9 @@ void FileHelper::SetWriteToRGB()
          vr = "OW";
       if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
-      BinEntry *pixel = 
-         CopyBinEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
-      pixel->SetValue(GDCM_BINLOADED);
+      DataEntry *pixel = 
+         CopyDataEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
+      pixel->SetFlag(DataEntry::FLAG_PIXELDATA);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
 
@@ -928,14 +927,14 @@ void FileHelper::SetWriteToRGB()
       // samples per pixels = 1 (in the read file)
       if ( FileInternal->GetBitsAllocated()==24 ) 
       {
-         ValEntry *bitsAlloc = CopyValEntry(0x0028,0x0100);
-         bitsAlloc->SetValue("8 ");
+         DataEntry *bitsAlloc = CopyDataEntry(0x0028,0x0100);
+         bitsAlloc->SetString("8 ");
 
-         ValEntry *bitsStored = CopyValEntry(0x0028,0x0101);
-         bitsStored->SetValue("8 ");
+         DataEntry *bitsStored = CopyDataEntry(0x0028,0x0101);
+         bitsStored->SetString("8 ");
 
-         ValEntry *highBit = CopyValEntry(0x0028,0x0102);
-         highBit->SetValue("7 ");
+         DataEntry *highBit = CopyDataEntry(0x0028,0x0102);
+         highBit->SetString("7 ");
 
          Archive->Push(bitsAlloc);
          Archive->Push(bitsStored);
@@ -1017,8 +1016,8 @@ void FileHelper::SetWriteFileTypeToExplicitVR()
    std::string ts = Util::DicomString( 
       Global::GetTS()->GetSpecialTransferSyntax(TS::ExplicitVRLittleEndian) );
 
-   ValEntry *tss = CopyValEntry(0x0002,0x0010);
-   tss->SetValue(ts);
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010);
+   tss->SetString(ts);
 
    Archive->Push(tss);
 }
@@ -1031,8 +1030,8 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
    std::string ts = Util::DicomString(
       Global::GetTS()->GetSpecialTransferSyntax(TS::ImplicitVRLittleEndian) );
 
-   ValEntry *tss = CopyValEntry(0x0002,0x0010);
-   tss->SetValue(ts);
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010);
+   tss->SetString(ts);
 
    Archive->Push(tss);
 }
@@ -1050,30 +1049,28 @@ void FileHelper::RestoreWriteFileType()
  */ 
 void FileHelper::SetWriteToLibido()
 {
-   ValEntry *oldRow = dynamic_cast<ValEntry *>
-                (FileInternal->GetDocEntry(0x0028, 0x0010));
-   ValEntry *oldCol = dynamic_cast<ValEntry *>
-                (FileInternal->GetDocEntry(0x0028, 0x0011));
+   DataEntry *oldRow = FileInternal->GetDataEntry(0x0028, 0x0010);
+   DataEntry *oldCol = FileInternal->GetDataEntry(0x0028, 0x0011);
    
    if ( oldRow && oldCol )
    {
       std::string rows, columns; 
 
-      ValEntry *newRow=new ValEntry(oldRow->GetDictEntry());
-      ValEntry *newCol=new ValEntry(oldCol->GetDictEntry());
+      DataEntry *newRow=new DataEntry(oldRow->GetDictEntry());
+      DataEntry *newCol=new DataEntry(oldCol->GetDictEntry());
 
       newRow->Copy(oldCol);
       newCol->Copy(oldRow);
 
-      newRow->SetValue(oldCol->GetValue());
-      newCol->SetValue(oldRow->GetValue());
+      newRow->SetString(oldCol->GetString());
+      newCol->SetString(oldRow->GetString());
 
       Archive->Push(newRow);
       Archive->Push(newCol);
    }
 
-   ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
-   libidoCode->SetValue("ACRNEMA_LIBIDO_1.1");
+   DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010);
+   libidoCode->SetString("ACRNEMA_LIBIDO_1.1");
    Archive->Push(libidoCode);
 }
 
@@ -1082,14 +1079,13 @@ void FileHelper::SetWriteToLibido()
  */ 
 void FileHelper::SetWriteToNoLibido()
 {
-   ValEntry *recCode = dynamic_cast<ValEntry *>
-                (FileInternal->GetDocEntry(0x0008,0x0010));
+   DataEntry *recCode = FileInternal->GetDataEntry(0x0008,0x0010);
    if ( recCode )
    {
-      if ( recCode->GetValue() == "ACRNEMA_LIBIDO_1.1" )
+      if ( recCode->GetString() == "ACRNEMA_LIBIDO_1.1" )
       {
-         ValEntry *libidoCode = CopyValEntry(0x0008,0x0010);
-         libidoCode->SetValue("");
+         DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010);
+         libidoCode->SetString("");
          Archive->Push(libidoCode);
       }
    }
@@ -1112,55 +1108,31 @@ void FileHelper::RestoreWriteOfLibido()
 }
 
 /**
- * \brief Duplicates a ValEntry or creates it.
- * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
- * \return  pointer to the new Val Entry (NULL when creation failed).          
- */ 
-ValEntry *FileHelper::CopyValEntry(uint16_t group, uint16_t elem)
-{
-   DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
-   ValEntry *newE;
-
-   if ( oldE )
-   {
-      newE = new ValEntry(oldE->GetDictEntry());
-      newE->Copy(oldE);
-   }
-   else
-   {
-      newE = GetFile()->NewValEntry(group, elem);
-   }
-
-   return newE;
-}
-
-/**
- * \brief   Duplicates a BinEntry or creates it.
+ * \brief   Duplicates a DataEntry or creates it.
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * @param   vr  Value Representation of the Entry
  *          FIXME : what is it used for?
  * \return  pointer to the new Bin Entry (NULL when creation failed).
  */ 
-BinEntry *FileHelper::CopyBinEntry(uint16_t group, uint16_t elem,
-                                   const std::string &vr)
+DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
+                                   const TagName &vr)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
-   BinEntry *newE;
+   DataEntry *newE;
 
-   if ( oldE ) 
+   if ( oldE && vr != GDCM_UNKNOWN ) 
       if ( oldE->GetVR()!=vr )
          oldE = NULL;
 
    if ( oldE )
    {
-      newE = new BinEntry(oldE->GetDictEntry());
+      newE = new DataEntry(oldE->GetDictEntry());
       newE->Copy(oldE);
    }
    else
    {
-      newE = GetFile()->NewBinEntry(group, elem, vr);
+      newE = GetFile()->NewDataEntry(group, elem, vr);
    }
 
    return newE;
@@ -1213,43 +1185,28 @@ void FileHelper::CheckMandatoryElements()
    // Create them if not found
    // Always modify the value
    // Push the entries to the archive.
-      ValEntry *e_0002_0000 = CopyValEntry(0x0002,0x0000);
-      e_0002_0000->SetValue("0"); // for the moment
-      Archive->Push(e_0002_0000);
+      CopyMandatoryEntry(0x0002,0x0000,"0");
   
-      BinEntry *e_0002_0001 = CopyBinEntry(0x0002,0x0001, "OB");
+      DataEntry *e_0002_0001 = CopyDataEntry(0x0002,0x0001, "OB");
       e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
                                false);
       e_0002_0001->SetLength(2);
       Archive->Push(e_0002_0001);
 
    // 'Media Stored SOP Class UID' 
-      ValEntry *e_0002_0002 = CopyValEntry(0x0002,0x0002);
       // [Secondary Capture Image Storage]
-      e_0002_0002->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
-      Archive->Push(e_0002_0002);
+      CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");
  
    // 'Media Stored SOP Instance UID'   
-      ValEntry *e_0002_0003 = CopyValEntry(0x0002,0x0003);
-      e_0002_0003->SetValue(Util::CreateUniqueUID());
-      Archive->Push(e_0002_0003); 
+      CopyMandatoryEntry(0x0002,0x0003,Util::CreateUniqueUID());
 
    // 'Implementation Class UID'
-      ValEntry *e_0002_0012 = CopyValEntry(0x0002,0x0012);
-      e_0002_0012->SetValue(Util::CreateUniqueUID());
-      Archive->Push(e_0002_0012); 
+      CopyMandatoryEntry(0x0002,0x0012,Util::CreateUniqueUID());
 
    // 'Implementation Version Name'
-      ValEntry *e_0002_0013 = CopyValEntry(0x0002,0x0013);
       std::string version = "GDCM ";
       version += Util::GetVersion();
-      e_0002_0013->SetValue(version);
-      Archive->Push(e_0002_0013);
-
-   //'Source Application Entity Title' Not Mandatory
-   //ValEntry *e_0002_0016 = CopyValEntry(0x0002,0x0016);
-   //   e_0002_0016->SetValue("1.2.840.10008.5.1.4.1.1.7");
-   //   Archive->Push(e_0002_0016);
+      CopyMandatoryEntry(0x0002,0x0013,version);
    }
 
    // Push out 'LibIDO-special' entries, if any
@@ -1260,11 +1217,9 @@ void FileHelper::CheckMandatoryElements()
 
    // Deal with the pb of (Bits Stored = 12)
    // - we're gonna write the image as Bits Stored = 16
-   if ( FileInternal->GetEntryValue(0x0028,0x0100) ==  "12")
+   if ( FileInternal->GetEntryString(0x0028,0x0100) ==  "12")
    {
-      ValEntry *e_0028_0100 = CopyValEntry(0x0028,0x0100);
-      e_0028_0100->SetValue("16");
-      Archive->Push(e_0028_0100);
+      CopyMandatoryEntry(0x0028,0x0100,"16");
    }
 
    // Check if user wasn't drunk ;-)
@@ -1274,9 +1229,7 @@ void FileHelper::CheckMandatoryElements()
    int nbBitsAllocated = FileInternal->GetBitsAllocated();
    if ( nbBitsAllocated == 0 || nbBitsAllocated > 32)
    {
-      ValEntry *e_0028_0100 = CopyValEntry(0x0028,0x0100);
-      e_0028_0100->SetValue("16");
-      Archive->Push(e_0028_0100); 
+      CopyMandatoryEntry(0x0028,0x0100,"16");
       gdcmWarningMacro("(0028,0100) changed from "
          << nbBitsAllocated << " to 16 for consistency purpose");
       nbBitsAllocated = 16; 
@@ -1285,10 +1238,9 @@ void FileHelper::CheckMandatoryElements()
    int nbBitsStored = FileInternal->GetBitsStored();
    if ( nbBitsStored == 0 || nbBitsStored > nbBitsAllocated )
    {
+      s.str("");
       s << nbBitsAllocated;
-      ValEntry *e_0028_0101 = CopyValEntry(0x0028,0x0101);
-      e_0028_0101->SetValue( s.str() );
-      Archive->Push(e_0028_0101);
+      CopyMandatoryEntry(0x0028,0x0101,s.str());
       gdcmWarningMacro("(0028,0101) changed from "
                        << nbBitsStored << " to " << nbBitsAllocated
                        << " for consistency purpose" );
@@ -1300,11 +1252,9 @@ void FileHelper::CheckMandatoryElements()
         highBitPosition > nbBitsAllocated-1 ||
         highBitPosition < nbBitsStored-1  )
    {
-      ValEntry *e_0028_0102 = CopyValEntry(0x0028,0x0102);
-
+      s.str("");
       s << nbBitsStored - 1; 
-      e_0028_0102->SetValue( s.str() );
-      Archive->Push(e_0028_0102);
+      CopyMandatoryEntry(0x0028,0x0102,s.str());
       gdcmWarningMacro("(0028,0102) changed from "
                        << highBitPosition << " to " << nbBitsAllocated-1
                        << " for consistency purpose");
@@ -1315,8 +1265,8 @@ void FileHelper::CheckMandatoryElements()
    // we create the 'Source Image Sequence' SeqEntry
    // to hold informations about the Source Image
 
-   ValEntry *e_0008_0016 = FileInternal->GetValEntry(0x0008, 0x0016);
-   if ( e_0008_0016 != 0 )
+   DataEntry *e_0008_0016 = FileInternal->GetDataEntry(0x0008, 0x0016);
+   if ( e_0008_0016 )
    {
       // Create 'Source Image Sequence' SeqEntry
       SeqEntry *sis = new SeqEntry (
@@ -1324,16 +1274,16 @@ void FileHelper::CheckMandatoryElements()
       SQItem *sqi = new SQItem(1);
       // (we assume 'SOP Instance UID' exists too) 
       // create 'Referenced SOP Class UID'
-      ValEntry *e_0008_1150 = new ValEntry(
+      DataEntry *e_0008_1150 = new DataEntry(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
-      e_0008_1150->SetValue( e_0008_0016->GetValue());
+      e_0008_1150->SetString( e_0008_0016->GetString());
       sqi->AddEntry(e_0008_1150);
       
       // create 'Referenced SOP Instance UID'
-      ValEntry *e_0008_0018 = FileInternal->GetValEntry(0x0008, 0x0018);
-      ValEntry *e_0008_1155 = new ValEntry(
+      DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
+      DataEntry *e_0008_1155 = new DataEntry(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
-      e_0008_1155->SetValue( e_0008_0018->GetValue());
+      e_0008_1155->SetString( e_0008_0018->GetString());
       sqi->AddEntry(e_0008_1155);
 
       sis->AddSQItem(sqi,1); 
@@ -1341,9 +1291,7 @@ void FileHelper::CheckMandatoryElements()
       Archive->Push(sis);
  
       // 'Image Type' (The written image is no longer an 'ORIGINAL' one)
-      ValEntry *e_0008_0008 = CopyValEntry(0x0008,0x0008);
-      e_0008_0008->SetValue("DERIVED\\PRIMARY");
-      Archive->Push(e_0008_0008);
+      CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");
    } 
    else
    {
@@ -1351,35 +1299,21 @@ void FileHelper::CheckMandatoryElements()
       // the source image was NOT a true Dicom one.
       // We consider the image is a 'Secondary Capture' one
       // SOP Class UID
-      e_0008_0016  =  new ValEntry( 
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0016) );
       // [Secondary Capture Image Storage]
-      e_0008_0016 ->SetValue("1.2.840.10008.5.1.4.1.1.7"); 
-      Archive->Push(e_0008_0016); 
+      SetMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");
    }
 
 // ---- The user will never have to take any action on the following ----.
-
    // new value for 'SOP Instance UID'
-   ValEntry *e_0008_0018 = new ValEntry(
-         Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0018) );
-   e_0008_0018->SetValue( Util::CreateUniqueUID() );
-   Archive->Push(e_0008_0018);
+   SetMandatoryEntry(0x0008,0x0018,Util::CreateUniqueUID());
 
    // Instance Creation Date
-   ValEntry *e_0008_0012 = CopyValEntry(0x0008,0x0012);
-   std::string date = Util::GetCurrentDate();
-   e_0008_0012->SetValue(date.c_str());
-   Archive->Push(e_0008_0012);
+   CopyMandatoryEntry(0x0008,0x0012,Util::GetCurrentDate().c_str());
  
    // Instance Creation Time
-   ValEntry *e_0008_0013 = CopyValEntry(0x0008,0x0013);
-   std::string time = Util::GetCurrentTime();
-   e_0008_0013->SetValue(time.c_str());
-   Archive->Push(e_0008_0013);
+   CopyMandatoryEntry(0x0008,0x0013,Util::GetCurrentTime().c_str());
 
 // ----- Add Mandatory Entries if missing ---
-
 // Entries whose type is 1 are mandatory, with a mandatory value
 // Entries whose type is 1c are mandatory-inside-a-Sequence
 // Entries whose type is 2 are mandatory, with a optional value
@@ -1392,14 +1326,7 @@ void FileHelper::CheckMandatoryElements()
    // keeping the same 'Serie Instance UID' for various images
    // The user shouldn't add any image to a 'Manufacturer Serie'
    // but there is no way no to allowed him to do that 
-   ValEntry *e_0020_000e = FileInternal->GetValEntry(0x0020, 0x000e);
-   if ( !e_0020_000e )
-   {
-      e_0020_000e = new ValEntry(
-           Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0020, 0x000e) );
-      e_0020_000e->SetValue(Util::CreateUniqueUID() );
-      Archive->Push(e_0020_000e);
-   } 
+   CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID());
 
    // 'Study Instance UID'
    // Keep the value if exists
@@ -1407,107 +1334,69 @@ void FileHelper::CheckMandatoryElements()
    //          keeping the same 'Study Instance UID' for various images
    // The user may add images to a 'Manufacturer Study',
    //          adding new series to an already existing Study 
-   ValEntry *e_0020_000d = FileInternal->GetValEntry(0x0020, 0x000d);
-   if ( !e_0020_000d )
-   {
-      e_0020_000d = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0020, 0x000d) );
-      e_0020_000d->SetValue(Util::CreateUniqueUID() );
-      Archive->Push(e_0020_000d);
-   }
+   CheckMandatoryEntry(0x0020,0x000d,Util::CreateUniqueUID());
 
    // Modality : if missing we set it to 'OTher'
-   ValEntry *e_0008_0060 = FileInternal->GetValEntry(0x0008, 0x0060);
-   if ( !e_0008_0060 )
-   {
-      e_0008_0060 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0060) );
-      e_0008_0060->SetValue("OT");
-      Archive->Push(e_0008_0060);
-   } 
+   CheckMandatoryEntry(0x0008,0x0060,"OT");
 
    // Manufacturer : if missing we set it to 'GDCM Factory'
-   ValEntry *e_0008_0070 = FileInternal->GetValEntry(0x0008, 0x0070);
-   if ( !e_0008_0070 )
-   {
-      e_0008_0070 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0070) );
-      e_0008_0070->SetValue("GDCM Factory");
-      Archive->Push(e_0008_0070);
-   } 
+   CheckMandatoryEntry(0x0008,0x0070,"GDCM Factory");
 
    // Institution Name : if missing we set it to 'GDCM Hospital'
-   ValEntry *e_0008_0080 = FileInternal->GetValEntry(0x0008, 0x0080);
-   if ( !e_0008_0080 )
-   {
-      e_0008_0080 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0080) );
-      e_0008_0080->SetValue("GDCM Hospital");
-      Archive->Push(e_0008_0080);
-   } 
+   CheckMandatoryEntry(0x0008,0x0080,"GDCM Hospital");
 
    // Patient's Name : if missing, we set it to 'GDCM^Patient'
-   ValEntry *e_0010_0010 = FileInternal->GetValEntry(0x0010, 0x0010);
-   if ( !e_0010_0010 )
-   {
-      e_0010_0010 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0010) );
-      e_0010_0010->SetValue("GDCM^Patient");
-      Archive->Push(e_0010_0010);
-   } 
+   CheckMandatoryEntry(0x0010,0x0010,"GDCM^Patient");
 
    // Patient's Birth Date : 'type 2' entry -> must exist, value not mandatory
-   ValEntry *e_0010_0030 = FileInternal->GetValEntry(0x0010, 0x0030);
-   if ( !e_0010_0030 )
-   {
-      e_0010_0030 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0030) );
-      e_0010_0030->SetValue("");
-      Archive->Push(e_0010_0030);
-   }
+   CheckMandatoryEntry(0x0010,0x0030,"");
 
    // Patient's Sex :'type 2' entry -> must exist, value not mandatory
-   ValEntry *e_0010_0040 = FileInternal->GetValEntry(0x0010, 0x0040);
-   if ( !e_0010_0040 )
-   {
-      e_0010_0040 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0010, 0x0040) );
-      e_0010_0040->SetValue("");
-      Archive->Push(e_0010_0040);
-   }
+   CheckMandatoryEntry(0x0010,0x0040,"");
 
    // Referring Physician's Name :'type 2' entry -> must exist, value not mandatory
-   ValEntry *e_0008_0090 = FileInternal->GetValEntry(0x0008, 0x0090);
-   if ( !e_0008_0090 )
-   {
-      e_0008_0090 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x0090) );
-      e_0008_0090->SetValue("");
-      Archive->Push(e_0008_0090);
-   }
+   CheckMandatoryEntry(0x0008,0x0090,"");
 
     // Pixel Spacing : defaulted to 1.0\1.0
-   ValEntry *e_0028_0030 = FileInternal->GetValEntry(0x0028, 0x0030);
-   if ( !e_0028_0030 )
-   {
-      e_0028_0030 = new ValEntry(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0028, 0x0030) );
-      e_0028_0030->SetValue("1.0\\1.0");
-      Archive->Push(e_0028_0030);
-   }  
+   CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
    
    // Remove some inconstencies (probably some more will be added)
 
    // if (0028 0008)Number of Frames exists
    //    Push out (0020 0052),Frame of Reference UID
    //    (only meaningfull within a Serie)
-   ValEntry *e_0028_0008 = FileInternal->GetValEntry(0x0028, 0x0008);
+   DataEntry *e_0028_0008 = FileInternal->GetDataEntry(0x0028, 0x0008);
    if ( !e_0028_0008 )
    {
       Archive->Push(0x0020, 0X0052);
    }
 } 
- 
+
+void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
+{
+   DataEntry *entry = FileInternal->GetDataEntry(group,elem);
+   if ( !entry )
+   {
+      entry = new DataEntry(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+      entry->SetString(value);
+      Archive->Push(entry);
+   }
+}
+
+void FileHelper::SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
+{
+   DataEntry *entry = new DataEntry(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+   entry->SetString(value);
+   Archive->Push(entry);
+}
+
+void FileHelper::CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
+{
+   DataEntry *entry = CopyDataEntry(group,elem);
+   entry->SetString(value);
+   Archive->Push(entry);
+}
+
 /**
  * \brief Restore in the File the initial group 0002
  */
@@ -1592,7 +1481,7 @@ uint8_t *FileHelper::GetRaw()
 
 //-----------------------------------------------------------------------------
 /**
- * \brief   Prints the common part of ValEntry, BinEntry, SeqEntry
+ * \brief   Prints the common part of DataEntry, SeqEntry
  * @param   os ostream we want to print in
  * @param indent (unused)
  */
