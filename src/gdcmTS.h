@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/22 13:37:57 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/10/18 10:43:32 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ class GDCM_EXPORT TS
 public:
 enum SpecialType {
   ImplicitVRLittleEndian = 0,
-  ImplicitVRLittleEndianDLXGE,
+  ImplicitVRBigEndianPrivateGE,
   ExplicitVRLittleEndian,
   DeflatedExplicitVRLittleEndian,
   ExplicitVRBigEndian,

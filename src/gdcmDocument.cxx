@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 09:17:08 $
-  Version:   $Revision: 1.290 $
+  Date:      $Date: 2005/10/18 10:43:31 $
+  Version:   $Revision: 1.291 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2073,7 +2073,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          return;
       }
 
-      // Group 0002 is always 'Explicit ...' enven when Transfer Syntax says 'Implicit ..." 
+      // Group 0002 is always 'Explicit ...' even when Transfer Syntax says 'Implicit ..." 
 
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )
          {
@@ -2081,7 +2081,10 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          }
        
       // FIXME Strangely, this works with 
-      //'Implicit VR Transfer Syntax (GE Private)
+      //'Implicit VR BigEndian Transfer Syntax (GE Private)
+      //
+      // --> Probabely normal, since we considered we never have to trust manufacturers.
+      // (we find very often 'Implicit VR' tag, even when Transfer Syntax tells us it's Explicit ...
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
       {
          gdcmWarningMacro("Transfer Syntax Name = [" 
