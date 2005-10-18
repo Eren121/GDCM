@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:00:04 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/10/18 12:58:27 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -279,7 +279,7 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
 {
    uint16_t group;
    uint16_t elem;
-   TagName vr;
+   VRKey vr;
    TagName vm;
    TagName name;
 
@@ -293,7 +293,7 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
       from >> std::ws;  //remove white space
       std::getline(from, name);
  
-      const DictEntry newEntry(group, elem, vr, vm, name);
+      DictEntry newEntry(group, elem, vr, vm, name);
       AddEntry(newEntry);
    }
    from.close();

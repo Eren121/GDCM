@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -165,7 +165,7 @@ protected:
    void RestoreWriteOfLibido();
 
    DataEntry *CopyDataEntry(uint16_t group, uint16_t elem, 
-                               const TagName &vr = GDCM_UNKNOWN);
+                               const TagName &vr = GDCM_VRUNKNOWN);
    void CheckMandatoryElements();
    void CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
    void SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value);

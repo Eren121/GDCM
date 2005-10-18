@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,9 +97,9 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       uint16_t zero = 0;
       uint16_t shortLgr = (uint16_t)lgth;
 
-      if (vr == GDCM_UNKNOWN)
+      if( IsVRUnknown() )
       {
-         // GDCM_UNKNOWN was stored in the Entry VR;
+         // GDCM_VRUNKNOWN was stored in the Entry VR;
          // deal with Entry as if TS were Implicit VR
  
          // FIXME : troubles expected on big endian processors :
@@ -113,8 +113,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       }
       else
       {
-         binary_write(*fp, vr);
-         gdcmAssertMacro( vr.size() == 2 );
+         binary_write(*fp, vr.str());
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") /*|| (vr == "UN")*/ )
          {
@@ -232,13 +231,14 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    size_t o;
    std::string st;
    TSKey v;
-   std::string d2, vr;
+   std::string d2;
+   VRKey vr;
    std::ostringstream s;
    uint32_t lgth;
 
    o  = GetOffset();
    vr = GetVR();
-   if ( vr==GDCM_UNKNOWN )
+   if ( vr == GDCM_VRUNKNOWN )
       vr="  ";
 
    s << DictEntry::TranslateToKey(GetGroup(),GetElement()); 

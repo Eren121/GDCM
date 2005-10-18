@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,9 +64,9 @@ public:
    // Dict *GetVirtualDict() { return &VirtualEntries; }
 
    DictEntry *NewVirtualDictEntry(uint16_t group, uint16_t elem,
-                                  TagName vr     = GDCM_UNKNOWN,
-                                  TagName vm     = GDCM_UNKNOWN,
-                                  TagName name   = GDCM_UNKNOWN);
+                                  const VRKey &vr     = GDCM_VRUNKNOWN,
+                                  const TagName &vm   = GDCM_UNKNOWN,
+                                  const TagName &name = GDCM_UNKNOWN);
 
    Dict *GetFirstEntry();
    Dict *GetNextEntry();

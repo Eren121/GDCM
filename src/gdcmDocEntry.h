@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ public:
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom header or in the Dicom
    /// Dictionnary, of the current Dicom entry
-   std::string const &GetVR() const { return DicomDict->GetVR(); }
+   VRKey const &GetVR() const { return DicomDict->GetVR(); }
 
    /// \brief Returns the 'Value Multiplicity' (e.g. "1", "1-n", "6"),
    /// found in the Dicom entry or in the Dicom Dictionnary

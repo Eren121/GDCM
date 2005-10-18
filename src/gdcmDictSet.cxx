@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 20:44:52 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/10/18 12:58:27 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,9 +106,9 @@ Dict *DictSet::GetDict(DictKey const &dictName)
  */
 DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
                                          uint16_t elem,
-                                         TagName vr,
-                                         TagName vm,
-                                         TagName name)
+                                         const VRKey &vr,
+                                         const TagName &vm,
+                                         const TagName &name)
 {
    DictEntry *entry;
 
@@ -125,9 +125,9 @@ DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
    char res[10];
    sprintf(res,"%04x|%04x", group, elem);
    ExtendedTagKey tag = res;
-   tag += "#" + vr + "#" + vm + "#" + name;  
+   tag += "#" + vr.str() + "#" + vm + "#" + name;  
 #endif
-  
+
    ExtendedTagKeyHT::iterator it;
    
    it = VirtualEntries.find(tag);

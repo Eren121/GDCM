@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/18 12:58:24 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
 
    gdcm::DataEntry *dataEntry;
    std::string value;
-   std::string vr;   // value representation
+   gdcm::VRKey vr;   // value representation
    std::string vm;   // value multiplicity
    std::string name; // held in the Dicom Dictionary
 

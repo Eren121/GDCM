@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,27 +123,6 @@ int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
    if ( entry )
       return entry->GetLength();
    return -1;
-}
-
-/**
- * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public [and private dictionaries] 
- *          for the element value representation of a given tag..
- *          Obtaining the VR (Value Representation) might be needed by caller
- *          to convert the string typed content to caller's native type 
- *          (think of C++ vs Python). The VR is actually of a higher level
- *          of semantics than just the native C++ type.
- * @param   group  Group number of the searched tag.
- * @param   elem Element number of the searched tag.
- * @return  Corresponding element value representation when it exists,
- *          and the string GDCM_UNFOUND ("gdcm::Unfound") otherwise.
- */
-std::string DocEntrySet::GetEntryVR(uint16_t group, uint16_t elem)
-{
-   DocEntry *entry = GetDocEntry(group, elem);
-   if ( entry )
-      return entry->GetVR();
-   return GDCM_UNFOUND;
 }
 
 /**
@@ -274,7 +253,7 @@ bool DocEntrySet::SetEntryBinArea(uint8_t *content, int lgth, DataEntry *entry)
  */ 
 DataEntry *DocEntrySet::InsertEntryString(std::string const &value, 
                                              uint16_t group, uint16_t elem,
-                                             TagName const &vr )
+                                             VRKey const &vr )
 {
    DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
@@ -332,7 +311,7 @@ DataEntry *DocEntrySet::InsertEntryString(std::string const &value,
  */
 DataEntry *DocEntrySet::InsertEntryBinArea(uint8_t *binArea, int lgth, 
                                               uint16_t group, uint16_t elem,
-                                              TagName const &vr )
+                                              VRKey const &vr )
 {
    DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
@@ -466,7 +445,7 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
  * @param   vr    V(alue) R(epresentation) of the new Entry 
  */
 DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
-                                   TagName const &vr) 
+                                     VRKey const &vr) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, vr);
    gdcmAssertMacro(dictEntry);
@@ -510,7 +489,7 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
  * @param   name   english name
  */
 DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group, uint16_t elem,
-                                             TagName const &vr,
+                                             VRKey const &vr,
                                              TagName const &vm,
                                              TagName const &name )
 {
@@ -553,18 +532,18 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
  */
 DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
-                                     TagName const &vr)
+                                     VRKey const &vr)
 {
    DictEntry *dictEntry = GetDictEntry(group,elem);
    DictEntry *goodEntry = dictEntry;
-   std::string goodVR = vr;
+   VRKey goodVR = vr;
 
    if (elem == 0x0000) goodVR="UL";
 
    if ( goodEntry )
    {
       if ( goodVR != goodEntry->GetVR()
-        && goodVR != GDCM_UNKNOWN )
+        && goodVR != GDCM_VRUNKNOWN )
       {
          goodEntry = NULL;
       }

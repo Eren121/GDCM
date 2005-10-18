@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/18 12:49:55 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1121,8 +1121,8 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    DataEntry *newE;
 
-   if ( oldE && vr != GDCM_UNKNOWN ) 
-      if ( oldE->GetVR()!=vr )
+   if ( oldE && vr != GDCM_VRUNKNOWN ) 
+      if ( oldE->GetVR() != vr )
          oldE = NULL;
 
    if ( oldE )

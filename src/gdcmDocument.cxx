@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 11:35:31 $
-  Version:   $Revision: 1.293 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.294 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -875,7 +875,7 @@ void Document::SkipBytes(uint32_t nBytes)
 int Document::ComputeGroup0002Length( ) 
 {
    uint16_t gr;
-   std::string vr;
+   VRKey vr;
    
    int groupLength = 0;
    bool found0002 = false;   
@@ -1275,7 +1275,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 {
    uint16_t group  = entry->GetGroup();
    uint16_t elem  = entry->GetElement();
-   std::string  vr = entry->GetVR();
+   const VRKey  &vr = entry->GetVR();
    uint32_t length = entry->GetLength();
 
    Fp->seekg((long)entry->GetOffset(), std::ios::beg);
@@ -1337,7 +1337,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 void Document::FindDocEntryLength( DocEntry *entry )
    throw ( FormatError )
 {
-   std::string  vr  = entry->GetVR();
+   const VRKey &vr  = entry->GetVR();
    uint16_t length16;       
    
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
@@ -1478,10 +1478,10 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
  * \brief     Find the Value Representation of the current Dicom Element.
  * @return    Value Representation of the current Entry
  */
-std::string Document::FindDocEntryVR()
+VRKey Document::FindDocEntryVR()
 {
    if ( Filetype != ExplicitVR )
-      return GDCM_UNKNOWN;
+      return GDCM_VRUNKNOWN;
 
    long positionOnEntry = Fp->tellg();
    // Warning: we believe this is explicit VR (Value Representation) because
@@ -1492,14 +1492,16 @@ std::string Document::FindDocEntryVR()
    // is in explicit VR and try to fix things if it happens not to be
    // the case.
 
-   char vr[3];
-   Fp->read (vr, (size_t)2);
-   vr[2] = 0;
+   VRKey vr;
+   Fp->read(&(vr[0]),(size_t)2);
 
+   gdcmWarningMacro( "--> VR: " << vr )
    if ( !CheckDocEntryVR(vr) )
    {
+      Global::GetVR()->Print(std::cerr);
+      gdcmWarningMacro( "Unknown VR '" << vr << "'" )
       Fp->seekg(positionOnEntry, std::ios::beg);
-      return GDCM_UNKNOWN;
+      return GDCM_VRUNKNOWN;
    }
    return vr;
 }
@@ -1512,12 +1514,9 @@ std::string Document::FindDocEntryVR()
  * @return    false if the VR is incorrect or if the VR isn't referenced
  *            otherwise, it returns true
 */
-bool Document::CheckDocEntryVR(VRKey vr)
+bool Document::CheckDocEntryVR(const VRKey &vr)
 {
-   if ( !Global::GetVR()->IsValidVR(vr) )
-      return false;
-
-   return true; 
+   return Global::GetVR()->IsValidVR(vr);
 }
 
 /**
@@ -1634,7 +1633,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
    uint16_t elem         = entry->GetElement();
    uint16_t group        = entry->GetGroup();
-   const std::string &vr = entry->GetVR();
+   const VRKey &vr = entry->GetVR();
    uint32_t length       = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
@@ -1950,10 +1949,11 @@ DocEntry *Document::ReadNextDocEntry()
    if ( HasDCMPreamble )
       HandleOutOfGroup0002(group, elem);
  
-   std::string vr = FindDocEntryVR();
-   std::string realVR = vr;
+   VRKey vr = FindDocEntryVR();
+   
+   VRKey realVR = vr;
 
-   if ( vr == GDCM_UNKNOWN )
+   if ( vr == GDCM_VRUNKNOWN )
    {
       if ( elem == 0x0000 ) // Group Length
       {
@@ -1974,6 +1974,7 @@ DocEntry *Document::ReadNextDocEntry()
          }
       }
    }
+   gdcmWarningMacro( "Found VR: " << vr << " / Real VR: " << realVR );
 
    DocEntry *newEntry;
    if ( Global::GetVR()->IsVROfSequence(realVR) )
@@ -1984,7 +1985,7 @@ DocEntry *Document::ReadNextDocEntry()
       static_cast<DataEntry *>(newEntry)->SetState(DataEntry::STATE_NOTLOADED);
    }
 
-   if ( vr == GDCM_UNKNOWN )
+   if ( vr == GDCM_VRUNKNOWN )
    {
       if ( Filetype == ExplicitVR )
       {

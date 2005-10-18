@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 09:17:08 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.125 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -190,8 +190,8 @@ private:
    void LoadDocEntry         (DocEntry *e, bool forceLoad = false);
    void FindDocEntryLength   (DocEntry *e) throw ( FormatError );
    uint32_t FindDocEntryLengthOBOrOW() throw( FormatUnexpected );
-   std::string FindDocEntryVR();
-   bool CheckDocEntryVR      (VRKey k);
+   VRKey FindDocEntryVR();
+   bool CheckDocEntryVR      (const VRKey &k);
 
    void SkipDocEntry          (DocEntry *entry);
    void SkipToNextDocEntry    (DocEntry *entry);

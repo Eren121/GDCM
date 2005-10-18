@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSystem.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 09:17:08 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/18 12:58:29 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,17 +86,6 @@ typedef  unsigned int        uint32_t;
 #endif
 
 #include <string>
-#define FASTTAGKEY 0
-
-// FIXME: Should rewrite this:
-#if FASTTAGKEY
-#include <iostream>
-#include <iomanip>
-#endif
-#if defined(_MSC_VER) && (_MSC_VER == 1200)
-/* ostream operator for std::string since VS6 does not provide it*/
-#include <iostream>
-#endif
 
 //-----------------------------------------------------------------------------
 #endif

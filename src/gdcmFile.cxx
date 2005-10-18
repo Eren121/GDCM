@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.276 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.277 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,7 +219,7 @@ bool File::DoTheLoadingJob( )
       DataEntry *oldEntry = dynamic_cast<DataEntry *>(entry);
       if (oldEntry)
       {
-         std::string PixelVR;
+         VRKey PixelVR;
          // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
          // more than 8 (i.e 12, 16) is a 'O Words'
          if ( GetBitsAllocated() == 8 || GetBitsAllocated() == 24 ) 

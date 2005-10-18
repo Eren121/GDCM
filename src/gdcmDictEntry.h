@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/10/18 12:58:27 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,10 +20,10 @@
 #define GDCMDICTENTRY_H
 
 #include "gdcmBase.h"
+#include "gdcmVRKey.h"
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
 /**
  * \brief
@@ -41,7 +41,7 @@ class GDCM_EXPORT DictEntry : public Base
 public:
    DictEntry(uint16_t group, 
              uint16_t elem,
-             TagName const &vr     = GDCM_UNKNOWN,
+             VRKey const &vr       = GDCM_VRUNKNOWN,
              TagName const &vm     = GDCM_UNKNOWN,
              TagName const &name   = GDCM_UNKNOWN);
 
@@ -49,12 +49,12 @@ public:
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
 // Content of DictEntry
-   void SetVR(TagName const &vr);
+   void SetVR(VRKey const &vr);
    void SetVM(TagName const &vm);
 
    /// \brief tells if the V(alue) R(epresentation) is known (?!)
    /// @return 
-   bool IsVRUnknown() const { return VR == GDCM_UNKNOWN; }
+   bool IsVRUnknown() const { return VR == GDCM_VRUNKNOWN; }
 
    /// \brief tells if the V(alue) M(ultiplicity) is known (?!)
    /// @return 
@@ -71,7 +71,7 @@ public:
    /// \brief  Returns the Dicom Value Representation of the current
    ///         DictEntry
    /// @return the Dicom Value Representation
-   const TagName &GetVR() const { return VR; }
+   const VRKey &GetVR() const { return VR; }
  
    /// \brief   sets the key of the current DictEntry
    /// @param k New key to be set.
@@ -112,7 +112,7 @@ private:
    ///        of the data represented e.g. 
    ///        "FD" short for "Floating Point Double"(see \ref VR)
    ///        "PN" short for "Person Name"       
-   TagName VR;
+   VRKey VR;
 
    /*
     *  .

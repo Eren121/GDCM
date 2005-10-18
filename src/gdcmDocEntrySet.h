@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/10/18 12:58:28 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #define GDCMDOCENTRYSET_H
 
 #include "gdcmBase.h"
+#include "gdcmVRKey.h"
+
 #include <fstream>
 
 namespace gdcm 
@@ -82,7 +84,6 @@ public:
    virtual std::string GetEntryString(uint16_t group, uint16_t elem);
    virtual void *GetEntryBinArea(uint16_t group, uint16_t elem);
    virtual int GetEntryLength(uint16_t group, uint16_t elem);
-   virtual std::string GetEntryVR(uint16_t group, uint16_t elem);
    virtual std::string GetEntryForcedAsciiValue(uint16_t group, uint16_t elem);
 
    /// \brief Gets any type of DocEntry, identified by its (group,elem)
@@ -101,10 +102,10 @@ public:
 
    DataEntry *InsertEntryString(std::string const &value,
                                    uint16_t group, uint16_t elem,
-                                   TagName const &vr = GDCM_UNKNOWN);
+                                   VRKey const &vr = GDCM_VRUNKNOWN);
    DataEntry *InsertEntryBinArea(uint8_t *binArea, int lgth,
                                     uint16_t group, uint16_t elem,
-                                    TagName const &vr = GDCM_UNKNOWN);
+                                    VRKey const &vr = GDCM_VRUNKNOWN);
    SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
    /// tells us if the set contains no entry
    virtual bool IsEmpty() = 0;
@@ -112,12 +113,12 @@ public:
 
 // DocEntry  related utilities 
    DataEntry *NewDataEntry(uint16_t group,uint16_t elem,
-                         TagName const &vr = GDCM_UNKNOWN);
+                         VRKey const &vr = GDCM_VRUNKNOWN);
    SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
 
 // DictEntry  related utilities 
    DictEntry *NewVirtualDictEntry(uint16_t group,uint16_t elem,
-                                  TagName const &vr     = GDCM_UNKNOWN,
+                                  VRKey const &vr     = GDCM_VRUNKNOWN,
                                   TagName const &vm     = GDCM_UNKNOWN,
                                   TagName const &name   = GDCM_UNKNOWN );
 
@@ -125,7 +126,7 @@ protected:
 // DictEntry  related utilities
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem);
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem,
-                           TagName const &vr);
+                           VRKey const &vr);
    /// To be able to backtrack (Private Sequence, Implicit VR related pb)
    DocEntry *PreviousDocEntry;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:51 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/10/18 12:58:29 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #define GDCMVR_H
 
 #include "gdcmCommon.h"
+#include "gdcmVRKey.h"
+
 #include <map>
 #include <string>
 #include <iostream>
@@ -28,7 +30,6 @@ namespace gdcm
 {
 
 //-----------------------------------------------------------------------------
-typedef std::string VRKey;
 typedef std::string VRAtr;
 /// Value Representation Hash Table
 typedef std::map<VRKey, VRAtr> VRHT;

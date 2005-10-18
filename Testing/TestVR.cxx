@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/02/02 10:05:26 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/18 12:58:25 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,29 +19,75 @@
 
 int TestVR(int , char *[])
 {
-   gdcm::VR *tempVrDict=0;
-   std::cout << "------ Test Default VR Dictionary : ----------" << std::endl;
-  // Just to improve test coverage:
-  // tempVrDict = new gdcm::Dict("dummyFileNameThatDoesntExist");
-  // tempVrDict->Print();
-  // std::cout << "----- end Test Default VR Dictionary : -----" << std::endl;
-
-   // Lets delete it.
-   delete tempVrDict;
-
+   int error = 0;
    gdcm::VR *vr = new gdcm::VR();
  
    // There should be 16 entries ...
    vr->Print( std::cout );
 
-   vr->IsVROfStringRepresentable( "PN" );
-   vr->IsVROfStringRepresentable( "FD" );
+   // Valid VR
+   if( !vr->IsValidVR( "PN" ) )
+   {
+      std::cerr << "'PN' is not a valid VR" << std::endl;
+      error++;
+   }
+   if( !vr->IsValidVR( "FD" ) )
+   {
+      std::cerr << "'FD' is not a valid VR" << std::endl;
+      error++;
+   }
+   if( vr->IsValidVR( "" ) )
+   {
+      std::cerr << "'' is a valid VR" << std::endl;
+      error++;
+   }
+   if( vr->IsValidVR( "  " ) )
+   {
+      std::cerr << "'  ' is a valid VR" << std::endl;
+      error++;
+   }
+   if( vr->IsValidVR( gdcm::GDCM_VRUNKNOWN ) )
+   {
+      std::cerr << "'  ' is a valid VR" << std::endl;
+      error++;
+   }
 
-   vr->IsVROfBinaryRepresentable( "FD" );
-   vr->IsVROfBinaryRepresentable( "PN" );
+   // String representable
+   if( !vr->IsVROfStringRepresentable( "PN" ) )
+   {
+      std::cerr << "'PN' is not a string representable" << std::endl;
+      error++;
+   }
+   if( vr->IsVROfStringRepresentable( "FD" ) )
+   {
+      std::cerr << "'FD' is a string representable" << std::endl;
+      error++;
+   }
 
-   vr->IsVROfSequence( "" );
-   vr->IsVROfSequence( "SQ" );
+   // Binary representable
+   if( !vr->IsVROfBinaryRepresentable( "FD" ) )
+   {
+      std::cerr << "FD is not a binary representable" << std::endl;
+      error++;
+   }
+   if( vr->IsVROfBinaryRepresentable( "PN" ) )
+   {
+      std::cerr << "'PN' is a binary representable" << std::endl;
+      error++;
+   }
+
+   // Sequence
+   if( vr->IsVROfSequence( "" ) )
+   {
+      std::cerr << "'' is a sequence" << std::endl;
+      error++;
+   }
+   if( !vr->IsVROfSequence( "SQ" ) )
+   {
+      std::cerr << "'SQ' is not a sequence" << std::endl;
+      error++;
+   }
+
    delete vr;
-   return 0;
+   return error;
 }

@@ -1,4 +1,11 @@
 Mon Oct 18 10:27:49 2005 by regrain
+   * Correctly use the VRKey for all vr variables... instead of TagName 
+     or std::string
+   * Replace the definition of VRKey from std::string to a class 
+     containing a char[2]. All methods are inline to have no speed low
+   * Create the GDCM_VRUNKNOWN = "  " for the VR values
+   
+Mon Oct 18 10:27:49 2005 by regrain
    * Remove useless constructor of gdcm::Document
    * Remove useless parameter in the constructor of gdcm::ElementSet
    * Split gdcmCommon to separate the System specifications to the gdcm
