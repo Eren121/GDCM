@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/10/18 12:49:55 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -704,7 +704,7 @@ bool FileHelper::Write(std::string const &fileName)
       // (shame on him !)
       // We add Recognition Code (RET)
         if ( ! FileInternal->GetDataEntry(0x0008, 0x0010) )
-            FileInternal->InsertEntryString("", 0x0008, 0x0010);
+            FileInternal->InsertEntryString("ACR-NEMA V1.0 ", 0x0008, 0x0010);
          SetWriteFileTypeToACR();
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
