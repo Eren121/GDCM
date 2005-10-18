@@ -1,4 +1,10 @@
 Mon Oct 18 10:27:49 2005 by regrain
+   * Remove useless constructor of gdcm::Document
+   * Remove useless parameter in the constructor of gdcm::ElementSet
+   * Split gdcmCommon to separate the System specifications to the gdcm
+     specifications
+
+Mon Oct 18 10:27:49 2005 by regrain
    * Minor coding-style clean up
    * Replace the ContentEntry and its derived classes (BinEntry and ValEntry)
      by the DataEntry. This unique entry considers all datas like binary datas.

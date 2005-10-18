@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/10/18 09:17:08 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,7 @@ typedef std::map<TagKey, DocEntry *> TagDocEntryHT;
 class GDCM_EXPORT ElementSet : public DocEntrySet
 {
 public:
-   ElementSet(int);
+   ElementSet();
    ~ElementSet();
 
    virtual void Print(std::ostream &os = std::cout, 

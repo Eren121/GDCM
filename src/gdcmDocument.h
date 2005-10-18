@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2005/10/18 09:17:08 $
+  Version:   $Revision: 1.124 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,7 +116,6 @@ protected:
    // to instanciate from this class Document (only gdcm::File and
    // gdcm::DicomDir are meaningfull).
    Document();
-   Document( std::string const &filename );
    virtual ~Document();
    
    uint16_t ReadInt16() throw ( FormatError );

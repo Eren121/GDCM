@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.289 $
+  Date:      $Date: 2005/10/18 09:17:08 $
+  Version:   $Revision: 1.290 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ const unsigned int Document::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
  *         
  */
 Document::Document() 
-         :ElementSet(-1)
+         :ElementSet()
 {
    Fp = 0;
 
@@ -66,29 +66,6 @@ Document::Document()
    SetFileName("");
 }
 
-/**
- * \brief   Constructor (DEPRECATED : not to break the API) 
- * @param   fileName 'Document' (File or DicomDir) to be open for parsing
- */
-Document::Document( std::string const &fileName )
-         :ElementSet(-1) 
-{
-   Fp = 0;
-
-   SetMaxSizeLoadEntry(MAX_SIZE_LOAD_ELEMENT_VALUE);
-   Initialize();
-   SwapCode = 1234;
-   Filetype = ExplicitVR;
-   Group0002Parsed = false;
-   LoadMode = LD_ALL; // Load everything, later
-
-   // Load will set it to true if sucessfull
-   IsDocumentAlreadyLoaded = false;
-   IsDocumentModified = true;
-
-   SetFileName(fileName);
-   Load( );
-}
 /**
  * \brief   Canonical destructor.
  */
