@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 19:54:26 $
-  Version:   $Revision: 1.296 $
+  Date:      $Date: 2005/10/18 21:19:57 $
+  Version:   $Revision: 1.297 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,7 +127,7 @@ bool Document::DoTheLoadingDocumentJob(  )
 
    Group0002Parsed = false;
 
-   gdcmWarningMacro( "Starting parsing of file: " << Filename.c_str());
+   gdcmDebugMacro( "Starting parsing of file: " << Filename.c_str());
 
    Fp->seekg(0, std::ios::end);
    long lgt = Fp->tellg();       // total length of the file
@@ -1160,7 +1160,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       }
       first = false;
    }                               // end While
-   gdcmWarningMacro( "Exit from ParseDES, delim-mode " << delim_mode );
+   gdcmDebugMacro( "Exit from ParseDES, delim-mode " << delim_mode );
 }
 
 /**
@@ -1496,7 +1496,7 @@ VRKey Document::FindDocEntryVR()
    VRKey vr;
    Fp->read(&(vr[0]),(size_t)2);
 
-   gdcmWarningMacro( "--> VR: " << vr )
+   gdcmDebugMacro( "--> VR: " << vr )
    if ( !CheckDocEntryVR(vr) )
    {
       gdcmWarningMacro( "Unknown VR '" << vr << "'" )
@@ -1695,7 +1695,7 @@ bool Document::CheckSwap()
    char *entCur = deb + 128;
    if ( memcmp(entCur, "DICM", (size_t)4) == 0 )
    {
-      gdcmWarningMacro( "Looks like DICOM Version3 (preamble + DCM)" );
+      gdcmDebugMacro( "Looks like DICOM Version3 (preamble + DCM)" );
       
       // Group 0002 should always be VR, and the first element 0000
       // Let's be carefull (so many wrong headers ...)
@@ -1727,24 +1727,24 @@ bool Document::CheckSwap()
       // instead of just checking for UL, OB and UI !? group 0000 
       {
          Filetype = ExplicitVR;
-         gdcmWarningMacro( "Group 0002 : Explicit Value Representation");
+         gdcmDebugMacro( "Group 0002 : Explicit Value Representation");
       } 
       else 
       {
          Filetype = ImplicitVR;
-         gdcmWarningMacro( "Group 0002 :Not an explicit Value Representation;"
+         gdcmErrorMacro( "Group 0002 :Not an explicit Value Representation;"
                         << "Looks like a bugged Header!");
       }
       
       if ( net2host )
       {
          SwapCode = 4321;
-         gdcmWarningMacro( "HostByteOrder != NetworkByteOrder");
+         gdcmDebugMacro( "HostByteOrder != NetworkByteOrder");
       }
       else 
       {
          SwapCode = 1234;
-         gdcmWarningMacro( "HostByteOrder = NetworkByteOrder");
+         gdcmDebugMacro( "HostByteOrder = NetworkByteOrder");
       }
       
       // Position the file position indicator at first tag 
@@ -1791,7 +1791,7 @@ bool Document::CheckSwap()
            memcmp(entCur, "OB", (size_t)2) == 0 )
          {
             Filetype = ExplicitVR;
-            gdcmWarningMacro( "Group 0002 : Explicit Value Representation");
+            gdcmDebugMacro( "Group 0002 : Explicit Value Representation");
             return true;
           }
     }
@@ -1974,7 +1974,7 @@ DocEntry *Document::ReadNextDocEntry()
          }
       }
    }
-   gdcmWarningMacro( "Found VR: " << vr << " / Real VR: " << realVR );
+   gdcmDebugMacro( "Found VR: " << vr << " / Real VR: " << realVR );
 
    DocEntry *newEntry;
    if ( Global::GetVR()->IsVROfSequence(realVR) )

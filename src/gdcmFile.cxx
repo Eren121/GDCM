@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 19:54:26 $
-  Version:   $Revision: 1.278 $
+  Date:      $Date: 2005/10/18 21:19:57 $
+  Version:   $Revision: 1.279 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -581,7 +581,7 @@ float File::GetYSpacing()
    }
    else
    {
-      gdcmWarningMacro( "Unfound Pixel Spacing (0018,1164)" );
+      gdcmWarningMacro( "Unfound Imager Pixel Spacing (0018,1164)" );
    }
 /*   const std::string &strImagerPixelSpacing = GetEntryString(0x0018,0x1164);
    if ( strImagerPixelSpacing != GDCM_UNFOUND )
@@ -2031,17 +2031,15 @@ uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
 
    if ( !ReadTag(testGroup, testElem) )
    {
+      gdcmErrorMacro( "ReadTag did not succeed..." );
       return 0;
    }
                                                                                 
    //// Then read the associated Item Length
    long currentPosition = Fp->tellg();
    uint32_t itemLength  = ReadInt32();
-   {
-      gdcmWarningMacro( "Basic Item Length is: "
-        << itemLength << std::endl
+   gdcmDebugMacro( "Basic Item Length is: " << itemLength 
         << "  at address: " << std::hex << (unsigned int)currentPosition);
-   }
    return itemLength;
 }
 
