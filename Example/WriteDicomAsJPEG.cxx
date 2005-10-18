@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 19:54:25 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/18 20:49:59 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
+#include "gdcmUtil.h"
  
 #include <iostream>
 #include <sstream>
@@ -36,6 +37,49 @@ extern "C" {
 
 #include "jdatasrc.cxx"
 #include "jdatadst.cxx"
+
+// PS 3.5, page 66
+void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, uint32_t length)
+{
+  assert( numFrag == 1);
+  uint32_t del = 0xffffffff; //data_element_length
+  //gdcm::binary_write(*fp, del);
+
+  // Item tag:
+  uint16_t group = 0xfffe;
+  uint16_t elem  = 0xe000;
+  gdcm::binary_write(*fp, group);
+  gdcm::binary_write(*fp, elem);
+  // Item Length
+  uint32_t item_length = 0x0000;
+  gdcm::binary_write(*fp, item_length);
+
+  // back again...First fragment
+  // Item tag:
+  gdcm::binary_write(*fp, group);
+  gdcm::binary_write(*fp, elem);
+  // Item Length
+  gdcm::binary_write(*fp, length);
+
+}
+
+void CloseJpeg(std::ostream *fp)
+{
+  // sequence terminator
+  uint16_t group = 0xfffe;
+  uint16_t elem  = 0xe000;
+  gdcm::binary_write(*fp, group);
+  gdcm::binary_write(*fp, elem);
+
+  uint32_t length = 0x0;
+  gdcm::binary_write(*fp, length);
+}
+
+// PS 3.5, page 67
+void EncodeWithBasicOffsetTable(std::ostream *fp, int numFrag)
+{
+  (void)fp; (void)numFrag;
+}
 
 bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
                      int image_width, int image_height, int sample_pixel, int quality)
@@ -199,7 +243,11 @@ int main(int argc, char *argv[])
    std::cout << "Y: " << ysize << std::endl;
    std::cout << "Sample: " << samplesPerPixel << std::endl;
    int fragment_size = xsize*ysize*samplesPerPixel;
+
+   EncodeWithoutBasicOffsetTable(of, 1, 15328);
    CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100);
+   CloseJpeg(of);
+
    if( !f->IsReadable() )
    {
       std::cerr << "-------------------------------\n"
@@ -291,8 +339,8 @@ int main(int argc, char *argv[])
    //out.write( of->str(), of
    //out << of->str(); //rdbuf is faster than going through str()
    out.write( (char*)imageData, size);
-   std::cerr << "JPEG marker is: " << imageData[6] << imageData[7] << 
-     imageData[8] << imageData[9] << std::endl;
+   //std::cerr << "JPEG marker is: " << imageData[6] << imageData[7] << 
+   //  imageData[8] << imageData[9] << std::endl;
    //out.rdbuf( *sb );
    out.close();
 
