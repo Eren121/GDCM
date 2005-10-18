@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 10:43:31 $
-  Version:   $Revision: 1.291 $
+  Date:      $Date: 2005/10/18 11:10:45 $
+  Version:   $Revision: 1.292 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1273,6 +1273,7 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
 void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 {
    uint16_t group  = entry->GetGroup();
+   uint16_t elem  = entry->GetElement();
    std::string  vr = entry->GetVR();
    uint32_t length = entry->GetLength();
 
@@ -1282,7 +1283,11 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
-   if ( group == 0xfffe || vr == "SQ" )
+   //
+   //          (fffe 0000) is an 'impossible' tag value, 
+   //                                      found in MR-PHILIPS-16-Multi-Seq.dcm   
+   
+   if ( (group == 0xfffe && elem != 0x0000 ) || vr == "SQ" )
    {
       // NO more value field for SQ !
       return;
@@ -1590,7 +1595,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    else if ( gr   == 0x0009 && ( elem == 0x1113 || elem == 0x1114 ) )
    {
       foundLength = 4;
-      entry->SetReadLength(4); // a bug is to be fixed !?
+      entry->SetReadLength(4); // a bug is to be fixed !
    } 
  
    else if ( entry->GetVR() == "SQ" )
@@ -1610,7 +1615,11 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      {
         foundLength = 0;
      }
-   }            
+     else
+     {
+        foundLength=12; // to skip the mess that follows this bugged Tag !
+     }
+   }                
    entry->SetLength(foundLength);
 }
 
