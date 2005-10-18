@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/18 19:06:29 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,9 +33,8 @@ unsigned long nbvalue = 5;
 /**
   * \brief Test the DataEntry object
   */  
-int TestDataEntry(int argc, char *argv[])
+int TestDataEntry(int , char *[])
 {
-   unsigned int error = 0;
    gdcm::DictEntry *dict;
    gdcm::DataEntry *entry;
 

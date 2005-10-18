@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 18:36:53 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/18 19:06:28 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -172,11 +172,12 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
 // Open a dicom file and compress it as JPEG stream
 int main(int argc, char *argv[])
 {
+  if( argc < 2)
+    return 1;
+
   std::string filename = argv[1];
 
 // Step 1 : Create the header of the image
-   gdcm::File *header = new gdcm::File();
-
    gdcm::File *f = new gdcm::File();
    f->SetLoadMode ( gdcm::LD_ALL ); // Load everything
    f->SetFileName( filename );
@@ -208,6 +209,7 @@ int main(int argc, char *argv[])
       return 1;
    }
    std::streambuf* sb = of->rdbuf();
+   (void)sb;
    //of->close();
    std::ofstream out("/tmp/jpeg2.jpg");
    //out.write( of->str(), of
@@ -228,44 +230,44 @@ int main(int argc, char *argv[])
    // Set the image size
    str.str("");
    str << xsize;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0011); // Columns
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0011); // Columns
    str.str("");
    str << ysize;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0010); // Rows
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0010); // Rows
 
    //if(img.sizeZ>1)
    //{
    //   str.str("");
    //   str << img.sizeZ;
-   //   fileToBuild->InsertValEntry(str.str(),0x0028,0x0008); // Number of Frames
+   //   fileToBuild->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
    //}
 
    // Set the pixel type
    str.str("");
    str << 8; //img.componentSize;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0100); // Bits Allocated
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
 
    str.str("");
    str << 8; //img.componentUse;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0101); // Bits Stored
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
 
    str.str("");
    str << 7; //( img.componentSize - 1 );
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0102); // High Bit
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << 0; //img.sign;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0103); // Pixel Representation
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << samplesPerPixel; //img.components;
-   fileToBuild->InsertValEntry(str.str(),0x0028,0x0002); // Samples per Pixel
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
    str.str("");
    str << "1.2.840.10008.1.2.4.50";
-   fileToBuild->InsertValEntry(str.str(),0x0002,0x0010); // Transfer Syntax UID
+   fileToBuild->InsertEntryString(str.str(),0x0002,0x0010); // Transfer Syntax UID
 
 // Step 2 : Create the output image
 //   std::cout << "2...";

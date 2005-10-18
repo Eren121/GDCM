@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 18:39:49 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/10/18 19:06:30 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,6 +108,7 @@ bool gdcm_write_JPEG_file (std::ostream *fp, void *im_buf,
  //
  // }
   assert( 0 );
+  (void)fp;
   //jpeg_stdio_dest(&cinfo, fp, 0, 0, image_width, image_height, quality);
 
   /* Step 3: set parameters for compression */
