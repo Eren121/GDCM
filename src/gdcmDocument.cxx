@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 11:10:45 $
-  Version:   $Revision: 1.292 $
+  Date:      $Date: 2005/10/18 11:35:31 $
+  Version:   $Revision: 1.293 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -694,7 +694,8 @@ void Document::LoadEntryBinArea(DataEntry *entry)
 
    // Swap the data content if necessary
    uint32_t i;
-   unsigned short vrLgth = Global::GetVR()->GetAtomicElementLength(entry->GetVR());
+   unsigned short vrLgth = 
+                        Global::GetVR()->GetAtomicElementLength(entry->GetVR());
    if( entry->GetVR() == "OW" )
       vrLgth = 1;
 
@@ -871,7 +872,7 @@ void Document::SkipBytes(uint32_t nBytes)
 /**
  * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
  */
-int Document::ComputeGroup0002Length( /*FileType filetype*/ ) 
+int Document::ComputeGroup0002Length( ) 
 {
    uint16_t gr;
    std::string vr;
@@ -897,7 +898,7 @@ int Document::ComputeGroup0002Length( /*FileType filetype*/ )
  
             //if ( filetype == ExplicitVR )
             //{
-            //   if ( (vr == "OB") || (vr == "OW") || (vr == "UT") || (vr == "SQ") )
+            //if ( (vr == "OB")||(vr == "OW")||(vr == "UT")||(vr == "SQ"))
             // (no SQ, OW, UT in group 0x0002;)
                if ( vr == "OB" ) 
                {
@@ -1285,7 +1286,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    //          (fffe e0dd) tells us the current SeQuence just ended
    //
    //          (fffe 0000) is an 'impossible' tag value, 
-   //                                      found in MR-PHILIPS-16-Multi-Seq.dcm   
+   //                                    found in MR-PHILIPS-16-Multi-Seq.dcm
    
    if ( (group == 0xfffe && elem != 0x0000 ) || vr == "SQ" )
    {
@@ -1557,7 +1558,7 @@ void Document::SkipToNextDocEntry(DocEntry *currentDocEntry)
 void Document::FixDocEntryFoundLength(DocEntry *entry,
                                       uint32_t foundLength)
 {
-   entry->SetReadLength( foundLength ); // will be updated only if a bug is found        
+   entry->SetReadLength( foundLength );// will be updated only if a bug is found
    if ( foundLength == 0xffffffff)
    {
       foundLength = 0;
@@ -1568,7 +1569,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      
    if ( foundLength % 2)
    {
-      gdcmWarningMacro( "Warning : Tag with uneven length " << foundLength 
+      gdcmWarningMacro( "Warning : Tag with uneven length " << foundLength
         <<  " in x(" << std::hex << gr << "," << elem <<")");
    }
       
@@ -1837,7 +1838,7 @@ bool Document::CheckSwap()
          //  Only 0 or 4321 will be possible 
          //  (no oportunity to check for the formerly well known
          //  ACR-NEMA 'Bad Big Endian' or 'Bad Little Endian' 
-         //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc -3, 4, ..., 8-) 
+         //  if unsuccessfull (i.e. neither 0x0002 nor 0x0200 etc-3, 4, ..., 8-)
          //  the file IS NOT ACR-NEMA nor DICOM V3
          //  Find a trick to tell it the caller...
       
@@ -1868,7 +1869,7 @@ bool Document::CheckSwap()
                Filetype = ACR;
                return true;
             default :
-               gdcmWarningMacro("ACR/NEMA unfound swap info (Really hopeless !)");
+               gdcmWarningMacro("ACR/NEMA unfound swap info (Hopeless !)");
                Filetype = Unknown;
                return false;
          }
@@ -1993,8 +1994,9 @@ DocEntry *Document::ReadNextDocEntry()
          { 
             std::string msg;
             int offset = Fp->tellg();
-            msg = Util::Format("Entry (%04x,%04x) at 0x(%x) should be Explicit VR\n", 
-                          newEntry->GetGroup(), newEntry->GetElement(), offset );
+            msg = Util::Format(
+                        "Entry (%04x,%04x) at x(%x) should be Explicit VR\n", 
+                        newEntry->GetGroup(), newEntry->GetElement(), offset );
             gdcmWarningMacro( msg.c_str() );
           }
       }
@@ -2025,7 +2027,8 @@ DocEntry *Document::ReadNextDocEntry()
  */
 void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
 {
-   // Endian reversion. Some files contain groups of tags with reversed endianess.
+   // Endian reversion. 
+   // Some files contain groups of tags with reversed endianess.
    static int reversedEndian = 0;
    // try to fix endian switching in the middle of headers
    if ((group == 0xfeff) && (elem == 0x00e0))
@@ -2050,7 +2053,7 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
      // Do what you want, it breaks !
      //reversedEndian--;
      //SwitchByteSwapCode();
-     gdcmWarningMacro( "Should never get here! reversed Sequence Terminator!" ); 
+     gdcmWarningMacro( "Should never get here! reversed Sequence Terminator!" );
      // fix the tag
       group = 0xfffe;
       elem  = 0xe0dd;  
@@ -2068,7 +2071,8 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
  */
 void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
 {
-   // Endian reversion. Some files contain groups of tags with reversed endianess.
+   // Endian reversion. 
+   // Some files contain groups of tags with reversed endianess.
    if ( !Group0002Parsed && group != 0x0002)
    {
       Group0002Parsed = true;
@@ -2082,9 +2086,11 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          return;
       }
 
-      // Group 0002 is always 'Explicit ...' even when Transfer Syntax says 'Implicit ..." 
+      // Group 0002 is always 'Explicit ...' 
+      // even when Transfer Syntax says 'Implicit ..." 
 
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )
+      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
+                                                    TS::ImplicitVRLittleEndian )
          {
             Filetype = ImplicitVR;
          }
@@ -2092,9 +2098,12 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       // FIXME Strangely, this works with 
       //'Implicit VR BigEndian Transfer Syntax (GE Private)
       //
-      // --> Probabely normal, since we considered we never have to trust manufacturers.
-      // (we find very often 'Implicit VR' tag, even when Transfer Syntax tells us it's Explicit ...
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian )
+      // --> Probabely normal, since we considered we never have 
+      // to trust manufacturers.
+      // (we find very often 'Implicit VR' tag, 
+      // even when Transfer Syntax tells us it's Explicit ...
+      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
+                                                       TS::ExplicitVRBigEndian )
       {
          gdcmWarningMacro("Transfer Syntax Name = [" 
                         << GetTransferSyntaxName() << "]" );
