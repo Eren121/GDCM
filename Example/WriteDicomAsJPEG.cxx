@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 16:05:14 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/19 16:08:29 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -204,7 +204,6 @@ bool WriteScanlines(struct jpeg_compress_struct &cinfo, void *input_buffer, int 
     if( jpeg_write_scanlines(&cinfo, row_pointer, 1) != 1)
       {
       //entering suspension mode, basically we wrote the whole jpeg fragment
-      //suspend = 1;
       return false;
       }
     row_pointer[0] +=  row_stride;
@@ -217,8 +216,7 @@ bool WriteScanlines(struct jpeg_compress_struct &cinfo, void *input_buffer, int 
 // input_buffer is ONE image
 // fragment_size is the size of this image (fragment)
 bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
-                     int image_width, int image_height, int sample_pixel, int quality,
-                     int &suspend)
+                     int image_width, int image_height, int sample_pixel, int quality)
 {
   struct jpeg_compress_struct cinfo;
   int row_stride;            /* physical row width in image buffer */
@@ -267,8 +265,7 @@ int main(int argc, char *argv[])
    int fragment_size = xsize*ysize*samplesPerPixel;
 
    EncodeWithoutBasicOffsetTable(of, 1, 15328);
-   int suspend = 0;
-   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100, suspend);
+   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100);
    CloseJpeg(of);
 
    if( !f->IsReadable() )
