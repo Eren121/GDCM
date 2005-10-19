@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVRKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:05 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/19 16:49:05 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmCommon.h"
 
 #include <assert.h>
+#include <iostream>
+#include <iomanip> // for std::ios::left, ...
 
 namespace gdcm 
 {
@@ -106,13 +108,13 @@ private :
 //-----------------------------------------------------------------------------
 inline std::ostream& operator<<(std::ostream& _os, const VRKey &_val)
 {
-   _os << _val.key[0] << _val[1];
+   _os << _val.key[0] << _val.key[1];
    return _os;
 }
 
 inline std::istream& operator>>(std::istream& _is, VRKey &_val)
 {
-   _is >> _val.key[0] >> _val[1];
+   _is >> _val.key[0] >> _val.key[1];
    return _is;
 }
 
