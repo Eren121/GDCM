@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVRKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 16:49:05 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/19 16:51:11 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,8 +22,7 @@
 #include "gdcmCommon.h"
 
 #include <assert.h>
-#include <iostream>
-#include <iomanip> // for std::ios::left, ...
+#include <iomanip> // important
 
 namespace gdcm 
 {
