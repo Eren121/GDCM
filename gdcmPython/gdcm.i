@@ -101,10 +101,10 @@ typedef unsigned long long uint64_t;
    {
       if(dynamic_cast<SeqEntry *>($1)) // SeqEntry *
          newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__SeqEntry,0);
-      else if(dynamic_cast<BinEntry *>($1)) // BinEntry *
-         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__BinEntry,0);
-      else // ValEntry *
-         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__ValEntry,0);
+      else if(dynamic_cast<DataEntry *>($1)) // DataEntry *
+         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__DataEntry,0);
+      else
+         newEntry = NULL;
    }
    else
    {
@@ -255,48 +255,3 @@ typedef unsigned long long uint64_t;
 %include "gdcmVR.h"
 %include "gdcmTS.h"
 %include "gdcmDictGroupName.h"
-
-////////////////////////////////////////////////////////////////////////////
-// Notes on swig and this file gdcm.i:
-//
-/////////////////////////////////////
-// Note 1: swig collision of method overloading and %typemap
-// Consider the following junk.i file:
-//     %module junk
-//     %{
-//     #include <string>
-//     #include <iostream>
-//     void Junk(std::string const & bozo) { std::cout << bozo << std::endl; }
-//     void Junk() { std::cout << "Renamed Junk()" << std::endl; }
-//     %}
-//   
-//     %typemap(python, in) std::string const &
-//     {
-//     $1 = new std::string( PyString_AsString( $input ) );
-//     }
-//     void Junk();
-//     void Junk(std::string const & bozo);
-//
-// that we compile on linux with:
-//    swig -c++ -python junk.i
-//    g++ -g -I/usr/include/python2.3/ -o junk_wrap.o -c junk_wrap.cxx
-//    g++ junk_wrap.o -shared -g -o _junk.so -L/usr/lib/python2.3/config \
-//        -lpython2.3
-// and invoque with:
-//    python -c 'from junk import *; Junk("aaa") '
-// then we get the following unexpected (for novice) python TypeError:
-//    TypeError: No matching function for overloaded 'Junk'
-//
-// This happens because the swig generated code (at least for python) does
-// the following two stage process:
-//   1/ first do a dynamic dispatch ON THE NUMBER OF ARGUMENTS of the overloaded
-//      Junk function (the same happens with method of course). [Note that the
-//      dispatch is NOT done on the type of the arguments].
-//   2/ second apply the typemap.
-// When the first dynamic dispatch is executed, the swig generated code
-// has no knowledge of the typemap, and thus expects a pointer to a std::string
-// type i.e. an argument to Junk of the form _p_std__int<address>. But this
-// is not what python handles to Junk ! An invocation of the form 'Junk("aaa")'
-// will make Python pass a PyString to swig (and this is precisely why we
-// wrote the typemap). And this will fail....
-/////////////////////////////////////

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 09:43:13 $
-  Version:   $Revision: 1.281 $
+  Date:      $Date: 2005/10/19 12:01:51 $
+  Version:   $Revision: 1.282 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1570,7 +1570,7 @@ size_t File::GetPixelAreaLength()
 void File::AddAnonymizeElement (uint16_t group, uint16_t elem, 
                                 std::string const &value) 
 { 
-   Element el;
+   DicomElement el;
    el.Group = group;
    el.Elem  = elem;
    el.Value = value;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2005/10/19 12:01:51 $
+  Version:   $Revision: 1.126 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ class GDCM_EXPORT Document : public ElementSet
 {
 public:
 
-typedef std::list<Element> ListElements;
+typedef std::list<DicomElement> ListElements;
 
 // Loading
    //Deprecated : use SetFileName() + Load()

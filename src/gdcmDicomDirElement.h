@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/10/19 12:01:50 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,36 +28,36 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 
-typedef std::list<Element> ListDicomDirElem;
-typedef std::list<Element> ListDicomDirMetaElem;
-typedef std::list<Element> ListDicomDirPatientElem;
-typedef std::list<Element> ListDicomDirStudyElem;
-typedef std::list<Element> ListDicomDirVisitElem;
-typedef std::list<Element> ListDicomDirSerieElem;
-typedef std::list<Element> ListDicomDirImageElem;
+typedef std::list<DicomElement> ListDicomDirElem;
+typedef std::list<DicomElement> ListDicomDirMetaElem;
+typedef std::list<DicomElement> ListDicomDirPatientElem;
+typedef std::list<DicomElement> ListDicomDirStudyElem;
+typedef std::list<DicomElement> ListDicomDirVisitElem;
+typedef std::list<DicomElement> ListDicomDirSerieElem;
+typedef std::list<DicomElement> ListDicomDirImageElem;
 
 // For future use (Full DICOMDIR)
 
 /*
-typedef std::list<Element> ListDicomDirResultElem;
-typedef std::list<Element> ListDicomDirStudyComponentElem;
+typedef std::list<DicomElement> ListDicomDirResultElem;
+typedef std::list<DicomElement> ListDicomDirStudyComponentElem;
 
-typedef std::list<Element> ListDicomDirOverlayElem;
-typedef std::list<Element> ListDicomDirModalityLutElem;
-typedef std::list<Element> ListDicomDirModalityLutElem;
-typedef std::list<Element> ListDicomDirCurveElem;
-typedef std::list<Element> ListDicomDirStoredPrintElem;
-typedef std::list<Element> ListDicomDirRtDoseElem;
-typedef std::list<Element> ListDicomDirRtStructureSetElem;
-typedef std::list<Element> ListDicomDirRtPlanElem;
-typedef std::list<Element> ListDicomDirRtTreatRecordElem;
-typedef std::list<Element> ListDicomDirPresentationElem;
-typedef std::list<Element> ListDicomDirSrDocumentElem;
-typedef std::list<Element> ListDicomDirKeyObjectDocElem;
-typedef std::list<Element> ListDicomDirSpectroscopyElem;
-typedef std::list<Element> ListDicomDirRawDataElem;
-typedef std::list<Element> ListDicomDirRegistrationElem;
-typedef std::list<Element> ListDicomDirFiducialElem;
+typedef std::list<DicomElement> ListDicomDirOverlayElem;
+typedef std::list<DicomElement> ListDicomDirModalityLutElem;
+typedef std::list<DicomElement> ListDicomDirModalityLutElem;
+typedef std::list<DicomElement> ListDicomDirCurveElem;
+typedef std::list<DicomElement> ListDicomDirStoredPrintElem;
+typedef std::list<DicomElement> ListDicomDirRtDoseElem;
+typedef std::list<DicomElement> ListDicomDirRtStructureSetElem;
+typedef std::list<DicomElement> ListDicomDirRtPlanElem;
+typedef std::list<DicomElement> ListDicomDirRtTreatRecordElem;
+typedef std::list<DicomElement> ListDicomDirPresentationElem;
+typedef std::list<DicomElement> ListDicomDirSrDocumentElem;
+typedef std::list<DicomElement> ListDicomDirKeyObjectDocElem;
+typedef std::list<DicomElement> ListDicomDirSpectroscopyElem;
+typedef std::list<DicomElement> ListDicomDirRawDataElem;
+typedef std::list<DicomElement> ListDicomDirRegistrationElem;
+typedef std::list<DicomElement> ListDicomDirFiducialElem;
 */
 
 //-----------------------------------------------------------------------------
@@ -118,7 +118,7 @@ public:
       { return DicomDirImageList; }
 
    // Public method to add an element
-   bool AddEntry(DicomDirType type, Element const &elem);
+   bool AddEntry(DicomDirType type, DicomElement const &elem);
 
    // Only one instance of ddElem 
    void AddDicomDirElement(DicomDirType type,

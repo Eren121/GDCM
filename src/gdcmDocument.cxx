@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 21:19:57 $
-  Version:   $Revision: 1.297 $
+  Date:      $Date: 2005/10/19 12:01:50 $
+  Version:   $Revision: 1.298 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -277,7 +277,7 @@ bool Document::DoTheLoadingDocumentJob(  )
  */
 void Document::AddForceLoadElement (uint16_t group, uint16_t elem) 
 { 
-   Element el;
+   DicomElement el;
    el.Group = group;
    el.Elem  = elem;
    UserForceLoadList.push_back(el); 

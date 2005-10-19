@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 08:06:45 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2005/10/19 12:01:50 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,8 @@
 
 #include <string>
 
+//-----------------------------------------------------------------------------
+// TagKey definition
 #define FASTTAGKEY 0
 
 // FIXME: Should rewrite this:
@@ -34,6 +36,17 @@
    #if defined(_MSC_VER) && (_MSC_VER == 1200)
    /* ostream operator for std::string since VS6 does not provide it*/
       #include <iostream>
+#endif
+
+//-----------------------------------------------------------------------------
+#if defined(_WIN32) && defined(BUILD_SHARED_LIBS)
+  #ifdef gdcm_EXPORTS
+    #define GDCM_EXPORT __declspec( dllexport )
+  #else
+    #define GDCM_EXPORT __declspec( dllimport )
+  #endif
+#else
+  #define GDCM_EXPORT
 #endif
 
 //-----------------------------------------------------------------------------
@@ -158,7 +171,7 @@ enum LodModeType
 /**
  * \brief structure, for internal use only
  */  
-struct Element
+struct DicomElement
 {
    /// DicomGroup number
    unsigned short int Group;

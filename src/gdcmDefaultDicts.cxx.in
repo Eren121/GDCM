@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/19 12:01:50 $
+  Version:   $Revision: 1.10 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ void FillDefaultDIRDict(DicomDirElement *dde)
 {
    unsigned int i = 0;
    ELEMENT e = dataElement[i];
-   Element elem;
+   DicomElement elem;
    DicomDirType type;
    std::string strType;
 

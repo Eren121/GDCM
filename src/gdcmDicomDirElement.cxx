@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:40:40 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/10/19 12:01:50 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,7 @@ DicomDirElement::DicomDirElement()
    {
       char buff[1024];
       std::string strType;
-      Element elem;
+      DicomElement elem;
       DicomDirType type;
 
       while (!from.eof())
@@ -115,7 +115,7 @@ DicomDirElement::~DicomDirElement()
  * @param type Element type (DD_PATIENT, DD_STUDY, DD_SERIE, DD_IMAGE) 
  * @param elem elem
  */
-bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
+bool DicomDirElement::AddEntry(DicomDirType type, DicomElement const &elem)
 {
    switch( type )
    {
@@ -150,12 +150,13 @@ bool DicomDirElement::AddEntry(DicomDirType type, Element const &elem)
 void DicomDirElement::AddDicomDirElement(DicomDirType type,
                                          uint16_t group, uint16_t elem)
 {
-   Element el;
+   DicomElement el;
    el.Group = group;
    el.Elem  = elem;
    el.Value = "";
    AddEntry(type, el);
 }
+
 //-----------------------------------------------------------------------------
 // Protected
 
@@ -171,7 +172,7 @@ void DicomDirElement::AddDicomDirElement(DicomDirType type,
 void DicomDirElement::Print(std::ostream &os)
 {
    std::ostringstream s;
-   std::list<Element>::iterator it;
+   std::list<DicomElement>::iterator it;
    //char greltag[10];  //group element tag
    TagKey greltag;
 

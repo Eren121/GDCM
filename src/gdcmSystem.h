@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSystem.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 08:16:59 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/19 12:01:51 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,16 +73,6 @@ typedef  unsigned int        uint32_t;
 // Basically for VS6 and bcc 5.5.1:
 #ifndef UINT32_MAX
 #define UINT32_MAX    (4294967295U)
-#endif
-
-#if defined(_WIN32) && defined(BUILD_SHARED_LIBS)
-  #ifdef gdcm_EXPORTS
-    #define GDCM_EXPORT __declspec( dllexport )
-  #else
-    #define GDCM_EXPORT __declspec( dllimport )
-  #endif
-#else
-  #define GDCM_EXPORT
 #endif
 
 //-----------------------------------------------------------------------------
