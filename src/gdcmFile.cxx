@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 09:27:24 $
-  Version:   $Revision: 1.280 $
+  Date:      $Date: 2005/10/19 09:43:13 $
+  Version:   $Revision: 1.281 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1991,19 +1991,24 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
       itemTagGroup = ReadInt16();
       itemTagElem  = ReadInt16();
    }
-   catch ( FormatError /*e*/ )
+   catch ( FormatError )
    {
-      //std::cerr << e << std::endl;
+      gdcmErrorMacro( "Can not read tag for "
+       << "   We should have found tag ("
+       << DictEntry::TranslateToKey(testGroup,testElem) << ")"
+       ) ;
+
       return false;
    }
    if ( itemTagGroup != testGroup || itemTagElem != testElem )
    {
-      gdcmWarningMacro( "Wrong Item Tag found:"
+      gdcmErrorMacro( "Wrong Item Tag found:"
        << "   We should have found tag ("
        << DictEntry::TranslateToKey(testGroup,testElem) << ")" << std::endl
        << "   but instead we encountered tag ("
        << DictEntry::TranslateToKey(itemTagGroup,itemTagElem) << ")"
-       << "  at address: " << "  0x(" << (unsigned int)currentPosition  << ")" 
+       << "  at address: " << "  0x(" << std::hex 
+       << (unsigned int)currentPosition  << std::dec << ")" 
        ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
 
@@ -2031,8 +2036,9 @@ uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
 
    if ( !ReadTag(testGroup, testElem) )
    {
-      gdcmErrorMacro( "ReadTag did not succeed... for "
-                    << DictEntry::TranslateToKey(testGroup,testElem) );
+      gdcmErrorMacro( "ReadTag did not succeed for ("
+                    << DictEntry::TranslateToKey(testGroup,testElem) 
+                    << ")..." );
       return 0;
    }
                                                                                 
