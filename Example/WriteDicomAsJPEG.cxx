@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 16:08:29 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/19 17:56:57 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,8 +38,11 @@ extern "C" {
 #include "jdatasrc.cxx"
 #include "jdatadst.cxx"
 
+typedef std::pair<size_t, uint32_t> JpegPair; //offset, jpeg size
+typedef std::vector<JpegPair> JpegVector;
+
 // PS 3.5, page 66
-void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, uint32_t length)
+void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, JpegVector& v) //, uint32_t length)
 {
   assert( numFrag == 1);
 
@@ -57,11 +60,26 @@ void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, uint32_t lengt
   gdcm::binary_write(*fp, group);
   gdcm::binary_write(*fp, elem);
   // Item Length
-  gdcm::binary_write(*fp, length);
-
+  uint32_t dummy = 0x12345678;
+  size_t offset = fp->tellp();
+  JpegPair jp;
+  jp.first = offset;
+  v.push_back(jp);
+  gdcm::binary_write(*fp, dummy);
 }
 
-void CloseJpeg(std::ostream *fp)
+void UpdateJpegFragmentSize(std::ostream *fp, JpegVector const &v)
+{
+  JpegVector::const_iterator i;
+  for(i= v.begin(); i!=v.end(); ++i)
+    {
+    const JpegPair &jp = *i;
+    fp->seekp( jp.first );
+    gdcm::binary_write(*fp, jp.second );
+    }
+}
+
+void CloseJpeg(std::ostream *fp, JpegVector &v)
 {
   // sequence terminator
   uint16_t group = 0xfffe;
@@ -71,7 +89,11 @@ void CloseJpeg(std::ostream *fp)
 
   uint32_t length = 0x0;
   gdcm::binary_write(*fp, length);
+
+  // Jpeg is done, now update the frag length
+  UpdateJpegFragmentSize(fp, v);
 }
+
 
 // PS 3.5, page 67
 void EncodeWithBasicOffsetTable(std::ostream *fp, int numFrag)
@@ -204,9 +226,11 @@ bool WriteScanlines(struct jpeg_compress_struct &cinfo, void *input_buffer, int 
     if( jpeg_write_scanlines(&cinfo, row_pointer, 1) != 1)
       {
       //entering suspension mode, basically we wrote the whole jpeg fragment
+      // technically we could enforce that by checkig the value of row_pointer to
+      // actually be at the end of the image...TODO
       return false;
       }
-    row_pointer[0] +=  row_stride;
+    row_pointer[0] += row_stride;
   }
 
   // Well looks like we are done writting the scanlines
@@ -216,7 +240,7 @@ bool WriteScanlines(struct jpeg_compress_struct &cinfo, void *input_buffer, int 
 // input_buffer is ONE image
 // fragment_size is the size of this image (fragment)
 bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
-                     int image_width, int image_height, int sample_pixel, int quality)
+                     int image_width, int image_height, int sample_pixel, int quality, JpegVector &v)
 {
   struct jpeg_compress_struct cinfo;
   int row_stride;            /* physical row width in image buffer */
@@ -229,6 +253,9 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
 
   r = FinalizeJpeg(cinfo);
   assert( r );
+
+  JpegPair &jp = v[0];
+  jp.second = 15328;
 
   return true;
 }
@@ -264,9 +291,11 @@ int main(int argc, char *argv[])
    std::cout << "Sample: " << samplesPerPixel << std::endl;
    int fragment_size = xsize*ysize*samplesPerPixel;
 
-   EncodeWithoutBasicOffsetTable(of, 1, 15328);
-   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100);
-   CloseJpeg(of);
+   JpegVector JpegFragmentSize;
+   //EncodeWithoutBasicOffsetTable(of, 1, 15328);
+   EncodeWithoutBasicOffsetTable(of, 1, JpegFragmentSize); //, 15328);
+   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100, JpegFragmentSize);
+   CloseJpeg(of, JpegFragmentSize);
 
    if( !f->IsReadable() )
    {
