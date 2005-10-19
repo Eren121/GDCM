@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:49 $
-  Version:   $Revision: 1.160 $
+  Date:      $Date: 2005/10/19 13:15:38 $
+  Version:   $Revision: 1.161 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,9 +181,6 @@ DicomDir::~DicomDir()
  */
 bool DicomDir::Load( ) 
 {
-   // We should clean out anything that already exists.
-   Initialize();  // sets all private fields to NULL
-
    if (!ParseDir)
    {
       if ( ! this->Document::Load( ) )
@@ -204,14 +201,7 @@ bool DicomDir::Load(std::string const &fileName )
 {
    // We should clean out anything that already exists.
    Initialize();  // sets all private fields to NULL
-
-   SetFileName( fileName );
-   if (!ParseDir)
-   {
-      if ( ! this->Document::Load( ) )
-         return false;
-   }
-   return DoTheLoadingJob( );
+   return Load();
 }
 
 /// DEPRECATED : use SetDirectoryName(dname) instead
@@ -233,18 +223,14 @@ void DicomDir::SetParseDir(bool parseDir)
  */
 bool DicomDir::DoTheLoadingJob( ) 
 {
-   // We should clean out anything that already exists.
-   Initialize();  // sets all private fields to NULL
+   Progress = 0.0f;
+   Abort = false;
 
    if (!ParseDir)
    {
    // Only if user passed a DICOMDIR
    // ------------------------------
       Fp = 0;
-      if ( !OpenFile() )
-      {
-         return false;
-      }
       if (!Document::Load() )
       {
          return false;
@@ -855,8 +841,6 @@ void DicomDir::CreateDicomDir()
         continue;
       }
       if ( si )
-         //MoveSQItem(si,tmpSI); // Old code : Copies each Entry
-                                 //  -and then removes the source-
          si->MoveObject(tmpSI);  // New code : Copies the List
 
       tmpSI=s->GetNextSQItem();
@@ -1080,14 +1064,14 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          }
          break;
       case GDCM_DICOMDIR_META:
-         elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
-         si = new DicomDirMeta(true);
          if ( MetaElems )
          {
             delete MetaElems;
             gdcmErrorMacro( "MetaElements already exist, they will be destroyed");
          }
-         MetaElems = static_cast<DicomDirMeta *>(si);
+         elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
+         MetaElems = new DicomDirMeta(true);
+         si = MetaElems;
          break;
       default:
          return;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/19 13:15:36 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
 {
    if (argc) 
    {
-      std::cerr << "Usage: " << argv[0] << " dummy ";
+      std::cerr << "Usage: " << argv[0] << " dummy " << std::endl;
    }
 
    gdcm::DicomDir *dcmdir;
@@ -182,6 +182,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
 
    // Write it on disc
    dcmdir->Write("NewDICOMDIR");
+
    delete dcmdir;
 
    // Read the newly written DicomDir
@@ -345,27 +346,15 @@ int TestBuildUpDicomDir(int argc, char *argv[])
          errorFound = true;
          break;
       } 
-/*
-      if ( s1111->GetEntryString(0x0004,0x1500) != "imageFileName1111 " )
-      {
-         errorFound = true;
-         break;
-      }
-*/
+
       if ( (s1112 = s111->GetNextImage()) == 0 )
       {
          std::cout << "missing image S1112" << std::endl;
          errorFound = true;
          break;
       }
-/*
-      if ( s1112->GetEntryString(0x0004,0x1500) != "imageFileName1112 " )
-      {
-         errorFound = true;
-         break;
-      }
-  */
-     break; // No error found. Stop looping
+
+      break; // No error found. Stop looping
    }
 
    delete newDicomDir;

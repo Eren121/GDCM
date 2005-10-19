@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/10/19 13:15:37 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,12 +63,13 @@ int CompareInternal(std::string const &filename, std::string const &output)
 
    if( !fileout->IsReadable() )
    {
-     std::cout << "Failed" << std::endl
-               << "Test::TestReadWriteReadCompare: Could not parse the newly "
-               << "written image:" << filename << std::endl;
-     delete file;
-     delete filehelper;
-     return 1;
+      std::cout << "Failed" << std::endl
+                << "Test::TestReadWriteReadCompare: Could not parse the newly "
+                << "written image:" << filename << std::endl;
+      delete file;
+      delete filehelper;
+      delete fileout;
+      return 1;
    }
 
    gdcm::FileHelper *reread = new gdcm::FileHelper( fileout );
@@ -94,6 +95,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
                   << reread->GetFile()->GetZSize() << std::endl;
       delete file;
       delete filehelper;
+      delete fileout;
       delete reread;
       return 1;
    }
@@ -106,6 +108,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
          << dataSize << " # " << dataSizeWritten << std::endl;
       delete file;
       delete filehelper;
+      delete fileout;
       delete reread;
       return 1;
    }
@@ -117,6 +120,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
          << "        Pixel differ (as expanded in memory)." << std::endl;
       delete file;
       delete filehelper;
+      delete fileout;
       delete reread;
       return 1;
    }
@@ -125,6 +129,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
    //////////////// Clean up:
    delete file;
    delete filehelper;
+   delete fileout;
    delete reread;
 
    return 0;

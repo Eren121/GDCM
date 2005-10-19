@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 12:01:50 $
-  Version:   $Revision: 1.298 $
+  Date:      $Date: 2005/10/19 13:15:39 $
+  Version:   $Revision: 1.299 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1081,8 +1081,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( newDocEntry->GetGroup()%2 != 0 )
             {
                 Fp->seekg( l, std::ios::cur);
-                RemoveEntry( newDocEntry );  // Remove and delete
-                //used = false; // never used
+                delete newDocEntry;  // Delete, not in the set 
                 continue;  
             } 
          } 
@@ -1090,8 +1089,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
            // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);
-            //used = false; // never used
-            RemoveEntry( newDocEntry );  // Remove and delete
+            delete newDocEntry; // Delete, not in the set
             continue;
          }
          // delay the dynamic cast as late as possible
@@ -1104,11 +1102,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          // is a Document, then we are building the first depth level.
          // Hence the SeqEntry we are building simply has a depth
          // level of one:
-//         SQItem *parentSQItem = dynamic_cast< SQItem* > ( set );
         if ( set == this ) // ( dynamic_cast< Document* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( 1 );
-         //   newSeqEntry->SetKey( newSeqEntry->GetKey() );
          }
          // But when "set" is already a SQItem, we are building a nested
          // sequence, and hence the depth level of the new SeqEntry
@@ -1118,9 +1114,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          else if (SQItem *parentSQItem = dynamic_cast< SQItem* > ( set ) )
          {
             newSeqEntry->SetDepthLevel( parentSQItem->GetDepthLevel() + 1 );
-
-          //  newSeqEntry->SetKey(  parentSQItem->GetBaseTagKey()
-          //                      + newSeqEntry->GetKey() );
          }
 
          if ( l != 0 )
