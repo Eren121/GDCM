@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 18:39:49 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2005/10/19 08:06:45 $
+  Version:   $Revision: 1.97 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,8 @@
 
 #include "gdcmConfigure.h"
 #include "gdcmSystem.h"
+
+#include <string>
 
 #define FASTTAGKEY 0
 
