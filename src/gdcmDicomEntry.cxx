@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmDictEntry.cxx,v $
+  Module:    $RCSfile: gdcmDicomEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:04 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/10/19 13:17:05 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmDictEntry.h"
+#include "gdcmDicomEntry.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
 
@@ -36,51 +36,36 @@ namespace gdcm
  * @param   vm         Value Multiplicity 
  * @param   name       description of the element
 */
-
-DictEntry::DictEntry(uint16_t group, uint16_t elem,
-                     VRKey const &vr, 
-                     TagName const &vm,
-                     TagName const &name):
-   DicomEntry(group,elem,vr)
+DicomEntry::DicomEntry(const uint16_t &group,const uint16_t &elt,
+                       const VRKey &vr)
 {
-   VM      = vm;
-   Name    = name;
+   Tag.SetGroup(group);
+   Tag.SetElement(elt);
+   VR = vr;
+}
+
+/**
+ * \brief   Destructor
+ */
+DicomEntry::~DicomEntry()
+{
 }
 
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief       If-and only if-the V(alue) R(epresentation)
- * \            is unset then overwrite it.
- * @param vr    New V(alue) R(epresentation) to be set.
+ * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
+ *                                              and a Dicom element number)
+ * @param  group the Dicom group number used to build the tag
+ * @param  elem the Dicom element number used to build the tag
+ * @return the built tag
  */
-void DictEntry::SetVR(VRKey const &vr) 
+TagKey DicomEntry::TranslateToKey(uint16_t group, uint16_t elem)
 {
-   if ( IsVRUnknown() )
-   {
-      DicomEntry::SetVR(vr);
-   }
-   else 
-   {
-      gdcmErrorMacro( "Overwriting VR might compromise a dictionary");
-   }
-}
-
-/**
- * \brief       If-and only if-the V(alue) M(ultiplicity)
- * \            is unset then overwrite it.
- * @param vm    New V(alue) M(ultiplicity) to be set.
- */
-void DictEntry::SetVM(TagName const &vm) 
-{
-   if ( IsVMUnknown() )
-   {
-      VM = vm;
-   }
-   else 
-   {
-      gdcmErrorMacro( "Overwriting VM might compromise a dictionary");
-   }
+   // according to 'Purify', TranslateToKey is one of the most
+   // time consuming methods.
+   // Let's try to shorten it !
+   return TagKey(group,elem);
 }
 
 //-----------------------------------------------------------------------------
@@ -96,21 +81,12 @@ void DictEntry::SetVM(TagName const &vm)
  * @param   os ostream we want to print in
  * @param indent Indentation string to be prepended during printing
  */
-void DictEntry::Print(std::ostream &os, std::string const &indent )
+void DicomEntry::Print(std::ostream &os, std::string const & )
 {
-   DicomEntry::Print(os,indent);
-
-   VRKey vr;
    std::ostringstream s;
 
-   if ( PrintLevel >= 1 )
-   {
-      s.setf(std::ios::left);
-      s << std::setw(66-GetName().length()) << " ";
-   }
-
-   s << "[" << GetName()<< "]";
-   os << s.str() << std::endl;
+   s << GetKey(); 
+   s << " [" << VR  << "] ";
 }
 
 //-----------------------------------------------------------------------------

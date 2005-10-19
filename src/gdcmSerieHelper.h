@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 09:52:41 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/10/19 13:17:05 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define GDCMSERIEHELPER_H
 
 #include "gdcmCommon.h" 
+#include "gdcmTagKey.h" 
 #include "gdcmDebug.h"  // for LEGACY
  
 #include <vector>

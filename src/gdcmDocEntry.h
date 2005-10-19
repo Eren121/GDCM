@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/10/19 13:17:04 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,11 +55,8 @@ public:
    /// Returns the Dicom Element number of the current Dicom entry
    const uint16_t &GetElement() const { return DicomDict->GetElement();}
 
-   /// Set the 'key' of the current Dicom entry
-   void  SetKey( TagKey const &key ) { Key = key; }
-
    /// Returns the 'key' of the current Dicom entry
-   TagKey const &GetKey() const { return Key; }
+   TagKey GetKey() const { return DicomDict->GetKey(); }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
@@ -147,10 +144,6 @@ protected:
 
    /// Offset from the beginning of file for direct user access
    size_t Offset; 
-
-   /// \brief Generalized key of this DocEntry (for details on
-   ///        the generalized key refer to \ref TagKey documentation).
-   TagKey Key;
 
 private:
 };

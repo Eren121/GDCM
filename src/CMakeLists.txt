@@ -33,6 +33,7 @@ SET(libgdcm_la_SOURCES
    gdcmDicomDirVisit.cxx
    gdcmDicomDirSerie.cxx
    gdcmDicomDirStudy.cxx
+   gdcmDicomEntry.cxx
    gdcmDict.cxx
    gdcmDictEntry.cxx
    gdcmDictGroupName.cxx
@@ -44,9 +45,9 @@ SET(libgdcm_la_SOURCES
    gdcmDocument.cxx
    gdcmElementSet.cxx
    gdcmException.cxx
+   gdcmFile.cxx
    gdcmFileHelper.cxx
    gdcmGlobal.cxx
-   gdcmFile.cxx
    gdcmJPEGFragment.cxx
    gdcmJPEGFragmentsInfo.cxx
    gdcmJpeg8.cxx

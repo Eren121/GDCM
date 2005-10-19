@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/10/19 13:17:05 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 
 #include "gdcmBase.h"
 #include "gdcmVRKey.h"
+#include "gdcmTagKey.h"
 
 #include <fstream>
 
@@ -31,8 +32,6 @@ class DocEntry;
 class DataEntry;
 class SeqEntry;
 class DictEntry;
-
-typedef TagKey BaseTagKey;
 
 //-----------------------------------------------------------------------------
 /**

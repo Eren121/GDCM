@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 12:01:50 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/10/19 13:17:04 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,20 +23,6 @@
 #include "gdcmSystem.h"
 
 #include <string>
-
-//-----------------------------------------------------------------------------
-// TagKey definition
-#define FASTTAGKEY 0
-
-// FIXME: Should rewrite this:
-#if FASTTAGKEY
-   #include <iostream>
-   #include <iomanip>
-#endif
-   #if defined(_MSC_VER) && (_MSC_VER == 1200)
-   /* ostream operator for std::string since VS6 does not provide it*/
-      #include <iostream>
-#endif
 
 //-----------------------------------------------------------------------------
 #if defined(_WIN32) && defined(BUILD_SHARED_LIBS)
@@ -83,37 +69,6 @@ GDCM_EXPORT extern const std::string GDCM_VRUNKNOWN;
 /// We'll fix the mess up -without any change in the API- as soon as the bench
 /// marks are fully performed.
 
-#if FASTTAGKEY
-typedef union   {
-      uint16_t  tab[2];
-      uint32_t  tagkey;
-    } TagKey;
-/* ostream operator for TagKey */
-inline std::ostream& operator<<(std::ostream& _O, TagKey _val)
-{
-   _O.setf( std::ios::right);
-   return (_O << std::hex << std::setw( 4 ) << std::setfill( '0' )
-      << _val.tab[0] << '|' << std::setw( 4 ) << std::setfill( '0' )
-      << _val.tab[1] << std::setfill( ' ' ) << std::dec);
-}
-inline bool operator==(TagKey _self, TagKey _val)
-{
-   return _self.tagkey == _val.tagkey;
-}
-inline bool operator<(TagKey _self, TagKey _val)
-{
-   // This expression is a tad faster but PrintFile output
-   // is more difficult to read
-   //return _self.tagkey < _val.tagkey;
-
-   // More usal order of dicom tags:
-   if( _self.tab[0] == _val.tab[0] )
-      return _self.tab[1] < _val.tab[1];
-   return _self.tab[0] < _val.tab[0];
-}
-#else
-typedef std::string TagKey;
-#endif
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
 // Doing everything within gdcm namespace to avoid polluting 3d party software
 inline std::ostream& operator<<(std::ostream& _O, std::string _val)
