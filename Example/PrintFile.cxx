@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/10/19 16:55:37 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -148,23 +148,22 @@ int main(int argc, char *argv[])
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
-      return 0;
+      return 1;
    }
 
    char *fileName = am->ArgMgrGetString("filein",(char *)0);
    char *dirName  = am->ArgMgrGetString("dirin",(char *)0);
 
-   if ( (fileName == 0 && dirName == 0)
-        ||
+   if ( (fileName == 0 && dirName == 0) ||
         (fileName != 0 && dirName != 0) )
    {
-       std::cout <<std::endl
-                 << "Either 'filein=' or 'dirin=' must be present;" 
-                 << std::endl << "Not both" << std::endl;
-       am->ArgMgrUsage(usage); // Display 'usage'  
-       delete am;
-       return 0;
- }
+      std::cerr << std::endl
+        << "Either 'filein=' or 'dirin=' must be present;" 
+        << std::endl << "Not both" << std::endl;
+      am->ArgMgrUsage(usage); // Display 'usage'  
+      delete am;
+      return 1;
+   }
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
@@ -201,7 +200,7 @@ int main(int argc, char *argv[])
    {
       am->ArgMgrUsage(usage);
       delete am;
-      return 0;
+      return 1;
    } 
 
    delete am;  // we don't need Argument Manager any longer
@@ -464,7 +463,6 @@ int main(int argc, char *argv[])
       std::cout<<std::flush;
       delete f;
       delete fh;
-      return 0;
    }
    else  // ====== Deal with a Directory ======
    {
@@ -583,4 +581,5 @@ int main(int argc, char *argv[])
       }
       std::cout<<std::flush;
    }
+   return 0;
 }
