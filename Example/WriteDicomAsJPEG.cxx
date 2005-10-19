@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 20:49:59 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/19 16:05:14 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,8 +42,6 @@ extern "C" {
 void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, uint32_t length)
 {
   assert( numFrag == 1);
-  uint32_t del = 0xffffffff; //data_element_length
-  //gdcm::binary_write(*fp, del);
 
   // Item tag:
   uint16_t group = 0xfffe;
@@ -81,10 +79,9 @@ void EncodeWithBasicOffsetTable(std::ostream *fp, int numFrag)
   (void)fp; (void)numFrag;
 }
 
-bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
-                     int image_width, int image_height, int sample_pixel, int quality)
+bool InitializeJpeg(std::ostream *fp, int fragment_size, int image_width, int image_height, 
+  int sample_pixel, int quality, struct jpeg_compress_struct &cinfo, int &row_stride)
 {
-   JSAMPLE *image_buffer = (JSAMPLE*) input_buffer;
 
   /* This struct contains the JPEG compression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
@@ -92,7 +89,7 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
    * compression/decompression processes, in existence at once.  We refer
    * to any one struct (and its associated working data) as a "JPEG object".
    */
-  struct jpeg_compress_struct cinfo;
+  //struct jpeg_compress_struct cinfo;
   /* This struct represents a JPEG error handler.  It is declared separately
    * because applications often want to supply a specialized error handler
    * (see the second half of this file for an example).  But here we just
@@ -103,9 +100,6 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
    */
   struct jpeg_error_mgr jerr;
   /* More stuff */
-  //FILE*  outfile;    /* target FILE* /
-  JSAMPROW row_pointer[1];   /* pointer to JSAMPLE row[s] */
-  int row_stride;            /* physical row width in image buffer */
 
   /* Step 1: allocate and initialize JPEG compression object */
 
@@ -121,17 +115,7 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
   /* Step 2: specify data destination (eg, a file) */
   /* Note: steps 2 and 3 can be done in either order. */
 
-  /* Here we use the library-supplied code to send compressed data to a
-   * stdio stream.  You can also write your own code to do something else.
-   * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
-   * requires it in order to write binary files.
-   */
- // if ((outfile = fopen(filename, "wb")) == NULL) {
- //   fprintf(stderr, "can't open %s\n", filename);
- //   exit(1);
- //
- // }
-  jpeg_stdio_dest(&cinfo, fp, fragment_size);
+  jpeg_stdio_dest(&cinfo, fp, fragment_size, 1);
 
   /* Step 3: set parameters for compression */
 
@@ -183,32 +167,70 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
     {
     row_stride = image_width * 1;/* JSAMPLEs per row in image_buffer */
     }
-  
 
-  while (cinfo.next_scanline < cinfo.image_height) {
-    /* jpeg_write_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could pass
-     * more than one scanline at a time if that's more convenient.
-     */
-    row_pointer[0] = & image_buffer[cinfo.next_scanline * row_stride];
+  /* everything was ok */
+  return true;
+}
 
-    (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
-  }
-
+bool FinalizeJpeg(struct jpeg_compress_struct &cinfo)
+{
   /* Step 6: Finish compression */
 
   jpeg_finish_compress(&cinfo);
   
-  /* After finish_compress, we can close the output file. */
-  
- // fclose(fp); --> the caller will close (multiframe treatement)
-
   /* Step 7: release JPEG compression object */
 
   /* This is an important step since it will release a good deal of memory. */
   jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
+  return true;
+}
+
+// If false then suspension return
+bool WriteScanlines(struct jpeg_compress_struct &cinfo, void *input_buffer, int row_stride)
+{
+  JSAMPLE *image_buffer = (JSAMPLE*) input_buffer;
+  JSAMPROW row_pointer[1];   /* pointer to JSAMPLE row[s] */
+  row_pointer[0] = image_buffer;
+
+  while (cinfo.next_scanline < cinfo.image_height) {
+    /* jpeg_write_scanlines expects an array of pointers to scanlines.
+     * Here the array is only one element long, but you could pass
+     * more than one scanline at a time if that's more convenient.
+     */
+    //row_pointer[0] = & image_buffer[cinfo.next_scanline * row_stride];
+
+    if( jpeg_write_scanlines(&cinfo, row_pointer, 1) != 1)
+      {
+      //entering suspension mode, basically we wrote the whole jpeg fragment
+      //suspend = 1;
+      return false;
+      }
+    row_pointer[0] +=  row_stride;
+  }
+
+  // Well looks like we are done writting the scanlines
+  return true;
+}
+
+// input_buffer is ONE image
+// fragment_size is the size of this image (fragment)
+bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
+                     int image_width, int image_height, int sample_pixel, int quality,
+                     int &suspend)
+{
+  struct jpeg_compress_struct cinfo;
+  int row_stride;            /* physical row width in image buffer */
+  bool r = InitializeJpeg(fp, fragment_size, image_width, image_height, 
+      sample_pixel, quality, cinfo, row_stride);
+  assert( r );
+
+  r = WriteScanlines(cinfo, input_buffer, row_stride);
+  assert( r );
+
+  r = FinalizeJpeg(cinfo);
+  assert( r );
 
   return true;
 }
@@ -245,7 +267,8 @@ int main(int argc, char *argv[])
    int fragment_size = xsize*ysize*samplesPerPixel;
 
    EncodeWithoutBasicOffsetTable(of, 1, 15328);
-   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100);
+   int suspend = 0;
+   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100, suspend);
    CloseJpeg(of);
 
    if( !f->IsReadable() )
@@ -338,7 +361,8 @@ int main(int argc, char *argv[])
    std::ofstream out("/tmp/jpeg2.jpg");
    //out.write( of->str(), of
    //out << of->str(); //rdbuf is faster than going through str()
-   out.write( (char*)imageData, size);
+   //out.write( (char*)imageData, size);
+   out.write( of->str().c_str(), size);
    //std::cerr << "JPEG marker is: " << imageData[6] << imageData[7] << 
    //  imageData[8] << imageData[9] << std::endl;
    //out.rdbuf( *sb );

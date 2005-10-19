@@ -162,7 +162,7 @@ term_destination (j_compress_ptr cinfo)
  */
 
 GLOBAL(void)
-jpeg_stdio_dest (j_compress_ptr cinfo, std::ostream * outfile, size_t frag_length) //, int flag)
+jpeg_stdio_dest (j_compress_ptr cinfo, std::ostream * outfile, size_t frag_length, int flag)
 {
   my_dest_ptr dest;
 
@@ -185,13 +185,10 @@ jpeg_stdio_dest (j_compress_ptr cinfo, std::ostream * outfile, size_t frag_lengt
   dest->outfile = outfile;
 
   // Need to setup a new buffer, clean bytes_in_buffer and next_input_byte
-  //if( flag )
+  if( flag )
     {
-    //dest->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
-    //dest->pub.next_input_byte = NULL; /* until buffer loaded */
+    dest->bytes_written = 0;
     }
-  //only upate the new fragment, valid for both 'flag' value
+  // only upate the new fragment, valid for both 'flag' value
   dest->frag_length = frag_length;
-  dest->bytes_written = 0;
-
 }
