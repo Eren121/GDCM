@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 19:06:29 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/19 15:43:58 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,7 @@ unsigned long nbvalue = 5;
   */  
 int TestDataEntry(int , char *[])
 {
+   unsigned int i;
    gdcm::DictEntry *dict;
    gdcm::DataEntry *entry;
 
@@ -130,7 +131,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != svalue[i] )
       {
@@ -182,7 +183,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != svalue[i] )
       {
@@ -216,7 +217,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != svalue[i] )
       {
@@ -268,7 +269,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != lvalue[i] )
       {
@@ -302,7 +303,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != lvalue[i] )
       {
@@ -353,7 +354,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != fvalue[i] )
       {
@@ -387,7 +388,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != fvalue[i] )
       {
@@ -438,7 +439,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != dvalue[i] )
       {
@@ -472,7 +473,7 @@ int TestDataEntry(int , char *[])
       delete entry;
       return(1);
    }
-   for(unsigned int i=0;i<entry->GetValueCount();i++)
+   for(i=0;i<entry->GetValueCount();i++)
    {
       if( entry->GetValue(i) != dvalue[i] )
       {
