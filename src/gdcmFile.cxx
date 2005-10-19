@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 12:01:51 $
-  Version:   $Revision: 1.282 $
+  Date:      $Date: 2005/10/19 19:36:54 $
+  Version:   $Revision: 1.283 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -479,7 +479,7 @@ float File::GetXSpacing()
    }
    else
    {
-      gdcmWarningMacro( "Unfound Pixel Spacing (0018,1164)" );
+      gdcmWarningMacro( "Unfound Imager Pixel Spacing (0018,1164)" );
    }
 
 /*   const std::string &strImagerPixelSpacing = GetEntryString(0x0018,0x1164);
