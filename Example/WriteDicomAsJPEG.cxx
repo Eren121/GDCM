@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 17:56:57 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/19 22:19:20 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,8 +41,24 @@ extern "C" {
 typedef std::pair<size_t, uint32_t> JpegPair; //offset, jpeg size
 typedef std::vector<JpegPair> JpegVector;
 
+void WriteDICOMItems(std::ostream *fp, JpegVector &v)
+{
+  // Item tag:
+  uint16_t group = 0xfffe;
+  uint16_t elem  = 0xe000;
+  gdcm::binary_write(*fp, group);
+  gdcm::binary_write(*fp, elem);
+  // Item Length
+  uint32_t dummy = 0x12345678;
+  size_t offset = fp->tellp();
+  JpegPair jp;
+  jp.first = offset;
+  v.push_back(jp);
+  gdcm::binary_write(*fp, dummy);
+}
+
 // PS 3.5, page 66
-void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, JpegVector& v) //, uint32_t length)
+void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag)// JpegVector& v) //, uint32_t length)
 {
   assert( numFrag == 1);
 
@@ -55,17 +71,41 @@ void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag, JpegVector& v)
   uint32_t item_length = 0x0000;
   gdcm::binary_write(*fp, item_length);
 
-  // back again...First fragment
+}
+
+// PS 3.5, page 67
+void EncodeWithBasicOffsetTable(std::ostream *fp, int numFrag, size_t &start)
+{
   // Item tag:
+  uint16_t group = 0xfffe;
+  uint16_t elem  = 0xe000;
   gdcm::binary_write(*fp, group);
   gdcm::binary_write(*fp, elem);
   // Item Length
-  uint32_t dummy = 0x12345678;
-  size_t offset = fp->tellp();
-  JpegPair jp;
-  jp.first = offset;
-  v.push_back(jp);
-  gdcm::binary_write(*fp, dummy);
+  uint32_t item_length = numFrag*4; // sizeof(uint32_t)
+  gdcm::binary_write(*fp, item_length);
+
+  // Just prepare the space
+  start = fp->tellp(); //to be able to rewind
+  for(int i=0; i<numFrag;++i)
+    {
+    uint32_t dummy = 0x0000;
+    gdcm::binary_write(*fp, dummy);
+    }
+}
+
+void UpdateBasicOffsetTable(std::ostream *fp, JpegVector const &v, size_t pos)
+{
+  JpegVector::const_iterator i;
+  fp->seekp( pos );
+  const JpegPair &first = v[0];
+  for(i=v.begin(); i!=v.end(); ++i)
+    {
+    const JpegPair &jp = *i;
+    if(i == v.begin() ){ assert( jp.first - first.first == 0); }
+    gdcm::binary_write(*fp, jp.first - first.first);
+    std::cerr << "Updating Table:" << jp.first - first.first << std::endl;
+    }
 }
 
 void UpdateJpegFragmentSize(std::ostream *fp, JpegVector const &v)
@@ -76,6 +116,7 @@ void UpdateJpegFragmentSize(std::ostream *fp, JpegVector const &v)
     const JpegPair &jp = *i;
     fp->seekp( jp.first );
     gdcm::binary_write(*fp, jp.second );
+    std::cerr << "Updating:" << jp.first << "," << jp.second << std::endl;
     }
 }
 
@@ -92,13 +133,6 @@ void CloseJpeg(std::ostream *fp, JpegVector &v)
 
   // Jpeg is done, now update the frag length
   UpdateJpegFragmentSize(fp, v);
-}
-
-
-// PS 3.5, page 67
-void EncodeWithBasicOffsetTable(std::ostream *fp, int numFrag)
-{
-  (void)fp; (void)numFrag;
 }
 
 bool InitializeJpeg(std::ostream *fp, int fragment_size, int image_width, int image_height, 
@@ -161,6 +195,21 @@ bool InitializeJpeg(std::ostream *fp, int fragment_size, int image_width, int im
    * since the defaults depend on the source color space.)
    */
   jpeg_set_defaults(&cinfo);
+  /*
+   * http://www.koders.com/c/fid80DBBF1D49D004EF71CE7C493C34610C4F17D3D3.aspx
+   * http://studio.imagemagick.org/pipermail/magick-users/2002-September/004685.html
+   * You need to set -quality 101 or greater.  If quality is 100 or less you
+   * get regular JPEG output.  This is not explained in the documentation, only
+   * in the comments in coder/jpeg.c.  When you have configured libjpeg with
+   * lossless support, then
+   * 
+   *    quality=predictor*100 + point_transform
+   * 
+   * If you don't know what these values should be, just use 101.
+   * They only affect the compression ratio, not the image appearance,
+   * which is lossless.
+   */
+  jpeg_simple_lossless (&cinfo, 1, 1);
   /* Now you can set any non-default parameters you wish to.
    * Here we just illustrate the use of quality (quantization table) scaling:
    */
@@ -240,25 +289,54 @@ bool WriteScanlines(struct jpeg_compress_struct &cinfo, void *input_buffer, int 
 // input_buffer is ONE image
 // fragment_size is the size of this image (fragment)
 bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
-                     int image_width, int image_height, int sample_pixel, int quality, JpegVector &v)
+                     int image_width, int image_height, int numZ, int sample_pixel, int quality, JpegVector &v)
 {
   struct jpeg_compress_struct cinfo;
   int row_stride;            /* physical row width in image buffer */
+  size_t beg = fp->tellp();
   bool r = InitializeJpeg(fp, fragment_size, image_width, image_height, 
       sample_pixel, quality, cinfo, row_stride);
   assert( r );
+  (void)numZ;
 
-  r = WriteScanlines(cinfo, input_buffer, row_stride);
-  assert( r );
+  uint8_t *pbuffer = (uint8_t*)input_buffer;
+  //int i;
+  //for(i=0; i<numZ; ++i)
+//    {
+    r = WriteScanlines(cinfo, pbuffer, row_stride);
+    assert( r );
+//    pbuffer+=fragment_size; //shift to next image
+
+    //Upodate frag size
+//    size_t end = fp->tellp();
+//    std::cerr << "DIFF: " << end-beg << std::endl;
+
+//    JpegPair &jp = v[i];
+//    jp.second = end-beg;
+    //beg = end; //
+ //   }
 
   r = FinalizeJpeg(cinfo);
   assert( r );
+    size_t end = fp->tellp();
+    static int i = 0;
+    JpegPair &jp = v[i];
+    jp.second = end-beg;
+    std::cerr << "DIFF: " << i <<" -> " << end-beg << std::endl;
+    ++i;
 
-  JpegPair &jp = v[0];
-  jp.second = 15328;
+  //JpegPair &jp = v[0];
+  //jp.second = 15328;
 
   return true;
 }
+
+//bool CreateMultipleFrames (std::ostream *fp, void *input_buffer, int fragment_size,
+//               int image_width, int image_height, int sample_pixel, int quality, JpegVector &v)
+//{
+//}
+
+#define WITHOFFSETTABLE 1
 
 // Open a dicom file and compress it as JPEG stream
 int main(int argc, char *argv[])
@@ -266,7 +344,14 @@ int main(int argc, char *argv[])
   if( argc < 2)
     return 1;
 
-  std::string filename = argv[1];
+   std::string filename = argv[1];
+   std::string outfilename = "/tmp/bla.dcm";
+   if( argc >= 3 )
+     outfilename = argv[2];
+   int quality = 100;
+   if( argc >= 4 )
+     quality = atoi(argv[2]);
+   std::cerr << "Using quality: " << quality << std::endl;
 
 // Step 1 : Create the header of the image
    gdcm::File *f = new gdcm::File();
@@ -278,6 +363,7 @@ int main(int argc, char *argv[])
    std::string PixelType = tested->GetFile()->GetPixelType();
    int xsize = f->GetXSize();
    int ysize = f->GetYSize();
+   int zsize = f->GetZSize();
 
    int samplesPerPixel = f->GetSamplesPerPixel();
    size_t testedDataSize    = tested->GetImageDataSize();
@@ -292,10 +378,24 @@ int main(int argc, char *argv[])
    int fragment_size = xsize*ysize*samplesPerPixel;
 
    JpegVector JpegFragmentSize;
-   //EncodeWithoutBasicOffsetTable(of, 1, 15328);
-   EncodeWithoutBasicOffsetTable(of, 1, JpegFragmentSize); //, 15328);
-   CreateOneFrame(of, testedImageData, fragment_size, xsize, ysize, samplesPerPixel, 100, JpegFragmentSize);
+#if WITHOFFSETTABLE
+   size_t bots; //basic offset table start
+   EncodeWithBasicOffsetTable(of, zsize, bots);
+#else
+   EncodeWithoutBasicOffsetTable(of, 1);
+#endif
+   uint8_t *pImageData = testedImageData;
+   for(int i=0; i<zsize;i++)
+     {
+     WriteDICOMItems(of, JpegFragmentSize);
+     CreateOneFrame(of, pImageData, fragment_size, xsize, ysize, zsize, 
+       samplesPerPixel, quality, JpegFragmentSize);
+     pImageData += fragment_size;
+     }
    CloseJpeg(of, JpegFragmentSize);
+#if WITHOFFSETTABLE
+   UpdateBasicOffsetTable(of, JpegFragmentSize, bots);
+#endif
 
    if( !f->IsReadable() )
    {
@@ -308,6 +408,14 @@ int main(int argc, char *argv[])
    std::streambuf* sb = of->rdbuf();
    (void)sb;
 
+   // Let save the file as jpeg standalone
+     {
+     std::ofstream *jof = new std::ofstream( "/tmp/test.jpg" );
+     CreateOneFrame(jof, testedImageData, fragment_size, xsize, ysize, zsize, 
+       samplesPerPixel, 70, JpegFragmentSize);
+     jof->close();
+     delete jof;
+     }
 
 
 
@@ -326,12 +434,12 @@ int main(int argc, char *argv[])
    str << ysize;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0010); // Rows
 
-   //if(img.sizeZ>1)
-   //{
-   //   str.str("");
-   //   str << img.sizeZ;
-   //   fileToBuild->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
-   //}
+   if(zsize>1)
+   {
+      str.str("");
+      str << zsize;
+      fileToBuild->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
+   }
 
    // Set the pixel type
    str.str("");
@@ -362,7 +470,7 @@ int main(int argc, char *argv[])
 //   {
 //      img.componentSize += 8-img.componentSize%8;
 //   }
-   size_t size = xsize * ysize * 1 /*Z*/ 
+   size_t size = xsize * ysize * zsize
                * samplesPerPixel /* * img.componentSize / 8*/;
 
    uint8_t *imageData = new uint8_t[size];
@@ -378,8 +486,7 @@ int main(int argc, char *argv[])
    //str::string *s = of->str();
    //fileH->SetWriteTypeToDcmExplVR();
    fileH->SetWriteTypeToJPEG(  );
-   std::string fileName = "/tmp/bla.dcm";
-   if( !fileH->Write(fileName) )
+   if( !fileH->Write(outfilename) )
      {
      std::cerr << "Badddd" << std::endl;
      }
