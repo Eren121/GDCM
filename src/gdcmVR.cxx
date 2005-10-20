@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:51 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/10/20 08:58:18 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -144,22 +144,22 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
 */
 }
 
-unsigned short VR::GetAtomicElementLength(VRKey const &vr)
+unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 {
    // Unsigned & signed short
-   if( vr == "US" || vr == "SS" )
+   if( tested == "US" || tested == "SS" )
       return 2;
    // Unsigned & signed long
-   if( vr == "UL" || vr == "SL" )
+   if( tested == "UL" || tested == "SL" )
       return 4;
    // Float
-   if( vr == "FL" )
+   if( tested == "FL" )
       return 4;
    // Double
-   if( vr == "FD" )
+   if( tested == "FD" )
       return 8;
    // Word string
-   if( vr == "OW" )
+   if( tested == "OW" )
       return 2;
    return 1;
 }

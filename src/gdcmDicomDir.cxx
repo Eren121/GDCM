@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:15:38 $
-  Version:   $Revision: 1.161 $
+  Date:      $Date: 2005/10/20 08:58:17 $
+  Version:   $Revision: 1.162 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -199,8 +199,7 @@ bool DicomDir::Load( )
  */
 bool DicomDir::Load(std::string const &fileName ) 
 {
-   // We should clean out anything that already exists.
-   Initialize();  // sets all private fields to NULL
+   SetFileName(fileName);
    return Load();
 }
 

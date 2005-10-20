@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/10/20 08:58:15 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -336,7 +336,7 @@ int WriteSimple(Image &img)
       std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
                   << " pixels differing (pos : test - ref) :" 
                   << std::endl;
-      int i;
+      unsigned int i;
       unsigned int j;
       for(i=0, j=0;i<dataSizeWritten && j<MAX_NUMBER_OF_DIFFERENCE;i++)
       {

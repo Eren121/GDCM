@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/20 08:58:15 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,13 +111,13 @@ int TestFileAccessors(int, char *[])
       TestMethodMacro(std::dec,f,GetFileName)
 
       f->GetImageOrientationPatient( iop );
+      std::cout << "   Orientation:" << std::endl;
       for (int j=0; j<6; j++)
-         std::cout << "iop[" << j << "] = " << iop[j] << std::endl;
+         std::cout << "      iop[" << j << "] = " << iop[j] << std::endl;
 
       if( f->IsReadable() )
       {
-         std::cout <<filename   << " is Readable" 
-                   << std::endl << std::endl;
+         std::cout << "   " << filename << " is Readable" << std::endl;
 
          gdcm::FileHelper *fh= new gdcm::FileHelper( f );   
 

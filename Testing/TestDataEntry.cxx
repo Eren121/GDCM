@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 15:43:58 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/20 08:58:15 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != 1 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: 1" << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -66,7 +68,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != 2 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: 2" << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -79,7 +83,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: 0" << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -102,7 +108,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetLength() != strlen(data) + strlen(data)%2 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Size of string is incorrect" << std::endl;
+                << "   Size of string is incorrect" << std::endl
+                << "   Found: " << entry->GetLength() 
+                << " - Must be: " << strlen(data) + strlen(data)%2 << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -110,7 +118,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -126,7 +136,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),data,entry->GetLength()) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << data << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -137,7 +149,8 @@ int TestDataEntry(int , char *[])
       {
          std::cout << "   Failed" << std::endl
                    << "   Content of entry's values is incorrect : id " << i << std::endl
-                   << "   Found " << entry->GetValue(i) << " - Must be " << svalue[i] << std::endl;
+                   << "   Found " << entry->GetValue(i)
+                   << " - Must be " << svalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -162,7 +175,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetLength() != nbvalue*sizeof(uint16_t) )
    {
       std::cout << "   Failed" << std::endl
-                << "   BinArea length is incorrect" << std::endl;
+                << "   BinArea length is incorrect" << std::endl
+                << "   Found: " << entry->GetLength()
+                << " - Must be: " << nbvalue*sizeof(uint16_t) << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -170,7 +185,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << data << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -178,7 +195,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount()
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -188,7 +207,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != svalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << svalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -204,7 +225,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << data << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -212,7 +235,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -222,7 +247,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != svalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << svalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -247,7 +274,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetLength() != nbvalue*sizeof(uint32_t) )
    {
       std::cout << "   Failed" << std::endl
-                << "   BinArea length is incorrect" << std::endl;
+                << "   BinArea length is incorrect" << std::endl
+                << "   Found: " << entry->GetLength()
+                << " - Must be: " << nbvalue*sizeof(uint32_t) << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -255,8 +284,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
-      std::cout<<"#"<<entry->GetString()<<"#"<<" / "<<"#"<<data<<"#"<<std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << data << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -264,7 +294,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -274,7 +306,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != lvalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << lvalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -290,7 +324,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str() 
+                << " - Must be: " << data << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -298,7 +334,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -308,7 +346,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != lvalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << lvalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -333,7 +373,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetLength() != nbvalue*sizeof(float) )
    {
       std::cout << "   Failed" << std::endl
-                << "   BinArea length is incorrect" << std::endl;
+                << "   BinArea length is incorrect" << std::endl
+                << "   Found: " << entry->GetLength() 
+                << " - Must be: " << nbvalue*sizeof(float) << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -341,7 +383,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << fdata << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -349,7 +393,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -359,7 +405,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != fvalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << fvalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -375,7 +423,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << fdata << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -383,7 +433,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -393,7 +445,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != fvalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << fvalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -418,7 +472,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetLength() != nbvalue*sizeof(double) )
    {
       std::cout << "   Failed" << std::endl
-                << "   BinArea length is incorrect" << std::endl;
+                << "   BinArea length is incorrect" << std::endl
+                << "   Found: " << entry->GetLength()
+                << " - Must be: " << nbvalue*sizeof(double) << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -426,7 +482,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << fdata << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -434,7 +492,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -444,7 +504,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != dvalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << dvalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);
@@ -460,7 +522,9 @@ int TestDataEntry(int , char *[])
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
    {
       std::cout << "   Failed" << std::endl
-                << "   Content of string is incorrect" << std::endl;
+                << "   Content of string is incorrect" << std::endl
+                << "   Found: " << entry->GetString().c_str()
+                << " - Must be: " << fdata << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -468,7 +532,9 @@ int TestDataEntry(int , char *[])
    if( entry->GetValueCount() != nbvalue )
    {
       std::cout << "   Failed" << std::endl
-                << "   Number of content values is incorrect" << std::endl;
+                << "   Number of content values is incorrect" << std::endl
+                << "   Found: " << entry->GetValueCount() 
+                << " - Must be: " << nbvalue << std::endl;
       delete dict;
       delete entry;
       return(1);
@@ -478,7 +544,9 @@ int TestDataEntry(int , char *[])
       if( entry->GetValue(i) != dvalue[i] )
       {
          std::cout << "   Failed" << std::endl
-                   << "   Content of entry's values is incorrect : id " << i << std::endl;
+                   << "   Content of entry's values is incorrect : id " << i << std::endl
+                   << "   Found: " << entry->GetValue(i)
+                   << " - Must be: " << dvalue[i] << std::endl;
          delete dict;
          delete entry;
          return(1);

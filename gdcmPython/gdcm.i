@@ -5,7 +5,10 @@
 
 #include "gdcmCommon.h"
 #include "gdcmBase.h"
+#include "gdcmTagKey.h"
+#include "gdcmVRKey.h"
 #include "gdcmDict.h"
+#include "gdcmDicomEntry.h"
 #include "gdcmDictEntry.h"
 #include "gdcmDictSet.h"
 #include "gdcmDicomDir.h"
@@ -201,6 +204,16 @@ typedef unsigned long long uint64_t;
 %ignore gdcm::binary_write(std::ostream &,uint32_t const &);
 %ignore gdcm::binary_write(std::ostream &,uint16_t const &);
 
+%ignore gdcm::VRKey::operator=(const VRKey &_val);
+%ignore gdcm::VRKey::operator=(const std::string &_val);
+%ignore gdcm::VRKey::operator=(const char *_val);
+%ignore gdcm::VRKey::operator[](const unsigned int &_id) const;
+%ignore gdcm::VRKey::operator[](const unsigned int &_id);
+
+%ignore gdcm::TagKey::operator=(const TagKey &_val);
+%ignore gdcm::TagKey::operator[](const unsigned int &_id) const;
+%ignore gdcm::TagKey::operator[](const unsigned int &_id);
+
 %ignore gdcm::DicomDir::SetStartMethod(DicomDir::Method *method,void *arg = NULL);
 %ignore gdcm::DicomDir::SetProgressMethod(DicomDir::Method *method,void *arg = NULL);
 %ignore gdcm::DicomDir::SetEndMethod(DicomDir::Method *method,void *arg = NULL);
@@ -229,6 +242,9 @@ typedef unsigned long long uint64_t;
 // Warning: Order matters !
 %include "gdcmCommon.h"
 %include "gdcmBase.h"
+%include "gdcmTagKey.h"
+%include "gdcmVRKey.h"
+%include "gdcmDicomEntry.h"
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"
 %include "gdcmDictSet.h"

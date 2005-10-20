@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/20 08:58:17 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,10 +83,8 @@ TagKey DicomEntry::TranslateToKey(uint16_t group, uint16_t elem)
  */
 void DicomEntry::Print(std::ostream &os, std::string const & )
 {
-   std::ostringstream s;
-
-   s << GetKey(); 
-   s << " [" << VR  << "] ";
+   os << GetKey(); 
+   os << " [" << VR  << "] ";
 }
 
 //-----------------------------------------------------------------------------

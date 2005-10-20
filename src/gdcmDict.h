@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/03 18:24:10 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/10/20 08:58:18 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,6 +33,7 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 typedef std::string DictKey;
 typedef std::map<TagKey, DictEntry>  TagKeyHT;
+
 //-----------------------------------------------------------------------------
 /**
  * \brief    Dict acts a memory representation of a dicom dictionary i.e.
