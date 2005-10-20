@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:58:18 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/10/20 14:25:47 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -178,13 +178,10 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
  */
 void VR::Print(std::ostream &os) 
 {
-   std::ostringstream s;
-
    for (VRHT::iterator it = vr.begin(); it != vr.end(); ++it)
    {
-      s << "VR : " << it->first << " = " << it->second << std::endl;
+      os << "VR : " << it->first << " = " << it->second << std::endl;
    }
-   os << s.str();
 }
 
 //-----------------------------------------------------------------------------
