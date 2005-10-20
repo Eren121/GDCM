@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/20 09:23:24 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,13 @@ public :
    inline TagKey() { tag[0] = tag[1] = 0x0000;}
 
    friend std::ostream& operator<<(std::ostream& _os, const TagKey &_val);
+
+   inline std::string str() const
+   {
+      char res[10];
+      sprintf(res,"%04x|%04x",tag[0],tag[1]);
+      return std::string(res);
+   }
 
    inline void SetGroup(const uint16_t &val) { tag[0] = val; }
    inline const uint16_t &GetGroup(void) { return tag[0]; }
