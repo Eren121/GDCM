@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 14:46:29 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/10/20 15:33:18 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -461,10 +461,10 @@ bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2)
                             << elemsToOrderOn[2*ri+1]
                             << std::endl;
  
-      e1= f1->gdcm::Document::GetDataEntry( elemsToOrderOn[2*ri],
-                                 elemsToOrderOn[2*ri+1]);
+      e1= f1->GetDataEntry( elemsToOrderOn[2*ri],
+                 elemsToOrderOn[2*ri+1]);
 
-      e2= f2->gdcm::Document::GetDataEntry( elemsToOrderOn[2*ri],
+      e2= f2->GetDataEntry( elemsToOrderOn[2*ri],
                                  elemsToOrderOn[2*ri+1]);
       if(!e2 || !e2)
       {
