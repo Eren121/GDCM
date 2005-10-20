@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.165 $
+  Date:      $Date: 2005/10/20 07:25:10 $
+  Version:   $Revision: 1.166 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -896,7 +896,7 @@ std::string Util::CreateUniqueUID(const std::string &root)
    append += Util::GDCM_MAC_ADRESS;
    append += ".";
    append += Util::GetCurrentDateTime();
-
+   append += ".";
    //Also add a mini random number just in case:
    char tmp[10];
    int r = (int) (100.0*rand()/RAND_MAX);
