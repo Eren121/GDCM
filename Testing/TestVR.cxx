@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:25 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/20 15:05:15 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,6 +44,11 @@ int TestVR(int , char *[])
    if( vr->IsValidVR( "  " ) )
    {
       std::cerr << "'  ' is a valid VR" << std::endl;
+      error++;
+   }
+   if( vr->IsValidVR( "\000/" ) )
+   {
+      std::cerr << "'\000/' is a valid VR" << std::endl;
       error++;
    }
    if( vr->IsValidVR( gdcm::GDCM_VRUNKNOWN ) )
