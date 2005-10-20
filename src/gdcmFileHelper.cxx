@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/18 19:54:27 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/10/20 07:27:43 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1182,6 +1182,8 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
  
 void FileHelper::CheckMandatoryElements()
 {
+   std::string sop =  Util::CreateUniqueUID();
+   
    // just to remember : 'official' 0002 group
    if ( WriteType != ACR && WriteType != ACR_LIBIDO )
    {
@@ -1209,13 +1211,13 @@ void FileHelper::CheckMandatoryElements()
       e_0002_0001->SetLength(2);
       Archive->Push(e_0002_0001);
 
-   // 'Media Stored SOP Class UID' 
-      // [Secondary Capture Image Storage]
-      CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");
+   // Potentialy post-processed image --> [Secondary Capture Image Storage]
+   // 'Media Storage SOP Class UID' 
+      CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");    
  
-   // 'Media Stored SOP Instance UID'   
-      CopyMandatoryEntry(0x0002,0x0003,Util::CreateUniqueUID());
-
+   // 'Media Storage SOP Instance UID'   
+      CopyMandatoryEntry(0x0002,0x0003,sop);
+      
    // 'Implementation Class UID'
       CopyMandatoryEntry(0x0002,0x0012,Util::CreateUniqueUID());
 
@@ -1319,9 +1321,16 @@ void FileHelper::CheckMandatoryElements()
       SetMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");
    }
 
+   // At the end, not to overwrite the original ones,
+   // needed by 'Referenced SOP Instance UID', 'Referenced SOP Class UID'   
+   // 'SOP Instance UID'  
+      CopyMandatoryEntry(0x0008,0x0018,sop);
+   // 'SOP Class UID' 
+      CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7"); 
+             
 // ---- The user will never have to take any action on the following ----.
    // new value for 'SOP Instance UID'
-   SetMandatoryEntry(0x0008,0x0018,Util::CreateUniqueUID());
+   //SetMandatoryEntry(0x0008,0x0018,Util::CreateUniqueUID());
 
    // Instance Creation Date
    CopyMandatoryEntry(0x0008,0x0012,Util::GetCurrentDate().c_str());
@@ -1336,14 +1345,6 @@ void FileHelper::CheckMandatoryElements()
 // Entries whose type is 2c are mandatory-inside-a-Sequence
 // Entries whose type is 3 are optional
 
-   // 'Serie Instance UID'
-   // Keep the value if exists
-   // The user is allowed to create his own Series, 
-   // keeping the same 'Serie Instance UID' for various images
-   // The user shouldn't add any image to a 'Manufacturer Serie'
-   // but there is no way no to allowed him to do that 
-   CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID());
-
    // 'Study Instance UID'
    // Keep the value if exists
    // The user is allowed to create his own Study, 
@@ -1352,6 +1353,14 @@ void FileHelper::CheckMandatoryElements()
    //          adding new series to an already existing Study 
    CheckMandatoryEntry(0x0020,0x000d,Util::CreateUniqueUID());
 
+   // 'Serie Instance UID'
+   // Keep the value if exists
+   // The user is allowed to create his own Series, 
+   // keeping the same 'Serie Instance UID' for various images
+   // The user shouldn't add any image to a 'Manufacturer Serie'
+   // but there is no way no to allowed him to do that 
+   CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID());
+   
    // Modality : if missing we set it to 'OTher'
    CheckMandatoryEntry(0x0008,0x0060,"OT");
 
