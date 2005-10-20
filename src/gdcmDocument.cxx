@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:15:39 $
-  Version:   $Revision: 1.299 $
+  Date:      $Date: 2005/10/20 13:55:05 $
+  Version:   $Revision: 1.300 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1640,9 +1640,9 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
       }
       else 
       {
-         // Allthough this should never happen, still some images have a
+         // Although this should never happen, still some images have a
          // corrupted group length [e.g. have a glance at offset x(8336) of
-         // gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm].
+         // gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm.
          // Since for dicom compliant and well behaved headers, the present
          // test is useless (and might even look a bit paranoid), when we
          // encounter such an ill-formed image, we simply display a warning
@@ -1873,8 +1873,8 @@ bool Document::CheckSwap()
  */
 void Document::SwitchByteSwapCode() 
 {
-   gdcmWarningMacro( "Switching Byte Swap code from "<< SwapCode
-                     << " at :" <<std::hex << Fp->tellg() );
+   gdcmDebugMacro( "Switching Byte Swap code from "<< SwapCode
+                     << " at: 0x" << std::hex << Fp->tellg() );
    if ( SwapCode == 1234 ) 
    {
       SwapCode = 4321;
@@ -1891,6 +1891,7 @@ void Document::SwitchByteSwapCode()
    {
       SwapCode = 3412;
    }
+   gdcmDebugMacro( " Into: "<< SwapCode );
 }
 
 /**
