@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 16:55:37 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/10/20 08:53:21 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,85 +40,85 @@ void ShowLutData(gdcm::File *f);
 
 void ShowLutData(gdcm::File *f)
 {  
-      gdcm::SeqEntry *modLutSeq = f->GetSeqEntry(0x0028,0x3000);
-      if ( modLutSeq !=0 )
+   gdcm::SeqEntry *modLutSeq = f->GetSeqEntry(0x0028,0x3000);
+   if ( modLutSeq !=0 )
+   {
+      gdcm::SQItem *sqi= modLutSeq->GetFirstSQItem();
+      if ( sqi != 0 )
       {
-         gdcm::SQItem *sqi= modLutSeq->GetFirstSQItem();
-         if ( sqi != 0 )
+         std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
+         if (   /*lutDescriptor   == GDCM_UNFOUND*/ 0 )
          {
-            std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
-           if (   /*lutDescriptor   == GDCM_UNFOUND*/ 0 )
-           {
-              //gdcmWarningMacro( "LUT Descriptor is missing" );
-              std::cout << "LUT Descriptor is missing" << std::endl;
-              return;
-            }
-            int length;   // LUT length in Bytes
-            int deb;      // Subscript of the first Lut Value
-            int nbits;    // Lut item size (in Bits)
+            //gdcmWarningMacro( "LUT Descriptor is missing" );
+            std::cout << "LUT Descriptor is missing" << std::endl;
+            return;
+         }
+         int length;   // LUT length in Bytes
+         int deb;      // Subscript of the first Lut Value
+         int nbits;    // Lut item size (in Bits)
 
-            int nbRead;    // nb of items in LUT descriptor (must be = 3)
+         int nbRead;    // nb of items in LUT descriptor (must be = 3)
 
-            nbRead = sscanf( lutDescriptor.c_str(),
-                              "%d\\%d\\%d",
-                               &length, &deb, &nbits );
-           std::cout << "length " << length 
-                     << " deb " << deb 
-                     << " nbits " << nbits
-                     << std::endl;
-            if ( nbRead != 3 )
-            {
-                //gdcmWarningMacro( "Wrong LUT descriptor" );
-                std::cout << "Wrong LUT descriptor" << std::endl;
-            }
-            //LUT Data (CTX dependent)    
-            gdcm::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006); 
-            if ( b != 0 )
+         nbRead = sscanf( lutDescriptor.c_str(),
+                           "%d\\%d\\%d",
+                              &length, &deb, &nbits );
+         std::cout << "length " << length 
+                  << " deb " << deb 
+                  << " nbits " << nbits
+                  << std::endl;
+         if ( nbRead != 3 )
+         {
+               //gdcmWarningMacro( "Wrong LUT descriptor" );
+               std::cout << "Wrong LUT descriptor" << std::endl;
+         }
+         //LUT Data (CTX dependent)    
+         gdcm::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006); 
+         if ( b != 0 )
+         { 
+            int BitsAllocated = f->GetBitsAllocated();
+            if ( BitsAllocated <= 8 )
             { 
-               int BitsAllocated = f->GetBitsAllocated();
-               if ( BitsAllocated <= 8 )
-               { 
-                  int mult;
-                  if ( ( nbits == 16 ) && ( BitsAllocated == 8 ) )
-                  {
-                  // when LUT item size is different than pixel size
-                     mult = 2; // high byte must be = low byte
-                  }
-                  else
-                  {
-                  // See PS 3.3-2003 C.11.1.1.2 p 619
-                     mult = 1;
-                  }
-                  uint8_t *lut = b->GetBinArea();
-                  for( int i=0; i < length; ++i )
-                  {
-                     std::cout << i+deb << " : \t"
-                               << (int) (lut[i*mult + 1]) << std::endl;
-                  }
+               int mult;
+               if ( ( nbits == 16 ) && ( BitsAllocated == 8 ) )
+               {
+               // when LUT item size is different than pixel size
+                  mult = 2; // high byte must be = low byte
                }
                else
                {
-                  uint16_t *lut = (uint16_t *)(b->GetBinArea());  
-                  for( int i=0; i < length; ++i )
-                  {
-                     std::cout << i+deb << " : \t"
-                               << (int) (((uint16_t *)lut)[i])
-                               << std::endl;
-                  }             
+               // See PS 3.3-2003 C.11.1.1.2 p 619
+                  mult = 1;
                }
-            }  
+               uint8_t *lut = b->GetBinArea();
+               for( int i=0; i < length; ++i )
+               {
+                  std::cout << i+deb << " : \t"
+                              << (int) (lut[i*mult + 1]) << std::endl;
+               }
+            }
             else
-               std::cout << "No LUT Data DataEntry (0x0028,0x3006) found?!? " 
-                         << std::endl;
-         }
+            {
+               uint16_t *lut = (uint16_t *)(b->GetBinArea());  
+               for( int i=0; i < length; ++i )
+               {
+                  std::cout << i+deb << " : \t"
+                              << (int) (((uint16_t *)lut)[i])
+                              << std::endl;
+               }             
+            }
+         }  
          else
-            std::cout << "No First SQ Item within (0x0028,0x3000) ?!? " 
-                      << std::endl;      
+            std::cout << "No LUT Data DataEntry (0x0028,0x3006) found?!? " 
+                        << std::endl;
       }
       else
-         std::cout << "No LUT Data SeqEntry (0x0028,0x3000) found " 
-                   << std::endl;
+         std::cout << "No First SQ Item within (0x0028,0x3000) ?!? " 
+                     << std::endl;      
    }
+   else
+      std::cout << "No LUT Data SeqEntry (0x0028,0x3000) found " 
+                  << std::endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -437,13 +437,15 @@ int main(int argc, char *argv[])
 
       //if( !f->gdcm::Document::IsReadable())
       // Try downcast to please MSVC
-     if ( !((gdcm::Document *)f)->IsReadable() )
-     {
+      if ( !((gdcm::Document *)f)->IsReadable() )
+      {
          std::cout <<std::endl<<fileName<<" is NOT 'gdcm parsable'"<<std::endl;
       }
      
-      if (f->IsReadable())
+      if ( f->IsReadable() )
+      {
          std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
+      }
       else if ( f->GetSeqEntry(0x0041,0x1010) )
       {
          std::cout <<std::endl<<fileName<<" looks like a 'PAPYRUS image' file"
@@ -511,62 +513,64 @@ int main(int argc, char *argv[])
 
 //------------------------------
 
-      // Lets's get and print some usefull fields about 'Orientation'
-      // ------------------------------------------------------------
+         // Lets's get and print some usefull fields about 'Orientation'
+         // ------------------------------------------------------------
 
-      std::string strPatientPosition = 
-                                      f->GetEntryString(0x0018,0x5100);
-      if ( strPatientPosition != gdcm::GDCM_UNFOUND 
-        && strPatientPosition != "" )  
-            std::cout << "PatientPosition (0x0010,0x5100)= [" 
-                      << strPatientPosition << "]" << std::endl;
- 
-      std::string strViewPosition = 
-                                      f->GetEntryString(0x0018,0x5101);
-      if ( strViewPosition != gdcm::GDCM_UNFOUND 
-        && strViewPosition != "" )  
-            std::cout << "strViewPosition (0x0010,0x5101)= [" 
-                      << strViewPosition << "]" << std::endl;
-      
-     std::string strPatientOrientation = 
-                                      f->GetEntryString(0x0020,0x0020);
-      if ( strPatientOrientation != gdcm::GDCM_UNFOUND
-        && strPatientOrientation != "")  
-         std::cout << "PatientOrientation (0x0020,0x0020)= [" 
-                   << strPatientOrientation << "]" << std::endl;
+         std::string strPatientPosition = 
+                                       f->GetEntryString(0x0018,0x5100);
+         if ( strPatientPosition != gdcm::GDCM_UNFOUND 
+         && strPatientPosition != "" )  
+               std::cout << "PatientPosition (0x0010,0x5100)= [" 
+                        << strPatientPosition << "]" << std::endl;
+    
+         std::string strViewPosition = 
+                                       f->GetEntryString(0x0018,0x5101);
+         if ( strViewPosition != gdcm::GDCM_UNFOUND 
+         && strViewPosition != "" )  
+               std::cout << "strViewPosition (0x0010,0x5101)= [" 
+                        << strViewPosition << "]" << std::endl;
+         
+         std::string strPatientOrientation = 
+                                       f->GetEntryString(0x0020,0x0020);
+         if ( strPatientOrientation != gdcm::GDCM_UNFOUND
+         && strPatientOrientation != "")  
+            std::cout << "PatientOrientation (0x0020,0x0020)= [" 
+                     << strPatientOrientation << "]" << std::endl;
 
-      std::string strImageOrientationPatient = 
-                                      f->GetEntryString(0x0020,0x0037);  
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND
-        && strImageOrientationPatient != "" )  
-         std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
-                   << strImageOrientationPatient << "]" << std::endl;
+         std::string strImageOrientationPatient = 
+                                       f->GetEntryString(0x0020,0x0037);  
+         if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND
+         && strImageOrientationPatient != "" )  
+            std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
+                     << strImageOrientationPatient << "]" << std::endl;
 
-      std::string strImageOrientationRET = 
-                                      f->GetEntryString(0x0020,0x0035);
-      if ( strImageOrientationRET != gdcm::GDCM_UNFOUND
-        && strImageOrientationRET != "" )  
-         std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
-                   << strImageOrientationRET << "]" << std::endl;
+         std::string strImageOrientationRET = 
+                                       f->GetEntryString(0x0020,0x0035);
+         if ( strImageOrientationRET != gdcm::GDCM_UNFOUND
+         && strImageOrientationRET != "" )
+         {
+            std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
+                     << strImageOrientationRET << "]" << std::endl;
+         }
 
-      // Let's compute 'user friendly' results about 'Orientation'
-      // ---------------------------------------------------------
- 
-      gdcm::Orientation o;
+         // Let's compute 'user friendly' results about 'Orientation'
+         // ---------------------------------------------------------
+    
+         gdcm::Orientation o;
 
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
-           strImageOrientationRET     != gdcm::GDCM_UNFOUND )
-      {
-  
-         gdcm::OrientationType orient = o.GetOrientationType( f );
- 
-         std::cout << "TypeOrientation = " << orient << " (-> " 
-                   << o.GetOrientationTypeString(orient) << " )" << std::endl;
-      }
+         if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
+            strImageOrientationRET     != gdcm::GDCM_UNFOUND )
+         {
+     
+            gdcm::OrientationType orient = o.GetOrientationType( f );
+    
+            std::cout << "TypeOrientation = " << orient << " (-> " 
+                     << o.GetOrientationTypeString(orient) << " )" << std::endl;
+         }
 
-      std::string ori = o.GetOrientation ( f );
-      if (ori != "\\" )
-         std::cout << "Orientation [" << ori << "]" << std::endl;
+         std::string ori = o.GetOrientation ( f );
+         if (ori != "\\" )
+            std::cout << "Orientation [" << ori << "]" << std::endl;
 
 //------------------------------- 
 
