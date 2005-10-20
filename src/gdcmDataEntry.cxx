@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 18:42:51 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/20 07:23:50 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -500,6 +500,12 @@ void DataEntry::Print(std::ostream &os, std::string const & )
 {
    os << "D ";
    DocEntry::Print(os);
+
+   uint16_t g = GetGroup();
+   if (g == 0xfffe) // delimiters have NO value
+   {          
+      return; // just to avoid identing all the remaining code 
+   }
 
    std::ostringstream s;
    TSAtr v;
