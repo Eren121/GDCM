@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:05 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/10/20 15:24:09 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,12 +114,6 @@ public:
    DataEntry *NewDataEntry(uint16_t group,uint16_t elem,
                          VRKey const &vr = GDCM_VRUNKNOWN);
    SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
-
-// DictEntry  related utilities 
-   DictEntry *NewVirtualDictEntry(uint16_t group,uint16_t elem,
-                                  VRKey const &vr     = GDCM_VRUNKNOWN,
-                                  TagName const &vm     = GDCM_UNKNOWN,
-                                  TagName const &name   = GDCM_UNKNOWN );
 
 protected:
 // DictEntry  related utilities

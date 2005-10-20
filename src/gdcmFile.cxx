@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 19:36:54 $
-  Version:   $Revision: 1.283 $
+  Date:      $Date: 2005/10/20 15:24:09 $
+  Version:   $Revision: 1.284 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -230,10 +230,11 @@ bool File::DoTheLoadingJob( )
          // Change only made if usefull
          if ( PixelVR != oldEntry->GetVR() )
          {
-            DictEntry* newDict = NewVirtualDictEntry(GrPixel,NumPixel,
-                                                     PixelVR,"1","Pixel Data");
+            DictEntry* newDict = DictEntry::New(GrPixel,NumPixel,
+                                                PixelVR,"1","Pixel Data");
 
             DataEntry *newEntry = new DataEntry(newDict);
+            newDict->Delete();
             newEntry->Copy(entry);
             newEntry->SetBinArea(oldEntry->GetBinArea(),oldEntry->IsSelfArea());
             oldEntry->SetSelfArea(false);

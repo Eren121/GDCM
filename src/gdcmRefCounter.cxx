@@ -1,10 +1,10 @@
   /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmBase.cxx,v $
+  Module:    $RCSfile: gdcmRefCounter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/10/20 15:24:10 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 
 namespace gdcm 
 {

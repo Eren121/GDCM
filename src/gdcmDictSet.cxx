@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 09:23:24 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/10/20 15:24:08 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,9 +55,6 @@ DictSet::~DictSet()
       tag->second = NULL;
    }
    Dicts.clear();
-
-   // Remove virtual dictionary entries
-   VirtualEntries.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -96,51 +93,10 @@ Dict *DictSet::GetDict(DictKey const &dictName)
 }
 
 /**
- * \brief   Create a DictEntry which will be referenced in no dictionary
- * @param   group   Group number of the Entry 
- * @param   elem  Element number of the Entry
- * @param   vr  Value Representation of the Entry
- * @param   vm  Value Multiplicity of the Entry
- * @param   name  English name of the Entry
- * @return  virtual entry
- */
-DictEntry *DictSet::NewVirtualDictEntry( uint16_t group,
-                                         uint16_t elem,
-                                         const VRKey &vr,
-                                         const TagName &vm,
-                                         const TagName &name)
-{
-   DictEntry *entry;
-
-   // Let's follow 'Purify' advice
-   // const std::string tag = DictEntry::TranslateToKey(group,elem)
-   //                         + "#" + vr + "#" + vm + "#" + name;
-   ExtendedTagKey tag = DictEntry::TranslateToKey(group,elem).str();
-   tag += "#" + vr.str() + "#" + vm + "#" + name;  
-
-   ExtendedTagKeyHT::iterator it;
-   
-   it = VirtualEntries.find(tag);
-   if ( it != VirtualEntries.end() )
-   {
-      entry = &(it->second);
-   }
-   else
-   {
-      DictEntry ent(group, elem, vr, vm, name);
-      VirtualEntries.insert(
-         ExtendedTagKeyHT::value_type(tag, ent) );
-      entry = &(VirtualEntries.find(tag)->second);
-   }
-
-   return entry;
-}
-
-/**
- * \brief   Get the first entry while visiting the DictSet
+ * \brief   Get the first dictionary while visiting the DictSet
  * \return  The first Dict if found, otherwhise NULL
  */
-Dict *DictSet::GetFirstEntry()
+Dict *DictSet::GetFirstDict()
 {
    ItDictHt = Dicts.begin();
    if ( ItDictHt != Dicts.end() )
@@ -149,11 +105,11 @@ Dict *DictSet::GetFirstEntry()
 }
 
 /**
- * \brief   Get the next entry while visiting the Hash table (DictSetHT)
+ * \brief   Get the next dictionary while visiting the Hash table (DictSetHT)
  * \note : meaningfull only if GetFirstEntry already called
  * \return  The next Dict if found, otherwhise NULL
  */
-Dict *DictSet::GetNextEntry()
+Dict *DictSet::GetNextDict()
 {
    gdcmAssertMacro (ItDictHt != Dicts.end());
   

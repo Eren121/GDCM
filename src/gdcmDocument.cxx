@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 13:55:05 $
-  Version:   $Revision: 1.300 $
+  Date:      $Date: 2005/10/20 15:24:09 $
+  Version:   $Revision: 1.301 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1965,6 +1965,7 @@ DocEntry *Document::ReadNextDocEntry()
          if ( dictEntry )
          {
             realVR = dictEntry->GetVR();
+            dictEntry->Unregister();
          }
       }
    }

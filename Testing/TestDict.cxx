@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:53:15 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/20 15:24:05 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ int TestDict(int , char *[])
 
    std::cout<<"DictSet content :\n";
 
-   gdcm::Dict *d = dicts->GetFirstEntry();
+   gdcm::Dict *d = dicts->GetFirstDict();
    if (!d)
    {
       std::cout << "Dictset is empty" << std::endl;
@@ -63,7 +63,7 @@ int TestDict(int , char *[])
    {
       std::cout << "------------- a Dict is found : ----------" << std::endl;
       d->Print();
-      d = dicts->GetNextEntry();
+      d = dicts->GetNextDict();
    }
 
    // Print the Dict (public)

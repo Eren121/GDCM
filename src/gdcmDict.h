@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:58:18 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/10/20 15:24:08 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ namespace gdcm
 
 //-----------------------------------------------------------------------------
 typedef std::string DictKey;
-typedef std::map<TagKey, DictEntry>  TagKeyHT;
+typedef std::map<TagKey, DictEntry *>  TagKeyHT;
 
 //-----------------------------------------------------------------------------
 /**
@@ -57,8 +57,8 @@ public:
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
 // Entries
-   bool AddEntry(DictEntry const &newEntry);
-   bool ReplaceEntry(DictEntry const &newEntry);
+   bool AddEntry(DictEntry *newEntry);
+   bool ReplaceEntry(DictEntry *newEntry);
    bool RemoveEntry (TagKey const &key);
    bool RemoveEntry (uint16_t group, uint16_t elem);
    void ClearEntry();

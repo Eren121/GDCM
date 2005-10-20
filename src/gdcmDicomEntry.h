@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/20 15:24:08 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #define GDCMDICOMENTRY_H
 
 #include "gdcmCommon.h"
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include "gdcmVRKey.h"
 #include "gdcmTagKey.h"
 
@@ -38,13 +38,12 @@ namespace gdcm
  *  - the VM (Value Multplicity)
  *  - the corresponding name in english
  */
-class GDCM_EXPORT DicomEntry : public Base
+class GDCM_EXPORT DicomEntry : public RefCounter
 {
 public:
-   DicomEntry(const uint16_t &group,const uint16_t &elt,
-              const VRKey &vr = GDCM_VRUNKNOWN);
-   ~DicomEntry();
+   gdcmTypeMacro(DicomEntry);
 
+public:
 // Print
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
@@ -70,6 +69,11 @@ public:
 
 // Key creation
    static TagKey TranslateToKey(uint16_t group, uint16_t elem);
+
+protected:
+   DicomEntry(const uint16_t &group,const uint16_t &elt,
+              const VRKey &vr = GDCM_VRUNKNOWN);
+   ~DicomEntry();
 
 private:
    /// Dicom \ref TagKey. Contains DicomGroup number and DicomElement number

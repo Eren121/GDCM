@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:27 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/10/20 15:24:08 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,7 +126,7 @@ bool Dict::RemoveDict(std::string const &filename)
         // from >> std::ws;  //remove white space
          std::getline(from, name);
  
-        RemoveEntry(DictEntry::TranslateToKey(group, elem));
+         RemoveEntry(group,elem);
       }
       from.close();
       return true;
@@ -138,9 +138,9 @@ bool Dict::RemoveDict(std::string const &filename)
  * @param   newEntry entry to add 
  * @return  false if Dicom Element already exists
  */
-bool Dict::AddEntry(DictEntry const &newEntry) 
+bool Dict::AddEntry(DictEntry *newEntry) 
 {
-   const TagKey &key = newEntry.GetKey();
+   const TagKey &key = newEntry->GetKey();
 
    if ( KeyHt.count(key) == 1 )
    {
@@ -149,7 +149,8 @@ bool Dict::AddEntry(DictEntry const &newEntry)
    } 
    else 
    {
-      KeyHt.insert( TagKeyHT::value_type(newEntry.GetKey(), newEntry));
+      newEntry->Register();
+      KeyHt.insert( TagKeyHT::value_type(key, newEntry));
       return true;
    }
 }
@@ -159,12 +160,14 @@ bool Dict::AddEntry(DictEntry const &newEntry)
  * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool Dict::ReplaceEntry(DictEntry const &newEntry)
+bool Dict::ReplaceEntry(DictEntry *newEntry)
 {
-   if ( RemoveEntry(newEntry.GetKey()) )
+   const TagKey &key = newEntry->GetKey();
+   if ( RemoveEntry(key) )
    {
-       KeyHt.insert( TagKeyHT::value_type(newEntry.GetKey(), newEntry));
-       return true;
+      newEntry->Register();
+      KeyHt.insert( TagKeyHT::value_type(key, newEntry));
+      return true;
    } 
    return false;
 }
@@ -180,6 +183,7 @@ bool Dict::RemoveEntry(TagKey const &key)
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if ( it != KeyHt.end() ) 
    {
+      it->second->Unregister();
       KeyHt.erase(key);
 
       return true;
@@ -210,6 +214,9 @@ void Dict::ClearEntry()
 {
    // we assume all the pointed DictEntries are already cleaned-up
    // when we clean KeyHt.
+   TagKeyHT::const_iterator it;
+   for(it = KeyHt.begin();it!=KeyHt.end();++it)
+      it->second->Unregister();
    KeyHt.clear();
 }
 
@@ -225,7 +232,7 @@ DictEntry *Dict::GetEntry(TagKey const &key)
    {
       return 0;
    }
-   return &(it->second);
+   return it->second;
 }
 
 DictEntry *Dict::GetEntry(uint16_t group, uint16_t elem)
@@ -236,7 +243,7 @@ DictEntry *Dict::GetEntry(uint16_t group, uint16_t elem)
    {
       return 0;
    }
-   return &(it->second);
+   return it->second;
 }
 
 /**
@@ -247,7 +254,7 @@ DictEntry *Dict::GetFirstEntry()
 {
    ItKeyHt = KeyHt.begin();
    if ( ItKeyHt != KeyHt.end() )
-      return &(ItKeyHt->second);
+      return ItKeyHt->second;
    return NULL;
 }
 
@@ -262,7 +269,7 @@ DictEntry *Dict::GetNextEntry()
 
    ++ItKeyHt;
    if (ItKeyHt != KeyHt.end())
-      return &(ItKeyHt->second);
+      return ItKeyHt->second;
    return NULL;
 }
 
@@ -283,6 +290,7 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
    TagName vm;
    TagName name;
 
+   DictEntry *newEntry;
    while (!from.eof() && from)
    {
       from >> std::hex;
@@ -293,8 +301,9 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
       from >> std::ws;  //remove white space
       std::getline(from, name);
  
-      DictEntry newEntry(group, elem, vr, vm, name);
+      newEntry = DictEntry::New(group, elem, vr, vm, name);
       AddEntry(newEntry);
+      newEntry->Delete();
    }
    from.close();
 }
@@ -314,12 +323,11 @@ void Dict::Print(std::ostream &os, std::string const & )
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
    {
       s << "Entry : ";
-      s << "(" << std::hex << std::setw(4) << tag->second.GetGroup() << ',';
-      s << std::hex << std::setw(4) << tag->second.GetElement() << ") = "
+      s << "(" << tag->second->GetKey() << ") = "
         << std::dec;
-      s << tag->second.GetVR() << ", ";
-      s << tag->second.GetVM() << ", ";
-      s << tag->second.GetName() << "."  << std::endl;
+      s << tag->second->GetVR() << ", ";
+      s << tag->second->GetVM() << ", ";
+      s << tag->second->GetName() << "."  << std::endl;
    }
    os << s.str();
 }

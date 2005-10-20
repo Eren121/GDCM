@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:17:04 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/10/20 15:24:08 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,6 @@ namespace gdcm
  * @param   vm         Value Multiplicity 
  * @param   name       description of the element
 */
-
 DictEntry::DictEntry(uint16_t group, uint16_t elem,
                      VRKey const &vr, 
                      TagName const &vm,
@@ -49,6 +48,22 @@ DictEntry::DictEntry(uint16_t group, uint16_t elem,
 
 //-----------------------------------------------------------------------------
 // Public
+/**
+ * \brief Class allocator
+ * @param   group      DICOM-Group Number
+ * @param   elem       DICOM-Element Number
+ * @param   vr         Value Representation
+ * @param   vm         Value Multiplicity 
+ * @param   name       description of the element
+*/
+DictEntry *DictEntry::New(uint16_t group, uint16_t elem,
+                          VRKey const &vr,
+                          TagName const &vm,
+                          TagName const &name)
+{
+   return new DictEntry(group,elem,vr,vm,name);
+}
+
 /**
  * \brief       If-and only if-the V(alue) R(epresentation)
  * \            is unset then overwrite it.

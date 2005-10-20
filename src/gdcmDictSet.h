@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/10/20 15:24:09 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,9 +27,8 @@
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
 typedef std::map<DictKey, Dict*> DictSetHT;
-typedef std::string ExtendedTagKey;
-typedef std::map<ExtendedTagKey, DictEntry>  ExtendedTagKeyHT;
 
 //-----------------------------------------------------------------------------
 /**
@@ -63,13 +62,8 @@ public:
    // \ warning : not end user intended
    // Dict *GetVirtualDict() { return &VirtualEntries; }
 
-   DictEntry *NewVirtualDictEntry(uint16_t group, uint16_t elem,
-                                  const VRKey &vr     = GDCM_VRUNKNOWN,
-                                  const TagName &vm   = GDCM_UNKNOWN,
-                                  const TagName &name = GDCM_UNKNOWN);
-
-   Dict *GetFirstEntry();
-   Dict *GetNextEntry();
+   Dict *GetFirstDict();
+   Dict *GetNextDict();
 
    static std::string BuildDictPath();
 
@@ -83,9 +77,6 @@ private:
 
    /// Directory path to dictionaries
    std::string DictPath;
-
-   /// H table for the on the fly created DictEntries  
-   ExtendedTagKeyHT VirtualEntries; 
 };
 } // end namespace gdcm
 

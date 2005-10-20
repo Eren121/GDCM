@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDefaultDicts.cxx.in,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 12:01:50 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/10/20 15:24:08 $
+  Version:   $Revision: 1.11 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,12 +44,14 @@ static DICT_ENTRY datadir[] = {
 
 void FillDefaultDataDict(Dict *d)
 {
+   DictEntry *e;
    unsigned int i = 0;
    DICT_ENTRY n = datadir[i];
    while( n.name != 0 )
    {
-      const DictEntry e( n.group, n.element, n.vr, n.vm, n.name);
+      e = DictEntry::New( n.group, n.element, n.vr, n.vm, n.name);
       d->AddEntry( e );
+      e->Delete();
       n = datadir[++i];
    }
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:58:15 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/20 15:24:05 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ int TestDataEntry(int , char *[])
    gdcm::DataEntry *entry;
 
    //------------------------------------------------------------------
-   dict = new gdcm::DictEntry(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0000,0x0000);
    entry = new gdcm::DataEntry(dict);
    dict->SetVR("US");
 
@@ -56,7 +56,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: 1" << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -71,7 +71,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: 2" << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -86,17 +86,17 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: 0" << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
 
    std::cout << std::endl;
-   delete dict;
+   dict->Delete();
    delete entry;
 
    //------------------------------------------------------------------
-   dict = new gdcm::DictEntry(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0000,0x0000);
    entry = new gdcm::DataEntry(dict);
    dict->SetVR("LT");
 
@@ -111,7 +111,7 @@ int TestDataEntry(int , char *[])
                 << "   Size of string is incorrect" << std::endl
                 << "   Found: " << entry->GetLength() 
                 << " - Must be: " << strlen(data) + strlen(data)%2 << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -121,7 +121,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -129,7 +129,7 @@ int TestDataEntry(int , char *[])
    {
       std::cout << "   Failed" << std::endl
                 << "   Content of bin area is incorrect" << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -139,7 +139,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -151,18 +151,18 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found " << entry->GetValue(i)
                    << " - Must be " << svalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
    }
 
    std::cout << std::endl;
-   delete dict;
+   dict->Delete();
    delete entry;
 
    //------------------------------------------------------------------
-   dict = new gdcm::DictEntry(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0000,0x0000);
    entry = new gdcm::DataEntry(dict);
    dict->SetVR("US");
 
@@ -178,7 +178,7 @@ int TestDataEntry(int , char *[])
                 << "   BinArea length is incorrect" << std::endl
                 << "   Found: " << entry->GetLength()
                 << " - Must be: " << nbvalue*sizeof(uint16_t) << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -188,7 +188,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -198,7 +198,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount()
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -210,7 +210,7 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << svalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
@@ -228,7 +228,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -238,7 +238,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -250,18 +250,18 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << svalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
    }
 
    std::cout << std::endl;
-   delete dict;
+   dict->Delete();
    delete entry;
 
    //------------------------------------------------------------------
-   dict = new gdcm::DictEntry(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0000,0x0000);
    entry = new gdcm::DataEntry(dict);
    dict->SetVR("UL");
 
@@ -277,7 +277,7 @@ int TestDataEntry(int , char *[])
                 << "   BinArea length is incorrect" << std::endl
                 << "   Found: " << entry->GetLength()
                 << " - Must be: " << nbvalue*sizeof(uint32_t) << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -287,7 +287,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -297,7 +297,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -309,7 +309,7 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << lvalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
@@ -327,7 +327,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str() 
                 << " - Must be: " << data << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -337,7 +337,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -349,18 +349,18 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << lvalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
    }
 
    std::cout << std::endl;
-   delete dict;
+   dict->Delete();
    delete entry;
 
    //------------------------------------------------------------------
-   dict = new gdcm::DictEntry(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0000,0x0000);
    entry = new gdcm::DataEntry(dict);
    dict->SetVR("FL");
 
@@ -376,7 +376,7 @@ int TestDataEntry(int , char *[])
                 << "   BinArea length is incorrect" << std::endl
                 << "   Found: " << entry->GetLength() 
                 << " - Must be: " << nbvalue*sizeof(float) << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -386,7 +386,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -396,7 +396,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -408,7 +408,7 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << fvalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
@@ -426,7 +426,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -436,7 +436,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -448,18 +448,18 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << fvalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
    }
 
    std::cout << std::endl;
-   delete dict;
+   dict->Delete();
    delete entry;
 
    //------------------------------------------------------------------
-   dict = new gdcm::DictEntry(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0000,0x0000);
    entry = new gdcm::DataEntry(dict);
    dict->SetVR("FD");
 
@@ -475,7 +475,7 @@ int TestDataEntry(int , char *[])
                 << "   BinArea length is incorrect" << std::endl
                 << "   Found: " << entry->GetLength()
                 << " - Must be: " << nbvalue*sizeof(double) << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -485,7 +485,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -495,7 +495,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -507,7 +507,7 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << dvalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
@@ -525,7 +525,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of string is incorrect" << std::endl
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -535,7 +535,7 @@ int TestDataEntry(int , char *[])
                 << "   Number of content values is incorrect" << std::endl
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
-      delete dict;
+      dict->Delete();
       delete entry;
       return(1);
    }
@@ -547,14 +547,14 @@ int TestDataEntry(int , char *[])
                    << "   Content of entry's values is incorrect : id " << i << std::endl
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << dvalue[i] << std::endl;
-         delete dict;
+         dict->Delete();
          delete entry;
          return(1);
       }
    }
 
    std::cout << std::endl;
-   delete dict;
+   dict->Delete();
    delete entry;
 
    //------------------------------------------------------------------

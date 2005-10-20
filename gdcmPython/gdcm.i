@@ -5,6 +5,7 @@
 
 #include "gdcmCommon.h"
 #include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include "gdcmTagKey.h"
 #include "gdcmVRKey.h"
 #include "gdcmDict.h"
@@ -242,6 +243,7 @@ typedef unsigned long long uint64_t;
 // Warning: Order matters !
 %include "gdcmCommon.h"
 %include "gdcmBase.h"
+%include "gdcmRefCounter.h"
 %include "gdcmTagKey.h"
 %include "gdcmVRKey.h"
 %include "gdcmDicomEntry.h"

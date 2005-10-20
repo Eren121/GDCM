@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/10/20 15:24:09 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -448,9 +448,9 @@ DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
                                      VRKey const &vr) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, vr);
-   gdcmAssertMacro(dictEntry);
 
    DataEntry *newEntry = new DataEntry(dictEntry);
+   dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry) 
    {
       gdcmWarningMacro( "Failed to allocate DataEntry");
@@ -469,31 +469,15 @@ DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
 SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
-   gdcmAssertMacro(dictEntry);
 
    SeqEntry *newEntry = new SeqEntry( dictEntry );
+   dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry)
    {
       gdcmWarningMacro( "Failed to allocate SeqEntry");
       return 0;
    }
    return newEntry;
-}
-
-/**
- * \brief   Request a new virtual dict entry to the dict set
- * @param   group Group   number of the underlying DictEntry
- * @param   elem  Element number of the underlying DictEntry
- * @param   vr    V(alue) R(epresentation) of the underlying DictEntry
- * @param   vm    V(alue) M(ultiplicity)   of the underlying DictEntry
- * @param   name   english name
- */
-DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group, uint16_t elem,
-                                             VRKey const &vr,
-                                             TagName const &vm,
-                                             TagName const &name )
-{
-   return Global::GetDicts()->NewVirtualDictEntry(group,elem,vr,vm,name);
 }
 
 //-----------------------------------------------------------------------------
@@ -506,6 +490,7 @@ DictEntry* DocEntrySet::NewVirtualDictEntry( uint16_t group, uint16_t elem,
  * @param   group  Group number of the searched DictEntry
  * @param   elem Element number of the searched DictEntry
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ * \remarks The returned DictEntry is registered when existing
  */
 DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem) 
 {
@@ -517,7 +502,9 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
    }
    else
    {
-      found = pubDict->GetEntry(group, elem);  
+      found = pubDict->GetEntry(group, elem);
+      if( found )
+         found->Register();
    }
    return found;
 }
@@ -530,6 +517,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
  * @param   elem element number of the searched DictEntry
  * @param   vr V(alue) R(epresentation) to use, if necessary 
  * @return  Corresponding DictEntry when it exists, NULL otherwise.
+ * \remarks The returned DictEntry is registered
  */
 DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
                                      VRKey const &vr)
@@ -538,7 +526,8 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    DictEntry *goodEntry = dictEntry;
    VRKey goodVR = vr;
 
-   if (elem == 0x0000) goodVR="UL";
+   if (elem == 0x0000) 
+      goodVR="UL";
 
    if ( goodEntry )
    {
@@ -554,13 +543,17 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    {
       if (dictEntry)
       {
-         goodEntry = NewVirtualDictEntry(group, elem, goodVR, "FIXME", 
-                                         dictEntry->GetName() );
+         goodEntry = DictEntry::New(group, elem, goodVR, "FIXME", 
+                                    dictEntry->GetName() );
       }
       else
       {
-         goodEntry = NewVirtualDictEntry(group, elem, goodVR);
+         goodEntry = DictEntry::New(group, elem, goodVR);
       }
+   }
+   else
+   {
+      goodEntry->Register();
    }
    return goodEntry;
 }

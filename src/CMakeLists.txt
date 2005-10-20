@@ -58,6 +58,7 @@ SET(libgdcm_la_SOURCES
    gdcmOrientation.cxx
    gdcmPixelReadConvert.cxx
    gdcmPixelWriteConvert.cxx
+   gdcmRefCounter.cxx
    gdcmRLEFrame.cxx
    gdcmRLEFramesInfo.cxx
    gdcmSeqEntry.cxx
