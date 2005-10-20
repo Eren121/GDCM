@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:55 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/10/20 14:46:29 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -199,11 +199,11 @@ int main(int argc, char *argv[])
    // Just to see
 
    int nbFiles;
-   // For all the Coherent Files lists of the gdcm::Serie
-   gdcm::FileList *l = sh->GetFirstCoherentFileList();
+   // For all the 'Single Serie UID' FileSets of the gdcm::Serie
+   gdcm::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
    if (l == 0 )
    {
-      std::cout << "Oops! No CoherentFileList found ?!?" << std::endl;
+      std::cout << "Oops! No 'Single Serie UID' FileSet found ?!?" << std::endl;
       return 0;
    }
 
@@ -223,9 +223,10 @@ int main(int argc, char *argv[])
       }
       else
       {
-         std::cout << "Oops! Empty CoherentFileList found ?!?" << std::endl;
+         std::cout << "Oops! Empty 'Single Serie UID' FileSet found ?!?"
+                   << std::endl;
       }
-      l = sh->GetNextCoherentFileList();
+      l = sh->GetNextSingleSerieUIDFileSet();
    }
 
    if (check)
