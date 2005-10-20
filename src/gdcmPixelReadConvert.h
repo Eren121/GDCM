@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/30 18:27:00 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/10/20 08:29:50 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,6 +122,7 @@ private:
    int SwapCode;
 
    bool IsRaw;
+   bool IsPrivateGETransferSyntax;
    bool IsJPEG2000;
    bool IsJPEGLS;
    bool IsJPEGLossless;
