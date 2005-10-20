@@ -14,6 +14,7 @@ INCLUDE_DIRECTORIES(
 
 # We need to pass that to swig to be sure all modules are generated in the proper dir
 SET(CMAKE_SWIG_FLAGS "-outdir \"${GDCM_BINARY_DIR}/gdcmPython\"")
+#SET(CMAKE_SWIG_OUTDIR "${GDCM_BINARY_DIR}/gdcmPython")
 # Looks like a bug to me in cmake 2.0.x:
 SEPARATE_ARGUMENTS(CMAKE_SWIG_FLAGS)
 
