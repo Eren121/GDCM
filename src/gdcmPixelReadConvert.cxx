@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 07:38:08 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2005/10/20 09:17:54 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,7 +124,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
      
    IsPrivateGETransferSyntax = 
-                       ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
+                ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
 
    IsMPEG          = Global::GetTS()->IsMPEG(ts);
    IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
@@ -177,7 +177,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         gdcmWarningMacro( "Unable to read Red Palette Color Lookup Table data" );
+         gdcmWarningMacro("Unable to read Red Palette Color Lookup Table data");
       }
 
       // //// Green round:
@@ -185,7 +185,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         gdcmWarningMacro( "Unable to read Green Palette Color Lookup Table data" );
+         gdcmWarningMacro("Unable to read Green Palette Color Lookup Table data");
       }
 
       // //// Blue round:
@@ -193,7 +193,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         gdcmWarningMacro( "Unable to read Blue Palette Color Lookup Table data" );
+         gdcmWarningMacro("Unable to read Blue Palette Color Lookup Table data");
       }
    }
    FileInternal = file;   
@@ -241,7 +241,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       if ( PixelDataLength != RawSize )
       {
          gdcmWarningMacro( "Mismatch between PixelReadConvert : "
-                            << PixelDataLength << " and RawSize : " << RawSize );
+                          << PixelDataLength << " and RawSize : " << RawSize );
       }
       if ( PixelDataLength > RawSize )
       {
@@ -260,7 +260,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    } 
    else if ( IsRLELossless )
    {
-      if ( ! RLEInfo->DecompressRLEFile( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
+      if ( ! RLEInfo->DecompressRLEFile
+                               ( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
       {
          gdcmWarningMacro( "RLE decompressor failed." );
          return false;
@@ -771,7 +772,7 @@ void PixelReadConvert::ConvertSwapZone()
    // then the header is in little endian format and the pixel data is in 
    // big endian format.  When reading the header, GDCM has already established
    // a byte swapping code suitable for this machine to read the
-   // header. In TS::ImplicitVRLittleEndianDLXGE, this code will need
+   // header. In TS::ImplicitVRBigEndianPrivateGE, this code will need
    // to be switched in order to read the pixel data.  This must be
    // done REGARDLESS of the processor endianess!
    //
