@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 10:43:31 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/10/20 07:38:08 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,6 +122,9 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
+     
+   IsPrivateGETransferSyntax = 
+                       ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
 
    IsMPEG          = Global::GetTS()->IsMPEG(ts);
    IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
@@ -743,6 +746,7 @@ void PixelReadConvert::BuildLUTRGBA()
          a16 += 4;
       }
 /* Just to 'see' the LUT, at debug time
+// Don't remove this commented out code.
 
       a16=(uint16_t*)LutRGBA;
       for (int j=0;j<65536;j++)
@@ -761,11 +765,53 @@ void PixelReadConvert::BuildLUTRGBA()
 void PixelReadConvert::ConvertSwapZone()
 {
    unsigned int i;
-
+   uint16_t localSwapCode = SwapCode;
+   
+   // If this file is 'ImplicitVR BigEndian PrivateGE Transfer Syntax', 
+   // then the header is in little endian format and the pixel data is in 
+   // big endian format.  When reading the header, GDCM has already established
+   // a byte swapping code suitable for this machine to read the
+   // header. In TS::ImplicitVRLittleEndianDLXGE, this code will need
+   // to be switched in order to read the pixel data.  This must be
+   // done REGARDLESS of the processor endianess!
+   //
+   // Example:  Assume we are on a little endian machine.  When
+   // GDCM reads the header, the header will match the machine
+   // endianess and the swap code will be established as a no-op.
+   // When GDCM reaches the pixel data, it will need to switch the
+   // swap code to do big endian to little endian conversion.
+   //
+   // Now, assume we are on a big endian machine.  When GDCM reads the
+   // header, the header will be recognized as a different endianess
+   // than the machine endianess, and a swap code will be established
+   // to convert from little endian to big endian.  When GDCM readers
+   // the pixel data, the pixel data endianess will now match the
+   // machine endianess.  But we currently have a swap code that
+   // converts from little endian to big endian.  In this case, we
+   // need to switch the swap code to a no-op.
+   //
+   // Therefore, in either case, if the file is in
+   // 'ImplicitVR BigEndian PrivateGE Transfer Syntax', then GDCM needs to switch
+   // the byte swapping code when entering the pixel data.
+    
+   if ( IsPrivateGETransferSyntax )
+   {
+      // PrivateGETransferSyntax only exists for 'true' Dicom images
+      // we assume there is no 'exotic' 32 bits endianess!
+      switch (localSwapCode)
+      {
+         case 1234:
+            localSwapCode = 4321;
+            break;
+         case 4321:
+            localSwapCode = 1234;
+            break;
+      }  
+   }
    if ( BitsAllocated == 16 )
    {
       uint16_t *im16 = (uint16_t*)Raw;
-      switch( SwapCode )
+      switch( localSwapCode )
       {
          case 1234:
             break;
@@ -787,7 +833,7 @@ void PixelReadConvert::ConvertSwapZone()
       uint16_t high;
       uint16_t low;
       uint32_t *im32 = (uint32_t*)Raw;
-      switch ( SwapCode )
+      switch ( localSwapCode )
       {
          case 1234:
             break;
