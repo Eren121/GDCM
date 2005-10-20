@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 09:23:24 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/20 13:58:18 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <iostream>
 #include <iomanip> // for std::ios::left, ...
+#include <stdio.h> // for ugly sprintf
 
 namespace gdcm 
 {
