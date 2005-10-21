@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 11:50:04 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/21 12:12:55 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ namespace gdcm
  *    i.e. the Group number
  *         the Element number
  *  - the VR (Value Representation)
- *  - the VM (Value Multplicity)
+ *  - the VM (Value Multiplicity)
  *  - the corresponding name in english
  */
 class GDCM_EXPORT DicomEntry : public RefCounter
