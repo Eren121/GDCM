@@ -793,7 +793,7 @@
 0020 0022 IS 1 Overlay Number
 0020 0024 IS 1 Curve Number
 0020 0026 IS 1 Lookup Table Number
-0020 0030 DS 1 Image Position (RET)
+0020 0030 DS 3 Image Position (RET)
 0020 0032 DS 3 Image Position (Patient)
 0020 0035 DS 6 Image Orientation (RET)
 0020 0037 DS 1 Image Orientation (Patient)
