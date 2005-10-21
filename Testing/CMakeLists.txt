@@ -12,7 +12,7 @@ SET(TEST_SOURCES
   TestBug.cxx
   TestHash.cxx
   TestTS.cxx
-  TestVR.cxx
+  #TestVR.cxx
   TestDictGroupName.cxx
   TestDict.cxx
   TestDataEntry.cxx
