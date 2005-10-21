@@ -17,8 +17,6 @@ SET(EXAMPLE_SOURCES
   exExtractTag
   exSerieHelper
   exExtractDicomTags
-  exPrintTime
-  exInline
                 
 #the following are utilities
   PrintDicomDir
