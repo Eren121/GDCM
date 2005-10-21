@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/22 15:38:04 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/10/21 08:35:13 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,12 +30,12 @@ int TestUtil(int , char *[])
    // are implanted in memory
    uint16_t u16 = 0x0102;
    uint32_t u32 = 0x01020304;
-   float flt= 1.0;
+   float flt;
    double dbl=1.0;
 
    std::cout << "This is gdcm version: " << gdcm::Util::GetVersion() << std::endl;
 
-   std::cout << "---------- uint16 : " << std::dec <<u16 << " = 0x" 
+   std::cout << "---------- uint16 : " << std::dec << u16 << " = 0x" 
              << std::hex << u16 << std::endl;
    for (i=0;i<sizeof(uint16_t);i++) 
    {
@@ -51,40 +51,44 @@ int TestUtil(int , char *[])
       std::cout << std::hex <<"[" <<(uint32_t)((uint8_t*)&u32)[i] << "] " ;
    }
    std::cout << std::endl;
-
-   std::cout << "---------- float : " <<flt << " = 0x" 
-             << std::hex << flt << std::endl;
-   for (i=0;i<sizeof(float);i++) 
+   std::cout << std::endl;
+   std::cout << "------------------- float -----------------" << std::endl;
+   std::cout << std::endl;
+   flt = -5;
+   int k;   
+   for (k=0; k<11;k++)
    {
-      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&flt)[i] << "] " ;
+      std::cout << "--- " << flt 
+             // << " = 0x" 
+             // << std::hex << (float *)&flt << std::endl;   
+             // << std::hex << (int)(float *)&flt << std::endl;
+             // << std::hex << flt 
+                << std::endl;
+      for (i=0;i<sizeof(float);i++) 
+      {
+         std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&flt)[i] << "] " ;
+      }
+      flt += 1.0;
+      std::cout << std::endl;
    }
+
+   std::cout << std::endl;
+   std::cout << std::endl;
+   std::cout << "--------------------- double ----------------" << std::endl;
    std::cout << std::endl;
 
-   flt= 2.0;
-   std::cout << "---------- float : " <<flt << " = 0x" 
-             << std::hex << flt << std::endl;
-   for (i=0;i<sizeof(float);i++) 
+   dbl = -5.0;
+   for (k=0; k<11; k++)
    {
-      std::cout << std::hex <<"[" <<(uint16_t) ((uint8_t*)&flt)[i] << "] " ;
+      std::cout << "---  " << std::dec << dbl
+                << std::endl;
+      for (i=0;i<sizeof(double);i++) 
+      {
+         std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&dbl)[i] << "] " ;
+      }
+      std::cout << std::endl;
+      dbl += 1.0;
    }
-   std::cout << std::endl;
-
-   std::cout << "---------- double : " << std::dec <<dbl << " = 0x" 
-             << std::hex << dbl << std::endl;
-   for (i=0;i<sizeof(double);i++) 
-   {
-      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&dbl)[i] << "] " ;
-   }
-   std::cout << std::endl;
-
-   dbl=2.0;
-   std::cout << "---------- double : " << std::dec <<dbl << " = 0x" 
-             << std::hex << dbl << std::endl;
-   for (i=0;i<sizeof(double);i++) 
-   {
-      std::cout << std::hex <<"[" <<(uint16_t)((uint8_t*)&dbl)[i] << "] " ;
-   }
-   std::cout << std::endl;
 
    // CreateCleanString
    std::string x = "a#@-bc\tdef";
