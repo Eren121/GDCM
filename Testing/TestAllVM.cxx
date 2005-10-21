@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 14:51:36 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/21 15:01:28 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,18 +33,24 @@ int TestAllVM(int, char *[])
       filename += gdcmDataImages[i];
 
       gdcm::File file;
-      file.SetLoadMode( gdcm::LD_ALL );
+      file.SetLoadMode( gdcm::LD_NOSHADOW );
       file.SetFileName( filename );
       if( !file.Load() ) //would be really bad...
         return 1;
 
       gdcm::DocEntry *d = file.GetFirstEntry();
+      std::cerr << "Testing file : " << filename << std::endl;
       while(d)
       {
          if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
          {
-           if(! de->IsValueCountValid() )
-             std::cerr << "Filename:" << filename << std::endl;
+           if( !de->IsValueCountValid() )
+             {
+             std::cerr << "Element: " << de->GetKey() <<
+               " (" << de->GetName() << ") " <<
+               "Contains a wrong VM: " << de->GetValueCount() 
+               << " should be: " << de->GetVM() << std::endl;;
+             }
          }
          else
          {
@@ -52,6 +58,7 @@ int TestAllVM(int, char *[])
          }
 
          d = file.GetNextEntry();
+         std::cerr << std::endl; // skip a line after each file
       }
 
       i++;
