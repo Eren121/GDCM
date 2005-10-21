@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 07:38:58 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/10/21 08:49:36 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -327,7 +327,7 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
+/* *
  * \brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
  *          Warning : 'coherent' means here they have the same Serie UID
  * @return  The first FileList if found, otherwhise NULL
@@ -340,7 +340,7 @@ FileList *SerieHelper::GetFirstCoherentFileList()
    return NULL;
 }
 
-/**
+/* *
  * \brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
  *          Warning : 'coherent' means here they have the same Serie UID
  * \note : meaningfull only if GetFirstCoherentFileList() already called 
@@ -356,7 +356,7 @@ FileList *SerieHelper::GetNextCoherentFileList()
    return NULL;
 }
 
-/**
+/* *
  * \brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
   *          Warning : 'coherent' means here they have the same Serie UID
  * @param SerieUID SerieUID
@@ -541,7 +541,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
  */
 
 XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet, 
-                                               uint16_t group, uint16_t element)
+                                               uint16_t group, uint16_t elem)
 {
    XCoherentFileSetmap CoherentFileSet;
 
@@ -561,7 +561,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       // 0020,0032 : Image Position Patient
       // 0020,0030 : Image Position (RET)
 
-      strTagValue = (*it)->GetEntryString(group,element);
+      strTagValue = (*it)->GetEntryString(group,elem);
       
       if ( CoherentFileSet.count(strTagValue) == 0 )
       {
