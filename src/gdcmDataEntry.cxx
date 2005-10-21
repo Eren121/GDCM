@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 14:09:41 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/21 14:15:41 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -222,7 +222,7 @@ double DataEntry::GetValue(const uint32_t &id) const
 bool DataEntry::IsValueCountValid() const
 {
   uint32_t vm;
-  ostringstream os;
+  std::istringstream os;
   os.str( GetVM() );
   os >> vm;
   return vm == GetValueCount();
