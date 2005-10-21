@@ -49,12 +49,9 @@ val=None
 print "##############################################################"
 val=file.GetFirstEntry()
 while(val):
-   if(isinstance(val,gdcm.ValEntryPtr)):
-      print "Val %04d|%04d [%s] : %s" % (val.GetGroup(),val.GetElement(),
-                                         val.GetName(),val.GetValue())
-   else:
-      print "Bin %04d|%04d [%s] : %s" % (val.GetGroup(),val.GetElement(),
-                                         val.GetName(),val.GetValue())
+   if(isinstance(val,gdcm.DataEntryPtr)):
+      print "Data %s [%s] [%s] : %s" % (val.GetKey().str(),val.GetVR().str(),
+                                        val.GetName(),val.GetString())
    val=file.GetNextEntry()
 val=None
 

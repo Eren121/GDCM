@@ -34,7 +34,6 @@ print "dict content :"
 entry=pubDict.GetFirstEntry()
 while(entry):
    print "%4x|%4x [%s] - M%s : %s (%s)" %\
-         (entry.GetGroup(),entry.GetElement(),entry.GetVR(),entry.GetVM(),
-          entry.GetName(),entry.GetKey())
+         (entry.GetGroup(),entry.GetElement(),entry.GetVR().str(),entry.GetVM(),          entry.GetName(),entry.GetKey().str())
    entry=pubDict.GetNextEntry()
 
