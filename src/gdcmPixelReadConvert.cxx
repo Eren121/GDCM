@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 09:17:54 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/10/21 12:11:06 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -795,7 +795,13 @@ void PixelReadConvert::ConvertSwapZone()
    // 'ImplicitVR BigEndian PrivateGE Transfer Syntax', then GDCM needs to switch
    // the byte swapping code when entering the pixel data.
     
-   if ( IsPrivateGETransferSyntax )
+
+// -->
+// --> Can't understand *why* TestWriteSimple fails sice this commit/
+// --> commented out, to be sure the troubles started from here.
+// --> JP
+ 
+/*   if ( IsPrivateGETransferSyntax )
    {
       // PrivateGETransferSyntax only exists for 'true' Dicom images
       // we assume there is no 'exotic' 32 bits endianess!
@@ -809,6 +815,7 @@ void PixelReadConvert::ConvertSwapZone()
             break;
       }  
    }
+*/
    if ( BitsAllocated == 16 )
    {
       uint16_t *im16 = (uint16_t*)Raw;
