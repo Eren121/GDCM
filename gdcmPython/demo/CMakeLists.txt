@@ -53,6 +53,12 @@ CONFIGURE_FILE(
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDict.py
 )
 
+INSTALL_FILES(/lib/gdcm/gdcmPython/demo FILES 
+   "${GDCM_BINARY_DIR}/gdcmPython/demo/PrintFile.py"
+   "${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDicomDir.py"
+   "${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDict.py"
+)
+
 #-----------------------------------------------------------------------------
 # Same but for VTK
 IF(GDCM_VTK)
@@ -74,8 +80,13 @@ IF(GDCM_VTK)
       ${GDCM_SOURCE_DIR}/gdcmPython/demo/vtkGdcmWriter.py.in
       ${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmWriter.py
   )
+
+  INSTALL_FILES(/lib/gdcm/gdcmPython/demo FILES 
+     "${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmReader.py"
+     "${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmWriter.py"
+  )
+
 ENDIF(GDCM_VTK)
 
 #-----------------------------------------------------------------------------
-INSTALL_FILES(/lib/gdcm/gdcmPython/demo "\\.py$")
 

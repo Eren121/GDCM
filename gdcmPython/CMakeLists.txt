@@ -142,9 +142,16 @@ IF(UNIX)
   ) 
   STRING(REGEX REPLACE "/usr" "" PYTHON_DIR ${PYTHON_DIR})
 
-  INSTALL_FILES(${PYTHON_DIR}/site-packages "gdcmPython.pth")
-  INSTALL_FILES(/lib/gdcm/gdcmPython "\\.py$")
-  INSTALL_FILES(/lib/gdcm/gdcmPython FILES "gdcm.py")
+  INSTALL_FILES(${PYTHON_DIR}/site-packages FILES 
+    "${GDCM_BINARY_DIR}/gdcmPython/gdcmPython.pth"
+  )
+  INSTALL_FILES(/lib/gdcm/gdcmPython FILES 
+    "gdcm.py" 
+    "__init__.py" 
+    "gdcmVersion.py" 
+    "core.py" 
+    "vtk.py"
+  )
 ENDIF(UNIX)
 
 #-----------------------------------------------------------------------------

@@ -197,7 +197,7 @@ OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation. Do use if you
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
 
-INSTALL_FILES(/include .h gdcmConfigure.h)
+INSTALL_FILES(/include/gdcm .h gdcmConfigure.h)
 INSTALL_FILES(/lib .cmake GDCMBuildSettings  GDCMConfig  GDCMLibraryDepends)
 
 #-----------------------------------------------------------------------------
