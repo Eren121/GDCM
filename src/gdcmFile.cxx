@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 14:15:42 $
-  Version:   $Revision: 1.287 $
+  Date:      $Date: 2005/10/21 16:00:55 $
+  Version:   $Revision: 1.288 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -484,25 +484,6 @@ float File::GetXSpacing()
       gdcmWarningMacro( "Unfound Imager Pixel Spacing (0018,1164)" );
    }
 
-/*   const std::string &strImagerPixelSpacing = GetEntryString(0x0018,0x1164);
-   if ( strImagerPixelSpacing != GDCM_UNFOUND )
-   {
-      if ( ( nbValues = sscanf( strImagerPixelSpacing.c_str(), 
-            "%f\\%f", &yspacing, &xspacing)) != 2 )
-      {
-         // if no values, xspacing is set to 1.0
-         if ( nbValues == 0 )
-            xspacing = 1.0;
-         // if single value is found, xspacing is defaulted to yspacing
-         if ( nbValues == 1 )
-            xspacing = yspacing;
-
-         if ( xspacing == 0.0 )
-            xspacing = 1.0;
-      }  
-      return xspacing;
-   }*/
-
    entry = GetDataEntry(0x0028,0x0030);
    if( entry )
    {
@@ -523,41 +504,6 @@ float File::GetXSpacing()
       gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
    }
 
-/*   const std::string &strSpacing = GetEntryString(0x0028,0x0030);
-   if ( strSpacing == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
-      return 1.;
-   }
-
-   if ( ( nbValues = sscanf( strSpacing.c_str(), 
-         "%f \\%f ", &yspacing, &xspacing)) != 2 )
-   {
-      // if no values, xspacing is set to 1.0
-      if ( nbValues == 0 )
-         xspacing = 1.0;
-      // if single value is found, xspacing is defaulted to yspacing
-      if ( nbValues == 1 )
-         xspacing = yspacing;
-
-      if ( xspacing == 0.0 )
-         xspacing = 1.0;
-   return xspacing;
-
-   }*/
-
-   // to avoid troubles with David Clunie's-like images (at least one)
-/*   if ( xspacing == 0.0 && yspacing == 0.0)
-      return 1.0;
-
-   if ( xspacing == 0.0)
-   {
-      gdcmWarningMacro("gdcmData/CT-MONO2-8-abdo.dcm-like problem");
-      // seems to be a bug in the header ...
-      nbValues = sscanf( strSpacing.c_str(), "%f \\0\\%f ", &yspacing, &xspacing);
-      gdcmAssertMacro( nbValues == 2 );
-   }
-*/
    return xspacing;
 }
 
@@ -585,20 +531,6 @@ float File::GetYSpacing()
    {
       gdcmWarningMacro( "Unfound Imager Pixel Spacing (0018,1164)" );
    }
-/*   const std::string &strImagerPixelSpacing = GetEntryString(0x0018,0x1164);
-   if ( strImagerPixelSpacing != GDCM_UNFOUND )
-   {
-      nbValues = sscanf( strImagerPixelSpacing.c_str(), "%f", &yspacing);
-   
-   // if sscanf cannot read any float value, it won't affect yspacing
-      if ( nbValues == 0 )
-            yspacing = 1.0;
-
-      if ( yspacing == 0.0 )
-            yspacing = 1.0;
-
-      return yspacing;  
-   }*/
 
    entry = GetDataEntry(0x0028,0x0030);
    if( entry )
@@ -613,22 +545,6 @@ float File::GetYSpacing()
    {
       gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
    }
-/*   std::string strSpacing = GetEntryString(0x0028,0x0030);  
-   if ( strSpacing == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro("Unfound Pixel Spacing (0028,0030)");
-      return 1.;
-    }
-
-   // if sscanf cannot read any float value, it won't affect yspacing
-   nbValues = sscanf( strSpacing.c_str(), "%f", &yspacing);
-
-   // if no values, yspacing is set to 1.0
-   if ( nbValues == 0 )
-      yspacing = 1.0;
-
-   if ( yspacing == 0.0 )
-      yspacing = 1.0;*/
 
    return yspacing;
 } 
@@ -690,31 +606,6 @@ float File::GetZSpacing()
       gdcmWarningMacro("Unfound Slice Thickness (0018,0050)");
 
    return zspacing;
-
-/*   const std::string &strSpacingBSlices = GetEntryString(0x0018,0x0088);
-   if ( strSpacingBSlices == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro("Unfound Spacing Between Slices (0018,0088)");
-      const std::string &strSliceThickness = GetEntryString(0x0018,0x0050);       
-      if ( strSliceThickness == GDCM_UNFOUND )
-      {
-         gdcmWarningMacro("Unfound Slice Thickness (0018,0050)");
-         return 1.0;
-      }
-      else
-      {
-         // if no 'Spacing Between Slices' is found, 
-         // we assume slices join together
-         // (no overlapping, no interslice gap)
-         // if they don't, we're fucked up
-         return (float)atof( strSliceThickness.c_str() );
-      }
-   }
-   
-   float zsp = (float)atof( strSpacingBSlices.c_str());
-   if (zsp == 0.0) // last change not to break further computations ...
-      zsp = 1.0;
-   return zsp;*/
 }
 
 /**
@@ -743,25 +634,6 @@ float File::GetXOrigin()
       return (float)entry->GetValue(0);
    }
    return 0.0f;
-
-/*   std::string strImPos = GetEntryString(0x0020,0x0032);
-   if ( strImPos == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntryString(0x0020,0x0030); // For ACR-NEMA images
-      if ( strImPos == GDCM_UNFOUND )
-      {
-         gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
-         return 0.0;
-      }
-   }
-
-   if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
-   {
-      return 0.0;
-   }
-
-   return xImPos;*/
 }
 
 /**
@@ -790,26 +662,6 @@ float File::GetYOrigin()
       return (float)entry->GetValue(1);
    }
    return 0.0f;
-/*   float xImPos, yImPos, zImPos;
-   std::string strImPos = GetEntryString(0x0020,0x0032);
-
-   if ( strImPos == GDCM_UNFOUND)
-   {
-      gdcmWarningMacro( "Unfound Image Position Patient (0020,0032)");
-      strImPos = GetEntryString(0x0020,0x0030); // For ACR-NEMA images
-      if ( strImPos == GDCM_UNFOUND )
-      {
-         gdcmWarningMacro( "Unfound Image Position (RET) (0020,0030)");
-         return 0.;
-      }  
-   }
-
-   if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3 )
-   {
-      return 0.;
-   }
-
-   return yImPos;*/
 }
 
 /**
@@ -828,26 +680,11 @@ float File::GetZOrigin()
       if( entry->GetValueCount() == 3 )
       {
          gdcmAssertMacro( entry->IsValueCountValid() );
-         return (float)entry->GetValue(0);
+         return (float)entry->GetValue(2);
       }
       gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)");
       return 0.0f;
    }
-/*   float xImPos, yImPos, zImPos; 
-   std::string strImPos = GetEntryString(0x0020,0x0032);
-
-   if ( strImPos != GDCM_UNFOUND )
-   {
-      if ( sscanf( strImPos.c_str(), "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos) != 3)
-      {
-         gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)");
-         return 0.;  // bug in the element 0x0020,0x0032
-      }
-      else
-      {
-         return zImPos;
-      }
-   }*/
 
    entry = GetDataEntry(0x0020,0x0030);
    if( entry )
@@ -855,25 +692,11 @@ float File::GetZOrigin()
       if( entry->GetValueCount() == 3 )
       {
          gdcmAssertMacro( entry->IsValueCountValid() );
-         return (float)entry->GetValue(0);
+         return (float)entry->GetValue(2);
       }
       gdcmWarningMacro( "Wrong Image Position (RET) (0020,0030)");
       return 0.0f;
    }
-/*   strImPos = GetEntryString(0x0020,0x0030); // For ACR-NEMA images
-   if ( strImPos != GDCM_UNFOUND )
-   {
-      if ( sscanf( strImPos.c_str(), 
-          "%f \\%f \\%f ", &xImPos, &yImPos, &zImPos ) != 3 )
-      {
-         gdcmWarningMacro( "Wrong Image Position (RET) (0020,0030)");
-         return 0.;  // bug in the element 0x0020,0x0032
-      }
-      else
-      {
-         return zImPos;
-      }
-   }*/
 
    // for *very* old ACR-NEMA images
    entry = GetDataEntry(0x0020,0x1041);
@@ -882,25 +705,11 @@ float File::GetZOrigin()
       if( entry->GetValueCount() == 1 )
       {
          gdcmAssertMacro( entry->IsValueCountValid() );
-         return (float)entry->GetValue(0);
+         return (float)entry->GetValue(0); // VM=1 !
       }
       gdcmWarningMacro( "Wrong Slice Location (0020,1041)");
       return 0.0f;
    }
-/*   std::string strSliceLocation = GetEntryString(0x0020,0x1041);
-   if ( strSliceLocation != GDCM_UNFOUND )
-   {
-      if ( sscanf( strSliceLocation.c_str(), "%f ", &zImPos) != 1)
-      {
-         gdcmWarningMacro( "Wrong Slice Location (0020,1041)");
-         return 0.;  // bug in the element 0x0020,0x1041
-      }
-      else
-      {
-         return zImPos;
-      }
-   }
-   gdcmWarningMacro( "Unfound Slice Location (0020,1041)");*/
 
    entry = GetDataEntry(0x0020,0x0050);
    if( entry )
@@ -913,21 +722,6 @@ float File::GetZOrigin()
       gdcmWarningMacro( "Wrong Location (0020,0050)");
       return 0.0f;
    }
-/*   std::string strLocation = GetEntryString(0x0020,0x0050);
-   if ( strLocation != GDCM_UNFOUND )
-   {
-      if ( sscanf( strLocation.c_str(), "%f ", &zImPos) != 1 )
-      {
-         gdcmWarningMacro( "Wrong Location (0020,0050)");
-         return 0.;  // bug in the element 0x0020,0x0050
-      }
-      else
-      {
-         return zImPos;
-      }
-   }
-   gdcmWarningMacro( "Unfound Location (0020,0050)");*/
-
    return 0.; // Hopeless
 }
 
@@ -971,8 +765,6 @@ bool File::GetImageOrientationPatient( float iop[6] )
    return true;
 }
 
-
-
 /**
  * \brief   Retrieve the number of Bits Stored (actually used)
  *          (as opposed to number of Bits Allocated)
@@ -988,15 +780,6 @@ int File::GetBitsStored()
       return 0;
    }
    return (int)entry->GetValue(0);
-
-/*   std::string strSize = GetEntryString( 0x0028, 0x0101 );
-   if ( strSize == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro("(0028,0101) is supposed to be mandatory");
-      return 0;  // It's supposed to be mandatory
-                 // the caller will have to check
-   }
-   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -1014,15 +797,6 @@ int File::GetBitsAllocated()
       return 0;
    }
    return (int)entry->GetValue(0);
-
-/*   std::string strSize = GetEntryString(0x0028,0x0100);
-   if ( strSize == GDCM_UNFOUND  )
-   {
-      gdcmWarningMacro( "(0028,0100) is supposed to be mandatory");
-      return 0; // It's supposed to be mandatory
-                // the caller will have to check
-   }
-   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -1040,14 +814,6 @@ int File::GetHighBitPosition()
       return 0;
    }
    return (int)entry->GetValue(0);
-
-/*   std::string strSize = GetEntryString( 0x0028, 0x0102 );
-   if ( strSize == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "(0028,0102) is supposed to be mandatory");
-      return 0;
-   }
-   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -1066,15 +832,6 @@ int File::GetSamplesPerPixel()
                 // but sometimes it's missing : *we* assume Gray pixels
    }
    return (int)entry->GetValue(0);
-
-/*   const std::string &strSize = GetEntryString(0x0028,0x0002);
-   if ( strSize == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "(0028,0002) is supposed to be mandatory");
-      return 1; // Well, it's supposed to be mandatory ...
-                // but sometimes it's missing : *we* assume Gray pixels
-   }
-   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -1091,14 +848,6 @@ int File::GetPlanarConfiguration()
       return 0;
    }
    return (int)entry->GetValue(0);
-
-/*   std::string strSize = GetEntryString(0x0028,0x0006);
-   if ( strSize == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "Not found : Planar Configuration (0028,0006)");
-      return 0;
-   }
-   return atoi( strSize.c_str() );*/
 }
 
 /**
@@ -1181,44 +930,6 @@ std::string File::GetPixelType()
    {
       sign = "U";
    }
-
-/*   std::string bitsAlloc = GetEntryString(0x0028, 0x0100); // Bits Allocated
-   if ( bitsAlloc == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "Missing  Bits Allocated (0028,0100)");
-      bitsAlloc = "16"; // default and arbitrary value, not to polute the output
-   }
-
-   if ( bitsAlloc == "64" )
-   {
-      return "FD";
-   }
-   else if ( bitsAlloc == "12" )
-   {
-      // It will be unpacked
-      bitsAlloc = "16";
-   }
-   else if ( bitsAlloc == "24" )
-   {
-      // (in order no to be messed up by old RGB images)
-      bitsAlloc = "8";
-   }
-
-   std::string sign = GetEntryString(0x0028, 0x0103);//"Pixel Representation"
-
-   if (sign == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "Missing Pixel Representation (0028,0103)");
-      sign = "U"; // default and arbitrary value, not to polute the output
-   }
-   else if ( sign == "0" )
-   {
-      sign = "U";
-   }
-   else
-   {
-      sign = "S";
-   }*/
    return bitsAlloc + sign;
 }
 
@@ -1239,18 +950,6 @@ bool File::IsSignedPixelData()
       return false;
    }
    return entry->GetValue(0) != 0;
-/*   std::string strSign = GetEntryString( 0x0028, 0x0103 );
-   if ( strSign == GDCM_UNFOUND )
-   {
-      gdcmWarningMacro( "(0028,0103) is supposed to be mandatory");
-      return false;
-   }
-   int sign = atoi( strSign.c_str() );
-   if ( sign == 0 ) 
-   {
-      return false;
-   }
-   return true;*/
 }
 
 /**
@@ -1424,19 +1123,6 @@ float File::GetRescaleIntercept()
    }
    return (float)entry->GetValue(0);
 
-/*   float resInter = 0.;
-   /// 0028 1052 DS IMG Rescale Intercept
-   const std::string &strRescInter = GetEntryString(0x0028,0x1052);
-   if ( strRescInter != GDCM_UNFOUND )
-   {
-      if ( sscanf( strRescInter.c_str(), "%f ", &resInter) != 1 )
-      {
-         // bug in the element 0x0028,0x1052
-         gdcmWarningMacro( "Rescale Intercept (0028,1052) is empty." );
-      }
-   }
-
-   return resInter;*/
 }
 
 /**
@@ -1453,19 +1139,6 @@ float File::GetRescaleSlope()
       return 1.0f;
    }
    return (float)entry->GetValue(0);
-/*   float resSlope = 1.;
-   //0028 1053 DS IMG Rescale Slope
-   std::string strRescSlope = GetEntryString(0x0028,0x1053);
-   if ( strRescSlope != GDCM_UNFOUND )
-   {
-      if ( sscanf( strRescSlope.c_str(), "%f ", &resSlope) != 1 )
-      {
-         // bug in the element 0x0028,0x1053
-         gdcmWarningMacro( "Rescale Slope (0028,1053) is empty.");
-      }
-   }
-
-   return resSlope;*/
 }
 
 /**
