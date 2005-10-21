@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 08:06:45 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/21 14:09:41 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,6 +63,7 @@ public:
    void SetValue(const uint32_t &id,const double &val);
    double GetValue(const uint32_t &id) const;
    uint32_t GetValueCount(void) const;
+   bool IsValueCountValid() const;
 
    void SetString(std::string const &value);
    std::string const &GetString() const;

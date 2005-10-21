@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 12:12:18 $
-  Version:   $Revision: 1.285 $
+  Date:      $Date: 2005/10/21 14:09:41 $
+  Version:   $Revision: 1.286 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -889,7 +889,6 @@ float File::GetZOrigin()
    entry = GetDataEntry(0x0020,0x0050);
    if( entry )
    {
-      gdcmWarningMacro( "Unfound Location (0020,0050)");
       if( entry->GetValueCount() == 1 )
          return (float)entry->GetValue(0);
       gdcmWarningMacro( "Wrong Location (0020,0050)");

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 07:23:50 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/21 14:09:41 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,6 +219,15 @@ double DataEntry::GetValue(const uint32_t &id) const
       return BinArea[id];
 }
 
+bool DataEntry::IsValueCountValid() const
+{
+  uint32_t vm;
+  ostringstream os;
+  os.str( GetVM() );
+  os >> vm;
+  return vm == GetValueCount();
+}
+
 uint32_t DataEntry::GetValueCount(void) const
 {
    const VRKey &vr = GetVR();
@@ -241,8 +250,8 @@ uint32_t DataEntry::GetValueCount(void) const
       }
       return count;
    }
-   else
-      return GetLength();
+
+   return GetLength();
 }
 
 void DataEntry::SetString(std::string const &value)
