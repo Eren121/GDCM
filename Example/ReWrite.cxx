@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/10/21 08:39:31 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -173,8 +173,8 @@ int main(int argc, char *argv[])
 
    case 'D' : // Not documented in the 'usage', because the method 
    case 'd' : //                             is known to be bugged. 
-           // Writting a DICOM Implicit VR file
-           // from a full gdcm readable File
+              // Writting a DICOM Implicit VR file
+              // from a full gdcm readable File
 
       std::cout << "WriteDCM Implicit VR" << std::endl;
       fh->WriteDcmImplVR(outputFileName);
@@ -186,7 +186,10 @@ int main(int argc, char *argv[])
               // from a full gdcm readable File
 
       std::cout << "WriteDCM Explicit VR" << std::endl;
-      fh->WriteDcmExplVR(outputFileName);
+      // fh->WriteDcmExplVR(outputFileName);
+      // Try this one :
+      fh->SetWriteTypeToDcmExplVR();
+      fh->Write(outputFileName);
       break;
 
    case 'R' :
@@ -198,7 +201,7 @@ int main(int argc, char *argv[])
       break;
  
  // Just for fun :
- // Write a 'Videon inverse' version of the file/
+ // Write a 'Video inverse' version of the file.
  // *Not* described, on purpose,  in the USAGE  
    
   case 'V' :
