@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 14:15:41 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/21 15:16:52 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -221,11 +221,22 @@ double DataEntry::GetValue(const uint32_t &id) const
 
 bool DataEntry::IsValueCountValid() const
 {
+  bool valid = false;
   uint32_t vm;
-  std::istringstream os;
-  os.str( GetVM() );
-  os >> vm;
-  return vm == GetValueCount();
+  const std::string &strVM = GetVM();
+  if( strVM == "1-n" )
+    {
+    // make sure it is at least one ??? FIXME
+    valid = GetValueCount() >= 1;
+    }
+  else
+    {
+    std::istringstream os;
+    os.str( strVM );
+    os >> vm;
+    valid = vm == GetValueCount();
+    }
+  return valid;
 }
 
 uint32_t DataEntry::GetValueCount(void) const
