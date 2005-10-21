@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRefCounter.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 10:29:51 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/21 10:40:53 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ public:
 // Allocator / Unallocator
    /// Delete the object
    /// \remarks The object is deleted only if its reference counting is to zero
-   inline virtual void Delete(void)
+   inline void Delete(void)
    {
       Unregister();
    }
@@ -46,13 +46,13 @@ public:
 // Reference count
    /// Register the object
    /// \remarks It increments the reference counting
-   inline virtual void Register(void)
+   inline void Register(void)
    {
       RefCount++;
    }
    /// Unregister the object
    /// \remarks It decrements the reference counting
-   inline virtual void Unregister(void)
+   inline void Unregister(void)
    {
       RefCount--;
       if(RefCount==0)
