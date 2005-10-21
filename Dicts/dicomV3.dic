@@ -2301,7 +2301,7 @@
 6000 0022 LO 1 Overlay Description
 6000 0040 CS 1 Overlay Type
 6000 0045 LO 1 Overlay Subtype
-6000 0050 SS 1 Overlay Origin
+6000 0050 SS 2 Overlay Origin
 6000 0051 US 1 Image Frame Origin
 6000 0052 US 1 Overlay Plane Origin
 6000 0060 LO 1 Compression Code (RET)
@@ -2333,7 +2333,7 @@
 6002 0022 LO 1 Overlay Description
 6002 0040 CS 1 Overlay Type
 6002 0045 LO 1 Overlay Subtype
-6002 0050 SS 1 Overlay Origin
+6002 0050 SS 2 Overlay Origin
 6002 0051 US 1 Image Frame Origin
 6002 0052 US 1 Overlay Plane Origin
 6002 0060 LO 1 Compression Code (RET)
@@ -2365,7 +2365,7 @@
 6004 0022 LO 1 Overlay Description
 6004 0040 CS 1 Overlay Type
 6004 0045 LO 1 Overlay Subtype
-6004 0050 SS 1 Overlay Origin
+6004 0050 SS 2 Overlay Origin
 6004 0051 US 1 Image Frame Origin
 6004 0052 US 1 Overlay Plane Origin
 6004 0060 LO 1 Compression Code (RET)
@@ -2397,7 +2397,7 @@
 6006 0022 LO 1 Overlay Description
 6006 0040 CS 1 Overlay Type
 6006 0045 LO 1 Overlay Subtype
-6006 0050 SS 1 Overlay Origin
+6006 0050 SS 2 Overlay Origin
 6006 0051 US 1 Image Frame Origin
 6006 0052 US 1 Overlay Plane Origin
 6006 0060 LO 1 Compression Code (RET)
@@ -2429,7 +2429,7 @@
 6008 0022 LO 1 Overlay Description
 6008 0040 CS 1 Overlay Type
 6008 0045 LO 1 Overlay Subtype
-6008 0050 SS 1 Overlay Origin
+6008 0050 SS 2 Overlay Origin
 6008 0051 US 1 Image Frame Origin
 6008 0052 US 1 Overlay Plane Origin
 6008 0060 LO 1 Compression Code (RET)
@@ -2461,7 +2461,7 @@
 600a 0022 LO 1 Overlay Description
 600a 0040 CS 1 Overlay Type
 600a 0045 LO 1 Overlay Subtype
-600a 0050 SS 1 Overlay Origin
+600a 0050 SS 2 Overlay Origin
 600a 0051 US 1 Image Frame Origin
 600a 0052 US 1 Overlay Plane Origin
 600a 0060 LO 1 Compression Code (RET)
@@ -2493,7 +2493,7 @@
 600c 0022 LO 1 Overlay Description
 600c 0040 CS 1 Overlay Type
 600c 0045 LO 1 Overlay Subtype
-600c 0050 SS 1 Overlay Origin
+600c 0050 SS 2 Overlay Origin
 600c 0051 US 1 Image Frame Origin
 600c 0052 US 1 Overlay Plane Origin
 600c 0060 LO 1 Compression Code (RET)
@@ -2525,7 +2525,7 @@
 600e 0022 LO 1 Overlay Description
 600e 0040 CS 1 Overlay Type
 600e 0045 LO 1 Overlay Subtype
-600e 0050 SS 1 Overlay Origin
+600e 0050 SS 2 Overlay Origin
 600e 0051 US 1 Image Frame Origin
 600e 0052 US 1 Overlay Plane Origin
 600e 0060 LO 1 Compression Code (RET)
