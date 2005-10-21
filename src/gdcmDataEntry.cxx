@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 15:16:52 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/21 15:41:56 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -234,7 +234,11 @@ bool DataEntry::IsValueCountValid() const
     std::istringstream os;
     os.str( strVM );
     os >> vm;
-    valid = vm == GetValueCount();
+    uint32_t vc = GetValueCount();
+    // Two cases:
+    // vm respect the one from the dict
+    // vm is 0 (we need to check is this element is allowed to be empty) FIXME
+    valid = vc == vm || vc == 0;
     }
   return valid;
 }
@@ -252,6 +256,8 @@ uint32_t DataEntry::GetValueCount(void) const
       return GetLength()/sizeof(double);
    else if( Global::GetVR()->IsVROfStringRepresentable(vr) )
    {
+      // Some element in DICOM are allowed to be empty
+      if( !GetLength() ) return 0;
       // Don't use std::string to accelerate processing
       uint32_t count = 1;
       for(uint32_t i=0;i<GetLength();i++)
