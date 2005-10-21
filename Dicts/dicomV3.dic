@@ -796,7 +796,7 @@
 0020 0030 DS 3 Image Position (RET)
 0020 0032 DS 3 Image Position (Patient)
 0020 0035 DS 6 Image Orientation (RET)
-0020 0037 DS 1 Image Orientation (Patient)
+0020 0037 DS 6 Image Orientation (Patient)
 0020 0050 DS 1 Location (RET)
 0020 0052 UI 1 Frame of Reference UID
 0020 0060 CS 1 Laterality
