@@ -75,3 +75,7 @@ IF(GDCM_VTK)
       ${GDCM_BINARY_DIR}/gdcmPython/demo/vtkGdcmWriter.py
   )
 ENDIF(GDCM_VTK)
+
+#-----------------------------------------------------------------------------
+INSTALL_FILES(/lib/gdcm/gdcmPython/demo "\\.py$")
+
