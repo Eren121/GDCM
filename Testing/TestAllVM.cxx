@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 14:42:12 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/21 14:51:36 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,19 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#include "gdcmDictEntry.h"
-#include "gdcmDict.h"
-#include "gdcmDictSet.h"
 #include "gdcmFile.h"
-#include "gdcmFileHelper.h"
-#include "gdcmUtil.h"
-#include "gdcmCommon.h"
-#include "gdcmDocEntry.h" 
-#include "gdcmDocEntrySet.h"           
-#include "gdcmDocument.h"          
-#include "gdcmElementSet.h"        
-#include "gdcmSeqEntry.h" 
-#include "gdcmSQItem.h" 
+#include "gdcmDataEntry.h"
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -39,12 +28,15 @@ int TestAllVM(int, char *[])
 
    while( gdcmDataImages[i] != 0 )
    {
-      std::string filename = gdcmDataImages[i];
+      std::string filename = GDCM_DATA_ROOT;
+      filename += "/";
+      filename += gdcmDataImages[i];
 
       gdcm::File file;
-      //file.SetLoadMode( gdcm::LD_NOSEQ );
+      file.SetLoadMode( gdcm::LD_ALL );
       file.SetFileName( filename );
-      file.Load();
+      if( !file.Load() ) //would be really bad...
+        return 1;
 
       gdcm::DocEntry *d = file.GetFirstEntry();
       while(d)
@@ -59,7 +51,7 @@ int TestAllVM(int, char *[])
           // We skip pb of SQ recursive exploration
          }
 
-         d = file->GetNextEntry();
+         d = file.GetNextEntry();
       }
 
       i++;

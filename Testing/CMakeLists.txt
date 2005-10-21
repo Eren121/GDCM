@@ -42,6 +42,7 @@ IF (GDCM_DATA_ROOT)
     TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
     TestMakeDicomDir.cxx             # writes a file named "NewDICOMDIR"
     TestSerieHelper.cxx              # uses gdcmData as a default root directory    
+    TestAllVM.cxx
   )
   # add test that require VTK:
   IF(GDCM_VTK)
