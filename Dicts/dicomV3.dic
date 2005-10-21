@@ -811,7 +811,7 @@
 0020 1001 IS 1 Acquisitions in Series (RET)
 0020 1002 IS 1 Images in Acquisition
 0020 1004 IS 1 Acquisitions in Study
-0020 1020 SH 1 Reference (RET)
+0020 1020 LO 1-n Reference (RET)
 0020 1040 LO 1 Position Reference Indicator
 0020 1041 DS 1 Slice Location
 0020 1070 IS 1-n Other Study Numbers
@@ -829,8 +829,8 @@
 0020 3405 SH 1 Modified Image Time (RET)
 0020 3406 SH 1 Modified Image Description (RET)
 0020 4000 LT 1 Image Comments
-0020 5000 US 1 Original Image Identification (RET)
-0020 5002 SH 1 Original Image Identification Nomenclature (RET)
+0020 5000 AT 1-n Original Image Identification (RET)
+0020 5002 LO 1-n Original Image Identification Nomenclature (RET)
 0020 9056 SH 1 Stack ID
 0020 9057 UL 1 In-Stack Position Number
 0020 9071 SQ 1 Frame Anatomy Sequence
