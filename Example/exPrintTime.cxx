@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: TestPrintTime.cxx,v $
+  Module:    $RCSfile: exPrintTime.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:06 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/21 08:43:32 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,8 @@
 #include <iomanip> // for std::ios::left, ...
 
 // Where is it?
-//#define CLK_TCK 1  ///usr/include/bits/time.h:41: warning: this is the location of the previous definition
+//#define CLK_TCK 1  ///usr/include/bits/time.h:41: 
+//                      warning: this is the location of the previous definition
 
 
 //Generated file:

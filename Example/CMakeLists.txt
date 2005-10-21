@@ -17,7 +17,9 @@ SET(EXAMPLE_SOURCES
   exExtractTag
   exSerieHelper
   exExtractDicomTags
-              
+  exPrintTime
+  exInline
+                
 #the following are utilities
   PrintDicomDir
   PrintFile
@@ -43,7 +45,7 @@ SET(EXAMPLE_SOURCES
 )
 
 FOREACH(name ${EXAMPLE_SOURCES})
-  ADD_EXECUTABLE(${name} ${name}.cxx)
+  ADD_EXECUTABLE(${name} ${name}.cxx )
   TARGET_LINK_LIBRARIES(${name} gdcm)
   INSTALL_TARGETS(/bin/ ${name})
 ENDFOREACH(name)
