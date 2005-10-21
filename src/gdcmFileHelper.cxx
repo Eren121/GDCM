@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/20 07:27:43 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/10/21 10:29:51 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1324,9 +1324,9 @@ void FileHelper::CheckMandatoryElements()
    // At the end, not to overwrite the original ones,
    // needed by 'Referenced SOP Instance UID', 'Referenced SOP Class UID'   
    // 'SOP Instance UID'  
-      CopyMandatoryEntry(0x0008,0x0018,sop);
+   CopyMandatoryEntry(0x0008,0x0018,sop);
    // 'SOP Class UID' 
-      CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7"); 
+   CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7"); 
              
 // ---- The user will never have to take any action on the following ----.
    // new value for 'SOP Instance UID'

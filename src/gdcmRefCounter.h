@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRefCounter.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 07:38:00 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/21 10:29:51 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,13 +46,13 @@ public:
 // Reference count
    /// Register the object
    /// \remarks It increments the reference counting
-   inline void Register(void)
+   inline virtual void Register(void)
    {
       RefCount++;
    }
    /// Unregister the object
    /// \remarks It decrements the reference counting
-   inline void Unregister(void)
+   inline virtual void Unregister(void)
    {
       RefCount--;
       if(RefCount==0)
