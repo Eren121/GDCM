@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 10:29:51 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/10/21 10:48:16 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -536,6 +536,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
       {
          goodEntry = NULL;
       }
+      dictEntry->Unregister();
    }
 
    // Create a new virtual DictEntry if necessary
@@ -555,7 +556,6 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    {
       goodEntry->Register();
    }
-   dictEntry->Unregister();
    return goodEntry;
 }
 
