@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 14:45:11 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/10/21 08:28:03 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <string.h>
 
 namespace gdcm 
 {
@@ -42,7 +43,7 @@ VR::VR()
    std::ifstream from(filename.c_str());
    if ( !from )
    {
-      gdcmWarningMacro("Can't open dictionary" << filename.c_str());
+      gdcmWarningMacro("Can't open dictionary " << filename.c_str());
       FillDefaultVRDict(vr);
    }
    else
@@ -55,6 +56,9 @@ VR::VR()
       {
          from >> std::ws;
          from.getline(buff, 1024, ' ');
+         if( strcmp(buff,"") == 0)
+            continue;
+
          key = buff;
          from >> std::ws;
          from.getline(buff, 1024, ';');
@@ -63,10 +67,7 @@ VR::VR()
          from >> std::ws;
          from.getline(buff, 1024, '\n');
    
-         if ( key != "" )
-         {
-            vr[key] = name;
-         }
+         vr[key] = name;
       }
       from.close();
    }
