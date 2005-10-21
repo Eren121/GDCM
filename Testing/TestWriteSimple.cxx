@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:58:15 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/10/21 08:34:26 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -253,8 +253,8 @@ int WriteSimple(Image &img)
    // Better use :
    gdcm::FileHelper *reread = new gdcm::FileHelper( );
    reread->SetFileName( fileName.str() );
-   reread->SetLoadMode(0); // Load everything
-                           // Other possible values are 
+   reread->SetLoadMode(gdcm::LD_ALL); // Load everything
+                           // Possible values are 
                            //              gdcm::LD_ALL, 
                            //              gdcm::LD_NOSEQ, 
                            //              gdcm::LD_NOSHADOW,
