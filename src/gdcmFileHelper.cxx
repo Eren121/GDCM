@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/21 10:29:51 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/10/21 12:06:06 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1310,22 +1310,16 @@ void FileHelper::CheckMandatoryElements()
  
       // 'Image Type' (The written image is no longer an 'ORIGINAL' one)
       CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");
-   } 
-   else
-   {
-      // There was no 'SOP Class UID'.
-      // the source image was NOT a true Dicom one.
-      // We consider the image is a 'Secondary Capture' one
-      // SOP Class UID
-      // [Secondary Capture Image Storage]
-      SetMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");
    }
 
    // At the end, not to overwrite the original ones,
    // needed by 'Referenced SOP Instance UID', 'Referenced SOP Class UID'   
    // 'SOP Instance UID'  
    CopyMandatoryEntry(0x0008,0x0018,sop);
-   // 'SOP Class UID' 
+   
+   // whether a 'SOP Class UID' already exists or not in the original image
+   // the gdcm written image *is* a [Secondary Capture Image Storage] !
+   // 'SOP Class UID' : [Secondary Capture Image Storage]
    CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7"); 
              
 // ---- The user will never have to take any action on the following ----.
