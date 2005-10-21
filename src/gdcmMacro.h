@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMacro.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/21 15:34:56 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #define gdcmTypeMacro(type) \
    private : \
       type(type &); /* Not implemented */ \
-      type &operator=(type &); /* Not implemented */
+      type &operator=(type &) /* Not implemented */
 
 //-----------------------------------------------------------------------------
 #endif
