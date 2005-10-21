@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/10/21 07:38:00 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ namespace gdcm
 class GDCM_EXPORT DictEntry : public DicomEntry
 {
 public:
-   gdcmTypeMacro(DictEntry);
+   gdcmTypeMacro(DictEntry)
 
 public:
    static DictEntry *New(uint16_t group, uint16_t elem,
