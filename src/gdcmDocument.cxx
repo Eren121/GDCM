@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.301 $
+  Date:      $Date: 2005/10/21 07:38:58 $
+  Version:   $Revision: 1.302 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -660,7 +660,7 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
 /**
  * \brief Loads (from disk) the element content 
  *        when a string is not suitable
- * @param elem  Entry whose binArea is going to be loaded
+ * @param entry  Entry whose binArea is going to be loaded
  */
 void Document::LoadEntryBinArea(DataEntry *entry) 
 {

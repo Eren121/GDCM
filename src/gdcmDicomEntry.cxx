@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:58:17 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/21 07:38:57 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,14 +33,12 @@ namespace gdcm
  * @param   group      DICOM-Group Number
  * @param   elem       DICOM-Element Number
  * @param   vr         Value Representation
- * @param   vm         Value Multiplicity 
- * @param   name       description of the element
 */
-DicomEntry::DicomEntry(const uint16_t &group,const uint16_t &elt,
+DicomEntry::DicomEntry(const uint16_t &group,const uint16_t &elem,
                        const VRKey &vr)
 {
    Tag.SetGroup(group);
-   Tag.SetElement(elt);
+   Tag.SetElement(elem);
    VR = vr;
 }
 

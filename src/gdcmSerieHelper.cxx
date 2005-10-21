@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/10/21 07:38:58 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,7 +152,7 @@ void SerieHelper::AddFileName(std::string const &filename)
  *        of the gdcm::SerieHelper.
  * \warning : this method should be used by aware users only!
  *           Passing a gdcm::File* has the same effect than passing a file name!
- * \TODO : decide which one is wrong (the method, or the commentary)!
+ * \todo : decide which one is wrong (the method, or the commentary)!
  *           the following comment doesn't match the method :-(
  *            User is supposed to know the files he want to deal with
  *           and consider them they belong to the same Serie
@@ -535,6 +535,8 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
  * \brief   Splits a SingleSerieUID File set Coherent according to the
  *          value of a given Tag
  * @param fileSet File Set to be splitted
+ * @param   group  group number of the target Element
+ * @param   elem element number of the target Element
  * \return  std::map of 'Xcoherent' File sets
  */
 
