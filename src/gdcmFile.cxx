@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.284 $
+  Date:      $Date: 2005/10/21 12:12:18 $
+  Version:   $Revision: 1.285 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2094,7 +2094,7 @@ void File::ReadEncapsulatedBasicOffsetTable()
 // These are the deprecated method that one day should be removed (after the next release)
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
+/* *
  * \brief  Constructor (DEPRECATED : temporaryly kept not to break the API)
  * @param  filename name of the file whose header we want to analyze
  * @deprecated do not use any longer
@@ -2109,7 +2109,7 @@ File::File( std::string const &filename )
    Load( ); // gdcm::Document is first Loaded, then the 'File part'
 }
 
-/**
+/* *
  * \brief   Loader. (DEPRECATED :  temporaryly kept not to break the API)
  * @param   fileName file to be open for parsing
  * @return false if file cannot be open or no swap info was found,
