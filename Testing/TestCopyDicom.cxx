@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/10/21 08:35:49 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,6 +76,9 @@ int CopyDicom(std::string const &filename,
 
       // Useless to set the image data, because it's already made when
       // copying the corresponding DataEntry that contains the pixel data
+      
+      // --> FIXME : Why do we let the following line?
+      //             to avoid compile time warnings?
       copy->SetImageData(imageData, dataSize);
 
       //////////////// Step 3:
