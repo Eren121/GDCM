@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 15:41:56 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/21 15:52:13 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -224,17 +224,17 @@ bool DataEntry::IsValueCountValid() const
   bool valid = false;
   uint32_t vm;
   const std::string &strVM = GetVM();
+  uint32_t vc = GetValueCount();
   if( strVM == "1-n" )
     {
     // make sure it is at least one ??? FIXME
-    valid = GetValueCount() >= 1;
+    valid = vc >= 1 || vc == 0;
     }
   else
     {
     std::istringstream os;
     os.str( strVM );
     os >> vm;
-    uint32_t vc = GetValueCount();
     // Two cases:
     // vm respect the one from the dict
     // vm is 0 (we need to check is this element is allowed to be empty) FIXME
