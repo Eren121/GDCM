@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:49:36 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/10/21 16:02:01 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -228,7 +228,7 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
+/* *
  * \brief add a rules for restricting a DICOM file to be in the serie we are
  * trying to find. For example you can select only the DICOM file from a
  * directory which would have a particular EchoTime==4.0.
@@ -328,9 +328,9 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
 
 #ifndef GDCM_LEGACY_REMOVE
 /* *
- * \brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
+ * \ brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
  *          Warning : 'coherent' means here they have the same Serie UID
- * @return  The first FileList if found, otherwhise NULL
+ * @ return  The first FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetFirstCoherentFileList()
 {
@@ -341,10 +341,10 @@ FileList *SerieHelper::GetFirstCoherentFileList()
 }
 
 /* *
- * \brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
+ * \ brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
  *          Warning : 'coherent' means here they have the same Serie UID
- * \note : meaningfull only if GetFirstCoherentFileList() already called 
- * @return  The next FileList if found, otherwhise NULL
+ * \ note : meaningfull only if GetFirstCoherentFileList() already called 
+ * @ return  The next FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetNextCoherentFileList()
 {
@@ -357,10 +357,10 @@ FileList *SerieHelper::GetNextCoherentFileList()
 }
 
 /* *
- * \brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
+ * \ brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
   *          Warning : 'coherent' means here they have the same Serie UID
- * @param SerieUID SerieUID
- * \return  pointer to the FileList if found, otherwhise NULL
+ * @ param SerieUID SerieUID
+ * \ return  pointer to the FileList if found, otherwhise NULL
  */
 FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {

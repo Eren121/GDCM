@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/21 12:06:06 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/10/21 16:02:01 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -161,20 +161,20 @@ FileHelper::FileHelper(File *header)
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
- * \brief DEPRECATED : use SetFilename() + SetLoadMode() + Load() methods
+/* *
+ * \ brief DEPRECATED : use SetFilename() + SetLoadMode() + Load() methods
  *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (gdcm::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
- * \note  the in-memory representation of all available tags found in
+ * \ note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
- * @param filename file to be opened for parsing
- * @deprecated  use SetFilename() + Load() methods
+ * @ param filename file to be opened for parsing
+ * @ deprecated  use SetFilename() + Load() methods
  */
 FileHelper::FileHelper(std::string const &filename )
 {
@@ -415,8 +415,8 @@ uint8_t *FileHelper::GetImageDataRaw ()
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
- * \brief   Useless function, since PixelReadConverter forces us 
+/* *
+ * \ brief   Useless function, since PixelReadConverter forces us 
  *          copy the Pixels anyway.  
  *          Reads the pixels from disk (uncompress if necessary),
  *          Transforms YBR pixels, if any, into RGB pixels
@@ -424,7 +424,7 @@ uint8_t *FileHelper::GetImageDataRaw ()
  *          Transforms single Grey plane + 3 Palettes into a RGB Plane   
  *          Copies at most MaxSize bytes of pixel data to caller allocated
  *          memory space.
- * \warning This function allows people that want to build a volume
+ * \ warning This function allows people that want to build a volume
  *          from an image stack *not to* have, first to get the image pixels, 
  *          and then move them to the volume area.
  *          It's absolutely useless for any VTK user since vtk chooses 
@@ -433,12 +433,12 @@ uint8_t *FileHelper::GetImageDataRaw ()
  *          to load the image line by line, starting from the end.
  *          VTK users have to call GetImageData
  *     
- * @param   destination Address (in caller's memory space) at which the
+ * @ param   destination Address (in caller's memory space) at which the
  *          pixel data should be copied
- * @param   maxSize Maximum number of bytes to be copied. When MaxSize
+ * @ param   maxSize Maximum number of bytes to be copied. When MaxSize
  *          is not sufficient to hold the pixel data the copy is not
  *          executed (i.e. no partial copy).
- * @return  On success, the number of bytes actually copied. Zero on
+ * @ return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
 size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)

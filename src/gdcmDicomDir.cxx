@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 12:12:55 $
-  Version:   $Revision: 1.163 $
+  Date:      $Date: 2005/10/21 16:02:01 $
+  Version:   $Revision: 1.164 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,18 +125,18 @@ DicomDir::DicomDir()
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
- * \brief Constructor Parses recursively the directory and creates the DicomDir
+/* *
+ * \ brief Constructor Parses recursively the directory and creates the DicomDir
  *        or uses an already built DICOMDIR, depending on 'parseDir' value.
- * @param fileName  name 
+ * @ param fileName  name 
  *                      - of the root directory (parseDir = true)
  *                      - of the DICOMDIR       (parseDir = false)
- * @param parseDir boolean
+ * @ param parseDir boolean
  *                      - true if user passed an entry point 
  *                        and wants to explore recursively the directories
  *                      - false if user passed an already built DICOMDIR file
  *                        and wants to use it 
- * @deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
+ * @ deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
  *              or : new DicomDir() + SetFileName(name)
  */
 DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
@@ -190,12 +190,12 @@ bool DicomDir::Load( )
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/**
- * \brief   Loader. (DEPRECATED : kept not to break the API)
- * @param   fileName file to be open for parsing
- * @return false if file cannot be open or no swap info was found,
+/* *
+ * \ brief   Loader. (DEPRECATED : kept not to break the API)
+ * @ param   fileName file to be open for parsing
+ * @ return false if file cannot be open or no swap info was found,
  *         or no tag was found.
- * @deprecated use SetFileName(n) + Load() instead
+ * @ deprecated use SetFileName(n) + Load() instead
  */
 bool DicomDir::Load(std::string const &fileName ) 
 {

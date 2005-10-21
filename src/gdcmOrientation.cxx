@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/10/21 16:02:01 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -204,146 +204,6 @@ Orientation::ProductVectorial(vector3D const &vec1, vector3D const &vec2)
 }
 
 
-
-// ---------------------------------------------------------------------------
-// Here is the original Python code, kindly supplied by THERALYS
-//
-// C++ code doesn't give good results
-// --> FIXME
-
-/*
-
-def TypeOrientation(self,file0):
-"""
-# ------------------------- Purpose : -----------------------------------
-# - This function compare the orientation of the given image and the
-#   basics orientations (Axial, Cornal, Sagital)
-# ------------------------- Parameters : --------------------------------
-# - <file0> : - type : string
-#             - The name of the first image file of the serie
-# ------------------------- Return : ------------------------------------
-#   1 :   Axial
-#  -1 :   Axial invert
-#   2 :   Coronal
-#  -2 :   Coronal invert
-#   3 :   Sagital
-#  -3 :   Sagital invert
-#   4 :   Heart Axial
-#  -4 :   Heart Axial invert
-#   5 :   Heart Coronal
-#  -5 :   Heart Coronal invert
-#   6 :   Heart Sagital
-#  -6 :   Heart Sagital invert
-#
-   # ------------------------- Other : -------------------------------------
-# This method finds the most similar basic orientation.
-"""
-try:
-   toRead = gdcm.File(file0)
-   ValDict = GetValuesDict(toRead)
-   try:
-      imageOrientation=ValDict["Image Orientation (Patient)"]
-   except KeyError:
-      imageOrientation=ValDict["Image Orientation"]
-
-   ori1=[float(split(imageOrientation,"\\")[0]),\
-      float(split(imageOrientation,"\\")[1]),\
-      float(split(imageOrientation,"\\")[2])]
-   ori2=[float(split(imageOrientation,"\\")[3]),\
-      float(split(imageOrientation,"\\")[4]),\
-      float(split(imageOrientation,"\\")[5])]
-
-## two vectors perpendicular describe one plane
-   dicPlane=[ [  [1,0,0],[0,1,0]   ],  ## Axial
-            [  [1,0,0],[0,0,-1]  ],  ## Coronal
-            [  [0,1,0],[0,0,-1]  ],  ## Sagittal
-            [  [ 0.8 , 0.5 ,  0.0 ],[-0.1 , 0.1 , -0.95]        ],## Axial - HEART
-            [  [ 0.8 , 0.5 ,  0.0 ],[-0.6674 , 0.687 , 0.1794]  ],## Coronal - HEART
-            [  [-0.1 , 0.1 , -0.95],[-0.6674 , 0.687 , 0.1794]  ] ] ## Sagittal - HEART
-
-   i=0
-   res=[0,99999]  ## [ <result> , <memory of the last succes calcule> ]
-   for plane in dicPlane:
-      i=i+1
-      refA=plane[0]
-      refB=plane[1]
-      res=self.VerfCriterion(  i , self.CalculLikelyhood2Vec(refA,refB,ori1,ori2) , res )
-      res=self.VerfCriterion( -i , self.CalculLikelyhood2Vec(refB,refA,ori1,ori2) , res )
-   return res[0]
-
-   except KeyError:
-   return 0
-
-
-   def VerfCriterion(self,typeCriterion,criterionNew,res):
-      type = res[0]
-      criterion = res[1]
-#     if criterionNew<0.1 and criterionNew<criterion:
-      if criterionNew<criterion:
-         criterion=criterionNew
-         type=typeCriterion
-      return [ type , criterion ]
-
-
-   def CalculLikelyhood2Vec(self,refA,refB,ori1,ori2):
-"""
-   # ------------------------- Purpose : -----------------------------------
-   # - This function determine the orientation similarity of two planes.
-   #   Each plane is described by two vector.
-   # ------------------------- Parameters : --------------------------------
-   # - <refA>  : - type : vector 3D (float)
-   # - <refB>  : - type : vector 3D (float)
-   #             - Description of the first plane
-   # - <ori1>  : - type : vector 3D (float)
-   # - <ori2>  : - type : vector 3D (float)
-   #             - Description of the second plane
-   # ------------------------- Return : ------------------------------------
-   #  float :   0 if the planes are perpendicular. 
-   # While the difference of the orientation between the planes 
-   # are big more enlarge is
-   # the criterion.
-   # ------------------------- Other : -------------------------------------
-   #  The calculus is based with vectors normalice
-   """
-
-      ori3=self.ProductVectorial(ori1,ori2)
-      refC=self.ProductVectorial(refA,refB)
-      res=math.pow(refC[0]-ori3[0],2) + math.pow(refC[1]-ori3[1],2) + math.pow(refC[2]-ori3[2],2)
-      return math.sqrt(res)
-
-   def ProductVectorial(self,vec1,vec2):
-      """
-      # ------------------------- Purpose : -----------------------------------
-      # - Calculus of the poduct vectorial between two vectors 3D
-      # ------------------------- Parameters : --------------------------------
-      # - <vec1>  : - type : vector 3D (float)
-      # - <vec2>  : - type : vector 3D (float)
-      # ------------------------- Return : ------------------------------------
-      #  (vec) :    - Vector 3D
-      # ------------------------- Other : -------------------------------------
-      """
-      vec3=[0,0,0]
-      vec3[0]=vec1[1]*vec2[2] - vec1[2]*vec2[1]
-      vec3[1]=-( vec1[0]*vec2[2] - vec1[2]*vec2[0])
-      vec3[2]=vec1[0]*vec2[1] - vec1[1]*vec2[0]
-      return vec3
-
-   def GetValuesDict(image):
-      """
-      Returns a dictionnary containing values associated with Field Names
-      dict["Dicom Field Name"]="Dicom field value"
-      """
-      val=image.GetFirstEntry()
-      dic={}
-      while(val):
-         if isinstance(val,gdcm.DataEntryPtr):
-            dic[val.GetName()]=val.GetValue()
-         val=image.GetNextEntry()
-      return dic
-
-*/
-
-
 // ------------------------------------------------------------------------
 /*
 2.2.2 Orientation of DICOM images
@@ -485,7 +345,12 @@ Some more stuff, from XMedcon
 
 ---> Personal remark from JPRx :
 --> patient_position (0x0018,0x5100) can be "HFS ", "FFS ", "HFP ", "FFP " 
---> the cosines may ahave any value -1< <+1, for MR images !
+--> or, not so common, 
+// HFDR = Head First-Decubitus Right
+// HFDL = Head First-Decubitus Left
+// FFDR = Feet First-Decubitus Right
+// FFDL = Feet First-Decubitus Left
+--> the cosines may have any value -1.< <+1., for MR images !
 
 enum patient_slice_orientation_type
   {
