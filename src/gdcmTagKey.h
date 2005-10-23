@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 13:58:18 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/23 14:59:43 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,8 @@ namespace gdcm
 class TagKey
 {
 public :
-   inline TagKey(const uint16_t &gr, const uint16_t &elt) { tag[0] = gr;tag[1] = elt;}
+   inline TagKey(const uint16_t &gr, const uint16_t &elt)
+                                                    { tag[0] = gr;tag[1] = elt;}
    inline TagKey() { tag[0] = tag[1] = 0x0000;}
 
    friend std::ostream& operator<<(std::ostream& _os, const TagKey &_val);
@@ -44,11 +45,11 @@ public :
       return std::string(res);
    }
 
-   inline void SetGroup(const uint16_t &val) { tag[0] = val; }
+   inline void SetGroup(const uint16_t &group) { tag[0] = group; }
    inline const uint16_t &GetGroup(void) { return tag[0]; }
 
-   inline void SetElement(const uint16_t &val) { tag[1] = val; }
-   inline const uint16_t &GetElement(void) { return tag[1]; }
+   inline void SetElement(const &uint16_t elem) { tag[1] = elem; }
+   inline const uint16_t GetElement(void) { return tag[1]; }
 
    inline TagKey &operator=(const TagKey &_val)
    {
@@ -80,7 +81,8 @@ public :
 
    inline bool operator<(const TagKey &_val) const
    {
-      return tag[0] < _val.tag[0] || (tag[0] == _val.tag[0] && tag[1] < _val.tag[1]);
+      return tag[0] < _val.tag[0] || (tag[0] == 
+                                           _val.tag[0] && tag[1] < _val.tag[1]);
    }
 
 private :

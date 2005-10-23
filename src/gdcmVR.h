@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 14:45:11 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/10/23 14:56:27 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,6 +61,7 @@ public:
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
    bool IsValidVR(VRKey const &key);
 #else
+/// \brief checks is a supposed-to-be VR is a 'legal' one.
    bool IsValidVR(VRKey const &key) { return vr.find(key) != vr.end(); }
 #endif
 

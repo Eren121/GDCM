@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:28:03 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/10/23 14:56:27 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,13 +91,6 @@ VR::~VR()
  */
 bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 {
-   //if ( tested == GDCM_UNKNOWN)
-   //{
-   //std::cout << "---------- never used --------------" << tested 
-   //          << std::endl;
-   //   return true;
-   //}
-
    if ( IsVROfStringRepresentable(tested) )
       return false;
 
@@ -109,12 +102,17 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
 
 /**
  * \brief   Simple predicate that checks whether the given argument
- *          corresponds to the Value Representation of a representable
- *          string.
+ *          corresponds to the Value Representation of a
+ *          'std::string representable' value.
  * @param   tested value representation to be checked.
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
+   //FIXME : either you consider than US, UL, SS, SL *are* string representable
+   //                            and you have to add FD and FL
+   //        or  you consider they are not, and you have to remove them
+   // (I cannot guess your point, reading gdcmDataEntry code :-( )  JPR
+ 
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
@@ -141,10 +139,11 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested != "OB" &&
           tested != "OW" &&
           tested != "AT" && // Attribute Tag ?!?
+          tested != "UN" && // UN is an actual VR !
           tested != "SQ" ;
 */
 }
-
+/// \brief returns the length of a elementary elem whose VR is passed
 unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 {
    // Unsigned & signed short
@@ -167,6 +166,7 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 
 // VS6 need a single implementation in the dll
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
+/// \brief checks is a supposed-to-be VR is a 'legal' one.
 bool VR::IsValidVR(VRKey const &key)
 {
   return vr.find(key) != vr.end();
