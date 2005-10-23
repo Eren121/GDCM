@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 07:38:58 $
-  Version:   $Revision: 1.302 $
+  Date:      $Date: 2005/10/23 15:28:26 $
+  Version:   $Revision: 1.303 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -684,7 +684,7 @@ void Document::LoadEntryBinArea(DataEntry *entry)
       return;
    }
 
-   // Read the datas
+   // Read the data
    Fp->read((char*)data, l);
    if ( Fp->fail() || Fp->eof() )
    {
@@ -718,7 +718,7 @@ void Document::LoadEntryBinArea(DataEntry *entry)
       }
       case 8:
       {
-         gdcmWarningMacro("Can't swap 64 bits datas");
+         gdcmWarningMacro("Can't swap 64 bits data");
 /*         uint64_t *data64 = (uint64_t *)data;
          for(i=0;i<l/vrLgth;i++)
             data64[i] = SwapLongLong(data64[i]);*/
@@ -903,7 +903,7 @@ int Document::ComputeGroup0002Length( )
             // (no SQ, OW, UT in group 0x0002;)
                if ( vr == "OB" ) 
                {
-                  // explicit VR AND OB, OW, SQ, UT : 4 more bytes
+                  // explicit VR AND (OB, OW, SQ, UT) : 4 more bytes
                   groupLength +=  4;
                }
             //}
@@ -998,16 +998,22 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       if ( newDataEntry )  
       {
          //////////////////////////// DataEntry
+ 
          vr = newDocEntry->GetVR();
+ 
+         // Useless checking, now !
+         /*
          if ( Filetype == ExplicitVR && 
                !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
          { 
                ////// No DataEntry: should mean UNKOWN VR
                gdcmWarningMacro( std::hex << newDocEntry->GetGroup() 
                                  << "|" << newDocEntry->GetElement()
-                                 << " : No DataEntry." 
-                                 "Probably unknown VR.");
+                                 << " : unknown VR." 
+                                 " Probably 'Implicit VR' entry within "
+                                 "an explicit VR 'document'.");
          }
+         */
 
          if ( !set->AddEntry( newDataEntry ) )
          {
