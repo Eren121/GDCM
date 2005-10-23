@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 19:46:17 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/23 19:52:37 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,12 +27,7 @@ const char fdata[] = "1.1\\2.2\\3.3\\4.4\\5.5";
 const int16_t svalue[]={1,2,3,4,5};
 const int32_t lvalue[]={1,2,3,4,5};
 const float fvalue[]={1.1f,2.2f,3.3f,4.4f,5.5f};
-// Temporary hack, assume that long and double are correlated
-#if GDCM_SIZEOF_LONG == 4
 const double dvalue[]={1.1,2.2,3.3,4.4,5.5};
-#else 
-const float dvalue[]={1.1,2.2,3.3,4.4,5.5};
-#endif
 
 const unsigned long nbvalue = 5;
 const float GDCM_EPS = 1e-6;
