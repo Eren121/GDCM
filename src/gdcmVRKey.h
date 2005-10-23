@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVRKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 16:51:11 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/23 15:01:34 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,8 @@ public :
 
    inline std::string str() const { return std::string(key,2); }
 
-   friend std::ostream& operator<<(std::ostream& _os, const VRKey &_val);
-   friend std::istream& operator>>(std::istream& _is, VRKey &_val);
+   friend std::ostream &operator<<(std::ostream &_os, const VRKey &_val);
+   friend std::istream &operator>>(std::istream &_is, VRKey &_val);
 
    inline VRKey &operator=(const VRKey &_val)
    {
@@ -45,12 +45,14 @@ public :
       key[1] = _val.key[1];
       return *this;
    }
+   
    inline VRKey &operator=(const std::string &_val)
    {
       key[0] = _val[0];
       key[1] = _val[1];
       return *this;
    }
+   
    inline VRKey &operator=(const char *_val)
    {
       key[0] = _val[0];
@@ -63,6 +65,7 @@ public :
       assert(_id<2);
       return key[_id];
    }
+   
    inline char &operator[](const unsigned int &_id)
    {
       assert(_id<2);
@@ -73,10 +76,12 @@ public :
    {
       return key[0] == _val.key[0] && key[1] == _val.key[1];
    }
+   
    inline bool operator==(const std::string &_val) const
    {
       return key[0] == _val[0] && key[1] == _val[1];
    }
+   
    inline bool operator==(const char *_val) const
    {
       return key[0] == _val[0] && key[1] == _val[1];
@@ -86,6 +91,7 @@ public :
    {
       return key[0] != _val.key[0] || key[1] != _val.key[1];
    }
+   
    inline bool operator!=(const std::string &_val) const
    {
       return key[0] != _val[0] || key[1] != _val[1];
@@ -105,13 +111,13 @@ private :
 };
 
 //-----------------------------------------------------------------------------
-inline std::ostream& operator<<(std::ostream& _os, const VRKey &_val)
+inline std::ostream &operator<<(std::ostream &_os, const VRKey &_val)
 {
    _os << _val.key[0] << _val.key[1];
    return _os;
 }
 
-inline std::istream& operator>>(std::istream& _is, VRKey &_val)
+inline std::istream &operator>>(std::istream &_is, VRKey &_val)
 {
    _is >> _val.key[0] >> _val.key[1];
    return _is;
