@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:29:50 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/10/23 15:09:19 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,19 +40,28 @@ typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, File *);
  */
 class GDCM_EXPORT PixelReadConvert : public Base
 {
-public:
+friend class FileHelper;
+
+private:
    PixelReadConvert();
    virtual ~PixelReadConvert();
 
    void Print( std::ostream &os = std::cout, std::string const &indent = "" );
 
    // Getter accessors:
+   /// \brief returns pixel area holding RGB Pixels, made from Grey level + LUT
    uint8_t *GetRGB()           { return RGB;     }
+   /// \brief returns pixel area length -RGB Pixels, (from Grey level + LUT)-
    size_t   GetRGBSize()       { return RGBSize; }
+   /// \brief returns pixel area holding native RGB Pixels or Grey level
    uint8_t *GetRaw()           { return Raw;     }
+   /// \brief returns pixel area size -native RGB Pixels or Grey level-
    size_t   GetRawSize()       { return RawSize; }
+   /// \brief returns Red Green Blue Alpha LUT
    uint8_t *GetLutRGBA()       { return LutRGBA; }
+   /// \brief returns Lut Item Number
    int      GetLutItemNumber() { return LutItemNumber; }
+   /// \brief returns Lut Item Size
    int      GetLutItemSize()   { return LutItemSize;   }
    // Predicates:
    bool IsRawRGB();
@@ -63,10 +72,11 @@ public:
    void Squeeze();
    bool BuildRGBImage();
    void BuildLUTRGBA();
-
+/// \brief Allow user to pass his own function to modify pixels 
+///        (e.g; mirror, upsidedown, ...) just after reading
    void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
                          { UserFunction = userFunc; }
-private:
+
    // Use the fp:
    void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp ) 
                                  throw ( FormatError );

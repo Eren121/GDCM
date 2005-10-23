@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 17:11:33 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2005/10/23 15:09:19 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -526,17 +526,19 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 }
 
 /**
- * \brief Build Red/Green/Blue/Alpha LUT from File
- *         when (0028,0004),Photometric Interpretation = [PALETTE COLOR ]
- *          and (0028,1101),(0028,1102),(0028,1102)
- *            - xxx Palette Color Lookup Table Descriptor - are found
- *          and (0028,1201),(0028,1202),(0028,1202)
- *            - xxx Palette Color Lookup Table Data - are found
+ * \brief Build Red/Green/Blue/Alpha LUT from File when :
+ *         - (0028,0004) : Photometric Interpretation == [PALETTE COLOR ]
+ *         and
+ *         - (0028,1101),(0028,1102),(0028,1102)
+ *            xxx Palette Color Lookup Table Descriptor are found
+ *          and 
+ *         - (0028,1201),(0028,1202),(0028,1202)
+ *           xxx Palette Color Lookup Table Data - are found
  * \warning does NOT deal with :
- *   0028 1100 Gray Lookup Table Descriptor (Retired)
- *   0028 1221 Segmented Red Palette Color Lookup Table Data
- *   0028 1222 Segmented Green Palette Color Lookup Table Data
- *   0028 1223 Segmented Blue Palette Color Lookup Table Data
+ *   - 0028 1100 Gray Lookup Table Descriptor (Retired)
+ *   - 0028 1221 Segmented Red Palette Color Lookup Table Data
+ *   - 0028 1222 Segmented Green Palette Color Lookup Table Data
+ *   - 0028 1223 Segmented Blue Palette Color Lookup Table Data
  *   no known Dicom reader deals with them :-(
  * @return a RGBA Lookup Table
  */
