@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 16:02:01 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/10/23 15:04:26 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,8 +54,8 @@ SerieHelper::~SerieHelper()
 }
 
 /**
- * \brief  - Preventively, clear everything at constructor time.
- *         - use it at destructor time.
+ * \brief  Preventively, clear everything at constructor time.
+ *         ( use it at destructor time.)
  */
 void SerieHelper::ClearAll()
 {
@@ -110,6 +110,7 @@ void SerieHelper::AddFileName(std::string const &filename)
          if ( !Util::CompareDicomString(s, r.value.c_str(), r.op) )
          {
            // Argh ! This rule is unmatched; let's just quit
+
            allrules = 0;
            break;
          }
@@ -124,6 +125,7 @@ void SerieHelper::AddFileName(std::string const &filename)
          const std::string &uid = header->GetEntryString(0x0020, 0x000e);
          // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
          // no need here to do anything special
+
 
          if ( SingleSerieUIDFileSetHT.count(uid) == 0 )
          {
@@ -228,18 +230,6 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/* *
- * \brief add a rules for restricting a DICOM file to be in the serie we are
- * trying to find. For example you can select only the DICOM file from a
- * directory which would have a particular EchoTime==4.0.
- * This method is a user level, value is not required to be formatted as a DICOM
- * string
- * @param   group  Group number of the target tag.
- * @param   elem Element number of the target tag.
- * @param value value to be checked to exclude File 
- * @deprecated use : AddRestriction(uint16_t group, uint16_t elem, 
- *                                 std::string const &value, int op);
- */
 void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
 {
    Rule r;
@@ -327,11 +317,7 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/* *
- * \ brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
- *          Warning : 'coherent' means here they have the same Serie UID
- * @ return  The first FileList if found, otherwhise NULL
- */
+
 FileList *SerieHelper::GetFirstCoherentFileList()
 {
    ItFileSetHt = SingleSerieUIDFileSetHT.begin();
@@ -340,12 +326,7 @@ FileList *SerieHelper::GetFirstCoherentFileList()
    return NULL;
 }
 
-/* *
- * \ brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
- *          Warning : 'coherent' means here they have the same Serie UID
- * \ note : meaningfull only if GetFirstCoherentFileList() already called 
- * @ return  The next FileList if found, otherwhise NULL
- */
+
 FileList *SerieHelper::GetNextCoherentFileList()
 {
    gdcmAssertMacro (ItFileSetHt != SingleSerieUIDFileSetHT.end());
@@ -356,12 +337,7 @@ FileList *SerieHelper::GetNextCoherentFileList()
    return NULL;
 }
 
-/* *
- * \ brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
-  *          Warning : 'coherent' means here they have the same Serie UID
- * @ param SerieUID SerieUID
- * \ return  pointer to the FileList if found, otherwhise NULL
- */
+
 FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {
    if ( SingleSerieUIDFileSetHT.count(SerieUID) == 0 )
@@ -585,8 +561,9 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
  *  We may order, considering :
  *   -# Image Position Patient
  *   -# Image Number
+ *   -# File Name
  *   -# More to come :-)
- * WARNING : FileList = std::vector<File* >
+ * \note : FileList = std::vector<File* >
  * @param fileList Coherent File list (same Serie UID) to sort
  * @return false only if the header is bugged !
  */
