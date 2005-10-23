@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 16:32:10 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/23 14:53:51 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,38 +24,40 @@
 
 int DoTheVMTest(std::string const &filename)
 {
-      gdcm::File file;
-      // - Do not test unknow VM in shadow groups (in element 0x0000 is present
-      // - Skip Sequences (if they are 'True Length'); loading will be quicker
-      //                  (anyway, Sequences are skipped at processing time ...)
-      file.SetLoadMode( gdcm::LD_NOSHADOW | gdcm::LD_NOSEQ );
+   gdcm::File file;
+   // - Do not test unknow VM in shadow groups (if element 0x0000 is present)
+   // - Skip Sequences (if they are 'True Length'); loading will be quicker
+   //                  (anyway, Sequences are skipped at processing time ...)
+   file.SetLoadMode( gdcm::LD_NOSHADOW | gdcm::LD_NOSEQ );
 
-      file.SetFileName( filename );
-      if( !file.Load() ) //would be really bad...
-        return 1;
+   file.SetFileName( filename );
+   if( !file.Load() ) //would be really bad...
+      return 1;
 
-      gdcm::DocEntry *d = file.GetFirstEntry();
-      std::cerr << "Testing file : " << filename << std::endl;
-      while(d)
+   gdcm::DocEntry *d = file.GetFirstEntry();
+   std::cerr << "Testing file : " << filename << std::endl;
+   while(d)
+   {
+      if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
       {
-         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
-         {
-           if( !de->IsValueCountValid() )
-             {
-             std::cerr << "Element: " << de->GetKey() <<
-               " (" << de->GetName() << ") " <<
-               "Contains a wrong VM: " << de->GetValueCount() 
-               << " should be: " << de->GetVM() << std::endl;;
-             }
+         if ( !(de->GetGroup() % 2) ) // Don't check shadow elements. Righ now,
+                                      // Private Dictionnary are not dealt with
+         {    
+            if( !de->IsValueCountValid() )
+            {
+               std::cerr << "Element: " << de->GetKey() <<
+                    " (" << de->GetName() << ") " <<
+                    "Contains a wrong VM: " << de->GetValueCount() 
+                    << " should be: " << de->GetVM() << std::endl;;
+            }
          }
-         else
-         {
-          // We skip pb of SQ recursive exploration
-         }
-
-         d = file.GetNextEntry();
       }
-
+      else
+      {
+          // We skip pb of SQ recursive exploration
+      }
+      d = file.GetNextEntry();
+   }
       return 0;
 }
 
