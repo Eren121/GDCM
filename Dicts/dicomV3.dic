@@ -1,8 +1,8 @@
 0000 0000 UL 1 Group Length
-0000 0001 UL 1 Group 0000 Length to End (RET)
+0000 0001 UL 1 Command Length to End (RET)
 0000 0002 UI 1 Affected SOP Class UID
 0000 0003 UI 1 Requested SOP Class UID
-0000 0010 SH 1 Recognition Code (RET)
+0000 0010 SH 1 Command Recognition Code (RET)
 0000 0100 US 1 Command Field
 0000 0110 US 1 Message ID (first)
 0000 0120 US 1 Message ID Responded to
@@ -61,7 +61,7 @@
 0008 0001 UL 1 Length to End (RET)
 0008 0005 CS 1-n Specific Character Set
 0008 0008 CS 1-n Image Type
-0008 0010 SH 1 Recognition Code (RET)
+0008 0010 LO 1 Recognition Code (RET)
 0008 0012 DA 1 Instance Creation Date
 0008 0013 TM 1 Instance Creation Time
 0008 0014 UI 1 Instance Creator UID
@@ -82,7 +82,7 @@
 0008 0033 TM 1 Content Time
 0008 0034 TM 1 Overlay Time
 0008 0035 TM 1 Curve Time
-0008 0040 US 1 Data Set Type (RET)
+0008 0040 SS 1 Data Set Type (RET)
 0008 0041 LO 1 Data Set Subtype (RET)
 0008 0042 CS 1 Nuclear Medicine Series Type (RET)
 0008 0050 SH 1 Accession Number
@@ -120,7 +120,7 @@
 0008 0115 ST 1 Coding Scheme Name
 0008 0116 ST 1 Responsible Organization
 0008 0201 SH 1 Timezone Offset From UTC 
-0008 1000 LO 1 Network ID (RET)
+0008 1000 LT 1 Network ID (RET)
 0008 1010 SH 1 Station Name
 0008 1030 LO 1 Study Description
 0008 1032 SQ 1 Procedure Code Sequence
@@ -188,7 +188,7 @@
 0008 2244 SQ 1 Transducer Orientation Sequence
 0008 2246 SQ 1 Transducer Orientation Modifier Sequence
 0008 3001 SQ 1 Alternate Representation Sequence
-0008 4000 SH 1 Comments (RET)
+0008 4000 LT 1-n Identifying Comments (RET)
 0008 9007 CS 4 Frame Type
 0008 9092 SQ 1 Referenced Image Evidence Sequence
 0008 9121 SQ 1 Referenced Raw Data Sequence
@@ -220,7 +220,7 @@
 0010 1020 DS 1 Patient's Size
 0010 1030 DS 1 Patient's Weight
 0010 1040 LO 1 Patient's Address
-0010 1050 SH 1 Insurance Plan Identification (RET)
+0010 1050 LT 1-n Insurance Plan Identification (RET)
 0010 1060 PN 1 Patient's Mother's Birth Name
 0010 1080 LO 1 Military Rank
 0010 1081 LO 1 Branch of Service
@@ -409,7 +409,7 @@
 0018 1200 DA 1-n Date of Last Calibration
 0018 1201 TM 1-n Time of Last Calibration
 0018 1210 SH 1-n Convolution Kernel
-0018 1240 DS 1 Upper/Lower Pixel Values (RET)
+0018 1240 IS 1-n Upper/Lower Pixel Values (RET)
 0018 1242 IS 1 Actual Frame Duration
 0018 1243 IS 1 Count Rate
 0018 1244 US 1 Preferred Playback Sequencing
@@ -484,7 +484,7 @@
 0018 3103 IS 1 IVUS Pullback Start Frame Number
 0018 3104 IS 1 IVUS Pullback Stop Frame Number
 0018 3105 IS 1-n Lesion Number
-0018 4000 SH 1 Comments (RET)
+0018 4000 LO 1-n Acquisition Comments (RET)
 0018 5000 SH 1-n Output Power
 0018 5010 LO 3 Transducer Data
 0018 5012 DS 1 Focus Depth
@@ -801,8 +801,8 @@
 0020 0052 UI 1 Frame of Reference UID
 0020 0060 CS 1 Laterality
 0020 0062 CS 1 Image Laterality
-0020 0070 SH 1 Image Geometry Type (RET)
-0020 0080 UI 1 Masking Image
+0020 0070 LO 1 Image Geometry Type (RET)
+0020 0080 LT 1-n Masking Image
 0020 0100 IS 1 Temporal Position Identifier
 0020 0105 IS 1 Number of Temporal Positions
 0020 0110 DS 1 Temporal Resolution
@@ -821,13 +821,13 @@
 0020 1206 IS 1 Number of Study Related Series
 0020 1208 IS 1 Number of Study Related Instances
 0020 1209 IS 1 Number of Series Related Instances
-0020 3100 SH 1 Source Image Ids (RET)
-0020 3401 SH 1 Modifying Device ID (RET)
-0020 3402 SH 1 Modified Image ID (RET)
-0020 3403 SH 1 Modified Image Date (RET)
-0020 3404 SH 1 Modifying Device Manufacturer (RET)
-0020 3405 SH 1 Modified Image Time (RET)
-0020 3406 SH 1 Modified Image Description (RET)
+0020 3100 LO 1-n Source Image IDs (RET)
+0020 3401 LO 1 Modifying Device ID (RET)
+0020 3402 LO 1 Modified Image ID (RET)
+0020 3403 DA 1 Modified Image Date (RET)
+0020 3404 LT 1 Modifying Device Manufacturer (RET)
+0020 3405 TM 1 Modified Image Time (RET)
+0020 3406 LT 1 Modified Image Description (RET)
 0020 4000 LT 1 Image Comments
 0020 5000 AT 1-n Original Image Identification (RET)
 0020 5002 LO 1-n Original Image Identification Nomenclature (RET)
@@ -891,7 +891,7 @@
 0028 0002 US 1 Samples per Pixel
 0028 0003 US 1 Samples per Pixel Used
 0028 0004 CS 1 Photometric Interpretation
-0028 0005 US 1 Image Dimensions (RET)
+0028 0005 SS 1 Image Dimensions (RET)
 0028 0006 US 1 Planar Configuration
 0028 0008 IS 1 Number of Frames
 0028 0009 AT 1-n Frame Increment Pointer
@@ -905,15 +905,15 @@
 0028 0032 DS 2 Zoom Center
 0028 0034 IS 2 Pixel Aspect Ratio
 0028 0040 SH 1 Image Format (RET)
-0028 0050 SH 1 Manipulated Image (RET)
+0028 0050 LO 1-n Manipulated Image (RET)
 0028 0051 CS 1-n Corrected Image
 0028 0060 SH 1 Compression Code (RET)
 0028 0100 US 1 Bits Allocated
 0028 0101 US 1 Bits Stored
 0028 0102 US 1 High Bit
 0028 0103 US 1 Pixel Representation
-0028 0104 US 1 Smallest Valid Pixel Value (RET)
-0028 0105 US 1 Largest Valid Pixel Value (RET)
+0028 0104 SS 1 Smallest Valid Pixel Value (RET)
+0028 0105 SS 1 Largest Valid Pixel Value (RET)
 0028 0106 US 1 Smallest Image Pixel Value
 0028 0107 US 1 Largest Image Pixel Value
 0028 0108 US 1 Smallest Pixel Value in Series
@@ -921,7 +921,7 @@
 0028 0110 US 1 Smallest Image Pixel Value in Plane
 0028 0111 US 1 Largest Image Pixel Value in Plane
 0028 0120 US 1 Pixel Padding Value
-0028 0200 US 1 Image Location (RET)
+0028 0200 SS 1 Image Location (RET)
 0028 0300 CS 1 Quality Control Image
 0028 0301 CS 1 Burned In Annotation
 0028 1040 CS 1 Pixel Intensity Relationship
@@ -932,14 +932,14 @@
 0028 1053 DS 1 Rescale Slope
 0028 1054 LO 1 Rescale Type
 0028 1055 LO 1-n Window Center & Width Explanation
-0028 1080 SH 1 Gray Scale (RET)
+0028 1080 LT 1 Gray Scale (RET)
 0028 1090 CS 1 Recommended Viewing Mode
 0028 1100 US 1 Gray Lookup Table Descriptor (RET)
 0028 1101 US 3 Red Palette Color Lookup Table Descriptor
 0028 1102 US 3 Green Palette Color Lookup Table Descriptor
 0028 1103 US 3 Blue Palette Color Lookup Table Descriptor
 0028 1199 UI 1 Palette Color Lookup Table UID
-0028 1200 US 1 Gray Lookup Table Data (RET)
+0028 1200 OW 1 Gray Lookup Table Data (RET)
 0028 1201 OW 1 Red Palette Color Lookup Table Data
 0028 1202 OW 1 Green Palette Color Lookup Table Data
 0028 1203 OW 1 Blue Palette Color Lookup Table Data
@@ -959,7 +959,7 @@
 0028 3006 OW 1 LUT Data
 0028 3010 SQ 1 VOI LUT Sequence
 0028 3110 SQ 1 Softcopy VOI LUT Sequence
-0028 4000 SH 1 Comments (RET)
+0028 4000 LT 1-n Image Presentation Comments (RET)
 0028 5000 SQ 1 Bi-Plane Acquisition Sequence
 0028 6010 US 1 Representative Frame Number
 0028 6020 US 1-n Frame Numbers of Interest (FOI)
@@ -2023,9 +2023,9 @@
 300e 0005 TM 1 Review Time
 300e 0008 PN 1 Reviewer Name
 
-4000 0000 UL 1 Group Length
-4000 0010 LT 1 Arbitrary (RET)
-4000 4000 LT 1 Comments (RET)
+4000 0000 UL 1 Text Group Length
+4000 0010 LT 1-n Text Arbitrary (RET)
+4000 4000 LT 1 Text Comments (RET)
 
 4008 0000 UL 1 Group Length
 4008 0040 SH 1 Results ID
@@ -2304,10 +2304,10 @@
 6000 0050 SS 2 Overlay Origin
 6000 0051 US 1 Image Frame Origin
 6000 0052 US 1 Overlay Plane Origin
-6000 0060 LO 1 Compression Code (RET)
+6000 0060 LT 1 Overlay Compression Code (RET)
 6000 0100 US 1 Overlay Bits Allocated
 6000 0102 US 1 Overlay Bit Position
-6000 0110 LO 1 Overlay Format (RET)
+6000 0110 LT 1 Overlay Format (RET)
 6000 0200 US 1 Overlay Location (RET)
 6000 1001 US 1 Overlay Activation Layer
 6000 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2323,7 +2323,7 @@
 6000 1303 DS 1 ROI Standard Deviation
 6000 1500 LO 1 Overlay Label
 6000 3000 OW 1 Overlay Data
-6000 4000 LO 1 Comments (RET)
+6000 4000 LT 1-n Overlay Comments (RET)
 
 6002 0000 UL 1 Group Length
 6002 0010 US 1 Rows
@@ -2336,10 +2336,10 @@
 6002 0050 SS 2 Overlay Origin
 6002 0051 US 1 Image Frame Origin
 6002 0052 US 1 Overlay Plane Origin
-6002 0060 LO 1 Compression Code (RET)
+6002 0060 LT 1 Overlay Compression Code (RET)
 6002 0100 US 1 Overlay Bits Allocated
 6002 0102 US 1 Overlay Bit Position
-6002 0110 LO 1 Overlay Format (RET)
+6002 0110 LT 1 Overlay Format (RET)
 6002 0200 US 1 Overlay Location (RET)
 6002 1001 US 1 Overlay Activation Layer
 6002 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2355,7 +2355,7 @@
 6002 1303 DS 1 ROI Standard Deviation
 6002 1500 LO 1 Overlay Label
 6002 3000 OW 1 Overlay Data
-6002 4000 LO 1 Comments (RET)
+6002 4000 LT 1-n Overlay Comments (RET)
 
 6004 0000 UL 1 Group Length
 6004 0010 US 1 Rows
@@ -2368,10 +2368,10 @@
 6004 0050 SS 2 Overlay Origin
 6004 0051 US 1 Image Frame Origin
 6004 0052 US 1 Overlay Plane Origin
-6004 0060 LO 1 Compression Code (RET)
+6004 0060 LT 1 Overlay Compression Code (RET)
 6004 0100 US 1 Overlay Bits Allocated
 6004 0102 US 1 Overlay Bit Position
-6004 0110 LO 1 Overlay Format (RET)
+6004 0110 LT 1 Overlay Format (RET)
 6004 0200 US 1 Overlay Location (RET)
 6004 1001 US 1 Overlay Activation Layer
 6004 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2387,7 +2387,7 @@
 6004 1303 DS 1 ROI Standard Deviation
 6004 1500 LO 1 Overlay Label
 6004 3000 OW 1 Overlay Data
-6004 4000 LO 1 Comments (RET)
+6004 4000 LT 1-n Overlay Comments (RET)
 
 6006 0000 UL 1 Group Length
 6006 0010 US 1 Rows
@@ -2400,10 +2400,10 @@
 6006 0050 SS 2 Overlay Origin
 6006 0051 US 1 Image Frame Origin
 6006 0052 US 1 Overlay Plane Origin
-6006 0060 LO 1 Compression Code (RET)
+6006 0060 LT 1 Overlay Compression Code (RET)
 6006 0100 US 1 Overlay Bits Allocated
 6006 0102 US 1 Overlay Bit Position
-6006 0110 LO 1 Overlay Format (RET)
+6006 0110 LT 1 Overlay Format (RET)
 6006 0200 US 1 Overlay Location (RET)
 6006 1001 US 1 Overlay Activation Layer
 6006 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2419,7 +2419,7 @@
 6006 1303 DS 1 ROI Standard Deviation
 6006 1500 LO 1 Overlay Label
 6006 3000 OW 1 Overlay Data
-6006 4000 LO 1 Comments (RET)
+6006 4000 LT 1-n Overlay Comments (RET)
 
 6008 0000 UL 1 Group Length
 6008 0010 US 1 Rows
@@ -2432,10 +2432,10 @@
 6008 0050 SS 2 Overlay Origin
 6008 0051 US 1 Image Frame Origin
 6008 0052 US 1 Overlay Plane Origin
-6008 0060 LO 1 Compression Code (RET)
+6008 0060 LT 1 Overlay Compression Code (RET)
 6008 0100 US 1 Overlay Bits Allocated
 6008 0102 US 1 Overlay Bit Position
-6008 0110 LO 1 Overlay Format (RET)
+6008 0110 LT 1 Overlay Format (RET)
 6008 0200 US 1 Overlay Location (RET)
 6008 1001 US 1 Overlay Activation Layer
 6008 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2451,7 +2451,7 @@
 6008 1303 DS 1 ROI Standard Deviation
 6008 1500 LO 1 Overlay Label
 6008 3000 OW 1 Overlay Data
-6008 4000 LO 1 Comments (RET)
+6008 4000 LT 1-n Overlay Comments (RET)
 
 600a 0000 UL 1 Group Length
 600a 0010 US 1 Rows
@@ -2464,10 +2464,10 @@
 600a 0050 SS 2 Overlay Origin
 600a 0051 US 1 Image Frame Origin
 600a 0052 US 1 Overlay Plane Origin
-600a 0060 LO 1 Compression Code (RET)
+600a 0060 LT 1 Overlay Compression Code (RET)
 600a 0100 US 1 Overlay Bits Allocated
 600a 0102 US 1 Overlay Bit Position
-600a 0110 LO 1 Overlay Format (RET)
+600a 0110 LT 1 Overlay Format (RET)
 600a 0200 US 1 Overlay Location (RET)
 600a 1001 US 1 Overlay Activation Layer
 600a 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2483,7 +2483,7 @@
 600a 1303 DS 1 ROI Standard Deviation
 600a 1500 LO 1 Overlay Label
 600a 3000 OW 1 Overlay Data
-600a 4000 LO 1 Comments (RET)
+600a 4000 LT 1-n Overlay Comments (RET)
 
 600c 0000 UL 1 Group Length
 600c 0010 US 1 Rows
@@ -2496,10 +2496,10 @@
 600c 0050 SS 2 Overlay Origin
 600c 0051 US 1 Image Frame Origin
 600c 0052 US 1 Overlay Plane Origin
-600c 0060 LO 1 Compression Code (RET)
+600c 0060 LT 1 Overlay Compression Code (RET)
 600c 0100 US 1 Overlay Bits Allocated
 600c 0102 US 1 Overlay Bit Position
-600c 0110 LO 1 Overlay Format (RET)
+600c 0110 LT 1 Overlay Format (RET)
 600c 0200 US 1 Overlay Location (RET)
 600c 1001 US 1 Overlay Activation Layer
 600c 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2515,7 +2515,7 @@
 600c 1303 DS 1 ROI Standard Deviation
 600c 1500 LO 1 Overlay Label
 600c 3000 OW 1 Overlay Data
-600c 4000 LO 1 Comments (RET)
+600c 4000 LT 1-n Overlay Comments (RET)
 
 600e 0000 UL 1 Group Length
 600e 0010 US 1 Rows
@@ -2528,10 +2528,10 @@
 600e 0050 SS 2 Overlay Origin
 600e 0051 US 1 Image Frame Origin
 600e 0052 US 1 Overlay Plane Origin
-600e 0060 LO 1 Compression Code (RET)
+600e 0060 LT 1 Overlay Compression Code (RET)
 600e 0100 US 1 Overlay Bits Allocated
 600e 0102 US 1 Overlay Bit Position
-600e 0110 LO 1 Overlay Format (RET)
+600e 0110 LT 1 Overlay Format (RET)
 600e 0200 US 1 Overlay Location (RET)
 600e 1001 US 1 Overlay Activation Layer
 600e 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2547,7 +2547,7 @@
 600e 1303 DS 1 ROI Standard Deviation
 600e 1500 LO 1 Overlay Label
 600e 3000 OW 1 Overlay Data
-600e 4000 LO 1 Comments (RET)
+600e 4000 LT 1-n Overlay Comments (RET)
 
 7fe0 0000 UL 1 Group Length
 7fe0 0010 OB 1 Pixel Data
