@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmConfigure.h.in,v $
   Language:  C++
-  Date:      $Date: 2005/09/19 18:55:12 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/10/23 19:46:18 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,6 +60,8 @@
 
 /* GDCM uses __FUNCTION__ which is not ANSI C, but C99 */
 #cmakedefine GDCM_COMPILER_HAS_FUNCTION
+
+#define GDCM_SIZEOF_LONG @GDCM_SIZEOF_LONG@
 
 
 /* GetMacAddress require a lot of include file to access low level API */

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:05 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/23 19:46:17 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,18 +17,25 @@
 =========================================================================*/
 #include "gdcmDictEntry.h"
 #include "gdcmDataEntry.h"
+#include <math.h>
 
 // ===============================================================
 
-char data[]="1\\2\\3\\4\\5";
-char fdata[]="1.1\\2.2\\3.3\\4.4\\5.5";
+const char data[] = "1\\2\\3\\4\\5";
+const char fdata[] = "1.1\\2.2\\3.3\\4.4\\5.5";
 
-short svalue[]={1,2,3,4,5};
-long lvalue[]={1,2,3,4,5};
-float fvalue[]={1.1f,2.2f,3.3f,4.4f,5.5f};
-double dvalue[]={1.1,2.2,3.3,4.4,5.5};
+const int16_t svalue[]={1,2,3,4,5};
+const int32_t lvalue[]={1,2,3,4,5};
+const float fvalue[]={1.1f,2.2f,3.3f,4.4f,5.5f};
+// Temporary hack, assume that long and double are correlated
+#if GDCM_SIZEOF_LONG == 4
+const double dvalue[]={1.1,2.2,3.3,4.4,5.5};
+#else 
+const float dvalue[]={1.1,2.2,3.3,4.4,5.5};
+#endif
 
-unsigned long nbvalue = 5;
+const unsigned long nbvalue = 5;
+const float GDCM_EPS = 1e-6;
 
 /**
   * \brief Test the DataEntry object
@@ -58,7 +65,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: 1" << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
 
    entry->SetString("1\\2");
@@ -73,7 +80,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: 2" << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
 
    entry->SetString("");
@@ -88,7 +95,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: 0" << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
 
    std::cout << std::endl;
@@ -113,7 +120,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << strlen(data) + strlen(data)%2 << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -123,7 +130,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( memcmp(entry->GetBinArea(),data,entry->GetLength()) != 0 )
    {
@@ -131,7 +138,7 @@ int TestDataEntry(int , char *[])
                 << "   Content of bin area is incorrect" << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( memcmp(entry->GetString().c_str(),data,entry->GetLength()) != 0 )
    {
@@ -141,7 +148,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << data << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -153,7 +160,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be " << svalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -180,7 +187,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue*sizeof(uint16_t) << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
    {
@@ -190,7 +197,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << data << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -200,7 +207,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -212,7 +219,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << svalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -230,7 +237,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << data << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -240,7 +247,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -252,7 +259,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << svalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -279,7 +286,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue*sizeof(uint32_t) << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
    {
@@ -289,7 +296,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << data << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -299,7 +306,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -311,7 +318,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << lvalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -329,7 +336,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << data << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -339,7 +346,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -351,7 +358,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << lvalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -378,7 +385,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue*sizeof(float) << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
    {
@@ -388,7 +395,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -398,7 +405,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -410,7 +417,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << fvalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -428,7 +435,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -438,7 +445,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -450,7 +457,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << fvalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -477,7 +484,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue*sizeof(double) << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
    {
@@ -487,7 +494,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -497,11 +504,13 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
-      if( entry->GetValue(i) != dvalue[i] )
+      // Never compare floating point value...
+      double dif = fabs(entry->GetValue(i) - dvalue[i]);
+      if( dif > GDCM_EPS)
       {
          std::cout << "   Failed" << std::endl
                    << "   Content of entry's values is incorrect : id " << i << std::endl
@@ -509,7 +518,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << dvalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
@@ -527,7 +536,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    if( entry->GetValueCount() != nbvalue )
    {
@@ -537,7 +546,7 @@ int TestDataEntry(int , char *[])
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
       delete entry;
-      return(1);
+      return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
    {
@@ -549,7 +558,7 @@ int TestDataEntry(int , char *[])
                    << " - Must be: " << dvalue[i] << std::endl;
          dict->Delete();
          delete entry;
-         return(1);
+         return 1;
       }
    }
 
