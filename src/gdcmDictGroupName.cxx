@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:58 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,6 +80,7 @@ DictGroupName::~DictGroupName()
 
 //-----------------------------------------------------------------------------
 // Public
+/// \returns the formerly NIH defined ACR-NEMA group name
 const TagName &DictGroupName::GetName(uint16_t group)
 {
    DictGroupNameHT::const_iterator it = groupName.find(group);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,6 +78,7 @@ private:
 
    /// Access through TagKey
    TagKeyHT KeyHt;
+   /// Iterator for the entries
    TagKeyHT::iterator ItKeyHt;
 };
 } // end namespace gdcm

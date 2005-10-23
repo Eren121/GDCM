@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ Dict::~Dict()
 // Public
 
 /**
- * \brief   Add a all the entries held in a source dictionary
+ * \brief   Add all the entries held in a source dictionary
  * \note it concerns only Private Dictionnary
  * @param   filename from which to build the dictionary.
  */
@@ -222,7 +222,7 @@ void Dict::ClearEntry()
 
 /**
  * \brief   Get the dictionary entry identified by a given tag ("group|element")
- * @param   key   tag of the entry to be found
+ * @param   key   tag of the searched entry 
  * @return  the corresponding dictionary entry when existing, NULL otherwise
  */
 DictEntry *Dict::GetEntry(TagKey const &key)
@@ -234,7 +234,12 @@ DictEntry *Dict::GetEntry(TagKey const &key)
    }
    return it->second;
 }
-
+/**
+ * \brief   Get the dictionary entry identified by it's "group" and "element")
+ * @param   group  Group number of the searched entry.
+ * @param   elem Element number of the searched entry.
+ * @return  the corresponding dictionary entry when existing, NULL otherwise
+ */
 DictEntry *Dict::GetEntry(uint16_t group, uint16_t elem)
 {
    TagKey key = DictEntry::TranslateToKey(group, elem);

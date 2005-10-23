@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/10/23 15:32:31 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,7 @@ public:
    /// Dictionnary, of the current Dicom entry
    VRKey const &GetVR() const { return DicomDict->GetVR(); }
 
-   /// \brief Returns the 'Value Multiplicity' (e.g. "1", "1-n", "6"),
+   /// \brief Returns the 'Value Multiplicity' (e.g. "1", 6", "1-n", "3-n"),
    /// found in the Dicom entry or in the Dicom Dictionnary
    /// of the current Dicom entry
    std::string const &GetVM() const { return DicomDict->GetVM(); }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 15:52:13 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,9 @@ void DataEntry::SetBinArea( uint8_t *area, bool self )
 
    State = STATE_LOADED;
 }
-
+/**
+ * \brief Inserts the value (non string) into the current Dicom Header Entry
+ */
 void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
 {
    DeleteBinArea();
@@ -105,7 +107,7 @@ void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
    }
 }
 
-void DataEntry::SetValue(const uint32_t &id,const double &val)
+void DataEntry::SetValue(const uint32_t &id, const double &val)
 {
    if( !BinArea )
       NewBinArea();
@@ -147,22 +149,30 @@ void DataEntry::SetValue(const uint32_t &id,const double &val)
       BinArea[id] = (uint8_t)val;
    }
 }
-
+/**
+ * \brief returns, as a double (?!?) one of the values 
+ //      (when entry is multivaluated), identified by its index.
+ //      Returns 0.0 if index is wrong
+ //     FIXME : warn the user there was a problem ! 
+ */
 double DataEntry::GetValue(const uint32_t &id) const
 {
    if( !BinArea )
    {
       gdcmErrorMacro("BinArea not set. Can't get the value");
-      return 0;
+      return 0.0;
    }
 
    uint32_t count = GetValueCount();
    if( id > count )
    {
       gdcmErrorMacro("Index (" << id << ")is greater than the data size");
-      return 0;
+      return 0.0;
    }
 
+   // FIX the API : user *knows* that entry contains a US
+   //               and he receives a double ?!?
+   
    const VRKey &vr = GetVR();
    if( vr == "US" || vr == "SS" )
       return ((uint16_t *)BinArea)[id];
@@ -219,31 +229,55 @@ double DataEntry::GetValue(const uint32_t &id) const
       return BinArea[id];
 }
 
+/**
+ * \brief Checks if the multiplicity of the value follows Dictionary VM
+ */
 bool DataEntry::IsValueCountValid() const
 {
   bool valid = false;
   uint32_t vm;
   const std::string &strVM = GetVM();
   uint32_t vc = GetValueCount();
+  
+  // FIXME : what shall we do with VM = "2-n", "3-n", etc
+  
   if( strVM == "1-n" )
-    {
+  {
     // make sure it is at least one ??? FIXME
     valid = vc >= 1 || vc == 0;
-    }
+  }
   else
-    {
+  {
     std::istringstream os;
     os.str( strVM );
     os >> vm;
     // Two cases:
     // vm respect the one from the dict
-    // vm is 0 (we need to check is this element is allowed to be empty) FIXME
+    // vm is 0 (we need to check if this element is allowed to be empty) FIXME
+
+    // note  (JPR)
+    // ----    
+    // Entries whose type is 1 are mandatory, with a mandatory value.
+    // Entries whose type is 1c are mandatory-inside-a-Sequence,
+    //                          with a mandatory value.
+    // Entries whose type is 2 are mandatory, with an optional value.
+    // Entries whose type is 2c are mandatory-inside-a-Sequence,
+    //                          with an optional value.
+    // Entries whose type is 3 are optional.
+
+    // case vc == 0 is only applicable for 'type 2' entries.
+    // Problem : entry type may depend on the modality and/or the Sequence
+    //           it's embedded in !
+    //          (Get the information in the 'Conformance Statements' ...)  
     valid = vc == vm || vc == 0;
-    }
+  }
   return valid;
 }
 
-uint32_t DataEntry::GetValueCount(void) const
+/**
+ * \brief returns the number of elementary values
+ */ 
+uint32_t DataEntry::GetValueCount( ) const
 {
    const VRKey &vr = GetVR();
    if( vr == "US" || vr == "SS" )
@@ -270,7 +304,10 @@ uint32_t DataEntry::GetValueCount(void) const
 
    return GetLength();
 }
-
+/**
+ * \brief Sets the 'value' of an Entry, passed as a std::string
+ * @param value string representation of the value to be set
+ */ 
 void DataEntry::SetString(std::string const &value)
 {
    DeleteBinArea();
@@ -328,16 +365,30 @@ void DataEntry::SetString(std::string const &value)
    {
       if( value.size() > 0 )
       {
+         // FIXME : should be quicker if we don't create one more std::string
+         //         just to make even the length of a char array ...
+
+         /*
          std::string finalVal = Util::DicomString( value.c_str() );
          SetLength(finalVal.size());
          NewBinArea();
 
          memcpy(BinArea, &(finalVal[0]), finalVal.size());
+         */
+
+         size_t l =  value.size();    
+         SetLength(l + l%2);
+         NewBinArea();
+         memcpy(BinArea, &(value[0]), l);
+         if (l%2)
+            BinArea[l] = '\0';
       }
    }
    State = STATE_LOADED;
 }
-
+/**
+ * \brief   returns as a string (when possible) the value of the DataEntry
+ */
 std::string const &DataEntry::GetString() const
 {
    static std::ostringstream s;
@@ -348,6 +399,9 @@ std::string const &DataEntry::GetString() const
 
    if( !BinArea )
       return StrArea;
+      
+   // When short integer(s) are stored, convert the following (n * 2) characters 
+   // as a displayable string, the values being separated by a back-slash
 
    if( vr == "US" || vr == "SS" )
    {
@@ -361,7 +415,7 @@ std::string const &DataEntry::GetString() const
       }
       StrArea=s.str();
    }
-   // See above comment on multiple integers (mutatis mutandis).
+   // See above comment on multiple short integers (mutatis mutandis).
    else if( vr == "UL" || vr == "SL" )
    {
       uint32_t *data=(uint32_t *)BinArea;
@@ -403,7 +457,10 @@ std::string const &DataEntry::GetString() const
 
    return StrArea;
 }
-
+/**
+ * \brief   Copies all the attributes from an other DocEntry 
+ * @param doc entry to copy from
+ */
 void DataEntry::Copy(DocEntry *doc)
 {
    DocEntry::Copy(doc);
@@ -416,7 +473,11 @@ void DataEntry::Copy(DocEntry *doc)
       CopyBinArea(entry->BinArea,entry->GetLength());
    }
 }
-
+/**
+ * \brief   Writes the value of a DataEntry
+ * @param fp already open ofstream pointer
+ * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
+ */
 void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
 { 
    DocEntry::WriteContent(fp, filetype);
@@ -553,10 +614,15 @@ void DataEntry::Print(std::ostream &os, std::string const & )
       { 
          if(Global::GetVR()->IsVROfStringRepresentable(vr))
          {
-            std::string cleanString = Util::CreateCleanString(v);  // replace non printable characters by '.'
+            // replace non printable characters by '.'
+            std::string cleanString = Util::CreateCleanString(v);
             if ( cleanString.length() <= GetMaxSizePrintEntry()
-            || PrintLevel >= 3
-            || IsNotLoaded() )
+              || PrintLevel >= 3
+              || IsNotLoaded() )
+           // FIXME : when IsNotLoaded(), you create a Clean String ?!?
+           // FIXME : PrintLevel<2 *does* print the values 
+           //        (3 is only for extra offsets printing)
+           // What do you wanted to do ? JPR
             {
                s << " [" << cleanString << "]";
             }
@@ -567,8 +633,14 @@ void DataEntry::Print(std::ostream &os, std::string const & )
          }
          else
          {
-            if ( Util::IsCleanArea( GetBinArea(),GetLength()  ) )
+            // A lot of Private elements (with no VR) contain actually 
+            // only printable characters;
+            // Let's deal with them as is they were VR std::string representable
+    
+            if ( Util::IsCleanArea( GetBinArea(), GetLength()  ) )
             {
+               // FIXME : since the 'Area' *is* clean, just use
+               //         a 'CreateString' method, to save CPU time.
                std::string cleanString = 
                      Util::CreateCleanString( BinArea,GetLength()  );
                s << " [" << cleanString << "]";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 15:34:56 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,11 +29,12 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 /**
  * \brief
- * the DicomEntry in an element contained by the Dict.
+ * a DicomEntry is an element contained by the Dict.
  * It contains :
- *  - the key referenced by the DICOM norm or the constructor (for private keys)
- *    i.e. the Group number
- *         the Element number
+ *  - the key referenced by the DICOM norm or the manufacturer(for private keys)
+ *    i.e. 
+ *    - - the Group number
+ *    - - the Element number
  *  - the VR (Value Representation)
  *  - the VM (Value Multiplicity)
  *  - the corresponding name in english
@@ -75,13 +76,13 @@ protected:
    ~DicomEntry();
 
 private:
-   /// Dicom \ref TagKey. Contains DicomGroup number and DicomElement number
+   /// Dicom \ref TagKey. Contains Dicom Group number and Dicom Element number
    TagKey Tag;
 
    /// \brief Value Representation i.e. some clue about the nature
    ///        of the data represented e.g. 
-   ///        "FD" short for "Floating Point Double"(see \ref VR)
-   ///        "PN" short for "Person Name"       
+   ///        - "FD" short for "Floating Point Double"(see \ref VR)
+   ///        - "PN" short for "Person Name"       
    VRKey VR;
 };
 } // end namespace gdcm

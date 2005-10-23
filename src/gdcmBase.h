@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 07:40:13 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 /**
- * \brief Base class of all gdcm classes
+ * \brief Base class of all gdcm classes.
  * Contains the Print related methods :
  *  - Print 
  *  - SetPrintLevel / GetPrintLevel 
@@ -34,9 +34,11 @@ namespace gdcm
 class GDCM_EXPORT Base
 {
 public:
+   /// \brief Constructor
    Base( ) {PrintLevel = 0;}
+   /// \brief Canonical Destructor   
    virtual ~Base() {}
-
+   /// \brief Printer
    virtual void Print(std::ostream & = std::cout, 
                       std::string const & = "" ) {};
 

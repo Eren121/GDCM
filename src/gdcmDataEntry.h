@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 14:09:41 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 /**
- * \brief   Any Dicom Document (File or DicomDir) contains 
+ * \brief   Any Dicom Document (File or DicomDir, or ...) contains 
  *           a set of DocEntry  - Dicom entries -
  *           (when successfuly parsed against a given Dicom dictionary)
  *          DataEntry is an elementary DocEntry (as opposed to SeqEntry).
@@ -46,7 +46,7 @@ public:
 // Write
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
 
-// Set/Get datas
+// Set/Get data
    /// Sets the value (string) of the current Dicom entry
    //virtual void SetValue(std::string const &val);
    /// \brief Returns the 'Value' (e.g. "Dupond^Marcel") converted 
@@ -70,20 +70,27 @@ public:
 
    /// \brief Sets SelfArea
    void SetSelfArea(bool area) { SelfArea = area; }
-   /// \brief Returns SelfArea
+   /// \brief True if Entry owns its BinArea
    bool IsSelfArea() { return SelfArea; }
 
    // State
    void SetState(const char &state) { State = state; }
    const char &GetState() const { return State; }
+   /// \brief true when value Entry not loaded  
    bool IsNotLoaded() { return State == STATE_NOTLOADED; }
+   /// \brief true if Entry not found  
    bool IsUnfound()   { return State == STATE_UNFOUND; }
+   /// \brief true if Entry not read    
    bool IsUnread()    { return State == STATE_UNREAD; }
+   /// \brief true if Entry value properly loaded
    bool IsGoodValue() { return State == 0; }
 
    // Flags
+   /// \brief sets the 'pixel data flag'   
    void SetFlag(const char &flag) { Flag = flag; }
+   /// \brief returns the 'pixel data flag'    
    const char &GetFlag() const { return Flag; }
+   /// \brief true id Entry is a Pixel Data entry
    bool IsPixelData() { return (Flag & FLAG_PIXELDATA) != 0; }
 
    void Copy(DocEntry *doc);
@@ -94,6 +101,7 @@ public:
    /// \brief Header Elements too long will not be printed
    static void SetMaxSizePrintEntry(const uint32_t &size) { MaxSizePrintEntry = size; }
 
+   ///\brief values for current state of a DataEntry (internal use only)
    typedef enum
    {
       STATE_LOADED    = 0x00,
@@ -101,7 +109,8 @@ public:
       STATE_UNFOUND   = 0x02,
       STATE_UNREAD    = 0x03
    } TValueState;
-
+   
+   ///\brief values for current pixel status of a DataEntry (internal use only)
    typedef enum
    {
       FLAG_NONE       = 0x00,
@@ -119,11 +128,14 @@ protected:
    uint8_t *BinArea;
    /// \brief Whether DataEntry has its own BinArea or not
    bool SelfArea;
-
+   /// \brief  std::string representable value of the Entry. 
+   ///        Parts of a multivaluated data are separated by back-slash
    mutable std::string StrArea;
 
 private:
+   /// \brief 0 for straight entries, FLAG_PIXELDATA for Pixel Data entries
    char Flag;
+   /// \brief Entry status : STATE_NOTLOADED,STATE_UNFOUND, STATE_UNREAD, 0
    char State;
 
    /// \brief Size threshold above which an element val

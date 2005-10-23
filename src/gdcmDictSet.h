@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/10/23 15:32:31 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,6 +73,7 @@ protected:
 private:
    /// Hash table of all dictionaries contained in this DictSet
    DictSetHT Dicts;
+   /// Iterator to visit the Dictionaries of a given DictSet
    DictSetHT::iterator ItDictHt;
 
    /// Directory path to dictionaries

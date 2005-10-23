@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2005/10/23 15:32:30 $
+  Version:   $Revision: 1.101 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,9 +129,9 @@ enum LodModeType
  */  
 struct DicomElement
 {
-   /// DicomGroup number
+   /// Dicom Group number
    unsigned short int Group;
-   /// DicomElement number
+   /// Dicom Element number
    unsigned short int Elem;
    /// value (coded as a std::string) of the Element
    std::string Value;
