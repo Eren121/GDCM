@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:09:19 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2005/10/23 17:51:43 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -796,7 +796,9 @@ void PixelReadConvert::ConvertSwapZone()
    // Therefore, in either case, if the file is in
    // 'ImplicitVR BigEndian PrivateGE Transfer Syntax', then GDCM needs to switch
    // the byte swapping code when entering the pixel data.
-    
+
+/* //Let me check something.
+   //I wait for the Dashboard !   
    if ( IsPrivateGETransferSyntax )
    {
       // PrivateGETransferSyntax only exists for 'true' Dicom images
@@ -811,7 +813,7 @@ void PixelReadConvert::ConvertSwapZone()
             break;
       }  
    }
-   
+*/   
    if ( BitsAllocated == 16 )
    {
       uint16_t *im16 = (uint16_t*)Raw;
