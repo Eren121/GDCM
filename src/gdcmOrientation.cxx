@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 16:02:01 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/10/23 15:12:24 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,6 +69,8 @@ static const char  *OrientationTypeStrings[] = {
   NULL
 };
 
+/// \brief returns human readable interpretation of the most 
+///        similar basic orientation (Axial, Coronal, Sagital, ...) of the image
 const char* Orientation::GetOrientationTypeString(OrientationType const o)
 {
   int k = (int)o;
@@ -78,6 +80,8 @@ const char* Orientation::GetOrientationTypeString(OrientationType const o)
   return OrientationTypeStrings[k];
 }
 
+/// \brief returns of the most similar basic orientation
+///        (Axial, Coronal, Sagital, ...) of the image
 OrientationType Orientation::GetOrientationType( File *f )
 {
    float iop[6];
@@ -270,18 +274,18 @@ have multiple letters in as described under "refinements" in C.7.6.1.1.1):
 */
 
 /**
- * \brief computes the Patient Orientation relative to the image plane
+ * \brief Computes the Patient Orientation relative to the image plane
  *          from the 'Image Orientation (Patient)'
- *          The first entry is the direction of the rows, given by the 
+ *          - The first entry is the direction of the rows, given by the 
  *          direction of the last pixel in the first row from the first 
  *          pixel in that row. 
- *          The second entry is the direction of the columns, given by 
+ *          - The second entry is the direction of the columns, given by 
  *          the direction of the last pixel in the first column from the
  *          first pixel in that column. 
  *          Anatomical direction is designated by the capital 
  *          letters: A (anterior), P (posterior), R (right),L (left), 
  *          H (head), F (foot).
- *          Refinements in the orientation descriptions are designated 
+ *          - Refinements in the orientation descriptions are designated 
  *          by one or two additional letters in each value.
  *          Use it when "Patient Orientation" (0020,0020) is not found 
  * @return orientation string as "rawOrientation\columnsOrientation"

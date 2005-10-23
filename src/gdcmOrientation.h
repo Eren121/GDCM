@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/03 16:09:27 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/10/23 15:12:24 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,9 @@ typedef enum {
 class GDCM_EXPORT Orientation : public Base
 {
 public:
+/// \brief Constructor
   Orientation() {}
+/// \brief Canonical Destructor
   ~Orientation() {}
 
   OrientationType GetOrientationType( File *file );
