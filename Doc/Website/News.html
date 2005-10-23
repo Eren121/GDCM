@@ -107,6 +107,8 @@ Any contribution is welcome.
       <LI> Allow manual adjunction / automatic recognition (pfff!...)
            of the private <TT>Dicom Dictionary</TT>
            to be used to parse <TT>Shadow groups</TT> against.
+      <LI> User friendly way of anonymizing image when Patient's name is
+           carved in the Pixels :-(
    </UL>
 </UL>
 <!#######################################################################>
@@ -128,25 +130,57 @@ Any contribution is welcome.
          Documentation</a> 
    <LI> New Features
    <UL>
+      <LI> Stupid difference between <TT>gdcm::ValEntry</TT> 
+           and <TT>gdcm::BinEntry</TT> removed. <br>
+           Only <TT>gdcm::DataEntry</TT> exist, now. 
+           Should have been considered as a 'Bug Fix'.<br>
+           Actually, it's an API breaking modification ...
+      <LI> SerieHelper : <br>     
+           Add some methods, to split a 'SingleSerieUID' Fileset into 
+           'Extra Coherent'  FileSets. <br>
+           They return a std::map of 'Filesets' (actually : std::vector 
+           of gdcm::File*)<br>
+           The key is the 'Orientation', the 'Position' 
+           or the value of a user choosen 'Tag' <br>
+           -  XCoherentFileSetmap SplitOnOrientation(FileList *fileSet); <br>
+           -  XCoherentFileSetmap SplitOnPosition(FileList *fileSet); <br>
+           -  XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
+                                       uint16_t group, uint16_t element); <br>
+           These methods must be called by user, depending on what he wants 
+           to do, at application time.- *he* only  knows what his Series 
+           contain !-
       <LI>
       <LI>
    </UL>
 
-   <LI> API breaking modiffications (since previous version)
+   <LI> API breaking modifications (since previous version)
    <UL>
-      <LI>   
+      <LI> Stupid difference between <TT>gdcm::ValEntry</TT> 
+           and <TT>gdcm::BinEntry</TT> removed. <br>
+           Only <TT>gdcm::DataEntry</TT> exist, now. <br>  
+      <LI>
       <LI>
    </UL> 
       
    <LI> Bug fixes
    <UL>
-      <LI>   
+      <LI> Implicit VR - Big Endian (G.E Private) Transfert Syntax 16 Bits 
+           images are now read correctly.  
+      <LI> File::GetZOrigin() returns accurate result in any case.
+      <LI>
       <LI>
    </UL>
    
    <LI> Known Bugs
    <UL>
-      <LI>   
+      <LI> Use of <TT>Implicit Value Representation</TT> writting mode may
+           causes troubles, when there are some <TT>SQ</TT> belonging to a 
+           <TT>Shadow Group</TT>. <br>
+           Better you use <TT>Explicit Value Representation</TT> writting mode ...
+      <LI> Troubles on 'Big endian' processors (i.e. Apple/Motorola, SunSparc
+           ...) when writting 16 Bits images.
+      <LI> Troubles on 64-bits processors.
+      <LI>
       <LI>
    </UL>
  
@@ -430,13 +464,7 @@ Any contribution is welcome.
 
    <LI> Known bugs
    <UL>
-      <LI> Use of <TT>Implicit Value Representation</TT> writting mode may
-           causes troubles, when there are some <TT>SQ</TT> belonging to a 
-           <TT>Shadow Group</TT>. <br>
-           Better you use <TT>Explicit Value Representation</TT> writting mode ...
-      <LI> Troubles on 'Big endian' processors (i.e. Apple/Motorola, SunSparc
-           ...) when writting 16 Bits images.
-      <LI> Troubles on 64-bits processors.
+
    </UL>
 
 </UL>
