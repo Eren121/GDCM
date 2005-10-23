@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/21 16:02:01 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/10/23 15:24:47 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -161,20 +161,20 @@ FileHelper::FileHelper(File *header)
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/* *
- * \ brief DEPRECATED : use SetFilename() + SetLoadMode() + Load() methods
+/* 
+ *  brief DEPRECATED : use SetFilename() + SetLoadMode() + Load() methods
  *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
  *        file (gdcm::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
- * \ note  the in-memory representation of all available tags found in
+ *  note  the in-memory representation of all available tags found in
  *        the DICOM header is post-poned to first header information access.
  *        This avoid a double parsing of public part of the header when
  *        one sets an a posteriori shadow dictionary (efficiency can be
  *        seen as a side effect).   
- * @ param filename file to be opened for parsing
- * @ deprecated  use SetFilename() + Load() methods
+ *  param filename file to be opened for parsing
+ *  deprecated  use SetFilename() + Load() methods
  */
 FileHelper::FileHelper(std::string const &filename )
 {
@@ -222,8 +222,7 @@ FileHelper::~FileHelper()
 
 /**
  * \brief Sets the LoadMode of the internal gdcm::File as a boolean string. 
- *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ
- *... (nothing more, right now)
+ *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ ... (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
@@ -351,7 +350,7 @@ size_t FileHelper::GetImageDataSize()
 }
 
 /**
- * \brief   Get the size of the image data
+ * \brief   Get the size of the image data.
  *          If the image could be converted to RGB using a LUT, 
  *          this transformation is not taken into account by GetImageDataRawSize
  *          (use GetImageDataSize if you wish)
@@ -367,7 +366,8 @@ size_t FileHelper::GetImageDataRawSize()
 }
 
 /**
- * \brief   - Allocates necessary memory,
+ * \brief brings pixels into memory :  
+ *          - Allocates necessary memory,
  *          - Reads the pixels from disk (uncompress if necessary),
  *          - Transforms YBR pixels, if any, into RGB pixels,
  *          - Transforms 3 planes R, G, B, if any, into a single RGB Plane
@@ -401,11 +401,12 @@ uint8_t *FileHelper::GetImageData()
 }
 
 /**
- * \brief   Allocates necessary memory, 
- *          Transforms YBR pixels (if any) into RGB pixels
- *          Transforms 3 planes R, G, B  (if any) into a single RGB Plane
- *          Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
- *          DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
+ * \brief brings pixels into memory :  
+ *          - Allocates necessary memory, 
+ *          - Transforms YBR pixels (if any) into RGB pixels
+ *          - Transforms 3 planes R, G, B  (if any) into a single RGB Plane
+ *          - Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
+ *          - DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
  *          NULL if alloc fails 
  */
@@ -415,7 +416,7 @@ uint8_t *FileHelper::GetImageDataRaw ()
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-/* *
+/*
  * \ brief   Useless function, since PixelReadConverter forces us 
  *          copy the Pixels anyway.  
  *          Reads the pixels from disk (uncompress if necessary),
@@ -1333,11 +1334,13 @@ void FileHelper::CheckMandatoryElements()
    CopyMandatoryEntry(0x0008,0x0013,Util::GetCurrentTime().c_str());
 
 // ----- Add Mandatory Entries if missing ---
-// Entries whose type is 1 are mandatory, with a mandatory value
-// Entries whose type is 1c are mandatory-inside-a-Sequence
-// Entries whose type is 2 are mandatory, with a optional value
-// Entries whose type is 2c are mandatory-inside-a-Sequence
-// Entries whose type is 3 are optional
+    // Entries whose type is 1 are mandatory, with a mandatory value
+    // Entries whose type is 1c are mandatory-inside-a-Sequence,
+    //                          with a mandatory value
+    // Entries whose type is 2 are mandatory, with an optional value
+    // Entries whose type is 2c are mandatory-inside-a-Sequence,
+    //                          with an optional value
+    // Entries whose type is 3 are optional
 
    // 'Study Instance UID'
    // Keep the value if exists

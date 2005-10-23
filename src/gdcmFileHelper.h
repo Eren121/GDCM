@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 19:54:27 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/10/23 15:24:47 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,12 +130,13 @@ public:
    void SetWriteTypeToAcr()           { SetWriteType(ACR);        }
    /// \brief Tells the writer we want to write as LibIDO
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); }
-   void SetWriteTypeToJPEG()     { SetWriteType(JPEG); }
+   /// \brief Tells the writer we want to write as JPEG   
+   void SetWriteTypeToJPEG()          { SetWriteType(JPEG);       }
    /// \brief Tells the writer which format we want to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    void SetWriteType(FileType format) { WriteType = format;       }
    /// \brief Gets the format we talled the write we wanted to write
-   ///   (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
+   /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType GetWriteType()            { return WriteType;         }
 
    // Write pixels of ONE image on hard drive
@@ -167,9 +168,9 @@ protected:
    DataEntry *CopyDataEntry(uint16_t group, uint16_t elem, 
                                const TagName &vr = GDCM_VRUNKNOWN);
    void CheckMandatoryElements();
-   void CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
-   void SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
-   void CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string value);
+   void CheckMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
+   void SetMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
+   void CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
    void RestoreWriteMandatory();
 
 private:
