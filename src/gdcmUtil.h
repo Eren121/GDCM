@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:51 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2005/10/23 14:51:01 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,6 +76,27 @@ public:
    static void SetFileMetaInformationVersion( uint16_t fmiv )
                      { FileMetaInformationVersion = (uint8_t *)&fmiv; }
 
+// ----------------- to be removed later --------------------------     
+//To perform a full check of inline functions on all the platforms, 
+// we put here the two 'static' functions
+// hifpswap and  hNoifpswap in a .h
+// They will be remove ASAP
+
+   static inline void hifpswap(double *a, double *b)    
+   {
+      double tmp;
+      tmp = *a;
+      *a = *b;
+      *b = tmp;
+   }
+   static void hNoifpswap(double *a, double *b)    
+   {
+      double tmp;
+      tmp = *a;
+      *a = *b;
+      *b = tmp;
+   }    
+// ------------ end of functions to remove --------------------
 private:
    static std::string GetIPAddress(); //Do not expose this method
 
