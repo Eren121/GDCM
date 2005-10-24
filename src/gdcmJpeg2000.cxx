@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 21:08:59 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/10/24 21:21:09 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,78 +38,78 @@ namespace gdcm
 
 bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 {
-  j2k_image_t img;
-  j2k_cp_t cp;
-
-  // default blindly copied
-  cp.layer=0;
-  cp.reduce=0;
-  cp.decod_format=-1;
-  cp.cod_format=-1;
-
-  cp.cod_format=J2K_CFMT;
-  cp.decod_format = PGX_DFMT;
-  int len = inputlength;
-  unsigned char *src = (unsigned char*)inputdata;
-
-  // Decompression
-  if (!j2k_decode(src, len, &img, &cp)) {
-    std::cerr << "ERROR -> j2k_to_image: failed to decode image!\n";
-    return false;
-  }
-
-  // Copy buffer
-  for (int compno = 0; compno < img.numcomps; compno++)
-  {
-    j2k_comp_t *comp = &img.comps[compno];
-    int nbytes = 0;
-
-    int w = img.comps[compno].w;
-    int wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
-
-    //int h = img.comps[compno].h;
-    int hr = int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
-
-    if (comp->prec <= 8)
+   j2k_image_t img;
+   j2k_cp_t cp;
+ 
+   // default blindly copied
+   cp.layer=0;
+   cp.reduce=0;
+   cp.decod_format=-1;
+   cp.cod_format=-1;
+ 
+   cp.cod_format=J2K_CFMT;
+   cp.decod_format = PGX_DFMT;
+   int len = inputlength;
+   unsigned char *src = (unsigned char*)inputdata;
+ 
+   // Decompression
+   if (!j2k_decode(src, len, &img, &cp))
+   {
+      gdcmErrorMacro( "ERROR -> j2k_to_image: failed to decode image!" );
+      return false;
+   }
+ 
+   // Copy buffer
+   for (int compno = 0; compno < img.numcomps; compno++)
+   {
+      j2k_comp_t *comp = &img.comps[compno];
+      int nbytes = 0;
+  
+      int w = img.comps[compno].w;
+      int wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
+  
+      //int h = img.comps[compno].h;
+      int hr = int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
+  
+      if (comp->prec <= 8)
       {
-      nbytes = 1;
-      uint8_t *data8 = (uint8_t*)raw;
-      for (int i = 0; i < wr * hr; i++) 
-        {
-        int v = img.comps[compno].data[i / wr * w + i % wr];
-        *data8++ = (uint8_t)v;
-        }
+         nbytes = 1;
+         uint8_t *data8 = (uint8_t*)raw;
+         for (int i = 0; i < wr * hr; i++) 
+         {
+            int v = img.comps[compno].data[i / wr * w + i % wr];
+            *data8++ = (uint8_t)v;
+         }
       }
-    else if (comp->prec <= 16)
+      else if (comp->prec <= 16)
       {
-      nbytes = 2;
-      uint16_t *data16 = (uint16_t*)raw;
-      for (int i = 0; i < wr * hr; i++) 
-        {
-        int v = img.comps[compno].data[i / wr * w + i % wr];
-        *data16++ = (uint16_t)v;
-        }
+         nbytes = 2;
+         uint16_t *data16 = (uint16_t*)raw;
+         for (int i = 0; i < wr * hr; i++) 
+         {
+            int v = img.comps[compno].data[i / wr * w + i % wr];
+            *data16++ = (uint16_t)v;
+         }
       }
-    else
+      else
       {
-      nbytes = 4;
-      uint32_t *data32 = (uint32_t*)raw;
-      for (int i = 0; i < wr * hr; i++) 
-        {
-        int v = img.comps[compno].data[i / wr * w + i % wr];
-        *data32++ = (uint32_t)v;
-        }
+         nbytes = 4;
+         uint32_t *data32 = (uint32_t*)raw;
+         for (int i = 0; i < wr * hr; i++) 
+         {
+            int v = img.comps[compno].data[i / wr * w + i % wr];
+            *data32++ = (uint32_t)v;
+         }
       }
-    free(img.comps[compno].data);
-  }
-
-
-  // Free remaining structures
-  j2k_dec_release();
-  // FIXME
-  delete[] inputdata;
-
-  return true;
+      free(img.comps[compno].data);
+   }
+ 
+   // Free remaining structures
+   j2k_dec_release();
+   // FIXME
+   delete[] inputdata;
+ 
+   return true;
 }
 
 #if 0
