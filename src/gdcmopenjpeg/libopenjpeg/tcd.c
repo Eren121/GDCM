@@ -61,6 +61,7 @@ extern jmp_buf j2k_error;
 void tcd_dump(tcd_image_t * img, int curtileno)
 {
   int tileno, compno, resno, bandno, precno, cblkno;
+  (void)curtileno;
   fprintf(stdout, "image {\n");
   fprintf(stdout, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", img->tw,
      img->th, tcd_img->x0, tcd_img->x1, tcd_img->y0, tcd_img->y1);
