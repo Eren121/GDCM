@@ -28,8 +28,8 @@
 
 #define VERSION "0.0.8"
 
-#ifdef DAVID_WIN32
-#ifdef LIBJ2K_EXPORTS
+#ifdef _WIN32 /*DAVID_WIN32*/
+#ifdef gdcmopenjpeg_EXPORTS /*LIBJ2K_EXPORTS*/
 #define LIBJ2K_API __declspec(dllexport)
 #else
 #define LIBJ2K_API __declspec(dllimport)
