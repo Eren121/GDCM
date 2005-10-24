@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 07:25:10 $
-  Version:   $Revision: 1.166 $
+  Date:      $Date: 2005/10/24 21:31:11 $
+  Version:   $Revision: 1.167 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,9 +25,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
+// Two approaches, *NIX or Win32
+#ifdef CMAKE_HAVE_SYS_TIMEB_H
 #include <sys/timeb.h>
-#else
+#endif
+#ifdef CMAKE_HAVE_SYS_TIMES_H
 #include <sys/time.h>
 #endif
 
@@ -95,7 +97,13 @@ namespace gdcm
 //-------------------------------------------------------------------------
 const std::string Util::GDCM_UID = "1.2.826.0.1.3680043.2.1143";
 std::string Util::RootUID        = GDCM_UID;
-const uint16_t Util::FMIV = 0x0001;
+/*
+ * File Meta Information Version (0002,0001) shall contain a two byte OB 
+ * value consisting of a 0x00 byte, followed by 0x01 byte, and not the 
+ * value 0x0001 encoded as a little endian 16 bit short value, 
+ * which would be the other way around...
+ */
+const uint16_t Util::FMIV = 0x0100;
 uint8_t *Util::FileMetaInformationVersion = (uint8_t *)&FMIV;
 std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
 
