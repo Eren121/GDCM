@@ -1,3 +1,4 @@
+INCLUDE_REGULAR_EXPRESSION("^.*$")
 # Create the lib
 SET(openjpeg_SRCS
   bio.c
@@ -20,7 +21,7 @@ SET(openjpeg_SRCS
 )
 ADD_LIBRARY(gdcmopenjpeg ${openjpeg_SRCS})
 
-## $Id: CMakeLists.txt,v 1.2 2005/10/24 15:39:38 malaterre Exp $
+## $Id: CMakeLists.txt,v 1.3 2005/10/24 15:58:35 malaterre Exp $
 ##
 ## makefile for OpenJPEG library
 #
