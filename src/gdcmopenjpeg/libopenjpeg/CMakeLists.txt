@@ -19,9 +19,21 @@ SET(openjpeg_SRCS
   jpt.c
   jp2.c
 )
+
+IF (WIN32)
+  IF (BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPENJPEGDLL)
+    #SET(JPEGDLL 1)
+  ELSE (BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPENJPEGSTATIC)
+    #SET(JPEGSTATIC 1)
+  ENDIF (BUILD_SHARED_LIBS)
+ENDIF (WIN32)
+
+
 ADD_LIBRARY(gdcmopenjpeg ${openjpeg_SRCS})
 
-## $Id: CMakeLists.txt,v 1.3 2005/10/24 15:58:35 malaterre Exp $
+## $Id: CMakeLists.txt,v 1.4 2005/10/24 20:53:32 malaterre Exp $
 ##
 ## makefile for OpenJPEG library
 #

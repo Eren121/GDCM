@@ -14,3 +14,6 @@ SUBDIRS(
     libopenjpeg
     #codec
     )
+
+# TODO, technically we should not have to ...
+# http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
