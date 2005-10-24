@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 13:17:22 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/24 16:00:46 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #include "gdcmDebug.h"
 #include <iostream>
 
-#include <time.h>
+/*#include <time.h>
 #ifdef CMAKE_HAVE_SYS_TIMES_H
 #include <sys/times.h>
 #else
@@ -56,28 +56,6 @@ uint32_t     passPtr32(uint32_t *a, uint32_t *b);
 double     passDirect(double a,  double b);
 double     passRef(double &a, double &b);
 double     passPtr(double *a, double *b);
-
-/*  
-//To perform a full check, just put the two 'static' functions
-//hifpswap and  hNoifpswap in a .h
-
-   static inline void hifpswap(double *a, double *b)    
-   {
-      double tmp;
-      tmp = *a;
-      *a = *b;
-      *b = tmp;
-   }
-
-   static void hNoifpswap(double *a, double *b)    
-   {
-      double tmp;
-      tmp = *a;
-      *a = *b;
-      *b = tmp;
-   }
-    
-*/
 
 #define       \
 mswap(a, b)   \
@@ -410,5 +388,11 @@ int TestInline(int argc, char *argv[])
         << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
         << std::endl; 
 
+   return 0;
+}
+*/
+
+int TestInline(int argc, char *argv[])
+{
    return 0;
 }

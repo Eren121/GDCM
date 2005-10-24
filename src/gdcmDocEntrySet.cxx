@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 10:48:16 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -287,7 +287,7 @@ DataEntry *DocEntrySet::InsertEntryString(std::string const &value,
       {
          gdcmWarningMacro("AddEntry failed although this is a creation.");
 
-         delete dataEntry;
+         dataEntry->Delete();
          return NULL;
       }
    }
@@ -346,7 +346,7 @@ DataEntry *DocEntrySet::InsertEntryBinArea(uint8_t *binArea, int lgth,
       {
          gdcmWarningMacro( "AddEntry failed although this is a creation.");
 
-         delete dataEntry;
+         dataEntry->Delete();
          return NULL;
       }
    }
@@ -415,7 +415,7 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
       {
          gdcmWarningMacro( "AddEntry failed although this is a creation.");
 
-         delete seqEntry;
+         seqEntry->Delete();
          return NULL;
       }
    }
@@ -443,13 +443,14 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
  * @param   group Group number   of the new Entry
  * @param   elem  Element number of the new Entry
  * @param   vr    V(alue) R(epresentation) of the new Entry 
+ * \remarks The user of this method must destroy the DataEntry when unused
  */
 DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
                                      VRKey const &vr) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, vr);
 
-   DataEntry *newEntry = new DataEntry(dictEntry);
+   DataEntry *newEntry = DataEntry::New(dictEntry);
    dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry) 
    {
@@ -465,12 +466,13 @@ DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
  *          a default one when absent.
  * @param   group Group   number of the new Entry
  * @param   elem  Element number of the new Entry
+ * \remarks The user of this method must destroy the SeqEntry when unused
  */
 SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem) 
 {
    DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
 
-   SeqEntry *newEntry = new SeqEntry( dictEntry );
+   SeqEntry *newEntry = SeqEntry::New( dictEntry );
    dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry)
    {

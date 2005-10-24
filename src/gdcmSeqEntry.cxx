@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/10/24 16:00:48 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,7 +129,7 @@ void SeqEntry::ClearSQItem()
    }
    if (SeqTerm)
    {
-      delete SeqTerm;
+      SeqTerm->Unregister();
    }
 }
 
@@ -193,6 +193,22 @@ SQItem *SeqEntry::GetSQItem(int nb)
 unsigned int SeqEntry::GetNumberOfSQItems()
 {
    return Items.size();
+}
+
+/**
+ * \brief Sets the Sequence Delimitation Item
+ * \param e Delimitation item
+ */
+void SeqEntry::SetDelimitationItem(DocEntry *e)
+{
+   if( SeqTerm != e )
+   {
+      if( SeqTerm )
+         SeqTerm->Unregister();
+      SeqTerm = e;
+      if( SeqTerm )
+         SeqTerm->Register();
+   }
 }
 
 //-----------------------------------------------------------------------------

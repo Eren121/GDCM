@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:28:26 $
-  Version:   $Revision: 1.303 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.304 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1057,7 +1057,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
          {
             if ( !used )
-               delete newDocEntry;
+               newDocEntry->Delete();
             break;
          }
 
@@ -1087,7 +1087,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             if ( newDocEntry->GetGroup()%2 != 0 )
             {
                 Fp->seekg( l, std::ios::cur);
-                delete newDocEntry;  // Delete, not in the set 
+                newDocEntry->Delete();  // Delete, not in the set 
                 continue;  
             } 
          } 
@@ -1095,7 +1095,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
            // User asked to skip *any* SeQuence
             Fp->seekg( l, std::ios::cur);
-            delete newDocEntry; // Delete, not in the set
+            newDocEntry->Delete(); // Delete, not in the set
             continue;
          }
          // delay the dynamic cast as late as possible
@@ -1148,14 +1148,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if ( !used )
-               delete newDocEntry;  
+               newDocEntry->Delete();
                break;
          }
       }  // end SeqEntry : VR = "SQ"
 
       if ( !used )
       {
-         delete newDocEntry;
+         newDocEntry->Delete();
       }
       first = false;
    }                               // end While
@@ -1194,7 +1194,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       }
       if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
       {
-         delete newDocEntry;
+         newDocEntry->Delete();
          break;
       }
       // create the current SQItem
@@ -1212,7 +1212,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
 
       // Let's try :------------
       // remove fff0,e000, created out of the SQItem
-      delete newDocEntry;
+      newDocEntry->Delete();
       Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);
       // fill up the current SQItem, starting at the beginning of fff0,e000
 
@@ -1240,7 +1240,7 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
 {
    // delete the Item Starter, built erroneously out of any Sequence
    // it's not yet in the HTable/chained list
-   delete docEntry;
+   docEntry->Delete();
 
    // Get all info we can from PreviousDocEntry
    uint16_t group = PreviousDocEntry->GetGroup();
@@ -2012,7 +2012,7 @@ DocEntry *Document::ReadNextDocEntry()
    catch ( FormatError )
    {
       // Call it quits
-      delete newEntry;
+      newEntry->Delete();
       return 0;
    }
 

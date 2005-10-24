@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,8 +73,6 @@ public:
    virtual bool AddEntry(DocEntry *entry) = 0;
    /// \brief Removes any type of entry out of the entry set, and destroys it
    virtual bool RemoveEntry(DocEntry *entryToRemove) = 0;
-   /// \brief Removes any type of entry out of the entry set, DOESN'T destroy it
-   virtual bool RemoveEntryNoDestroy(DocEntry *entryToRemove) = 0;
    /// Gets the first entry of any type of set
    virtual DocEntry *GetFirstEntry()=0;
    /// Gets the next entry of any type of set

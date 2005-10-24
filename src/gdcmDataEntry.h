@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:30 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,10 +35,11 @@ namespace gdcm
  */
 class GDCM_EXPORT DataEntry  : public DocEntry
 {
+   gdcmTypeMacro(DataEntry);
+
 public:
-   DataEntry(DictEntry *e);
-   DataEntry(DocEntry *d); 
-   ~DataEntry();
+   static DataEntry *New(DictEntry *e) {return new DataEntry(e);}
+   static DataEntry *New(DocEntry *d) {return new DataEntry(d);}
 
 // Print
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
@@ -118,6 +119,10 @@ public:
    } TValueFlag;
 
 protected:
+   DataEntry(DictEntry *e);
+   DataEntry(DocEntry *d); 
+   ~DataEntry();
+
 // Methods :
    void NewBinArea(void);
    void DeleteBinArea(void);

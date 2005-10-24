@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/23 15:24:47 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/10/24 16:00:48 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,7 @@ fh1->Write(newFileName);
    fp = opens file(fileName);
    ComputeGroup0002Length( );
    BitsAllocated 12->16
-      RemoveEntryNoDestroy(palettes, etc)
+      RemoveEntry(palettes, etc)
       Document::WriteContent(fp, writetype);
    RestoreWrite();
       (moves back to the File all the archived elements)
@@ -865,6 +865,9 @@ void FileHelper::SetWriteToRaw()
 
       Archive->Push(photInt);
       Archive->Push(pixel);
+
+      photInt->Delete();
+      pixel->Delete();
    }
 }
 
@@ -917,6 +920,11 @@ void FileHelper::SetWriteToRGB()
       Archive->Push(photInt);
       Archive->Push(pixel);
 
+      spp->Delete();
+      planConfig->Delete();
+      photInt->Delete();
+      pixel->Delete();
+
       // Remove any LUT
       Archive->Push(0x0028,0x1101);
       Archive->Push(0x0028,0x1102);
@@ -945,6 +953,10 @@ void FileHelper::SetWriteToRGB()
          Archive->Push(bitsAlloc);
          Archive->Push(bitsStored);
          Archive->Push(highBit);
+
+         bitsAlloc->Delete();
+         bitsStored->Delete();
+         highBit->Delete();
       }
    }
    else
@@ -1026,6 +1038,7 @@ void FileHelper::SetWriteFileTypeToJPEG()
    tss->SetString(ts);
 
    Archive->Push(tss);
+   tss->Delete();
 }
 
 void FileHelper::SetWriteFileTypeToExplicitVR()
@@ -1037,6 +1050,7 @@ void FileHelper::SetWriteFileTypeToExplicitVR()
    tss->SetString(ts);
 
    Archive->Push(tss);
+   tss->Delete();
 }
 
 /**
@@ -1051,6 +1065,7 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
    tss->SetString(ts);
 
    Archive->Push(tss);
+   tss->Delete();
 }
 
 
@@ -1073,8 +1088,8 @@ void FileHelper::SetWriteToLibido()
    {
       std::string rows, columns; 
 
-      DataEntry *newRow=new DataEntry(oldRow->GetDictEntry());
-      DataEntry *newCol=new DataEntry(oldCol->GetDictEntry());
+      DataEntry *newRow=DataEntry::New(oldRow->GetDictEntry());
+      DataEntry *newCol=DataEntry::New(oldCol->GetDictEntry());
 
       newRow->Copy(oldCol);
       newCol->Copy(oldRow);
@@ -1084,11 +1099,15 @@ void FileHelper::SetWriteToLibido()
 
       Archive->Push(newRow);
       Archive->Push(newCol);
+
+      newRow->Delete();
+      newCol->Delete();
    }
 
    DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010);
    libidoCode->SetString("ACRNEMA_LIBIDO_1.1");
    Archive->Push(libidoCode);
+   libidoCode->Delete();
 }
 
 /**
@@ -1104,6 +1123,7 @@ void FileHelper::SetWriteToNoLibido()
          DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010);
          libidoCode->SetString("");
          Archive->Push(libidoCode);
+         libidoCode->Delete();
       }
    }
 }
@@ -1144,7 +1164,7 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 
    if ( oldE )
    {
-      newE = new DataEntry(oldE->GetDictEntry());
+      newE = DataEntry::New(oldE->GetDictEntry());
       newE->Copy(oldE);
    }
    else
@@ -1288,19 +1308,19 @@ void FileHelper::CheckMandatoryElements()
    if ( e_0008_0016 )
    {
       // Create 'Source Image Sequence' SeqEntry
-      SeqEntry *sis = new SeqEntry (
+      SeqEntry *sis = SeqEntry::New (
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
       SQItem *sqi = new SQItem(1);
       // (we assume 'SOP Instance UID' exists too) 
       // create 'Referenced SOP Class UID'
-      DataEntry *e_0008_1150 = new DataEntry(
+      DataEntry *e_0008_1150 = DataEntry::New(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
       e_0008_1150->SetString( e_0008_0016->GetString());
       sqi->AddEntry(e_0008_1150);
       
       // create 'Referenced SOP Instance UID'
       DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
-      DataEntry *e_0008_1155 = new DataEntry(
+      DataEntry *e_0008_1155 = DataEntry::New(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
       e_0008_1155->SetString( e_0008_0018->GetString());
       sqi->AddEntry(e_0008_1155);
@@ -1308,6 +1328,7 @@ void FileHelper::CheckMandatoryElements()
       sis->AddSQItem(sqi,1); 
       // temporarily replaces any previous 'Source Image Sequence' 
       Archive->Push(sis);
+      sis->Delete();
  
       // 'Image Type' (The written image is no longer an 'ORIGINAL' one)
       CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");
@@ -1399,17 +1420,19 @@ void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string va
    DataEntry *entry = FileInternal->GetDataEntry(group,elem);
    if ( !entry )
    {
-      entry = new DataEntry(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+      entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
       entry->SetString(value);
       Archive->Push(entry);
+      entry->Delete();
    }
 }
 
 void FileHelper::SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
 {
-   DataEntry *entry = new DataEntry(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+   DataEntry *entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
    entry->SetString(value);
    Archive->Push(entry);
+   entry->Delete();
 }
 
 void FileHelper::CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
@@ -1417,6 +1440,7 @@ void FileHelper::CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string val
    DataEntry *entry = CopyDataEntry(group,elem);
    entry->SetString(value);
    Archive->Push(entry);
+   entry->Delete();
 }
 
 /**
@@ -1452,7 +1476,6 @@ void FileHelper::RestoreWriteMandatory()
 
    Archive->Restore(0x0020,0x000d);
    Archive->Restore(0x0020,0x000e);
-
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 16:02:01 $
-  Version:   $Revision: 1.164 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.165 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -319,7 +319,7 @@ DicomDirMeta *DicomDir::NewMeta()
          if ( dynamic_cast<SeqEntry *>(entry) )
             break;
 
-         RemoveEntryNoDestroy(entry);
+         RemoveEntry(entry);
          MetaElems->AddEntry(entry);
 
          entry = GetFirstEntry();
@@ -737,6 +737,7 @@ void DicomDir::CreateDicomDir()
    //  3 - we find an other tag
    //       + we create the object for the precedent tag
    //       + loop to 1 -
+   gdcmDebugMacro("Create DicomDir");
 
    // Directory record sequence
    DocEntry *e = GetDocEntry(0x0004, 0x1220);
@@ -1092,7 +1093,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       tmpEl     = it->Elem;
       dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
 
-      entry     = new DataEntry( dictEntry ); // Be sure it's never a DataEntry !
+      entry     = DataEntry::New( dictEntry ); // Be sure it's never a DataEntry !
 
       entry->SetOffset(0); // just to avoid further missprinting
 
@@ -1144,6 +1145,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          gdcmWarningMacro("GDCM_DICOMDIR_META ?!? should never print that");
       }
       si->AddEntry(entry);
+      entry->Delete();
    }
 }
 
@@ -1160,7 +1162,7 @@ void DicomDir::MoveSQItem(DocEntrySet *dst,DocEntrySet *src)
    entry = src->GetFirstEntry();
    while(entry)
    {
-      src->RemoveEntryNoDestroy(entry);
+      src->RemoveEntry(entry);
       dst->AddEntry(entry);
       // we destroyed -> the current iterator is not longer valid
       entry = src->GetFirstEntry();

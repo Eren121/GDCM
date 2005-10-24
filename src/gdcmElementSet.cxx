@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 09:17:08 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,6 +75,7 @@ bool ElementSet::AddEntry(DocEntry *newEntry)
    else
    {
       TagHT.insert(TagDocEntryHT::value_type(newEntry->GetKey(), newEntry));
+      newEntry->Register();
       return true;
    }
 }
@@ -89,30 +90,11 @@ bool ElementSet::RemoveEntry( DocEntry *entryToRemove)
    if ( TagHT.count(key) == 1 )
    {
       TagHT.erase(key);
-      //gdcmWarningMacro( "One element erased.");
-      delete entryToRemove;
+      entryToRemove->Unregister();
       return true;
    }
 
    gdcmWarningMacro( "Key not present : " << key);
-   return false ;
-}
-
-/**
- * \brief   Clear the hash table from given entry BUT keep the entry.
- * @param   entryToRemove Entry to remove.
- */
-bool ElementSet::RemoveEntryNoDestroy(DocEntry *entryToRemove)
-{
-   const TagKey &key = entryToRemove->GetKey();
-   if ( TagHT.count(key) == 1 )
-   {
-      TagHT.erase(key);
-      //gdcmWarningMacro( "One element erased.");
-      return true;
-   }
-
-   gdcmWarningMacro( "Key not present " << key);
    return false ;
 }
 
@@ -125,7 +107,7 @@ void ElementSet::ClearEntry()
    {
       if ( cc->second )
       {
-         delete cc->second;
+         cc->second->Unregister();
       }
    }
    TagHT.clear();

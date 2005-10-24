@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/10/24 16:00:48 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,11 +39,12 @@ typedef std::list<SQItem *> ListSQItem;
  */ 
 class GDCM_EXPORT SeqEntry : public DocEntry 
 {
+   gdcmTypeMacro(SeqEntry);
+
 public:
-   SeqEntry( DictEntry *e);
-   SeqEntry( DocEntry *d, int depth );
-   ~SeqEntry();
-   
+   static SeqEntry *New(DictEntry *e) {return new SeqEntry(e);}
+   static SeqEntry *New(DocEntry *d, int depth) {return new SeqEntry(d,depth);}
+
    void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
 
@@ -57,8 +58,8 @@ public:
    /// Sets the delimitor mode
    void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
 
-   /// Sets the Sequence Delimitation Item
-   void SetDelimitationItem(DocEntry *e) { SeqTerm = e;   }
+   
+   void SetDelimitationItem(DocEntry *e);
 
    /// Gets the Sequence Delimitation Item
    DocEntry *GetDelimitationItem()       { return SeqTerm;}
@@ -71,6 +72,10 @@ public:
 protected:
 
 private:
+   SeqEntry( DictEntry *e);
+   SeqEntry( DocEntry *d, int depth );
+   ~SeqEntry();
+
 // Variables
    /// If this Sequence is in delimitor mode (length =0xffffffff) or not
    bool DelimitorMode;

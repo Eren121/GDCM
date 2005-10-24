@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:50 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/10/24 16:00:48 $
+  Version:   $Revision: 1.77 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,6 +110,7 @@ bool SQItem::AddEntry(DocEntry *entry)
    if (DocEntries.empty() )
    {
       DocEntries.push_back(entry);
+      entry->Register();
       return true;
    }
  
@@ -131,9 +132,11 @@ bool SQItem::AddEntry(DocEntry *entry)
             break;
    } while (it != DocEntries.begin() );
   
-   insertSpot = it++;
-   insertSpot++; // ?!?
+   ++it;
+   insertSpot = it;
+   //++insertSpot; // ?!?
    DocEntries.insert(insertSpot, entry); 
+   entry->Register();
    return true;
 }   
 
@@ -152,7 +155,7 @@ bool SQItem::RemoveEntry( DocEntry *entryToRemove )
       {
          DocEntries.erase(it);
          gdcmWarningMacro( "One element erased: " << entryToRemove->GetKey() );
-         delete entryToRemove;
+         entryToRemove->Unregister();
          return true;
       }
    }
@@ -160,30 +163,6 @@ bool SQItem::RemoveEntry( DocEntry *entryToRemove )
    return false ;
 }
 
-/**
- * \brief   Clear the std::list from given entry BUT keep the entry.
- * @param   entryToRemove Entry to remove.
- * @return true if the entry was found and removed; false otherwise
- */
-bool SQItem::RemoveEntryNoDestroy(DocEntry *entryToRemove)
-{
-   for(ListDocEntry::iterator it =  DocEntries.begin();
-                              it != DocEntries.end();
-                            ++it)
-   {
-      if ( *it == entryToRemove )
-      {
-         DocEntries.erase(it);
-         gdcmWarningMacro( "One element removed, no destroyed: "
-                            << entryToRemove->GetKey() );
-         return true;
-      }
-   }
-                                                                                
-   gdcmWarningMacro( "Entry not found:" << entryToRemove->GetKey() );
-   return false ;
-}
-                                                                                
 /**
  * \brief  Remove all entry in the Sequence Item 
  */
@@ -193,19 +172,10 @@ void SQItem::ClearEntry()
                               cc != DocEntries.end();
                             ++cc)
    {
-      delete *cc;
+      (*cc)->Unregister();
    }
    DocEntries.clear();
 }
-
-/**
- * \brief  Clear the std::list from given Sequence Item  BUT keep the entries
- */
-void SQItem::ClearEntryNoDestroy()
-{
-   DocEntries.clear();
-}
-
 
 /**
  * \brief  Move all the entries from a given Sequence Item 
@@ -213,7 +183,7 @@ void SQItem::ClearEntryNoDestroy()
 void SQItem::MoveObject(SQItem *source)
 {
    DocEntries = source->DocEntries;
-   source->ClearEntryNoDestroy();
+   source->DocEntries.clear();
 }
 
 /**

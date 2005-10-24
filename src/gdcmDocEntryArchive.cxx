@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 14:40:40 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,10 @@ bool DocEntryArchive::Push(DocEntry *newEntry)
       DocEntry *old = ArchFile->GetDocEntry(group, elem);
       Archive[key]  = old;
       if ( old )
-         ArchFile->RemoveEntryNoDestroy(old);
+      {
+         old->Register();
+         ArchFile->RemoveEntry(old);
+      }
 
       // Set the new DocEntry
       ArchFile->AddEntry(newEntry);
@@ -94,7 +97,10 @@ bool DocEntryArchive::Push(uint16_t group, uint16_t elem)
       DocEntry *old = ArchFile->GetDocEntry(group, elem);
       Archive[key] = old;
       if ( old )
-         ArchFile->RemoveEntryNoDestroy(old);
+      {
+         old->Register();
+         ArchFile->RemoveEntry(old);
+      }
 
       return true;
    }
@@ -119,11 +125,16 @@ bool DocEntryArchive::Restore(uint16_t group, uint16_t elem)
       // Delete the new value
       DocEntry *rem = ArchFile->GetDocEntry(group, elem);
       if ( rem )
+      {
          ArchFile->RemoveEntry(rem);
+      }
 
       // Restore the old value
-      if ( Archive[key] )
-         ArchFile->AddEntry(Archive[key]);
+      if ( restoreIt->second )
+      {
+         ArchFile->AddEntry(restoreIt->second);
+         restoreIt->second->Unregister();
+      }
 
       Archive.erase(restoreIt);
 
@@ -142,7 +153,8 @@ void DocEntryArchive::ClearArchive( )
        it!=Archive.end();
        ++it)
    {
-      delete it->second;
+      if(it->second)
+         it->second->Unregister();
    }
    Archive.clear();
 }

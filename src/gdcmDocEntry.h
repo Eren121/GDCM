@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:31 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDOCENTRY_H
 #define GDCMDOCENTRY_H
 
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include "gdcmDictEntry.h"
 
 #include <iostream>
@@ -35,12 +35,11 @@ class SeqEntry;
  * \brief   The dicom header of a Dicom file contains a set of such entries
  *          (when successfuly parsed against a given Dicom dictionary)
  */
-class GDCM_EXPORT DocEntry : public Base
+class GDCM_EXPORT DocEntry : public RefCounter
 {
-public:
-   DocEntry(DictEntry*);
-   virtual ~DocEntry();
+   gdcmTypeMacro(DocEntry);
 
+public:
    virtual void Print (std::ostream &os = std::cout, std::string const &indent = ""); 
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
 
@@ -126,6 +125,9 @@ public:
    virtual void Copy(DocEntry *e);
 
 protected:
+   DocEntry(DictEntry*);
+   virtual ~DocEntry();
+
    /// \brief pointer to the underlying Dicom dictionary element
    DictEntry *DicomDict;
    

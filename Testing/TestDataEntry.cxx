@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 01:17:54 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/24 16:00:46 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = new gdcm::DataEntry(dict);
+   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("US");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -59,7 +59,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: 1" << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
 
@@ -74,7 +74,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: 2" << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
 
@@ -89,17 +89,17 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: 0" << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
 
    std::cout << std::endl;
    dict->Delete();
-   delete entry;
+   entry->Delete();
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = new gdcm::DataEntry(dict);
+   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("LT");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -114,7 +114,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetLength() 
                 << " - Must be: " << strlen(data) + strlen(data)%2 << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -124,7 +124,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( memcmp(entry->GetBinArea(),data,entry->GetLength()) != 0 )
@@ -132,7 +132,7 @@ int TestDataEntry(int , char *[])
       std::cout << "   Failed" << std::endl
                 << "   Content of bin area is incorrect" << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( memcmp(entry->GetString().c_str(),data,entry->GetLength()) != 0 )
@@ -142,7 +142,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -154,18 +154,18 @@ int TestDataEntry(int , char *[])
                    << "   Found " << entry->GetValue(i)
                    << " - Must be " << svalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
 
    std::cout << std::endl;
    dict->Delete();
-   delete entry;
+   entry->Delete();
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = new gdcm::DataEntry(dict);
+   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("US");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -181,7 +181,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetLength()
                 << " - Must be: " << nbvalue*sizeof(uint16_t) << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
@@ -191,7 +191,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -201,7 +201,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount()
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -213,7 +213,7 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << svalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
@@ -231,7 +231,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -241,7 +241,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -253,18 +253,18 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << svalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
 
    std::cout << std::endl;
    dict->Delete();
-   delete entry;
+   entry->Delete();
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = new gdcm::DataEntry(dict);
+   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("UL");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -280,7 +280,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetLength()
                 << " - Must be: " << nbvalue*sizeof(uint32_t) << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( memcmp(entry->GetString().c_str(),data,strlen(data)) != 0 )
@@ -290,7 +290,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << data << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -300,7 +300,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -312,7 +312,7 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << lvalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
@@ -330,7 +330,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str() 
                 << " - Must be: " << data << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -340,7 +340,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -352,18 +352,18 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << lvalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
 
    std::cout << std::endl;
    dict->Delete();
-   delete entry;
+   entry->Delete();
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = new gdcm::DataEntry(dict);
+   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("FL");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -379,7 +379,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetLength() 
                 << " - Must be: " << nbvalue*sizeof(float) << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
@@ -389,7 +389,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -399,7 +399,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -411,7 +411,7 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << fvalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
@@ -429,7 +429,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -439,7 +439,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -451,18 +451,18 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << fvalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
 
    std::cout << std::endl;
    dict->Delete();
-   delete entry;
+   entry->Delete();
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = new gdcm::DataEntry(dict);
+   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("FD");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -478,7 +478,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetLength()
                 << " - Must be: " << nbvalue*sizeof(double) << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( memcmp(entry->GetString().c_str(),fdata,strlen(fdata)) != 0 )
@@ -488,7 +488,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -498,7 +498,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -512,7 +512,7 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << dvalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
@@ -530,7 +530,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetString().c_str()
                 << " - Must be: " << fdata << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    if( entry->GetValueCount() != nbvalue )
@@ -540,7 +540,7 @@ int TestDataEntry(int , char *[])
                 << "   Found: " << entry->GetValueCount() 
                 << " - Must be: " << nbvalue << std::endl;
       dict->Delete();
-      delete entry;
+      entry->Delete();
       return 1;
    }
    for(i=0;i<entry->GetValueCount();i++)
@@ -552,14 +552,14 @@ int TestDataEntry(int , char *[])
                    << "   Found: " << entry->GetValue(i)
                    << " - Must be: " << dvalue[i] << std::endl;
          dict->Delete();
-         delete entry;
+         entry->Delete();
          return 1;
       }
    }
 
    std::cout << std::endl;
    dict->Delete();
-   delete entry;
+   entry->Delete();
 
    //------------------------------------------------------------------
    std::cout<<std::flush;

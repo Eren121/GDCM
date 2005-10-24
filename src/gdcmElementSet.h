@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 09:17:08 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/10/24 16:00:47 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,6 @@ public:
 
    bool AddEntry(DocEntry *Entry);
    bool RemoveEntry(DocEntry *EntryToRemove);
-   bool RemoveEntryNoDestroy(DocEntry *EntryToRemove);
    void ClearEntry();
    
    DocEntry *GetFirstEntry();
