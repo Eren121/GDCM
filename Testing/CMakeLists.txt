@@ -8,7 +8,6 @@ SET(GDCM_TESTS ${CXX_TEST_PATH}/gdcmTests)
 # add test that does not require data:
 # They usally return if no argument is given
 SET(TEST_SOURCES
-  TestInline
   TestUtil.cxx
   TestBug.cxx
   TestHash.cxx
@@ -23,6 +22,11 @@ SET(TEST_SOURCES
   TestDicomString.cxx
   #TestValidate.cxx
 )
+IF(UNIX)
+  SET(TEST_SOURCES ${TEST_SOURCES}
+    TestInline.cxx
+  )
+IF(UNIX)
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
