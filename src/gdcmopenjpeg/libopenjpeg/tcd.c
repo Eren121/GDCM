@@ -270,7 +270,7 @@ void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
        tccp->qmfbid ==
        0 ? dwt_getgain_real(band->bandno) : dwt_getgain(band->bandno);
      numbps = img->comps[compno].prec + gain;
-     band->stepsize = (1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn);
+     band->stepsize = (float)((1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn));
      band->numbps = ss->expn + tccp->numgbits - 1;   /* WHY -1 ? */
 
      band->precincts =
@@ -513,7 +513,7 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
        tccp->qmfbid ==
        0 ? dwt_getgain_real(band->bandno) : dwt_getgain(band->bandno);
      numbps = img->comps[compno].prec + gain;
-          band->stepsize = (1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn);
+          band->stepsize = (float)((1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn));
      band->numbps = ss->expn + tccp->numgbits - 1;   /* WHY -1 ? */
 
      for (precno = 0; precno < res->pw * res->ph; precno++) {
@@ -719,7 +719,7 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
        tccp->qmfbid ==
        0 ? dwt_getgain_real(band->bandno) : dwt_getgain(band->bandno);
      numbps = img->comps[compno].prec + gain;
-          band->stepsize = (1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn);
+          band->stepsize = (float)((1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn));
      band->numbps = ss->expn + tccp->numgbits - 1;   /* WHY -1 ? */
 
      band->precincts =
@@ -1562,7 +1562,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
       for (i = res->x0; i < res->x1; i++) {
 
    int v;
-   float tmp = (tilec->data[i - res->x0 + (j - res->y0) * tw])/8192.0;
+   double tmp = (tilec->data[i - res->x0 + (j - res->y0) * tw])/8192.0;
         int tmp2;
         
    if (tcd_tcp->tccps[compno].qmfbid == 1) {

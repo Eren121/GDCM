@@ -903,7 +903,7 @@ void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 
          for (j = 0; j < cblk->y1 - cblk->y0; j++) {
       for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-                  float tmp=t1_data[j][i] * band->stepsize * 4096.0;
+                  double tmp=t1_data[j][i] * band->stepsize * 4096.0;
                   int tmp2;
         if (t1_data[j][i]>>1 == 0) {
           tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
