@@ -1013,7 +1013,7 @@ void tcd_rateallocate(unsigned char *dest, int len, info_image * info_IM)
   int compno, resno, bandno, precno, cblkno, passno, layno;
   double min, max;
   double cumdisto[100];      /*add fixed_quality*/
-  const double K = 1;      /* 1.1; /*add fixed_quality*/*/
+  const double K = 1;      /* 1.1; //add fixed_quality*/
 
   double maxSE = 0;
   min = DBL_MAX;
