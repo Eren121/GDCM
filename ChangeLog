@@ -1,3 +1,8 @@
+Mon Oct 24 13:34:45 EDT 2005 by malaterre
+   * Adding the OpenJPEG library. It contains a patch from Antonin compared to
+	 the official release that allow us to work around the famous 16bits issues
+	 in jasper
+
 Mon Oct 18 10:27:49 2005 by regrain
    * Correctly use the VRKey for all vr variables... instead of TagName 
      or std::string
