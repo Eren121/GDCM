@@ -18,9 +18,9 @@ SET(openjpeg_SRCS
   jpt.c
   jp2.c
 )
-ADD_LIBRARY(openjpeg ${openjpeg_SRCS})
+ADD_LIBRARY(gdcmopenjpeg ${openjpeg_SRCS})
 
-## $Id: CMakeLists.txt,v 1.1 2005/10/24 15:34:56 malaterre Exp $
+## $Id: CMakeLists.txt,v 1.2 2005/10/24 15:39:38 malaterre Exp $
 ##
 ## makefile for OpenJPEG library
 #
