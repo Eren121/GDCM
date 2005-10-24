@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 09:24:10 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/10/24 15:36:33 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,10 @@
 
 #include <iostream>
 #include <fstream>
-#include <jasper/jasper.h>
+//#include <jasper/jasper.h>
+extern "C" {
+#include <openjpeg.h>
+}
 
 namespace gdcm 
 {
@@ -34,6 +37,109 @@ namespace gdcm
  */
 
 bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
+{
+  j2k_image_t img;
+  j2k_cp_t cp;
+  //jp2_struct_t *jp2_struct=NULL;
+
+  // default blindly copied
+  cp.layer=0;
+  cp.reduce=0;
+  cp.decod_format=-1;
+  cp.cod_format=-1;
+
+  cp.cod_format=J2K_CFMT;
+  cp.decod_format = PGX_DFMT;
+  int len = inputlength;
+  unsigned char *src = (unsigned char*)inputdata;
+
+    if (!j2k_decode(src, len, &img, &cp)) {
+      fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
+      return false;
+    }
+
+
+    /************** PGX *****************/
+    //char *data8 = (char*)raw;
+    //uint16_t *data8 = (uint16_t*)raw;
+   for (int compno = 0; compno < img.numcomps; compno++) {
+      j2k_comp_t *comp = &img.comps[compno];
+      int nbytes = 0;
+ 
+      // w = int_ceildiv(img.x1 - img.x0, comp->dx);
+      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), comp->dx);
+      int w = img.comps[compno].w;
+      int wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
+      std::cerr << "wr=" << wr << std::endl;
+      
+      // h = int_ceildiv(img.y1 - img.y0, comp->dy);
+      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), comp->dy);
+      int h = img.comps[compno].h;
+      int hr = int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
+      std::cerr << "hr=" << hr << std::endl;
+      
+      //fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+',
+      //  comp->prec, wr, hr);
+
+      if (comp->prec <= 8)
+        {
+        nbytes = 1;
+        uint8_t *data8 = (uint8_t*)raw;
+        for (int i = 0; i < wr * hr; i++) 
+          {
+          int v = img.comps[compno].data[i / wr * w + i % wr];
+          *data8++ = (uint8_t)v;
+          }
+        }
+      else if (comp->prec <= 16)
+        {
+        nbytes = 2;
+        uint16_t *data16 = (uint16_t*)raw;
+        for (int i = 0; i < wr * hr; i++) 
+          {
+          int v = img.comps[compno].data[i / wr * w + i % wr];
+          *data16++ = (uint16_t)v;
+          }
+        }
+      else
+        {
+        nbytes = 4;
+        uint32_t *data32 = (uint32_t*)raw;
+        for (int i = 0; i < wr * hr; i++) 
+          {
+          int v = img.comps[compno].data[i / wr * w + i % wr];
+          *data32++ = (uint32_t)v;
+          }
+        }
+//      for (int i = 0; i < wr * hr; i++) 
+//        {
+//        //std::cout << "i:" << i << '\n';
+//        int v = img.comps[compno].data[i / wr * w + i % wr];
+//        //for (int j = nbytes - 1; j >= 0; j--) 
+//        for (int j = 0; j < nbytes-1 ; j++) 
+//          {
+//          char byte = (char) (v >> (j * 8));
+//          //fwrite(&byte, 1, 1, fdest);
+//          *data8++ = byte;
+//        }
+//        //*data8++ = (uint16_t)v;
+//      }
+      free(img.comps[compno].data);
+//      fclose(fdest);
+    /************** END PGX *****************/
+   }
+
+
+  // Free remaining structures
+  //--------------------------
+  delete[] inputdata;
+  j2k_dec_release();
+
+  return true;
+}
+
+#if 0
+bool gdcm_read_JASPER_file (void* raw, char *inputdata, size_t inputlength)
 {
 #if 0
   std::cerr << "Inputlenght=" << inputlength << std::endl;
@@ -110,6 +216,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 
   return true;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

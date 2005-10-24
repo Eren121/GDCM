@@ -5,8 +5,8 @@ INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 SUBDIRS(
   gdcmjpeg
   #gdcmmpeg2
-  gdcmjasper
   gdcmjpegls
+  gdcmopenjpeg
   )
 
 # "jpeglib.h" is defined here:
@@ -15,8 +15,7 @@ INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/gdcmmpeg2/src/mpeg2dec
   ${GDCM_BINARY_DIR} #for gdcmConfigure.h
   ${GDCM_BINARY_DIR}/src #for gdcmjpeg 8, 12 and 16 
-  ${GDCM_BINARY_DIR}/src/gdcmjasper/src/libjasper/include
-  ${GDCM_SOURCE_DIR}/src/gdcmjasper/src/libjasper/include
+  ${GDCM_SOURCE_DIR}/src/gdcmopenjpeg/libopenjpeg
 )
 
 SET(libgdcm_la_SOURCES
@@ -77,7 +76,7 @@ TARGET_LINK_LIBRARIES(gdcm
   gdcmjpeg12
   gdcmjpeg16
   #  gdcmmpeg2
-  gdcmjasper
+  gdcmopenjpeg
 )
 IF(WIN32)
   IF(NOT BORLAND)
