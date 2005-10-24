@@ -28,7 +28,7 @@
 
 #define VERSION "0.0.8"
 
-#if defined(_WIN32) && defined (OPENJPEGDLL)
+#if defined(_WIN32) && defined (OPENJPEGDLL) && !defined(OPENJPEGSTATIC)
 #ifdef gdcmopenjpeg_EXPORTS /*LIBJ2K_EXPORTS*/
 #define LIBJ2K_API __declspec(dllexport)
 #else
@@ -38,7 +38,7 @@
 #define LIBJ2K_API
 #endif
 
-#if defined(_WIN32) && defined (OPENJPEGSTATIC)
+#if defined(_WIN32) && defined (OPENJPEGSTATIC) && !defined(OPENJPEGDLL)
 #define LIBJ2K_API __declspec(dllexport)
 #else
 #define LIBJ2K_API extern
