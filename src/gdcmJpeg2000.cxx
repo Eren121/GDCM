@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 15:41:55 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/10/24 21:08:59 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 
   // Decompression
   if (!j2k_decode(src, len, &img, &cp)) {
-    fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
+    std::cerr << "ERROR -> j2k_to_image: failed to decode image!\n";
     return false;
   }
 
