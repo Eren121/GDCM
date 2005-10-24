@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 21:31:11 $
-  Version:   $Revision: 1.167 $
+  Date:      $Date: 2005/10/24 22:49:57 $
+  Version:   $Revision: 1.168 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,11 +25,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-// Two approaches, *NIX or Win32
-#ifdef CMAKE_HAVE_SYS_TIMEB_H
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__)
 #include <sys/timeb.h>
-#endif
-#ifdef CMAKE_HAVE_SYS_TIMES_H
+#else
 #include <sys/time.h>
 #endif
 
