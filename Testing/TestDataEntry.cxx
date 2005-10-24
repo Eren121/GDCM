@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 19:52:37 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/24 01:17:54 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ const float fvalue[]={1.1f,2.2f,3.3f,4.4f,5.5f};
 const double dvalue[]={1.1,2.2,3.3,4.4,5.5};
 
 const unsigned long nbvalue = 5;
-const float GDCM_EPS = 1e-6;
+const double GDCM_EPS = 1e-6;
 
 /**
   * \brief Test the DataEntry object
