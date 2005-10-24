@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/24 16:00:48 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/10/24 21:54:28 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1349,10 +1349,24 @@ void FileHelper::CheckMandatoryElements()
    //SetMandatoryEntry(0x0008,0x0018,Util::CreateUniqueUID());
 
    // Instance Creation Date
-   CopyMandatoryEntry(0x0008,0x0012,Util::GetCurrentDate().c_str());
+   const std::string &date = Util::GetCurrentDate();
+   CopyMandatoryEntry(0x0008,0x0012,date);
  
    // Instance Creation Time
-   CopyMandatoryEntry(0x0008,0x0013,Util::GetCurrentTime().c_str());
+   const std::string &time = Util::GetCurrentTime();
+   CopyMandatoryEntry(0x0008,0x0013,time);
+
+   // Study Date
+   CopyMandatoryEntry(0x0008,0x0020,date);
+   // Study Time
+   CopyMandatoryEntry(0x0008,0x0030,time);
+
+   // Accession Number
+   CopyMandatoryEntry(0x0008,0x0050,"");
+   
+   // Conversion Type ... FIXME (type 1)
+   // See PS 3.3, Page 408
+   CopyMandatoryEntry(0x0008,0x0064,"SYN");
 
 // ----- Add Mandatory Entries if missing ---
     // Entries whose type is 1 are mandatory, with a mandatory value
@@ -1378,6 +1392,18 @@ void FileHelper::CheckMandatoryElements()
    // The user shouldn't add any image to a 'Manufacturer Serie'
    // but there is no way no to allowed him to do that 
    CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID());
+
+   // Study ID
+   CheckMandatoryEntry(0x0020,0x0010,"");
+
+   // Series Number
+   CheckMandatoryEntry(0x0020,0x0011,"");
+
+   // Instance Number
+   CheckMandatoryEntry(0x0020,0x0013,"");
+
+   // Patient Orientation FIXME 1\0\0\0\1\0 or empty ?
+   CheckMandatoryEntry(0x0020,0x0020,"");
    
    // Modality : if missing we set it to 'OTher'
    CheckMandatoryEntry(0x0008,0x0060,"OT");
@@ -1391,6 +1417,9 @@ void FileHelper::CheckMandatoryElements()
    // Patient's Name : if missing, we set it to 'GDCM^Patient'
    CheckMandatoryEntry(0x0010,0x0010,"GDCM^Patient");
 
+   // Patient ID
+   CheckMandatoryEntry(0x0010,0x0020,"");
+
    // Patient's Birth Date : 'type 2' entry -> must exist, value not mandatory
    CheckMandatoryEntry(0x0010,0x0030,"");
 
@@ -1402,6 +1431,9 @@ void FileHelper::CheckMandatoryElements()
 
     // Pixel Spacing : defaulted to 1.0\1.0
    CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
+
+   // Samples Per Pixel (type 1) ... FIXME default to grayscale ?
+   CheckMandatoryEntry(0x0028,0x0002,"1");
    
    // Remove some inconstencies (probably some more will be added)
 
@@ -1411,7 +1443,7 @@ void FileHelper::CheckMandatoryElements()
    DataEntry *e_0028_0008 = FileInternal->GetDataEntry(0x0028, 0x0008);
    if ( !e_0028_0008 )
    {
-      Archive->Push(0x0020, 0X0052);
+      Archive->Push(0x0020, 0x0052);
    }
 } 
 

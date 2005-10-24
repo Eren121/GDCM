@@ -181,3 +181,4 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno);
 void tcd_dec_release();
 
 #endif
+
