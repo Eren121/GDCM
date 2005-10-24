@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 14:49:51 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/24 01:16:20 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,9 @@
 #include <iostream>
 
 #include <time.h>
+#ifdef CMAKE_HAVE_SYS_TIMES_H
 #include <sys/times.h>
+#endif
 
 void        frswap (double &a, double &b);
 void        fpswap (double *a, double *b);

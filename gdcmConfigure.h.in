@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmConfigure.h.in,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 19:46:18 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/10/24 01:16:19 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,6 +63,8 @@
 
 #define GDCM_SIZEOF_LONG @GDCM_SIZEOF_LONG@
 
+/* Special JPR */
+#cmakedefine CMAKE_HAVE_SYS_TIMES_H
 
 /* GetMacAddress require a lot of include file to access low level API */
 #cmakedefine CMAKE_HAVE_UNISTD_H
