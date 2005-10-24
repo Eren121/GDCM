@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 01:16:20 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/24 10:55:12 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,7 +177,7 @@ int TestInline(int argc, char *argv[])
    double a = 1, b = 2;
    double tmp;
    
-   uint16_t x, y;    
+   uint16_t x=1, y=2;    
  // ----------------------------------------
  
    std::cout << "Use a macro "<< std::endl;
