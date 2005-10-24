@@ -177,3 +177,4 @@ void cio_write_from_buf(unsigned char* dest_buf, int n)/* Glenn adds */
   memcpy(dest_buf, cio_bp, n);
   cio_bp += n;
 }
+

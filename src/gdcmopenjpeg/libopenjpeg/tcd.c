@@ -341,6 +341,7 @@ void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 void tcd_free_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 {
   int tileno, compno, resno, bandno, precno;
+  (void)curtileno;
   tcd_img = img;
   tcd_cp = cp;
   tcd_image.tw = cp->tw;

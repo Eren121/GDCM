@@ -517,6 +517,7 @@ int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len)
 int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream,
        char *output)
 {
+  (void)output;
   jp2_write_jp();
   jp2_write_ftyp(jp2_struct);
   jp2_write_jp2h(jp2_struct);

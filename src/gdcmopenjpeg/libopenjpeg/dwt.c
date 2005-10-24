@@ -529,6 +529,7 @@ void dwt_decode_real(tcd_tilecomp_t * tilec, int stop)
 /* </summary>                         */
 int dwt_getgain_real(int orient)
 {
+  (void)orient;
   return 0;
 }
 
