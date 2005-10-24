@@ -33,13 +33,13 @@ INCLUDE_DIRECTORIES(
 # Loop over all executables:
 FOREACH(exe j2k_to_image image_to_j2k)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
-  TARGET_LINK_LIBRARIES(${exe} openjpeg)
+  TARGET_LINK_LIBRARIES(${exe} gdcmopenjpeg)
   IF(UNIX)
     TARGET_LINK_LIBRARIES(${exe} -lm)
   ENDIF(UNIX)
 ENDFOREACH(exe)
 
-## $Id: CMakeLists.txt,v 1.1 2005/10/24 15:34:53 malaterre Exp $
+## $Id: CMakeLists.txt,v 1.2 2005/10/24 18:40:55 malaterre Exp $
 ##
 ## makefile for OpenJPEG codec
 #
