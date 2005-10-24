@@ -20,5 +20,5 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 SUBDIRS(
     libopenjpeg
-    codec
+    #    codec
     )
