@@ -26,7 +26,7 @@ IF(UNIX)
   SET(TEST_SOURCES ${TEST_SOURCES}
     TestInline.cxx
   )
-IF(UNIX)
+ENDIF(UNIX)
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
