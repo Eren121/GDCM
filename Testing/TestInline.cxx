@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:46 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/24 16:01:39 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #include "gdcmDebug.h"
 #include <iostream>
 
-/*#include <time.h>
+#include <time.h>
 #ifdef CMAKE_HAVE_SYS_TIMES_H
 #include <sys/times.h>
 #else
@@ -388,11 +388,5 @@ int TestInline(int argc, char *argv[])
         << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
         << std::endl; 
 
-   return 0;
-}
-*/
-
-int TestInline(int argc, char *argv[])
-{
    return 0;
 }
