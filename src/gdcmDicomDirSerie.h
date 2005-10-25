@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/10/25 14:52:33 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,9 +34,10 @@ typedef std::list<DicomDirImage *> ListDicomDirImage;
  */
 class GDCM_EXPORT DicomDirSerie : public DicomDirObject 
 {
+   gdcmTypeMacro(DicomDirSerie);
+
 public:
-   DicomDirSerie(bool empty=false); 
-   ~DicomDirSerie();
+   static DicomDirSerie *New(bool empty=false) {return new DicomDirSerie(empty);}
 
    void Print( std::ostream &os = std::cout, std::string const &indent = "" );
    void WriteContent( std::ofstream *fp, FileType t );
@@ -50,8 +51,11 @@ public:
    DicomDirImage *GetFirstImage();
    DicomDirImage *GetNextImage();
 
-private:
+protected:
+   DicomDirSerie(bool empty=false); 
+   ~DicomDirSerie();
 
+private:
    ///chained list of DicomDirImages (to be exploited recursively)
    ListDicomDirImage Images;
    /// iterator on the DicomDirImages of the current DicomDirSerie

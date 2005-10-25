@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:58:15 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@
    catch(...) \
    { \
       std::cout << "   --> Can't access to the '" << #name << "' method !" << std::endl; \
-      delete f; \
+      f->Delete(); \
       return 1; \
    }
 
@@ -63,7 +63,7 @@ int TestFileAccessors(int, char *[])
       filename += gdcmDataImages[i];
       
       std::cout << "Begin with " << filename << std::endl;
-      gdcm::File *f= new gdcm::File( );
+      gdcm::File *f= gdcm::File::New( );
       f->SetFileName( filename );
       f->Load( );
 
@@ -119,7 +119,7 @@ int TestFileAccessors(int, char *[])
       {
          std::cout << "   " << filename << " is Readable" << std::endl;
 
-         gdcm::FileHelper *fh= new gdcm::FileHelper( f );   
+         gdcm::FileHelper *fh= gdcm::FileHelper::New( f );   
 
          TestMethodMacro(std::dec,fh,GetImageDataSize)
          TestMethodMacro(std::dec,fh,GetImageDataRawSize)
@@ -128,17 +128,17 @@ int TestFileAccessors(int, char *[])
          TestMethodMacro(std::dec,fh,GetUserDataSize)
          TestMethodMacro(std::dec,fh,GetWriteType)
  
-         delete fh;
+         fh->Delete();
       }
       else
       {
          std::cout << filename << " is NOT Readable" 
                    << std::endl << std::endl;
-         delete f;
+         f->Delete();
          return 1;
       }
 
-      delete f;
+      f->Delete();
       std::cout << "End with " << filename << std::endl;
       i++;
    }

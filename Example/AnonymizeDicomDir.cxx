@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/25 14:52:26 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
    //   Read the input DICOMDIR
    gdcm::File *f;
-   f = new gdcm::File( );
+   f = gdcm::File::New( );
    f->SetLoadMode(0);
    f->SetFileName( fileName );
    bool res = f->Load();  
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
    if ( !e )
    {
       std::cout << "No Directory Record Sequence (0004,1220) found" <<std::endl;;
-      delete f;
+      f->Delete();
       return 0;
    }
    
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
    if ( !s )
    {
       std::cout << "Element (0004,1220) is not a Sequence ?!?" <<std::endl;
-      delete f;
+      f->Delete();
       return 0;
    }
 
@@ -188,7 +188,8 @@ int main(int argc, char *argv[])
 
    fp->close();
 
-   delete f;
+   delete fp;
+   f->Delete();
    return 0;
 }
 

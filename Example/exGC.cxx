@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGC.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
    std::cout << argv[1] << std::endl;
 
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode( gdcm::LD_ALL);
    f->SetFileName( fileName );
    bool res = f->Load();        
@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "DICOM / ACR File"
                  <<std::endl;
+       f->Delete();
        return 0;
    }
    std::cout << " ... is readable " << std::endl;
@@ -101,7 +102,7 @@ int main(int argc, char *argv[])
 // ============================================================
 
    // We need a gdcm::FileHelper, since we want to load the pixels        
-   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
 
    // (unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one) 
 
@@ -111,6 +112,8 @@ int main(int argc, char *argv[])
    {
        std::cerr << "Sorry, Pixels of" << fileName <<"  are not "
                  << " gdcm-readable."  << std::endl;
+       f->Delete();
+       fh->Delete();
        return 0;
    }
 
@@ -118,7 +121,7 @@ int main(int argc, char *argv[])
    // ------                              without Sequences     -------------
 
  
-   gdcm::FileHelper *copy = new gdcm::FileHelper( );
+   gdcm::FileHelper *copy = gdcm::FileHelper::New( );
    copy->SetFileName( output );
    copy->Load();
  
@@ -162,17 +165,17 @@ int main(int argc, char *argv[])
       }
    }
    
-    std::cout << n << " points put to black (within " 
-              << imageSize/3 << ")" << std::endl;
+   std::cout << n << " points put to black (within " 
+             << imageSize/3 << ")" << std::endl;
 
    n = 0;
    for (i = 0; i<imageSize/3; i++)
    {
-   if ( ((rgb8_t *)imageData)[i].r < threshold
-     &&
-        ((rgb8_t *)imageData)[i].g < threshold
-     &&
-        ((rgb8_t *)imageData)[i].b < threshold )
+      if ( ((rgb8_t *)imageData)[i].r < threshold
+         &&
+         ((rgb8_t *)imageData)[i].g < threshold
+         &&
+         ((rgb8_t *)imageData)[i].b < threshold )
       {
          n++;
         ((rgb8_t *)imageData)[i].r = (unsigned char)background;
@@ -190,9 +193,9 @@ int main(int argc, char *argv[])
 
    copy->WriteDcmExplVR( output );
 
-   delete f;
-   delete fh;
-   delete copy;
+   f->Delete();
+   fh->Delete();
+   copy->Delete();
 
    exit (0);
 }

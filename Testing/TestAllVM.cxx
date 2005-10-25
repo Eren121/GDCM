@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 14:53:51 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/25 14:52:30 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,17 +24,17 @@
 
 int DoTheVMTest(std::string const &filename)
 {
-   gdcm::File file;
+   gdcm::File *file = gdcm::File::New();
    // - Do not test unknow VM in shadow groups (if element 0x0000 is present)
    // - Skip Sequences (if they are 'True Length'); loading will be quicker
    //                  (anyway, Sequences are skipped at processing time ...)
-   file.SetLoadMode( gdcm::LD_NOSHADOW | gdcm::LD_NOSEQ );
+   file->SetLoadMode( gdcm::LD_NOSHADOW | gdcm::LD_NOSEQ );
 
-   file.SetFileName( filename );
-   if( !file.Load() ) //would be really bad...
+   file->SetFileName( filename );
+   if( !file->Load() ) //would be really bad...
       return 1;
 
-   gdcm::DocEntry *d = file.GetFirstEntry();
+   gdcm::DocEntry *d = file->GetFirstEntry();
    std::cerr << "Testing file : " << filename << std::endl;
    while(d)
    {
@@ -56,9 +56,11 @@ int DoTheVMTest(std::string const &filename)
       {
           // We skip pb of SQ recursive exploration
       }
-      d = file.GetNextEntry();
+      d = file->GetNextEntry();
    }
-      return 0;
+   file->Delete();
+
+   return 0;
 }
 
 int TestAllVM(int argc, char *argv[])

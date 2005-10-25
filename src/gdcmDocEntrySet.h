@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDOCENTRYSET_H
 #define GDCMDOCENTRYSET_H
 
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include "gdcmVRKey.h"
 #include "gdcmTagKey.h"
 
@@ -56,14 +56,11 @@ class DictEntry;
  *       members to this class since this class is designed as an adapter 
  *       in the form of an abstract base class.
  */
-class GDCM_EXPORT DocEntrySet : public Base
+class GDCM_EXPORT DocEntrySet : public RefCounter
 {
-public:
-   /// Canonical Constructor
-   DocEntrySet();
-   /// Canonical Destructor
-   virtual ~DocEntrySet() {}
+   gdcmTypeMacro(DocEntrySet);
 
+public:
    /// \brief write any type of entry to the entry set
    virtual void WriteContent (std::ofstream *fp, FileType filetype) = 0;
 
@@ -114,6 +111,11 @@ public:
    SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
 
 protected:
+   /// Canonical Constructor
+   DocEntrySet();
+   /// Canonical Destructor
+   virtual ~DocEntrySet() {}
+
 // DictEntry  related utilities
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem);
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem,

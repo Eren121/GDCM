@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 12:42:37 $
-  Version:   $Revision: 1.306 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.307 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1204,7 +1204,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          break;
       }
       // create the current SQItem
-      SQItem *itemSQ = new SQItem( seqEntry->GetDepthLevel() );
+      SQItem *itemSQ = SQItem::New( seqEntry->GetDepthLevel() );
       unsigned int l = newDocEntry->GetReadLength();
       
       if ( l == 0xffffffff )
@@ -1227,6 +1227,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       // end try -----------------
  
       seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
+      itemSQ->Delete();
       newDocEntry->Delete();
       SQItemNumber++;
       if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max )

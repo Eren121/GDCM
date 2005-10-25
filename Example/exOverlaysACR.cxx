@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/25 14:52:28 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
    //std::cout << argv[1] << std::endl;
 
-   f = new gdcm::File( );
+   f = gdcm::File::New( );
 
    f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    f->SetFileName( fileName );
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
        std::cout << "Sorry, " << fileName <<"  not a gdcm-readable "
            << "DICOM / ACR File"
            <<std::endl;
-      delete f;
+      f->Delete();
       return 0;
    }
    std::cout << " ... is readable " << std::endl;
@@ -115,14 +115,14 @@ int main(int argc, char *argv[])
    if ( bitsAllocated <= 8 )
    {
       std::cout << " 8 bits pixel image cannot contain Overlays " << std::endl;
-      delete f;
+      f->Delete();
       return 0;
    }
    std::string s1 = f->GetEntryString(0x6000, 0x0102);
    if (s1 == gdcm::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Overlay " << std::endl;
-      delete f;
+      f->Delete();
       return 0;
    }
    std::cout << " File is read! " << std::endl;
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
    if (fp == 0)
    {
       std::cout << "Unable to open File" << std::endl;
-      delete f;
+      f->Delete();
       return 0;
    }
    else
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
                  << "readable. expected length :" << nx*ny 
                  << "  " << "read length : " << lgt
                  << std::endl;
-       delete f;
+       f->Delete();
        delete pixels;  
        return 0;
    }
@@ -199,9 +199,9 @@ int main(int argc, char *argv[])
    gdcm::FileHelper *fh = 0;
 
       
-while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102)) 
-          != gdcm::GDCM_UNFOUND )
-{
+   while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102)) 
+            != gdcm::GDCM_UNFOUND )
+   {
 
       strOverlayLocation = f->GetEntryString(currentOvlGroup, 0x0200);
       if ( strOverlayLocation != gdcm::GDCM_UNFOUND )
@@ -234,7 +234,7 @@ while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102))
       if( gdcm::Debug::GetDebugFlag() )
          std::cout << "About to built empty file"  << std::endl;
 
-      fileToBuild = new gdcm::File();
+      fileToBuild = gdcm::File::New();
 
       if( gdcm::Debug::GetDebugFlag() )
          std::cout << "Finish to built empty file"  << std::endl;
@@ -259,7 +259,7 @@ while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102))
       if( gdcm::Debug::GetDebugFlag() )
          std::cout << "-------------About to built FileHelper"  << std::endl;
 
-      fh = new gdcm::FileHelper(fileToBuild);
+      fh = gdcm::FileHelper::New(fileToBuild);
 
       if( gdcm::Debug::GetDebugFlag() )
          std::cout << "-------------Finish to built FileHelper"  << std::endl;
@@ -275,9 +275,9 @@ while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102))
       {
          std::cout << "Failed\n"
                    << "File in unwrittable\n";
-         delete fh;
+         fh->Delete();
          if (fileToBuild)
-            delete fileToBuild;
+            fileToBuild->Delete();
          delete pixels;
          delete tabPixels;
          return 0;
@@ -290,13 +290,14 @@ while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102))
       i++;
    }
     
-   delete f;
    if (f)
-      delete fh;
+      fh->Delete();
    if (fileToBuild)
-      delete fileToBuild;
+      fileToBuild->Delete();
+   f->Delete();
    delete pixels;
    delete tabPixels;
+
    return 0;
 }
 

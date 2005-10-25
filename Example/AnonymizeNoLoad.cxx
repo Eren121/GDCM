@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:05 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/10/25 14:52:26 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
    // 
    //   Parse the input file.
    // 
-      f = new gdcm::File( );
+      f = gdcm::File::New( );
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
               << "Sorry, " << fileName <<"  not a gdcm-readable "
               << "DICOM / ACR Document"
               << std::endl;
-           delete f;
+           f->Delete();
            return 1;
       }
       std::cout << fileName << " is readable " << std::endl;
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
       //   
       f->ClearAnonymizeList();
  
-      delete f;
+      f->Delete();
       return 0;
 
    }
@@ -192,13 +192,13 @@ int main(int argc, char *argv[])
                                  it != fileList.end();
                                  ++it )
       {
-         f = new gdcm::File( );
+         f = gdcm::File::New( );
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
 
          if ( !f->Load() )
          {
-            delete f; 
+            f->Delete();
             continue;
          }
          // 
@@ -243,10 +243,9 @@ int main(int argc, char *argv[])
 
          f->ClearAnonymizeList();
     
-         delete f;         
-        }
-
-     }
+         f->Delete();
+      }
+   }
    return 0;
 }
 

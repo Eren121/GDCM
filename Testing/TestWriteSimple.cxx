@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:34:26 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,7 +110,7 @@ int WriteSimple(Image &img)
 // Step 1 : Create the header of the image
 
    std::cout << "        1...";
-   gdcm::File *fileToBuild = new gdcm::File();
+   gdcm::File *fileToBuild = gdcm::File::New();
    std::ostringstream str;
 
    // Set the image size
@@ -204,7 +204,7 @@ int WriteSimple(Image &img)
 
 // Step 3 : Create the file of the image
    std::cout << "3...";
-   gdcm::FileHelper *fileH = new gdcm::FileHelper(fileToBuild);
+   gdcm::FileHelper *fileH = gdcm::FileHelper::New(fileToBuild);
    fileH->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image
@@ -229,8 +229,8 @@ int WriteSimple(Image &img)
          std::cout << "Failed for [" << fileName.str() << "]\n"
                    << "        Write mode '"<<img.writeMode<<"' is undefined\n";
 
-         delete fileH;
-         delete fileToBuild;
+         fileH->Delete();
+         fileToBuild->Delete();
          delete[] imageData;
          return 1;
    }
@@ -240,8 +240,8 @@ int WriteSimple(Image &img)
       std::cout << "Failed for [" << fileName.str() << "]\n"
                 << "           File is unwrittable\n";
 
-      delete fileH;
-      delete fileToBuild;
+      fileH->Delete();
+      fileToBuild->Delete();
       delete[] imageData;
       return 1;
    }
@@ -251,7 +251,7 @@ int WriteSimple(Image &img)
    // old form.
    //gdcm::FileHelper *reread = new gdcm::FileHelper( fileName.str() );
    // Better use :
-   gdcm::FileHelper *reread = new gdcm::FileHelper( );
+   gdcm::FileHelper *reread = gdcm::FileHelper::New( );
    reread->SetFileName( fileName.str() );
    reread->SetLoadMode(gdcm::LD_ALL); // Load everything
                            // Possible values are 
@@ -266,9 +266,9 @@ int WriteSimple(Image &img)
    {
       std::cerr << "Failed" << std::endl
                 << "Could not read written image : " << fileName.str() << std::endl;
-      delete fileToBuild;
-      delete fileH;
-      delete reread;
+      fileToBuild->Delete();
+      fileH->Delete();
+      reread->Delete();
       delete[] imageData;
       return 1;
    }
@@ -285,9 +285,9 @@ int WriteSimple(Image &img)
          << "        File type differ: "
          << fileH->GetWriteType() << " # " 
          << reread->GetFile()->GetFileType() << std::endl;
-      delete fileToBuild;
-      delete fileH;
-      delete reread;
+      fileToBuild->Delete();
+      fileH->Delete();
+      reread->Delete();
       delete[] imageData;
 
       return 1;
@@ -306,9 +306,9 @@ int WriteSimple(Image &img)
                   << reread->GetFile()->GetYSize() << " | "
          << "Z: " << fileToBuild->GetZSize() << " # " 
                   << reread->GetFile()->GetZSize() << std::endl;
-      delete fileToBuild;
-      delete fileH;
-      delete reread;
+      fileToBuild->Delete();
+      fileH->Delete();
+      reread->Delete();
       delete[] imageData;
 
       return 1;
@@ -320,9 +320,9 @@ int WriteSimple(Image &img)
       std::cout << "Failed" << std::endl
          << "        Pixel areas lengths differ: "
          << size << " # " << dataSizeWritten << std::endl;
-      delete fileToBuild;
-      delete fileH;
-      delete reread;
+      fileToBuild->Delete();
+      fileH->Delete();
+      reread->Delete();
       delete[] imageData;
 
       return 1;
@@ -350,9 +350,9 @@ int WriteSimple(Image &img)
             }
       }
       std::cout << std::endl;
-      delete fileToBuild;
-      delete fileH;
-      delete reread;
+      fileToBuild->Delete();
+      fileH->Delete();
+      reread->Delete();
       delete[] imageData;
 
       return 1;
@@ -360,9 +360,9 @@ int WriteSimple(Image &img)
 
    std::cout << "OK" << std::endl;
 
-   delete fileToBuild;
-   delete fileH;
-   delete reread;
+   fileToBuild->Delete();
+   fileH->Delete();
+   reread->Delete();
    delete[] imageData;
 
    return 0;

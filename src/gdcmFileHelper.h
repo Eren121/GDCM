@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 12:43:25 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #define GDCMFILEHELPER_H
 
 #include "gdcmDebug.h"
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 
 
 namespace gdcm 
@@ -40,8 +40,10 @@ typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, File *);
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */
-class GDCM_EXPORT FileHelper : public Base
+class GDCM_EXPORT FileHelper : public RefCounter
 {
+   gdcmTypeMacro(FileHelper);
+
 public:
    enum FileMode
    {
@@ -50,9 +52,8 @@ public:
    };
      
 public:
-   FileHelper( );
-   FileHelper( File *header );
-   GDCM_LEGACY(FileHelper( std::string const &filename ));
+   static FileHelper *New() {return new FileHelper();}
+   static FileHelper *New(File *header) {return new FileHelper(header);}
    
    virtual ~FileHelper();
 
@@ -149,6 +150,9 @@ public:
    bool Write         (std::string const &fileName);
 
 protected:
+   FileHelper( );
+   FileHelper( File *header );
+
    bool CheckWriteIntegrity();
 
    void SetWriteToRaw();
@@ -182,11 +186,6 @@ private:
    /// gdcm::File to use to load the file
    File *FileInternal;
 
-   /// \brief Whether the underlying \ref gdcm::File was loaded by
-   ///  the constructor or passed to the constructor. 
-   ///  When false the destructor is in charge of deletion.
-   bool SelfHeader;
-   
    /// Whether already parsed or not
    bool Parsed;
 

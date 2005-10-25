@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 //   Read the input image.
 // ============================================================
 
-   f = new gdcm::File( );
+   f = gdcm::File::New( );
 
    //f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    f->SetFileName( fileName );
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
        std::cerr << "Sorry, " << fileName << " not a gdcm-readable "
            << "DICOM / ACR File"
            << std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << " ... is readable " << std::endl;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
    {
      gdcm::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
      std::cerr << "Image doesn't contain any tag: " << dictEntry->GetName() << std::endl;
-     delete f;
+     f->Delete();
      return 1;
    }
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
    if( !dicom_tag )
    {
       std::cerr << "Sorry DataEntry only please" << std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -95,13 +95,13 @@ int main(int argc, char *argv[])
    if( !o )
    {
       std::cerr << "Problem opening file: " << argv[4] << std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
    o.write((char*)dicom_tag->GetBinArea(), dicom_tag->GetLength());
    o.close();
 
-   delete f;
+   f->Delete();
    return 0;
 }
 

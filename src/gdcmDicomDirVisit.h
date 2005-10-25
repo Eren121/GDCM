@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirVisit.h,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 19:07:12 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,13 +30,17 @@ namespace gdcm
  */
 class GDCM_EXPORT DicomDirVisit : public DicomDirObject 
 {
+   gdcmTypeMacro(DicomDirVisit);
+
 public:
-   DicomDirVisit(bool empty=false); 
-   ~DicomDirVisit();
+   static DicomDirVisit *New(bool empty=false) {return new DicomDirVisit(empty);}
 
    void Print( std::ostream &os = std::cout, std::string const &indent = "" );
   // void WriteContent( std::ofstream *fp, FileType t );
 
+protected:
+   DicomDirVisit(bool empty=false); 
+   ~DicomDirVisit();
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

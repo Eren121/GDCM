@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/25 14:52:30 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,10 +21,10 @@
 
 #include <iomanip>
 
-int CompareDictGroupName(gdcm::DictGroupName &groupName,
+int CompareDictGroupName(gdcm::DictGroupName *groupName,
                          uint16_t group,std::string ref)
 {
-   std::string val = groupName.GetName(group);
+   std::string val = groupName->GetName(group);
    std::cout << "Group : 0x" << std::hex << std::setw(4) << group 
              << std::dec << " : " << val << " - "
              << (bool)(val==ref) << std::endl;
@@ -34,8 +34,8 @@ int CompareDictGroupName(gdcm::DictGroupName &groupName,
 
 int TestDictGroupName(int , char *[])
 {
-   gdcm::DictGroupName groupName;
-   groupName.Print( std::cout );
+   gdcm::DictGroupName *groupName = gdcm::DictGroupName::New();
+   groupName->Print( std::cout );
 
    int ret = 0;
 
@@ -43,6 +43,8 @@ int TestDictGroupName(int , char *[])
    ret += CompareDictGroupName(groupName,0x0002,"Meta Elements");
    ret += CompareDictGroupName(groupName,0x7fe0,"Pixels");
    ret += CompareDictGroupName(groupName,0x0007,gdcm::GDCM_UNFOUND);
+
+   groupName->Delete();
 
    return ret;
 }

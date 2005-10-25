@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 //   Read the input image.
 // ============================================================
 
-   f = new gdcm::File( );
+   f = gdcm::File::New( );
 
    f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    f->SetFileName( fileName );
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
        std::cout << "Sorry, " << fileName <<"  not a gdcm-readable "
            << "DICOM / ACR File"
            <<std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << " ... is readable " << std::endl;
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
    if (curve_data_str == gdcm::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Curve Data" << std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << " File is read! " << std::endl;
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
          break;
       default:
          std::cerr << "Error don't know the type: " << data_rep_str << std::endl;
-         delete f;
+         f->Delete();
          return 1;
    }
    // Just to make sure that values read are consistant and we won't read out of bound data:
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
    //o.write((char*)curve_data, num_points*sz);
    //o.close();
 
-   delete f;
+   f->Delete();
    return 0;
 }
 

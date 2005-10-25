@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/10/25 14:52:30 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -398,7 +398,7 @@ int InternalTest(std::string const &filename,
       std::cout << "1...";
 
        // new style 
-      gdcm::File *f = new gdcm::File();
+      gdcm::File *f = gdcm::File::New();
       f->SetLoadMode ( gdcm::LD_ALL ); // Load everything
       f->SetFileName( filename );
       f->Load();
@@ -408,10 +408,10 @@ int InternalTest(std::string const &filename,
         std::cout << " Failed" << std::endl
                    << "      Image not gdcm compatible:"
                   << filename << std::endl;
-        delete f;
+        f->Delete();
         return 1;
       }
-     gdcm::FileHelper *tested = new gdcm::FileHelper( f );
+      gdcm::FileHelper *tested = gdcm::FileHelper::New( f );
      
       ////// Step 2:
       ////// Check for existence of reference baseline dicom file:
@@ -443,8 +443,8 @@ int InternalTest(std::string const &filename,
                    << "      Image not Testing compatible:"
                   << filename << std::endl;
          delete reference;
-         delete tested;
-         delete f;
+         tested->Delete();
+         f->Delete();
          return 1;
       }
 
@@ -471,8 +471,8 @@ int InternalTest(std::string const &filename,
                    << "Z: " << tested->GetFile()->GetZSize() << " # " 
                    << reference->GetZSize() << std::endl;
          delete reference;
-         delete tested;
-         delete f;
+         tested->Delete();
+         f->Delete();
          return 1;
       }
 
@@ -488,8 +488,8 @@ int InternalTest(std::string const &filename,
                    << reference->GetNumberOfComponents() << std::endl
                    << "        Pixel type: " << tested->GetFile()->GetPixelType() << std::endl;
          delete reference;
-         delete tested;
-         delete f;
+         tested->Delete();
+         f->Delete();
          return 1;
       }
 
@@ -507,9 +507,9 @@ int InternalTest(std::string const &filename,
                    << tested->GetFile()->GetYSize() << ","
                    << tested->GetFile()->GetZSize() << ")"
                    << std::endl;
-         delete tested;
+         tested->Delete();
          delete reference;
-         delete f;
+         f->Delete();
          return 1;
       }
 
@@ -546,16 +546,16 @@ int InternalTest(std::string const &filename,
          }
          std::cout << std::endl;
 
-         delete tested;
+         tested->Delete();
          delete reference;
-         delete f;
+         f->Delete();
          return 1;
       }
 
       //////////////// Clean up:
-      delete tested;
+      tested->Delete();
       delete reference;
-      delete f;
+      f->Delete();
 
       std::cout << "OK." << std::endl;
       

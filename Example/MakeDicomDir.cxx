@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 09:29:10 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/10/25 14:52:26 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
    // we ask for Directory parsing
 
-   dcmdir = new gdcm::DicomDir( );
+   dcmdir = gdcm::DicomDir::New( );
 
    dcmdir->SetStartMethod(StartMethod);
    dcmdir->SetEndMethod(EndMethod);
@@ -119,17 +119,17 @@ int main(int argc, char *argv[])
    {
       std::cout << "makeDicomDir: no patient found. Exiting."
                 << std::endl;
-      delete dcmdir;
+      dcmdir->Delete();
       return 1;
    }
     
    // ----- Create the corresponding DicomDir
 
    dcmdir->Write("NewDICOMDIR");
-   delete dcmdir;
+   dcmdir->Delete();
 
    // Read from disc the just written DicomDir
-   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir();
+   gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
    newDicomDir->SetFileName( "NewDICOMDIR" );
    newDicomDir->Load();
    if( !newDicomDir->IsReadable() )
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
                <<" is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete newDicomDir;
+      newDicomDir->Delete();
       return 1;
    }
 
@@ -148,12 +148,12 @@ int main(int argc, char *argv[])
                <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete newDicomDir;
+      newDicomDir->Delete();
       return(1);
    }
 
    std::cout<<std::flush;
 
-   delete newDicomDir;
+   newDicomDir->Delete();
    return 0;
 }

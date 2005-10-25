@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exImageLighten.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/25 14:52:28 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
    std::cout << argv[1] << std::endl;
 
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode( gdcm::LD_ALL);
    f->SetFileName( fileName );
    bool res = f->Load();        
@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "DICOM / ACR File"
                  <<std::endl;
+       f->Delete();
        return 0;
    }
    std::cout << " ... is readable " << std::endl;
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
    // to load the Palettes Color (if any)
 
    // First, create a gdcm::FileHelper
-   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
 
    // Load the pixels, DO NOT transform LUT (if any) into RGB Pixels 
    uint8_t *imageDataRaw = fh->GetImageDataRaw();
@@ -88,7 +89,7 @@ int main(int argc, char *argv[])
 //   Create a new gdcm::Filehelper, to hold new image.
 // ============================================================
 
-   gdcm::FileHelper *copy = new gdcm::FileHelper( );
+   gdcm::FileHelper *copy = gdcm::FileHelper::New( );
    copy->SetFileName( output );
    copy->Load();
 
@@ -128,9 +129,10 @@ int main(int argc, char *argv[])
    std::cout << std::endl
              << "------------------------------------------------------------"
              << std::endl;
-   delete f;
-   delete fh;
-   delete copy;
+
+   f->Delete();
+   fh->Delete();
+   copy->Delete();
 
    exit (0);
 }

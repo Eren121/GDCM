@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/25 12:42:01 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,8 +130,7 @@ namespace gdcm
  */
 FileHelper::FileHelper( )
 { 
-   FileInternal = new File( );
-   SelfHeader = true;
+   FileInternal = File::New( );
    Initialize();
 }
 
@@ -152,43 +151,13 @@ FileHelper::FileHelper( )
 FileHelper::FileHelper(File *header)
 {
    FileInternal = header;
-   SelfHeader = false;
+   header->Register();
    Initialize();
    if ( FileInternal->IsReadable() )
    {
       PixelReadConverter->GrabInformationsFromFile( FileInternal );
    }
 }
-
-#ifndef GDCM_LEGACY_REMOVE
-/* 
- *  brief DEPRECATED : use SetFilename() + SetLoadMode() + Load() methods
- *        Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (gdcm::File only deals with the ... header)
- *        Opens (in read only and when possible) an existing file and checks
- *        for DICOM compliance. Returns NULL on failure.
- *        It will be up to the user to load the pixels into memory
- *  note  the in-memory representation of all available tags found in
- *        the DICOM header is post-poned to first header information access.
- *        This avoid a double parsing of public part of the header when
- *        one sets an a posteriori shadow dictionary (efficiency can be
- *        seen as a side effect).   
- *  param filename file to be opened for parsing
- *  deprecated  use SetFilename() + Load() methods
- */
-FileHelper::FileHelper(std::string const &filename )
-{
-   FileInternal = new File( );
-   FileInternal->SetFileName( filename );
-   FileInternal->Load();
-   SelfHeader = true;
-   Initialize();
-   if ( FileInternal->IsReadable() )
-   {
-      PixelReadConverter->GrabInformationsFromFile( FileInternal );
-   }
-}
-#endif
 
 /**
  * \brief canonical destructor
@@ -210,10 +179,7 @@ FileHelper::~FileHelper()
       delete Archive;
    }
 
-   if ( SelfHeader )
-   {
-      delete FileInternal;
-   }
+   FileInternal->Unregister();
    FileInternal = 0;
 }
 
@@ -1392,13 +1358,14 @@ void FileHelper::CheckMandatoryElements()
       // Create 'Source Image Sequence' SeqEntry
       SeqEntry *sis = SeqEntry::New (
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
-      SQItem *sqi = new SQItem(1);
+      SQItem *sqi = SQItem::New(1);
       // (we assume 'SOP Instance UID' exists too) 
       // create 'Referenced SOP Class UID'
       DataEntry *e_0008_1150 = DataEntry::New(
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
       e_0008_1150->SetString( e_0008_0016->GetString());
       sqi->AddEntry(e_0008_1150);
+      e_0008_1150->Delete();
       
       // create 'Referenced SOP Instance UID'
       DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
@@ -1406,8 +1373,11 @@ void FileHelper::CheckMandatoryElements()
             Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
       e_0008_1155->SetString( e_0008_0018->GetString());
       sqi->AddEntry(e_0008_1155);
+      e_0008_1155->Delete();
 
-      sis->AddSQItem(sqi,1); 
+      sis->AddSQItem(sqi,1);
+      sqi->Delete();
+
       // temporarily replaces any previous 'Source Image Sequence' 
       Archive->Push(sis);
       sis->Delete();

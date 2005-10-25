@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:48 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/10/25 14:52:35 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,9 +40,10 @@ typedef std::list<DocEntry *> ListDocEntry;
  */ 
 class GDCM_EXPORT SQItem : public DocEntrySet 
 {
+   gdcmTypeMacro(SQItem);
+
 public:
-   SQItem(int depthLevel);
-   ~SQItem();
+   static SQItem *New(int depthLevel) {return new SQItem(depthLevel);}
 
    virtual void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
@@ -71,6 +72,9 @@ public:
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
 protected:
+   SQItem(int depthLevel);
+   ~SQItem();
+
 // Variables that need to be accessed in subclasses
    /// \brief Chained list of Doc Entries
    ListDocEntry DocEntries;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,7 +141,7 @@ void ClearList(FileList &list)
    FileList::iterator it;
    for(it=list.begin();it!=list.end();++it)
    {
-      delete (*it);
+      (*it)->Delete();
    }
    list.clear();
 }
@@ -182,7 +182,7 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
    memset(imageData,0,size);
 
 // Write the image
-   gdcm::FileHelper *hlp = new gdcm::FileHelper(file);
+   gdcm::FileHelper *hlp = gdcm::FileHelper::New(file);
    hlp->SetImageData(imageData,size);
    hlp->SetWriteTypeToDcmExplVR();
    if( !hlp->Write(fileName) )
@@ -190,22 +190,22 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
       std::cout << "Failed\n"
                 << "        File in unwrittable\n";
 
-      delete hlp;
+      hlp->Delete();
       delete[] imageData;
       return NULL;
    }
    delete[] imageData;
-   delete hlp;
+   hlp->Delete();
 
 // Read the written image
-   gdcm::File *reread = new gdcm::File(  );
+   gdcm::File *reread = gdcm::File::New(  );
    reread->SetFileName( fileName );
    reread->Load();
    if( !reread->IsReadable() )
    {
      std::cerr << "Failed" << std::endl
                << "        Could not reread written image :" << fileName << std::endl;
-     delete reread;
+     reread->Delete();
      return NULL;
    }
 
@@ -248,7 +248,7 @@ int TestImageSet(int argc, char *argv[])
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
-      file = new gdcm::File();
+      file = gdcm::File::New();
       // It's up to the user to initialize Serie UID and Study UID
       // Study Instance UID
       studyUID = gdcm::Util::CreateUniqueUID();
@@ -260,13 +260,13 @@ int TestImageSet(int argc, char *argv[])
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {
-         delete file;
+         file->Delete();
          return 1;
       }
       else
          fileList.push_back(newFile);
 
-      delete file;
+      file->Delete();
    }
 
    if( CompareImages(fileList, false, false) )
@@ -286,20 +286,20 @@ int TestImageSet(int argc, char *argv[])
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
-      file = new gdcm::File();
+      file = gdcm::File::New();
       file->InsertEntryString(studyUID, 0x0020, 0x000d);
       file->InsertEntryString(serieUID, 0x0020, 0x000e);
 
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {
-         delete file;
+         file->Delete();
          return(1);
       }
       else
          fileList.push_back(newFile);
 
-      delete file;
+      file->Delete();
    }
 
    if( CompareImages(fileList, true, true) )
@@ -318,20 +318,20 @@ int TestImageSet(int argc, char *argv[])
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
-      file = new gdcm::File();
+      file = gdcm::File::New();
       file->InsertEntryString(studyUID, 0x0020, 0x000d);
       serieUID = gdcm::Util::CreateUniqueUID();
       file->InsertEntryString(serieUID, 0x0020, 0x000e);
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {
-         delete file;
+         file->Delete();
          return(1);
       }
       else
          fileList.push_back(newFile);
 
-      delete file;
+      file->Delete();
    }
 
    if( CompareImages(fileList, false, true) )

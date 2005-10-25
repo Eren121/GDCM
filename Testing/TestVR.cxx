@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:28:02 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 int TestVR(int , char *[])
 {
    int error = 0;
-   gdcm::VR *vr = new gdcm::VR();
+   gdcm::VR *vr = gdcm::VR::New();
  
    gdcm::Debug::DebugOn();
 
@@ -96,6 +96,6 @@ int TestVR(int , char *[])
       error++;
    }
 
-   delete vr;
+   vr->Delete();
    return error;
 }

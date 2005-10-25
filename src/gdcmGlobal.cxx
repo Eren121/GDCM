@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:28 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/10/25 14:52:35 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,11 +70,11 @@ Global::Global()
       gdcmWarningMacro( "VR or TS or Dicts already allocated");
       return;
    }
-   Dicts     = new DictSet();
-   ValRes    = new VR();
-   TranSyn   = new TS();
-   GroupName = new DictGroupName();
-   ddElem    = new DicomDirElement();
+   Dicts     = DictSet::New();
+   ValRes    = VR::New();
+   TranSyn   = TS::New();
+   GroupName = DictGroupName::New();
+   ddElem    = DicomDirElement::New();
 }
 
 /**
@@ -82,11 +82,11 @@ Global::Global()
  */
 Global::~Global()
 {
-   delete Dicts;
-   delete ValRes;
-   delete TranSyn;
-   delete GroupName;
-   delete ddElem;
+   Dicts->Delete();
+   ValRes->Delete();
+   TranSyn->Delete();
+   GroupName->Delete();
+   ddElem->Delete();
 }
 
 //-----------------------------------------------------------------------------

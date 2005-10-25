@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/25 14:52:28 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -133,14 +133,14 @@ int main(int argc, char *argv[])
    }
 
    int loadMode = 0x0; // load everything
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  
 
    if ( !res )
    {
-      delete f;
+      f->Delete();
       return 0;
    }
 
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
    if (!seqPapyrus)
    {
       std::cout << "NOT a Papyrus File : " << fileName <<std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
    {
       std::cout << "NO SQItem found within private Papyrus Sequence"
           << std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
       
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 
    std::string NumberOfFrames = gdcm::Util::Format("%d", nbImages); 
 
-   gdcm::File *n = new gdcm::File();
+   gdcm::File *n = gdcm::File::New();
 
    n->InsertEntryString(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
    n->InsertEntryString(PixelRepresentation,0x0028,0x0103);
 
    // create the file
-   gdcm::FileHelper *file = new gdcm::FileHelper(n);
+   gdcm::FileHelper *file = gdcm::FileHelper::New(n);
 
    file->SetImageData(PixelArea,lgrImage*nbImages);
    file->SetWriteTypeToDcmExplVR();
@@ -305,7 +305,11 @@ int main(int argc, char *argv[])
    if (!file)
    {
       std::cout <<"Fail to open (write) file:[" << outputFileName << "]" << std::endl;;
+      n->Delete();
+      file->Delete();
       return 1;  
    }
+   n->Delete();
+   file->Delete();
    return 0;
 }

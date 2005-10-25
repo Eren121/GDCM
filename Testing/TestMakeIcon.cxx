@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,23 +48,24 @@ int TestMakeIcon (int argc, char *argv[])
                 << " input filename.dcm output Filename.dcm" << std::endl;
    }
 
-   gdcm::File *f = new gdcm::File( );
+   gdcm::File *f = gdcm::File::New( );
    f->SetFileName( input );
    f->Load( );
 
    if ( ! f->IsReadable() )
    {
       std::cout << " Failed to Open/Parse file" << input << std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }  
-   gdcm::FileHelper *fh = new gdcm::FileHelper(f); 
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f); 
    uint8_t *pixels = fh->GetImageData();
    uint32_t lgth   = fh->GetImageDataSize();
 
    gdcm::SeqEntry *icon = f->InsertSeqEntry(0x0088, 0x0200);
-   gdcm::SQItem *sqi = new gdcm::SQItem(1);
+   gdcm::SQItem *sqi = gdcm::SQItem::New(1);
    icon->AddSQItem(sqi, 1);
+   sqi->Delete();
 
    // icone is just define like the image
    // The purpose is NOT to imagine an icon, 
@@ -85,9 +86,10 @@ int TestMakeIcon (int argc, char *argv[])
     
    fh->WriteDcmExplVR(output);
 
-   delete f;
+   f->Delete();
+   fh->Delete();
 
-   f = new gdcm::File();
+   f = gdcm::File::New();
    f->SetFileName(output);
    f->Load();
    f->Print();
@@ -98,8 +100,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "Sequence 0088|0200 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "Sequence 0088|0200 found" << std::endl;
@@ -110,8 +111,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "Sequence 0088|0200 has no SQItem" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -122,8 +122,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "GetDataEntry 0028|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->DataEntry 0028|0010 found" << std::endl;
@@ -133,8 +132,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0028,0x0010)->GetString()
                 << " - Expected : 128" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -143,8 +141,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "GetDataEntry 0028|0011 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->DataEntry 0028|0011 found" << std::endl;
@@ -154,8 +151,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0028,0x0011)->GetString()
                 << " - Expected : 128" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -164,8 +160,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "GetDataEntry 0028|0100 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->DataEntry 0028|0100 found" << std::endl;
@@ -175,8 +170,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0028,0x0100)->GetString()
                 << " - Expected : 8" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -185,8 +179,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "GetDataEntry 0028|0101 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->DataEntry 0028|0101 found" << std::endl;
@@ -196,8 +189,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0028,0x0101)->GetString()
                 << " - Expected : 8" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -206,8 +198,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "DataEntry 0028|0102 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->DataEntry 0028|0102 found" << std::endl;
@@ -217,8 +208,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0028,0x0102)->GetString()
                 << " - Expected : 7" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -227,8 +217,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "GetDataEntry 0028|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->DataEntry 0028|0103 found" << std::endl;
@@ -238,8 +227,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0028,0x0103)->GetString()
                 << " - Expected : 0" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -248,8 +236,7 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "GetDataEntry 0005|0010 not found" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "First Item ->GetDataEntry 0005|0010 found" << std::endl;
@@ -259,8 +246,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << "Read : " << sqi->GetDataEntry(0x0005,0x0010)->GetLength()
                 << " - Expected : 6" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -270,14 +256,12 @@ int TestMakeIcon (int argc, char *argv[])
    {
       std::cout << "Value 0005|0010 don't match (DataEntry)" << std::endl
                 << "   ... Failed" << std::endl;
-      delete fh;
-      delete f;
+      f->Delete();
       return 1;
    }
    std::cout << "Value DataEntry 0005|0010 OK" << std::endl;
 
-   delete fh;
-   delete f;
+   f->Delete();
    std::cout << "   ... OK" << std::endl;
 
    return 0;

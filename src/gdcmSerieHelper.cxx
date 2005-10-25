@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 12:40:03 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/10/25 14:52:35 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ void SerieHelper::ClearAll()
                                     it != l->end(); 
                                   ++it)
       {
-         delete *it; // remove each entry
+         (*it)->Delete(); // remove each entry
       }
       l->clear();
       delete l;     // remove the container
@@ -88,7 +88,7 @@ void SerieHelper::ClearAll()
 void SerieHelper::AddFileName(std::string const &filename)
 {
    // Create a DICOM file
-   File *header = new File ();
+   File *header = File::New();
    header->SetLoadMode(LoadMode);
    header->SetFileName( filename ); 
    header->Load();
@@ -139,13 +139,13 @@ void SerieHelper::AddFileName(std::string const &filename)
       else
       {
          // at least one rule was unmatched we need to deallocate the file:
-         delete header;
+         header->Delete();
       }
    }
    else
    {
       gdcmWarningMacro("Could not read file: " << filename );
-      delete header;
+      header->Delete();
    }
 }
 

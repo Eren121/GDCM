@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 14:56:27 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/10/25 14:52:35 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMVR_H
 #define GDCMVR_H
 
-#include "gdcmCommon.h"
+#include "gdcmRefCounter.h"
 #include "gdcmVRKey.h"
 
 #include <map>
@@ -39,11 +39,12 @@ typedef std::map<VRKey, VRAtr> VRHT;
  * \brief Container for dicom Value Representation Hash Table
  * \note   This is a singleton
  */
-class GDCM_EXPORT VR 
+class GDCM_EXPORT VR : public RefCounter
 {
+   gdcmTypeMacro(VR);
+
 public:
-   VR(void);
-   ~VR();
+   static VR *New() {return new VR();}
 
    void Print(std::ostream &os = std::cout);
 
@@ -66,6 +67,10 @@ public:
 #endif
 
    unsigned short GetAtomicElementLength(VRKey const &tested);
+
+protected:
+   VR();
+   ~VR();
 
 private:
    VRHT vr;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
 
 // Step 1 : Create the header of the image
-   gdcm::File *header = new gdcm::File();
+   gdcm::File *header = gdcm::File::New();
    std::ostringstream str;
 
    // Set the image size
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
       std::cerr << "-------------------------------\n"
                 << "Error while creating the file\n"
                 << "This file is considered to be not readable\n";
-
+      header->Delete();
       return 1;
    }
 
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
    }
 
 // Step 3 : Create the file of the image
-   gdcm::FileHelper *file = new gdcm::FileHelper(header);
+   gdcm::FileHelper *file = gdcm::FileHelper::New(header);
    file->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image
@@ -162,18 +162,17 @@ int main(int argc, char *argv[])
                    << "File :" << fileName << std::endl;
 
          delete[] imageData;
-         delete file;
-         delete header;
+         file->Delete();
+         header->Delete();
          return 0;
 
       default :
          std::cout << "-------------------------------\n"
                    << "Write mode undefined...\n"
                    << "No file written\n";
-
          delete[] imageData;
-         delete file;
-         delete header;
+         file->Delete();
+         header->Delete();
          return 1;
    }
 
@@ -185,8 +184,8 @@ int main(int argc, char *argv[])
    }
 
    delete[] imageData;
-   delete file;
-   delete header;
+   file->Delete();
+   header->Delete();
 
    return 0;
 }

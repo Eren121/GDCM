@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestLoadAllDocumentsNoPrivNoSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ int TestLoadAllDocumentsNoPrivNoSeq(int, char *[])
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
 
-      gdcm::File *f= new gdcm::File( );
+      gdcm::File *f= gdcm::File::New( );
       f->SetFileName( filename );
       // just to improve coverage
       f->SetLoadMode (gdcm::LD_NOSEQ|gdcm::LD_NOSHADOW);
@@ -120,11 +120,11 @@ int TestLoadAllDocumentsNoPrivNoSeq(int, char *[])
       {
          std::cout << filename << " is NOT Readable" 
                    << std::endl << std::endl;
-         delete f;
+         f->Delete();
          return 1;
       }
  */
-      delete f;
+      f->Delete();
       i++;
    }
    return 0;

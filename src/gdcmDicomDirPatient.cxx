@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:58 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/10/25 14:52:33 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,9 +75,9 @@ void DicomDirPatient::WriteContent(std::ofstream *fp, FileType t)
  */
 DicomDirStudy* DicomDirPatient::NewStudy()
 {
-   DicomDirStudy *st = new DicomDirStudy();
-   Studies.push_back(st);
-   return st; 
+   DicomDirStudy *dd = DicomDirStudy::New();
+   Studies.push_back(dd);
+   return dd; 
 }   
 
 /**
@@ -89,7 +89,7 @@ void DicomDirPatient::ClearStudy()
                                          cc != Studies.end(); 
                                        ++cc )
    {
-      delete *cc;
+      (*cc)->Delete();
    }
    Studies.clear();
 }

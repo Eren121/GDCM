@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:30 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
 
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include "gdcmDictEntry.h"
 
 #include <iostream>
@@ -44,12 +44,13 @@ typedef std::map<TagKey, DictEntry *>  TagKeyHT;
  *           combined with all software versions...
  * \see DictSet
  */
-class GDCM_EXPORT Dict : public Base
+class GDCM_EXPORT Dict : public RefCounter
 {
+   gdcmTypeMacro(Dict);
+
 public:
-   Dict();
-   Dict(std::string const &filename);
-   ~Dict();
+   static Dict *New() {return new Dict();}
+   static Dict *New(std::string const &filename) {return new Dict(filename);}
 
    bool AddDict(std::string const &filename);
    bool RemoveDict(std::string const &filename);
@@ -69,6 +70,11 @@ public:
 
    DictEntry *GetFirstEntry();
    DictEntry *GetNextEntry();
+
+protected:
+   Dict();
+   Dict(std::string const &filename);
+   ~Dict();
 
 private:
    void DoTheLoadingJob(std::ifstream &ifs);

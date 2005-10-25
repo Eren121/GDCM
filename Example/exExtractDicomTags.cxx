@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractDicomTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,14 +83,14 @@ int main(int argc, char *argv[])
 
 
    int loadMode = 0x0; // load everything
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  
 
    if ( !res )
    {
-      delete f;
+      f->Delete();
       return 0;
    }
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
    if (!f->IsReadable())
    {
       std::cout << "NOT a Dicom File : " << fileName <<std::endl;
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -247,5 +247,6 @@ int main(int argc, char *argv[])
    std::cout << "GetYSpacing = ["            << sy << "]" << std::endl;
    std::cout << "GetZSpacing = ["            << sz << "]" << std::endl;
 
+   f->Delete();
    return 0;
 }

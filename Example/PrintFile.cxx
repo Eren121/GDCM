@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 08:53:21 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
       // any kind of gdcm-Parsable *document* 
       // not only gdcm::File (as opposed to gdcm::DicomDir)
 
-      gdcm::File *f = new gdcm::File();
+      gdcm::File *f = gdcm::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
 
@@ -239,11 +239,11 @@ int main(int argc, char *argv[])
                    << std::endl;
          std::cout << "use 'PrintFile filein=... debug' to try to guess the pb"
                    << std::endl;
-         delete f;
+         f->Delete();
          return 0;
       }
 
-      gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+      gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
       fh->SetPrintLevel( level );
 
       fh->Print();
@@ -286,6 +286,7 @@ int main(int argc, char *argv[])
             std::cout << "Transfer Syntax not loaded. " << std::endl
                      << "Better you increase MAX_SIZE_LOAD_ELEMENT_VALUE"
                   << std::endl;
+            f->Delete();
             return 0;
          }
   
@@ -378,7 +379,7 @@ int main(int argc, char *argv[])
                gdcm::SQItem *sqi= modLutSeq->GetFirstSQItem();
                if ( !sqi )
                {
-               std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
+                  std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
                   int length;   // LUT length in Bytes
                   int deb;      // Subscript of the first Lut Value
                   int nbits;    // Lut item size (in Bits)
@@ -463,7 +464,7 @@ int main(int argc, char *argv[])
       }
  
       std::cout<<std::flush;
-      delete f;
+      f->Delete();
       delete fh;
    }
    else  // ====== Deal with a Directory ======
@@ -473,13 +474,14 @@ int main(int argc, char *argv[])
       gdcm::DirListType fileList = dirList.GetFilenames();
       gdcm::File *f;
       bool res;
+
       for( gdcm::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
       {
          std::cout << std::endl<<" Start processing :[" << it->c_str() << "]"
                    << std::endl;
-         f = new gdcm::File();
+         f = gdcm::File::New();
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
 
@@ -503,11 +505,11 @@ int main(int argc, char *argv[])
             std::cout << "use 'PrintFile filein=... debug' "
                       << "to try to guess the pb"
                       << std::endl;
-            delete f;
+            f->Delete();
             continue;
          }
 
-         gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+         gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
          fh->SetPrintLevel( level );
          fh->Print();
 
@@ -580,8 +582,8 @@ int main(int argc, char *argv[])
          else
             std::cout <<std::endl<<it->c_str()<<" is NOT Readable"<<std::endl;
          std::cout << "\n\n" << std::endl;
-         delete f;
-         delete fh;
+         f->Delete();
+         fh->Delete();
       }
       std::cout<<std::flush;
    }

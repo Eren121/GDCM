@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 09:22:15 $
-  Version:   $Revision: 1.166 $
+  Date:      $Date: 2005/10/25 14:52:33 $
+  Version:   $Revision: 1.167 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,36 +124,6 @@ DicomDir::DicomDir()
    NewMeta();
 }
 
-#ifndef GDCM_LEGACY_REMOVE
-/* *
- * \ brief Constructor Parses recursively the directory and creates the DicomDir
- *        or uses an already built DICOMDIR, depending on 'parseDir' value.
- * @ param fileName  name 
- *                      - of the root directory (parseDir = true)
- *                      - of the DICOMDIR       (parseDir = false)
- * @ param parseDir boolean
- *                      - true if user passed an entry point 
- *                        and wants to explore recursively the directories
- *                      - false if user passed an already built DICOMDIR file
- *                        and wants to use it 
- * @ deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
- *              or : new DicomDir() + SetFileName(name)
- */
-DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
-   Document( )
-{
-   // At this step, Document constructor is already executed,
-   // whatever user passed (either a root directory or a DICOMDIR)
-   // and whatever the value of parseDir was.
-   // (nothing is cheked in Document constructor, to avoid overhead)
-
-   ParseDir = parseDir;
-   SetLoadMode (LD_ALL); // concerns only dicom files
-   SetFileName( fileName );
-   Load( );
-}
-#endif
-
 /**
  * \brief  Canonical destructor 
  */
@@ -166,7 +136,7 @@ DicomDir::~DicomDir()
    ClearPatient();
    if ( MetaElems )
    {
-      delete MetaElems;
+      MetaElems->Delete();
    }
 }
 
@@ -306,12 +276,12 @@ bool DicomDir::IsReadable()
 DicomDirMeta *DicomDir::NewMeta()
 {
    if ( MetaElems )
-      delete MetaElems;
+      MetaElems->Delete();
 
    DocEntry *entry = GetFirstEntry();
    if ( entry )
    { 
-      MetaElems = new DicomDirMeta(true); // true = empty
+      MetaElems = DicomDirMeta::New(true); // true = empty
 
       entry = GetFirstEntry();
       while( entry )
@@ -327,7 +297,7 @@ DicomDirMeta *DicomDir::NewMeta()
    }
    else  // after root directory parsing
    {
-      MetaElems = new DicomDirMeta(false); // false = not empty
+      MetaElems = DicomDirMeta::New(false); // false = not empty
    }
    MetaElems->SetSQItemNumber(0); // To avoid further missprinting
    return MetaElems;  
@@ -339,9 +309,9 @@ DicomDirMeta *DicomDir::NewMeta()
  */
 DicomDirPatient *DicomDir::NewPatient()
 {
-   DicomDirPatient *p = new DicomDirPatient();
-   AddPatientToEnd( p );
-   return p;
+   DicomDirPatient *dd = DicomDirPatient::New();
+   AddPatientToEnd( dd );
+   return dd;
 }
 
 /**
@@ -353,7 +323,7 @@ void DicomDir::ClearPatient()
                                      cc!= Patients.end();
                                    ++cc)
    {
-      delete *cc;
+      (*cc)->Unregister();
    }
    Patients.clear();
 }
@@ -626,18 +596,12 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
          break;
       }
 
-      f = new File( );
+      f = File::New( );
       f->SetLoadMode(LoadMode); // we allow user not to load Sequences, or Shadow
                               //             groups, or ......
       f->SetFileName( it->c_str() );
-   /*int res = */f->Load( );
+      f->Load( );
 
-//     if ( !f )
-//     {
-//         gdcmWarningMacro( "Failure in new gdcm::File " << it->c_str() );
-//         continue;
-//      }
-      
       if ( f->IsReadable() )
       {
          // Add the file to the chained list:
@@ -646,7 +610,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
        }
        else
        {
-          delete f;
+          f->Delete();
        }
        count++;
    }
@@ -662,7 +626,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
        itDoc!=list.end();
        ++itDoc)
    {
-      delete dynamic_cast<File *>(*itDoc);
+      dynamic_cast<File *>(*itDoc)->Delete();
    }
 }
 
@@ -780,50 +744,50 @@ void DicomDir::CreateDicomDir()
 
       if ( v == "IMAGE " ) 
       {
-         si = new DicomDirImage(true);
+         si = DicomDirImage::New(true);
          if ( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
          {
-            delete si;
+            si->Delete();
             si = NULL;
             gdcmErrorMacro( "Add AddImageToEnd failed");
          }
       }
       else if ( v == "SERIES" )
       {
-         si = new DicomDirSerie(true);
+         si = DicomDirSerie::New(true);
          if ( !AddSerieToEnd( static_cast<DicomDirSerie *>(si)) )
          {
-            delete si;
+            si->Delete();
             si = NULL;
             gdcmErrorMacro( "Add AddSerieToEnd failed");
          }
       }
       else if ( v == "VISIT " )
       {
-         si = new DicomDirVisit(true);
+         si = DicomDirVisit::New(true);
          if ( !AddVisitToEnd( static_cast<DicomDirVisit *>(si)) )
          {
-            delete si;
+            si->Delete();
             si = NULL;
             gdcmErrorMacro( "Add AddVisitToEnd failed");
          }
       }
       else if ( v == "STUDY " )
       {
-         si = new DicomDirStudy(true);
+         si = DicomDirStudy::New(true);
          if ( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
          {
-            delete si;
+            si->Delete();
             si = NULL;
             gdcmErrorMacro( "Add AddStudyToEnd failed");
          }
       }
       else if ( v == "PATIENT " )
       {
-         si = new DicomDirPatient(true);
+         si = DicomDirPatient::New(true);
          if ( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
          {
-            delete si;
+            si->Delete();
             si = NULL;
             gdcmErrorMacro( "Add PatientToEnd failed");
          }
@@ -1029,48 +993,48 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    {
       case GDCM_DICOMDIR_IMAGE:
          elemList = Global::GetDicomDirElements()->GetDicomDirImageElements();
-         si = new DicomDirImage(true);
+         si = DicomDirImage::New(true);
          if ( !AddImageToEnd(static_cast<DicomDirImage *>(si)) )
          {
-            delete si;
+            si->Delete();
             gdcmErrorMacro( "Add ImageToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_SERIE:
          elemList = Global::GetDicomDirElements()->GetDicomDirSerieElements();
-         si = new DicomDirSerie(true);
+         si = DicomDirSerie::New(true);
          if ( !AddSerieToEnd(static_cast<DicomDirSerie *>(si)) )
          {
-            delete si;
+            si->Delete();
             gdcmErrorMacro( "Add SerieToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_STUDY:
          elemList = Global::GetDicomDirElements()->GetDicomDirStudyElements();
-         si = new DicomDirStudy(true);
+         si = DicomDirStudy::New(true);
          if ( !AddStudyToEnd(static_cast<DicomDirStudy *>(si)) )
          {
-            delete si;
+            si->Delete();
             gdcmErrorMacro( "Add StudyToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_PATIENT:
          elemList = Global::GetDicomDirElements()->GetDicomDirPatientElements();
-         si = new DicomDirPatient(true);
+         si = DicomDirPatient::New(true);
          if ( !AddPatientToEnd(static_cast<DicomDirPatient *>(si)) )
          {
-            delete si;
+            si->Delete();
             gdcmErrorMacro( "Add PatientToEnd failed");
          }
          break;
       case GDCM_DICOMDIR_META:
          if ( MetaElems )
          {
-            delete MetaElems;
+            MetaElems->Delete();
             gdcmErrorMacro( "MetaElements already exist, they will be destroyed");
          }
          elemList = Global::GetDicomDirElements()->GetDicomDirMetaElements();
-         MetaElems = new DicomDirMeta(true);
+         MetaElems = DicomDirMeta::New(true);
          si = MetaElems;
          break;
       default:

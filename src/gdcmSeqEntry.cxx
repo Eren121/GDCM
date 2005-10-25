@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:48 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2005/10/25 14:52:35 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -116,6 +116,7 @@ void SeqEntry::AddSQItem(SQItem *sqItem, int itemNumber)
 //         Or we can add (or remove) anywhere, and SQItemNumber will be broken
    sqItem->SetSQItemNumber(itemNumber);
    Items.push_back(sqItem);
+   sqItem->Register();
 }
 
 /**
@@ -125,7 +126,7 @@ void SeqEntry::ClearSQItem()
 {
    for(ListSQItem::iterator cc = Items.begin(); cc != Items.end(); ++cc)
    {
-      delete *cc;
+      (*cc)->Unregister();
    }
    if (SeqTerm)
    {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/10/25 14:52:33 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,9 +42,10 @@ typedef std::list<DicomDirStudyComponent *> ListDicomDirStudyComponent;
  */
 class GDCM_EXPORT DicomDirStudy : public DicomDirObject
 {
+   gdcmTypeMacro(DicomDirStudy);
+
 public:
-   DicomDirStudy(bool empty=false); 
-   ~DicomDirStudy();
+   static DicomDirStudy *New(bool empty=false) {return new DicomDirStudy(empty);}
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
    void WriteContent(std::ofstream *fp, FileType t);
@@ -77,8 +78,12 @@ public:
    DicomDirStudyComponent *GetNextStudyComponent();
    DicomDirStudyComponent *GetLastStudyComponent();
 */    
-private:
 
+protected:
+   DicomDirStudy(bool empty=false); 
+   ~DicomDirStudy();
+
+private:
    /// chained list of DicomDirSeries (to be exploited hierarchicaly)
    ListDicomDirSerie Series;
    /// iterator on the DicomDirSeries of the current DicomDirStudy

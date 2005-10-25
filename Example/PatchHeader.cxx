@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PatchHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:05 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
       loadMode |= gdcm::LD_NOSHADOWSEQ;
    else 
    {
-   if ( am->ArgMgrDefined("noshadow") )
+      if ( am->ArgMgrDefined("noshadow") )
          loadMode |= gdcm::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
          loadMode |= gdcm::LD_NOSEQ;
@@ -288,12 +288,10 @@ int main(int argc, char *argv[])
 
    if ( fileName != 0 ) // ====== Deal with a single file ======
    {
-
-   // 
-   //   Parse the input file.
-   // 
-      
-      f = new gdcm::File( );
+      // 
+      //   Parse the input file.
+      // 
+      f = gdcm::File::New( );
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
       bool res = f->Load();
@@ -303,12 +301,12 @@ int main(int argc, char *argv[])
       // not only gdcm::File (as opposed to gdcm::DicomDir)
       if ( !res ) 
       {
-          std::cout <<std::endl
-              << "Sorry, " << fileName <<"  not a gdcm-readable "
-              << "DICOM / ACR Document"
-              << std::endl;
-           delete f;
-           return 1;
+         std::cout <<std::endl
+            << "Sorry, " << fileName <<"  not a gdcm-readable "
+            << "DICOM / ACR Document"
+            << std::endl;
+         f->Delete();
+         return 1;
       }
       std::cout << fileName << " is readable " << std::endl;
 
@@ -325,7 +323,7 @@ int main(int argc, char *argv[])
 
       fp->close();
       delete fp; 
-      delete f;
+      f->Delete();
       return 0;
 
    }
@@ -338,14 +336,14 @@ int main(int argc, char *argv[])
                                  it != fileList.end();
                                  ++it )
       {
-         f = new gdcm::File( );
+         f = gdcm::File::New( );
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
          bool res = f->Load();
 
          if ( !res )
          {
-            delete f; 
+            f->Delete(); 
             continue;
          }
 
@@ -357,8 +355,8 @@ int main(int argc, char *argv[])
 
          fp->close();
          delete fp; 
-         delete f;
-     }
+         f->Delete();
+      }
    }
    return 0;
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/10/25 14:52:30 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,9 +100,9 @@ int TestDicomDir(int argc, char *argv[])
       file += "/DICOMDIR";
    }
 
-   dicomdir = new gdcm::DicomDir( );
+   dicomdir = gdcm::DicomDir::New();
    dicomdir->SetFileName(file);
-   dicomdir->Load( );
+   dicomdir->Load();
    if (argc > 2) 
    {
       int level = atoi(argv[2]);   
@@ -116,7 +116,7 @@ int TestDicomDir(int argc, char *argv[])
                <<"' is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete dicomdir;
+      dicomdir->Delete();
       return 1;
    }
    else
@@ -132,7 +132,7 @@ int TestDicomDir(int argc, char *argv[])
                <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete dicomdir;
+      dicomdir->Delete();
       return 1;
    }
 
@@ -187,10 +187,10 @@ int TestDicomDir(int argc, char *argv[])
              << "NewDICOMDIR written on disc =================================" 
              << std::endl<< std::endl;
   // Read what we wrote  
-   gdcm::DicomDir *d2 = new gdcm::DicomDir( );
+   gdcm::DicomDir *d2 = gdcm::DicomDir::New();
    d2->SetFileName("NewDICOMDIR");
-   d2->Load( );
-   if (!d2->IsReadable( ))
+   d2->Load();
+   if (!d2->IsReadable())
    {
       std::cout << std::endl << std::endl  
                 << "Read NewDicomDir from disc failed ========================" 
@@ -212,8 +212,8 @@ int TestDicomDir(int argc, char *argv[])
    if (!d2)
    {
       std::cout << "NewDICOMDIR contains no Patient ?!?" << std::endl;
-      delete dicomdir;
-      delete d2;
+      dicomdir->Delete();
+      d2->Delete();
       return 1;
    }
    
@@ -222,8 +222,8 @@ int TestDicomDir(int argc, char *argv[])
 
       if ( CompareSQItem(pa2,pa1) == 1 )
       {
-         delete dicomdir;
-         delete d2;
+         dicomdir->Delete();
+         d2->Delete();
          return 1;
       }
   
@@ -238,8 +238,8 @@ int TestDicomDir(int argc, char *argv[])
       {
          if ( CompareSQItem(st2,st1) == 1 )
          {
-            delete dicomdir;
-            delete d2;
+            dicomdir->Delete();
+            d2->Delete();
             return 1;
          }
 
@@ -256,7 +256,8 @@ int TestDicomDir(int argc, char *argv[])
          while ( se1 && se2 ) 
          { // we process all the SERIE of this study
             if ( CompareSQItem(se2,se1) == 1 )
-              return 1; 
+              return 1;
+
             std::cout << "--- --- " << se2->GetEntryString(0x0008, 0x103e);      // Serie Description
             std::cout << " Ser.nb:["<< se2->GetEntryString(0x0020, 0x0011);        // Series number
             std::cout << "] Mod.:[" << se2->GetEntryString(0x0008, 0x0060) << "]" << std::endl; // Modality
@@ -267,8 +268,8 @@ int TestDicomDir(int argc, char *argv[])
             {
                if ( CompareSQItem(im2,im1) == 1 )
                {
-                  delete dicomdir;
-                  delete d2;
+                  dicomdir->Delete();
+                  d2->Delete();
                   return 1; 
                }
 
@@ -286,8 +287,8 @@ int TestDicomDir(int argc, char *argv[])
    }
    
    std::cout << std::flush;
-   delete dicomdir;
-   delete d2;
+   dicomdir->Delete();
+   d2->Delete();
 
    return 0;
 }

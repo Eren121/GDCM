@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exColorToRGB.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,24 +51,28 @@ int main(int argc, char *argv[])
 
    std::cout << argv[1] << std::endl;
 
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode( gdcm::LD_ALL);
    f->SetFileName( fileName );
    bool res = f->Load();        
 
-   if (!res) {
+   if (!res) 
+   {
        std::cerr << "Sorry, " << fileName <<"  not a gdcm-readable "
                  << "DICOM / ACR File"
                  <<std::endl;
+       f->Delete();
        return 0;
    }
    std::cout << " ... is readable " << std::endl;
 
 /*
-   if (!f->IsMonochrome()) {
+   if (!f->IsMonochrome()) 
+   {
        std::cerr << "Sorry, " << fileName <<"  not a 'color' File "
                  << " "
                  <<std::endl;
+       f->Delete();
        return 0;
    }
 */
@@ -78,7 +82,7 @@ int main(int argc, char *argv[])
 // ============================================================
 
    // We need a gdcm::FileHelper, since we want to load the pixels        
-   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
 
    // uint8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
    // It's just for prototyping.
@@ -90,6 +94,7 @@ int main(int argc, char *argv[])
    {
        std::cerr << "Sorry, Pixels of" << fileName <<"  are not "
                  << " gdcm-readable."       << std::endl;
+       f->Delete();
        return 0;
    }
  
@@ -98,7 +103,7 @@ int main(int argc, char *argv[])
    // ------                              without Sequences     -------------
 
  
-   gdcm::FileHelper *copy = new gdcm::FileHelper( );
+   gdcm::FileHelper *copy = gdcm::FileHelper::New( );
    copy->SetFileName( output );
    copy->Load();
  
@@ -132,10 +137,9 @@ int main(int argc, char *argv[])
 
    copy->WriteDcmExplVR( output );
 
-
-   delete f;
-   delete fh;
-   delete copy;
+   f->Delete();
+   fh->Delete();
+   copy->Delete();
 
    exit (0);
 }

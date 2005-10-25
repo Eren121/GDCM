@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:39:31 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,24 +96,24 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  
    if ( !res )
    {
-      delete f;
+      f->Delete();
       return 0;
    }
   
    if (!f->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
-       delete f;
+       f->Delete();
        return 0;
    }
    
-   gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
    void *imageData; 
    int dataSize;
   
@@ -162,74 +162,68 @@ int main(int argc, char *argv[])
 
    switch (mode[0])
    {
-   case 'A' :
-   case 'a' :
-            // Writting an ACR file
-            // from a full gdcm readable File
+      case 'A' :
+      case 'a' :
+      // Writting an ACR file
+      // from a full gdcm readable File
+         std::cout << "WriteACR" << std::endl;
+         fh->WriteAcr(outputFileName);
+         break;
 
-      std::cout << "WriteACR" << std::endl;
-      fh->WriteAcr(outputFileName);
-      break;
+      case 'D' : // Not documented in the 'usage', because the method 
+      case 'd' : //                             is known to be bugged. 
+      // Writting a DICOM Implicit VR file
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Implicit VR" << std::endl;
+         fh->WriteDcmImplVR(outputFileName);
+         break;
 
-   case 'D' : // Not documented in the 'usage', because the method 
-   case 'd' : //                             is known to be bugged. 
-              // Writting a DICOM Implicit VR file
-              // from a full gdcm readable File
+      case 'X' :
+      case 'x' :
+      // writting a DICOM Explicit VR 
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Explicit VR" << std::endl;
+         // fh->WriteDcmExplVR(outputFileName);
+         // Try this one :
+         fh->SetWriteTypeToDcmExplVR();
+         fh->Write(outputFileName);
+         break;
 
-      std::cout << "WriteDCM Implicit VR" << std::endl;
-      fh->WriteDcmImplVR(outputFileName);
-      break;
-
-   case 'X' :
-   case 'x' :
-              // writting a DICOM Explicit VR 
-              // from a full gdcm readable File
-
-      std::cout << "WriteDCM Explicit VR" << std::endl;
-      // fh->WriteDcmExplVR(outputFileName);
-      // Try this one :
-      fh->SetWriteTypeToDcmExplVR();
-      fh->Write(outputFileName);
-      break;
-
-   case 'R' :
-   case 'r' :
-             //  Writting a Raw File, 
-
-      std::cout << "WriteRaw" << std::endl;
-      fh->WriteRawData(outputFileName);
-      break;
+      case 'R' :
+      case 'r' :
+      //  Writting a Raw File, 
+         std::cout << "WriteRaw" << std::endl;
+         fh->WriteRawData(outputFileName);
+         break;
  
  // Just for fun :
  // Write a 'Video inverse' version of the file.
  // *Not* described, on purpose,  in the USAGE  
-   
-  case 'V' :
-  case 'v' :
-
-     if ( fh->GetFile()->GetBitsAllocated() == 8)
-     {
-        std::cout << "videoinv for 8 bits" << std::endl;
-        for (int i=0; i<dataSize; i++) 
-        {
-           ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
-        }
-     }
-     else
-     {
-        std::cout << "videoinv for 16 bits" << std::endl;    
-        for (int i=0; i<dataSize/2; i++) 
-        {
-           ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
-        }
-     }
-     std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
-     fh->WriteDcmExplVR(outputFileName);
-     break;      
-
+      case 'V' :
+      case 'v' :
+         if ( fh->GetFile()->GetBitsAllocated() == 8)
+         {
+            std::cout << "videoinv for 8 bits" << std::endl;
+            for (int i=0; i<dataSize; i++) 
+            {
+               ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
+            }
+         }
+         else
+         {
+            std::cout << "videoinv for 16 bits" << std::endl;    
+            for (int i=0; i<dataSize/2; i++) 
+            {
+               ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
+            }
+         }
+         std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
+         fh->WriteDcmExplVR(outputFileName);
+         break;
    }
-   delete f;
-   delete fh;
+
+   f->Delete();
+   fh->Delete();
    return 0;
 }
 

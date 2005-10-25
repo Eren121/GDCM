@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 09:22:13 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/25 14:52:30 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,7 +44,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    gdcm::DicomDir *dcmdir;
    std::string dirName;  
 
-   dcmdir = new gdcm::DicomDir();
+   dcmdir = gdcm::DicomDir::New();
 
    gdcm::DicomDirPatient *p1;
    // --- Forget these 4 lines :
@@ -171,7 +171,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                <<" is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete dcmdir;
+      dcmdir->Delete();
       return 1;
    }
 
@@ -184,10 +184,10 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    // Write it on disc
    dcmdir->Write("NewDICOMDIR");
 
-   delete dcmdir;
+   dcmdir->Delete();
 
    // Read the newly written DicomDir
-   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir();
+   gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
    newDicomDir->SetFileName("NewDICOMDIR");
    newDicomDir->Load( );
    if( !newDicomDir->IsReadable() )
@@ -196,7 +196,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                <<" is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete newDicomDir;
+      newDicomDir->Delete();
       return 1;
    }
    // Check some value we are sure
@@ -208,7 +208,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    {
       std::cout << "A patient is missing in written DicomDir"
           << std::endl;
-      delete newDicomDir;
+      newDicomDir->Delete();
       return 1;
    }
 
@@ -363,7 +363,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    }
 
    std::cout<<std::flush;
-   delete newDicomDir;
+   newDicomDir->Delete();
 
    return errorFound;
 }

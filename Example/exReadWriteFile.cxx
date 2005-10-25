@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 12:58:24 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/25 14:52:28 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    // First, let's create a gdcm::File
    // that will contain all the Dicom fields but the Pixels Element
 
-   gdcm::File *f1= new gdcm::File( );
+   gdcm::File *f1= gdcm::File::New( );
    f1->SetFileName( filename );
    f1->Load();
 
@@ -218,7 +218,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    // Hope now he knows enought about the image ;-)
 
    // First, create a gdcm::FileHelper
-   gdcm::FileHelper *fh1 = new gdcm::FileHelper(f1);
+   gdcm::FileHelper *fh1 = gdcm::FileHelper::New(f1);
 
    // Load the pixels, transforms LUT (if any) into RGB Pixels 
    uint8_t *imageData = fh1->GetImageData();
@@ -253,7 +253,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
  
    // ------ User wants write a new image without shadow groups -------------
 
-   gdcm::FileHelper *copy = new gdcm::FileHelper( );
+   gdcm::FileHelper *copy = gdcm::FileHelper::New( );
    copy->SetFileName( output );
    copy->Load();
  
@@ -323,9 +323,9 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    std::cout << std::endl
              << "------------------------------------------------------------"
              << std::endl;
-   delete f1;
-   delete fh1;
-   delete copy;
+   f1->Delete();
+   fh1->Delete();
+   copy->Delete();
 
    exit (0);
 }

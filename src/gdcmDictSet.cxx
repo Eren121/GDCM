@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@ DictSet::DictSet()
    DictPath = BuildDictPath();
    std::string pubDictFile(DictPath);
    pubDictFile += PUB_DICT_FILENAME;
-   Dicts[PUB_DICT_NAME] = new Dict(pubDictFile);
+   Dicts[PUB_DICT_NAME] = Dict::New(pubDictFile);
 }
 
 /**
@@ -47,12 +47,8 @@ DictSet::~DictSet()
    // Remove dictionaries
    for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) 
    {
-      Dict *entryToDelete = tag->second;
-      if ( entryToDelete )
-      {
-         delete entryToDelete;
-      }
-      tag->second = NULL;
+      if ( tag->second )
+         tag->second->Delete();
    }
    Dicts.clear();
 }
@@ -70,8 +66,8 @@ DictSet::~DictSet()
 Dict *DictSet::LoadDictFromFile(std::string const &filename, 
                                 DictKey const &name) 
 {
-   Dict *newDict = new Dict(filename);
-   AppendDict(newDict, name);
+   Dict *newDict = Dict::New(filename);
+   Dicts[name] = newDict;
 
    return newDict;
 }
@@ -151,16 +147,6 @@ std::string DictSet::BuildDictPath()
 
 //-----------------------------------------------------------------------------
 // Protected
-/**
- * \brief   Adds a Dictionary to a DictSet
- * \return  always true
- */
-bool DictSet::AppendDict(Dict *newDict, DictKey const &name)
-{
-   Dicts[name] = newDict;
-
-   return true;
-}
 
 //-----------------------------------------------------------------------------
 // Private

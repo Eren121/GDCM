@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 10:43:32 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/10/25 14:52:35 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMTS_H
 #define GDCMTS_H
 
-#include "gdcmCommon.h"
+#include "gdcmRefCounter.h"
 
 #include <map>
 #include <string>
@@ -38,34 +38,35 @@ typedef std::map<TSKey, TSAtr> TSHT;    // Transfer Syntax Hash Table
  * \brief Container for dicom 'Transfer Syntax' Hash Table
  * \note   This is a singleton
  */
-class GDCM_EXPORT TS
+class GDCM_EXPORT TS : public RefCounter
 {
-public:
-enum SpecialType {
-  ImplicitVRLittleEndian = 0,
-  ImplicitVRBigEndianPrivateGE,
-  ExplicitVRLittleEndian,
-  DeflatedExplicitVRLittleEndian,
-  ExplicitVRBigEndian,
-  JPEGBaselineProcess1,
-  JPEGExtendedProcess2_4,
-  JPEGExtendedProcess3_5,
-  JPEGSpectralSelectionProcess6_8,
-  JPEGFullProgressionProcess10_12,
-  JPEGLosslessProcess14,
-  JPEGLosslessProcess14_1,
-  JPEGLSLossless,
-  JPEGLSNearLossless,
-  JPEG2000Lossless,  
-  JPEG2000,
-  RLELossless,
-  MPEG2MainProfile,  
-  UnknownTS
-};
+   gdcmTypeMacro(TS);
 
 public:
-   TS();
-   ~TS();
+   enum SpecialType {
+   ImplicitVRLittleEndian = 0,
+   ImplicitVRBigEndianPrivateGE,
+   ExplicitVRLittleEndian,
+   DeflatedExplicitVRLittleEndian,
+   ExplicitVRBigEndian,
+   JPEGBaselineProcess1,
+   JPEGExtendedProcess2_4,
+   JPEGExtendedProcess3_5,
+   JPEGSpectralSelectionProcess6_8,
+   JPEGFullProgressionProcess10_12,
+   JPEGLosslessProcess14,
+   JPEGLosslessProcess14_1,
+   JPEGLSLossless,
+   JPEGLSNearLossless,
+   JPEG2000Lossless,  
+   JPEG2000,
+   RLELossless,
+   MPEG2MainProfile,  
+   UnknownTS
+   };
+
+public:
+   static TS *New() {return new TS();}
 
    void Print(std::ostream &os = std::cout);
 
@@ -83,6 +84,10 @@ public:
    // This should be deprecated very soon
    SpecialType GetSpecialTransferSyntax(TSKey const &key);
    const char* GetSpecialTransferSyntax(SpecialType t);
+
+protected:
+   TS();
+   ~TS();
 
 private:
    TSHT TsMap;

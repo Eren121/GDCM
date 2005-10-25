@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.10 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,107 +53,89 @@ int main( int argc, char *argv[] )
 
    //const char *inputfile = argv[1];
    std::string directory = argv[1];
-//   itksys::SystemTools::ConvertToUnixSlashes( directory );
+   //   itksys::SystemTools::ConvertToUnixSlashes( directory );
    if (directory[directory.size()-1] != '/') 
-      directory += '/';
+   directory += '/';
 
    std::cout << "Converting image into dicom in " << directory << std::endl;
 
-    ////////////////////////////////////////////////////////////
-    // Reading input image and getting some information       //
-    ////////////////////////////////////////////////////////////
-    //std::cout << "Loading image " << inputfile << std::endl;
-    //PixelType* imageData = input->GetPixelContainer()->GetImportPointer();
-    uint8_t *imageData = new uint8_t[256*256*10];
-    memset( imageData, 0, 256*256*10);
-    std::cout << "Image Loaded." << std::endl;
+   ////////////////////////////////////////////////////////////
+   // Reading input image and getting some information       //
+   ////////////////////////////////////////////////////////////
+   //std::cout << "Loading image " << inputfile << std::endl;
+   //PixelType* imageData = input->GetPixelContainer()->GetImportPointer();
+   uint8_t *imageData = new uint8_t[256*256*10];
+   memset( imageData, 0, 256*256*10);
+   std::cout << "Image Loaded." << std::endl;
 
-    int   sizex      = 256;
-    int   sizey      = 256;
-    int   sizez      = 10;
-    //float spacing[3] = { 1.0, 1.0, 1.5 };
-    //float orig[3]    = { 0.0, 0.0, 0.0 };
-    int   sliceSize  = sizex*sizey*sizeof(uint8_t);
+   int   sizex      = 256;
+   int   sizey      = 256;
+   int   sizez      = 10;
+   //float spacing[3] = { 1.0, 1.0, 1.5 };
+   //float orig[3]    = { 0.0, 0.0, 0.0 };
+   int   sliceSize  = sizex*sizey*sizeof(uint8_t);
 
-    ////////////////////////////////////////////////////////////
-    // compute window center and window width                 //
-    ////////////////////////////////////////////////////////////
-    uint8_t min, max; min = max = imageData[0];
-    for (int i=1; i<sizex*sizey*sizez; i++) 
-    {
-       uint8_t val = imageData[i];
-       if (val > max) 
-          max = val;
-       if (val < min) 
-          min = val;
-    }
-    //float wcenter = (max+min) / 2.;
-    //float wwidth  = (max-min)>0 ? (max-min) : 1.;
+   ////////////////////////////////////////////////////////////
+   // compute window center and window width                 //
+   ////////////////////////////////////////////////////////////
+   uint8_t min, max; min = max = imageData[0];
+   for (int i=1; i<sizex*sizey*sizez; i++) 
+   {
+      uint8_t val = imageData[i];
+      if (val > max) 
+         max = val;
+      if (val < min) 
+         min = val;
+   }
+   //float wcenter = (max+min) / 2.;
+   //float wwidth  = (max-min)>0 ? (max-min) : 1.;
 
-    ////////////////////////////////////////////////////////////
-    // Get file date and time                                 //
-    ////////////////////////////////////////////////////////////
-    std::string filedate, filetime;    
-    //GetFileDateAndTime(inputfile, filedate, filetime);
+   ////////////////////////////////////////////////////////////
+   // Get file date and time                                 //
+   ////////////////////////////////////////////////////////////
+   std::string filedate, filetime;    
+   //GetFileDateAndTime(inputfile, filedate, filetime);
 
-    ////////////////////////////////////////////////////////////
-    // Create a new dicom header and fill in some info        //
-    ////////////////////////////////////////////////////////////
-    gdcm::File *f = new gdcm::File();
+   ////////////////////////////////////////////////////////////
+   // Create a new dicom header and fill in some info        //
+   ////////////////////////////////////////////////////////////
+   gdcm::File *f = gdcm::File::New();
 
-    //f->SetDateAndTime(filedate, filetime);
-    //f->SetModality("CT");
-    //f->SetPatientName( "TestPatient");
-    //f->SetPatientID( "TestID");
-    //f->SetStudyID( "1");
-    //f->SetSeriesNumber( "1");
-    //f->SetSliceThickness(spacing[2]);
-    //f->SetSpaceBetweenSlices(spacing[2]);
-    //f->SetXYSpacing( spacing[0], spacing[1]);
-    //f->SetXSize(sizex);
-    //f->SetYSize(sizey);
-    //f->SetNbBitsAllocated(16);
-    //f->SetNbBitsStored(12);
-    //f->SetNbBitsStored(12);
-    //f->SetPixelSigned(true);
-    //f->SetCenter( wcenter);
-    //f->SetWindow( wwidth);
+   ////////////////////////////////////////////////////////////
+   // Create a new dicom file object from the header         //
+   ////////////////////////////////////////////////////////////
+   gdcm::FileHelper  *fh = gdcm::FileHelper::New(f);
+   uint8_t *myData = fh->GetImageData(); // Get an Image pointer
+   fh->SetImageData( myData, sliceSize); // This callback ensures that the internal
+                                        // Pixel_Data of fh is set correctly
 
-    ////////////////////////////////////////////////////////////
-    // Create a new dicom file object from the header         //
-    ////////////////////////////////////////////////////////////
-    gdcm::FileHelper  *fh = new gdcm::FileHelper(f);
-    uint8_t *myData = fh->GetImageData(); // Get an Image pointer
-    fh->SetImageData( myData, sliceSize); // This callback ensures that the internal
-                                          // Pixel_Data of fh is set correctly
 
-    
-    ////////////////////////////////////////////////////////////
-    // Iterate through the slices and save them to file       //
-    ////////////////////////////////////////////////////////////
-    for (int z=0; z<sizez; z++) 
-    {
-       // Set dicom relevant information for that slice
-       //f->SetImageUIDFromSliceNumber(z);
-       //f->SetImageLocation(orig[0],orig[1],orig[2]+z*spacing[2]);
+   ////////////////////////////////////////////////////////////
+   // Iterate through the slices and save them to file       //
+   ////////////////////////////////////////////////////////////
+   for (int z=0; z<sizez; z++) 
+   {
+      // Set dicom relevant information for that slice
+      //f->SetImageUIDFromSliceNumber(z);
+      //f->SetImageLocation(orig[0],orig[1],orig[2]+z*spacing[2]);
 
-       // copy image slice content
-       memcpy(myData,imageData+z*sizex*sizey,sliceSize);
+      // copy image slice content
+      memcpy(myData,imageData+z*sizex*sizey,sliceSize);
 
-       // write the image
-       std::string filename = directory + gdcm::Util::Format("%Image_%05d.dcm", z);
-       std::cout << "Writing file " << filename;
-       fh->WriteDcmExplVR(filename);
-       std::cout << " OK" << std::endl;
-    }
+      // write the image
+      std::string filename = directory + gdcm::Util::Format("%Image_%05d.dcm", z);
+      std::cout << "Writing file " << filename;
+      fh->WriteDcmExplVR(filename);
+      std::cout << " OK" << std::endl;
+   }
 
-    ////////////////////////////////////////////////////////////
-    // Free the allocated objects                             //
-    ////////////////////////////////////////////////////////////
-    // delete fh; // FIXME: these calls sometimes crashes under .NET ????
-    // delete f;
+   ////////////////////////////////////////////////////////////
+   // Free the allocated objects                             //
+   ////////////////////////////////////////////////////////////
+   fh->Delete();
+   f->Delete();
 
-    return 0;
+   return 0;
 }
 
 

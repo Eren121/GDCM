@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
    }
 
 // don't modify identation in order to let this source xdiffable with ../Test
-
       std::string filename = argv[1];
       std::string output = argv[2];
 
@@ -81,26 +80,21 @@ int main(int argc, char *argv[])
             return 1;
          }
       }
-      gdcm::File *fileOr = new gdcm::File();
+      gdcm::File *fileOr = gdcm::File::New();
       fileOr->SetFileName( filename );
       fileOr->Load();
-      gdcm::FileHelper *original = new gdcm::FileHelper( fileOr );
+      gdcm::FileHelper *original = gdcm::FileHelper::New( fileOr );
    
       std::cout << "--- Original ----------------------" << std::endl;
-      //original->GetFile()->Print();
    
-      gdcm::FileHelper *copy = new gdcm::FileHelper( );
+      gdcm::FileHelper *copy = gdcm::FileHelper::New( );
       copy->SetFileName( output );
       copy->Load();
 
-      //size_t dataSize;
       uint8_t *imageData;
-      //dataSize = original->GetImageDataSize();// just an accesor :useless here
       
       imageData = original->GetImageData(); // VERY important : 
                                       // brings pixels into memory !
-      //(void)imageData; // not enough to avoid warning with icc compiler
-      //(void)dataSize; //  not enough to avoid warning on 'Golgot'
   
       std::cout << imageData << std::endl; // to avoid warning ?
 
@@ -117,18 +111,15 @@ int main(int argc, char *argv[])
          }
          else
          {
-          // We skip pb of SQ recursive exploration
-          std::cout << "Skipped Sequence " 
-                    << "------------- " << d->GetVR() << " "<< std::hex
-                    << d->GetGroup() << "," << d->GetElement()
-                    << std::endl;    
+            // We skip pb of SQ recursive exploration
+            std::cout << "Skipped Sequence " 
+                      << "------------- " << d->GetVR() << " "<< std::hex
+                      << d->GetGroup() << "," << d->GetElement()
+                      << std::endl;    
          }
 
          d=original->GetFile()->GetNextEntry();
       }
-
-      //copy->GetImageData();
-      //copy->SetImageData(imageData, dataSize);
 
       std::cout << "--- Copy ----------------------" << std::endl;
       std::cout <<std::endl << "DO NOT care about Offset"  
@@ -138,10 +129,9 @@ int main(int argc, char *argv[])
    
       copy->WriteDcmExplVR( output );
       
-
-      delete fileOr;   // File
-      delete original; // FileHelper
-      delete copy;     // FileHelper
+      fileOr->Delete();    // File
+      original->Delete();  // FileHelper
+      copy->Delete();      // FileHelper
       return 0;
 }
 

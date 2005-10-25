@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/06 18:54:50 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.118 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,10 +98,10 @@ enum ModalityType {
  */
 class GDCM_EXPORT File : public Document
 {
+   gdcmTypeMacro(File);
+
 public:
-   File();
-   GDCM_LEGACY(File( std::string const &filename ));
-   ~File();
+   static File *New() {return new File();}
 
    // Loading
    GDCM_LEGACY(bool Load( std::string const &filename ));
@@ -175,7 +175,9 @@ public:
    bool Write(std::string fileName, FileType filetype);
 
 protected:
- 
+   File();
+   ~File();
+
    /// Store the RLE frames info obtained during parsing of pixels.
    RLEFramesInfo *RLEInfo;
    /// Store the JPEG fragments info obtained during parsing of pixels.

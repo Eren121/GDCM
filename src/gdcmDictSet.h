@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:31 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/10/25 14:52:34 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDICTSET_H
 #define GDCMDICTSET_H
 
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include "gdcmDict.h"
 
 #include <map>
@@ -38,11 +38,12 @@ typedef std::map<DictKey, Dict*> DictSetHT;
  * \par    having many in memory representations of the same dictionary
  *        (saving memory).
  */
-class GDCM_EXPORT DictSet : public Base
+class GDCM_EXPORT DictSet : public RefCounter
 {
+   gdcmTypeMacro(DictSet);
+
 public:
-   DictSet();
-   ~DictSet();
+   static DictSet *New() {return new DictSet();}
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
@@ -68,7 +69,8 @@ public:
    static std::string BuildDictPath();
 
 protected:
-   bool AppendDict(Dict *NewDict, DictKey const &name);
+   DictSet();
+   ~DictSet();
 
 private:
    /// Hash table of all dictionaries contained in this DictSet

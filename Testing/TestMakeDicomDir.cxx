@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/31 09:29:11 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,7 @@ int TestMakeDicomDir(int argc, char *argv[])
    gdcm::DicomDir *dcmdir;
 
    // new style (user is allowed no to load Sequences an/or Shadow Groups)
-   dcmdir = new gdcm::DicomDir( );
+   dcmdir = gdcm::DicomDir::New( );
  
    // dcmdir->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    // some images have a wrong length for element 0x0000 of private groups
@@ -78,16 +78,16 @@ int TestMakeDicomDir(int argc, char *argv[])
       std::cout << "makeDicomDir: no patient found. Exiting."
                 << std::endl;
 
-      delete dcmdir;
+      dcmdir->Delete();
       return 1;
    }
     
    // Create the corresponding DicomDir
    dcmdir->Write("NewDICOMDIR");
-   delete dcmdir;
+   dcmdir->Delete();
 
    // Read from disc the just written DicomDir
-   gdcm::DicomDir *newDicomDir = new gdcm::DicomDir();
+   gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
    newDicomDir->SetFileName("NewDICOMDIR");
    newDicomDir->Load();
 
@@ -97,7 +97,7 @@ int TestMakeDicomDir(int argc, char *argv[])
                <<" is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete newDicomDir;
+      newDicomDir->Delete();
       return 1;
    }
 
@@ -107,11 +107,11 @@ int TestMakeDicomDir(int argc, char *argv[])
                <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete newDicomDir;
+      newDicomDir->Delete();
       return(1);
    }
 
    std::cout<<std::flush;
-   delete newDicomDir;
+   newDicomDir->Delete();
    return 0;
 }

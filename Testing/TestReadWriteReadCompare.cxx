@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:15:37 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/10/25 14:52:31 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
 
    //////////////// Step 1 (see above description):
 
-   gdcm::File *file = new gdcm::File( );
+   gdcm::File *file = gdcm::File::New( );
    file->SetFileName( filename );
    file->Load ();
    if( !file->IsReadable() )
@@ -36,13 +36,13 @@ int CompareInternal(std::string const &filename, std::string const &output)
       std::cout << "Failed" << std::endl
                 << "Test::TestReadWriteReadCompare: Image not gdcm compatible:"
                 << filename << std::endl;
-      delete file;
+      file->Delete();
       return 1;
    }
    std::cout << "           step 1...";
 
    //////////////// Step 2:
-   gdcm::FileHelper *filehelper = new gdcm::FileHelper( file );
+   gdcm::FileHelper *filehelper = gdcm::FileHelper::New( file );
    int dataSize    = filehelper->GetImageDataSize();
    uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
@@ -56,7 +56,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
    std::cout << "2...";
  
    //////////////// Step 3:
-   gdcm::File *fileout = new gdcm::File();
+   gdcm::File *fileout = gdcm::File::New();
    fileout->SetFileName( output );
    fileout->Load();
   // gdcm::FileHelper *reread = new gdcm::FileHelper( output ); // deprecated
@@ -66,13 +66,13 @@ int CompareInternal(std::string const &filename, std::string const &output)
       std::cout << "Failed" << std::endl
                 << "Test::TestReadWriteReadCompare: Could not parse the newly "
                 << "written image:" << filename << std::endl;
-      delete file;
-      delete filehelper;
-      delete fileout;
+      file->Delete();
+      filehelper->Delete();
+      fileout->Delete();
       return 1;
    }
 
-   gdcm::FileHelper *reread = new gdcm::FileHelper( fileout );
+   gdcm::FileHelper *reread = gdcm::FileHelper::New( fileout );
 
    std::cout << "3...";
    // For the next step:
@@ -93,10 +93,10 @@ int CompareInternal(std::string const &filename, std::string const &output)
                   << reread->GetFile()->GetYSize() << " | "
          << "Z: " << file->GetZSize() << " # " 
                   << reread->GetFile()->GetZSize() << std::endl;
-      delete file;
-      delete filehelper;
-      delete fileout;
-      delete reread;
+      file->Delete();
+      filehelper->Delete();
+      fileout->Delete();
+      reread->Delete();
       return 1;
    }
 
@@ -106,10 +106,10 @@ int CompareInternal(std::string const &filename, std::string const &output)
       std::cout << "Failed" << std::endl
          << "        Pixel areas lengths differ: "
          << dataSize << " # " << dataSizeWritten << std::endl;
-      delete file;
-      delete filehelper;
-      delete fileout;
-      delete reread;
+      file->Delete();
+      filehelper->Delete();
+      fileout->Delete();
+      reread->Delete();
       return 1;
    }
 
@@ -118,19 +118,19 @@ int CompareInternal(std::string const &filename, std::string const &output)
    {
       std::cout << "Failed" << std::endl
          << "        Pixel differ (as expanded in memory)." << std::endl;
-      delete file;
-      delete filehelper;
-      delete fileout;
-      delete reread;
+      file->Delete();
+      filehelper->Delete();
+      fileout->Delete();
+      reread->Delete();
       return 1;
    }
    std::cout << "4...OK." << std::endl ;
 
    //////////////// Clean up:
-   delete file;
-   delete filehelper;
-   delete fileout;
-   delete reread;
+   file->Delete();
+   filehelper->Delete();
+   fileout->Delete();
+   reread->Delete();
 
    return 0;
 }

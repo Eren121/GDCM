@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/10/25 14:52:26 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
    std::string fileName;
 
    gdcm::FileHelper *h;
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    
    
    if(argc > 1 ) 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
    f->Load();
    // Should test if it worked !
    
-   h = new gdcm::FileHelper(f);
+   h = gdcm::FileHelper::New(f);
    
    std::string ManufacturerName="SIEMENS ";
    std::string RecCode="ACR-NEMA 2.0";
@@ -112,6 +112,9 @@ int main(int argc, char *argv[])
    h->WriteAcr(fileNameToWrite);
 
    std::cout << "----------------apres Write---------------------" << std::endl;
+
+   h->Delete();
+   f->Delete();
 
    return 0;
 }

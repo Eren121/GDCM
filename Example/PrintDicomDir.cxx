@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:43 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/10/25 14:52:27 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
    // new gdcm2 style 
 
-   f = new gdcm::DicomDir();
+   f = gdcm::DicomDir::New();
    f->SetFileName ( fileName );
    f->Load( );
 
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
                <<"' is not readable"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete f;
+      f->Delete();
       return 1;
    }
 
@@ -106,152 +106,161 @@ int main(int argc, char* argv[])
                <<" has no patient"<<std::endl
                <<"          ...Failed"<<std::endl;
 
-      delete f;
+      f->Delete();
       return 1;
    }
 
 // Structure use Examples 
 
    switch (detailLevel)
-  { 
-  case 1:
-     std::cout << std::endl << std::endl  
-       << " =  PATIENT List ==========================================" 
-       << std::endl<< std::endl;
+   { 
+      case 1:
+         std::cout << std::endl << std::endl  
+         << " =  PATIENT List ==========================================" 
+         << std::endl<< std::endl;
 
-      pa = f->GetFirstPatient();
-      while (pa) 
-      {
-         std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
-         std::cout << " Pat.ID:[";
-         std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
-         pa = f->GetNextPatient();    
-      }
-      break;
-
-   case 2:    
-      std::cout << std::endl << std::endl  
-        << " = PATIENT/STUDY List =======================================" 
-        << std::endl<< std::endl;
-
-      pa = f->GetFirstPatient();
-      while ( pa ) // on degouline les PATIENT de ce DICOMDIR
-      {  
-         std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
-         std::cout << " Pat.ID:[";
-         std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
-         st = pa->GetFirstStudy();
-         while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
-            std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
-            std::cout << std::endl; 
-            st = pa->GetNextStudy();
+         pa = f->GetFirstPatient();
+         while (pa) 
+         {
+            std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
+            std::cout << " Pat.ID:[";
+            std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
+            pa = f->GetNextPatient();    
          }
-         pa = f->GetNextPatient();    
-      }   
-      break;
+         break;
 
-   case 3: 
-      std::cout << std::endl << std::endl  
-        << " =  PATIENT/STUDY/SERIE List ==================================" 
-        << std::endl<< std::endl;
+      case 2:    
+         std::cout << std::endl << std::endl  
+         << " = PATIENT/STUDY List =======================================" 
+         << std::endl<< std::endl;
 
-      pa = f->GetFirstPatient(); 
-      while ( pa )   // on degouline les PATIENT de ce DICOMDIR
-      {
-       // Patient's Name, Patient ID 
-         std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
-         std::cout << " Pat.ID:[";
-         std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
-
-         st = pa->GetFirstStudy();
-         while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
-            std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
-            std::cout << std::endl;
-
-            se = st->GetFirstSerie();
-            while ( se ) { // on degouline les SERIES de cette study
-               std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e)<< "]";  // Series Description
-               std::cout << " Ser.nb:["          << se->GetEntryString(0x0020, 0x0011);        // Series number
-               std::cout << "] Mod.:["           << se->GetEntryString(0x0008, 0x0060) << "]"; // Modality
-               std::cout << std::endl;    
-               se = st->GetNextSerie();   
+         pa = f->GetFirstPatient();
+         while ( pa ) // on degouline les PATIENT de ce DICOMDIR
+         {  
+            std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
+            std::cout << " Pat.ID:[";
+            std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
+            st = pa->GetFirstStudy();
+            while ( st ) 
+            { // on degouline les STUDY de ce patient
+               std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
+               std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
+               std::cout << std::endl; 
+               st = pa->GetNextStudy();
             }
-  
-            vs = st->GetFirstVisit();
-            while ( vs ) { // on degouline les VISIT de cette study
-               std::cout << "--- --- VISIT: ";
-               std::cout << " Ref. File ID :[" << vs->GetEntryString(0x0004, 0x1500) << "]"; // Referenced File ID
-               std::cout << " Inst.Name:["    << vs->GetEntryString(0x0008,0x0080)   << "]"; // Institution Name
-               std::cout << " Adm.ID:["      << vs->GetEntryString(0x0038, 0x0010)   << "]"; // Admission ID
-               std::cout << " Adm. date:["   << vs->GetEntryString(0x0038, 0x0020)   << "]"; // Admitting Date
-               std::cout << std::endl;    
-               vs = st->GetNextVisit();    
-            }
+            pa = f->GetNextPatient();    
+         }   
+         break;
 
-            st = pa->GetNextStudy();
-         }
-         pa = f->GetNextPatient();    
-      } 
-      break;
+      case 3: 
+         std::cout << std::endl << std::endl  
+         << " =  PATIENT/STUDY/SERIE List ==================================" 
+         << std::endl<< std::endl;
 
-   case 4:  
-      std::cout << std::endl << std::endl  
-           << " = PATIENT/STUDY/SERIE/IMAGE List ============================" 
-           << std::endl<< std::endl;
- 
-      pa = f->GetFirstPatient(); 
-      while ( pa ) {  // les PATIENT de ce DICOMDIR
-       // Patient's Name, Patient ID 
-         std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
-         std::cout << " Pat.ID:[";
-         std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
+         pa = f->GetFirstPatient(); 
+         while ( pa )   // on degouline les PATIENT de ce DICOMDIR
+         {
+            // Patient's Name, Patient ID 
+            std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
+            std::cout << " Pat.ID:[";
+            std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
 
-         st = pa->GetFirstStudy();
-         while ( st ) { // on degouline les STUDY de ce patient
-            std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
-            std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
-            std::cout << std::endl;
-  
-            vs = st->GetFirstVisit();
-            while ( vs ) { // on degouline les VISIT de cette study
-               std::cout << "--- --- VISIT: ";
-               std::cout << " Ref. File ID :[" << vs->GetEntryString(0x0004, 0x1500) << "]"; // Referenced File ID
-               std::cout << " Inst.Name:["    << vs->GetEntryString(0x0008,0x0080)   << "]"; // Institution Name
-               std::cout << " Adm.ID:["      << vs->GetEntryString(0x0038, 0x0010)   << "]"; // Admission ID
-               std::cout << " Adm. date:["   << vs->GetEntryString(0x0038, 0x0020)   << "]"; // Admitting Date
-               std::cout << std::endl;    
-               vs = st->GetNextVisit();    
-            }
+            st = pa->GetFirstStudy();
+            while ( st ) 
+            { // on degouline les STUDY de ce patient
+               std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
+               std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
+               std::cout << std::endl;
 
-            se = st->GetFirstSerie();
-            while ( se ) { // on degouline les SERIES de cette study
-               std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e)<< "]";  // Series Description
-               std::cout << " Ser.nb:["         <<  se->GetEntryString(0x0020, 0x0011);        // Series number
-               std::cout << "] Mod.:["          <<  se->GetEntryString(0x0008, 0x0060) << "]"; // Modality
-               std::cout << std::endl;    
-
-               im = se->GetFirstImage();
-               while ( im ) { // on degouline les Images de cette serie
-                  std::cout << "--- --- --- "<< " IMAGE Ref. File ID :[" << im->GetEntryString(0x0004, 0x1500) 
-                            << "]" << std::endl; // File name (Referenced File ID)
-                  im = se->GetNextImage();   
+               se = st->GetFirstSerie();
+               while ( se ) 
+               { // on degouline les SERIES de cette study
+                  std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e)<< "]";  // Series Description
+                  std::cout << " Ser.nb:["          << se->GetEntryString(0x0020, 0x0011);        // Series number
+                  std::cout << "] Mod.:["           << se->GetEntryString(0x0008, 0x0060) << "]"; // Modality
+                  std::cout << std::endl;    
+                  se = st->GetNextSerie();   
                }
-               se = st->GetNextSerie();   
-           }
-            st = pa->GetNextStudy();
-        }     
-        pa = f->GetNextPatient();    
-      }
-      break;
 
-   case 5:
-      std::cout << std::endl << std::endl  
-           << " = DICOMDIR full content ==========================================" 
-           << std::endl<< std::endl;
-      f->Print();
-      break;
+               vs = st->GetFirstVisit();
+               while ( vs ) 
+               { // on degouline les VISIT de cette study
+                  std::cout << "--- --- VISIT: ";
+                  std::cout << " Ref. File ID :[" << vs->GetEntryString(0x0004, 0x1500) << "]"; // Referenced File ID
+                  std::cout << " Inst.Name:["    << vs->GetEntryString(0x0008,0x0080)   << "]"; // Institution Name
+                  std::cout << " Adm.ID:["      << vs->GetEntryString(0x0038, 0x0010)   << "]"; // Admission ID
+                  std::cout << " Adm. date:["   << vs->GetEntryString(0x0038, 0x0020)   << "]"; // Admitting Date
+                  std::cout << std::endl;    
+                  vs = st->GetNextVisit();    
+               }
+
+               st = pa->GetNextStudy();
+            }
+            pa = f->GetNextPatient();    
+         } 
+         break;
+
+      case 4:  
+         std::cout << std::endl << std::endl  
+         << " = PATIENT/STUDY/SERIE/IMAGE List ============================" 
+         << std::endl<< std::endl;
+
+         pa = f->GetFirstPatient(); 
+         while ( pa )
+         {  // les PATIENT de ce DICOMDIR
+            // Patient's Name, Patient ID 
+            std::cout << "Pat.Name:[" << pa->GetEntryString(0x0010, 0x0010) <<"]"; // Patient's Name
+            std::cout << " Pat.ID:[";
+            std::cout << pa->GetEntryString(0x0010, 0x0020) << "]" << std::endl; // Patient ID
+
+            st = pa->GetFirstStudy();
+            while ( st ) 
+            { // on degouline les STUDY de ce patient
+               std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
+               std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
+               std::cout << std::endl;
+
+               vs = st->GetFirstVisit();
+               while ( vs ) 
+               { // on degouline les VISIT de cette study
+                  std::cout << "--- --- VISIT: ";
+                  std::cout << " Ref. File ID :[" << vs->GetEntryString(0x0004, 0x1500) << "]"; // Referenced File ID
+                  std::cout << " Inst.Name:["    << vs->GetEntryString(0x0008,0x0080)   << "]"; // Institution Name
+                  std::cout << " Adm.ID:["      << vs->GetEntryString(0x0038, 0x0010)   << "]"; // Admission ID
+                  std::cout << " Adm. date:["   << vs->GetEntryString(0x0038, 0x0020)   << "]"; // Admitting Date
+                  std::cout << std::endl;    
+                  vs = st->GetNextVisit();    
+               }
+
+               se = st->GetFirstSerie();
+               while ( se ) 
+               { // on degouline les SERIES de cette study
+                  std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e)<< "]";  // Series Description
+                  std::cout << " Ser.nb:["         <<  se->GetEntryString(0x0020, 0x0011);        // Series number
+                  std::cout << "] Mod.:["          <<  se->GetEntryString(0x0008, 0x0060) << "]"; // Modality
+                  std::cout << std::endl;    
+
+                  im = se->GetFirstImage();
+                  while ( im ) 
+                  { // on degouline les Images de cette serie
+                     std::cout << "--- --- --- "<< " IMAGE Ref. File ID :[" << im->GetEntryString(0x0004, 0x1500) 
+                               << "]" << std::endl; // File name (Referenced File ID)
+                     im = se->GetNextImage();   
+                  }
+                  se = st->GetNextSerie();   
+               }
+               st = pa->GetNextStudy();
+            }     
+            pa = f->GetNextPatient();    
+         }
+         break;
+
+      case 5:
+         std::cout << std::endl << std::endl  
+         << " = DICOMDIR full content ==========================================" 
+         << std::endl<< std::endl;
+         f->Print();
+         break;
 
    }  // end switch
 
@@ -296,7 +305,7 @@ int main(int argc, char* argv[])
    else
       std::cout <<std::endl<<fileName<<" is NOT Readable"<<std::endl;
    std::cout<<std::flush;
-   delete f;
+   f->Delete();
 
    return(0);
 }

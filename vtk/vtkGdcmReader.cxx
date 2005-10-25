@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 08:50:57 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2005/10/25 14:52:37 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.84 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.85 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -452,7 +452,7 @@ void vtkGdcmReader::LoadFileInformation()
       fclose(fp);
 
       // Read the file
-      file=new gdcm::File();
+      file=gdcm::File::New();
       file->SetLoadMode( LoadMode );
       file->SetFileName(filename->c_str() );
       file->Load();
@@ -463,7 +463,7 @@ void vtkGdcmReader::LoadFileInformation()
          vtkErrorMacro(<< "Gdcm cannot parse file " << filename->c_str());
          vtkErrorMacro(<< "Removing this file from read files: "
                         << filename->c_str());
-         delete file;
+         file->Delete();
          file=NULL;
          InternalFileList.push_back(file);
          continue;
@@ -479,7 +479,7 @@ void vtkGdcmReader::LoadFileInformation()
                        << "   File type found : " << type.c_str() 
                        << " (might be 8U, 8S, 16U, 16S, 32U, 32S) \n"
                        << "   Removing this file from read files");
-         delete file;
+         file->Delete();
          file=NULL;
          InternalFileList.push_back(file);
          continue;
@@ -499,7 +499,7 @@ void vtkGdcmReader::LoadFileInformation()
       }
       else if(!TestFileInformation(file))
       {
-         delete file;
+         file->Delete();
          file=NULL;
       }
 
@@ -681,7 +681,7 @@ void vtkGdcmReader::RemoveAllInternalFile(void)
                                  it!=InternalFileList.end();
                                  ++it)
       {
-         delete (*it);
+         (*it)->Delete();
       }
    }
    this->InternalFileList.clear();
@@ -741,7 +741,7 @@ void vtkGdcmReader::LoadImageInMemory(
    if(!f)
       return;
 
-   gdcm::FileHelper *fileH = new gdcm::FileHelper( f );
+   gdcm::FileHelper *fileH = gdcm::FileHelper::New( f );
    fileH->SetUserFunction( UserFunction );
 
    int numColumns = f->GetXSize();
@@ -821,7 +821,7 @@ void vtkGdcmReader::LoadImageInMemory(
       dst += 2 * planeSize;
    }
 
-   delete fileH;
+   fileH->Delete();
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/11 08:20:25 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/10/25 14:52:33 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,9 +83,9 @@ void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t)
  */
 DicomDirSerie *DicomDirStudy::NewSerie()
 {
-   DicomDirSerie *st = new DicomDirSerie();
-   Series.push_back(st);
-   return st;
+   DicomDirSerie *dd = DicomDirSerie::New();
+   Series.push_back(dd);
+   return dd;
 } 
 
 /**
@@ -97,7 +97,7 @@ void DicomDirStudy::ClearSerie()
                                    cc != Series.end();
                                  ++cc )
    {
-      delete *cc;
+      (*cc)->Delete();
    }
    Series.clear();
 }
@@ -151,9 +151,10 @@ DicomDirSerie *DicomDirStudy::GetLastSerie()
  */
 DicomDirVisit *DicomDirStudy::NewVisit()
 {
-   DicomDirVisit *st = new DicomDirVisit();
-   Visits.push_back(st);
-   return st;
+   DicomDirVisit *dd = DicomDirVisit::New();
+   Visits.push_back(dd);
+   dd->Delete();
+   return dd;
 } 
 
 /**
@@ -165,7 +166,7 @@ void DicomDirStudy::ClearVisit()
                                    cc != Visits.end();
                                  ++cc )
    {
-      delete *cc;
+      (*cc)->Delete();
    }
    Visits.clear();
 }
