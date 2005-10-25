@@ -16,6 +16,7 @@ SET(EXAMPLE_SOURCES
   exCurveData
   exExtractTag
   exSerieHelper
+  exXCoherentFileSet
   exExtractDicomTags
                 
 #the following are utilities
