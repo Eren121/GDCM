@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 17:51:43 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2005/10/25 17:54:55 $
+  Version:   $Revision: 1.87 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,6 +115,8 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
    std::string ts  = file->GetTransferSyntax();
+   if ( ts == GDCM_UNKNOWN )
+     gdcmErrorMacro( "Could someone tell me how in the world could this happen !" );
    IsRaw =
         ( ! file->IsDicomV3() )
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
