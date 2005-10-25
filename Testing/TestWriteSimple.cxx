@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/10/25 16:43:46 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,6 @@ Image Images [] = {
    {256, 256, 1, 1, 8,  8,  0, 'a'},
    {256, 256, 1, 1, 8,  8,  0, 'e'},
    {256, 256, 1, 1, 8,  8,  0, 'i'},
-
    {512, 256, 1, 1, 8,  8,  0, 'a'},
    {512, 256, 1, 1, 8,  8,  0, 'e'},
    {512, 256, 1, 1, 8,  8,  0, 'i'},
@@ -99,6 +98,7 @@ Image Images [] = {
    {0,   0,   1,  1, 8, 8,  0, 'i'} // to find the end
 };
 
+
 const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
 
 int WriteSimple(Image &img)
@@ -107,10 +107,14 @@ int WriteSimple(Image &img)
    fileName.str("");
    fileName << "TestWriteSimple";
 
-// Step 1 : Create the header of the image
+// Step 1 : Create an empty FileHelper
 
    std::cout << "        1...";
-   gdcm::File *fileToBuild = gdcm::File::New();
+   gdcm::FileHelper *fileH = gdcm::FileHelper::New();
+ 
+ //  Get the (empty) image header.  
+   gdcm::File *fileToBuild = fileH->GetFile()
+   ;
    std::ostringstream str;
 
    // Set the image size
@@ -165,7 +169,6 @@ int WriteSimple(Image &img)
    } 
 
    std::cout << "[" << fileName.str() << "]...";
-
    // Set the samples per pixel
    str.str("");
    str << img.components;
@@ -202,9 +205,8 @@ int WriteSimple(Image &img)
       }
    }
 
-// Step 3 : Create the file of the image
+// Step 3 : Set the image Pixel Data
    std::cout << "3...";
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New(fileToBuild);
    fileH->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image
@@ -230,7 +232,6 @@ int WriteSimple(Image &img)
                    << "        Write mode '"<<img.writeMode<<"' is undefined\n";
 
          fileH->Delete();
-         fileToBuild->Delete();
          delete[] imageData;
          return 1;
    }
@@ -241,7 +242,7 @@ int WriteSimple(Image &img)
                 << "           File is unwrittable\n";
 
       fileH->Delete();
-      fileToBuild->Delete();
+
       delete[] imageData;
       return 1;
    }
@@ -378,7 +379,7 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-   //gdcm::Debug::DebugOn();
+   gdcm::Debug::DebugOn();
        
    int ret=0;
    int i=0;
