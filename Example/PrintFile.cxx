@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/10/25 15:57:52 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@
 #include "gdcmOrientation.h"
 #include <iostream>
 
-// TODO : code factorization, for 'sigle file' an 'whole directory' processing
+// TODO : code factorization, for 'single file' an 'whole directory' processing
 
 void ShowLutData(gdcm::File *f);
 
