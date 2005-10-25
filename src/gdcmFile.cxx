@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:48 $
-  Version:   $Revision: 1.290 $
+  Date:      $Date: 2005/10/25 08:41:35 $
+  Version:   $Revision: 1.291 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1659,7 +1659,7 @@ void File::ComputeJPEGFragmentInfo()
 
 /**
  * \brief   Assuming the internal file pointer \ref Document::Fp 
- *          is placed at the beginning of a tag check whether this
+ *          is placed at the beginning of a tag, check whether this
  *          tag is (TestGroup, TestElem).
  * \warning On success the internal file pointer \ref Document::Fp
  *          is modified to point after the tag.
@@ -1694,15 +1694,17 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
       return false;
    }
    if ( itemTagGroup != testGroup || itemTagElem != testElem )
-   {
-      gdcmErrorMacro( "Wrong Item Tag found:"
-       << "   We should have found tag ("
-       << DictEntry::TranslateToKey(testGroup,testElem) << ")" << std::endl
-       << "   but instead we encountered tag ("
-       << DictEntry::TranslateToKey(itemTagGroup,itemTagElem) << ")"
-       << "  at address: " << "  0x(" << std::hex 
-       << (unsigned int)currentPosition  << std::dec << ")" 
-       ) ;
+   { 
+       // in order not to pollute output we don't warn on 'delimitors'
+      if (temTagGroup != 0xfffe ||  testGroup =! 0xfffe )
+         gdcmErrorMacro( "Wrong Item Tag found:"
+          << "   We should have found tag ("
+          << DictEntry::TranslateToKey(testGroup,testElem) << ")" << std::endl
+          << "   but instead we encountered tag ("
+          << DictEntry::TranslateToKey(itemTagGroup,itemTagElem) << ")"
+          << "  at address: " << "  0x(" << std::hex 
+          << (unsigned int)currentPosition  << std::dec << ")" 
+          ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
 
       return false;
