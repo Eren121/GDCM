@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/10/25 09:22:15 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -286,10 +286,10 @@ DataEntry *DocEntrySet::InsertEntryString(std::string const &value,
       if ( !AddEntry(dataEntry) )
       {
          gdcmWarningMacro("AddEntry failed although this is a creation.");
-
          dataEntry->Delete();
          return NULL;
       }
+      dataEntry->Delete();
    }
 
    // Set the dataEntry value
@@ -345,10 +345,10 @@ DataEntry *DocEntrySet::InsertEntryBinArea(uint8_t *binArea, int lgth,
       if ( !AddEntry(dataEntry) )
       {
          gdcmWarningMacro( "AddEntry failed although this is a creation.");
-
          dataEntry->Delete();
          return NULL;
       }
+      dataEntry->Delete();
    }
 
    // Set the dataEntry value
@@ -414,10 +414,10 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
       if ( !AddEntry(seqEntry) )
       {
          gdcmWarningMacro( "AddEntry failed although this is a creation.");
-
          seqEntry->Delete();
          return NULL;
       }
+      seqEntry->Delete();
    }
 
    // TODO : Find a trick to insert a SequenceDelimitationItem 

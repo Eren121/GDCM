@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.304 $
+  Date:      $Date: 2005/10/25 09:22:15 $
+  Version:   $Revision: 1.305 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1025,6 +1025,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          }
          else
          {
+            newDataEntry->Delete();
             // Load only if we can add (not a duplicate key)
             LoadDocEntry( newDataEntry );
          }
@@ -1144,12 +1145,16 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                 << newSeqEntry->GetOffset() << " )" ); 
             used = false;
          }
+         else
+         {
+            newDocEntry->Delete();
+         }
  
          if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
          {
             if ( !used )
                newDocEntry->Delete();
-               break;
+            break;
          }
       }  // end SeqEntry : VR = "SQ"
 
@@ -1189,6 +1194,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          if ( newDocEntry->IsSequenceDelimitor() )
          {
             seqEntry->SetDelimitationItem( newDocEntry ); 
+            newDocEntry->Delete();
             break;
          }
       }
@@ -1212,7 +1218,6 @@ void Document::ParseSQ( SeqEntry *seqEntry,
 
       // Let's try :------------
       // remove fff0,e000, created out of the SQItem
-      newDocEntry->Delete();
       Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);
       // fill up the current SQItem, starting at the beginning of fff0,e000
 
@@ -1222,6 +1227,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       // end try -----------------
  
       seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
+      newDocEntry->Delete();
       SQItemNumber++;
       if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max )
       {

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/24 21:54:28 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/10/25 09:22:16 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1231,6 +1231,7 @@ void FileHelper::CheckMandatoryElements()
                                false);
       e_0002_0001->SetLength(2);
       Archive->Push(e_0002_0001);
+      e_0002_0001->Delete();
 
    // Potentialy post-processed image --> [Secondary Capture Image Storage]
    // 'Media Storage SOP Class UID' 

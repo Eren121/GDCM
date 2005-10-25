@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 13:15:36 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/10/25 09:22:13 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,6 +40,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
       std::cerr << "Usage: " << argv[0] << " dummy " << std::endl;
    }
 
+   bool errorFound = false; 
    gdcm::DicomDir *dcmdir;
    std::string dirName;  
 
@@ -215,7 +216,6 @@ int TestBuildUpDicomDir(int argc, char *argv[])
              << "----------Final Check ---------------------" 
              <<std::endl;
  
-   bool errorFound = false; 
    std::string valueStuff;  
    for (;;) // exit on 'break'
    {
@@ -357,14 +357,13 @@ int TestBuildUpDicomDir(int argc, char *argv[])
       break; // No error found. Stop looping
    }
 
-   delete newDicomDir;
    if ( errorFound )
    {
       std::cout << "MissWritting / MissReading " << std::endl;
-      std::cout<<std::flush;
-      return(1);
    }
 
    std::cout<<std::flush;
-   return 0;
+   delete newDicomDir;
+
+   return errorFound;
 }

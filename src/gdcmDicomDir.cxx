@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.165 $
+  Date:      $Date: 2005/10/25 09:22:15 $
+  Version:   $Revision: 1.166 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -319,8 +319,8 @@ DicomDirMeta *DicomDir::NewMeta()
          if ( dynamic_cast<SeqEntry *>(entry) )
             break;
 
-         RemoveEntry(entry);
          MetaElems->AddEntry(entry);
+         RemoveEntry(entry);
 
          entry = GetFirstEntry();
       }
@@ -1093,8 +1093,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       tmpEl     = it->Elem;
       dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
 
-      entry     = DataEntry::New( dictEntry ); // Be sure it's never a DataEntry !
-
+      entry     = DataEntry::New( dictEntry ); 
       entry->SetOffset(0); // just to avoid further missprinting
 
       if ( header )
