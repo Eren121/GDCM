@@ -1286,7 +1286,7 @@ for (compno = 0; compno < tile->numcomps; compno++) {
 
   time7 = clock() - time7;
   fprintf(stdout,"total:     %ld.%.3ld s\n", time7 / CLOCKS_PER_SEC,
-    (time7 % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
+    (time7 % (int)CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
   /* cleaning memory */
   for (compno = 0; compno < tile->numcomps; compno++) {
@@ -1445,7 +1445,7 @@ for (compno = 0; compno < tile->numcomps; compno++) {
  /*---------------CLEAN-------------------*/
   time = clock() - time;
   fprintf(stdout,"total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
-    (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
+    (time % (int)CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
   for (compno = 0; compno < tile->numcomps; compno++) {
     tilec = &tile->comps[compno];
@@ -1584,7 +1584,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 
   time = clock() - time;
   fprintf(stdout, "%ld.%.3ld s\n", time / CLOCKS_PER_SEC,
-     (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
+     (time % (int)CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
 
 
