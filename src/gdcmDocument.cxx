@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 09:22:15 $
-  Version:   $Revision: 1.305 $
+  Date:      $Date: 2005/10/25 12:42:37 $
+  Version:   $Revision: 1.306 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1981,7 +1981,7 @@ DocEntry *Document::ReadNextDocEntry()
          }
       }
    }
-   gdcmDebugMacro( "Found VR: " << vr << " / Real VR: " << realVR );
+  // gdcmDebugMacro( "Found VR: " << vr << " / Real VR: " << realVR );
 
    DocEntry *newEntry;
    if ( Global::GetVR()->IsVROfSequence(realVR) )
