@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/25 09:22:16 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/10/25 12:42:01 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -374,6 +374,7 @@ size_t FileHelper::GetImageDataRawSize()
  *          - Transforms single Grey plane + 3 Palettes into a RGB Plane
  *          - Copies the pixel data (image[s]/volume[s]) to newly allocated zone.
  * @return  Pointer to newly allocated pixel data.
+ *          (uint8_t is just for prototyping. feel free to cast)
  *          NULL if alloc fails 
  */
 uint8_t *FileHelper::GetImageData()
@@ -408,6 +409,7 @@ uint8_t *FileHelper::GetImageData()
  *          - Copies the pixel data (image[s]/volume[s]) to newly allocated zone. 
  *          - DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
+ *          (uint8_t is just for prototyping. feel free to cast)
  *          NULL if alloc fails 
  */
 uint8_t *FileHelper::GetImageDataRaw ()
@@ -1189,6 +1191,14 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
  *          The writing process will restore the entries as they where before 
  *          entering FileHelper::CheckMandatoryElements, so the user will always
  *          see the entries just as he left them.
+ * \note
+ *       -  Entries whose type is 1 are mandatory, with a mandatory value
+ *       -  Entries whose type is 1c are mandatory-inside-a-Sequence,
+ *                             with a mandatory value
+ *       -  Entries whose type is 2 are mandatory, with an optional value
+ *       -  Entries whose type is 2c are mandatory-inside-a-Sequence,
+ *                             with an optional value
+ *       -  Entries whose type is 3 are optional
  * 
  * \todo : - warn the user if we had to add some entries :
  *         even if a mandatory entry is missing, we add it, with a default value
@@ -1200,6 +1210,69 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
  *         - write a user callable full checker, to allow post reading
  *         and/or pre writting image consistency check.           
  */ 
+
+/* -------------------------------------------------------------------------------------
+To be moved to User's guide / WIKI  ?
+
+
+-->'Media Storage SOP Class UID' (0x0002,0x0002)
+-->'SOP Class UID'               (0x0008,0x0016) are set to 
+                                               [Secondary Capture Image Storage]
+   (Potentialy, the image was modified by user, and post-processed; 
+    it's no longer a 'native' image)
+
+--> 'Image Type'  (0x0008,0x0008)
+     is forced to  "DERIVED\PRIMARY"
+     (The written image is no longer an 'ORIGINAL' one)
+     
+--> 'Modality' (0x0008,0x0060)   
+    is defaulted to "OT" (other) if missing.   
+    (a fully user created image belongs to *no* modality)
+      
+--> 'Media Storage SOP Instance UID' (0x0002,0x0003)
+--> 'Implementation Class UID'       (0x0002,0x0012)
+    are automatically generated; no user intervention possible
+
+--> 'Serie Instance UID'(0x0020,0x000e)
+--> 'Study Instance UID'(0x0020,0x000d) are kept as is if already exist
+                                             created  if it doesn't.
+     The user is allowed to create his own Series/Studies, 
+     keeping the same 'Serie Instance UID' / 'Study Instance UID' 
+     for various images
+     Warning :     
+     The user shouldn't add any image to a 'Manufacturer Serie'
+     but there is no way no to allowed him to do that 
+
+             
+--> If 'SOP Class UID' exists in the native image  ('true DICOM' image)
+    we create the 'Source Image Sequence' SeqEntry (0x0008, 0x2112)
+    
+    --> 'Referenced SOP Class UID' (0x0008, 0x1150)
+         whose value is the original 'SOP Class UID'
+    ---> 'Referenced SOP Instance UID' (0x0008, 0x1155)
+         whose value is the original 'SOP Class UID'
+    
+--> Bits Stored, Bits Allocated, Hight Bit Position are checked for consistency
+--> Pixel Spacing     (0x0028,0x0030) is defaulted to "1.0\1.0"
+--> Samples Per Pixel (0x0028,0x0002) is defaulted to 1 (grayscale)
+
+--> Instance Creation Date, Instance Creation Time, Study Date, Study Time
+    are force to current Date and Time
+    
+-->  Conversion Type (0x0008,0x0064)
+     is forced to 'SYN'
+     
+--> Study ID, Series Number, Instance Number, Patient Orientation (Type 2)
+    are created, with empty value if there are missing.
+
+--> Manufacturer, Institution Name, Patient's Name, (Type 2)
+    are defaulted with a 'gdcm' value.
+    
+--> Patient ID, Patient's Birth Date, Patient's Sex, (Type 2)
+--> Referring Physician's Name  (Type 2)
+    are created, with empty value if there are missing.  
+
+ -------------------------------------------------------------------------------------*/
  
 void FileHelper::CheckMandatoryElements()
 {
@@ -1299,6 +1372,14 @@ void FileHelper::CheckMandatoryElements()
                        << highBitPosition << " to " << nbBitsAllocated-1
                        << " for consistency purpose");
    }
+
+    // Pixel Spacing : defaulted to 1.0\1.0
+   CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
+
+   // Samples Per Pixel (type 1) : default to grayscale 
+   CheckMandatoryEntry(0x0028,0x0002,"1");
+    
+   
   // --- Check UID-related Entries ---
 
    // If 'SOP Class UID' exists ('true DICOM' image)
@@ -1331,6 +1412,8 @@ void FileHelper::CheckMandatoryElements()
       Archive->Push(sis);
       sis->Delete();
  
+      // FIXME : is 'Image Type' *really* depending on the presence of'SOP Class UID'?
+      
       // 'Image Type' (The written image is no longer an 'ORIGINAL' one)
       CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");
    }
@@ -1429,12 +1512,6 @@ void FileHelper::CheckMandatoryElements()
 
    // Referring Physician's Name :'type 2' entry -> must exist, value not mandatory
    CheckMandatoryEntry(0x0008,0x0090,"");
-
-    // Pixel Spacing : defaulted to 1.0\1.0
-   CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
-
-   // Samples Per Pixel (type 1) ... FIXME default to grayscale ?
-   CheckMandatoryEntry(0x0028,0x0002,"1");
    
    // Remove some inconstencies (probably some more will be added)
 
