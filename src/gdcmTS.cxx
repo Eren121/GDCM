@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 09:09:43 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/10/25 17:51:17 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,8 @@ static const char *SpecialStrings[] =  {
   // MPEG2 Main Profile @ Main Level
   "1.2.840.10008.1.2.4.100",
   // Unknown
-  "Unknown Transfer Syntax"
+  "Unknown Transfer Syntax", // Pretty sure we never use this case...
+  NULL // Compilers have no obligation to finish by NULL, do it ourself
 };
 
 //-----------------------------------------------------------------------------
