@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.295 $
+  Date:      $Date: 2005/10/25 15:28:49 $
+  Version:   $Revision: 1.296 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -631,7 +631,10 @@ float File::GetXOrigin()
 
    if( entry->GetValueCount() == 3 )
    {
-      gdcmErrorMacro( entry->IsValueCountValid() );
+      if (!entry->IsValueCountValid() )
+      {
+         gdcmErrorMacro( "Invalid Value Count" );
+      }
       return (float)entry->GetValue(0);
    }
    return 0.0f;
@@ -659,7 +662,10 @@ float File::GetYOrigin()
 
    if( entry->GetValueCount() == 3 )
    {
-      gdcmErrorMacro( entry->IsValueCountValid() );
+      if (!entry->IsValueCountValid() )
+      {
+         gdcmErrorMacro( "Invalid Value Count" );
+      }
       return (float)entry->GetValue(1);
    }
    return 0.0f;
@@ -680,7 +686,10 @@ float File::GetZOrigin()
    {
       if( entry->GetValueCount() == 3 )
       {
-         gdcmErrorMacro( entry->IsValueCountValid() );
+         if (!entry->IsValueCountValid() )
+         {
+            gdcmErrorMacro( "Invalid Value Count" );
+         }
          return (float)entry->GetValue(2);
       }
       gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)");
@@ -692,7 +701,10 @@ float File::GetZOrigin()
    {
       if( entry->GetValueCount() == 3 )
       {
-         gdcmErrorMacro( entry->IsValueCountValid() );
+         if (!entry->IsValueCountValid() )
+         {
+            gdcmErrorMacro( "Invalid Value Count" );
+         }
          return (float)entry->GetValue(2);
       }
       gdcmWarningMacro( "Wrong Image Position (RET) (0020,0030)");
@@ -705,7 +717,10 @@ float File::GetZOrigin()
    {
       if( entry->GetValueCount() == 1 )
       {
-         gdcmErrorMacro( entry->IsValueCountValid() );
+         if (!entry->IsValueCountValid() )
+         {
+            gdcmErrorMacro( "Invalid Value Count" );
+         }
          return (float)entry->GetValue(0); // VM=1 !
       }
       gdcmWarningMacro( "Wrong Slice Location (0020,1041)");
@@ -717,7 +732,10 @@ float File::GetZOrigin()
    {
       if( entry->GetValueCount() == 1 )
       {
-         gdcmErrorMacro( entry->IsValueCountValid() );
+         if (!entry->IsValueCountValid() )
+         {
+            gdcmErrorMacro( "Invalid Value Count" );
+         }
          return (float)entry->GetValue(0);
       }
       gdcmWarningMacro( "Wrong Location (0020,0050)");
