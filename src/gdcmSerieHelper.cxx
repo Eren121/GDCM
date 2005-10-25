@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:04:26 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/10/25 12:40:03 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -400,9 +400,9 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
    if (nb == 0 )
       return CoherentFileSet;
    float iop[6];
-   std::ostringstream ossOrient;
+
    std::string strOrient;
-   
+   std::ostringstream ossOrient;   
    FileList::const_iterator it = fileSet->begin();
    it ++;
    for ( ;
@@ -415,6 +415,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
 
       // Let's build again the 'cosines' string, to be sure of it's format      
       (*it)->GetImageOrientationPatient(iop);
+
       ossOrient << iop[0];      
       for (int i = 1; i < 6; i++)
       {
@@ -422,7 +423,9 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
         ossOrient << iop[i]; 
       }      
       strOrient = ossOrient.str();
-      
+      ossOrient.str("");
+      // FIXME : is it a 'cleaner' way to initialize an ostringstream? 
+       
       if ( CoherentFileSet.count(strOrient) == 0 )
       {
          gdcmDebugMacro(" New Orientation :[" << strOrient << "]");
@@ -436,7 +439,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
 }
 
 /**
- * \brief   Splits a Single SerieUID Fileset according to the Positions
+ * \brief   Splits a 'Single SerieUID' Fileset according to the Positions
  * @param fileSet File Set to be splitted
  * \return  std::map of 'Xcoherent' File sets
  */
@@ -508,7 +511,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
 }
 
 /**
- * \brief   Splits a SingleSerieUID File set Coherent according to the
+ * \brief   Splits a 'Single SerieUID' File set Coherent according to the
  *          value of a given Tag
  * @param fileSet File Set to be splitted
  * @param   group  group number of the target Element
@@ -717,7 +720,7 @@ bool SerieHelper::ImageNumberGreaterThan(File *file1, File *file2)
  * \note Works only on bona fide files  (i.e image number is a character string
  *                                      corresponding to an integer)
  *             within a bona fide serie (i.e image numbers are consecutive)
- * @param fileList Coherent File list (same Serie UID) to sort 
+ * @param fileList  File set (same Serie UID) to sort 
  * @return false if non bona fide stuff encountered
  */
 bool SerieHelper::ImageNumberOrdering(FileList *fileList) 
