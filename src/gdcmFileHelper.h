@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:24:47 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/10/25 12:43:25 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -203,10 +203,12 @@ private:
    // Write variables
    /// \brief (WMODE_RAW, WMODE_RGB)
    FileMode WriteMode;
+   
    /// \brief (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType WriteType;
-   /// Pointer to a user supplied function to allow modification of pixel order
-   /// (i.e. : Mirror, TopDown, 90°Rotation, ...)
+   
+   /// \brief Pointer to a user supplied function to allow modification 
+   /// of pixel order (e.g. : Mirror, UpsideDown, 90°Rotation, ...)
    /// use as : void userSuppliedFunction(uint8_t *im, gdcm::File *f)
    /// NB : the "uint8_t *" type of first param is just for prototyping.
    /// User will Cast it according what he founds with f->GetPixelType()
