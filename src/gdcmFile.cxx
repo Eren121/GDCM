@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 12:41:30 $
-  Version:   $Revision: 1.293 $
+  Date:      $Date: 2005/10/25 14:36:30 $
+  Version:   $Revision: 1.294 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -491,7 +491,7 @@ float File::GetXSpacing()
       nbValue = entry->GetValueCount();
       if( nbValue >= 3 )
          xspacing = (float)entry->GetValue(2);
-      if( nbValue >= 2 )
+      else if( nbValue >= 2 )
          xspacing = (float)entry->GetValue(1);
       else
          xspacing = (float)entry->GetValue(0);
