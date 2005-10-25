@@ -1,5 +1,5 @@
 %module gdcm
-#pragma SWIG nowarn=504
+#pragma SWIG nowarn=504,510
 %{
 #include <iostream>
 
