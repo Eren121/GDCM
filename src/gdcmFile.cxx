@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 08:44:51 $
-  Version:   $Revision: 1.292 $
+  Date:      $Date: 2005/10/25 12:41:30 $
+  Version:   $Revision: 1.293 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1731,7 +1731,9 @@ uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
 
    if ( !ReadTag(testGroup, testElem) )
    {
-      gdcmErrorMacro( "ReadTag did not succeed for ("
+      // Avoid polutting output
+      if ( testGroup != 0xfffe ) 
+         gdcmErrorMacro( "ReadTag did not succeed for ("
                     << DictEntry::TranslateToKey(testGroup,testElem) 
                     << ")..." );
       return 0;
