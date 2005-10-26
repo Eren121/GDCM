@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 14:54:51 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2005/10/26 16:15:38 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 namespace gdcm
 {
 
-//bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t lenght);
+//bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t lenght); 
 bool gdcm_read_JPEG2000_file (void* raw, 
                               char *inputdata, size_t inputlength);
 //-----------------------------------------------------------------------------
