@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 18:14:49 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2005/10/26 06:57:02 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,13 +115,19 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
    std::string ts  = file->GetTransferSyntax();
-   if ( ts == GDCM_UNKNOWN )
-     {
-     gdcmErrorMacro( "Could someone tell me how in the world could this happen !" );
-     abort(); // DO NOT REMOVE.  WE SHOULD NEVER READ SUCH IMAGE EVER (only gdcm can write such broekn dicom file)
-     }
+
+   
+//   if ( ts == GDCM_UNKNOWN )
+//     {
+//     gdcmErrorMacro( "Could someone tell me how in the world could this happen !" );
+// -->
+//--> on ALL acr-nema images ! JPRx
+//-->
+//     abort(); // DO NOT REMOVE.  WE SHOULD NEVER READ SUCH IMAGE EVER (only gdcm can write such broekn dicom file)
+//     }
+
    IsRaw =
-        ( ! file->IsDicomV3() )
+        ( ! file->IsDicomV3() )  // Should be ACR-NEMA file
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE
      || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
