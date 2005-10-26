@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2005/10/26 15:53:40 $
+  Version:   $Revision: 1.128 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,6 +70,7 @@ public:
    // System access (meaning endian related !?)
    uint16_t SwapShort(uint16_t);
    uint32_t SwapLong(uint32_t);
+   double SwapDouble(double);
    /// \brief  Unswaps back the bytes of 2-bytes long integer 
    ///         so they agree with the processor order.
    uint16_t UnswapShort(uint16_t a) { return SwapShort(a);}
