@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/26 15:56:51 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,34 +74,6 @@ public:
    /// \brief True if Entry owns its BinArea
    bool IsSelfArea() { return SelfArea; }
 
-   // State
-   void SetState(const char &state) { State = state; }
-   const char &GetState() const { return State; }
-   /// \brief true when value Entry not loaded  
-   bool IsNotLoaded() { return State == STATE_NOTLOADED; }
-   /// \brief true if Entry not found  
-   bool IsUnfound()   { return State == STATE_UNFOUND; }
-   /// \brief true if Entry not read    
-   bool IsUnread()    { return State == STATE_UNREAD; }
-   /// \brief true if Entry value properly loaded
-   bool IsGoodValue() { return State == 0; }
-
-   // Flags
-   /// \brief sets the 'pixel data flag'   
-   void SetFlag(const char &flag) { Flag = flag; }
-   /// \brief returns the 'pixel data flag'    
-   const char &GetFlag() const { return Flag; }
-   /// \brief true id Entry is a Pixel Data entry
-   bool IsPixelData() { return (Flag & FLAG_PIXELDATA) != 0; }
-
-   void Copy(DocEntry *doc);
-
-   /// \brief returns the size threshold above which an element value 
-   ///        will NOT be *printed* in order no to polute the screen output
-   static const uint32_t &GetMaxSizePrintEntry() { return MaxSizePrintEntry; }
-   /// \brief Header Elements too long will not be printed
-   static void SetMaxSizePrintEntry(const uint32_t &size) { MaxSizePrintEntry = size; }
-
    ///\brief values for current state of a DataEntry (internal use only)
    typedef enum
    {
@@ -117,6 +89,34 @@ public:
       FLAG_NONE       = 0x00,
       FLAG_PIXELDATA  = 0x01
    } TValueFlag;
+
+   // State
+   void SetState(const TValueState &state) { State = state; }
+   const TValueState &GetState() const { return State; }
+   /// \brief true when value Entry not loaded  
+   bool IsNotLoaded() { return State == STATE_NOTLOADED; }
+   /// \brief true if Entry not found  
+   bool IsUnfound()   { return State == STATE_UNFOUND; }
+   /// \brief true if Entry not read    
+   bool IsUnread()    { return State == STATE_UNREAD; }
+   /// \brief true if Entry value properly loaded
+   bool IsGoodValue() { return State == 0; }
+
+   // Flags
+   /// \brief sets the 'pixel data flag'   
+   void SetFlag(const TValueFlag &flag) { Flag = flag; }
+   /// \brief returns the 'pixel data flag'    
+   const TValueFlag &GetFlag() const { return Flag; }
+   /// \brief true id Entry is a Pixel Data entry
+   bool IsPixelData() { return (Flag & FLAG_PIXELDATA) != 0; }
+
+   void Copy(DocEntry *doc);
+
+   /// \brief returns the size threshold above which an element value 
+   ///        will NOT be *printed* in order no to polute the screen output
+   static const uint32_t &GetMaxSizePrintEntry() { return MaxSizePrintEntry; }
+   /// \brief Header Elements too long will not be printed
+   static void SetMaxSizePrintEntry(const uint32_t &size) { MaxSizePrintEntry = size; }
 
 protected:
    DataEntry(DictEntry *e);
@@ -139,9 +139,9 @@ protected:
 
 private:
    /// \brief 0 for straight entries, FLAG_PIXELDATA for Pixel Data entries
-   char Flag;
+   TValueFlag Flag;
    /// \brief Entry status : STATE_NOTLOADED,STATE_UNFOUND, STATE_UNREAD, 0
-   char State;
+   TValueState State;
 
    /// \brief Size threshold above which an element val
    ///        By default, this upper bound is fixed to 64 bytes.
