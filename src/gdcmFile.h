@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2005/10/26 09:15:19 $
+  Version:   $Revision: 1.119 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,7 +177,10 @@ public:
 protected:
    File();
    ~File();
-
+   /// \brief Protect the Writer from writing illegal groups
+   bool MayIWrite(uint16_t group)
+     { if (group < 8 &&  group !=2 ) return false; else return true; }
+      
    /// Store the RLE frames info obtained during parsing of pixels.
    RLEFramesInfo *RLEInfo;
    /// Store the JPEG fragments info obtained during parsing of pixels.

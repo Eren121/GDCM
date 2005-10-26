@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 06:07:26 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/10/26 09:15:19 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,9 +55,13 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
                                      i != TagHT.end(); 
                                     ++i)
    { 
-   // FIXME : find a trick to know if current object is a
-   //         gdcm::File or a gdcm::Document
-   //if ( dynamic_cast< File* > ( this ) ) { // ignore illegal groups }
+       // depending on the gdcm::Document type 
+       // (gdcm::File; gdcm::DicomDir, (more to come ?)
+       // some groups *cannot* be present.
+       // We hereby protect gdcm for writting stupid things
+       // if they were found in the original document. 
+       if ( !MayIWrite( (i->second)->GetGroup() ) ) 
+          continue;
    
       // Skip 'Group Length' element, since it may be wrong.
       //       except for Group 0002 
