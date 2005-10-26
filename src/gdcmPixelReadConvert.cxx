@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 06:57:02 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2005/10/26 07:15:31 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,35 +114,48 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    //PixelSize       = file->GetPixelSize();  Useless
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
-   std::string ts  = file->GetTransferSyntax();
+   
+   if (! file->IsDicomV3() )  // Should be ACR-NEMA file
+   {
+      IsRaw = true;
+      // Don't loose time checking unexistant Transfer Syntax !
+      IsPrivateGETransferSyntax = IsMPEG
+             = IsJPEG2000 = IsJPEGLS = IsJPEGLossy  
+             = IsJPEGLossless = IsRLELossless 
+             = false;
+   }
+   else
+   {
+      std::string ts  = file->GetTransferSyntax();
 
    
 //   if ( ts == GDCM_UNKNOWN )
-//     {
+//   {
 //     gdcmErrorMacro( "Could someone tell me how in the world could this happen !" );
 // -->
 //--> on ALL acr-nema images ! JPRx
 //-->
 //     abort(); // DO NOT REMOVE.  WE SHOULD NEVER READ SUCH IMAGE EVER (only gdcm can write such broekn dicom file)
-//     }
+//   }
 
-   IsRaw =
-        ( ! file->IsDicomV3() )  // Should be ACR-NEMA file
-     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
-     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE
-     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
-     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
-     || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
+      IsRaw =
+           ( ! file->IsDicomV3() )  // Should be ACR-NEMA file
+        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
+        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE
+        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
+        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
+        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
      
-   IsPrivateGETransferSyntax = 
+      IsPrivateGETransferSyntax = 
                 ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
 
-   IsMPEG          = Global::GetTS()->IsMPEG(ts);
-   IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
-   IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts);
-   IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts);
-   IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts);
-   IsRLELossless   = Global::GetTS()->IsRLELossless(ts);
+      IsMPEG          = Global::GetTS()->IsMPEG(ts);
+      IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
+      IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts);
+      IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts);
+      IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts);
+      IsRLELossless   = Global::GetTS()->IsRLELossless(ts);
+   }
 
    PixelOffset     = file->GetPixelOffset();
    PixelDataLength = file->GetPixelAreaLength();
