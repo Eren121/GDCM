@@ -36,8 +36,6 @@ SET(EXAMPLE_SOURCES
  
   FindTags
   FlatHashTablePrint
-  TestCopyDicom
-  TestChangeHeader
   Volume2Dicom
   WriteDicomSimple
   WriteRead
