@@ -28,7 +28,6 @@
  *
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <fcntl.h>
@@ -58,6 +57,7 @@ static void Clear_Options();
 static void Print_Options();
 #endif
 
+
 int my_open(char *filename)
 {
   return open(filename,O_RDONLY|O_BINARY);
@@ -75,7 +75,82 @@ int my_close(int infile)
   return close(infile);
 }
 
+ostream *my_fopen(const char *path, const char *mode)
+{
+  FILE *fd = fopen(path, mode);
+  ostream *os = (ostream*)malloc(sizeof(ostream));
+  os->Fd = fd;
+  return os;
+}
 
+int my_fseek(ostream *stream, long offset, int whence)
+{
+  return fseek(stream->Fd, offset, whence);
+}
+
+size_t my_fread(void *ptr, size_t size, size_t nmemb, ostream *stream)
+{
+  return fread(ptr, size, nmemb, stream->Fd);
+}
+
+size_t my_fwrite(const void *ptr, size_t size, size_t nmemb, ostream *stream)
+{
+  return fwrite(ptr, size, nmemb, stream->Fd);
+}
+
+int my_fclose(ostream *fp)
+{
+  FILE *fd = fp->Fd;
+  free(fp);
+  return fclose(fd);
+}
+#include <stdarg.h>
+
+int my_printf(const char *format, ...)
+{
+  //return printf(format, ...);
+  va_list argptr;
+  int ret;
+
+  va_start(argptr, format);
+  ret = vprintf(format, argptr);
+  va_end(argptr);
+
+  return ret;
+}
+
+int my_sprintf(char *str, const char *format, ...)
+{
+  //return sprintf(str, format, ...);
+  va_list argptr;
+  int ret;
+
+  va_start(argptr, format);
+  ret = vsprintf(str,format, argptr);
+  va_end(argptr);
+
+  return ret;
+}
+
+int my_fprintf(const char *format, ...)
+{
+  //return fprintf(stderr, format, ...);
+  va_list argptr;
+  int ret;
+
+  va_start(argptr, format);
+  ret = vfprintf(stderr,format, argptr);
+  va_end(argptr);
+
+  return ret;
+}
+void my_exit(int status)
+{
+  exit(status);
+}
+
+
+#define GDCM_BUILD_MPEG2DEC
 
 #ifdef GDCM_BUILD_MPEG2DEC
 int main(argc,argv)

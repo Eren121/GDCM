@@ -27,8 +27,6 @@
  *
  */
 
-#include <stdio.h>
-
 #include "config.h"
 #include "global.h"
 #include "getvlc.h"

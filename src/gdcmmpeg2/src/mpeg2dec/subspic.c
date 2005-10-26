@@ -1,4 +1,3 @@
-/* #define DEBUG */
 /* subspic.c, Frame buffer substitution routines */
 
 /* Copyright (C) 1996, MPEG Software Simulation Group. All Rights Reserved. */
@@ -28,9 +27,7 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
+//#include <fcntl.h>
 
 #include "config.h"
 #include "global.h"
@@ -66,7 +63,7 @@ int sequence_framenum;
 
 
 #ifdef DEBUG
-  printf("SUB: seq fn(%d) bitfn(%d) tempref(%d) picstr(%d) type(%d)\n", 
+  my_printf("SUB: seq fn(%d) bitfn(%d) tempref(%d) picstr(%d) type(%d)\n", 
     sequence_framenum, bitstream_framenum, temporal_reference, 
     picture_structure, picture_coding_type);
 #endif
@@ -118,7 +115,7 @@ int sequence_framenum;
 #ifdef DEBUG
     else if((picture_coding_type!=B_TYPE)||(picture_coding_type!=D_TYPE))
     {
-      printf("NO SUBS FOR THIS PICTURE\n");
+      my_printf("NO SUBS FOR THIS PICTURE\n");
     }
 #endif
   }
@@ -162,7 +159,7 @@ int framenum;
   int field_mode;
 
   if(framenum<0)
-    printf("ERROR: framenum (%d) is less than zero\n", framenum);
+    my_printf("ERROR: framenum (%d) is less than zero\n", framenum);
 
 
   if(Big_Picture_Flag)
@@ -172,7 +169,7 @@ int framenum;
 
   if(rerr!=0)
   {
-    printf("was unable to substitute frame\n");
+    my_printf("was unable to substitute frame\n");
   }
 
   /* now copy to the appropriate buffer */
@@ -204,7 +201,7 @@ int framenum;
 
 #ifdef VERBOSE
   if(Verbose_Flag > NO_LAYER)
-    printf("substituted %s %d\n",
+    my_printf("substituted %s %d\n",
       (field_mode ? (parity?"bottom field":"bottom field"):"frame"), framenum);
 #endif
 }
@@ -221,17 +218,17 @@ int framenum;
   char outname[FILENAME_LENGTH];
   char name[FILENAME_LENGTH];
 
-  sprintf(outname,filename,framenum);
+  my_sprintf(outname,filename,framenum);
 
 
-  sprintf(name,"%s.Y",outname);
+  my_sprintf(name,"%s.Y",outname);
   err += Read_Component(name, frame[0], Coded_Picture_Width, 
     Coded_Picture_Height);
 
-  sprintf(name,"%s.U",outname);
+  my_sprintf(name,"%s.U",outname);
   err += Read_Component(name, frame[1], Chroma_Width, Chroma_Height);
 
-  sprintf(name,"%s.V",outname);
+  my_sprintf(name,"%s.V",outname);
   err += Read_Component(name, frame[2], Chroma_Width, Chroma_Height);
 
   return(err);
@@ -251,21 +248,21 @@ int Height;
   Size = Width*Height;
 
 #ifdef DEBUG
-  printf("SUBS: reading %s\n", filename);
+  my_printf("SUBS: reading %s\n", filename);
 #endif
 
-  if(!(Infile=open(Filename,O_RDONLY|O_BINARY))<0)
+  if(!(Infile=my_open(Filename))<0)
   {
-    printf("ERROR: unable to open reference filename (%s)\n", Filename);
+    my_printf("ERROR: unable to open reference filename (%s)\n", Filename);
     return(-1);
   }
 
-  abort();
+  /*abort();*/
   Bytes_Read = read(Infile, Frame, Size);
   
   if(Bytes_Read!=Size)
   {
-    printf("was able to read only %d bytes of %d of file %s\n",
+    my_printf("was able to read only %d bytes of %d of file %s\n",
       Bytes_Read, Size, Filename);
   }
  
@@ -286,15 +283,16 @@ unsigned char *frame[3];
 int framenum;
 {
 /*  int err = 0; */
-  FILE *fd;
+  //FILE *fd;
+  ostream *fd;
   int line;
   int size, offset;
-  abort();
+  /*abort();*/
 
 
-  if (!(fd = fopen(filename,"rb")))
+  if (!(fd = my_fopen(filename,"rb")))
   {
-    sprintf(Error_Text,"Couldn't open %s\n",filename);
+    my_sprintf(Error_Text,"Couldn't open %s\n",filename);
     return(-1);
   }
 
@@ -308,42 +306,42 @@ int framenum;
   else if(chroma_format==CHROMA420)
     size = ((size*3)>>1);
   else
-    printf("ERROR: chroma_format (%d) not recognized\n", chroma_format);
+    my_printf("ERROR: chroma_format (%d) not recognized\n", chroma_format);
 
 
   /* compute distance into "big" file */
   offset = size*framenum;
 
 #ifdef DEBUG
-  printf("EXTRACTING: frame(%d) offset(%d), size (%d) from %s\n", 
+  my_printf("EXTRACTING: frame(%d) offset(%d), size (%d) from %s\n", 
     framenum, offset, size, filename);
 #endif
 
   /* seek to location in big file where desired frame begins */
   /* note: this offset cannot exceed a few billion bytes due to the */
   /*       obvious limitations of 32-bit integers */
-  fseek(fd, offset, SEEK_SET);
+  my_fseek(fd, offset, SEEK_SET);
 
   /* Y  */
   for (line=0; line<Coded_Picture_Height; line++)
   {
-    fread(frame[0]+(line*Coded_Picture_Width),1,Coded_Picture_Width,fd);
+    my_fread(frame[0]+(line*Coded_Picture_Width),1,Coded_Picture_Width,fd);
   }
 
   /* Cb */
   for (line=0; line<Chroma_Height; line++)
   {
-    fread(frame[1]+(line*Chroma_Width),1,Chroma_Width,fd);
+    my_fread(frame[1]+(line*Chroma_Width),1,Chroma_Width,fd);
   }
 
   /* Cr */
   for (line=0; line<Chroma_Height; line++)
   {
-    fread(frame[2]+(line*Chroma_Width),1,Chroma_Width,fd);
+    my_fread(frame[2]+(line*Chroma_Width),1,Chroma_Width,fd);
   }
 
 
-  fclose(fd);
+  my_fclose(fd);
   return(0);
 }
 
@@ -363,7 +361,7 @@ int field_mode;    /* 0 = frame, 1 = field                      */
   s = d = 0;
 
 #ifdef DEBUG
-  printf("COPYING (w=%d, h=%d, parity=%d, field_mode=%d)\n",
+  my_printf("COPYING (w=%d, h=%d, parity=%d, field_mode=%d)\n",
     width,height,parity,field_mode);
 #endif /* DEBUG */
 

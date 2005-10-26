@@ -127,3 +127,19 @@
 #define MB_WEIGHT                  32
 #define MB_CLASS4                  64
 
+#include <stdio.h>
+typedef struct
+{
+  FILE* Fd;
+} ostream;
+
+int my_open(char *filename);
+int my_printf(const char *format, ...);
+int my_fprintf(const char *format, ...);
+int my_sprintf(char *str, const char *format, ...);
+void my_exit(int status);
+ostream *my_fopen(const char *path, const char *mode);
+int my_fseek(ostream *stream, long offset, int whence);
+size_t my_fread(void *ptr, size_t size, size_t nmemb, ostream *stream);
+int my_fclose(ostream *fp);
+

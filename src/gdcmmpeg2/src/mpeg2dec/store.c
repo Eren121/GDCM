@@ -27,8 +27,7 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> /* for malloc */
 #include <fcntl.h>
 #include <string.h> /* for strcat */
 
@@ -68,16 +67,16 @@ int frame;
   if (progressive_sequence || progressive_frame || Frame_Store_Flag)
   {
     /* progressive */
-    sprintf(outname,Output_Picture_Filename,frame,'f');
+    my_sprintf(outname,Output_Picture_Filename,frame,'f');
     store_one(outname,src,0,Coded_Picture_Width,vertical_size);
   }
   else
   {
     /* interlaced */
-    sprintf(outname,Output_Picture_Filename,frame,'a');
+    my_sprintf(outname,Output_Picture_Filename,frame,'a');
     store_one(outname,src,0,Coded_Picture_Width<<1,vertical_size>>1);
 
-    sprintf(outname,Output_Picture_Filename,frame,'b');
+    my_sprintf(outname,Output_Picture_Filename,frame,'b');
     store_one(outname,src,
       Coded_Picture_Width,Coded_Picture_Width<<1,vertical_size>>1);
   }
@@ -126,7 +125,7 @@ int offset,incr,height;
 
   hsize = horizontal_size;
 
-  sprintf(tmpname,"%s.Y",outname);
+  my_sprintf(tmpname,"%s.Y",outname);
   store_yuv1(tmpname,src[0],offset,incr,hsize,height);
 
   if (chroma_format!=CHROMA444)
@@ -139,10 +138,10 @@ int offset,incr,height;
     height>>=1;
   }
 
-  sprintf(tmpname,"%s.U",outname);
+  my_sprintf(tmpname,"%s.U",outname);
   store_yuv1(tmpname,src[1],offset,incr,hsize,height);
 
-  sprintf(tmpname,"%s.V",outname);
+  my_sprintf(tmpname,"%s.V",outname);
   store_yuv1(tmpname,src[2],offset,incr,hsize,height);
 }
 
@@ -156,11 +155,11 @@ int offset,incr,width,height;
   unsigned char *p;
 
   if (!Quiet_Flag)
-    fprintf(stderr,"saving %s\n",name);
+    my_fprintf("saving %s\n",name);
 
   if ((outfile = open(name,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
   {
-    sprintf(Error_Text,"Couldn't create %s\n",name);
+    my_sprintf(Error_Text,"Couldn't create %s\n",name);
     Error(Error_Text);
   }
 
@@ -218,11 +217,11 @@ int offset, incr, height;
   strcat(outname,".SIF");
 
   if (!Quiet_Flag)
-    fprintf(stderr,"saving %s\n",outname);
+    my_fprintf("saving %s\n",outname);
 
   if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
   {
-    sprintf(Error_Text,"Couldn't create %s\n",outname);
+    my_sprintf(Error_Text,"Couldn't create %s\n",outname);
     Error(Error_Text);
   }
 
@@ -311,11 +310,11 @@ int tgaflag;
   strcat(outname,tgaflag ? ".tga" : ".ppm");
 
   if (!Quiet_Flag)
-    fprintf(stderr,"saving %s\n",outname);
+    my_fprintf("saving %s\n",outname);
 
   if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
   {
-    sprintf(Error_Text,"Couldn't create %s\n",outname);
+    my_sprintf(Error_Text,"Couldn't create %s\n",outname);
     Error(Error_Text);
   }
 
@@ -333,7 +332,7 @@ int tgaflag;
   else
   {
     /* PPM header */
-    sprintf(header,"P6\n%d %d\n255\n",horizontal_size,height);
+    my_sprintf(header,"P6\n%d %d\n255\n",horizontal_size,height);
 
     for (i=0; header[i]!=0; i++)
       putbyte(header[i]);
