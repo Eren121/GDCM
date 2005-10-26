@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 06:23:37 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/10/26 11:19:14 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -497,7 +497,8 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
         ossPosition << pos[i]; 
       }      
       strPosition = ossPosition.str();
-      
+      ossPosition.str("");
+            
       if ( CoherentFileSet.count(strPosition) == 0 )
       {
          gdcmDebugMacro(" New Position :[" << strPosition << "]");
