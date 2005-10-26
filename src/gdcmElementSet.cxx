@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/10/26 06:07:26 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,8 +54,18 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
                                      i != TagHT.end(); 
                                     ++i)
-   {
-      i->second->WriteContent(fp, filetype);
+   { 
+   // FIXME : find a trick to know if current object is a
+   //         gdcm::File or a gdcm::Document
+   //if ( dynamic_cast< File* > ( this ) ) { // ignore illegal groups }
+   
+      // Skip 'Group Length' element, since it may be wrong.
+      //       except for Group 0002 
+       if ( (i->second)->GetElement() == 0x0000 
+         && (i->second)->GetElement() != 0x0002 )
+          continue;
+      
+       i->second->WriteContent(fp, filetype);
    } 
 }
 
