@@ -303,7 +303,7 @@ unsigned char *src, *dst;
         ip3 = (i<width-3) ? i+3 : width-1;
         ip4 = (i<width-4) ? i+4 : width-1;
         ip5 = (i<width-5) ? i+5 : width-1;
-        ip6 = (i<width-5) ? i+6 : width-1;
+        ip6 = (i<width-6) ? i+6 : width-1;
 
         /* FIR filter with 0.5 sample interval phase shift */
         dst[i>>1] = clp[(int)(228*(src[i]+src[ip1])
