@@ -118,6 +118,7 @@ void form_predictions _ANSI_ARGS_((int bx, int by, int macroblock_type,
 void Spatial_Prediction _ANSI_ARGS_((void));
 
 /* store.c */
+void FreeStaticBuffer _ANSI_ARGS_((void));
 void Write_Frame _ANSI_ARGS_((unsigned char *src[], int frame));
 
 #ifdef DISPLAY

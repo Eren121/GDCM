@@ -53,7 +53,7 @@ static void conv420to422 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 static unsigned char obfr[OBFRSIZE];
 static unsigned char *optr;
 static ostream *outfile;
-unsigned char *static_malloc[6] = {0,0,0,0,0,0}; //worse case there is 6 buffer in this impl unit.
+unsigned char *static_malloc[6] = {0,0,0,0,0,0}; /*worse case there is 6 buffer in this impl unit.*/
 
 void FreeStaticBuffer()
 {
@@ -160,12 +160,11 @@ int offset,incr,width,height;
 {
   int i, j;
   unsigned char *p;
+  ostream file;
 
   if (!Quiet_Flag)
     my_fprintf("saving %s\n",name);
 
-  //if ((outfile = open(name,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
-  ostream file;
   outfile = &file;
   if(!my_fopen(name, "wb", outfile))
   {
@@ -199,6 +198,7 @@ int offset, incr, height;
   int i,j;
   unsigned char *py, *pu, *pv;
   static unsigned char *u422, *v422;
+  ostream file;
 
   if (chroma_format==CHROMA444)
     Error("4:4:4 not supported for SIF format");
@@ -231,8 +231,6 @@ int offset, incr, height;
   if (!Quiet_Flag)
     my_fprintf("saving %s\n",outname);
 
-  //if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
-  ostream file;
   outfile = &file;
   if(!my_fopen(outname, "wb", outfile))
   {
@@ -279,6 +277,7 @@ int tgaflag;
   static unsigned char tga24[14] = {0,0,2,0,0,0,0, 0,0,0,0,0,24,32};
   char header[FILENAME_LENGTH];
   static unsigned char *u422, *v422, *u444, *v444;
+  ostream file;
 
   if (chroma_format==CHROMA444)
   {
@@ -331,8 +330,6 @@ int tgaflag;
   if (!Quiet_Flag)
     my_fprintf("saving %s\n",outname);
 
-  //if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
-  ostream file;
   outfile = &file;
   if(! my_fopen(outname, "wb", outfile))
   {

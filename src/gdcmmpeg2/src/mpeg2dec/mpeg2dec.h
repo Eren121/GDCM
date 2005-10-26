@@ -137,12 +137,10 @@ typedef struct
   FILE* OutFd;
 } ostream;
 
-//int my_open(char *filename);
 int my_printf(const char *format, ...);
 int my_fprintf(const char *format, ...);
 int my_sprintf(char *str, const char *format, ...);
 void my_exit(int status);
-//ostream *my_fopen(const char *path, const char *mode);
 int my_fopenr(const char *path, const char *mode, istream *os);
 int my_fopen(const char *path, const char *mode, ostream *os);
 int my_fseek(ostream *stream, long offset, int whence);

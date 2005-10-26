@@ -83,7 +83,7 @@ int my_fopenr(const char *path, const char *mode, istream *os)
   if(fd)
     {
     os->InFd = fd;
-    return 1; //success
+    return 1; /*success*/
     }
   else
     os->InFd = NULL;
@@ -96,7 +96,7 @@ int my_fopen(const char *path, const char *mode, ostream *os)
   if(fd)
     {
     os->OutFd = fd;
-    return 1; //success
+    return 1; /*success*/
     }
   else
     os->OutFd = NULL;
@@ -134,7 +134,6 @@ int my_fclose(ostream *fp)
 
 int my_printf(const char *format, ...)
 {
-  //return printf(format, ...);
   va_list argptr;
   int ret;
 
@@ -147,7 +146,6 @@ int my_printf(const char *format, ...)
 
 int my_sprintf(char *str, const char *format, ...)
 {
-  //return sprintf(str, format, ...);
   va_list argptr;
   int ret;
 
@@ -160,7 +158,6 @@ int my_sprintf(char *str, const char *format, ...)
 
 int my_fprintf(const char *format, ...)
 {
-  //return fprintf(stderr, format, ...);
   va_list argptr;
   int ret;
 
@@ -311,10 +308,10 @@ static void Initialize_Decoder()
 
 static void DeInitialize_Decoder()
 {
-  free(Clip-384); // WTF !!!
+  free(Clip-384); /* I love magic number */
 }
 
-/* mostly IMPLEMENTAION specific rouintes */
+/* mostly IMPLEMENTAION specific routines */
 static void Initialize_Sequence()
 {
   int cc, size;
@@ -438,16 +435,16 @@ char *argv[];              /* argument vector */
 "         -f        store/display interlaced video in frame format\n"
 "         -g        concatenated file format for substitution method (-x)\n"
 "         -in file  information & statistics report  (n: level)\n"
-"         -l  file  file name pattern for lower layer sequence\n"
-"                   (for spatial scalability)\n"
+"         -l  file  file name pattern for lower layer sequence\n");
+printf("                   (for spatial scalability)\n"
 "         -on file  output format (0:YUV 1:SIF 2:TGA 3:PPM 4:X11 5:X11HiQ)\n"
 "         -q        disable warnings to stderr\n"
 "         -r        use double precision reference IDCT\n"
 "         -t        enable low level tracing to stdout\n"
 "         -u  file  print user_data to stdio or file\n"
 "         -vn       verbose output (n: level)\n"
-"         -x  file  filename pattern of picture substitution sequence\n\n"
-"File patterns:  for sequential filenames, \"printf\" style, e.g. rec%%d\n"
+"         -x  file  filename pattern of picture substitution sequence\n\n");
+printf("File patterns:  for sequential filenames, \"printf\" style, e.g. rec%%d\n"
 "                 or rec%%d%%c for fieldwise storage\n"
 "Levels:        0:none 1:sequence 2:picture 3:slice 4:macroblock 5:block\n\n"
 "Example:       mpeg2decode -b bitstream.mpg -f -r -o0 rec%%d\n"
@@ -769,7 +766,7 @@ static void Deinitialize_Sequence()
 {
   int i;
 
-  /* First clenup the static buffer in store.c */
+  /* First cleanup the static buffer in store.c */
   FreeStaticBuffer();
 
   /* clear flags */
