@@ -34,7 +34,7 @@ except IndexError:
    printLevel = 1
 
 ### Build the DicomDir element list
-dicomdir = gdcm.DicomDir()
+dicomdir = gdcm.DicomDir.New()
 
 dicomdir.SetStartMethod(startMethod)
 dicomdir.SetProgressMethod(progressMethod)
