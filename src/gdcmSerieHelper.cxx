@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:35 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/10/26 06:23:37 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -425,7 +425,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
       strOrient = ossOrient.str();
       ossOrient.str("");
       // FIXME : is it a 'cleaner' way to initialize an ostringstream? 
-       
+
       if ( CoherentFileSet.count(strOrient) == 0 )
       {
          gdcmDebugMacro(" New Orientation :[" << strOrient << "]");
@@ -434,7 +434,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
       }
       // Current Orientation and DICOM header match; add the file:
       CoherentFileSet[strOrient]->push_back( (*it) );
-   }   
+   } 
    return CoherentFileSet;
 }
 

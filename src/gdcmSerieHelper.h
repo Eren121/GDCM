@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:04:26 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/10/26 06:23:37 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,9 @@ public:
    FileList *GetFirstSingleSerieUIDFileSet();
    FileList *GetNextSingleSerieUIDFileSet();
    FileList *GetSingleSerieUIDFileSet(std::string serieUID);
-
+   /// brief returns the 'Series Instance UID' Single SerieUID FileSet
+   std::string GetCurrentSerieUIDFileSetUID()
+                             { return  (*ItFileSetHt).first; }
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
    GDCM_LEGACY( void AddRestriction(TagKey const &key, std::string const &value) );
