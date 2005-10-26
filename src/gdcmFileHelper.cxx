@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/26 06:08:24 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/10/26 08:28:58 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -150,8 +150,10 @@ FileHelper::FileHelper( )
  */
 FileHelper::FileHelper(File *header)
 {
+   gdcmAssertMacro(header);
+
    FileInternal = header;
-   header->Register();
+   FileInternal->Register();
    Initialize();
    if ( FileInternal->IsReadable() )
    {
@@ -180,7 +182,6 @@ FileHelper::~FileHelper()
    }
 
    FileInternal->Unregister();
-   FileInternal = 0;
 }
 
 //-----------------------------------------------------------------------------

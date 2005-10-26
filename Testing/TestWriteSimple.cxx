@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 16:43:46 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2005/10/26 08:28:56 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,8 +113,7 @@ int WriteSimple(Image &img)
    gdcm::FileHelper *fileH = gdcm::FileHelper::New();
  
  //  Get the (empty) image header.  
-   gdcm::File *fileToBuild = fileH->GetFile()
-   ;
+   gdcm::File *fileToBuild = fileH->GetFile();
    std::ostringstream str;
 
    // Set the image size
@@ -361,7 +360,6 @@ int WriteSimple(Image &img)
 
    std::cout << "OK" << std::endl;
 
-   fileToBuild->Delete();
    fileH->Delete();
    reread->Delete();
    delete[] imageData;
