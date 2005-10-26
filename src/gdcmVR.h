@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:35 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/10/26 08:04:16 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,8 @@ class GDCM_EXPORT VR : public RefCounter
 public:
    static VR *New() {return new VR();}
 
-   void Print(std::ostream &os = std::cout);
+   virtual void Print(std::ostream &os = std::cout, 
+                      std::string const &indent = "" );
 
    /// \brief   Get the count for an element
    int Count(VRKey const &key) { return vr.count(key); };

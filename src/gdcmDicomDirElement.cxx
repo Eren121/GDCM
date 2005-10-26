@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 12:01:50 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/10/26 08:04:15 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,7 +169,7 @@ void DicomDirElement::AddDicomDirElement(DicomDirType type,
  * \brief   Print all
  * @param   os The output stream to be written to.
  */
-void DicomDirElement::Print(std::ostream &os)
+void DicomDirElement::Print(std::ostream &os,std::string const &)
 {
    std::ostringstream s;
    std::list<DicomElement>::iterator it;

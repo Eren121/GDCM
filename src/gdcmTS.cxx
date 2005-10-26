@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 17:51:17 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/10/26 08:04:16 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -346,7 +346,7 @@ const char* TS::GetSpecialTransferSyntax(SpecialType t)
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */
-void TS::Print(std::ostream &os) 
+void TS::Print(std::ostream &os,std::string const &)
 {
    std::ostringstream s;
 

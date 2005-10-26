@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 14:56:27 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/10/26 08:04:16 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -185,7 +185,7 @@ bool VR::IsValidVR(VRKey const &key)
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */
-void VR::Print(std::ostream &os) 
+void VR::Print(std::ostream &os,std::string const &) 
 {
    for (VRHT::iterator it = vr.begin(); it != vr.end(); ++it)
    {

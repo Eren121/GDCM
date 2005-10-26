@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:30 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/26 08:04:15 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,7 @@ const TagName &DictGroupName::GetName(uint16_t group)
  * \brief   Print all 
  * @param   os The output stream to be written to.
  */
-void DictGroupName::Print(std::ostream &os) 
+void DictGroupName::Print(std::ostream &os,std::string const &) 
 {
    std::ostringstream s;
 

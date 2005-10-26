@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/10/26 08:04:15 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,8 @@ public:
    /**
     * \brief   canonical Printer 
     */ 
-   void Print(std::ostream &os);
+   virtual void Print(std::ostream &os = std::cout, 
+                      std::string const &indent = "" );
 
    /**
     * \brief   returns a reference to the chained List 
