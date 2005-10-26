@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/10/26 06:08:24 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1226,7 +1226,7 @@ To be moved to User's guide / WIKI  ?
     are force to current Date and Time
     
 -->  Conversion Type (0x0008,0x0064)
-     is forced to 'SYN'
+     is forced to 'SYN' (Synthetic Image)
      
 --> Study ID, Series Number, Instance Number, Patient Orientation (Type 2)
     are created, with empty value if there are missing.
@@ -1418,8 +1418,22 @@ void FileHelper::CheckMandatoryElements()
    // Accession Number
    CopyMandatoryEntry(0x0008,0x0050,"");
    
-   // Conversion Type ... FIXME (type 1)
+   // Conversion Type.
+   // Other possible values are :
    // See PS 3.3, Page 408
+   
+   // DV = Digitized Video
+   // DI = Digital Interface   
+   // DF = Digitized Film
+   // WSD = Workstation
+   // SD = Scanned Document
+   // SI = Scanned Image
+   // DRW = Drawing
+   // SYN = Synthetic Image
+
+   // FIXME : Must we Force Value, or Default value ?
+   // Is it Type 1 for any Modality ?
+   //    --> Answer seems to be NO :-(
    CopyMandatoryEntry(0x0008,0x0064,"SYN");
 
 // ----- Add Mandatory Entries if missing ---
