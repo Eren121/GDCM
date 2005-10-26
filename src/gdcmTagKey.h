@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:35:05 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/26 15:34:33 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,57 +32,62 @@ namespace gdcm
 class TagKey
 {
 public :
-   inline TagKey(const uint16_t &gr, const uint16_t &elt)
-                                                    { tag[0] = gr;tag[1] = elt;}
-   inline TagKey() { tag[0] = tag[1] = 0x0000;}
+   TagKey(const uint16_t &gr, const uint16_t &elt) { tag[0] = gr;tag[1] = elt;}
+   TagKey() { tag[0] = tag[1] = 0x0000;}
 
    friend std::ostream& operator<<(std::ostream& _os, const TagKey &_val);
 
-   inline std::string str() const
+   std::string str() const
    {
       char res[10];
       sprintf(res,"%04x|%04x",tag[0],tag[1]);
       return std::string(res);
    }
 
-   inline void SetGroup(const uint16_t &group) { tag[0] = group; }
-   inline const uint16_t &GetGroup(void) { return tag[0]; }
+   void SetGroup(const uint16_t &group) { tag[0] = group; }
+   uint16_t &GetGroup(void) { return tag[0]; } const
 
-   inline void SetElement(const uint16_t &elem) { tag[1] = elem; }
-   inline const uint16_t GetElement(void) { return tag[1]; }
+   void SetElement(const uint16_t &elem) { tag[1] = elem; }
+   uint16_t GetElement(void) { return tag[1]; } const
 
-   inline TagKey &operator=(const TagKey &_val)
+   TagKey &operator=(const TagKey &_val)
    {
       tag[0] = _val.tag[0];
       tag[1] = _val.tag[1];
       return *this;
    }
 
-   inline const uint16_t &operator[](const unsigned int &_id) const
+   TagKey(const TagKey &_val)
+     {
+     tag[0] = _val[0];
+     tag[1] = _val[1];
+     }
+
+   uint16_t &operator[](const unsigned int &_id) const
    {
       assert(_id<2);
       return tag[_id];
    }
-   inline const uint16_t &operator[](const unsigned int &_id)
+   uint16_t &operator[](const unsigned int &_id)
    {
       assert(_id<2);
       return tag[_id];
    }
 
-   inline bool operator==(const TagKey &_val) const
+   bool operator==(const TagKey &_val) const
    {
       return tag[0] == _val.tag[0] && tag[1] == _val.tag[1];
    }
 
-   inline bool operator!=(const TagKey &_val) const
+   bool operator!=(const TagKey &_val) const
    {
       return tag[0] != _val.tag[0] || tag[1] != _val.tag[1];
    }
 
-   inline bool operator<(const TagKey &_val) const
+   bool operator<(const TagKey &_val) const
    {
-      return tag[0] < _val.tag[0] || (tag[0] == 
-                                           _val.tag[0] && tag[1] < _val.tag[1]);
+      return tag[0] < _val.tag[0] 
+        || (tag[0] == _val.tag[0] && tag[1] < _val.tag[1]);
    }
 
 private :
