@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 09:09:31 $
-  Version:   $Revision: 1.310 $
+  Date:      $Date: 2005/10/26 15:49:56 $
+  Version:   $Revision: 1.311 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -501,6 +501,42 @@ uint32_t Document::SwapLong(uint32_t a)
    return a;
 } 
 
+/**
+ * \brief   Swaps back the bytes of 8-byte long 'double' accordingly to
+ *          processor order.
+ * @return  The properly swaped 64 bits double.
+ */
+double Document::SwapDouble(double a)
+{
+   switch (SwapCode)
+   {
+      // There were no 'double' at ACR-NEMA time.
+      // We just have to deal with 'straight Little Endian' and 
+      // 'straight Big Endian'
+      case 1234 :
+         break;
+      case 4321 :
+         char *beg = (char *)&a;
+         char *end = beg + 7;
+         char t;
+         for (unsigned int i = 0; i<7; i++)
+         {
+            t    = *beg;
+            *beg = *end;
+            *end = t;
+            beg++,
+            end--;  
+         } 
+         break;   
+
+      default :
+         gdcmErrorMacro( "Unset swap code:" << SwapCode );
+         a = 0.;
+   }
+   return a;
+} 
+
+
 //
 // -----------------File I/O ---------------
 /**
@@ -719,10 +755,9 @@ void Document::LoadEntryBinArea(DataEntry *entry)
       }
       case 8:
       {
-         gdcmWarningMacro("Can't swap 64 bits data");
-/*         uint64_t *data64 = (uint64_t *)data;
+         double *data64 = (double *)data;
          for(i=0;i<l/vrLgth;i++)
-            data64[i] = SwapLongLong(data64[i]);*/
+            data64[i] = SwapDouble(data64[i]);
          break;
       }
    }
@@ -1505,7 +1540,8 @@ VRKey Document::FindDocEntryVR()
    //gdcmDebugMacro( "--> VR: " << vr )
    if ( !CheckDocEntryVR(vr) )
    {
-      gdcmWarningMacro( "Unknown VR '" << vr << "'" )
+      gdcmWarningMacro( "Unknown VR '" << vr << "' at offset :"
+                        << positionOnEntry );
       Fp->seekg(positionOnEntry, std::ios::beg);
       return GDCM_VRUNKNOWN;
    }
