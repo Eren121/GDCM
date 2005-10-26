@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:27:37 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/10/26 15:48:33 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -379,7 +379,8 @@ void DataEntry::SetString(std::string const &value)
          size_t l =  value.size();    
          SetLength(l + l%2);
          NewBinArea();
-         memcpy(BinArea, &(value[0]), l);
+         //memcpy(BinArea, &(value[0]), l);
+         memcpy(BinArea, value.c_str(), l);
          if (l%2)
             BinArea[l] = '\0';
       }
