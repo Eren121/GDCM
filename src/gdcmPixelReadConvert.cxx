@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 13:16:45 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2005/10/26 14:54:51 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,19 +128,8 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    {
       std::string ts = file->GetTransferSyntax();
 
-   
-//   if ( ts == GDCM_UNKNOWN )
-//   {
-//     gdcmErrorMacro( "Could someone tell me how in the world could this happen !" );
-// -->
-//--> on ALL acr-nema images ! JPRx
-//-->
-//     abort(); // DO NOT REMOVE.  WE SHOULD NEVER READ SUCH IMAGE EVER (only gdcm can write such broekn dicom file)
-//   }
-
       IsRaw =
-           ( ! file->IsDicomV3() )  // Should be ACR-NEMA file
-        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
+           Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
         || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE
         || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
         || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
