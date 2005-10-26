@@ -53,6 +53,14 @@ static void conv420to422 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 static unsigned char obfr[OBFRSIZE];
 static unsigned char *optr;
 static ostream *outfile;
+unsigned char *static_malloc[6] = {0,0,0,0,0,0}; //worse case there is 6 buffer in this impl unit.
+
+void FreeStaticBuffer()
+{
+  int i;
+  for(i=0;i<6;++i)
+    free(static_malloc[i]);
+}
 
 /*
  * store a picture as either one frame or two fields
@@ -207,9 +215,11 @@ int offset, incr, height;
       if (!(u422 = (unsigned char *)malloc((Coded_Picture_Width>>1)
                                            *Coded_Picture_Height)))
         Error("malloc failed");
+      static_malloc[0] = u422;
       if (!(v422 = (unsigned char *)malloc((Coded_Picture_Width>>1)
                                            *Coded_Picture_Height)))
         Error("malloc failed");
+      static_malloc[1] = v422;
     }
   
     conv420to422(src[1],u422);
@@ -284,18 +294,22 @@ int tgaflag;
         if (!(u422 = (unsigned char *)malloc((Coded_Picture_Width>>1)
                                              *Coded_Picture_Height)))
           Error("malloc failed");
+        static_malloc[2] = u422;
         if (!(v422 = (unsigned char *)malloc((Coded_Picture_Width>>1)
                                              *Coded_Picture_Height)))
           Error("malloc failed");
+        static_malloc[3] = v422;
       }
 
       if (!(u444 = (unsigned char *)malloc(Coded_Picture_Width
                                            *Coded_Picture_Height)))
         Error("malloc failed");
+      static_malloc[4] = u444;
 
       if (!(v444 = (unsigned char *)malloc(Coded_Picture_Width
                                            *Coded_Picture_Height)))
         Error("malloc failed");
+      static_malloc[5] = v444;
     }
 
     if (chroma_format==CHROMA420)

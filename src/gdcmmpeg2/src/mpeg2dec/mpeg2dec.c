@@ -42,6 +42,7 @@ static int  Decode_Bitstream _ANSI_ARGS_((void));
 static int  Headers _ANSI_ARGS_((void));
 static void Initialize_Sequence _ANSI_ARGS_((void));
 static void Initialize_Decoder _ANSI_ARGS_((void));
+static void DeInitialize_Decoder _ANSI_ARGS_((void));
 static void Deinitialize_Sequence _ANSI_ARGS_((void));
 static void Process_Options _ANSI_ARGS_((int argc, char *argv[]));
 
@@ -280,6 +281,8 @@ char *argv[];
     /*close(enhan.Infile);*/
     ld->close_stream(enhan.Infile);
 
+  DeInitialize_Decoder();
+
   return ret;
 }
 #endif /*GDCM_BUILD_MPEG2DEC*/
@@ -304,6 +307,11 @@ static void Initialize_Decoder()
   else
     Initialize_Fast_IDCT();
 
+}
+
+static void DeInitialize_Decoder()
+{
+  free(Clip-384); // WTF !!!
 }
 
 /* mostly IMPLEMENTAION specific rouintes */
@@ -760,6 +768,9 @@ static int Decode_Bitstream()
 static void Deinitialize_Sequence()
 {
   int i;
+
+  /* First clenup the static buffer in store.c */
+  FreeStaticBuffer();
 
   /* clear flags */
   base.MPEG2_Flag=0;
