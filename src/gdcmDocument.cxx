@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 06:09:34 $
-  Version:   $Revision: 1.308 $
+  Date:      $Date: 2005/10/26 06:34:03 $
+  Version:   $Revision: 1.309 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -386,7 +386,8 @@ FileType Document::GetFileType()
  * \brief   Accessor to the Transfer Syntax (when present) of the
  *          current document (it internally handles reading the
  *          value from disk when only parsing occured).
- * @return  The encountered Transfer Syntax of the current document.
+ * @return  The encountered Transfer Syntax of the current document, if DICOM.
+ *          GDCM_UNKNOWN for ACR-NEMA files (or broken headers ...)
  */
 std::string Document::GetTransferSyntax()
 {
