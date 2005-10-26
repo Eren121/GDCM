@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 14:47:06 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2005/10/26 14:50:30 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,7 +114,8 @@ public:
            << ", function " << GDCM_FUNCTION << '\n';       \
    if( errno )                                              \
      osmacro  << "Last system error was: " <<               \
-       strerror(errno) << '\n' << msg << "\n\n";            \
+       strerror(errno) << '\n';                             \
+   osmacro << msg << "\n\n";                                \
    if( Debug::GetDebugToFile() )                            \
       Debug::GetDebugFile() << osmacro.str() << std::endl;  \
    else                                                     \
