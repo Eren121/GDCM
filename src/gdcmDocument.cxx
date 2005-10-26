@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.307 $
+  Date:      $Date: 2005/10/26 06:09:34 $
+  Version:   $Revision: 1.308 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -605,7 +605,7 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
    // Skip if user wants to write an ACR-NEMA file
 
    if ( filetype == ImplicitVR || filetype == ExplicitVR ||
-     filetype == JPEG )
+        filetype == JPEG )
    {
       // writing Dicom File Preamble
       char filePreamble[128];
@@ -1502,7 +1502,7 @@ VRKey Document::FindDocEntryVR()
    VRKey vr;
    Fp->read(&(vr[0]),(size_t)2);
 
-   gdcmDebugMacro( "--> VR: " << vr )
+   //gdcmDebugMacro( "--> VR: " << vr )
    if ( !CheckDocEntryVR(vr) )
    {
       gdcmWarningMacro( "Unknown VR '" << vr << "'" )
