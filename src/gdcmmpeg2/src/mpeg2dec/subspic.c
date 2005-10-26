@@ -27,8 +27,6 @@
  *
  */
 
-//#include <fcntl.h>
-
 #include "config.h"
 #include "global.h"
 
@@ -243,7 +241,7 @@ int Height;
 {
   int Size;
   int Bytes_Read;
-  int Infile;
+  istream Infile;
 
   Size = Width*Height;
 
@@ -251,14 +249,14 @@ int Height;
   my_printf("SUBS: reading %s\n", filename);
 #endif
 
-  if(!(Infile=my_open(Filename))<0)
+  if(!my_fopenr(Filename, "rb", &Infile))
   {
     my_printf("ERROR: unable to open reference filename (%s)\n", Filename);
     return(-1);
   }
 
   /*abort();*/
-  Bytes_Read = read(Infile, Frame, Size);
+  Bytes_Read = my_fread(Frame, Size, 1, &Infile);
   
   if(Bytes_Read!=Size)
   {
@@ -266,7 +264,7 @@ int Height;
       Bytes_Read, Size, Filename);
   }
  
-  close(Infile); 
+  my_fcloser(&Infile); 
   return(0);
 }
 
@@ -283,14 +281,13 @@ unsigned char *frame[3];
 int framenum;
 {
 /*  int err = 0; */
-  //FILE *fd;
-  ostream *fd;
+  istream fd;
   int line;
   int size, offset;
   /*abort();*/
 
 
-  if (!(fd = my_fopen(filename,"rb")))
+  if (!my_fopenr(filename,"rb", &fd))
   {
     my_sprintf(Error_Text,"Couldn't open %s\n",filename);
     return(-1);
@@ -320,28 +317,28 @@ int framenum;
   /* seek to location in big file where desired frame begins */
   /* note: this offset cannot exceed a few billion bytes due to the */
   /*       obvious limitations of 32-bit integers */
-  my_fseek(fd, offset, SEEK_SET);
+  my_fseekr(&fd, offset, SEEK_SET);
 
   /* Y  */
   for (line=0; line<Coded_Picture_Height; line++)
   {
-    my_fread(frame[0]+(line*Coded_Picture_Width),1,Coded_Picture_Width,fd);
+    my_fread(frame[0]+(line*Coded_Picture_Width),1,Coded_Picture_Width,&fd);
   }
 
   /* Cb */
   for (line=0; line<Chroma_Height; line++)
   {
-    my_fread(frame[1]+(line*Chroma_Width),1,Chroma_Width,fd);
+    my_fread(frame[1]+(line*Chroma_Width),1,Chroma_Width,&fd);
   }
 
   /* Cr */
   for (line=0; line<Chroma_Height; line++)
   {
-    my_fread(frame[2]+(line*Chroma_Width),1,Chroma_Width,fd);
+    my_fread(frame[2]+(line*Chroma_Width),1,Chroma_Width,&fd);
   }
 
 
-  my_fclose(fd);
+  my_fcloser(&fd);
   return(0);
 }
 

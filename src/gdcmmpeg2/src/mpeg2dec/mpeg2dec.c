@@ -62,6 +62,7 @@ int my_open(char *filename)
 {
   return open(filename,O_RDONLY|O_BINARY);
 }
+
 off_t my_seek(int infile, off_t offset,int whence)
 {
   return lseek(infile, offset, whence);
@@ -75,34 +76,58 @@ int my_close(int infile)
   return close(infile);
 }
 
-ostream *my_fopen(const char *path, const char *mode)
+int my_fopenr(const char *path, const char *mode, istream *os)
 {
   FILE *fd = fopen(path, mode);
-  ostream *os = (ostream*)malloc(sizeof(ostream));
-  os->Fd = fd;
-  return os;
+  if(fd)
+    {
+    os->InFd = fd;
+    return 1; //success
+    }
+  else
+    os->InFd = NULL;
+  return 0;
+}
+
+int my_fopen(const char *path, const char *mode, ostream *os)
+{
+  FILE *fd = fopen(path, mode);
+  if(fd)
+    {
+    os->OutFd = fd;
+    return 1; //success
+    }
+  else
+    os->OutFd = NULL;
+  return 0;
 }
 
 int my_fseek(ostream *stream, long offset, int whence)
 {
-  return fseek(stream->Fd, offset, whence);
+  return fseek(stream->OutFd, offset, whence);
+}
+int my_fseekr(istream *stream, long offset, int whence)
+{
+  return fseek(stream->InFd, offset, whence);
 }
 
-size_t my_fread(void *ptr, size_t size, size_t nmemb, ostream *stream)
+size_t my_fread(void *ptr, size_t size, size_t nmemb, istream *stream)
 {
-  return fread(ptr, size, nmemb, stream->Fd);
+  return fread(ptr, size, nmemb, stream->InFd);
 }
 
 size_t my_fwrite(const void *ptr, size_t size, size_t nmemb, ostream *stream)
 {
-  return fwrite(ptr, size, nmemb, stream->Fd);
+  return fwrite(ptr, size, nmemb, stream->OutFd);
 }
 
+int my_fcloser(istream *fp)
+{
+  return fclose(fp->InFd);
+}
 int my_fclose(ostream *fp)
 {
-  FILE *fd = fp->Fd;
-  free(fp);
-  return fclose(fd);
+  return fclose(fp->OutFd);
 }
 #include <stdarg.h>
 

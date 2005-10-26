@@ -28,7 +28,6 @@
  */
 
 #include <stdlib.h> /* for malloc */
-#include <fcntl.h>
 #include <string.h> /* for strcat */
 
 #include "config.h"
@@ -53,7 +52,7 @@ static void conv420to422 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 #define OBFRSIZE 4096
 static unsigned char obfr[OBFRSIZE];
 static unsigned char *optr;
-static int outfile;
+static ostream *outfile;
 
 /*
  * store a picture as either one frame or two fields
@@ -157,7 +156,10 @@ int offset,incr,width,height;
   if (!Quiet_Flag)
     my_fprintf("saving %s\n",name);
 
-  if ((outfile = open(name,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
+  //if ((outfile = open(name,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
+  ostream file;
+  outfile = &file;
+  if(!my_fopen(name, "wb", outfile))
   {
     my_sprintf(Error_Text,"Couldn't create %s\n",name);
     Error(Error_Text);
@@ -173,9 +175,9 @@ int offset,incr,width,height;
   }
 
   if (optr!=obfr)
-    write(outfile,obfr,optr-obfr);
+    my_fwrite(obfr,optr-obfr,1,outfile);
 
-  close(outfile);
+  my_fclose(outfile);
 }
 
 /*
@@ -219,7 +221,10 @@ int offset, incr, height;
   if (!Quiet_Flag)
     my_fprintf("saving %s\n",outname);
 
-  if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
+  //if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
+  ostream file;
+  outfile = &file;
+  if(!my_fopen(outname, "wb", outfile))
   {
     my_sprintf(Error_Text,"Couldn't create %s\n",outname);
     Error(Error_Text);
@@ -243,9 +248,9 @@ int offset, incr, height;
   }
 
   if (optr!=obfr)
-    write(outfile,obfr,optr-obfr);
+    my_fwrite(obfr,optr-obfr,1,outfile);
 
-  close(outfile);
+  my_fclose(outfile);
 }
 
 /*
@@ -312,7 +317,10 @@ int tgaflag;
   if (!Quiet_Flag)
     my_fprintf("saving %s\n",outname);
 
-  if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
+  //if ((outfile = open(outname,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))==-1)
+  ostream file;
+  outfile = &file;
+  if(! my_fopen(outname, "wb", outfile))
   {
     my_sprintf(Error_Text,"Couldn't create %s\n",outname);
     Error(Error_Text);
@@ -371,9 +379,9 @@ int tgaflag;
   }
 
   if (optr!=obfr)
-    write(outfile,obfr,optr-obfr);
+    my_fwrite(obfr,optr-obfr,1,outfile);
 
-  close(outfile);
+  my_fclose(outfile);
 }
 
 static void putbyte(c)
@@ -383,7 +391,7 @@ int c;
 
   if (optr == obfr+OBFRSIZE)
   {
-    write(outfile,obfr,OBFRSIZE);
+    my_fwrite(obfr,OBFRSIZE,1,outfile);
     optr = obfr;
   }
 }
