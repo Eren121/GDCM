@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 09:15:19 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/10/26 13:00:15 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ protected:
    ~ElementSet();
    /// \brief Some group are illegal withing some Dicom Documents
    ///        Only the Document knows it.
-   bool MayIWrite(uint16_t gr)
+   bool MayIWrite(uint16_t )
                  { return true; }
 private:
 // Variables
