@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 07:15:31 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2005/10/26 13:16:45 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,7 +126,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    }
    else
    {
-      std::string ts  = file->GetTransferSyntax();
+      std::string ts = file->GetTransferSyntax();
 
    
 //   if ( ts == GDCM_UNKNOWN )
