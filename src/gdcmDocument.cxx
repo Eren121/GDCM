@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:55:00 $
-  Version:   $Revision: 1.313 $
+  Date:      $Date: 2005/10/27 10:18:22 $
+  Version:   $Revision: 1.314 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -609,7 +609,7 @@ std::ifstream *Document::OpenFile()
        zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
    {
       std::string msg = Util::Format(
-             "ACR/DICOM starting at the beginning of the file:(%04x)\n", zero);
+        "ACR/DICOM starting by 0x(%04x) at the beginning of the file\n", zero);
       // FIXME : is it a Warning message, or a Debug message?
       gdcmWarningMacro( msg.c_str() );
       return Fp;
