@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 11:55:45 $
-  Version:   $Revision: 1.315 $
+  Date:      $Date: 2005/10/27 16:52:44 $
+  Version:   $Revision: 1.316 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -531,7 +531,6 @@ double Document::SwapDouble(double a)
       case 1234 :
          break;
       case 4321 :
-         {
          char *beg = (char *)&a;
          char *end = beg + 7;
          char t;
@@ -543,7 +542,6 @@ double Document::SwapDouble(double a)
             beg++,
             end--;  
          }
-         }
          break;   
       default :
          gdcmErrorMacro( "Unexpected swap code:" << SwapCode );
@@ -551,7 +549,6 @@ double Document::SwapDouble(double a)
    }
    return a;
 } 
-
 
 //
 // -----------------File I/O ---------------
@@ -761,11 +758,18 @@ void Document::LoadEntryBinArea(DataEntry *entry)
    uint32_t i;
    unsigned short vrLgth = 
                         Global::GetVR()->GetAtomicElementLength(entry->GetVR());
+
+// FIXME : trouble expected if we read an ... OW Entry (LUT, etc ..)
    if( entry->GetVR() == "OW" )
       vrLgth = 1;
 
    switch(vrLgth)
    {
+      case 1:
+      {
+  std::cout << "Atomic lgt = 1 ; NO swap at reading" << std::endl;
+         break;
+      }     
       case 2:
       {
          uint16_t *data16 = (uint16_t *)data;
@@ -1534,7 +1538,7 @@ VRKey Document::FindDocEntryVR()
    // we used a heuristic that found "UL" in the first tag and/or
    // 'Transfer Syntax' told us it is.
    // Alas this doesn't guarantee that all the tags will be in explicit VR. 
-   // In some cases one finds implicit VR tags mixed within an explicit VR file
+   // In some cases one finds implicit VR tags mixed within an explicit VR file.
    // Hence we make sure the present tag is in explicit VR and try to fix things
    // if it happens not to be the case.
 
@@ -1785,12 +1789,12 @@ bool Document::CheckSwap()
       if ( net2host )
       {
          SwapCode = 4321;
-         gdcmDebugMacro( "HostByteOrder != NetworkByteOrder");
+         gdcmDebugMacro( "HostByteOrder != NetworkByteOrder, SwapCode = 4321");
       }
       else 
       {
          SwapCode = 1234;
-         gdcmDebugMacro( "HostByteOrder = NetworkByteOrder");
+         gdcmDebugMacro( "HostByteOrder = NetworkByteOrder, SwapCode = 1234");
       }
       
       // Position the file position indicator at first tag 
@@ -2126,12 +2130,18 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
    {
       Group0002Parsed = true;
       // we just came out of group 0002
-      // if Transfer syntax is Big Endian we have to change CheckSwap
+      // if Transfer Syntax is Big Endian we have to change CheckSwap
 
       std::string ts = GetTransferSyntax();
+      if ( ts == GDCM_UNKNOWN )
+      {
+         gdcmDebugMacro("True DICOM File, with NO Transfer Syntax (?!) " );
+         return;      
+      }
       if ( !Global::GetTS()->IsTransferSyntax(ts) )
       {
-         gdcmDebugMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
+         gdcmWarningMacro("True DICOM File, with illegal Transfer Syntax: [" 
+                          << ts << "]");
          return;
       }
 
@@ -2140,9 +2150,9 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
 
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
                                                     TS::ImplicitVRLittleEndian )
-         {
-            Filetype = ImplicitVR;
-         }
+      {
+         Filetype = ImplicitVR;
+      }
        
       // FIXME Strangely, this works with 
       //'Implicit VR BigEndian Transfer Syntax (GE Private)
