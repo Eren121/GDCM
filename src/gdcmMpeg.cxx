@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:59 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/27 19:05:36 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,62 +18,110 @@
 #include "gdcmDebug.h"
 
 #include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <fcntl.h>
+
+
+typedef struct
+{
+  std::ifstream InFd;
+} istream;
 extern "C" {
 #define GLOBAL
 #include "config.h"
 #include "global.h"
+}
 
-/* private prototypes */
-static int  video_sequence        _ANSI_ARGS_((int *framenum));
-static int  Decode_Bitstream      _ANSI_ARGS_((void));
-static int  Headers               _ANSI_ARGS_((void));
-static void Initialize_Sequence   _ANSI_ARGS_((void));
-static void Initialize_Decoder    _ANSI_ARGS_((void));
-static void Deinitialize_Sequence _ANSI_ARGS_((void));
-//static void Process_Options       _ANSI_ARGS_((int argc, char *argv[]));
 
-/* IMPLEMENTATION specific routines */
-static void Initialize_Decoder()
+off_t my_seek(istream *infile, off_t offset, int whence)
+{
+  //return fseek(infile->InFd,offset, whence);
+  switch(whence)
+    {
+    case SEEK_SET:
+      infile->InFd.seekg(offset, std::ios::beg);
+      break;
+    case SEEK_END:
+      infile->InFd.seekg(offset, std::ios::end);
+      break;
+    case SEEK_CUR:
+      infile->InFd.seekg(offset, std::ios::cur);
+      break;
+    }
+  return infile->InFd.tellg();
+}
+ssize_t my_read(istream *infile, void *buf, size_t count)
+{
+  //return fread(buf,1,count, infile->InFd);
+  infile->InFd.read((char*)buf, count);
+  return infile->InFd.gcount();
+}
+
+int my_close(istream *infile)
+{
+  //return fclose(infile->InFd);
+  infile->InFd.close();
+  return 0;
+}
+
+namespace gdcm 
+{
+/**
+ * \brief   routine for MPEG decompression 
+ * @param fp pointer to an already open file descriptor 
+ *                      8 significant bits per pixel
+ * @param image_buffer to receive uncompressed pixels
+ * @param length length
+ * @return 1 on success, 0 on error
+ */
+static int Headers();
+static void DeInitialize_Decoder()
+{
+  free(Clip-384); /* I love magic number */
+}
+static void Deinitialize_Sequence()
 {
   int i;
 
-  /* Clip table */
-  if ( !(Clip=(unsigned char *)malloc(1024)) )
-    Error("Clip[] malloc failed\n");
+  /* First cleanup the static buffer in store.c */
+  FreeStaticBuffer();
 
-  Clip += 384;
+  /* clear flags */
+  base.MPEG2_Flag=0;
 
-  for (i=-384; i<640; i++)
-    Clip[i] = (i<0) ? 0 : ((i>255) ? 255 : i);
+  for(i=0;i<3;i++)
+  {
+    free(backward_reference_frame[i]);
+    free(forward_reference_frame[i]);
+    free(auxframe[i]);
 
-  /* IDCT */
-  if ( Reference_IDCT_Flag )
-    Initialize_Reference_IDCT();
-  else
-    Initialize_Fast_IDCT();
+    if (base.scalable_mode==SC_SPAT)
+    {
+     free(llframe0[i]);
+     free(llframe1[i]);
+    }
+  }
 
+  if (base.scalable_mode==SC_SPAT)
+    free(lltmp);
+
+#ifdef DISPLAY
+  if (Output_Type==T_X11) 
+    Terminate_Display_Process();
+#endif
 }
 
-/* mostly IMPLEMENTATION specific routines */
+/* mostly IMPLEMENTAION specific routines */
 static void Initialize_Sequence()
 {
   int cc, size;
   static int Table_6_20[3] = {6,8,12};
 
   /* check scalability mode of enhancement layer */
-  if ( Two_Streams && (enhan.scalable_mode!=SC_SNR) 
-      &&
-       (base.scalable_mode!=SC_DP) )
-  {
-     Error("unsupported scalability mode\n");
-  }
+  if (Two_Streams && (enhan.scalable_mode!=SC_SNR) && (base.scalable_mode!=SC_DP))
+    Error("unsupported scalability mode\n");
+
   /* force MPEG-1 parameters for proper decoder behavior */
   /* see ISO/IEC 13818-2 section D.9.14 */
-  if ( !base.MPEG2_Flag )
+  if (!base.MPEG2_Flag)
   {
     progressive_sequence = 1;
     progressive_frame = 1;
@@ -103,39 +151,39 @@ static void Initialize_Sequence()
 
   for (cc=0; cc<3; cc++)
   {
-    if ( cc==0 )
+    if (cc==0)
       size = Coded_Picture_Width*Coded_Picture_Height;
     else
       size = Chroma_Width*Chroma_Height;
 
-    if ( !(backward_reference_frame[cc] = (unsigned char *)malloc(size)) )
+    if (!(backward_reference_frame[cc] = (unsigned char *)malloc(size)))
       Error("backward_reference_frame[] malloc failed\n");
 
-    if ( !(forward_reference_frame[cc] = (unsigned char *)malloc(size)) )
+    if (!(forward_reference_frame[cc] = (unsigned char *)malloc(size)))
       Error("forward_reference_frame[] malloc failed\n");
 
-    if ( !(auxframe[cc] = (unsigned char *)malloc(size)) )
+    if (!(auxframe[cc] = (unsigned char *)malloc(size)))
       Error("auxframe[] malloc failed\n");
 
-    if (  Ersatz_Flag )
-      if ( !(substitute_frame[cc] = (unsigned char *)malloc(size)) )
+    if(Ersatz_Flag)
+      if (!(substitute_frame[cc] = (unsigned char *)malloc(size)))
         Error("substitute_frame[] malloc failed\n");
 
 
-    if ( base.scalable_mode==SC_SPAT )
+    if (base.scalable_mode==SC_SPAT)
     {
       /* this assumes lower layer is 4:2:0 */
-      if ( !(llframe0[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
+      if (!(llframe0[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
         Error("llframe0 malloc failed\n");
-      if ( !(llframe1[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
+      if (!(llframe1[cc] = (unsigned char *)malloc((lower_layer_prediction_horizontal_size*lower_layer_prediction_vertical_size)/(cc?4:1))))
         Error("llframe1 malloc failed\n");
     }
   }
 
   /* SCALABILITY: Spatial */
-  if ( base.scalable_mode==SC_SPAT )
+  if (base.scalable_mode==SC_SPAT)
   {
-    if ( !(lltmp = (short *)malloc(lower_layer_prediction_horizontal_size*((lower_layer_prediction_vertical_size*vertical_subsampling_factor_n)/vertical_subsampling_factor_m)*sizeof(short))))
+    if (!(lltmp = (short *)malloc(lower_layer_prediction_horizontal_size*((lower_layer_prediction_vertical_size*vertical_subsampling_factor_n)/vertical_subsampling_factor_m)*sizeof(short))))
       Error("lltmp malloc failed\n");
   }
 
@@ -148,104 +196,8 @@ static void Initialize_Sequence()
 #endif /* DISPLAY */
 
 }
-
-extern void Error(char *text)
-{
-  fprintf(stderr,text);
-  exit(1);
-}
-
-/* Trace_Flag output */
-void Print_Bits(int code, int bits, int len)
-{
-  int i;
-  for (i=0; i<len; i++)
-    printf("%d",(code>>(bits-1-i))&1);
-}
-
-static int Headers()
-{
-  int ret;
-
-  ld = &base;
-  
-  /* return when end of sequence (0) or picture
-     header has been parsed (1) */
-
-  ret = Get_Hdr();
-
-
-  if (Two_Streams)
-  {
-    ld = &enhan;
-    if (Get_Hdr()!=ret && !Quiet_Flag)
-      fprintf(stderr,"streams out of sync\n");
-    ld = &base;
-  }
-
-  return ret;
-}
-
-
-
-static int Decode_Bitstream()
-{
-  int ret;
-  int Bitstream_Framenum;
-
-  Bitstream_Framenum = 0;
-
-  for(;;)
-  {
-
-#ifdef VERIFY
-    Clear_Verify_Headers();
-#endif /* VERIFY */
-
-    ret = Headers();
-    
-    if ( ret==1 )
-    {
-      ret = video_sequence(&Bitstream_Framenum);
-    }
-    else
-      return(ret);
-  }
-
-}
-
-
-static void Deinitialize_Sequence()
-{
-  int i;
-
-  /* clear flags */
-  base.MPEG2_Flag=0;
-
-  for(i=0;i<3;i++)
-  {
-    free(backward_reference_frame[i]);
-    free(forward_reference_frame[i]);
-    free(auxframe[i]);
-
-    if ( base.scalable_mode==SC_SPAT )
-    {
-     free(llframe0[i]);
-     free(llframe1[i]);
-    }
-  }
-
-  if ( base.scalable_mode==SC_SPAT )
-    free(lltmp);
-
-#ifdef DISPLAY
-  if ( Output_Type==T_X11 ) 
-    Terminate_Display_Process();
-#endif
-}
-
-
 static int video_sequence(int *Bitstream_Framenumber)
+//int *Bitstream_Framenumber;
 {
   int Bitstream_Framenum;
   int Sequence_Framenum;
@@ -263,7 +215,7 @@ static int video_sequence(int *Bitstream_Framenumber)
   Decode_Picture(Bitstream_Framenum, Sequence_Framenum);
 
   /* update picture numbers */
-  if ( !Second_Field )
+  if (!Second_Field)
   {
     Bitstream_Framenum++;
     Sequence_Framenum++;
@@ -274,7 +226,7 @@ static int video_sequence(int *Bitstream_Framenumber)
   {
     Decode_Picture(Bitstream_Framenum, Sequence_Framenum);
 
-    if ( !Second_Field )
+    if (!Second_Field)
     {
       Bitstream_Framenum++;
       Sequence_Framenum++;
@@ -296,60 +248,471 @@ static int video_sequence(int *Bitstream_Framenumber)
   *Bitstream_Framenumber = Bitstream_Framenum;
   return(Return_Value);
 }
-} // End "C" extern
 
-namespace gdcm 
+static int Headers()
 {
-/**
- * \brief   routine for MPEG decompression 
- * @param fp pointer to an already open file descriptor 
- *                      8 significant bits per pixel
- * @param image_buffer to receive uncompressed pixels
- * @param length length
- * @return 1 on success, 0 on error
- */
+  int ret;
+
+  ld = &base;
+  
+
+  /* return when end of sequence (0) or picture
+     header has been parsed (1) */
+
+  ret = Get_Hdr();
+
+
+  if (Two_Streams)
+  {
+    ld = &enhan;
+    if (Get_Hdr()!=ret && !Quiet_Flag)
+      fprintf(stderr,"streams out of sync\n");
+    ld = &base;
+  }
+
+  return ret;
+}
+static int Decode_Bitstream()
+{
+  int ret;
+  int Bitstream_Framenum;
+
+  Bitstream_Framenum = 0;
+
+  for(;;)
+  {
+
+#ifdef VERIFY
+    Clear_Verify_Headers();
+#endif /* VERIFY */
+
+    ret = Headers();
+    
+    if(ret==1)
+    {
+      ret = video_sequence(&Bitstream_Framenum);
+    }
+    else
+      return(ret);
+  }
+
+}
+
+
+/* IMPLEMENTATION specific routines */
+static void Initialize_Decoder()
+{
+  int i;
+
+  /* Clip table */
+  if (!(Clip=(unsigned char *)malloc(1024)))
+    Error("Clip[] malloc failed\n");
+
+  Clip += 384;
+
+  for (i=-384; i<640; i++)
+    Clip[i] = (i<0) ? 0 : ((i>255) ? 255 : i);
+
+  /* IDCT */
+  if (Reference_IDCT_Flag)
+    Initialize_Reference_IDCT();
+  else
+    Initialize_Fast_IDCT();
+
+}
+
+/* option processing */
+static void Process_Options(int argc, const char *argv[])
+//int argc;                  /* argument count  */
+//char *argv[];              /* argument vector */
+{
+  int i, LastArg, NextArg;
+
+  /* at least one argument should be present */
+  if (argc<2)
+  {
+    printf("\n%s, %s\n",Version,Author);
+    printf("Usage:  mpeg2decode {options}\n"
+"Options: -b  file  main bitstream (base or spatial enhancement layer)\n"
+"         -cn file  conformance report (n: level)\n"
+"         -e  file  enhancement layer bitstream (SNR or Data Partitioning)\n"
+"         -f        store/display interlaced video in frame format\n"
+"         -g        concatenated file format for substitution method (-x)\n"
+"         -in file  information & statistics report  (n: level)\n"
+"         -l  file  file name pattern for lower layer sequence\n");
+printf("                   (for spatial scalability)\n"
+"         -on file  output format (0:YUV 1:SIF 2:TGA 3:PPM 4:X11 5:X11HiQ)\n"
+"         -q        disable warnings to stderr\n"
+"         -r        use double precision reference IDCT\n"
+"         -t        enable low level tracing to stdout\n"
+"         -u  file  print user_data to stdio or file\n"
+"         -vn       verbose output (n: level)\n"
+"         -x  file  filename pattern of picture substitution sequence\n\n");
+printf("File patterns:  for sequential filenames, \"printf\" style, e.g. rec%%d\n"
+"                 or rec%%d%%c for fieldwise storage\n"
+"Levels:        0:none 1:sequence 2:picture 3:slice 4:macroblock 5:block\n\n"
+"Example:       mpeg2decode -b bitstream.mpg -f -r -o0 rec%%d\n"
+"         \n");
+    exit(0);
+  }
+
+
+  Output_Type = -1;
+  i = 1;
+
+  /* command-line options are proceeded by '-' */
+
+  while(i < argc)
+  {
+    /* check if this is the last argument */
+    LastArg = ((argc-i)==1);
+
+    /* parse ahead to see if another flag immediately follows current
+       argument (this is used to tell if a filename is missing) */
+    if(!LastArg)
+      NextArg = (argv[i+1][0]=='-');
+    else
+      NextArg = 0;
+
+    /* second character, [1], after '-' is the switch */
+    if(argv[i][0]=='-')
+    {
+      switch(toupper(argv[i][1]))
+      {
+        /* third character. [2], is the value */
+      case 'B':
+        Main_Bitstream_Flag = 1;
+
+        if(NextArg || LastArg)
+        {
+          printf("ERROR: -b must be followed the main bitstream filename\n");
+        }
+        else
+          Main_Bitstream_Filename = argv[++i]; 
+
+        break;
+
+
+      case 'C':
+
+#ifdef VERIFY
+        Verify_Flag = atoi(&argv[i][2]); 
+
+        if((Verify_Flag < NO_LAYER) || (Verify_Flag > ALL_LAYERS))
+        {
+          printf("ERROR: -c level (%d) out of range [%d,%d]\n",
+            Verify_Flag, NO_LAYER, ALL_LAYERS);
+          exit(ERROR);
+        }
+#else  /* VERIFY */
+        printf("This program not compiled for Verify_Flag option\n");
+#endif /* VERIFY */
+        break;
+
+      case 'E':
+        Two_Streams = 1; /* either Data Partitioning (DP) or SNR Scalability enhancment */
+                   
+        if(NextArg || LastArg)
+        {
+          printf("ERROR: -e must be followed by filename\n");
+          exit(ERROR);
+        }
+        else
+          Enhancement_Layer_Bitstream_Filename = argv[++i]; 
+
+        break;
+
+
+      case 'F':
+        Frame_Store_Flag = 1;
+        break;
+
+      case 'G':
+        Big_Picture_Flag = 1;
+        break;
+
+
+      case 'I':
+#ifdef VERIFY
+        Stats_Flag = atoi(&argv[i][2]); 
+#else /* VERIFY */
+        printf("WARNING: This program not compiled for -i option\n");
+#endif /* VERIFY */     
+        break;
+    
+      case 'L':  /* spatial scalability flag */
+        Spatial_Flag = 1;
+
+       if(NextArg || LastArg)
+       {
+         printf("ERROR: -l must be followed by filename\n");
+         exit(ERROR);
+       }
+       else
+         Lower_Layer_Picture_Filename = argv[++i]; 
+
+        break;
+
+      case 'O':
+  
+        Output_Type = atoi(&argv[i][2]); 
+  
+        if((Output_Type==4) || (Output_Type==5))
+          Output_Picture_Filename = "";  /* no need of filename */
+        else if(NextArg || LastArg)  
+        {
+          printf("ERROR: -o must be followed by filename\n");
+          exit(ERROR);
+        }
+        else
+        /* filename is separated by space, so it becomes the next argument */
+          Output_Picture_Filename = argv[++i]; 
+
+#ifdef DISPLAY
+        if (Output_Type==T_X11HIQ)
+        {
+          hiQdither = 1;
+          Output_Type=T_X11;
+        }
+#endif /* DISPLAY */
+        break;
+
+      case 'Q':
+        Quiet_Flag = 1;
+        break;
+
+      case 'R':
+        Reference_IDCT_Flag = 1;
+        break;
+    
+      case 'T':
+#ifdef TRACE
+        Trace_Flag = 1;
+#else /* TRACE */
+        printf("WARNING: This program not compiled for -t option\n");
+#endif /* TRACE */
+        break;
+
+      case 'U':
+        User_Data_Flag = 1;
+
+      case 'V':
+#ifdef VERBOSE
+        Verbose_Flag = atoi(&argv[i][2]); 
+#else /* VERBOSE */
+        printf("This program not compiled for -v option\n");
+#endif /* VERBOSE */
+        break;
+
+
+      case 'X':
+        Ersatz_Flag = 1;
+
+       if(NextArg || LastArg)
+       {
+         printf("ERROR: -x must be followed by filename\n"); 
+         exit(ERROR);
+       }
+       else
+        Substitute_Picture_Filename = argv[++i]; 
+
+        break;
+
+
+
+      default:
+        fprintf(stderr,"undefined option -%c ignored. Exiting program\n", 
+          argv[i][1]);
+
+        exit(ERROR);
+    
+      } /* switch() */
+    } /* if argv[i][0] == '-' */
+    
+    i++;
+
+    /* check for bitstream filename argument (there must always be one, at the very end
+     of the command line arguments */
+
+  } /* while() */
+
+
+  /* options sense checking */
+
+  if(Main_Bitstream_Flag!=1)
+  {
+    printf("There must be a main bitstream specified (-b filename)\n");
+  }
+
+  /* force display process to show frame pictures */
+  if((Output_Type==4 || Output_Type==5) && Frame_Store_Flag)
+    Display_Progressive_Flag = 1;
+  else
+    Display_Progressive_Flag = 0;
+
+#ifdef VERIFY
+  /* parse the bitstream, do not actually decode it completely */
+  
+
+#if 0
+  if(Output_Type==-1)
+  {
+    Decode_Layer = Verify_Flag;
+    printf("FYI: Decoding bitstream elements up to: %s\n", 
+      Layer_Table[Decode_Layer]);
+  }
+  else
+#endif
+    Decode_Layer = ALL_LAYERS;
+
+#endif /* VERIFY */
+
+  /* no output type specified */
+  if(Output_Type==-1)
+  {
+    Output_Type = 9; 
+    Output_Picture_Filename = "";
+  }
+
+
+#ifdef DISPLAY
+  if (Output_Type==T_X11)
+  {
+    if(Frame_Store_Flag)
+      Display_Progressive_Flag = 1;
+    else
+      Display_Progressive_Flag = 0;
+
+    Frame_Store_Flag = 1; /* to avoid calling dither() twice */
+  }
+#endif
+
+
+}
+
+static void Clear_Options()
+{
+  Verbose_Flag = 0;
+  Output_Type = 0;
+  Output_Picture_Filename = " ";
+  hiQdither  = 0;
+  Output_Type = 0;
+  Frame_Store_Flag = 0;
+  Spatial_Flag = 0;
+  Lower_Layer_Picture_Filename = " ";
+  Reference_IDCT_Flag = 0;
+  Trace_Flag = 0;
+  Quiet_Flag = 0;
+  Ersatz_Flag = 0;
+  Substitute_Picture_Filename  = " ";
+  Two_Streams = 0;
+  Enhancement_Layer_Bitstream_Filename = " ";
+  Big_Picture_Flag = 0;
+  Main_Bitstream_Flag = 0;
+  Main_Bitstream_Filename = " ";
+  Verify_Flag = 0;
+  Stats_Flag  = 0;
+  User_Data_Flag = 0; 
+}
+static void Print_Options()
+{
+  
+  printf("Verbose_Flag                         = %d\n", Verbose_Flag);
+  printf("Output_Type                          = %d\n", Output_Type);
+  printf("Output_Picture_Filename              = %s\n", Output_Picture_Filename);
+  printf("hiQdither                            = %d\n", hiQdither);
+  printf("Output_Type                          = %d\n", Output_Type);
+  printf("Frame_Store_Flag                     = %d\n", Frame_Store_Flag);
+  printf("Spatial_Flag                         = %d\n", Spatial_Flag);
+  printf("Lower_Layer_Picture_Filename         = %s\n", Lower_Layer_Picture_Filename);
+  printf("Reference_IDCT_Flag                  = %d\n", Reference_IDCT_Flag);
+  printf("Trace_Flag                           = %d\n", Trace_Flag);
+  printf("Quiet_Flag                           = %d\n", Quiet_Flag);
+  printf("Ersatz_Flag                          = %d\n", Ersatz_Flag);
+  printf("Substitute_Picture_Filename          = %s\n", Substitute_Picture_Filename);
+  printf("Two_Streams                          = %d\n", Two_Streams);
+  printf("Enhancement_Layer_Bitstream_Filename = %s\n", Enhancement_Layer_Bitstream_Filename);
+  printf("Big_Picture_Flag                     = %d\n", Big_Picture_Flag);
+  printf("Main_Bitstream_Flag                  = %d\n", Main_Bitstream_Flag);
+  printf("Main_Bitstream_Filename              = %s\n", Main_Bitstream_Filename);
+  printf("Verify_Flag                          = %d\n", Verify_Flag);
+  printf("Stats_Flag                           = %d\n", Stats_Flag);
+  printf("User_Data_Flag                       = %d\n", User_Data_Flag);
+
+}
 
 bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
 {
-  int ret, code;
-
-#if 0
+#if 1
   fp->read((char*)image_buffer, length);
-
-  ofstream out("/tmp/etiam.mpeg");
+  std::ofstream out("/tmp/etiam.mpeg");
   out.write((char*)image_buffer, length);
   out.close();
 #endif
 
+  int ret, code;
+  istream bos,eos;
+  /*base.open_stream = my_open;*/
+  base.seek_stream = my_seek;
+  base.read_stream = my_read;
+  base.close_stream = my_close;
+
 //  Clear_Options();
-
-  /* decode command line arguments */
+//  int argc = 7;
+//  const char *argv[] = {"mpeg2decode", "-b", "/tmp/etiam.mpeg", "-f", "-r", "-o3", "/tmp/rec%d"};
+//
+//  /* decode command line arguments */
 //  Process_Options(argc,argv);
+//  Print_Options();
+ 
+  Verbose_Flag                         = 0;
+  Output_Type                          = 3;
+  Output_Picture_Filename              = "/tmp/rec%d";
+  hiQdither                            = 0;
+  Output_Type                          = 3;
+  Frame_Store_Flag                     = 1;
+  Spatial_Flag                         = 0;
+  Lower_Layer_Picture_Filename         = "";
+  Reference_IDCT_Flag                  = 1;
+  Trace_Flag                           = 0;
+  Quiet_Flag                           = 0;
+  Ersatz_Flag                          = 0;
+  Substitute_Picture_Filename          = "";
+  Two_Streams                          = 0;
+  Enhancement_Layer_Bitstream_Filename = "";
+  Big_Picture_Flag                     = 0;
+  Main_Bitstream_Flag                  = 1;
+  Main_Bitstream_Filename              = "/tmp/etiam.mpeg";
+  Verify_Flag                          = 0;
+  Stats_Flag                           = 0;
+  User_Data_Flag                       = 0;
 
-#ifdef DEBUG
-  Print_Options();
-#endif
 
   ld = &base; /* select base layer context */
 
   /* open MPEG base layer bitstream file(s) */
   /* NOTE: this is either a base layer stream or a spatial enhancement stream */
-#if 0
-  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+/*  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0) */
+  /*base.Infile = ld->open_stream(Main_Bitstream_Filename);*/
+  base.Infile = &bos;
+#ifdef FILESTAR
+  //base.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
+  base.Infile->InFd.open(Main_Bitstream_Filename, std::ios::binary | std::ios::in);
+#else
+  base.Infile->InFd = open(Main_Bitstream_Filename,O_RDONLY|O_BINARY );
+#endif
+  if( !base.Infile->InFd)
   {
     fprintf(stderr,"Base layer input file %s not found\n", Main_Bitstream_Filename);
     exit(1);
   }
-#else
-  base.Infile = -1; //DEBUG
-#endif
 
 
-  if ( base.Infile != 0 )
+  if(base.Infile != 0)
   {
-    Initialize_Buffer(); 
-  
-    if ( Show_Bits(8)==0x47 )
+    Initialize_Buffer();
+
+    if(Show_Bits(8)==0x47)
     {
       sprintf(Error_Text,"Decoder currently does not parse transport streams\n");
       Error(Error_Text);
@@ -373,25 +736,33 @@ bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
       break;
     }
 
-    //lseek(base.Infile, 0l, SEEK_SET);
-    //fp->seekg(mpeg_start, ios_base::beg);
+    /*lseek(base.Infile, 0l, SEEK_SET);*/
+    ld->seek_stream(base.Infile,0l,SEEK_SET);
     Initialize_Buffer(); 
   }
 
-  if ( base.Infile!=0 )
+  if(base.Infile!=0)
   {
-    //lseek(base.Infile, 0l, SEEK_SET);
-    //fp->seekg(mpeg_start, ios_base::beg);
+    /*lseek(base.Infile, 0l, SEEK_SET);*/
+    ld->seek_stream(base.Infile,0l,SEEK_SET);
   }
 
   Initialize_Buffer(); 
 
-  if ( Two_Streams )
+  if(Two_Streams)
   {
-  abort();
     ld = &enhan; /* select enhancement layer context */
 
-    if ( (enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)
+    /*if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)*/
+    /*enhan.Infile = ld->open_stream(Enhancement_Layer_Bitstream_Filename);*/
+    enhan.Infile = &eos;
+#ifdef FILESTAR
+    //enhan.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
+    enhan.Infile->InFd.open(Main_Bitstream_Filename, std::ios::binary|std::ios::in);
+#else
+    enhan.Infile->InFd = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY);
+#endif
+    if (enhan.Infile->InFd)
     {
       sprintf(Error_Text,"enhancment layer bitstream file %s not found\n",
         Enhancement_Layer_Bitstream_Filename);
@@ -407,13 +778,14 @@ bool ReadMPEGFile (std::ifstream *fp, void *image_buffer, size_t length)
 
   ret = Decode_Bitstream();
 
-  //close(base.Infile);
+  /*close(base.Infile);*/
+  ld->close_stream(base.Infile);
 
-  if ( Two_Streams )
-    {
-    abort();
-    close(enhan.Infile);
-    }
+  if (Two_Streams)
+    /*close(enhan.Infile);*/
+    ld->close_stream(enhan.Infile);
+
+  DeInitialize_Decoder();
 
   return ret;
 }
