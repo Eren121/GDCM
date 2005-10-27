@@ -42,10 +42,14 @@ static void store_sif _ANSI_ARGS_((char *outname, unsigned char *src[],
   int offset, int incr, int height));
 static void store_ppm_tga _ANSI_ARGS_((char *outname, unsigned char *src[],
   int offset, int incr, int height, int tgaflag));
+static void store_in_mem _ANSI_ARGS_((char *outmem, unsigned char *src[],
+  int offset, int incr, int height));
 static void store_yuv1 _ANSI_ARGS_((char *name, unsigned char *src,
   int offset, int incr, int width, int height));
 static void putbyte _ANSI_ARGS_((int c));
 static void putword _ANSI_ARGS_((int w));
+static void mem_putbyte _ANSI_ARGS_((int c));
+/*static void mem_putword _ANSI_ARGS_((int w));*/
 static void conv422to444 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 static void conv420to422 _ANSI_ARGS_((unsigned char *src, unsigned char *dst));
 
@@ -110,6 +114,9 @@ int offset, incr, height;
     break;
   case T_PPM:
     store_ppm_tga(outname,src,offset,incr,height,0);
+    break;
+  case T_MEM:
+    store_in_mem(OUTMEM,src,offset,incr,height);
     break;
 #ifdef DISPLAY
   case T_X11:
@@ -395,6 +402,150 @@ int tgaflag;
   my_fclose(outfile);
 }
 
+/*
+ * store as PPM (PBMPLUS) or uncompressed Truevision TGA ('Targa') file
+ */
+static void store_in_mem(outmem,src,offset,incr,height)
+char *outmem;
+unsigned char *src[];
+int offset, incr, height;
+{
+  int i, j;
+  int y, u, v, r, g, b;
+  int crv, cbu, cgu, cgv;
+  unsigned char *py, *pu, *pv;
+  /*static unsigned char tga24[14] = {0,0,2,0,0,0,0, 0,0,0,0,0,24,32};*/
+  /*char header[FILENAME_LENGTH];*/
+  static unsigned char *u422, *v422, *u444, *v444;
+  /*ostream file;*/
+  outmem = OUTMEM;
+
+  if (chroma_format==CHROMA444)
+  {
+    u444 = src[1];
+    v444 = src[2];
+  }
+  else
+  {
+    if (!u444)
+    {
+      if (chroma_format==CHROMA420)
+      {
+        if (!(u422 = (unsigned char *)malloc((Coded_Picture_Width>>1)
+                                             *Coded_Picture_Height)))
+          Error("malloc failed");
+        static_malloc[2] = u422;
+        if (!(v422 = (unsigned char *)malloc((Coded_Picture_Width>>1)
+                                             *Coded_Picture_Height)))
+          Error("malloc failed");
+        static_malloc[3] = v422;
+      }
+
+      if (!(u444 = (unsigned char *)malloc(Coded_Picture_Width
+                                           *Coded_Picture_Height)))
+        Error("malloc failed");
+      static_malloc[4] = u444;
+
+      if (!(v444 = (unsigned char *)malloc(Coded_Picture_Width
+                                           *Coded_Picture_Height)))
+        Error("malloc failed");
+      static_malloc[5] = v444;
+    }
+
+    if (chroma_format==CHROMA420)
+    {
+      conv420to422(src[1],u422);
+      conv420to422(src[2],v422);
+      conv422to444(u422,u444);
+      conv422to444(v422,v444);
+    }
+    else
+    {
+      conv422to444(src[1],u444);
+      conv422to444(src[2],v444);
+    }
+  }
+
+  /*strcat(outname,tgaflag ? ".tga" : ".ppm");*/
+
+  /*if (!Quiet_Flag)
+    my_fprintf("saving %s\n",outname);*/
+
+ /* outfile = &file;
+  if(! my_fopen(outname, "wb", outfile))
+  {
+    my_sprintf(Error_Text,"Couldn't create %s\n",outname);
+    Error(Error_Text);
+  }*/
+
+  optr = obfr;
+
+#if 0
+  if (tgaflag)
+  {
+    /* TGA header */
+    for (i=0; i<12; i++)
+      putbyte(tga24[i]);
+
+    putword(horizontal_size); putword(height);
+    putbyte(tga24[12]); putbyte(tga24[13]);
+  }
+  else
+  {
+    /* PPM header */
+    my_sprintf(header,"P6\n%d %d\n255\n",horizontal_size,height);
+
+    for (i=0; header[i]!=0; i++)
+      putbyte(header[i]);
+  }
+#endif
+
+  /* matrix coefficients */
+  crv = Inverse_Table_6_9[matrix_coefficients][0];
+  cbu = Inverse_Table_6_9[matrix_coefficients][1];
+  cgu = Inverse_Table_6_9[matrix_coefficients][2];
+  cgv = Inverse_Table_6_9[matrix_coefficients][3];
+  
+  for (i=0; i<height; i++)
+  {
+    py = src[0] + offset + incr*i;
+    pu = u444 + offset + incr*i;
+    pv = v444 + offset + incr*i;
+
+    for (j=0; j<horizontal_size; j++)
+    {
+      u = *pu++ - 128;
+      v = *pv++ - 128;
+      y = 76309 * (*py++ - 16); /* (255/219)*65536 */
+      r = Clip[(y + crv*v + 32768)>>16];
+      g = Clip[(y - cgu*u - cgv*v + 32768)>>16];
+      b = Clip[(y + cbu*u + 32786)>>16];
+
+
+#if 0
+      if (tgaflag)
+      {
+        putbyte(b); putbyte(g); putbyte(r);
+      }
+      else
+      {
+        putbyte(r); putbyte(g); putbyte(b);
+      }
+#else
+     mem_putbyte(r); mem_putbyte(g); mem_putbyte(b);
+#endif
+    }
+  }
+
+  if (optr!=obfr)
+    {
+    /*my_fwrite(obfr,optr-obfr,1,outfile);*/
+    memcpy(OUTMEM,obfr,optr-obfr); OUTMEM+=(optr-obfr);
+    }
+
+  /*my_fclose(outfile);*/
+}
+
 static void putbyte(c)
 int c;
 {
@@ -412,6 +563,25 @@ int w;
 {
   putbyte(w); putbyte(w>>8);
 }
+
+static void mem_putbyte(c)
+int c;
+{
+  *optr++ = c;
+
+  if (optr == obfr+OBFRSIZE)
+  {
+    /*my_fwrite(obfr,OBFRSIZE,1,outfile);*/
+    memcpy(OUTMEM,obfr,OBFRSIZE);OUTMEM+=OBFRSIZE;
+    optr = obfr;
+  }
+}
+
+/*static void mem_putword(w)
+int w;
+{
+  mem_putbyte(w); mem_putbyte(w>>8);
+}*/
 
 /* horizontal 1:2 interpolation filter */
 static void conv422to444(src,dst)

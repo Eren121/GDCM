@@ -238,6 +238,7 @@ EXTERN int Inverse_Table_6_9[8][4]
 #define T_PPM   3
 #define T_X11   4
 #define T_X11HIQ 5
+#define T_MEM    6
 
 /* decoder operation control variables */
 EXTERN int Output_Type;
@@ -268,6 +269,8 @@ EXTERN const char *Substitute_Picture_Filename;
 EXTERN const char *Main_Bitstream_Filename; 
 EXTERN const char *Enhancement_Layer_Bitstream_Filename; 
 
+/* Pointer to allocated memory */
+EXTERN char *OUTMEM;
 
 /* buffers for multiuse purposes */
 EXTERN char Error_Text[256];
