@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/26 08:28:58 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/10/27 17:25:04 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1340,6 +1340,9 @@ void FileHelper::CheckMandatoryElements()
                        << " for consistency purpose");
    }
 
+    // Imager Pixel Spacing : defaulted to 1.0\1.0
+    // --> This one is the *legal* one !
+   CheckMandatoryEntry(0x0018,0x1164,"1.0\\1.0");
     // Pixel Spacing : defaulted to 1.0\1.0
    CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
 
