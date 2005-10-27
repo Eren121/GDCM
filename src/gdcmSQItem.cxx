@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:48 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/10/27 09:52:33 $
+  Version:   $Revision: 1.78 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,7 +154,7 @@ bool SQItem::RemoveEntry( DocEntry *entryToRemove )
       if ( *it == entryToRemove )
       {
          DocEntries.erase(it);
-         gdcmWarningMacro( "One element erased: " << entryToRemove->GetKey() );
+         gdcmDebugMacro( "One element erased: " << entryToRemove->GetKey() );
          entryToRemove->Unregister();
          return true;
       }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 06:23:37 $
-  Version:   $Revision: 1.297 $
+  Date:      $Date: 2005/10/27 09:52:33 $
+  Version:   $Revision: 1.298 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -863,7 +863,6 @@ int File::GetPlanarConfiguration()
    DataEntry *entry = GetDataEntry(0x0028,0x0006);
    if( !entry )
    {
-      gdcmWarningMacro( "Not found : Planar Configuration (0028,0006)");
       return 0;
    }
    return (int)entry->GetValue(0);
