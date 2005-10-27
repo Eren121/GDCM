@@ -132,8 +132,9 @@ CHECK_INCLUDE_FILE("stdint.h"       CMAKE_HAVE_STDINT_H)
 IF(UNIX) #Avoid polluting Win32 cmakecache
   CHECK_INCLUDE_FILE("inttypes.h"     CMAKE_HAVE_INTTYPES_H)
 ENDIF(UNIX)
-# Special JPR, don't know what he is doing...
+# Special Time support, two convention: *NIX vs Win32
 CHECK_INCLUDE_FILE("sys/times.h"     CMAKE_HAVE_SYS_TIMES_H)
+CHECK_INCLUDE_FILE("sys/timeb.h"     CMAKE_HAVE_SYS_TIMEB_H)
 
 # Check if header file exists and add it to the list.
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
