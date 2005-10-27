@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 16:15:38 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2005/10/27 09:51:28 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,7 +114,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    //PixelSize       = file->GetPixelSize();  Useless
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
-   
+ 
    if (! file->IsDicomV3() )  // Should be ACR-NEMA file
    {
       IsRaw = true;
@@ -128,22 +128,38 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    {
       std::string ts = file->GetTransferSyntax();
 
-      IsRaw =
-           Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian
-        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE
-        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian
-        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian
-        || Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian;
-     
+      IsRaw = false;
+      while (true)
+      {
+         // mind the order : check the most usual first.
+         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian)         break;
+         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )        break;
+         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian)            break;
+         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE)   break;
+         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian) break;
+         break;
+      }
+          
       IsPrivateGETransferSyntax = 
                 ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
 
-      IsMPEG          = Global::GetTS()->IsMPEG(ts);
-      IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts);
-      IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts);
-      IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts);
-      IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts);
-      IsRLELossless   = Global::GetTS()->IsRLELossless(ts);
+      IsMPEG =  IsJPEG2000 =  IsJPEGLS =  IsJPEGLossy =  IsJPEGLossless = IsRLELossless = false;  
+
+      if (!IsRaw)
+      {     
+         while(true)
+         {
+            // mind the order : check the most usual first.
+            if( IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts) )    break;
+            if( IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts) ) break;
+            if( IsRLELossless   = Global::GetTS()->IsRLELossless(ts) )  break;
+            if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
+            if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
+            if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
+            gdcmWarningMacro("Unexepected Transfer Syntax :[" << ts << "]");
+            break;
+         } 
+      }
    }
 
    PixelOffset     = file->GetPixelOffset();
@@ -168,7 +184,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutGreenDescriptor = file->GetEntryString( 0x0028, 0x1102 );
       LutBlueDescriptor  = file->GetEntryString( 0x0028, 0x1103 );
    
-      // The following comment is probabely meaningless, since LUT are *always*
+      // FIXME : The following comment is probabely meaningless, since LUT are *always*
       // loaded at parsing time, whatever their length is.
          
       // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
