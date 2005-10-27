@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:08 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/10/27 14:12:24 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,6 @@ void DictEntry::Print(std::ostream &os, std::string const &indent )
 {
    DicomEntry::Print(os,indent);
 
-   VRKey vr;
    std::ostringstream s;
 
    if ( PrintLevel >= 1 )
