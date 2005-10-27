@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 11:39:34 $
-  Version:   $Revision: 1.169 $
+  Date:      $Date: 2005/10/27 17:04:36 $
+  Version:   $Revision: 1.170 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -813,7 +813,7 @@ int GetMacAddrSys ( unsigned char *addr )
    }
    close(sd);
 #endif
-   // Not implemented platforms
+   // Not implemented platforms (or no cable !)
    perror("in Get MAC Adress (internal) : There was a configuration problem on your plateform");
    memset(addr,0,6);
    return -1;
@@ -939,7 +939,7 @@ const std::string &Util::GetRootUID()
 /**
  * \brief binary_write binary_write
  * @param os ostream to write to 
- * @param val val
+ * @param val 16 bits value to write
  */ 
 std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 {
@@ -956,7 +956,7 @@ std::ostream &binary_write(std::ostream &os, const uint16_t &val)
 /**
  * \brief binary_write binary_write
  * @param os ostream to write to
- * @param val val
+ * @param val 32 bits value to write
  */ 
 std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 {
@@ -970,10 +970,39 @@ std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
+
+/**
+ * \brief binary_write binary_write
+ * @param os ostream to write to
+ * @param val double (64 bits) value to write
+ */ 
+std::ostream &binary_write(std::ostream &os, const double &val)
+{
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)    
+   double swap;
+   
+   char *beg = (char *)&swap;
+   char *end = beg + 7;
+   char t;
+   for (unsigned int i = 0; i<7; i++)
+   {
+      t    = *beg;
+      *beg = *end;
+      *end = t;
+      beg++,
+      end--;  
+   }  
+   return os.write(reinterpret_cast<const char*>(&swap), 8);
+#else
+   return os.write(reinterpret_cast<const char*>(&val), 8);
+#endif //GDCM_WORDS_BIGENDIAN
+}
+
+
 /**
  * \brief  binary_write binary_write
  * @param os ostream to write to
- * @param val val
+ * @param val 8 bits characters aray to write
  */ 
 std::ostream &binary_write(std::ostream &os, const char *val)
 {
@@ -981,9 +1010,9 @@ std::ostream &binary_write(std::ostream &os, const char *val)
 }
 
 /**
- * \brief
+ * \brief  binary_write binary_write
  * @param os ostream to write to
- * @param val val
+ * @param val std::string value to write
  */ 
 std::ostream &binary_write(std::ostream &os, std::string const &val)
 {
@@ -993,11 +1022,12 @@ std::ostream &binary_write(std::ostream &os, std::string const &val)
 /**
  * \brief  binary_write binary_write
  * @param os ostream to write to
- * @param val 'characters' value
+ * @param val 8 bits 'characters' aray to write
  * @param len length of the 'value' to be written
  */ 
 std::ostream &binary_write(std::ostream &os, const uint8_t *val, size_t len)
 {
+std::cout << "binary_write " << len << std::endl;
    // We are writting sizeof(char) thus no need to swap bytes
    return os.write(reinterpret_cast<const char*>(val), len);
 }
@@ -1005,8 +1035,8 @@ std::ostream &binary_write(std::ostream &os, const uint8_t *val, size_t len)
 /**
  * \brief  binary_write binary_write
  * @param os ostream to write to
- * @param val val
- * @param len length of the 'value' to be written 
+ * @param val 16 bits words aray to write
+ * @param len length (in bytes) of the 'value' to be written 
  */ 
 std::ostream &binary_write(std::ostream &os, const uint16_t *val, size_t len)
 {
