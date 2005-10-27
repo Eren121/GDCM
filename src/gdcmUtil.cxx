@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 17:04:36 $
-  Version:   $Revision: 1.170 $
+  Date:      $Date: 2005/10/27 18:14:01 $
+  Version:   $Revision: 1.171 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,7 +192,7 @@ int Util::CountSubstring (const std::string &str,
  */
 bool Util::IsCleanString(std::string const &s)
 {
-   std::cout<< std::endl << s << std::endl;
+   //std::cout<< std::endl << s << std::endl;
    for(unsigned int i=0; i<s.size(); i++)
    {
       //std::cout<< std::endl << i << " : " << (unsigned char)s[i] << std::endl;
@@ -1027,7 +1027,7 @@ std::ostream &binary_write(std::ostream &os, std::string const &val)
  */ 
 std::ostream &binary_write(std::ostream &os, const uint8_t *val, size_t len)
 {
-std::cout << "binary_write " << len << std::endl;
+    gdcmDebugMacro( "binary_write " << len );
    // We are writting sizeof(char) thus no need to swap bytes
    return os.write(reinterpret_cast<const char*>(val), len);
 }
