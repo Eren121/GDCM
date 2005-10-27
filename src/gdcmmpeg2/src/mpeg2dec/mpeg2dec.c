@@ -76,12 +76,10 @@ off_t my_seek(istream *infile, off_t offset, int whence)
 ssize_t my_read(istream *infile, void *buf, size_t count)
 {
 #ifdef FILESTAR
-  size_t r = fread(buf,1,count, infile->InFd);
+  return fread(buf,1,count, infile->InFd);
 #else
-  ssize_t r = read(infile->InFd,buf,count);
+  return read(infile->InFd,buf,count);
 #endif
-  printf( "%d , %d\n", count , r);
-  return r;
 }
 
 int my_close(istream *infile)
