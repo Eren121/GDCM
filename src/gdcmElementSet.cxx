@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 09:15:19 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/10/27 11:39:34 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,13 +62,11 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
        // if they were found in the original document. 
        if ( !MayIWrite( (i->second)->GetGroup() ) ) 
           continue;
-   
       // Skip 'Group Length' element, since it may be wrong.
       //       except for Group 0002 
        if ( (i->second)->GetElement() == 0x0000 
-         && (i->second)->GetElement() != 0x0002 )
-          continue;
-      
+         && (i->second)->GetGroup() != 0x0002 )
+          continue; 
        i->second->WriteContent(fp, filetype);
    } 
 }
