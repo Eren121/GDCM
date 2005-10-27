@@ -127,11 +127,25 @@
 #define MB_WEIGHT                  32
 #define MB_CLASS4                  64
 
+/* FIXME */
+#include <sys/types.h>
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+typedef int ssize_t;
+#endif
+
+
+#define FILESTAR
+
 #include <stdio.h>
 typedef struct
 {
+#ifdef FILESTAR
   FILE* InFd;
+#else
+  int InFd;
+#endif
 } istream;
+
 typedef struct
 {
   FILE* OutFd;

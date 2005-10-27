@@ -418,20 +418,14 @@ EXTERN int broken_link;
 
 
 
-/* FIXME */
-#include <sys/types.h>
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-typedef int ssize_t;
-#endif
-
 /* layer specific variables (needed for SNR and DP scalability) */
 EXTERN struct layer_data {
   /* bit input */
-  int Infile;
-  int  (*open_stream) (char *filename);
-  off_t   (*seek_stream) (int infile, off_t offset,int whence);
-  ssize_t (*read_stream) (int infile, void *buf, size_t count);
-  int  (*close_stream) (int infile);
+  istream *Infile;
+/*  int  (*open_stream) (char *filename);*/
+  off_t   (*seek_stream) (istream *is, off_t offset,int whence);
+  ssize_t (*read_stream) (istream *is, void *buf, size_t count);
+  int  (*close_stream) (istream *is);
   unsigned char Rdbfr[2048];
   unsigned char *Rdptr;
   unsigned char Inbfr[16];

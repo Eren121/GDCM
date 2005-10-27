@@ -61,24 +61,40 @@ static void Print_Options();
 
 int my_open(char *filename)
 {
+  abort();
   return open(filename,O_RDONLY|O_BINARY);
 }
 
-off_t my_seek(int infile, off_t offset,int whence)
+off_t my_seek(istream *infile, off_t offset, int whence)
 {
-  return lseek(infile, offset, whence);
+#ifdef FILESTAR
+  return fseek(infile->InFd,offset, whence);
+#else
+  return lseek(infile->InFd,offset, whence);
+#endif
 }
-ssize_t my_read(int infile,void *buf,size_t count)
+ssize_t my_read(istream *infile, void *buf, size_t count)
 {
-  return read(infile,buf,count);
+#ifdef FILESTAR
+  size_t r = fread(buf,1,count, infile->InFd);
+#else
+  ssize_t r = read(infile->InFd,buf,count);
+#endif
+  printf( "%d , %d\n", count , r);
+  return r;
 }
-int my_close(int infile)
+int my_close(istream *infile)
 {
-  return close(infile);
+#ifdef FILESTAR
+  return fclose(infile->InFd);
+#else
+  return close(infile->InFd);
+#endif
 }
 
 int my_fopenr(const char *path, const char *mode, istream *os)
 {
+#if 0
   FILE *fd = fopen(path, mode);
   if(fd)
     {
@@ -87,6 +103,7 @@ int my_fopenr(const char *path, const char *mode, istream *os)
     }
   else
     os->InFd = NULL;
+#endif
   return 0;
 }
 
@@ -181,7 +198,7 @@ int argc;
 char *argv[];
 {
   int ret, code;
-  base.open_stream = my_open;
+  /*base.open_stream = my_open;*/
   base.seek_stream = my_seek;
   base.read_stream = my_read;
   base.close_stream = my_close;
@@ -200,8 +217,15 @@ char *argv[];
   /* open MPEG base layer bitstream file(s) */
   /* NOTE: this is either a base layer stream or a spatial enhancement stream */
 /*  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0) */
-  base.Infile = ld->open_stream(Main_Bitstream_Filename);
-  if( base.Infile < 0 )
+  /*base.Infile = ld->open_stream(Main_Bitstream_Filename);*/
+  istream bos;
+  base.Infile = &bos;
+#ifdef FILESTAR
+  base.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
+#else
+  base.Infile->InFd = open(Main_Bitstream_Filename,O_RDONLY|O_BINARY );
+#endif
+  if( !base.Infile->InFd)
   {
     fprintf(stderr,"Base layer input file %s not found\n", Main_Bitstream_Filename);
     exit(1);
@@ -210,8 +234,8 @@ char *argv[];
 
   if(base.Infile != 0)
   {
-    Initialize_Buffer(); 
-  
+    Initialize_Buffer();
+
     if(Show_Bits(8)==0x47)
     {
       sprintf(Error_Text,"Decoder currently does not parse transport streams\n");
@@ -254,8 +278,15 @@ char *argv[];
     ld = &enhan; /* select enhancement layer context */
 
     /*if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)*/
-    enhan.Infile = ld->open_stream(Enhancement_Layer_Bitstream_Filename);
-    if (enhan.Infile<0)
+    /*enhan.Infile = ld->open_stream(Enhancement_Layer_Bitstream_Filename);*/
+    istream eos;
+    enhan.Infile = &eos;
+#ifdef FILESTAR
+    enhan.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
+#else
+    enhan.Infile->InFd = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY);
+#endif
+    if (enhan.Infile->InFd)
     {
       sprintf(Error_Text,"enhancment layer bitstream file %s not found\n",
         Enhancement_Layer_Bitstream_Filename);
