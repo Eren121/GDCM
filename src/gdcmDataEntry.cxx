@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 15:56:51 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/10/27 17:07:24 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -487,61 +487,67 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
    {
       return; //delimitors have NO value
    }
-
-   uint8_t *binArea8 = BinArea; //safe notation
-   size_t lgr = GetLength();
-   if (BinArea) // the binArea was *actually* loaded
-   {
-
-   //  The same operation should be done if we wanted 
-   //  to write image with Big Endian Transfer Syntax, 
-   //  while working on Little Endian Processor
+   
+   // --> We only deal with Little Endian writting
    // --> forget Big Endian Transfer Syntax writting!
    //     Next DICOM version will give it up ...
-
-   // --> FIXME 
-   //    The stuff looks nice, but it's probably bugged,
-   //    since troubles occur on big endian processors (SunSparc, Motorola)
-   //    while reading the pixels of a 
-   //    gdcm-written Little-Endian 16 bits per pixel image
-
+ 
+   // WARNING - Implicit VR private element :
+   //           we have *no choice* but considering them as
+   //           something like 'OB' values.
+   //           we rewrite them as we found them on disc.
+   //           Some trouble will occur if element was 
+   //           *actually* OW, if image was produced 
+   //           on Big endian based processor, read and writen 
+   //           on Little endian based processor
+   //           and, later on, somebody needs
+   //           this 'OW' Implicit VR private element (?!?)
+ 
+ 
+   // 8/16 bits Pixels problem should be solve automatiquely,
+   // since we ensure the VR is conform to Pixel size.
+        
+   uint8_t *data = BinArea; //safe notation
+   size_t l = GetLength(); 
+   if (BinArea) // the binArea was *actually* loaded
+   {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
-
-      /// \todo FIXME : Right now, we only care of Pixels element
-      ///       we should deal with *all* the BinEntries
-      ///       Well, not really since we are not interpreting values read...
-
-      // 8 Bits Pixels *are* OB, 16 Bits Pixels *are* OW
-      // -value forced while Reading process-
-      
-      // -->  WARNING
-      // -->        the following lines *looked* very clever, 
-      // -->        but they don't work on big endian processors.
-      // -->        since I've no access for the moment to a big endian proc :-(
-      // -->        I comment them out, to see the result on the dash board 
-      // -->     
-      
-      // --> Revert to initial code : TestWriteSimple hangs on Darwin :-(     
-      if (GetGroup() == 0x7fe0 && GetVR() == "OW")
-      {  
-         uint16_t *binArea16 = (uint16_t*)binArea8;
-         binary_write (*fp, binArea16, lgr );
+      unsigned short vrLgth = 
+                        Global::GetVR()->GetAtomicElementLength(this->GetVR());
+      unsigned int i;
+      switch(vrLgth)
+      {
+         case 1:
+         {
+            binary_write (*fp, data, l );           
+            break;
+         }     
+         case 2:
+         {
+            uint16_t *data16 = (uint16_t *)data;
+            for(i=0;i<l/vrLgth;i++)
+               binary_write( *fp, data16[i]);
+            break;
+         }
+         case 4:
+         {
+            uint32_t *data32 = (uint32_t *)data;
+            for(i=0;i<l/vrLgth;i++)
+               binary_write( *fp, data32[i]);
+            break;
+         }
+         case 8:
+         {
+            double *data64 = (double *)data;
+            for(i=0;i<l/vrLgth;i++)
+               binary_write( *fp, data64[i]);
+            break;
+         }
       }
-      else
-      { 
-         // For any other VR, DataEntry is re-written as-is
-         binary_write (*fp, binArea8, lgr );
-      }
-
-      // -->  WARNING      
-      // -->         remove the following line, an uncomment the previous ones, 
-      // -->         if it doesn't work better
-      // -->     
-      /*binary_write ( *fp, binArea8, lgr ); // Elem value*/
-      
 #else
-      binary_write ( *fp, binArea8, lgr ); // Elem value
+   binary_write (*fp, data, l );
 #endif //GDCM_WORDS_BIGENDIAN
+
    }
    else
    {
@@ -551,7 +557,7 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
       //  --> the initial data (on the the source image) is lost
       //  --> user is *not* informed !
       
-      fp->seekp(lgr, std::ios::cur);
+      fp->seekp(l, std::ios::cur);
    }
 }
 
