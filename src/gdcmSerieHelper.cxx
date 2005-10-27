@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 11:19:14 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/10/27 09:14:15 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -296,10 +296,10 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
 
    FileList::const_iterator it = fileSet->begin();
 
-   int nX = (*it)->GetXSize();
-   int nY = (*it)->GetYSize();
-   int pixelSize = (*it)->GetPixelSize();
-
+   int nX =               (*it)->GetXSize();
+   int nY =               (*it)->GetYSize();
+   int pixelSize =        (*it)->GetPixelSize();
+   bool signedPixelData = (*it)->IsSignedPixelData();
    it ++;
    for ( ;
          it != fileSet->end();
@@ -311,7 +311,9 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
          return false;
       if ( (*it)->GetPixelSize() != pixelSize )
          return false;
-      // probabely more is to be checked (?)
+      if ( (*it)->IsSignedPixelData() != signedPixelData )
+         return false;
+      // probabely more is to be checked (?)      
    }
    return true;
 }
