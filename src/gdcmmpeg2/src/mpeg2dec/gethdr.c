@@ -984,7 +984,7 @@ static int extra_bit_information()
 /* Purpose: this function is mainly designed to aid in bitstream conformance
    testing.  A simple Flush_Buffer(1) would do */
 void marker_bit(text)
-char *text;
+const char *text;
 {
   int marker;
   (void)text;

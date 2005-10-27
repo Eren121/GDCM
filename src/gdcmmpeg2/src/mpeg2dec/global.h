@@ -72,7 +72,7 @@ void Decode_MPEG2_Non_Intra_Block _ANSI_ARGS_((int comp));
 int Get_Hdr _ANSI_ARGS_((void));
 void next_start_code _ANSI_ARGS_((void));
 int slice_header _ANSI_ARGS_((void));
-void marker_bit _ANSI_ARGS_((char *text));
+void marker_bit _ANSI_ARGS_((const char *text));
 
 /* getpic.c */
 void Decode_Picture _ANSI_ARGS_((int bitstream_framenum, 
@@ -105,7 +105,7 @@ void motion_vector _ANSI_ARGS_((int *PMV, int *dmvector,
 void Dual_Prime_Arithmetic _ANSI_ARGS_((int DMV[][2], int *dmvector, int mvx, int mvy));
 
 /* mpeg2dec.c */
-void Error _ANSI_ARGS_((char *text));
+void Error _ANSI_ARGS_((const char *text));
 void Warning _ANSI_ARGS_((char *text));
 void Print_Bits _ANSI_ARGS_((int code, int bits, int len));
 
@@ -263,10 +263,10 @@ EXTERN int Main_Bitstream_Flag;
 
 
 /* filenames */
-EXTERN char *Output_Picture_Filename;
-EXTERN char *Substitute_Picture_Filename;
-EXTERN char *Main_Bitstream_Filename; 
-EXTERN char *Enhancement_Layer_Bitstream_Filename; 
+EXTERN const char *Output_Picture_Filename;
+EXTERN const char *Substitute_Picture_Filename;
+EXTERN const char *Main_Bitstream_Filename; 
+EXTERN const char *Enhancement_Layer_Bitstream_Filename; 
 
 
 /* buffers for multiuse purposes */
@@ -287,7 +287,7 @@ EXTERN unsigned char *llframe0[3];
 EXTERN unsigned char *llframe1[3];
 
 EXTERN short *lltmp;
-EXTERN char *Lower_Layer_Picture_Filename;
+EXTERN const char *Lower_Layer_Picture_Filename;
 
 
 

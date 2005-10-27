@@ -83,6 +83,7 @@ ssize_t my_read(istream *infile, void *buf, size_t count)
   printf( "%d , %d\n", count , r);
   return r;
 }
+
 int my_close(istream *infile)
 {
 #ifdef FILESTAR
@@ -94,7 +95,6 @@ int my_close(istream *infile)
 
 int my_fopenr(const char *path, const char *mode, istream *os)
 {
-#if 0
   FILE *fd = fopen(path, mode);
   if(fd)
     {
@@ -103,7 +103,6 @@ int my_fopenr(const char *path, const char *mode, istream *os)
     }
   else
     os->InFd = NULL;
-#endif
   return 0;
 }
 
@@ -198,6 +197,7 @@ int argc;
 char *argv[];
 {
   int ret, code;
+  istream bos,eos;
   /*base.open_stream = my_open;*/
   base.seek_stream = my_seek;
   base.read_stream = my_read;
@@ -218,7 +218,6 @@ char *argv[];
   /* NOTE: this is either a base layer stream or a spatial enhancement stream */
 /*  if ((base.Infile=open(Main_Bitstream_Filename,O_RDONLY|O_BINARY))<0) */
   /*base.Infile = ld->open_stream(Main_Bitstream_Filename);*/
-  istream bos;
   base.Infile = &bos;
 #ifdef FILESTAR
   base.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
@@ -279,7 +278,6 @@ char *argv[];
 
     /*if ((enhan.Infile = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY))<0)*/
     /*enhan.Infile = ld->open_stream(Enhancement_Layer_Bitstream_Filename);*/
-    istream eos;
     enhan.Infile = &eos;
 #ifdef FILESTAR
     enhan.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
@@ -431,7 +429,7 @@ static void Initialize_Sequence()
 }
 
 void Error(text)
-char *text;
+const char *text;
 {
   fprintf(stderr,text);
   exit(1);

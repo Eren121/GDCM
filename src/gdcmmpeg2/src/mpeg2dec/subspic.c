@@ -31,15 +31,15 @@
 #include "global.h"
 
 /* private prototypes*/
-static void Read_Frame _ANSI_ARGS_((char *filename, 
+static void Read_Frame _ANSI_ARGS_((const char *filename, 
   unsigned char *frame_buffer[], int framenum));
 static void Copy_Frame _ANSI_ARGS_((unsigned char *src, unsigned char *dst, 
   int width, int height, int parity, int incr));
-static int Read_Components _ANSI_ARGS_ ((char *filename, 
+static int Read_Components _ANSI_ARGS_ ((const char *filename, 
   unsigned char *frame[3], int framenum));
 static int Read_Component _ANSI_ARGS_ ((char *fname, unsigned char *frame, 
   int width, int height));
-static int Extract_Components _ANSI_ARGS_ ((char *filename,
+static int Extract_Components _ANSI_ARGS_ ((const char *filename,
   unsigned char *frame[3], int framenum));
 
 
@@ -148,7 +148,7 @@ int sequence_framenum;
 /* Note: fields are only read to serve as the same-frame reference for 
    a second field */
 static void Read_Frame(fname,frame,framenum)
-char *fname;
+const char *fname;
 unsigned char *frame[];
 int framenum;
 {
@@ -208,7 +208,7 @@ int framenum;
 
 
 static int Read_Components(filename, frame, framenum) 
-char *filename;
+const char *filename;
 unsigned char *frame[3];
 int framenum;
 {
@@ -276,7 +276,7 @@ int Height;
    MPEG Committee's syntax validation and conformance ad-hoc groups from 
    the year 1993 until 1995 */
 static int Extract_Components(filename, frame, framenum) 
-char *filename;
+const char *filename;
 unsigned char *frame[3];
 int framenum;
 {

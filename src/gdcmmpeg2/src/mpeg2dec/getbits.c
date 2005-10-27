@@ -60,7 +60,6 @@ void Fill_Buffer()
 {
   int Buffer_Level;
 
-  /*Buffer_Level = read(ld->Infile,ld->Rdbfr,2048);*/
   Buffer_Level = ld->read_stream(ld->Infile,ld->Rdbfr,2048);
   ld->Rdptr = ld->Rdbfr;
 
@@ -97,7 +96,6 @@ int Get_Byte()
 {
   while(ld->Rdptr >= ld->Rdbfr+2048)
   {
-    /*read(ld->Infile,ld->Rdbfr,2048);*/
     ld->read_stream(ld->Infile,ld->Rdbfr,2048);
     ld->Rdptr -= 2048;
     ld->Rdmax -= 2048;
