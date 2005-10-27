@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 17:06:33 $
-  Version:   $Revision: 1.312 $
+  Date:      $Date: 2005/10/27 09:55:00 $
+  Version:   $Revision: 1.313 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,8 +119,6 @@ bool Document::DoTheLoadingDocumentJob(  )
    if ( !OpenFile() )
    {
       // warning already performed in OpenFile()
-      //gdcmWarningMacro( "Unable to open as an ACR/DICOM file: "
-      //                 << Filename.c_str() );
       Filetype = Unknown;
       return false;
    }
@@ -154,7 +152,7 @@ bool Document::DoTheLoadingDocumentJob(  )
 
    if ( IsEmpty() )
    { 
-      gdcmWarningMacro( "No tag in internal hash table for: "
+      gdcmErrorMacro( "No tag in internal hash table for: "
                         << Filename.c_str());
       CloseFile(); 
       return false;
@@ -174,20 +172,33 @@ bool Document::DoTheLoadingDocumentJob(  )
       LoadEntryBinArea(0x0028,0x1200);  // gray LUT
    
       /// FIXME
+      /// --> FIXME : The difference between BinEntry and DataEntry
+      /// --> no longer exists, but the alteration of Dicom Dictionary remains.
+      /// --> Old comment restored on purpose.
+      /// --> New one (replacing both BinEntry and ValEntry by DataEntry)
+      /// --> had absolutely no meaning.
+      /// --> The whole comment will be removed when the stuff is cleaned !
+      /// -->
       /// The tags refered by the three following lines used to be CORRECTLY
       /// defined as having an US Value Representation in the public
       /// dictionary. BUT the semantics implied by the three following
       /// lines state that the corresponding tag contents are in fact
-      /// the ones of a DataEntry.
+      /// the ones of a BinEntry.
       /// In order to fix things "Quick and Dirty" the dictionary was
       /// altered on PURPOSE but now contains a WRONG value.
       /// In order to fix things and restore the dictionary to its
       /// correct value, one needs to decided of the semantics by deciding
       /// whether the following tags are either :
-      /// - multivaluated US, and hence loaded as DataEntry, but afterwards
-      ///   also used as DataEntry, which requires the proper conversion,
-      /// - OW, and hence loaded as DataEntry, but afterwards also used
-      ///   as DataEntry, which requires the proper conversion.
+      /// - multivaluated US, and hence loaded as ValEntry, but afterwards
+      ///   also used as BinEntry, which requires the proper conversion,
+      /// - OW, and hence loaded as BinEntry, but afterwards also used
+      ///   as ValEntry, which requires the proper conversion.
+      
+      // --> OB (byte aray) or OW (short int aray)
+      // The actual VR has to be deduced from other entries.
+      // Our way of loading them may fail in some cases :
+      // We must or not SwapByte depending on other field values.
+             
       LoadEntryBinArea(0x0028,0x1201);  // R    LUT
       LoadEntryBinArea(0x0028,0x1202);  // G    LUT
       LoadEntryBinArea(0x0028,0x1203);  // B    LUT
@@ -212,6 +223,8 @@ bool Document::DoTheLoadingDocumentJob(  )
          {
             if ( dataEntry->GetLength() != 0 )
             {
+               // FIXME : CTX dependent means : contexted dependant.
+               //         see upper comment.
                LoadEntryBinArea(dataEntry);    //LUT Data (CTX dependent)
             }   
         }
@@ -225,7 +238,7 @@ bool Document::DoTheLoadingDocumentJob(  )
                                it != UserForceLoadList.end();
                              ++it)
    {
-      gdcmWarningMacro( "Force Load " << std::hex 
+      gdcmDebugMacro( "Force Load " << std::hex 
                        << (*it).Group << "|" <<(*it).Elem );
   
       d = GetDocEntry( (*it).Group, (*it).Elem);
@@ -329,13 +342,13 @@ bool Document::IsReadable()
 {
    if ( Filetype == Unknown )
    {
-      gdcmWarningMacro( "Wrong filetype");
+      gdcmErrorMacro( "Wrong filetype");
       return false;
    }
 
    if ( IsEmpty() )
    { 
-      gdcmWarningMacro( "No tag in internal hash table.");
+      gdcmErrorMacro( "No tag in internal hash table.");
       return false;
    }
 
@@ -409,6 +422,7 @@ std::string Document::GetTransferSyntax()
       if  ( transfer.length() == 0 )
       {
          // for brain damaged headers
+         gdcmWarningMacro( "Transfer Syntax has length = 0.");
          return GDCM_UNKNOWN;
       }
       while ( !isdigit((unsigned char)transfer[transfer.length()-1]) )
@@ -417,6 +431,7 @@ std::string Document::GetTransferSyntax()
          if  ( transfer.length() == 0 )
          {
             // for brain damaged headers
+            gdcmWarningMacro( "Transfer Syntax contains no valid character.");
             return GDCM_UNKNOWN;
          }
       }
@@ -442,7 +457,7 @@ std::string Document::GetTransferSyntaxName()
    }
    if ( transferSyntax == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "Unfound Transfer Syntax (0002,0010)");
+      gdcmDebugMacro( "Unfound Transfer Syntax (0002,0010)");
       return "Uncompressed ACR-NEMA";
    }
 
@@ -495,7 +510,7 @@ uint32_t Document::SwapLong(uint32_t a)
          a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
       break;
       default :
-         gdcmErrorMacro( "Unset swap code:" << SwapCode );
+         gdcmErrorMacro( "Unexpected swap code:" << SwapCode );
          a = 0;
    }
    return a;
@@ -531,7 +546,7 @@ double Document::SwapDouble(double a)
          }
          break;   
       default :
-         gdcmErrorMacro( "Unset swap code:" << SwapCode );
+         gdcmErrorMacro( "Unexpected swap code:" << SwapCode );
          a = 0.;
    }
    return a;
@@ -555,7 +570,7 @@ std::ifstream *Document::OpenFile()
 
    if ( Fp )
    {
-      gdcmWarningMacro( "File already open: " << Filename.c_str());
+      gdcmDebugMacro( "File already open: " << Filename.c_str());
       CloseFile();
    }
 
@@ -566,6 +581,10 @@ std::ifstream *Document::OpenFile()
    // a spurious message will appear when you use, for instance 
    // gdcm::FileHelper *fh = new gdcm::FileHelper( outputFileName );
    // to create outputFileName.
+   
+   // FIXME : if the upper comment is still usefull 
+   //         --> the constructor is not so good ...
+   
       gdcmWarningMacro( "Cannot open file: " << Filename.c_str());
       delete Fp;
       Fp = 0;
@@ -590,7 +609,8 @@ std::ifstream *Document::OpenFile()
        zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
    {
       std::string msg = Util::Format(
-        "ACR/DICOM starting at the beginning of the file:(%04x)\n", zero);
+             "ACR/DICOM starting at the beginning of the file:(%04x)\n", zero);
+      // FIXME : is it a Warning message, or a Debug message?
       gdcmWarningMacro( msg.c_str() );
       return Fp;
    }
@@ -612,7 +632,9 @@ std::ifstream *Document::OpenFile()
 
    // -- Neither ACR/No Preamble Dicom nor DICOMV3 file
    CloseFile();
-   gdcmWarningMacro( "Neither ACR/No Preamble Dicom nor DICOMV3 file: "
+   // Don't user Warning nor Error, not to polute the output
+   // while directory recursive parsing ...
+   gdcmDebugMacro( "Neither ACR/No Preamble Dicom nor DICOMV3 file: "
                       << Filename.c_str()); 
    return 0;
 }
@@ -662,6 +684,10 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
     *    UpdateGroupLength(false,filetype);
     * if ( filetype == ACR)
     *    UpdateGroupLength(true,ACR);
+    *
+    * --> Computing group length for groups with embeded Sequences
+    * --> was too much tricky / we were [in a hurry / too lazy]
+    * --> We don't write the element 0x0000 (group length)
     */
 
    ElementSet::WriteContent(fp, filetype); // This one is recursive
@@ -933,7 +959,8 @@ int Document::ComputeGroup0002Length( )
             vr = entry->GetVR();
 
             // FIXME : group 0x0002 is *always* Explicit VR!
- 
+            // --> Except for Implicit VR Transfer Syntax (GE Private) !!
+   
             //if ( filetype == ExplicitVR )
             //{
             //if ( (vr == "OB")||(vr == "OW")||(vr == "UT")||(vr == "SQ"))
@@ -986,7 +1013,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
               // (Entry will then be deleted)
    bool delim_mode_intern = delim_mode;
    bool first = true;
-   gdcmWarningMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
+   gdcmDebugMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
                      << " at offset " << std::hex << offset ); 
    while (true)
    {
@@ -997,16 +1024,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
       newDocEntry = ReadNextDocEntry( );
 
-      // FIXME :
-      // Private tag, in IMplicit VR are defaulted as a DataEntry,
-      // Very often they are only composed of Printable characters, 
-      // and could be defaulted as a DataEntry.
-      // It's too late to do the Job
-      // (we should check the value, but we know it after LoadDocEntry ...)
-
       // Uncoment this cerr line to be able to 'follow' the DocEntries
       // when something *very* strange happens
-
       if( Debug::GetDebugFlag() ) 
          std::cerr<<newDocEntry->GetKey()<<" "<<newDocEntry->GetVR()<<std::endl;
 
@@ -1020,8 +1039,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
        // but we didn't get it (private Sequence + Implicit VR)
        // we have to backtrack.
       if ( !first && newDocEntry->IsItemStarter() )
-      {
-         newDocEntry = Backtrack(newDocEntry); 
+      { 
+        // Debug message within the method !      
+        newDocEntry = Backtrack(newDocEntry); 
       }
       else
       { 
@@ -1036,24 +1056,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          //////////////////////////// DataEntry
  
          vr = newDocEntry->GetVR();
- 
-         // Useless checking, now !
-         /*
-         if ( Filetype == ExplicitVR && 
-               !Global::GetVR()->IsVROfBinaryRepresentable(vr) )
-         { 
-               ////// No DataEntry: should mean UNKOWN VR
-               gdcmWarningMacro( std::hex << newDocEntry->GetGroup() 
-                                 << "|" << newDocEntry->GetElement()
-                                 << " : unknown VR." 
-                                 " Probably 'Implicit VR' entry within "
-                                 "an explicit VR 'document'.");
-         }
-         */
 
          if ( !set->AddEntry( newDataEntry ) )
          {
-            gdcmWarningMacro( "in ParseDES : cannot add a DataEntry "
+            gdcmDebugMacro( "in ParseDES : cannot add a DataEntry "
                                  << newDataEntry->GetKey()  
                                  << " (at offset : " 
                                  << newDataEntry->GetOffset() << " )" );
@@ -1162,7 +1168,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          if ( l != 0 )
          {  // Don't try to parse zero-length sequences
 
-            gdcmWarningMacro( "Entry in ParseSQ, delim " << delim_mode_intern
+            gdcmDebugMacro( "Entry in ParseSQ, delim " << delim_mode_intern
                                << " at offset " << std::hex
                                << newDocEntry->GetOffset() );
 
@@ -1170,7 +1176,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      newDocEntry->GetOffset(),
                      l, delim_mode_intern);
 
-            gdcmWarningMacro( "Exit from ParseSQ, delim " << delim_mode_intern);
+            gdcmDebugMacro( "Exit from ParseSQ, delim " << delim_mode_intern);
  
          }
          if ( !set->AddEntry( newSeqEntry ) )
@@ -1221,7 +1227,6 @@ void Document::ParseSQ( SeqEntry *seqEntry,
 
       if ( !newDocEntry )
       {
-         // FIXME Should warn user
          gdcmWarningMacro("in ParseSQ : should never get here!");
          break;
       }
@@ -1252,7 +1257,6 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          dlm_mod = false;
       }
 
-      // Let's try :------------
       // remove fff0,e000, created out of the SQItem
       Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);
       // fill up the current SQItem, starting at the beginning of fff0,e000
@@ -1260,7 +1264,6 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
 
       offsetStartCurrentSQItem = Fp->tellg();
-      // end try -----------------
  
       seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
       itemSQ->Delete();
@@ -1291,7 +1294,7 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    uint32_t lgt   = PreviousDocEntry->GetLength();
    long offset    = PreviousDocEntry->GetOffset();
 
-   gdcmWarningMacro( "Backtrack :" << std::hex << group 
+   gdcmDebugMacro( "Backtrack :" << std::hex << group 
                                    << "|" << elem
                                    << " at offset " << offset );
    RemoveEntry( PreviousDocEntry );
@@ -1351,8 +1354,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    }
 
    // The elements whose length is bigger than the specified upper bound
-   // are not loaded. Instead we leave a short notice on the offset of
-   // the element content and it's length.
+   // are not loaded.
 
    std::ostringstream s;
 
@@ -1451,7 +1453,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
       // Length is on 4 bytes.
 
      // Well ... group 0002 is always coded in 'Explicit VR Litle Endian'
-     // even if Transfer Syntax is 'Implicit VR ...' 
+     // even if Transfer Syntax is 'Implicit VR ...'
+     // --> Except for 'Implicit VR Big Endian Transfer Syntax GE Private' 
       
       FixDocEntryFoundLength( entry, ReadInt32() );
       return;
@@ -1528,20 +1531,20 @@ VRKey Document::FindDocEntryVR()
 
    long positionOnEntry = Fp->tellg();
    // Warning: we believe this is explicit VR (Value Representation) because
-   // we used a heuristic that found "UL" in the first tag. Alas this
-   // doesn't guarantee that all the tags will be in explicit VR. In some
-   // cases (see e-film filtered files) one finds implicit VR tags mixed
-   // within an explicit VR file. Hence we make sure the present tag
-   // is in explicit VR and try to fix things if it happens not to be
-   // the case.
+   // we used a heuristic that found "UL" in the first tag and/or
+   // 'Transfer Syntax' told us it is.
+   // Alas this doesn't guarantee that all the tags will be in explicit VR. 
+   // In some cases one finds implicit VR tags mixed within an explicit VR file
+   // Hence we make sure the present tag is in explicit VR and try to fix things
+   // if it happens not to be the case.
 
    VRKey vr;
    Fp->read(&(vr[0]),(size_t)2);
 
-   //gdcmDebugMacro( "--> VR: " << vr )
    if ( !CheckDocEntryVR(vr) )
    {
-      gdcmWarningMacro( "Unknown VR '" << vr << "' at offset :"
+      gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
+                        << vr[0] << vr[1] << ") at offset :" 
                         << positionOnEntry );
       Fp->seekg(positionOnEntry, std::ios::beg);
       return GDCM_VRUNKNOWN;
@@ -1676,7 +1679,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
 {
    uint16_t elem         = entry->GetElement();
    uint16_t group        = entry->GetGroup();
-   const VRKey &vr = entry->GetVR();
+   const VRKey &vr       = entry->GetVR();
    uint32_t length       = entry->GetLength();
 
    // When we have some semantics on the element we just read, and if we
@@ -1775,7 +1778,7 @@ bool Document::CheckSwap()
       else 
       {
          Filetype = ImplicitVR;
-         gdcmErrorMacro( "Group 0002 :Not an explicit Value Representation;"
+         gdcmWarningMacro( "Group 0002 :Not an explicit Value Representation;"
                         << "Looks like a bugged Header!");
       }
       
@@ -2106,7 +2109,7 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
    }
    else if (group == 0xfffe && elem == 0xe0dd) 
    {
-      gdcmWarningMacro( "Straight Sequence Terminator." );  
+      gdcmDebugMacro( "Straight Sequence Terminator." );  
    }
 }
 
@@ -2128,7 +2131,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       std::string ts = GetTransferSyntax();
       if ( !Global::GetTS()->IsTransferSyntax(ts) )
       {
-         gdcmWarningMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
+         gdcmDebugMacro("True DICOM File, with NO Tansfer Syntax: " << ts );
          return;
       }
 
@@ -2151,7 +2154,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
                                                        TS::ExplicitVRBigEndian )
       {
-         gdcmWarningMacro("Transfer Syntax Name = [" 
+         gdcmDebugMacro("Transfer Syntax Name = [" 
                         << GetTransferSyntaxName() << "]" );
          SwitchByteSwapCode();
          group = SwapShort(group);
