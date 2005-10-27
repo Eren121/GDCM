@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 17:46:24 $
-  Version:   $Revision: 1.317 $
+  Date:      $Date: 2005/10/27 18:12:40 $
+  Version:   $Revision: 1.318 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -769,7 +769,7 @@ void Document::LoadEntryBinArea(DataEntry *entry)
    {
       case 1:
       {
-  std::cout << "Atomic lgt = 1 ; NO swap at reading" << std::endl;
+         gdcmDebugMacro( "Atomic lgt = 1 ; NO swap at reading");
          break;
       }     
       case 2:
