@@ -137,6 +137,7 @@ typedef int ssize_t;
 #define FILESTAR
 
 #include <stdio.h>
+#ifndef __cplusplus
 typedef struct
 {
 #ifdef FILESTAR
@@ -145,6 +146,7 @@ typedef struct
   int InFd;
 #endif
 } istream;
+#endif
 
 typedef struct
 {
