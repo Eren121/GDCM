@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 09:22:15 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/10/27 09:13:18 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,12 +154,8 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
 {
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
-   {
-      gdcmWarningMacro( "No corresponding SeqEntry " << std::hex << group <<
-                        "," << elem);
       return NULL;
-   }
-
+      
    return dynamic_cast<SeqEntry*>(currentEntry);
 }
 
