@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 19:57:21 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/10/27 20:08:29 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 typedef struct
 {
-  std::ifstream InFd;
+  std::ifstream *InFd;
 } istream;
 extern "C" {
 #define GLOBAL
@@ -37,28 +37,28 @@ off_t my_seek(istream *infile, off_t offset, int whence)
   switch(whence)
     {
     case SEEK_SET:
-      infile->InFd.seekg(offset, std::ios::beg);
+      infile->InFd->seekg(offset, std::ios::beg);
       break;
     case SEEK_END:
-      infile->InFd.seekg(offset, std::ios::end);
+      infile->InFd->seekg(offset, std::ios::end);
       break;
     case SEEK_CUR:
-      infile->InFd.seekg(offset, std::ios::cur);
+      infile->InFd->seekg(offset, std::ios::cur);
       break;
     }
-  return infile->InFd.tellg();
+  return infile->InFd->tellg();
 }
 ssize_t my_read(istream *infile, void *buf, size_t count)
 {
   //return fread(buf,1,count, infile->InFd);
-  infile->InFd.read((char*)buf, count);
-  return infile->InFd.gcount();
+  infile->InFd->read((char*)buf, count);
+  return infile->InFd->gcount();
 }
 
 int my_close(istream *infile)
 {
   //return fclose(infile->InFd);
-  infile->InFd.close();
+  infile->InFd->close();
   return 0;
 }
 
@@ -323,7 +323,8 @@ static void Initialize_Decoder()
 
 bool ReadMPEGFile (std::ifstream *fp, char *image_buffer, size_t length)
 {
-#if 1
+  std::streampos mpeg_start = fp->tellg(); // the MPEG stream in our case does not start at 0
+#if 0
   fp->read((char*)image_buffer, length);
   std::ofstream out("/tmp/etiam.mpeg");
   out.write((char*)image_buffer, length);
@@ -370,7 +371,8 @@ bool ReadMPEGFile (std::ifstream *fp, char *image_buffer, size_t length)
   base.Infile = &bos;
 #ifdef FILESTAR
   //base.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
-  base.Infile->InFd.open(Main_Bitstream_Filename, std::ios::binary | std::ios::in);
+  //base.Infile->InFd.open(Main_Bitstream_Filename, std::ios::binary | std::ios::in);
+  base.Infile->InFd = fp;
 #else
   base.Infile->InFd = open(Main_Bitstream_Filename,O_RDONLY|O_BINARY );
 #endif
@@ -410,14 +412,14 @@ bool ReadMPEGFile (std::ifstream *fp, char *image_buffer, size_t length)
     }
 
     /*lseek(base.Infile, 0l, SEEK_SET);*/
-    ld->seek_stream(base.Infile,0l,SEEK_SET);
+    ld->seek_stream(base.Infile,mpeg_start,SEEK_SET);
     Initialize_Buffer(); 
   }
 
   if(base.Infile!=0)
   {
     /*lseek(base.Infile, 0l, SEEK_SET);*/
-    ld->seek_stream(base.Infile,0l,SEEK_SET);
+    ld->seek_stream(base.Infile,mpeg_start,SEEK_SET);
   }
 
   Initialize_Buffer(); 
@@ -431,7 +433,8 @@ bool ReadMPEGFile (std::ifstream *fp, char *image_buffer, size_t length)
     enhan.Infile = &eos;
 #ifdef FILESTAR
     //enhan.Infile->InFd = fopen(Main_Bitstream_Filename, "rb");
-    enhan.Infile->InFd.open(Main_Bitstream_Filename, std::ios::binary|std::ios::in);
+    enhan.Infile->InFd->open(Main_Bitstream_Filename, std::ios::binary|std::ios::in);
+    abort();
 #else
     enhan.Infile->InFd = open(Enhancement_Layer_Bitstream_Filename,O_RDONLY|O_BINARY);
 #endif
