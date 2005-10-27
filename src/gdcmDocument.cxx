@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 16:52:44 $
-  Version:   $Revision: 1.316 $
+  Date:      $Date: 2005/10/27 17:46:24 $
+  Version:   $Revision: 1.317 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -531,6 +531,7 @@ double Document::SwapDouble(double a)
       case 1234 :
          break;
       case 4321 :
+         {
          char *beg = (char *)&a;
          char *end = beg + 7;
          char t;
@@ -541,6 +542,7 @@ double Document::SwapDouble(double a)
             *end = t;
             beg++,
             end--;  
+         }
          }
          break;   
       default :
