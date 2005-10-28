@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:51:28 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2005/10/28 16:12:51 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1243,13 +1243,13 @@ void PixelReadConvert::ConvertHandleColor()
    // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
    // - [Planar 2] OR  [Photo D] requires LUT intervention.
 
-   gdcmWarningMacro("--> ConvertHandleColor"
+   gdcmDebugMacro("--> ConvertHandleColor "
                     << "Planar Configuration " << PlanarConfiguration );
 
    if ( ! IsRawRGB() )
    {
       // [Planar 2] OR  [Photo D]: LUT intervention done outside
-      gdcmWarningMacro("--> RawRGB : LUT intervention done outside");
+      gdcmDebugMacro("--> RawRGB : LUT intervention done outside");
       return;
    }
                                                                                 
