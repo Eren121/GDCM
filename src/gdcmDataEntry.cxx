@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 17:07:24 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/10/28 13:02:32 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -502,9 +502,9 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //           on Little endian based processor
    //           and, later on, somebody needs
    //           this 'OW' Implicit VR private element (?!?)
+   //           (Same stuff, mutatis mutandis, for Little/Big)
  
- 
-   // 8/16 bits Pixels problem should be solve automatiquely,
+   // 8/16 bits Pixels problem should be solved automatiquely,
    // since we ensure the VR is conform to Pixel size.
         
    uint8_t *data = BinArea; //safe notation

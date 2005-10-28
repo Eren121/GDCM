@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:09 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/10/28 13:02:32 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,13 +84,18 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //
    // ----------- Writes the common part
    //
+   
+ // ----------- Writes the common part : the Tag   
    binary_write( *fp, group); //group number
    binary_write( *fp, el);    //element number
 
    // Dicom V3 group 0x0002 is *always* Explicit VR !
    if ( filetype == ExplicitVR || filetype == JPEG || group == 0x0002 )
    {
-      // Special case of delimiters:
+
+// ----------- Writes the common part : the VR + the length 
+  
+          // Special case of delimiters:
       if (group == 0xfffe)
       {
          // Delimiters have NO Value Representation
@@ -114,13 +119,6 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          // GDCM_VRUNKNOWN was stored in the Entry VR;
          // deal with Entry as if TS were Implicit VR
  
-         // FIXME : troubles expected on big endian processors :
-         // let lgth = 0x00001234
-         // we write 34 12 00 00 on little endian proc (OK)
-         // we write 12 34 00 00 on big endian proc (KO)          
-         //binary_write(*fp, shortLgr);
-         //binary_write(*fp, zero);
-
          binary_write(*fp, lgth);
       }
       else
@@ -128,6 +126,8 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          binary_write(*fp, vr.str());
                   
          if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") /*|| (vr == "UN")*/ )
+// FIXME : what is the status of VR = "UN"
+//         --> uncomment or remove comment !
          {
             binary_write(*fp, zero);
             if (vr == "SQ")
@@ -150,6 +150,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    } 
    else // IMPLICIT VR 
    { 
+// ----------- Writes the common part : the VR  
       if (vr == "SQ")
       {
          binary_write(*fp, ffff);
