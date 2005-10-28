@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:51 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/10/28 15:52:15 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,12 @@ Validator::~Validator()
 // compare to the one from the dictionary
 bool CheckVM(DataEntry *entry)
 {
+  // Don't waste time checking tags where VM is OB and OW, since we know
+  // it's allways 1, whatever the actual length (found on disc)
+  
+  if ( entry->GetVR() == "OB" ||  entry->GetVR() == "OW" )
+     return true;
+     
   const std::string &s = entry->GetString();
   std::string::size_type n = s.find("\\");
   if ( n == s.npos ) // none found
