@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 18:12:40 $
-  Version:   $Revision: 1.318 $
+  Date:      $Date: 2005/10/28 12:44:26 $
+  Version:   $Revision: 1.319 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -187,7 +187,7 @@ bool Document::DoTheLoadingDocumentJob(  )
       /// In order to fix things "Quick and Dirty" the dictionary was
       /// altered on PURPOSE but now contains a WRONG value.
       /// In order to fix things and restore the dictionary to its
-      /// correct value, one needs to decided of the semantics by deciding
+      /// correct value, one needs to decide of the semantics by deciding
       /// whether the following tags are either :
       /// - multivaluated US, and hence loaded as ValEntry, but afterwards
       ///   also used as BinEntry, which requires the proper conversion,
@@ -762,8 +762,8 @@ void Document::LoadEntryBinArea(DataEntry *entry)
                         Global::GetVR()->GetAtomicElementLength(entry->GetVR());
 
 // FIXME : trouble expected if we read an ... OW Entry (LUT, etc ..)
-   if( entry->GetVR() == "OW" )
-      vrLgth = 1;
+//   if( entry->GetVR() == "OW" )
+//      vrLgth = 1;
 
    switch(vrLgth)
    {
