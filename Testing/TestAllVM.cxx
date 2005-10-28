@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:30 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/10/28 15:44:54 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,13 +43,17 @@ int DoTheVMTest(std::string const &filename)
          if ( !(de->GetGroup() % 2) ) // Don't check shadow elements. Righ now,
                                       // Private Dictionnary are not dealt with
          {    
-            if( !de->IsValueCountValid() )
-            {
-               std::cerr << "Element: " << de->GetKey() <<
+            // We know OB and OW VM is always 1, whatever the actual
+            //  found value is.
+     
+            if (de->GetVR() != "OB" && de->GetVR() != "OW" )
+               if( !de->IsValueCountValid() )
+               {
+                  std::cerr << "Element: " << de->GetKey() <<
                     " (" << de->GetName() << ") " <<
                     "Contains a wrong VM: " << de->GetValueCount() 
                     << " should be: " << de->GetVM() << std::endl;;
-            }
+               }
          }
       }
       else
