@@ -1,1 +1,4 @@
-SUBDIRS(mpeg2dec mpeg2enc)
+SUBDIRS(
+  mpeg2dec 
+  # mpeg2enc
+  )
