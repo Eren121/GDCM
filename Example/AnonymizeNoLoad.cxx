@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:26 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2005/11/02 10:11:29 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
       loadMode |= gdcm::LD_NOSHADOWSEQ;
    else 
    {
-   if ( am->ArgMgrDefined("noshadow") )
-      loadMode |= gdcm::LD_NOSHADOW;
+      if ( am->ArgMgrDefined("noshadow") )
+         loadMode |= gdcm::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
          loadMode |= gdcm::LD_NOSEQ;
    }
