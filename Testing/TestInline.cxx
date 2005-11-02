@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:01:39 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/11/02 09:40:11 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,7 +149,7 @@ int TestInline(int argc, char *argv[])
    if (argc > 1)
       nbLoop = atoi(argv[1]);
    else
-      nbLoop = 100000000;      
+      nbLoop = 10000000;      
 
    clock_t r1, r2;
    struct tms tms1, tms2;
