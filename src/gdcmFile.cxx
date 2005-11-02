@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:52:33 $
-  Version:   $Revision: 1.298 $
+  Date:      $Date: 2005/11/02 10:15:04 $
+  Version:   $Revision: 1.299 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,21 +19,21 @@
 //
 // --------------  Remember ! ----------------------------------
 //
-// Image Position Patient                              (0020,0032):
+// Image Position (Patient)                            (0020,0032):
 // If not found (ACR_NEMA) we try Image Position       (0020,0030)
 // If not found (ACR-NEMA), we consider Slice Location (0020,1041)
 //                                   or Location       (0020,0050) 
 //                                   as the Z coordinate, 
 // 0. for all the coordinates if nothing is found
 //
-// Image Position (Patient) (0020,0032) VM=3 What is it used for?
+// Image Position (Patient) (0020,0032) VM=3
 // -->
 //  The attribute Patient Orientation (0020,0020) from the General Image Module 
 // is of type 2C and has the condition Required if image does not require 
 // Image Orientation (0020,0037) and Image Position (0020,0032). 
 // However, if the image does require the attributes 
 // - Image Orientation (Patient) (0020,0037), VM=6
-// - Image Position Patient (0020,0032), VM=3
+// - Image Position (Patient)    (0020,0032), VM=3
 // then attribute Patient Orientation (0020,0020) should not be present
 //  in the images.
 //
@@ -65,7 +65,7 @@
 // FFDR = Feet First-Decubitus Right
 // FFDL = Feet First-Decubitus Left
 
-//  we can also find      
+//  we can also find (non standard!)     
 
 // SEMIERECT
 // SUPINE
