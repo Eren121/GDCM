@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/11/02 10:10:28 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,40 +24,73 @@
  */
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
+#include "gdcmArgMgr.h"
  
 #include <iostream>
 #include <sstream>
 
 // Image size
-#define SIZE_X          256
-#define SIZE_Y          256
+ uint16_t SIZE_X;
+ uint16_t SIZE_Y;
 // Number of components in the image (3 for RGB)
-#define COMPONENT       1
+ uint16_t  COMPONENT;
 // Size of each component (in byte)
-#define COMPONENT_SIZE  1
-// Window / Level
-#define COLOR_WINDOW    256
-#define COLOR_LEVEL     128
+ uint16_t  COMPONENT_SIZE;
+
 
 int main(int argc, char *argv[])
 {
-   if (argc < 3) 
+
+
+   START_USAGE(usage)
+   " \n exWriteDicomSimple : \n                                               ",
+   " Creates a Dicom image File                                               ",
+   " usage: exWriteDicomSimple {fileout=outputFileName}                       ",
+   "                       [nx=number of colomns] [ny=number of lines]        ",
+   "                       [components= 1: grey, 3 : RGB]                     ",
+   "                       [pixelsize= Pixel Size in Bytes : 1/2] } ] [debug] ",
+   FINISH_USAGE
+
+   // Initialize Arguments Manager   
+   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+  
+   if (argc == 1 || am->ArgMgrDefined("usage") )
    {
-      std::cerr << "usage: \n" 
-                << argv[0] << " Output Mode " << std::endl 
-                << "Output : output file name\n"
-                << "Mode : \n"
-                << "   a : ACR, produces a file named Output.ACR\n"
-                << "   e : DICOM Explicit VR, produces a file named Output.E.DCM\n"
-                << "   i : DICOM Implicit VR, produces a file named Output.I.DCM\n"
-                << "   r : RAW, produces a file named Output.RAW\n"
-                << std::endl;
+      am->ArgMgrUsage(usage); // Display 'usage'
+      delete am;
       return 1;
    }
 
+   if (am->ArgMgrDefined("debug"))
+      gdcm::Debug::DebugOn();
+      
+   char *fileOut = am->ArgMgrGetString("fileout","WriteDicomSimple.dcm");   
+   SIZE_X = am->ArgMgrGetInt("NX", 128);
+   SIZE_Y = am->ArgMgrGetInt("NY", 128);
+   COMPONENT = am->ArgMgrGetInt("components", 1);
+   COMPONENT_SIZE = am->ArgMgrGetInt("size", 1);
+   
+   /* if unused Param we give up */
+   if ( am->ArgMgrPrintUnusedLabels() )
+   {
+      am->ArgMgrUsage(usage);
+      delete am;
+      return 1;
+   } 
 
-// Step 1 : Create the header of the image
-   gdcm::File *header = gdcm::File::New();
+   delete am;  // we don't need Argument Manager any longer
+
+   // ----------- End Arguments Manager ---------
+   
+   
+// Step 1 : Create an empty gdcm::FileHelper for the image
+//          (it deals with the acces to the pixels)
+   gdcm::FileHelper *fileH = gdcm::FileHelper::New();
+   
+//         Get the empty gdcm::File of the image 
+//         (it deals with the 'entries' od the image header)  
+   gdcm::File *header = fileH->GetFile();
+    
    std::ostringstream str;
 
    // Set the image size
@@ -89,22 +122,6 @@ int main(int argc, char *argv[])
    str << COMPONENT;
    header->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
-   // Set the Window / Level
-   str.str("");
-   str << COLOR_WINDOW;
-   header->InsertEntryString(str.str(),0x0028,0x1051); // Window Width
-   str.str("");
-   str << COLOR_LEVEL;
-   header->InsertEntryString(str.str(),0x0028,0x1050); // Window Center
-
-   if( !header->IsReadable() )
-   {
-      std::cerr << "-------------------------------\n"
-                << "Error while creating the file\n"
-                << "This file is considered to be not readable\n";
-      header->Delete();
-      return 1;
-   }
 
 // Step 2 : Create the output image
    size_t size = SIZE_X * SIZE_Y * COMPONENT * COMPONENT_SIZE;
@@ -123,69 +140,45 @@ int main(int argc, char *argv[])
       }
    }
 
-// Step 3 : Create the file of the image
-   gdcm::FileHelper *file = gdcm::FileHelper::New(header);
-   file->SetImageData(imageData,size);
+// Step 3 : Set the 'Pixel Area' of the image
 
-// Step 4 : Set the writting mode and write the image
-   std::string fileName = argv[1]; 
-   std::string mode = argv[2];
+   fileH->SetImageData(imageData,size);
+   header->Print();
+   std::cout << "-------------------------------" << std::endl;
+   
+      // Step 4 : Set the writting mode and write the image
 
-   file->SetWriteModeToRaw();
-   switch (mode[0])
+/*
+// Warning : SetImageData does *not* add the 7FE0|0010 Element!
+//           IsReadable() is always false
+   if( !header->IsReadable() )
    {
-      case 'a' : // Write an ACR file
-         fileName += ".ACR";
-         file->SetWriteTypeToAcr();
-         std::cout << "Write ACR" << std::endl
-                   << "File :" << fileName << std::endl;
-         break;
-
-      case 'e' : // Write a DICOM Explicit VR file
-         fileName += ".E.DCM";
-         file->SetWriteTypeToDcmExplVR();
-         std::cout << "Write DCM Explicit VR" << std::endl
-                   << "File :" << fileName << std::endl;
-         break;
-
-      case 'i' : // Write a DICOM Implicit VR file
-         fileName += ".I.DCM";
-         file->SetWriteTypeToDcmImplVR();
-         std::cout << "Write DCM Implicit VR" << std::endl
-                   << "File :" << fileName << std::endl;
-         break;
-
-      case 'r' : // Write a RAW file
-         fileName += ".RAW";
-         file->WriteRawData(fileName);
-         std::cout << "Write Raw" << std::endl
-                   << "File :" << fileName << std::endl;
-
-         delete[] imageData;
-         file->Delete();
-         header->Delete();
-         return 0;
-
-      default :
-         std::cout << "-------------------------------\n"
-                   << "Write mode undefined...\n"
-                   << "No file written\n";
-         delete[] imageData;
-         file->Delete();
-         header->Delete();
-         return 1;
+      std::cerr << "-------------------------------\n"
+                << "Error while creating the file\n"
+                << "This file is considered to be not readable\n";
+      return 1;
    }
+*/
+   fileH->SetWriteModeToRaw(); // no LUT, no compression.
 
-   if( !file->Write(fileName) )
+    // Write a DICOM Explicit VR file
+
+    fileH->SetWriteTypeToDcmExplVR();
+    std::cout << "Write DCM Explicit VR" << std::endl
+              << "File :" << fileOut << std::endl;
+
+
+   if( !fileH->Write(fileOut) )
    {
       std::cout << "-------------------------------\n"
-                   << "Error when writting the file " << fileName << "\n"
+                   << "Error when writting the file " << fileOut << "\n"
                 << "No file written\n";
    }
 
+   header->Print();
+
    delete[] imageData;
-   file->Delete();
-   header->Delete();
+   fileH->Delete();
 
    return 0;
 }
