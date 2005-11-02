@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:30 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/11/02 09:39:04 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,10 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
+//-->
+//--> WARNING :
+//-->          The .tst files *must* be generated on a Little Endian based computer.
+//-->
 /**
  * /brief   File Read/Writer specific for the TestAllReadCompareDicom test
  * /remarks The Test file format is (only in little endian) :
@@ -34,46 +38,51 @@
  *  - 4 bytes : size X
  *  - 4 bytes : size Y
  *  - 4 bytes : size Z
- *  - 2 bytes : scalar size (8,16,32)
- *  - 2 bytes : number of components per pixel (1,2,3)
- *  - n bytes : datas
+ *  - 2 bytes : scalar size (8,16,32) --> ?!? 1 or 2 only in DICOM V3 !
+ *  - 2 bytes : number of components per pixel (1,2,3) ---> 1 or 3 only in DICOMV3 !
+ *  - n bytes : data
  */
 class TestFile
 {
 public:
-   TestFile(void);
-   ~TestFile(void);
+   TestFile();
+   ~TestFile();
 
-   bool IsReadable(void) {return readable;}
-   int GetXSize(void) {return sizeX;};
-   void SetXSize(int size) {sizeX = size;};
-   int GetYSize(void) {return sizeY;};
-   void SetYSize(int size) {sizeY = size;};
-   int GetZSize(void) {return sizeZ;};
-   void SetZSize(int size) {sizeZ = size;};
-   int GetScalarSize(void) {return scalarSize;};
-   void SetScalarSize(int size) {scalarSize = size;};
-   int GetNumberOfComponents(void) {return components;};
-   void SetNumberOfComponents(int size) {components = size;};
+   bool IsReadable() {return readable;}
+   
+   int GetXSize() {return SizeX;}
+   int GetYSize() {return SizeY;}
+   int GetZSize() {return SizeZ;}
+   
+   void SetXSize(int size) {SizeX = size;}   
+   void SetYSize(int size) {SizeY = size;}
+   void SetZSize(int size) {SizeZ = size;}
+   
+   int GetScalarSize()                  {return ScalarSize;}
+   void SetScalarSize(int size)         {ScalarSize = size;}
+   
+   int GetNumberOfComponents()          {return Components;}
+   void SetNumberOfComponents(int size) {Components = size;}
+   int GetSwapCode() {return SwapCode;}
 
-   unsigned long GetDataSize(void) {return GetLineSize()*sizeY*sizeZ;}
-   uint8_t *GetData(void) {return data;}
+   unsigned long GetDataSize() {return GetLineSize()*SizeY*SizeZ;}
+   uint8_t *GetData() {return Data;}
    void SetData(const uint8_t *newData);
 
    void Load(const std::string &filename);
    void Write(const std::string &filename);
 
 private:
-   unsigned long GetLineSize(void) {return sizeX*scalarSize*components;}
-   int GetSwapCode(uint32_t tag);
+   unsigned long GetLineSize() {return SizeX*ScalarSize*Components;}
+   int ComputeSwapCode(uint32_t tag);
 
-   void NewData(void);
-   void DeleteData(void);
+   void NewData();
+   void DeleteData();
 
-   void ReadFile(void);
+   void ReadFile();
    bool ReadFileHeader(std::ifstream *fp);
    bool ReadFileData(std::ifstream *fp);
-   void WriteFile(void);
+   void WriteFile();
    bool WriteFileHeader(std::ofstream *fp);
    bool WriteFileData(std::ofstream *fp);
 
@@ -102,13 +111,13 @@ private:
    std::string fileName;
    bool readable;
 
-   int sizeX;
-   int sizeY;
-   int sizeZ;
-   uint16_t scalarSize;
-   uint16_t components;
-   uint8_t *data;
-   int swapCode;
+   int SizeX;
+   int SizeY;
+   int SizeZ;
+   uint16_t ScalarSize;
+   uint16_t Components;
+   uint8_t *Data;
+   int SwapCode;
 
    static const unsigned int HEADER_SIZE;
 };
@@ -121,17 +130,17 @@ TestFile::TestFile()
    fileName = "";
    readable=false;
 
-   sizeX = 0;
-   sizeY = 0;
-   sizeZ = 0;
-   scalarSize = 0;
-   components = 0;
-   data = NULL;
+   SizeX = 0;
+   SizeY = 0;
+   SizeZ = 0;
+   ScalarSize = 0;
+   Components = 0;
+   Data = NULL;
 
-   swapCode = 1234;
+   SwapCode = 1234;
 }
 
-TestFile::~TestFile(void)
+TestFile::~TestFile()
 {
    DeleteData();
 }
@@ -140,8 +149,8 @@ void TestFile::SetData(const uint8_t *newData)
 {
    DeleteData();
    NewData();
-   if( data )
-      memcpy(data,newData,GetDataSize());
+   if( Data )
+      memcpy(Data,newData,GetDataSize());
 }
 
 void TestFile::Load(const std::string &filename)
@@ -156,7 +165,7 @@ void TestFile::Write(const std::string &filename)
    WriteFile();
 }
 
-int TestFile::GetSwapCode(uint32_t tag)
+int TestFile::ComputeSwapCode(uint32_t tag)
 {
    int swap = 0;
    for(int i=0;i<4;i++)
@@ -183,22 +192,22 @@ int TestFile::GetSwapCode(uint32_t tag)
    return swap;
 }
 
-void TestFile::NewData(void)
+void TestFile::NewData()
 {
    DeleteData();
    if( GetDataSize() == 0 )
       return;
-   data = new uint8_t[GetDataSize()];
+   Data = new uint8_t[GetDataSize()];
 }
 
-void TestFile::DeleteData(void)
+void TestFile::DeleteData()
 {
-   if( data )
-      delete[] data;
-   data = NULL;
+   if( Data )
+      delete[] Data;
+   Data = NULL;
 }
 
-void TestFile::ReadFile(void)
+void TestFile::ReadFile()
 {
    readable=true;
    std::ifstream fp(fileName.c_str(),std::ios::in | std::ios::binary);
@@ -222,7 +231,7 @@ void TestFile::ReadFile(void)
       readable=ReadFileData(&fp);
       if(!readable)
       {
-         std::cout << "Problems when reading datas" << std::endl;
+         std::cout << "Problems when reading data" << std::endl;
          fp.close();
          return;
       }
@@ -240,18 +249,18 @@ void TestFile::ReadFile(void)
 bool TestFile::ReadFileHeader(std::ifstream *fp)
 {
    uint32_t tag = ReadInt32(fp);
-   swapCode = GetSwapCode(tag);
-   if( swapCode == 0 )
+   SwapCode = ComputeSwapCode(tag);
+   if( SwapCode == 0 )
    {
       std::cout << "TestFile: Bad tag - Must be 'gdcm'" << std::endl;
       return(false);
    }
 
-   sizeX = ReadInt32(fp); // Size X
-   sizeY = ReadInt32(fp); // Size Y
-   sizeZ = ReadInt32(fp); // Size Z
-   scalarSize = ReadInt16(fp)/8; // bits per scalar
-   components = ReadInt16(fp);   // Number of components
+   SizeX = ReadInt32(fp); // Size X
+   SizeY = ReadInt32(fp); // Size Y
+   SizeZ = ReadInt32(fp); // Size Z
+   ScalarSize = ReadInt16(fp)/8; // bits per scalar
+   Components = ReadInt16(fp);   // Number of components
 
    return(true);
 }
@@ -260,18 +269,34 @@ bool TestFile::ReadFileData(std::ifstream *fp)
 {
    DeleteData();
 
-   // Allocate datas
+   // Allocate data
    NewData();
-   if( !data )
+   if( !Data )
       return(false);
 
-   // Read datas
-   fp->read((char *)data,GetDataSize());
+   // Read data
+   fp->read((char *)Data,GetDataSize());
+      
+   if (GetScalarSize() == 1 || GetSwapCode() == 1234)
+   {
+      return true;
+   }
+   // We *know* the .tst files are written in 'Little Endian' format.
+   // We *know* DataSize may be 1 or 2 !  
+   uint16_t g;   
+   for (int i=0; i<GetDataSize()/2; i++)
+   {
+      g = ((uint16_t *)Data)[i];
+      g = ( g << 8 |  g >> 8  );
+      ((uint16_t *)Data)[i] = g;   
+   }
+   
+   
 
    return(true);
 }
 
-void TestFile::WriteFile(void)
+void TestFile::WriteFile()
 {
    std::ofstream fp(fileName.c_str(),std::ios::out | std::ios::binary);
 
@@ -293,18 +318,18 @@ bool TestFile::WriteFileHeader(std::ofstream *fp)
    WriteInt8(fp,'d'); // Bitmap tag - must be 'd'
    WriteInt8(fp,'c'); // Bitmap tag - must be 'c'
    WriteInt8(fp,'m'); // Bitmap tag - must be 'm'
-   WriteInt32(fp,sizeX); // Size X
-   WriteInt32(fp,sizeY); // Size Y
-   WriteInt32(fp,sizeZ); // Size Z
-   WriteInt16(fp,scalarSize*8); // bits per scalar
-   WriteInt16(fp,components);   // number of components
+   WriteInt32(fp,SizeX); // Size X
+   WriteInt32(fp,SizeY); // Size Y
+   WriteInt32(fp,SizeZ); // Size Z
+   WriteInt16(fp,ScalarSize*8); // bits per scalar
+   WriteInt16(fp,Components);   // number of components
 
    return(true);
 }
 
 bool TestFile::WriteFileData(std::ofstream *fp)
 {
-   fp->write((char *)data,GetDataSize());
+   fp->write((char *)Data,GetDataSize());
 
    return(true);
 }
@@ -514,10 +539,9 @@ int InternalTest(std::string const &filename,
       }
 
       // Test the data content
-      if (int res = memcmp(testedImageData, referenceImageData,
+      if ( memcmp(testedImageData, referenceImageData,
                            testedDataSize) != 0 )
       {
-         (void)res;
          std::string ts  = tested->GetFile()->GetTransferSyntax();
 
          std::cout << " Failed" << std::endl
@@ -599,14 +623,14 @@ int TestAllReadCompareDicom(int argc, char *argv[])
              << std::endl
              << "           special internal file format containing the"
              << std::endl
-             << "           caracteristic of the image and the pixel datas "
+             << "           caracteristic of the image and the pixel data "
              << "(uncompressed). This file is written if it's not found."
              << std::endl;
    std::cout << "   step 3: compare the DICOM image with the reference image"
              << std::endl
              << "           (.tst file). The test is made on the caracteristics"
              << std::endl
-             << "           of the image and the pixel datas"
+             << "           of the image and the pixel data"
              << std::endl << std::endl;
 
    int i = 0;
