@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/28 13:02:32 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/11/02 10:14:33 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -475,7 +475,7 @@ void DataEntry::Copy(DocEntry *doc)
    }
 }
 /**
- * \brief   Writes the value of a DataEntry
+ * \brief   Writes the 'value' area of a DataEntry
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
@@ -492,7 +492,7 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // --> forget Big Endian Transfer Syntax writting!
    //     Next DICOM version will give it up ...
  
-   // WARNING - Implicit VR private element :
+   // WARNING - For Implicit VR private element,
    //           we have *no choice* but considering them as
    //           something like 'OB' values.
    //           we rewrite them as we found them on disc.
@@ -509,6 +509,9 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
         
    uint8_t *data = BinArea; //safe notation
    size_t l = GetLength(); 
+   gdcmDebugMacro ("in DataEntry::WriteContent " << GetKey() 
+             << " : " << Global::GetVR()->GetAtomicElementLength(this->GetVR())
+             );
    if (BinArea) // the binArea was *actually* loaded
    {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
