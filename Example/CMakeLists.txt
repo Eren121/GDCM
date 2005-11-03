@@ -28,7 +28,8 @@ SET(EXAMPLE_SOURCES
   AnonymizeNoLoad   # without loading the Pixel Data 
   PatchHeader
   ReWrite
-
+  TestValidate
+  
 #the following will be transformed into 'examples', or 'utilities'
 #              or will be removed
 #
