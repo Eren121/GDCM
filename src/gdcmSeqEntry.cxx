@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:35 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2005/11/03 08:36:19 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,10 +82,11 @@ void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
    uint32_t seq_term_lg = 0xffffffff;
-
-   //uint16_t item_term_gr = 0xfffe;
-   //uint16_t item_term_el = 0xe00d;
-   
+ 
+   // ignore 'Zero length' Sequences
+   if ( GetReadLength() == 0 )
+      return;
+       
    DocEntry::WriteContent(fp, filetype);
    for(ListSQItem::iterator cc  = Items.begin();
                             cc != Items.end();
