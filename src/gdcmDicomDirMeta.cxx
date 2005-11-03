@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:29:23 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/11/03 16:49:45 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,8 +60,8 @@ DicomDirMeta::~DicomDirMeta()
 void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype)
 {   
    // 'Media Storage SOP Instance UID'   
-   DataEntry *e00002_0013 = GetDataEntry(0x0002,0x0013);
-   e00002_0013->SetString(Util::CreateUniqueUID());
+   DataEntry *e00002_0003 = GetDataEntry(0x0002,0x0003);
+   e00002_0003->SetString(Util::CreateUniqueUID());
 
    // 'Implementation Class UID'
    DataEntry *e00002_0012 = GetDataEntry(0x0002,0x0012);
