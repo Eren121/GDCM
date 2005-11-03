@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:21:50 $
-  Version:   $Revision: 1.321 $
+  Date:      $Date: 2005/11/03 14:39:47 $
+  Version:   $Revision: 1.322 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1543,7 +1543,9 @@ VRKey Document::FindDocEntryVR()
 
    if ( !CheckDocEntryVR(vr) )
    {
-      gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
+      // Don't warn user with useless messages
+      if ( vr[0] != 0xff || vr[1] != 0xff )
+         gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ") at offset :" << positionOnEntry );
       Fp->seekg(positionOnEntry, std::ios::beg);
