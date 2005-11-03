@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/28 15:52:46 $
-  Version:   $Revision: 1.320 $
+  Date:      $Date: 2005/11/03 14:21:50 $
+  Version:   $Revision: 1.321 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -939,7 +939,7 @@ void Document::SkipBytes(uint32_t nBytes)
 }
 
 /**
- * \brief   Re-computes the length of a ACR-NEMA/Dicom group from a DcmHeader
+ * \brief   Re-computes the length of the Dicom group 0002.
  */
 int Document::ComputeGroup0002Length( ) 
 {
@@ -963,11 +963,6 @@ int Document::ComputeGroup0002Length( )
          {
             vr = entry->GetVR();
 
-            // FIXME : group 0x0002 is *always* Explicit VR!
-            // --> Except for Implicit VR Transfer Syntax (GE Private) !!
-   
-            //if ( filetype == ExplicitVR )
-            //{
             //if ( (vr == "OB")||(vr == "OW")||(vr == "UT")||(vr == "SQ"))
             // (no SQ, OW, UT in group 0x0002;)
                if ( vr == "OB" ) 
@@ -975,7 +970,7 @@ int Document::ComputeGroup0002Length( )
                   // explicit VR AND (OB, OW, SQ, UT) : 4 more bytes
                   groupLength +=  4;
                }
-            //}
+ 
             groupLength += 2 + 2 + 4 + entry->GetLength();   
          }
       }
