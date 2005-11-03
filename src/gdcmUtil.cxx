@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 08:47:52 $
-  Version:   $Revision: 1.173 $
+  Date:      $Date: 2005/11/03 14:04:43 $
+  Version:   $Revision: 1.174 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -978,7 +978,7 @@ std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 std::ostream &binary_write(std::ostream &os, const double &val)
 {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)    
-   double swap;
+   double swap = val;
    
    char *beg = (char *)&swap;
    char *end = beg + 7;
