@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 16:49:45 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/11/03 17:22:41 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,11 +34,9 @@ DicomDirMeta::DicomDirMeta(bool empty):
 {
    if ( !empty )
    {
-      uint8_t fmiv[2] = {0x02,0x00};
       ListDicomDirStudyElem const &elemList = 
          Global::GetDicomDirElements()->GetDicomDirMetaElements();
       FillObject(elemList);
-      SetEntryBinArea(fmiv, 0x0002,0x0001, 2); 
    }
 }
 
@@ -58,7 +56,11 @@ DicomDirMeta::~DicomDirMeta()
  * @return
  */ 
 void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype)
-{   
+{  
+   // 'File Meta Information Version'
+   uint8_t fmiv[2] = {0x02,0x00};      
+   SetEntryBinArea(fmiv, 0x0002,0x0001, 2); 
+       
    // 'Media Storage SOP Instance UID'   
    DataEntry *e00002_0003 = GetDataEntry(0x0002,0x0003);
    e00002_0003->SetString(Util::CreateUniqueUID());
