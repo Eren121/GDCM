@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/28 13:02:32 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2005/11/03 08:47:51 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,6 +84,10 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //
    // ----------- Writes the common part
    //
+    // To avoid gdcm to propagate oddities.
+    // --> Don't forget to *write* an even length value   
+   if (lgth%2)
+      lgth ++;
    
  // ----------- Writes the common part : the Tag   
    binary_write( *fp, group); //group number

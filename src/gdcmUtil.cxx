@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/28 15:52:46 $
-  Version:   $Revision: 1.172 $
+  Date:      $Date: 2005/11/03 08:47:52 $
+  Version:   $Revision: 1.173 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,7 +110,7 @@ std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
 /**
  * \brief Provide a better 'c++' approach for sprintf
  * For example c code is:
- * char result[200]; // hope 200 is enough
+ * char result[2048]; // hope 2048 is enough
  * sprintf(result, "%04x|%04x", group , elem);
  *
  * c++ code is 
@@ -126,7 +126,7 @@ std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
  */
 std::string Util::Format(const char *format, ...)
 {
-   char buffer[2048];
+   char buffer[2048]; // hope 2048 is enough
    va_list args;
    va_start(args, format);
    vsprintf(buffer, format, args);  //might be a security flaw
