@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/05 18:47:38 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/11/03 16:11:56 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,9 +27,11 @@ int TestValidate(int argc, char *argv[])
     return 1;
   }
 
-  const char *filename = argv[1];
+   const char *filename = argv[1];
 
-   gdcm::File *input = new gdcm::File( filename );
+   gdcm::File *input =  gdcm::File::New( );
+   input->SetFileName(filename);
+   input->Load();
    gdcm::Validator *v = new gdcm::Validator();
    v->SetInput( input );
 

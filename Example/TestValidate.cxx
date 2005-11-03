@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:17:24 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/11/03 16:11:54 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 {
   if( argc < 2 )
   {
-    std::cerr << "ouh les cornes / shame on you" << std::endl;
+    std::cerr << "ouh les cornes / shame on you / !inocente!" << std::endl;
     return 1;
   }
 
