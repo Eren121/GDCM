@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/02 10:14:33 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/11/03 08:41:59 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -243,7 +243,7 @@ bool DataEntry::IsValueCountValid() const
   
   if( strVM == "1-n" )
   {
-    // make sure it is at least one ??? FIXME
+    // make sure there is at least one ??? FIXME
     valid = vc >= 1 || vc == 0;
   }
   else
@@ -252,7 +252,7 @@ bool DataEntry::IsValueCountValid() const
     os.str( strVM );
     os >> vm;
     // Two cases:
-    // vm respect the one from the dict
+    // vm respects the one from the dict
     // vm is 0 (we need to check if this element is allowed to be empty) FIXME
 
     // note  (JPR)
@@ -454,8 +454,12 @@ std::string const &DataEntry::GetString() const
       StrArea=s.str();
    }
    else
+   {
       StrArea.append((const char *)BinArea,GetLength());
-
+      // to avoid gdcm propagate oddities in lengthes
+      if ( GetLength()%2)
+         StrArea.append(" ",1);  
+   }
    return StrArea;
 }
 /**
@@ -505,7 +509,7 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
    //           (Same stuff, mutatis mutandis, for Little/Big)
  
    // 8/16 bits Pixels problem should be solved automatiquely,
-   // since we ensure the VR is conform to Pixel size.
+   // since we ensure the VR (OB vs OW) is conform to Pixel size.
         
    uint8_t *data = BinArea; //safe notation
    size_t l = GetLength(); 
@@ -562,6 +566,10 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
       
       fp->seekp(l, std::ios::cur);
    }
+   // to avoid gdcm to propagate oddities
+   // (length was already modified)  
+   if (l%2)
+      fp->seekp(1, std::ios::cur);  
 }
 
 //-----------------------------------------------------------------------------
