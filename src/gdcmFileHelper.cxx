@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/10/27 17:25:04 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/11/03 08:46:03 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,7 @@
 #include "gdcmPixelWriteConvert.h"
 #include "gdcmDocEntryArchive.h"
 #include "gdcmDictSet.h"
+#include "gdcmOrientation.h"
 
 #include <fstream>
 
@@ -1216,19 +1217,23 @@ To be moved to User's guide / WIKI  ?
     
     --> 'Referenced SOP Class UID' (0x0008, 0x1150)
          whose value is the original 'SOP Class UID'
-    ---> 'Referenced SOP Instance UID' (0x0008, 0x1155)
+    --> 'Referenced SOP Instance UID' (0x0008, 0x1155)
          whose value is the original 'SOP Class UID'
     
 --> Bits Stored, Bits Allocated, Hight Bit Position are checked for consistency
 --> Pixel Spacing     (0x0028,0x0030) is defaulted to "1.0\1.0"
 --> Samples Per Pixel (0x0028,0x0002) is defaulted to 1 (grayscale)
+--> Imager Pixel Spacing (0x0018,0x1164) : defaulted to 1.0\1.0
 
 --> Instance Creation Date, Instance Creation Time, Study Date, Study Time
     are force to current Date and Time
     
 -->  Conversion Type (0x0008,0x0064)
      is forced to 'SYN' (Synthetic Image)
-     
+
+--> Patient Orientation : (0x0020,0x0020), if not present, is deduced from 
+    Image Orientation (Patient) : (0020|0037)
+   
 --> Study ID, Series Number, Instance Number, Patient Orientation (Type 2)
     are created, with empty value if there are missing.
 
@@ -1265,7 +1270,7 @@ void FileHelper::CheckMandatoryElements()
    // Always modify the value
    // Push the entries to the archive.
       CopyMandatoryEntry(0x0002,0x0000,"0");
-  
+ 
       DataEntry *e_0002_0001 = CopyDataEntry(0x0002,0x0001, "OB");
       e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
                                false);
@@ -1273,8 +1278,11 @@ void FileHelper::CheckMandatoryElements()
       Archive->Push(e_0002_0001);
       e_0002_0001->Delete();
 
-   // Potentialy post-processed image --> [Secondary Capture Image Storage]
-   // 'Media Storage SOP Class UID' 
+   // FIXME : we should allow user to tell he *wants* to keep the original 
+   //         'Media Storage SOP Class UID'  
+   // Potentialy this is a post-processed image 
+   // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
+   //  
       CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");    
  
    // 'Media Storage SOP Instance UID'   
@@ -1342,13 +1350,14 @@ void FileHelper::CheckMandatoryElements()
 
     // Imager Pixel Spacing : defaulted to 1.0\1.0
     // --> This one is the *legal* one !
+    // FIXME : we should write it only when we are *sure* the image comes from
+    //         an imager (see also 0008,0x0064)
    CheckMandatoryEntry(0x0018,0x1164,"1.0\\1.0");
     // Pixel Spacing : defaulted to 1.0\1.0
    CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
 
    // Samples Per Pixel (type 1) : default to grayscale 
    CheckMandatoryEntry(0x0028,0x0002,"1");
-    
    
   // --- Check UID-related Entries ---
 
@@ -1420,7 +1429,8 @@ void FileHelper::CheckMandatoryElements()
    CopyMandatoryEntry(0x0008,0x0030,time);
 
    // Accession Number
-   CopyMandatoryEntry(0x0008,0x0050,"");
+   //CopyMandatoryEntry(0x0008,0x0050,"");
+   CheckMandatoryEntry(0x0008,0x0050,"");
    
    // Conversion Type.
    // Other possible values are :
@@ -1438,6 +1448,8 @@ void FileHelper::CheckMandatoryElements()
    // FIXME : Must we Force Value, or Default value ?
    // Is it Type 1 for any Modality ?
    //    --> Answer seems to be NO :-(
+    // FIXME : we should write it only when we are *sure* the image 
+    //         *does not* come from an imager (see also 0018,0x1164)  
    CopyMandatoryEntry(0x0008,0x0064,"SYN");
 
 // ----- Add Mandatory Entries if missing ---
@@ -1454,7 +1466,7 @@ void FileHelper::CheckMandatoryElements()
    // The user is allowed to create his own Study, 
    //          keeping the same 'Study Instance UID' for various images
    // The user may add images to a 'Manufacturer Study',
-   //          adding new series to an already existing Study 
+   //          adding new Series to an already existing Study 
    CheckMandatoryEntry(0x0020,0x000d,Util::CreateUniqueUID());
 
    // 'Serie Instance UID'
@@ -1462,7 +1474,7 @@ void FileHelper::CheckMandatoryElements()
    // The user is allowed to create his own Series, 
    // keeping the same 'Serie Instance UID' for various images
    // The user shouldn't add any image to a 'Manufacturer Serie'
-   // but there is no way no to allowed him to do that 
+   // but there is no way no to prevent him for doing that 
    CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID());
 
    // Study ID
@@ -1473,9 +1485,15 @@ void FileHelper::CheckMandatoryElements()
 
    // Instance Number
    CheckMandatoryEntry(0x0020,0x0013,"");
-
-   // Patient Orientation FIXME 1\0\0\0\1\0 or empty ?
-   CheckMandatoryEntry(0x0020,0x0020,"");
+   
+   // Patient Orientation
+   // Can be computed from (0020|0037) :  Image Orientation (Patient)
+   gdcm::Orientation o;
+   std::string ori = o.GetOrientation ( FileInternal );
+   if (ori != "\\" )
+      CheckMandatoryEntry(0x0020,0x0020,ori);
+   else   
+      CheckMandatoryEntry(0x0020,0x0020,"");
    
    // Modality : if missing we set it to 'OTher'
    CheckMandatoryEntry(0x0008,0x0060,"OT");
