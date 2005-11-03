@@ -4,7 +4,7 @@ metaElem    0002 0002 "1.2.840.10008.1.3.10" // Media Stored SOP Class UID i.e. 
 metaElem    0002 0003 ""                     // Media Stored SOP Instance UID  : may be forged later
 metaElem    0002 0010 "1.2.840.10008.1.2.1"  // Transfer Syntax UID i.e. : Explicit VR - Little Endian
 metaElem    0002 0012 ""                     // Implementation Class UID : may be forged later
-metaElem    0002 0013 "gdcmLib "             // Implementation Version Name  don't remove trailing space !
+metaElem    0002 0013 "gdcm1.2 "             // Implementation Version Name  don't remove trailing space !
 metaElem    0002 0016 " "                    // Source Application Entity Title (our ?)
 metaElem    0002 0100 ""                     // Private Information Creator
 metaElem    0004 1130 ""                     // File-set ID
