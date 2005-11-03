@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:39:47 $
-  Version:   $Revision: 1.322 $
+  Date:      $Date: 2005/11/03 14:55:24 $
+  Version:   $Revision: 1.323 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,6 @@ Document::~Document ()
 
 //-----------------------------------------------------------------------------
 // Public
-
 /**
  * \brief   Loader. use SetLoadMode(), SetFileName() before ! 
  * @return false if file cannot be open or no swap info was found,
@@ -1544,7 +1543,7 @@ VRKey Document::FindDocEntryVR()
    if ( !CheckDocEntryVR(vr) )
    {
       // Don't warn user with useless messages
-      if ( vr[0] != 0xff || vr[1] != 0xff )
+      if ( (unsigned char)vr[0] != 0xff || (unsigned char)vr[1] != 0xff )
          gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ") at offset :" << positionOnEntry );
