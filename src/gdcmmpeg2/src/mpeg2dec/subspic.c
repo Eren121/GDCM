@@ -153,7 +153,7 @@ unsigned char *frame[];
 int framenum;
 {
   int parity;
-  int rerr = 0;
+  int rerr;
   int field_mode;
 
   if(framenum<0)

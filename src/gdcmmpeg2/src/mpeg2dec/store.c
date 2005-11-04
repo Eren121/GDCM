@@ -417,8 +417,7 @@ int offset, incr, height;
   /*static unsigned char tga24[14] = {0,0,2,0,0,0,0, 0,0,0,0,0,24,32};*/
   /*char header[FILENAME_LENGTH];*/
   static unsigned char *u422, *v422, *u444, *v444;
-  /*ostream file;*/
-  outmem = OUTMEM;
+  (void)outmem;
 
   if (chroma_format==CHROMA444)
   {
