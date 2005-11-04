@@ -28,19 +28,19 @@
 
 
 
-//MEMORY LEAK
+/* MEMORY LEAK */
 
 #ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 
-#include <stdlib.h>  // Must be included first
+#include <stdlib.h>  /* Must be included first */
 
 #include <crtdbg.h>
 
 #endif
 
-//MEM
+/* MEM */
 
 #include <openjpeg.h>
 #include <stdio.h>
@@ -298,7 +298,7 @@ int main(int argc, char **argv)
   int numpocs, numpocs_tile;   /*   Number of progression order change (POC) default 0       */
   int prcw_init[J2K_MAXRLVLS];   /*   Initialisation Precinct width                            */
   int prch_init[J2K_MAXRLVLS];   /*   Initialisation Precinct height                           */
-  //int prcw_init, prch_init;                     /*   Initialisation precincts' size                           */
+  /*int prcw_init, prch_init;*/                  /*   Initialisation precincts' size                           */
   int cblockw_init, cblockh_init;   /*   Initialisation codeblocks' size                          */
   int mode, value;      /*   Mode switch (cblk_style)                                 */
   int subsampling_dx, subsampling_dy;   /* subsampling value for dx and dy                    */
@@ -348,7 +348,7 @@ int main(int argc, char **argv)
   cp.comment = "Created by OpenJPEG version 0.9";
   cp.disto_alloc = 0;
   cp.fixed_alloc = 0;
-  cp.fixed_quality = 0;      //add fixed_quality
+  cp.fixed_quality = 0;      /*add fixed_quality*/
   /* img.PPT=0; */
 
   Tile_arg = 0;
@@ -662,11 +662,11 @@ int main(int argc, char **argv)
     fprintf(stderr,
        "Error: options -r -q and -f cannot be used together !!\n");
     return 1;
-  }            // mod fixed_quality
+  }            /* mod fixed_quality*/
 
   /* if no rate entered, lossless by default */
   if (tcp_init->numlayers == 0) {
-    tcp_init->rates[0] = 0;   //MOD antonin : losslessbug
+    tcp_init->rates[0] = 0;   /*MOD antonin : losslessbug*/
     tcp_init->numlayers++;
     cp.disto_alloc = 1;
   }
@@ -753,7 +753,7 @@ int main(int argc, char **argv)
     tcp = &cp.tcps[tileno];
     tcp->numlayers = tcp_init->numlayers;
     for (j = 0; j < tcp->numlayers; j++) {
-      if (cp.fixed_quality)   // add fixed_quality
+      if (cp.fixed_quality)   /* add fixed_quality*/
    tcp->distoratio[j] = tcp_init->distoratio[j];
       else
    tcp->rates[j] = tcp_init->rates[j];
@@ -899,15 +899,15 @@ int main(int argc, char **argv)
     /* If you wish to modify those boxes, you have to modify 
     the jp2_struct content */
 
-    jp2_struct->numcomps = img.numcomps;   // NC
+    jp2_struct->numcomps = img.numcomps;   /* NC*/
 
     if (jp2_init_stdjp2(jp2_struct)) {
       fprintf(stderr, "Error with jp2 initialization");
       return 1;
     };
 
-    jp2_struct->h = img.y1 - img.y0;   // HEIGHT
-    jp2_struct->w = img.x1 - img.x0;   // WIDTH
+    jp2_struct->h = img.y1 - img.y0;   /* HEIGHT*/
+    jp2_struct->w = img.x1 - img.x0;   /* WIDTH*/
 
     depth_0 = img.comps[0].prec - 1;
     sign = img.comps[0].sgnd;
@@ -936,9 +936,9 @@ int main(int argc, char **argv)
       else if (img.color_space == 2)
    jp2_struct->enumcs = 17;
       else if (img.color_space == 3)
-   jp2_struct->enumcs = 18;   // YUV                          
+   jp2_struct->enumcs = 18;   /* YUV */                         
     } else
-      jp2_struct->enumcs = 0;   // PROFILE (??)
+      jp2_struct->enumcs = 0;   /* PROFILE (??)*/
 
     cio_init(jp2_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
     len = jp2_wrap_j2k(jp2_struct, j2k_codestream, jp2_codestream);
@@ -990,7 +990,7 @@ int main(int argc, char **argv)
 
 
 
-  //MEMORY LEAK
+  /*MEMORY LEAK*/
 
   #ifdef _DEBUG
 
@@ -998,7 +998,7 @@ int main(int argc, char **argv)
 
   #endif
 
-  //MEM
+  /*MEM*/
 
   return 0;
 }
