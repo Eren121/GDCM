@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define VERSION "0.0.8"
+#define VERSION "0.0.9"
 
 #if defined(_WIN32) && defined (OPENJPEGDLL)
 #ifdef gdcmopenjpeg_EXPORTS /*LIBJ2K_EXPORTS*/
