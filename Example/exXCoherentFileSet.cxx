@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/02 10:08:18 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/11/04 08:59:08 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
 
    // FIXME : check only one of them is set !
 
-   bool pos = am->ArgMgrDefined("pos");
-   bool ori = am->ArgMgrDefined("ori");
-   bool tag = am->ArgMgrDefined("tag");
+   int pos = am->ArgMgrDefined("pos");
+   int ori = am->ArgMgrDefined("ori");
+   int tag = am->ArgMgrDefined("tag");
    
    int nb;
    uint16_t *groupelem;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
       {
          std::cout << "Split the 'Single SerieUID' FileSet :[" 
                    << s->GetCurrentSerieUIDFileSetUID()
-           << "]  " << nbFiles << " long" << std::endl;
+                   << "]  " << nbFiles << " long" << std::endl;
          std::cout << "-----------------------------------" << std::endl;
   
          if (ori) 
