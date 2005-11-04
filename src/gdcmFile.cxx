@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:23:13 $
-  Version:   $Revision: 1.300 $
+  Date:      $Date: 2005/11/04 16:00:01 $
+  Version:   $Revision: 1.301 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -469,9 +469,13 @@ float File::GetXSpacing()
    {
       nbValue = entry->GetValueCount();
       // Can't use IsValueCountValid because of the complex heuristic.
+      if( nbValue !=2 )
+         gdcmWarningMacro("ImagerPixelSpacing (0x0018,0x1164) "
+         << "has a wrong number of values :" << nbValue);
+     
       if( nbValue >= 3 )
          xspacing = (float)entry->GetValue(2);
-      if( nbValue >= 2 )
+      else if( nbValue >= 2 )
          xspacing = (float)entry->GetValue(1);
       else
          xspacing = (float)entry->GetValue(0);
@@ -489,6 +493,10 @@ float File::GetXSpacing()
    if( entry )
    {
       nbValue = entry->GetValueCount();
+      if( nbValue !=2 )
+         gdcmWarningMacro("PixelSpacing (0x0018,0x0030) "
+          << "has a wrong number of values :" << nbValue);      
+      
       if( nbValue >= 3 )
          xspacing = (float)entry->GetValue(2);
       else if( nbValue >= 2 )
