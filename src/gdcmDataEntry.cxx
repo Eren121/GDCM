@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 08:41:59 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/11/04 15:31:34 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -365,21 +365,9 @@ void DataEntry::SetString(std::string const &value)
    {
       if( value.size() > 0 )
       {
-         // FIXME : should be quicker if we don't create one more std::string
-         //         just to make even the length of a char array ...
-
-         /*
-         std::string finalVal = Util::DicomString( value.c_str() );
-         SetLength(finalVal.size());
-         NewBinArea();
-
-         memcpy(BinArea, &(finalVal[0]), finalVal.size());
-         */
-
          size_t l =  value.size();    
          SetLength(l + l%2);
          NewBinArea();
-         //memcpy(BinArea, &(value[0]), l);
          memcpy(BinArea, value.c_str(), l);
          if (l%2)
             BinArea[l] = '\0';
