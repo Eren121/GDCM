@@ -88,6 +88,26 @@ IF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
 ENDIF("GDCM_COMPILER_HAS_FUNCTION" MATCHES "^GDCM_COMPILER_HAS_FUNCTION$")
 
 #-----------------------------------------------------------------------------
+# Test is compiler support istringstream
+IF("GDCM_TEST_ISTRINGSTREAM" MATCHES "^GDCM_TEST_ISTRINGSTREAM$")
+  MESSAGE(STATUS "Checking istringstream")
+  TRY_RUN(GDCM_TEST_ISTRINGSTREAM GDCM_TEST_ISTRINGSTREAM_COMPILED
+          ${GDCM_BINARY_DIR}/CMakeTmp/
+          ${GDCM_SOURCE_DIR}/CMake/gdcmTestIstringStream.cxx)
+  IF(GDCM_TEST_ISTRINGSTREAM_COMPILED)
+    IF(GDCM_TEST_ISTRINGSTREAM)
+      MESSAGE(STATUS "Checking signedness of char -- signed")
+      SET(GDCM_TEST_ISTRINGSTREAM 1 CACHE INTERNAL "Whether char is signed.")
+    ELSE(GDCM_TEST_ISTRINGSTREAM)
+      MESSAGE(STATUS "Checking signedness of char -- unsigned")
+      SET(GDCM_TEST_ISTRINGSTREAM 0 CACHE INTERNAL "Whether char is signed.")
+    ENDIF(GDCM_TEST_ISTRINGSTREAM)
+  ELSE(GDCM_TEST_ISTRINGSTREAM_COMPILED)
+    MESSAGE(STATUS "Checking signedness of char -- failed")
+  ENDIF(GDCM_TEST_ISTRINGSTREAM_COMPILED)
+ENDIF("GDCM_TEST_ISTRINGSTREAM" MATCHES "^GDCM_TEST_ISTRINGSTREAM$")
+
+#-----------------------------------------------------------------------------
 # Build directory on which many applications depend
 SUBDIRS(
   Dicts
