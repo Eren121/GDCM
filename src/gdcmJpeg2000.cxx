@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 21:21:09 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/11/04 15:20:13 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,6 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
    for (int compno = 0; compno < img.numcomps; compno++)
    {
       j2k_comp_t *comp = &img.comps[compno];
-      int nbytes = 0;
   
       int w = img.comps[compno].w;
       int wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
@@ -73,7 +72,6 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
   
       if (comp->prec <= 8)
       {
-         nbytes = 1;
          uint8_t *data8 = (uint8_t*)raw;
          for (int i = 0; i < wr * hr; i++) 
          {
@@ -83,7 +81,6 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
       }
       else if (comp->prec <= 16)
       {
-         nbytes = 2;
          uint16_t *data16 = (uint16_t*)raw;
          for (int i = 0; i < wr * hr; i++) 
          {
@@ -93,7 +90,6 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
       }
       else
       {
-         nbytes = 4;
          uint32_t *data32 = (uint32_t*)raw;
          for (int i = 0; i < wr * hr; i++) 
          {
