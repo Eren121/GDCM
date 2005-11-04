@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 08:28:40 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/11/04 16:08:08 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,7 @@ bool CheckVM(DataEntry *entry)
   }
 */
 
-  int n = Util::CountSubstring( s , "\\");
+  unsigned int n = Util::CountSubstring( s , "\\");
   
   n++; // number of '\' + 1 == Value Multiplicity
 
