@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:15 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/11/04 15:29:59 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,20 +60,21 @@ DicomDirElement::DicomDirElement()
          from.getline(buff, 1024, ' ');
          strType = buff;
 
-         if ( strType == "metaElem" )
-            type = DD_META;
-         else if ( strType == "patientElem" )
-            type = DD_PATIENT;
-         else if ( strType == "studyElem" )
-            type = DD_STUDY;
+         if ( strType == "imageElem" )
+            type = DD_IMAGE;
          else if ( strType == "serieElem" )
             type = DD_SERIE;
-         else if ( strType == "imageElem" )
-            type = DD_IMAGE;
+         else if ( strType == "studyElem" )
+            type = DD_STUDY;
+         else if ( strType == "patientElem" )
+            type = DD_PATIENT;
+         else if ( strType == "metaElem" )
+            type = DD_META;
          else
          {
-            gdcmWarningMacro("Unknown type found in the file : "
-                             <<filename.c_str());
+            gdcmWarningMacro("Unknown type (" << strType 
+                             << ") found in the file : "
+                             << filename.c_str());
             type = DD_UNKNOWN;
          }
 
@@ -119,20 +120,20 @@ bool DicomDirElement::AddEntry(DicomDirType type, DicomElement const &elem)
 {
    switch( type )
    {
-      case DD_META :
-         DicomDirMetaList.push_back(elem);
-         break;
-      case DD_PATIENT :
-         DicomDirPatientList.push_back(elem);
-         break;
-      case DD_STUDY :
-         DicomDirStudyList.push_back(elem);
+      case DD_IMAGE :
+         DicomDirImageList.push_back(elem);
          break;
       case DD_SERIE :
          DicomDirSerieList.push_back(elem);
          break;
-      case DD_IMAGE :
-         DicomDirImageList.push_back(elem);
+      case DD_STUDY :
+         DicomDirStudyList.push_back(elem);
+         break;
+      case DD_PATIENT :
+         DicomDirPatientList.push_back(elem);
+         break;
+      case DD_META :
+         DicomDirMetaList.push_back(elem);
          break;
       default :
          return false;
