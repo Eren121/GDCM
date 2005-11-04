@@ -770,21 +770,21 @@ static int Decode_Bitstream()
   Bitstream_Framenum = 0;
 
   for(;;)
-  {
+    {
 
 #ifdef VERIFY
     Clear_Verify_Headers();
 #endif /* VERIFY */
 
     ret = Headers();
-    
+
     if(ret==1)
-    {
-      ret = video_sequence(&Bitstream_Framenum);
-    }
+      {
+      /*ret =*/ video_sequence(&Bitstream_Framenum);
+      }
     else
       return(ret);
-  }
+    }
 
 }
 
