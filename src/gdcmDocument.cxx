@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:55:24 $
-  Version:   $Revision: 1.323 $
+  Date:      $Date: 2005/11/04 15:33:35 $
+  Version:   $Revision: 1.324 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -341,7 +341,7 @@ bool Document::IsReadable()
 {
    if ( Filetype == Unknown )
    {
-      gdcmErrorMacro( "Wrong filetype");
+      gdcmErrorMacro( "Wrong filetype for " << GetFileName());
       return false;
    }
 

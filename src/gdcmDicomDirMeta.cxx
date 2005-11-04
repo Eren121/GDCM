@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 17:40:22 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/11/04 15:33:35 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,8 @@ void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype)
 {  
    // 'File Meta Information Version'
    
-   uint8_t fmiv[2] = {0x02,0x00};      
+   uint8_t fmiv[2] = {0x02,0x00};
+   // FIXME : the following doesn't make the job (?!?)      
    //SetEntryBinArea(fmiv, 0x0002,0x0001, 2); 
    DataEntry *e00002_0001 = GetDataEntry(0x0002,0x0001);
    e00002_0001->CopyBinArea(fmiv, 2);
