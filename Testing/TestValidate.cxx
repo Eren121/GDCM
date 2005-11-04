@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 16:11:56 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/11/04 17:05:49 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,23 +18,56 @@
 #include "gdcmFile.h"
 #include "gdcmValidator.h"
 
+//Generated file:
+#include "gdcmDataImages.h"
 
-int TestValidate(int argc, char *argv[])
+int Validate(std::string const &filename);
+
+int Validate(std::string const &filename)
 {
-  if( argc < 2 )
-  {
-    std::cerr << "ouh les cornes / shame on you" << std::endl;
-    return 1;
-  }
-
-   const char *filename = argv[1];
-
    gdcm::File *input =  gdcm::File::New( );
    input->SetFileName(filename);
    input->Load();
    gdcm::Validator *v = new gdcm::Validator();
    v->SetInput( input );
+   return 1; // allways true (we don't want to break the test suite)
+} 
 
-   return 0;
+
+int TestValidate(int argc, char *argv[])
+{
+   if ( argc == 2 )
+   {
+      // The test is specified a specific filename, use it instead of looping
+      // over all images
+      const std::string input = argv[1];
+      return Validate( input );
+   }
+   else if ( argc > 2 || argc == 2 )
+   {
+      std::cout << "   Usage: " << argv[0]
+                << " (no arguments needed)." << std::endl;
+      std::cout << "or   Usage: " << argv[0]
+                << " filename.dcm " << std::endl;
+      return 1;
+   }
+   
+
+   int i =0;
+   int retVal = 0;  //by default this is an error
+   while( gdcmDataImages[i] != 0 )
+   {
+      std::string filename = GDCM_DATA_ROOT;
+      filename += "/";  //doh!
+      filename += gdcmDataImages[i];
+      std::cout << filename << std::endl;
+      if( Validate( filename ) != 0 )
+      {
+         retVal++;
+      }
+
+      i++;
+   }
+   return 0; // never break the testsuite!
 }
 

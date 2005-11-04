@@ -20,7 +20,7 @@ SET(TEST_SOURCES
   TestImageSet.cxx
   TestDicomDirElement.cxx
   TestDicomString.cxx
-  #TestValidate.cxx
+
 )
 IF(UNIX)
   SET(TEST_SOURCES ${TEST_SOURCES}
@@ -48,6 +48,7 @@ IF (GDCM_DATA_ROOT)
     TestMakeDicomDir.cxx             # writes a file named "NewDICOMDIR"
     TestSerieHelper.cxx              # uses gdcmData as a default root directory    
     TestAllVM.cxx
+    TestValidate.cxx                 #Just to have on overviews of oddities ...  
   )
   # add test that require VTK:
   IF(GDCM_VTK)
