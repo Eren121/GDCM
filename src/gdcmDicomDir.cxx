@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.167 $
+  Date:      $Date: 2005/11/04 15:26:22 $
+  Version:   $Revision: 1.168 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,12 +229,12 @@ bool DicomDir::DoTheLoadingJob( )
       {
          // user passed '.' as Name
          // we get current directory name
-         char dummy[1000];
+         char dummy[1000];      // Hope 1000 is enough!
          getcwd(dummy, (size_t)1000);
          SetFileName( dummy ); // will be converted into a string
       }
       NewMeta();
-      gdcmWarningMacro( "Parse directory and create the DicomDir : " 
+      gdcmDebugMacro( "Parse directory and create the DicomDir : " 
                          << GetFileName() );
       ParseDirectory();
    }
@@ -253,7 +253,7 @@ bool DicomDir::IsReadable()
 {
    if ( Filetype == Unknown )
    {
-      gdcmWarningMacro( "Wrong filetype");
+      gdcmErrorMacro( "Wrong filetype for " << GetFileName());
       return false;
    }
    if ( !MetaElems )
@@ -597,8 +597,8 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
       }
 
       f = File::New( );
-      f->SetLoadMode(LoadMode); // we allow user not to load Sequences, or Shadow
-                              //             groups, or ......
+      f->SetLoadMode(LoadMode); // we allow user not to load Sequences, 
+                                //        or Shadow groups, or ......
       f->SetFileName( it->c_str() );
       f->Load( );
 
@@ -606,7 +606,7 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
       {
          // Add the file to the chained list:
          list.push_back(f);
-         gdcmWarningMacro( "Readable " << it->c_str() );
+         gdcmDebugMacro( "Readable " << it->c_str() );
        }
        else
        {
@@ -796,7 +796,7 @@ void DicomDir::CreateDicomDir()
       {
          // It was neither a 'PATIENT', nor a 'STUDY', nor a 'SERIE',
          // nor an 'IMAGE' SQItem. Skip to next item.
-         gdcmWarningMacro( " -------------------------------------------"
+         gdcmDebugMacro( " -------------------------------------------"
          << "a non PATIENT/STUDY/SERIE/IMAGE SQItem was found : "
          << v);
 
@@ -1087,7 +1087,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
             }
             else
             {
-               val = &(header->GetFileName().c_str()[path.length()]);
+               val = &(header->GetFileName().c_str()[path.length()+1]);
             }
          }
          else
@@ -1105,7 +1105,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {
-         gdcmWarningMacro("GDCM_DICOMDIR_META ?!? should never print that");
+         gdcmDebugMacro("GDCM_DICOMDIR_META ?!? should never print that");
       }
       si->AddEntry(entry);
       entry->Delete();
