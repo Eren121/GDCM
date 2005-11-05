@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 15:46:03 $
-  Version:   $Revision: 1.169 $
+  Date:      $Date: 2005/11/05 13:16:34 $
+  Version:   $Revision: 1.170 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,16 +229,9 @@ bool DicomDir::DoTheLoadingJob( )
       {
          // user passed '.' as Name
          // we get current directory name
-         char buf[2048];
-         const char *cwd = getcwd(buf, 2048);
-         if( cwd )
-           {
-           SetFileName( cwd ); // will be converted into a string
-           }
-         else
-           {
-           gdcmErrorMacro( "Path was too long to fit on 2048 bytes" );
-           }
+         char dummy[1000];      // Hope 1000 is enough!
+         getcwd(dummy, (size_t)1000);
+         SetFileName( dummy ); // will be converted into a string
       }
       NewMeta();
       gdcmDebugMacro( "Parse directory and create the DicomDir : " 
@@ -493,7 +486,7 @@ void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
 bool DicomDir::Write(std::string const &fileName) 
 {  
    int i;
-   uint16_t sq[4] = { 0x0004, 0x1220, 0xffff, 0xffff };
+   uint16_t sq[6] = { 0x0004, 0x1220, 0x5153, 0x0000, 0xffff, 0xffff };
    uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
 
    std::ofstream *fp = new std::ofstream(fileName.c_str(),  
@@ -513,7 +506,7 @@ bool DicomDir::Write(std::string const &fileName)
    ptrMeta->WriteContent(fp, ExplicitVR);
    
    // force writing 0004|1220 [SQ ], that CANNOT exist within DicomDirMeta
-   for(i=0;i<4;++i)
+   for(i=0;i<6;++i)
    {
       binary_write(*fp, sq[i]);
    }
@@ -1047,6 +1040,9 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       default:
          return;
    }
+   
+   // FIXME : troubles found when it's a SeqEntry
+      
    // removed all the seems-to-be-useless stuff about Referenced Image Sequence
    // to avoid further troubles
    // imageElem 0008 1140 "" // Referenced Image Sequence
@@ -1055,8 +1051,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    // imageElem 0008 1155 "" // Referenced SOP Instance UID : to be set/forged later
    // imageElem fffe e00d "" // Item delimitation : length to be set to ZERO later
  
-   // FIXME : troubles found when it's a SeqEntry
-
+   std::string referencedVal;
    // for all the relevant elements found in their own spot of the DicomDir.dic
    for( it = elemList.begin(); it != elemList.end(); ++it)
    {
@@ -1071,7 +1066,8 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       {
          // NULL when we Build Up (ex nihilo) a DICOMDIR
          //   or when we add the META elems
-         val = header->GetEntryString(tmpGr, tmpEl);
+ 
+            val = header->GetEntryString(tmpGr, tmpEl); 
       }
       else
       {
@@ -1079,27 +1075,49 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       }
 
       if ( val == GDCM_UNFOUND) 
-      {
-         if ( tmpGr == 0x0004 && tmpEl == 0x1130 ) // File-set ID
+      {       
+         if ( tmpGr == 0x0004 ) // never present in File !     
          {
-           // force to the *end* File Name
-           val = Util::GetName( path );
-         }
-         else if ( tmpGr == 0x0004 && tmpEl == 0x1500 ) // Only used for image
-         {
-            if ( header->GetFileName().substr(0, path.length()) != path )
-            {
-               gdcmWarningMacro( "The base path of file name is incorrect");
-               val = header->GetFileName();
-            }
-            else
-            {
-               val = &(header->GetFileName().c_str()[path.length()+1]);
-            }
-         }
-         else
-         {
-            val = it->Value;
+            switch (tmpEl)
+           {
+           case 0x1130: // File-set ID
+              // force to the *end* File Name
+              val = Util::GetName( path );
+              break;
+      
+           case 0x1500: // Only used for image    
+               if ( header->GetFileName().substr(0, path.length()) != path )
+               {
+                  gdcmWarningMacro( "The base path of file name is incorrect");
+                  val = header->GetFileName();
+               }
+               else
+               {
+                  val = &(header->GetFileName().c_str()[path.length()+1]);
+               }
+       break;
+    
+       case 0x1510:  // Referenced SOP Class UID in File
+          referencedVal = header->GetEntryString(0x0008, 0x0016);
+          // FIXME : probabely something to check
+          val = referencedVal;
+          break;
+       
+       case 0x1511: // Referenced SOP Instance UID in File
+          referencedVal = header->GetEntryString(0x0008, 0x0018);
+          // FIXME : probabely something to check
+          val = referencedVal;
+          break;
+    
+       case 0x1512: // Referenced Transfer Syntax UID in File
+          referencedVal = header->GetEntryString(0x0002, 0x0010);
+          // FIXME : probabely something to check
+          val = referencedVal;
+          break;
+    
+       default :
+         val = it->Value;   
+    } 
          }
       }
       else
@@ -1108,6 +1126,17 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
             val = it->Value;
       }
 
+
+      if (val == GDCM_UNFOUND)
+         val = "";
+
+      if ( tmpGr == 0x0002 && tmpEl == 0x0013)
+      { 
+         // 'Implementation Version Name'
+         std::string val = "GDCM ";
+         val += Util::GetVersion();
+      }
+ 
       entry->SetString( val ); // troubles expected when vr=SQ ...
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
