@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:07:45 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2005/11/05 13:26:19 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,7 +129,8 @@ int main(int argc, char *argv[])
    " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]",
    "                       [forceload=listOfElementsToForceLoad]              ",
    "                       [dict= privateDirectory]                           ",
-   "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
+   "                       [ { [noshadowseq] | [noshadow][noseq] } ]          ",
+   "                       [debug] [warning]                                  ",
    "      level = 0,1,2 : depending on the amount of details user wants to see",
    "      listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)",
    "                                of Elements to load whatever their length ",
@@ -138,6 +139,7 @@ int main(int argc, char *argv[])
    "      noshadow   : user doesn't want to load Private groups (odd number)  ",
    "      noseq      : user doesn't want to load Sequences                    ",
    "      debug      : user wants to run the program in 'debug mode'          ",
+   "      warning    : user wants to be warned about any oddity in the File   ",
    "      showlut :user wants to display the Palette Color (as an int array)  ",
    FINISH_USAGE
 
@@ -167,7 +169,10 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
- 
+
+   if (am->ArgMgrDefined("warning"))
+      gdcm::Debug::WarningOn();
+       
    int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
       loadMode |= gdcm::LD_NOSHADOWSEQ;
