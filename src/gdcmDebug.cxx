@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/24 10:55:58 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/11/05 13:21:32 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,9 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Warning message level to be displayed
-static bool DebugFlag   = false;
-static bool DebugToFile = false;
+static bool DebugFlag     = false;
+static bool WarningFlag   = false;
+static bool DebugToFile   = false;
 static std::ofstream DebugFile;
 
 //-----------------------------------------------------------------------------
@@ -43,16 +44,20 @@ Debug::~Debug()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief   Sets the debug flag
- * @param   flag Set the debug flag
+ * \brief   Sets both the debug flag and warning flag
+ *          (both used for debugging purpose)
+ * @param   flag Set the debug flag and warning flag
  */ 
 void Debug::SetDebugFlag (bool flag) 
 {
-   DebugFlag = flag;
+   // To help tracking a bug, both flags are necessary
+   DebugFlag   = flag;
+   WarningFlag = flag;
 }
 
 /**
  * \brief   Gets the debug flag value
+ *          (used to warn user when file contains some oddity)
  * @return debug flag value
  */ 
 bool Debug::GetDebugFlag ()
@@ -60,6 +65,26 @@ bool Debug::GetDebugFlag ()
    return DebugFlag;
 }
 
+/**
+ * \brief   Sets the warning flag
+ * @param   flag Set the warning flag
+ */ 
+void Debug::SetWarningFlag (bool flag) 
+{
+   // Cannot unset Warning flag if Debug flag is on.
+   if (flag == false && DebugFlag == true)
+      return;
+   WarningFlag = flag;
+}
+
+/**
+ * \brief   Gets the warning flag value
+ * @return warning flag value
+ */ 
+bool Debug::GetWarningFlag ()
+{
+   return WarningFlag;
+}
 /**
  * \brief   Accessor
  * @param   flag whether we want to redirect to file

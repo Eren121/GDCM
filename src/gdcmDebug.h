@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:12:20 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2005/11/05 13:21:32 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,14 +51,23 @@ public:
    Debug();
    ~Debug();
 
-   /// \brief This is a global flag that controls whether any debug, warning
-   ///        messages are displayed.
+   /// \brief This is a global flag that controls whether 
+   ///        both debug and warning messages are displayed. 
    static void SetDebugFlag (bool flag);
    static bool GetDebugFlag ();
    /// \brief Sets the Debug Flag to true
    static void DebugOn  () { SetDebugFlag(true);  }
    /// \brief Sets the Debug Flag to false
    static void DebugOff () { SetDebugFlag(false); }
+   
+   /// \brief This is a global flag that controls whether 
+   ///        warning messages are displayed.
+   static void SetWarningFlag (bool flag);
+   static bool GetWarningFlag ();
+   /// \brief Sets the Warning Flag to true
+   static void WarningOn  () { SetWarningFlag(true);  }
+   /// \brief Sets the Warning Flag to false
+   static void WarningOff () { SetWarningFlag(false); }   
 
    /// \brief This is a global flag that controls if debug are redirected
    ///        to a file or not
@@ -133,7 +142,7 @@ public:
 #else
 #define gdcmWarningMacro(msg)                               \
 {                                                           \
-   if( Debug::GetDebugFlag() )                              \
+   if( Debug::GetWarningFlag() )                            \
    {                                                        \
    std::ostringstream osmacro;                              \
    osmacro << "Warning: In " __FILE__ ", line " << __LINE__ \
