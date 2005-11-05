@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:30 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/11/05 13:25:26 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -305,7 +305,7 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
       from >> vm;
       from >> std::ws;  //remove white space
       std::getline(from, name);
- 
+
       newEntry = DictEntry::New(group, elem, vr, vm, name);
       AddEntry(newEntry);
       newEntry->Delete();

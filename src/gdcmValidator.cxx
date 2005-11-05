@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 16:08:08 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/05 13:25:26 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,11 +20,15 @@
 #include "gdcmElementSet.h"
 #include "gdcmDataEntry.h"
 #include "gdcmUtil.h"
+#include <map>
 
 #include <sstream>
 
 namespace gdcm 
 {
+//-----------------------------------------------------------------------------
+typedef std::map<uint16_t, int> GroupHT;    //  Hash Table
+//-----------------------------------------------------------------------------
 
 Validator::Validator()
 {
@@ -46,13 +50,6 @@ bool CheckVM(DataEntry *entry)
      
   const std::string &s = entry->GetString();
 
-/*  std::string::size_type n = s.find("\\");
-  if ( n == s.npos ) // none found
-  {
-    n = 0;
-  }
-*/
-
   unsigned int n = Util::CountSubstring( s , "\\");
   
   n++; // number of '\' + 1 == Value Multiplicity
@@ -71,8 +68,22 @@ bool CheckVM(DataEntry *entry)
 
 void Validator::SetInput(ElementSet *input)
 {
-  // berk for now SetInput do two things at the same time
+// First stage to check group length
+  GroupHT grHT;
   DocEntry *d=input->GetFirstEntry();
+  while(d)
+  {
+    grHT[d->GetGroup()] = 0;
+    d=input->GetNextEntry();
+  }
+  for (GroupHT::iterator it = grHT.begin(); it != grHT.end(); ++it)  
+  {
+      std::cout << std::hex << it->first << std::endl; 
+  } 
+
+
+  // berk for now SetInput do two things at the same time
+  d=input->GetFirstEntry();
   if (!d)
   {
      std::cout << "No Entry found" << std::endl;
@@ -105,7 +116,7 @@ void Validator::SetInput(ElementSet *input)
     {
       // We skip pb of SQ recursive exploration
     }
-      d=input->GetNextEntry();
+    d=input->GetNextEntry();
   }
 }
 

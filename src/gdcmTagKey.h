@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 15:26:53 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/05 13:25:26 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,10 +58,10 @@ public :
    }
 
    TagKey(const TagKey &_val)
-     {
+   {
      tag[0] = _val[0];
      tag[1] = _val[1];
-     }
+   }
 
    const uint16_t &operator[](const unsigned int &_id) const
    {
