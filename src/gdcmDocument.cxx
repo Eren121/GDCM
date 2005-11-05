@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 15:33:35 $
-  Version:   $Revision: 1.324 $
+  Date:      $Date: 2005/11/05 13:23:30 $
+  Version:   $Revision: 1.325 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -599,7 +599,10 @@ std::ifstream *Document::OpenFile()
       return 0;
    }
  
-   //-- ACR or DICOM with no Preamble; may start with a Shadow Group --
+   //-- Broken ACR or DICOM with no Preamble; may start with a Shadow Group --
+   
+   // FIXME : We cannot be sure the preable is only zeroes..
+   //         (see ACUSON-24-YBR_FULL-RLE.dcm )
    if ( 
        zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
        zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
@@ -1543,7 +1546,8 @@ VRKey Document::FindDocEntryVR()
    if ( !CheckDocEntryVR(vr) )
    {
       // Don't warn user with useless messages
-      if ( (unsigned char)vr[0] != 0xff || (unsigned char)vr[1] != 0xff )
+      // Often, delimiters (0xfffe), are not explicit VR ...
+      if ( CurrentGroup != 0xfffe )
          gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ") at offset :" << positionOnEntry );
@@ -1975,13 +1979,10 @@ void Document::SetMaxSizeLoadEntry(long newSize)
  */
 DocEntry *Document::ReadNextDocEntry()
 {
-   uint16_t group;
-   uint16_t elem;
-
    try
    {
-      group = ReadInt16();
-      elem  = ReadInt16();
+      CurrentGroup = ReadInt16();
+      CurrentElem  = ReadInt16();
    }
    catch ( FormatError )
    {
@@ -1991,11 +1992,11 @@ DocEntry *Document::ReadNextDocEntry()
    }
 
    // Sometimes file contains groups of tags with reversed endianess.
-   HandleBrokenEndian(group, elem);
+   HandleBrokenEndian(CurrentGroup, CurrentElem);
 
    // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
-      HandleOutOfGroup0002(group, elem);
+      HandleOutOfGroup0002(CurrentGroup, CurrentElem);
  
    VRKey vr = FindDocEntryVR();
    
@@ -2003,11 +2004,12 @@ DocEntry *Document::ReadNextDocEntry()
 
    if ( vr == GDCM_VRUNKNOWN )
    {
-      if ( elem == 0x0000 ) // Group Length
+      if ( CurrentElem == 0x0000 ) // Group Length
       {
          realVR = "UL";     // must be UL
       }
-      else if (group%2 == 1 &&  (elem >= 0x0010 && elem <=0x00ff ))
+      else if (CurrentGroup%2 == 1 &&  
+                               (CurrentElem >= 0x0010 && CurrentElem <=0x00ff ))
       {  
       // DICOM PS 3-5 7.8.1 a) states that those 
       // (gggg-0010->00FF where gggg is odd) attributes have to be LO
@@ -2015,7 +2017,7 @@ DocEntry *Document::ReadNextDocEntry()
       }
       else
       {
-         DictEntry *dictEntry = GetDictEntry(group,elem);
+         DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);
          if ( dictEntry )
          {
             realVR = dictEntry->GetVR();
@@ -2027,10 +2029,10 @@ DocEntry *Document::ReadNextDocEntry()
 
    DocEntry *newEntry;
    if ( Global::GetVR()->IsVROfSequence(realVR) )
-      newEntry = NewSeqEntry(group, elem);
+      newEntry = NewSeqEntry(CurrentGroup, CurrentElem);
    else 
    {
-      newEntry = NewDataEntry(group, elem, realVR);
+      newEntry = NewDataEntry(CurrentGroup, CurrentElem, realVR);
       static_cast<DataEntry *>(newEntry)->SetState(DataEntry::STATE_NOTLOADED);
    }
 
@@ -2084,6 +2086,7 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
    if ((group == 0xfeff) && (elem == 0x00e0))
    {
      // start endian swap mark for group found
+     gdcmDebugMacro( "Start endian swap mark found." );
      reversedEndian++;
      SwitchByteSwapCode();
      // fix the tag
@@ -2093,6 +2096,7 @@ void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
    else if (group == 0xfffe && elem == 0xe00d && reversedEndian) 
    {
      // end of reversed endian group
+     gdcmDebugMacro( "End of reversed endian." );
      reversedEndian--;
      SwitchByteSwapCode();
    }

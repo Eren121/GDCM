@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 15:53:40 $
-  Version:   $Revision: 1.128 $
+  Date:      $Date: 2005/11/05 13:23:30 $
+  Version:   $Revision: 1.129 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -224,7 +224,12 @@ private:
    /// this upper bound is fixed to 1024 bytes (which might look reasonable
    /// when one considers the definition of the various VR contents).
    uint32_t MaxSizeLoadEntry;
-   
+
+   /// \brief to allow any inner method to know current tag Group number 
+   uint16_t CurrentGroup;
+   /// \brief to allow any inner method to know current tag Element number 
+   uint16_t CurrentElem; 
+     
 //  uint32_t GenerateFreeTagKeyInGroup(uint16_t group);
 //  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
 //                                  DocEntrySet *set );
