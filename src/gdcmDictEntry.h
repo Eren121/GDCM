@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 15:34:56 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2005/11/05 13:24:39 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ namespace gdcm
  *    i.e. the Group number
  *         the Element number
  *  - the VR (Value Representation)
- *  - the VM (Value Multplicity)
+ *  - the VM (Value Multiplicity)
  *  - the corresponding name in english
  */
 class GDCM_EXPORT DictEntry : public DicomEntry
@@ -71,10 +71,10 @@ protected:
              TagName const &name   = GDCM_UNKNOWN);
 
 private:
-   /// \brief Value Multiplicity (e.g. "1", "1-n", "6")
+   /// \brief Value Multiplicity (e.g. "1", "1-n", "2-n", "6")
    TagName VM; 
 
-   /// e.g. "Patient's Name"                    
+   /// \brief English name of the entry (e.g. "Patient's Name")                   
    TagName Name;      
 };
 } // end namespace gdcm
