@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:16:34 $
-  Version:   $Revision: 1.170 $
+  Date:      $Date: 2005/11/06 01:38:02 $
+  Version:   $Revision: 1.171 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -229,9 +229,16 @@ bool DicomDir::DoTheLoadingJob( )
       {
          // user passed '.' as Name
          // we get current directory name
-         char dummy[1000];      // Hope 1000 is enough!
-         getcwd(dummy, (size_t)1000);
-         SetFileName( dummy ); // will be converted into a string
+         char buf[2048];
+         const char *cwd = getcwd(buf, 2048);
+         if( cwd )
+           {
+           SetFileName( buf ); // will be converted into a string
+           }
+         else
+           {
+           gdcmErrorMacro( "Path was too long to fit on 2048 bytes" );
+           }
       }
       NewMeta();
       gdcmDebugMacro( "Parse directory and create the DicomDir : " 
