@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/03 08:46:03 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/11/07 09:50:52 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1148,8 +1148,8 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 /**
  * \brief   This method is called automatically, just before writting
  *         in order to produce a 'True Dicom V3' image
- *         We cannot know *how* the user made the File (reading an old ACR-NEMA
- *         file or a not very clean DICOM file ...) 
+ *         We cannot know *how* the user made the File :
+ *         (reading an old ACR-NEMA file or a not very clean DICOM file ...) 
  *          
  *          Just before writting :
  *             - we check the Entries
@@ -1158,7 +1158,7 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
  *             - we push the sensitive entries to the Archive
  *          The writing process will restore the entries as they where before 
  *          entering FileHelper::CheckMandatoryElements, so the user will always
- *          see the entries just as he left them.
+ *          see the entries just as they were before he decided to write.
  * \note
  *       -  Entries whose type is 1 are mandatory, with a mandatory value
  *       -  Entries whose type is 1c are mandatory-inside-a-Sequence,
@@ -1183,16 +1183,21 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 To be moved to User's guide / WIKI  ?
 
 
+
 -->'Media Storage SOP Class UID' (0x0002,0x0002)
 -->'SOP Class UID'               (0x0008,0x0016) are set to 
                                                [Secondary Capture Image Storage]
    (Potentialy, the image was modified by user, and post-processed; 
     it's no longer a 'native' image)
+  Except if user told he wants to keep MediaStorageSOPClassUID,
+  when *he* knows he didn't modify the image (e.g. : he just anonymized the file)
 
 --> 'Image Type'  (0x0008,0x0008)
      is forced to  "DERIVED\PRIMARY"
      (The written image is no longer an 'ORIGINAL' one)
-     
+  Except if user told he wants to keep MediaStorageSOPClassUID,
+  when *he* knows he didn't modify the image (e.g. : he just anonymized the file)
+       
 --> 'Modality' (0x0008,0x0060)   
     is defaulted to "OT" (other) if missing.   
     (a fully user created image belongs to *no* modality)
@@ -1210,7 +1215,6 @@ To be moved to User's guide / WIKI  ?
      Warning :     
      The user shouldn't add any image to a 'Manufacturer Serie'
      but there is no way no to allowed him to do that 
-
              
 --> If 'SOP Class UID' exists in the native image  ('true DICOM' image)
     we create the 'Source Image Sequence' SeqEntry (0x0008, 0x2112)
@@ -1223,7 +1227,7 @@ To be moved to User's guide / WIKI  ?
 --> Bits Stored, Bits Allocated, Hight Bit Position are checked for consistency
 --> Pixel Spacing     (0x0028,0x0030) is defaulted to "1.0\1.0"
 --> Samples Per Pixel (0x0028,0x0002) is defaulted to 1 (grayscale)
---> Imager Pixel Spacing (0x0018,0x1164) : defaulted to 1.0\1.0
+--> Imager Pixel Spacing (0x0018,0x1164) : defaulted to Pixel Spacing value
 
 --> Instance Creation Date, Instance Creation Time, Study Date, Study Time
     are force to current Date and Time
@@ -1276,19 +1280,23 @@ void FileHelper::CheckMandatoryElements()
                                false);
       e_0002_0001->SetLength(2);
       Archive->Push(e_0002_0001);
-      e_0002_0001->Delete();
+      e_0002_0001->Delete(); 
 
-   // FIXME : we should allow user to tell he *wants* to keep the original 
-   //         'Media Storage SOP Class UID'  
+      if ( KeepMediaStorageSOPClassUID)      
+   // It up to the use to *know* whether he modified the pixels or not.
+   // he is allowed to keep the original 'Media Storage SOP Class UID'
+         CheckMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");    
+      else
    // Potentialy this is a post-processed image 
    // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
-   //  
-      CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");    
- 
+         CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");    
+       
    // 'Media Storage SOP Instance UID'   
       CopyMandatoryEntry(0x0002,0x0003,sop);
       
    // 'Implementation Class UID'
+   // FIXME : in all examples we have, 0x0002,0x0012 is not so long :
+   //         semms to be Root UID + 4 digits (?)
       CopyMandatoryEntry(0x0002,0x0012,Util::CreateUniqueUID());
 
    // 'Implementation Version Name'
@@ -1348,18 +1356,24 @@ void FileHelper::CheckMandatoryElements()
                        << " for consistency purpose");
    }
 
-    // Imager Pixel Spacing : defaulted to 1.0\1.0
-    // --> This one is the *legal* one !
-    // FIXME : we should write it only when we are *sure* the image comes from
-    //         an imager (see also 0008,0x0064)
-   CheckMandatoryEntry(0x0018,0x1164,"1.0\\1.0");
-    // Pixel Spacing : defaulted to 1.0\1.0
-   CheckMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
+   std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
+   if ( pixelSpacing == GDCM_UNKNOWN )
+      pixelSpacing = "1.0\\1.0";
+   else
+       // if missing, Pixel Spacing forced to "1.0\1.0"
+   CopyMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
+
+   // 'Imager Pixel Spacing' : defaulted to 'Pixel Spacing'
+   // --> This one is the *legal* one !
+   // FIXME : we should write it only when we are *sure* the image comes from
+   //         an imager (see also 0008,0x0064)
+          
+   CheckMandatoryEntry(0x0018,0x1164,pixelSpacing);
 
    // Samples Per Pixel (type 1) : default to grayscale 
    CheckMandatoryEntry(0x0028,0x0002,"1");
    
-  // --- Check UID-related Entries ---
+   // --- Check UID-related Entries ---
 
    // If 'SOP Class UID' exists ('true DICOM' image)
    // we create the 'Source Image Sequence' SeqEntry
@@ -1396,9 +1410,16 @@ void FileHelper::CheckMandatoryElements()
       sis->Delete();
  
       // FIXME : is 'Image Type' *really* depending on the presence of'SOP Class UID'?
-      
-      // 'Image Type' (The written image is no longer an 'ORIGINAL' one)
+       if ( KeepMediaStorageSOPClassUID)      
+   // It up to the use to *know* whether he modified the pixels or not.
+   // he is allowed to keep the original 'Media Storage SOP Class UID'
+   // and 'Image Type' as well
+         CheckMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");    
+      else
+   // Potentialy this is a post-processed image 
+   // (The written image is no longer an 'ORIGINAL' one)
       CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");
+
    }
 
    // At the end, not to overwrite the original ones,
@@ -1406,12 +1427,47 @@ void FileHelper::CheckMandatoryElements()
    // 'SOP Instance UID'  
    CopyMandatoryEntry(0x0008,0x0018,sop);
    
-   // whether a 'SOP Class UID' already exists or not in the original image
-   // the gdcm written image *is* a [Secondary Capture Image Storage] !
-   // 'SOP Class UID' : [Secondary Capture Image Storage]
-   CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7"); 
-             
-// ---- The user will never have to take any action on the following ----.
+   // the gdcm written image is a [Secondary Capture Image Storage]
+   // except if user told us he dind't modify the pixels, and, therefore
+   // he want to keep the 'Media Storage SOP Class UID'
+   
+      // 'Media Storage SOP Class UID' : [Secondary Capture Image Storage]
+   if ( KeepMediaStorageSOPClassUID)
+   {      
+      // It up to the use to *know* whether he modified the pixels or not.
+      // he is allowed to keep the original 'Media Storage SOP Class UID'
+      CheckMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");    
+   }
+   else
+   {
+       // Potentialy this is a post-processed image 
+       // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
+      CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");    
+
+       // FIXME : Must we Force Value, or Default value ?
+       // Is it Type 1 for any Modality ?
+       //    --> Answer seems to be NO :-(
+       // FIXME : we should write it only when we are *sure* the image 
+       //         *does not* come from an imager (see also 0018,0x1164)
+
+       // Conversion Type.
+       // Other possible values are :
+       // See PS 3.3, Page 408
+   
+       // DV = Digitized Video
+       // DI = Digital Interface   
+       // DF = Digitized Film
+       // WSD = Workstation
+       // SD = Scanned Document
+       // SI = Scanned Image
+       // DRW = Drawing
+       // SYN = Synthetic Image
+     
+      CheckMandatoryEntry(0x0008,0x0064,"SYN");
+   }   
+           
+   // ---- The user will never have to take any action on the following ----
+   
    // new value for 'SOP Instance UID'
    //SetMandatoryEntry(0x0008,0x0018,Util::CreateUniqueUID());
 
@@ -1432,34 +1488,15 @@ void FileHelper::CheckMandatoryElements()
    //CopyMandatoryEntry(0x0008,0x0050,"");
    CheckMandatoryEntry(0x0008,0x0050,"");
    
-   // Conversion Type.
-   // Other possible values are :
-   // See PS 3.3, Page 408
-   
-   // DV = Digitized Video
-   // DI = Digital Interface   
-   // DF = Digitized Film
-   // WSD = Workstation
-   // SD = Scanned Document
-   // SI = Scanned Image
-   // DRW = Drawing
-   // SYN = Synthetic Image
 
-   // FIXME : Must we Force Value, or Default value ?
-   // Is it Type 1 for any Modality ?
-   //    --> Answer seems to be NO :-(
-    // FIXME : we should write it only when we are *sure* the image 
-    //         *does not* come from an imager (see also 0018,0x1164)  
-   CopyMandatoryEntry(0x0008,0x0064,"SYN");
-
-// ----- Add Mandatory Entries if missing ---
-    // Entries whose type is 1 are mandatory, with a mandatory value
-    // Entries whose type is 1c are mandatory-inside-a-Sequence,
-    //                          with a mandatory value
-    // Entries whose type is 2 are mandatory, with an optional value
-    // Entries whose type is 2c are mandatory-inside-a-Sequence,
-    //                          with an optional value
-    // Entries whose type is 3 are optional
+   // ----- Add Mandatory Entries if missing ---
+   // Entries whose type is 1 are mandatory, with a mandatory value
+   // Entries whose type is 1c are mandatory-inside-a-Sequence,
+   //                          with a mandatory value
+   // Entries whose type is 2 are mandatory, with an optional value
+   // Entries whose type is 2c are mandatory-inside-a-Sequence,
+   //                          with an optional value
+   // Entries whose type is 3 are optional
 
    // 'Study Instance UID'
    // Keep the value if exists
@@ -1529,6 +1566,23 @@ void FileHelper::CheckMandatoryElements()
    {
       Archive->Push(0x0020, 0x0052);
    }
+   
+   // Deal with element 0x0000 (group length) of each group.
+   // First stage : get all the different Groups
+  GroupHT grHT;
+  DocEntry *d=input->GetFirstEntry();
+  while(d)
+  {
+    grHT[d->GetGroup()] = 0;
+    d=input->GetNextEntry();
+  }
+  // Second stage : add the missing ones (if any)
+  for (GroupHT::iterator it = grHT.begin(); it != grHT.end(); ++it)  
+  {
+      CheckMandatoryEntry(it->first, 0x0000, "0"); 
+  }    
+  // Third stage : update all 'zero level' groups length
+   
 } 
 
 void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
@@ -1576,6 +1630,8 @@ void FileHelper::RestoreWriteMandatory()
    Archive->Restore(0x0002,0x0100);
    Archive->Restore(0x0002,0x0102);
 
+   // FIXME : Check if none is missing !
+   
    Archive->Restore(0x0008,0x0012);
    Archive->Restore(0x0008,0x0013);
    Archive->Restore(0x0008,0x0016);
@@ -1602,7 +1658,8 @@ void FileHelper::RestoreWriteMandatory()
 void FileHelper::Initialize()
 {
    UserFunction = 0;
-
+   KeepMediaStorageSOPClassUID = false;
+   
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
 

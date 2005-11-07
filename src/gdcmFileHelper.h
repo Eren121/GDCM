@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/11/07 09:50:52 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,7 +66,7 @@ public:
    void SetLoadMode(int loadMode);
    void SetFileName(std::string const &fileName);
    bool Load();
-   /// to allow user to modify pixel order (e.g. Mirror, TopDown,...)
+   /// to allow user to modify pixel order (e.g. Mirror, UpsideDown,...)
    void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
                         { UserFunction = userFunc; }   
    // File methods
@@ -148,7 +148,13 @@ public:
    bool WriteDcmExplVR(std::string const &fileName);
    bool WriteAcr      (std::string const &fileName);
    bool Write         (std::string const &fileName);
-
+   /// \brief if user knows he didn't modify the pixels (e.g. he just anonymized 
+   ///        the file), he is allowed to ask to keep the original
+   ///        'Media Storage SOP Class UID' and 'Image Type'   
+   void SetKeepMediaStorageSOPClassUID (bool v) 
+                              { KeepMediaStorageSOPClassUID = v; }
+   // no GetKeepMediaStorageSOPClassUID() method, on purpose!
+   
 protected:
    FileHelper( );
    FileHelper( File *header );
@@ -213,6 +219,11 @@ private:
    /// User will Cast it according what he founds with f->GetPixelType()
    /// See vtkgdcmSerieViewer for an example
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
+   
+   /// if user knows he didn't modify the pixels (e.g. he just anonymized 
+   /// the file), he is allowed to ask to keep the original
+   /// 'Media Storage SOP Class UID' and 'Image Type'  
+   bool KeepMediaStorageSOPClassUID;
 };
 } // end namespace gdcm
 
