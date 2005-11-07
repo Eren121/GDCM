@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/07 09:50:52 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/11/07 10:53:55 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,6 +114,7 @@ fh1->Write(newFileName);
 
 namespace gdcm 
 {
+typedef std::map<uint16_t, int> GroupHT;    //  Hash Table
 //-------------------------------------------------------------------------
 // Constructor / Destructor
 /**
@@ -1570,11 +1571,11 @@ void FileHelper::CheckMandatoryElements()
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
   GroupHT grHT;
-  DocEntry *d=input->GetFirstEntry();
+  DocEntry *d = FileInternal->GetFirstEntry();
   while(d)
   {
     grHT[d->GetGroup()] = 0;
-    d=input->GetNextEntry();
+    d=FileInternal->GetNextEntry();
   }
   // Second stage : add the missing ones (if any)
   for (GroupHT::iterator it = grHT.begin(); it != grHT.end(); ++it)  
