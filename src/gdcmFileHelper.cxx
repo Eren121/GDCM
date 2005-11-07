@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/07 10:53:55 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/11/07 14:10:39 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1567,9 +1567,10 @@ void FileHelper::CheckMandatoryElements()
    {
       Archive->Push(0x0020, 0x0052);
    }
-   
+ 
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
+ /*
   GroupHT grHT;
   DocEntry *d = FileInternal->GetFirstEntry();
   while(d)
@@ -1583,7 +1584,7 @@ void FileHelper::CheckMandatoryElements()
       CheckMandatoryEntry(it->first, 0x0000, "0"); 
   }    
   // Third stage : update all 'zero level' groups length
-   
+*/   
 } 
 
 void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
