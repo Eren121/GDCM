@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:13:07 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/11/07 10:33:47 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
       
-   std::string fileOut = am->ArgMgrGetString("fileout","WriteDicomSimple.dcm");   
+   std::string fileOut = am->ArgMgrGetString("fileout",(char *)"WriteDicomSimple.dcm");   
    SIZE_X = am->ArgMgrGetInt("NX", 128);
    SIZE_Y = am->ArgMgrGetInt("NY", 128);
    COMPONENT = am->ArgMgrGetInt("components", 1);
