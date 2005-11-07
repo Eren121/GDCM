@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:04:43 $
-  Version:   $Revision: 1.174 $
+  Date:      $Date: 2005/11/07 09:51:35 $
+  Version:   $Revision: 1.175 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -813,7 +813,7 @@ int GetMacAddrSys ( unsigned char *addr )
    close(sd);
 #endif
    // Not implemented platforms (or no cable !)
-   perror("in Get MAC Adress (internal) : There was a configuration problem on your plateform");
+   perror("in Get MAC Adress (internal) : There was a configuration problem (or no cable !) on your plateform");
    memset(addr,0,6);
    return -1;
 #endif //__sun
@@ -876,8 +876,8 @@ std::string Util::GetMACAddress()
 }
 
 /**
- * \brief Creates a new UID. As stipulate in the DICOM ref
- *        each time a DICOM image is create it should have 
+ * \brief Creates a new UID. As stipulated in the DICOM ref
+ *        each time a DICOM image is created it should have 
  *        a unique identifier (URI)
  * @param root is the DICOM prefix assigned by IOS group
  */
