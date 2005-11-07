@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 17:05:49 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2005/11/07 11:03:22 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,6 +68,7 @@ int TestValidate(int argc, char *argv[])
 
       i++;
    }
-   return 0; // never break the testsuite!
+   retVal = 0; // Never break test suite
+   return retVal;
 }
 
