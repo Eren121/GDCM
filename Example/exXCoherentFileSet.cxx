@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 08:59:08 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/11/07 10:54:41 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
 
    int pos = am->ArgMgrDefined("pos");
    int ori = am->ArgMgrDefined("ori");
-   int tag = am->ArgMgrDefined("tag");
    
    int nb;
    uint16_t *groupelem;
-   if (tag)
+   groupelem = am->ArgMgrGetXInt16Enum("tag", &nb);
+
+   if (groupelem != 0)
    {
-      groupelem = am->ArgMgrGetXInt16Enum("tag", &nb); 
       if (nb != 1)
       {
          std::cout << "TAG : one and only one group,elem!" << std::endl;
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
             xcm = s->SplitOnOrientation(l);
          if (pos)
             xcm = s->SplitOnPosition(l);
-         if (tag)
+         if (groupelem != 0)
             xcm = s->SplitOnTagValue(l, groupelem[0],groupelem[1] );
     
          for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
                std::cout << "Orientation : ";
             if (pos) 
                std::cout << "Position : ";
-            if (tag)    
+            if (groupelem != 0)    
                std::cout << "Tag (" << std::hex << groupelem[0] 
                                  << "|" << groupelem[1] << ") value : ";
     
