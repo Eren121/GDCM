@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/06 01:38:02 $
-  Version:   $Revision: 1.171 $
+  Date:      $Date: 2005/11/07 10:14:44 $
+  Version:   $Revision: 1.172 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1133,6 +1133,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
             val = it->Value;
       }
 
+/* FIX later the pb of creating the 'Implementation Version Name'!
 
       if (val == GDCM_UNFOUND)
          val = "";
@@ -1143,7 +1144,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          std::string val = "GDCM ";
          val += Util::GetVersion();
       }
- 
+*/ 
       entry->SetString( val ); // troubles expected when vr=SQ ...
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
