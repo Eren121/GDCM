@@ -27,19 +27,19 @@
 
 
 
-//MEMORY LEAK
+/*MEMORY LEAK*/
 
 #ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 
-#include <stdlib.h>  // Must be included first
+#include <stdlib.h>  /* Must be included first */
 
 #include <crtdbg.h>
 
 #endif
 
-//MEM
+/* MEM */
 
 
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
       break;
     switch (c) {
       
-      //Input file
+      /* Input file */
     case 'i':
       infile = optarg;
       tmp = optarg;
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
       
       /* ----------------------------------------------------- */
       
-      //Output file
+      /*Output file */
     case 'o':
       outfile = optarg;
       tmp = optarg;
@@ -175,14 +175,14 @@ int main(int argc, char **argv)
       tmp--;
       S1 = *tmp;
       
-      // PGX format      
+      /* PGX format */     
       if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
    || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
    cp.decod_format = PGX_DFMT;
    break;
       }
       
-      // PxM format 
+      /* PxM format */
       if ((S1 == 'p' && S2 == 'n' && S3 == 'm')
    || (S1 == 'P' && S2 == 'N' && S3 == 'M') 
    || (S1 == 'p' && S2 == 'g' && S3 == 'm')
@@ -193,14 +193,14 @@ int main(int argc, char **argv)
    break;
       }
       
-      // BMP format 
+      /* BMP format */
       if ((S1 == 'b' && S2 == 'm' && S3 == 'p')
    || (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
    cp.decod_format = BMP_DFMT;
    break;
       }
       
-      // otherwise : error
+      /* otherwise : error */
       fprintf(stderr,
    "!! Unrecognized output image format *.%c%c%c [only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n",
    S1, S2, S3);
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
       
       /* ----------------------------------------------------- */
       
-      //Reduce option
+      /*Reduce option*/
     case 'r':
       tmp=optarg;
       sscanf(tmp, "%d", &cp.reduce);
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
       
       /* ----------------------------------------------------- */
       
-      //Layering option
+      /*Layering option*/
     case 'l':
       tmp=optarg;
       sscanf(tmp, "%d", &cp.layer);
@@ -239,15 +239,15 @@ int main(int argc, char **argv)
     }
   }
   
-  //Check required arguments
-  //------------------------
+  /*Check required arguments*/
+  /*------------------------*/
   if (!infile || !outfile) {
     fprintf(stderr,"ERROR -> At least one required argument is missing\nCheck j2k_to_image -u for usage information\n");
     return 1;
   }
   
-  //Read the input file and put it in memory
-  //----------------------------------------
+  /*Read the input file and put it in memory*/
+  /*----------------------------------------*/
   fsrc = fopen(infile, "rb");
   if (!fsrc) {
     fprintf(stderr, "ERROR -> failed to open %s for reading\n", infile);
@@ -260,8 +260,8 @@ int main(int argc, char **argv)
   fread(src, 1, len, fsrc);
   fclose(fsrc);
   
-  //Decode the code-stream
-  //----------------------
+  /*Decode the code-stream*/
+  /*----------------------*/
   switch(cp.cod_format) {
     
   case J2K_CFMT:
@@ -304,14 +304,14 @@ int main(int argc, char **argv)
     break;
   }
   
-  //Free the memory containing the code-stream
-  //------------------------------------------
+  /*Free the memory containing the code-stream*/
+  /*------------------------------------------*/
   
   free(src);
   
   
-  //Create output image
-  //-------------------
+  /*Create output image*/
+  /*-------------------*/
   
   /* ---------------------------- / */
   /* /                            / */
@@ -345,12 +345,12 @@ int main(int argc, char **argv)
       }
       
       w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor),img.comps[0].dx);
+      /* wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor),img.comps[0].dx);*/
       wr = img.comps[0].w;
       wrr = int_ceildivpow2(img.comps[0].w, img.comps[0].factor);
       
       h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);
+      /* hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);*/
       hr = img.comps[0].h;
       hrr = int_ceildivpow2(img.comps[0].h, img.comps[0].factor);
       
@@ -411,13 +411,13 @@ int main(int argc, char **argv)
    }
    
    w = int_ceildiv(img.x1 - img.x0, img.comps[compno].dx);
-   // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor),img.comps[compno].dx);
+   /* wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor),img.comps[compno].dx);*/
    wr = img.comps[compno].w;
    wrr =
      int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
    
    h = int_ceildiv(img.y1 - img.y0, img.comps[compno].dy);
-   // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[compno].dy);
+   /* hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[compno].dy);*/
    hr = img.comps[compno].h;
    hrr =
      int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
@@ -485,13 +485,13 @@ int main(int argc, char **argv)
    return 1;
       }
       
-      // w = int_ceildiv(img.x1 - img.x0, comp->dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), comp->dx);
+      /* w = int_ceildiv(img.x1 - img.x0, comp->dx);*/
+      /* wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), comp->dx);*/
       w = img.comps[compno].w;
       wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
       
-      // h = int_ceildiv(img.y1 - img.y0, comp->dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), comp->dy);
+      /* h = int_ceildiv(img.y1 - img.y0, comp->dy);*/
+      /* hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), comp->dy); */
       h = img.comps[compno].h;
       hr = int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
       
@@ -547,13 +547,13 @@ int main(int argc, char **argv)
    return 1;
       }
       
-      // w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);
+      /* w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);*/
+      /* wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);*/
       w = img.comps[0].w;
       wr = int_ceildivpow2(img.comps[0].w, img.comps[0].factor);
       
-      // h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);
+      /* h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);*/
+      /* hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy); */
       h = img.comps[0].h;
       hr = int_ceildivpow2(img.comps[0].h, img.comps[0].factor);
       
@@ -612,11 +612,12 @@ int main(int argc, char **argv)
       for (i = 0; i < wr * hr; i++) {
    unsigned char R, G, B;
    /* a modifier */
-   // R = img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+   /* R = img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];*/
    R = img.comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-   // G = img.comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+   /* G = img.comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];*/
    G = img.comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-   // B = img.comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+   /* B = img.comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
+  
    B = img.comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
    fprintf(fdest, "%c%c%c", B, G, R);
    
@@ -636,13 +637,13 @@ int main(int argc, char **argv)
              
    <<-- <<-- <<-- <<-- */
       fdest = fopen(outfile, "wb");
-      // w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);
+      /* w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);*/
+      /* wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);*/
       w = img.comps[0].w;
       wr = int_ceildivpow2(img.comps[0].w, img.comps[0].factor);
       
-      // h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);
+      /* h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);*/
+      /* hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);*/
       h = img.comps[0].h;
       hr = int_ceildivpow2(img.comps[0].h, img.comps[0].factor);
       
@@ -704,7 +705,7 @@ int main(int argc, char **argv)
     
     for (i = 0; i < wr * hr; i++) {
       /* a modifier !! */
-      // fprintf(fdest, "%c", img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);
+      /* fprintf(fdest, "%c", img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);*/
       fprintf(fdest, "%c",
    img.comps[0].data[w * hr - ((i) / (wr) + 1) * w +
    (i) % (wr)]);
@@ -727,14 +728,14 @@ int main(int argc, char **argv)
   }
   
   
-  // Free remaining structures
-  //--------------------------
+  /* Free remaining structures*/
+  /*--------------------------*/
   j2k_dec_release();
   
   
   
-  // Check memory leaks if debug mode
-  //---------------------------------
+  /* Check memory leaks if debug mode*/
+  /*---------------------------------*/
   
 #ifdef _DEBUG
   
