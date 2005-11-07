@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:26 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/11/07 09:53:53 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
    // We need a gdcm::FileHelper, since we want to load the pixels        
    gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
 
-   // (unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one) 
+   // unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
+   // Feel free to cast if you know it's not. 
 
    uint8_t *imageData = fh->GetImageData();
 
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
    // Telephone
    f->AddAnonymizeElement(0x0010, 0x2154, "3615" );
 
-   // Aware user will add more fields to anonymize here
+   // Aware user will add here more fields to anonymize here
 
    // The gdcm::File is modified in memory
 
@@ -134,7 +135,12 @@ int main(int argc, char *argv[])
    // ============================================================
    //   Write a new file
    // ============================================================
-
+   
+   // Since we just Anonymized the file, we know no modification 
+   // was performed on the pixels.
+   // We don't want this image appears as a 'Secondary Captured image'
+   fh->SetKeepMediaStorageSOPClassUID(true);
+   
    fh->WriteDcmExplVR(outputFileName);
    std::cout <<"End Anonymize" << std::cout;
 

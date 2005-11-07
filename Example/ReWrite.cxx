@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/11/07 09:53:53 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,6 +159,11 @@ int main(int argc, char *argv[])
    transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
              << std::endl;
+
+   // Since we just ReWrite the image, we know no modification 
+   // was performed on the pixels.
+   // We don't want this image appears as a 'Secondary Captured image'
+   fh->SetKeepMediaStorageSOPClassUID(true);
 
    switch (mode[0])
    {
