@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:26:19 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/11/07 10:38:56 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -269,16 +269,16 @@ int main(int argc, char *argv[])
 
       pixelType    = f->GetPixelType();
       sPP          = f->GetSamplesPerPixel();
-      if (sPP == 3)
-         planarConfig = f->GetPlanarConfiguration();
-
       std::cout << " pixelType= ["            << pixelType 
                 << "] SamplesPerPixel= ["     << sPP
                 << "] ";
+
       if (sPP == 3)
+      {
+         planarConfig = f->GetPlanarConfiguration();
          std::cout << " PlanarConfiguration= [" << planarConfig 
                 << "] "<< std::endl;
- 
+      } 
       std::cout << " PhotometricInterpretation= [" 
                 << f->GetEntryString(0x0028,0x0004)
                 << "] "<< std::endl;
