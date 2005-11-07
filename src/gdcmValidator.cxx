@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:25:26 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/11/07 11:42:25 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,6 +68,7 @@ bool CheckVM(DataEntry *entry)
 
 void Validator::SetInput(ElementSet *input)
 {
+/*
 // First stage to check group length
   GroupHT grHT;
   DocEntry *d=input->GetFirstEntry();
@@ -80,7 +81,7 @@ void Validator::SetInput(ElementSet *input)
   {
       std::cout << std::hex << it->first << std::endl; 
   } 
-
+*/
 
   // berk for now SetInput do two things at the same time
   d=input->GetFirstEntry();
