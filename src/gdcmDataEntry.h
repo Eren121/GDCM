@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 15:56:51 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/11/07 09:46:36 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,8 @@ public:
 
 // Write
    virtual void WriteContent(std::ofstream *fp, FileType filetype);
-
+   uint32_t ComputeFullLength();
+   
 // Set/Get data
    /// Sets the value (string) of the current Dicom entry
    //virtual void SetValue(std::string const &val);

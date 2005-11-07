@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 15:31:34 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2005/11/07 09:46:36 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -558,6 +558,15 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // (length was already modified)  
    if (l%2)
       fp->seekp(1, std::ios::cur);  
+}
+
+/**
+ * \brief   Compute the full length of the elementary DataEntry (not only value
+ *          length) depending on the VR.
+ */
+uint32_t DataEntry::ComputeFullLength()
+{
+   return GetFullLength();
 }
 
 //-----------------------------------------------------------------------------

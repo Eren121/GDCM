@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:52:33 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/11/07 09:46:37 $
+  Version:   $Revision: 1.79 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,6 +97,29 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
    {
       binary_write( *fp, itemt[j]);  // fffe e000 ffff ffff 
    } 
+}
+
+/**
+ * \brief   Compute the full length of the SQItem (not only value
+ *          length) depending on the VR.
+ */
+uint32_t SQItem::ComputeFullLength()
+{
+   uint32_t l = 8;  // Item Starter length
+   for (ListDocEntry::iterator it = DocEntries.begin();  
+                               it != DocEntries.end();
+                             ++it)
+   {   
+      // we skip delimitors (start and end one) because 
+      // we force them as 'no length'
+      if ( (*it)->GetGroup() == 0xfffe )
+      {
+         continue;
+      }
+      l += (*it)->ComputeFullLength();
+   }
+   l += 8; // 'Item Delimitation' item 
+   return l;  
 }
 
 /**

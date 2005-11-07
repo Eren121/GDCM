@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:47 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/11/07 09:46:36 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,10 +92,11 @@ public:
    virtual void SetLength(uint32_t l) { Length = l; }
    /// \brief Returns the actual value length of the current Dicom entry
    /// \warning this value is not *always* the one stored in the Dicom header
-   ///          in case of well knowned bugs
+   ///          in case of well known bugs
    const uint32_t &GetLength() const { return Length; }
 
    uint32_t GetFullLength();
+   virtual uint32_t ComputeFullLength() = 0;
 
 // The following 3 members, for internal use only ! 
    /// \brief   Sets the offset of the Dicom entry

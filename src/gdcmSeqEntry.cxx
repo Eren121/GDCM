@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 08:36:19 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2005/11/07 09:46:36 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,6 +100,23 @@ void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write(*fp, seq_term_gr);
    binary_write(*fp, seq_term_el);
    binary_write(*fp, seq_term_lg);
+}
+
+/**
+ * \brief   Compute the full length of the SeqEntry (not only value
+ *          length) depending on the VR.
+ */
+uint32_t SeqEntry::ComputeFullLength()
+{
+   uint32_t l = 12; // Tag (4) + VR (explicit) 4 + 4 (length);   
+   for(ListSQItem::iterator cc  = Items.begin();
+                            cc != Items.end();
+                          ++cc)
+   {        
+      l += (*cc)->ComputeFullLength();
+   }   
+   l += 8; // seq_term Tag (4) +  seq_term_lg (4)
+   return l;
 }
 
 /**
