@@ -1,5 +1,11 @@
 PROJECT(OPENJPEG)
 
+# For openjpeg team if they ever want Dart+CMake
+IF(FALSE)
+  ENABLE_TESTING()
+  INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
+ENDIF(FALSE)
+
 #-----------------------------------------------------------------------------
 # OPENJPEG version number, usefull for packaging and doxygen doc:
 SET(OPENJPEG_MAJOR_VERSION 0)
