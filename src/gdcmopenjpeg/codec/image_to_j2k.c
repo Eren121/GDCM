@@ -211,24 +211,24 @@ int give_progression(char progression[4])
     return 0;
   } else {
     if (progression[0] == 'R' && progression[1] == 'L'
-   && progression[2] == 'C' && progression[3] == 'P') {
+     && progression[2] == 'C' && progression[3] == 'P') {
       return 1;
     } else {
       if (progression[0] == 'R' && progression[1] == 'P'
-     && progression[2] == 'C' && progression[3] == 'L') {
-   return 2;
+       && progression[2] == 'C' && progression[3] == 'L') {
+        return 2;
       } else {
-   if (progression[0] == 'P' && progression[1] == 'C'
-       && progression[2] == 'R' && progression[3] == 'L') {
-     return 3;
-   } else {
-     if (progression[0] == 'C' && progression[1] == 'P'
-         && progression[2] == 'R' && progression[3] == 'L') {
-       return 4;
-     } else {
-       return -1;
-     }
-   }
+        if (progression[0] == 'P' && progression[1] == 'C'
+         && progression[2] == 'R' && progression[3] == 'L') { 
+          return 3;
+        } else {
+          if (progression[0] == 'C' && progression[1] == 'P'
+           && progression[2] == 'R' && progression[3] == 'L') {
+            return 4;
+          } else {
+            return -1;
+          }
+        }
       }
     }
   }
@@ -292,23 +292,23 @@ int main(int argc, char **argv)
   int len;
   int NumResolution, numD_min;   /*   NumResolution : number of resolution                     */
   int Tile_arg;         /*   Tile_arg = 0 (not in argument) ou = 1 (in argument)      */
-  int CSty;         /*   CSty : coding style                                      */
-  int Prog_order;      /*   progression order (default LRCP)                         */
+  int CSty;             /*   CSty : coding style                                      */
+  int Prog_order;       /*   progression order (default LRCP)                         */
   char progression[4];
-  int numpocs, numpocs_tile;   /*   Number of progression order change (POC) default 0       */
+  int numpocs, numpocs_tile;     /*   Number of progression order change (POC) default 0       */
   int prcw_init[J2K_MAXRLVLS];   /*   Initialisation Precinct width                            */
   int prch_init[J2K_MAXRLVLS];   /*   Initialisation Precinct height                           */
   /*int prcw_init, prch_init;*/                  /*   Initialisation precincts' size                           */
   int cblockw_init, cblockh_init;   /*   Initialisation codeblocks' size                          */
   int mode, value;      /*   Mode switch (cblk_style)                                 */
   int subsampling_dx, subsampling_dy;   /* subsampling value for dx and dy                    */
-  int ROI_compno, ROI_shift;   /*   region of interrest                                      */
-  int Dim[2];         /*   portion of the image coded                               */
-  int TX0, TY0;         /*   tile off-set                                             */
+  int ROI_compno, ROI_shift;            /*   region of interrest                                      */
+  int Dim[2];                           /*   portion of the image coded                               */
+  int TX0, TY0;                         /*   tile off-set                                             */
   j2k_image_t img;
-  j2k_cp_t cp, cp_init;      /*   cp_init is used to initialise in multiple tiles          */
-  j2k_tcp_t *tcp, *tcp_init;   /*   tcp_init is used to initialise in multiple tile          */
-  j2k_poc_t POC[32];      /*   POC : used in case of Progression order change           */
+  j2k_cp_t cp, cp_init;       /*   cp_init is used to initialise in multiple tiles          */
+  j2k_tcp_t *tcp, *tcp_init;  /*   tcp_init is used to initialise in multiple tile          */
+  j2k_poc_t POC[32];          /*   POC : used in case of Progression order change           */
   j2k_poc_t *tcp_poc;
   j2k_tccp_t *tccp;
   int i, tileno, j;
@@ -319,8 +319,8 @@ int main(int argc, char **argv)
   int ir = 0;
   int res_spec = 0;      /*   For various precinct sizes specification                 */
   char sep;
-  char *j2k_codestream;
-  char *jp2_codestream;
+  unsigned char *j2k_codestream;
+  unsigned char *jp2_codestream;
   FILE *f;
   int depth_0, sign, depth;
 
@@ -368,7 +368,7 @@ int main(int argc, char **argv)
       infile = optarg;
       s = optarg;
       while (*s) {
-   s++;
+        s++;
       }
       s--;
       S3 = *s;
@@ -378,27 +378,27 @@ int main(int argc, char **argv)
       S1 = *s;
 
       if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
-     || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
-   cp.decod_format = PGX_DFMT;
-   break;
+       || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
+        cp.decod_format = PGX_DFMT;
+        break;
       }
 
       if ((S1 == 'p' && S2 == 'n' && S3 == 'm')
-     || (S1 == 'P' && S2 == 'N' && S3 == 'M')
-     || (S1 == 'p' && S2 == 'g' && S3 == 'm') || (S1 == 'P'
+       || (S1 == 'P' && S2 == 'N' && S3 == 'M')
+       || (S1 == 'p' && S2 == 'g' && S3 == 'm') || (S1 == 'P'
                          && S2 == 'G'
                          && S3 == 'M')
-     || (S1 == 'P' && S2 == 'P' && S3 == 'M') || (S1 == 'p'
+       || (S1 == 'P' && S2 == 'P' && S3 == 'M') || (S1 == 'p'
                          && S2 == 'p'
                          && S3 == 'm')) {
-   cp.decod_format = PXM_DFMT;
-   break;
+        cp.decod_format = PXM_DFMT;
+        break;
       }
 
       if ((S1 == 'b' && S2 == 'm' && S3 == 'p')
-     || (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
-   cp.decod_format = BMP_DFMT;
-   break;
+       || (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
+        cp.decod_format = BMP_DFMT;
+        break;
       }
       fprintf(stderr,
          "!! Unrecognized format for infile : %c%c%c [accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n",
@@ -409,7 +409,7 @@ int main(int argc, char **argv)
     case 'o':         /* OUT fill */
       outfile = optarg;
       while (*outfile) {
-   outfile++;
+        outfile++;
       }
       outfile--;
       S3 = *outfile;
@@ -421,32 +421,29 @@ int main(int argc, char **argv)
       outfile = optarg;
 
       if ((S1 == 'j' && S2 == '2' && S3 == 'k')
-     || (S1 == 'J' && S2 == '2' && S3 == 'K'))
-   cp.cod_format = J2K_CFMT;
+       || (S1 == 'J' && S2 == '2' && S3 == 'K'))
+        cp.cod_format = J2K_CFMT;
       else if ((S1 == 'j' && S2 == 'p' && S3 == '2')
-          || (S1 == 'J' && S2 == 'P' && S3 == '2'))
-   cp.cod_format = JP2_CFMT;
+            || (S1 == 'J' && S2 == 'P' && S3 == '2'))
+        cp.cod_format = JP2_CFMT;
       else {
-   fprintf(stderr,
-      "Unknown output format image *.%c%c%c [only *.j2k, *.jp2]!! \n",
-      S1, S2, S3);
-   return 1;
+        fprintf(stderr,
+          "Unknown output format image *.%c%c%c [only *.j2k, *.jp2]!! \n",
+          S1, S2, S3);
+        return 1;
       }
-
-
-
       break;
       /* ----------------------------------------------------- */
     case 'r':         /* rates rates/distorsion */
       s = optarg;
       while (sscanf(s, "%d", &tcp_init->rates[tcp_init->numlayers]) == 1) {
-   tcp_init->numlayers++;
-   while (*s && *s != ',') {
-     s++;
-   }
-   if (!*s)
-     break;
-   s++;
+        tcp_init->numlayers++;
+        while (*s && *s != ',') {
+          s++;
+        }
+        if (!*s)
+          break;
+        s++;
       }
       cp.disto_alloc = 1;
       cp.matrice = NULL;
@@ -456,13 +453,13 @@ int main(int argc, char **argv)
       s = optarg;
       while (sscanf(s, "%f", &tcp_init->distoratio[tcp_init->numlayers])
         == 1) {
-   tcp_init->numlayers++;
-   while (*s && *s != ',') {
-     s++;
-   }
-   if (!*s)
-     break;
-   s++;
+        tcp_init->numlayers++;
+        while (*s && *s != ',') {
+          s++;
+        }
+        if (!*s)
+          break;
+        s++;
       }
       cp.fixed_quality = 1;
       cp.matrice = NULL;
@@ -474,34 +471,34 @@ int main(int argc, char **argv)
       sscanf(s, "%d", &tcp_init->numlayers);
       s++;
       if (tcp_init->numlayers > 9)
-   s++;
+        s++;
       cp.matrice =
-   (int *) malloc(tcp_init->numlayers * NumResolution * 3 *
+          (int *) malloc(tcp_init->numlayers * NumResolution * 3 *
              sizeof(int));
       s = s + 2;
       for (i = 0; i < tcp_init->numlayers; i++) {
-   tcp_init->rates[i] = 1;
-   sscanf(s, "%d,", &cp.matrice[i * NumResolution * 3]);
-   s += 2;
-   if (cp.matrice[i * NumResolution * 3] > 9)
-     s++;
-   cp.matrice[i * NumResolution * 3 + 1] = 0;
-   cp.matrice[i * NumResolution * 3 + 2] = 0;
-   for (j = 1; j < NumResolution; j++) {
-     sscanf(s, "%d,%d,%d",
-       &cp.matrice[i * NumResolution * 3 + j * 3 + 0],
-       &cp.matrice[i * NumResolution * 3 + j * 3 + 1],
-       &cp.matrice[i * NumResolution * 3 + j * 3 + 2]);
-     s += 6;
-     if (cp.matrice[i * NumResolution * 3 + j * 3] > 9)
-       s++;
-     if (cp.matrice[i * NumResolution * 3 + j * 3 + 1] > 9)
-       s++;
-     if (cp.matrice[i * NumResolution * 3 + j * 3 + 2] > 9)
-       s++;
-   }
-   if (i < tcp_init->numlayers - 1)
-     s++;
+        tcp_init->rates[i] = 1;
+        sscanf(s, "%d,", &cp.matrice[i * NumResolution * 3]);
+        s += 2;
+        if (cp.matrice[i * NumResolution * 3] > 9)
+            s++;
+        cp.matrice[i * NumResolution * 3 + 1] = 0;
+        cp.matrice[i * NumResolution * 3 + 2] = 0;
+        for (j = 1; j < NumResolution; j++) {
+          sscanf(s, "%d,%d,%d",
+              &cp.matrice[i * NumResolution * 3 + j * 3 + 0],
+              &cp.matrice[i * NumResolution * 3 + j * 3 + 1],
+              &cp.matrice[i * NumResolution * 3 + j * 3 + 2]);
+          s += 6;
+          if (cp.matrice[i * NumResolution * 3 + j * 3] > 9)
+            s++;
+          if (cp.matrice[i * NumResolution * 3 + j * 3 + 1] > 9)
+            s++;
+          if (cp.matrice[i * NumResolution * 3 + j * 3 + 2] > 9)
+            s++;
+        }
+        if (i < tcp_init->numlayers - 1)
+          s++;
       }
       cp.fixed_alloc = 1;
       break;
@@ -518,12 +515,12 @@ int main(int argc, char **argv)
     case 'c':         /* precinct dimension */
       s = optarg;
       do {
-   sep = 0;
-   sscanf(s, "[%d,%d]%c", &prcw_init[res_spec],
+        sep = 0;
+        sscanf(s, "[%d,%d]%c", &prcw_init[res_spec],
           &prch_init[res_spec], &sep);
-   CSty |= 0x01;
-   res_spec++;
-   s = strpbrk(s, "]") + 2;
+        CSty |= 0x01;
+        res_spec++;
+        s = strpbrk(s, "]") + 2;
       }
       while (sep == ',');
       break;
@@ -531,10 +528,10 @@ int main(int argc, char **argv)
     case 'b':         /* code-block dimension */
       sscanf(optarg, "%d,%d", &cblockw_init, &cblockh_init);
       if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
-     || cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
-   fprintf(stderr,
-      "!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
-   return 1;
+       || cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
+        fprintf(stderr,
+           "!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
+        return 1;
       }
       break;
       /* ----------------------------------------------------- */
@@ -546,31 +543,31 @@ int main(int argc, char **argv)
     case 'p':         /* progression order */
       s = optarg;
       for (i = 0; i < 4; i++) {
-   progression[i] = *s;
-   s++;
+        progression[i] = *s;
+        s++;
       }
       Prog_order = give_progression(progression);
 
       if (Prog_order == -1) {
-   fprintf(stderr,
-      "Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
-   return 1;
+        fprintf(stderr,
+           "Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
+        return 1;
       }
       break;
       /* ----------------------------------------------------- */
     case 's':         /* subsampling factor */
       if (sscanf(optarg, "%d,%d", &subsampling_dx, &subsampling_dy) != 2) {
-   fprintf(stderr,
-      "'-s' sub-sampling argument error !  [-s dx,dy]\n");
-   return 1;
+        fprintf(stderr,
+           "'-s' sub-sampling argument error !  [-s dx,dy]\n");
+        return 1;
       }
       break;
       /* ----------------------------------------------------- */
     case 'd':         /* coordonnate of the reference grid */
       if (sscanf(optarg, "%d,%d", &Dim[0], &Dim[1]) != 2) {
-   fprintf(stderr,
-      "-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
-   return 1;
+        fprintf(stderr,
+           "-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
+        return 1;
       }
       break;
       /* ----------------------------------------------------- */
@@ -589,15 +586,15 @@ int main(int argc, char **argv)
           &POC[numpocs].resno0, &POC[numpocs].compno0,
           &POC[numpocs].layno1, &POC[numpocs].resno1,
           &POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
-   POC[numpocs].prg = give_progression(POC[numpocs].progorder);
+        POC[numpocs].prg = give_progression(POC[numpocs].progorder);
    /* POC[numpocs].tile; */
-   numpocs++;
-   while (*s && *s != '/') {
-     s++;
-   }
-   if (!*s)
-     break;
-   s++;
+        numpocs++;
+        while (*s && *s != '/') {
+          s++;
+        }
+        if (!*s)
+          break;
+        s++;
       }
       break;
       /* ------------------------------------------------------ */
@@ -611,25 +608,25 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'M':         /* Mode switch pas tous au point !! */
       if (sscanf(optarg, "%d", &value) == 1) {
-   for (i = 0; i <= 5; i++) {
-     int cache = value & (1 << i);
-     if (cache)
-       mode |= (1 << i);
-   }
+        for (i = 0; i <= 5; i++) {
+          int cache = value & (1 << i);
+          if (cache)
+            mode |= (1 << i);
+        }
       }
       break;
       /* ------------------------------------------------------ */
     case 'R':         /* ROI */
       if (sscanf(optarg, "OI:c=%d,U=%d", &ROI_compno, &ROI_shift) != 2) {
-   fprintf(stderr, "ROI error !! [-ROI:c='compno',U='shift']\n");
-   return 1;
+        fprintf(stderr, "ROI error !! [-ROI:c='compno',U='shift']\n");
+        return 1;
       }
       break;
       /* ------------------------------------------------------ */
     case 'T':         /* Tile offset */
       if (sscanf(optarg, "%d,%d", &TX0, &TY0) != 2) {
-   fprintf(stderr, "-T 'tile offset' argument error !! [-T X0,Y0]");
-   return 1;
+        fprintf(stderr, "-T 'tile offset' argument error !! [-T X0,Y0]");
+        return 1;
       }
       break;
       /* ------------------------------------------------------ */
@@ -690,16 +687,16 @@ int main(int argc, char **argv)
   case PGX_DFMT:
     if (Tile_arg) {
       if (!pgxtoimage
-     (infile, &img, cp.tdy, subsampling_dx, subsampling_dy, Dim, cp))
+          (infile, &img, cp.tdy, subsampling_dx, subsampling_dy, Dim, cp))
       {
-   fprintf(stderr, "not a pgx file\n");
-   return 1;
+        fprintf(stderr, "not a pgx file\n");
+        return 1;
       }
     } else {
       if (!pgxtoimage
-     (infile, &img, -1, subsampling_dx, subsampling_dy, Dim, cp)) {
-   fprintf(stderr, " not a pgx file\n");
-   return 1;
+          (infile, &img, -1, subsampling_dx, subsampling_dy, Dim, cp)) {
+        fprintf(stderr, " not a pgx file\n");
+        return 1;
       }
     }
     break;
@@ -754,9 +751,9 @@ int main(int argc, char **argv)
     tcp->numlayers = tcp_init->numlayers;
     for (j = 0; j < tcp->numlayers; j++) {
       if (cp.fixed_quality)   /* add fixed_quality*/
-   tcp->distoratio[j] = tcp_init->distoratio[j];
+        tcp->distoratio[j] = tcp_init->distoratio[j];
       else
-   tcp->rates[j] = tcp_init->rates[j];
+        tcp->rates[j] = tcp_init->rates[j];
     }
     tcp->csty = CSty;
     tcp->prg = Prog_order;
@@ -772,17 +769,17 @@ int main(int argc, char **argv)
       /* intialisation of POC */
       tcp->POC = 1;
       for (i = 0; i < numpocs; i++) {
-   if (tileno == POC[i].tile - 1 || POC[i].tile == -1) {
-     tcp_poc = &tcp->pocs[numpocs_tile];
-     tcp_poc->resno0 = POC[numpocs_tile].resno0;
-     tcp_poc->compno0 = POC[numpocs_tile].compno0;
-     tcp_poc->layno1 = POC[numpocs_tile].layno1;
-     tcp_poc->resno1 = POC[numpocs_tile].resno1;
-     tcp_poc->compno1 = POC[numpocs_tile].compno1;
-     tcp_poc->prg = POC[numpocs_tile].prg;
-     tcp_poc->tile = POC[numpocs_tile].tile;
-     numpocs_tile++;
-   }
+        if (tileno == POC[i].tile - 1 || POC[i].tile == -1) {
+          tcp_poc = &tcp->pocs[numpocs_tile];
+          tcp_poc->resno0 = POC[numpocs_tile].resno0;
+          tcp_poc->compno0 = POC[numpocs_tile].compno0;
+          tcp_poc->layno1 = POC[numpocs_tile].layno1;
+          tcp_poc->resno1 = POC[numpocs_tile].resno1;
+          tcp_poc->compno1 = POC[numpocs_tile].compno1;
+          tcp_poc->prg = POC[numpocs_tile].prg;
+          tcp_poc->tile = POC[numpocs_tile].tile;
+          numpocs_tile++;
+        }
       }
     }
     tcp->numpocs = numpocs_tile;
@@ -799,74 +796,72 @@ int main(int argc, char **argv)
       tccp->qntsty = ir ? J2K_CCP_QNTSTY_SEQNT : J2K_CCP_QNTSTY_NOQNT;
       tccp->numgbits = 2;
       if (i == ROI_compno)
-   tccp->roishift = ROI_shift;
+        tccp->roishift = ROI_shift;
       else
-   tccp->roishift = 0;
+        tccp->roishift = 0;
       if (CSty & J2K_CCP_CSTY_PRT) {
-   int p = 0;
-   for (j = tccp->numresolutions - 1; j >= 0; j--) {
-     if (p < res_spec) {
-       if (prcw_init[p] < 1)
-         tccp->prcw[j] = 1;
-       else
-         tccp->prcw[j] = int_floorlog2(prcw_init[p]);
+        int p = 0;
+        for (j = tccp->numresolutions - 1; j >= 0; j--) {
+          if (p < res_spec) {
+            if (prcw_init[p] < 1)
+              tccp->prcw[j] = 1;
+            else
+              tccp->prcw[j] = int_floorlog2(prcw_init[p]);
 
-       if (prch_init[p] < 1)
-         tccp->prch[j] = 1;
-       else
-         tccp->prch[j] = int_floorlog2(prch_init[p]);
-     } else {
-       int size_prcw, size_prch;
-       size_prcw = prcw_init[res_spec - 1] >> (p - (res_spec - 1));
-       size_prch = prch_init[res_spec - 1] >> (p - (res_spec - 1));
-       if (size_prcw < 1)
-         tccp->prcw[j] = 1;
-       else
-         tccp->prcw[j] = int_floorlog2(size_prcw);
-       if (size_prch < 1)
-         tccp->prch[j] = 1;
-       else
-         tccp->prch[j] = int_floorlog2(size_prch);
-     }
-     p++;
-     /*printf("\nsize precinct pour level %d : %d,%d\n", j,
-        tccp->prcw[j], tccp->prch[j]); */
-   }
+            if (prch_init[p] < 1)
+              tccp->prch[j] = 1;
+            else
+              tccp->prch[j] = int_floorlog2(prch_init[p]);
+          } else {
+            int size_prcw, size_prch;
+            size_prcw = prcw_init[res_spec - 1] >> (p - (res_spec - 1));
+            size_prch = prch_init[res_spec - 1] >> (p - (res_spec - 1));
+           if (size_prcw < 1)
+              tccp->prcw[j] = 1;
+           else
+              tccp->prcw[j] = int_floorlog2(size_prcw);
+           if (size_prch < 1)
+             tccp->prch[j] = 1;
+           else
+             tccp->prch[j] = int_floorlog2(size_prch);
+          }
+          p++;
+          /*printf("\nsize precinct pour level %d : %d,%d\n", j,
+          tccp->prcw[j], tccp->prch[j]); */
+        }
       } else {
-   for (j = 0; j < tccp->numresolutions; j++) {
-     tccp->prcw[j] = 15;
-     tccp->prch[j] = 15;
-   }
+        for (j = 0; j < tccp->numresolutions; j++) {
+          tccp->prcw[j] = 15;
+          tccp->prch[j] = 15;
+        }
       }
       calc_explicit_stepsizes(tccp, img.comps[i].prec);
     }
   }
-
-
 
   if (cp.cod_format == J2K_CFMT) {   /* J2K format output */
     if (cp.intermed_file == 1) {   /* After the encoding of each tile, j2k_encode 
                   stores the data in the file */
       len = j2k_encode(&img, &cp, outfile, cp.tdx * cp.tdy * 2, index);
       if (len == 0) {
-   fprintf(stderr, "failed to encode image\n");
-   return 1;
+        fprintf(stderr, "failed to encode image\n");
+        return 1;
       }
     } else {
-      j2k_codestream = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+      j2k_codestream = (unsigned char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
       /* Allocate memory for all tiles */
       cio_init(j2k_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
       len =
-   j2k_encode(&img, &cp, j2k_codestream,
+        j2k_encode(&img, &cp, j2k_codestream,
          cp.tdx * cp.tdy * cp.tw * cp.th * 2, index);
       if (len == 0) {
-   fprintf(stderr, "failed to encode image\n");
-   return 1;
+        fprintf(stderr, "failed to encode image\n");
+        return 1;
       }
       f = fopen(outfile, "wb");
       if (!f) {
-   fprintf(stderr, "failed to open %s for writing\n", outfile);
-   return 1;
+        fprintf(stderr, "failed to open %s for writing\n", outfile);
+        return 1;
       }
       fwrite(j2k_codestream, 1, len, f);
       free(j2k_codestream);
@@ -880,8 +875,8 @@ int main(int argc, char **argv)
       files for each tile */
       cp.intermed_file = 0;
     }
-    j2k_codestream = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
-    jp2_codestream = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+    j2k_codestream = (unsigned char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+    jp2_codestream = (unsigned char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
 
     cio_init(j2k_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
     len = j2k_encode(&img, &cp, j2k_codestream,
@@ -917,7 +912,7 @@ int main(int argc, char **argv)
       depth = img.comps[i].prec - 1;
       sign = img.comps[i].sgnd;
       if (depth_0 != depth)
-   jp2_struct->bpc = 255;
+        jp2_struct->bpc = 255;
     }
 
     for (i = 0; i < img.numcomps; i++)
@@ -932,11 +927,11 @@ int main(int argc, char **argv)
     
     if (jp2_struct->meth == 1) {
       if (img.color_space == 1)
-   jp2_struct->enumcs = 16;
+        jp2_struct->enumcs = 16;
       else if (img.color_space == 2)
-   jp2_struct->enumcs = 17;
+        jp2_struct->enumcs = 17;
       else if (img.color_space == 3)
-   jp2_struct->enumcs = 18;   /* YUV */                         
+        jp2_struct->enumcs = 18;   /* YUV */                         
     } else
       jp2_struct->enumcs = 0;   /* PROFILE (??)*/
 
@@ -963,7 +958,7 @@ int main(int argc, char **argv)
       char tmp;
       sprintf(&tmp, "Compo%d", i);
       if (remove(&tmp) == -1) {
-   fprintf(stderr, "failed to kill %s file !\n", &tmp);
+        fprintf(stderr, "failed to kill %s file !\n", &tmp);
       }
     }
   } else {         /* PGX */
@@ -972,7 +967,7 @@ int main(int argc, char **argv)
       sprintf(&tmp, "bandtile%d", i + 1);
 
       if (remove(&tmp) == -1) {
-   fprintf(stderr, "failed to kill %s file !\n", &tmp);
+        fprintf(stderr, "failed to kill %s file !\n", &tmp);
       }
     }
   }

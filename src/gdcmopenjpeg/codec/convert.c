@@ -104,7 +104,7 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     File_h.bfSize = getc(IN);
     File_h.bfSize = (getc(IN) << 8) + File_h.bfSize;
     File_h.bfSize = (getc(IN) << 16) + File_h.bfSize;
-    File_h.bfSize = (getc(IN) << 24) + File_h.bfSize;
+    File_h.bfSize = (getc(IN) << 24) + File_h.bfSize;convert.c
 
     File_h.bfReserved1 = getc(IN);
     File_h.bfReserved1 = (getc(IN) << 8) + File_h.bfReserved1;
@@ -769,7 +769,7 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     }
     for (i = 0; i < w * h; i++) {
       unsigned int l;
-      fscanf(f, "%d", &l);
+      fscanf(f, "%d", &(unsigned int)l);
       fprintf(Compo0, "%c", l);
     }
     fclose(Compo0);
