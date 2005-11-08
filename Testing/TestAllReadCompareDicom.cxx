@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 14:07:12 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/11/08 09:13:22 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -283,16 +283,19 @@ bool TestFile::ReadFileData(std::ifstream *fp)
    }
    // We *know* the .tst files are written in 'Little Endian' format.
    // We *know* DataSize may be 1 or 2 !  
-   uint16_t g;   
+   uint16_t g;
+   
+// Track BigEndian troubles
+std::cout << " calarSize : " << GetScalarSize() 
+          << " SwapCode:" << GetSwapCode()
+          << std::endl;
+    
    for (unsigned int i=0; i<GetDataSize()/2; i++)
    {
       g = ((uint16_t *)Data)[i];
       g = ( g << 8 |  g >> 8  );
       ((uint16_t *)Data)[i] = g;   
    }
-   
-   
-
    return(true);
 }
 
@@ -588,6 +591,9 @@ int InternalTest(std::string const &filename,
 
 int TestAllReadCompareDicom(int argc, char *argv[]) 
 {
+// Temporarily added, to track BigEndian troubles
+gdcm::Debug::DebugOn();
+
    if (argc == 4)
       gdcm::Debug::DebugOn();
 
