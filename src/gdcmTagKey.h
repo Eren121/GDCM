@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:25:26 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/11/08 09:35:44 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,10 +45,10 @@ public :
    }
 
    void SetGroup(uint16_t group) { tag[0] = group; }
-   uint16_t GetGroup() { return tag[0]; } const
+   uint16_t GetGroup() const { return tag[0]; }
 
    void SetElement(uint16_t elem) { tag[1] = elem; }
-   uint16_t GetElement() { return tag[1]; } const
+   uint16_t GetElement() const { return tag[1]; }
 
    TagKey &operator=(const TagKey &_val)
    {
