@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 09:54:20 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/11/08 16:40:02 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,8 @@ int main(int argc, char *argv[])
 
    s = new gdcm::SerieHelper();
    s->SetLoadMode(gdcm::LD_ALL);     // Load everything for each File
-   //s->AddRestriction(tagKey, valueToCheck); // Keep only files where
+   //gdcm::TagKey t(0x0020,0x0013);
+   //s->AddRestriction(t, "340", gdcm::GDCM_LESS); // Keep only files where
                                               // restriction is true
    s->SetDirectory(dirName, true); // true : recursive exploration
 
