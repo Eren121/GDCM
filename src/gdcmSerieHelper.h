@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 06:23:37 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/11/08 16:31:21 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,8 +98,7 @@ public:
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
    GDCM_LEGACY( void AddRestriction(TagKey const &key, std::string const &value) );
-   void AddRestriction(uint16_t group, uint16_t elem, 
-                       std::string const &value, int op);
+   void AddRestriction(TagKey const &key, std::string const &value, int op);
  
 /**
  * \brief Sets the LoadMode as a boolean string. 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:14:15 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/11/08 16:31:21 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -218,12 +218,12 @@ void SerieHelper::AddGdcmFile(File *header)
  * @param value value to be checked to exclude File
  * @param op  operator we want to use to check
  */
-void SerieHelper::AddRestriction(uint16_t group, uint16_t elem, 
+void SerieHelper::AddRestriction(TagKey const &key, 
                                  std::string const &value, int op)
 {
    ExRule r;
-   r.group = group;
-   r.elem  = elem;
+   r.group = key[0];
+   r.elem  = key[1];
    r.value = value;
    r.op    = op;
    ExRestrictions.push_back( r ); 
