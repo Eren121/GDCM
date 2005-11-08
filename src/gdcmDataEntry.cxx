@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:46:36 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/11/08 09:54:42 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -519,6 +519,7 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
          }     
          case 2:
          {
+gdcmDebugMacro ("AtomicLength = 2 found; lgt =" << l); 
             uint16_t *data16 = (uint16_t *)data;
             for(i=0;i<l/vrLgth;i++)
                binary_write( *fp, data16[i]);
