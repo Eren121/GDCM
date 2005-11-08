@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: dynmodule.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 16:19:57 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/11/08 08:31:42 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,7 @@ extern "C" __ELX_DLLEXPORT void afunc(void)
   // Create an instance of a gdcm class. This makes sure
   // that the problematic gdcm-library is linked.
   gdcm::File *file = gdcm::File::New();
+  file->SetLoadMode(0); // To avoid warning
   
   std::cerr << "End of function afunc"  << std::endl; 
   
