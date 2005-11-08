@@ -4,8 +4,8 @@ INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 
 SUBDIRS(
   gdcmjpeg
-  #gdcmmpeg2
-  gdcmjpegls
+  gdcmmpeg2
+  #gdcmjpegls
   gdcmopenjpeg
   )
 
@@ -53,7 +53,7 @@ SET(libgdcm_la_SOURCES
    gdcmJpeg12.cxx
    gdcmJpeg16.cxx
    gdcmJpeg2000.cxx
-   #   gdcmMpeg.cxx
+   gdcmMpeg.cxx
    gdcmOrientation.cxx
    gdcmPixelReadConvert.cxx
    gdcmPixelWriteConvert.cxx
@@ -75,7 +75,7 @@ TARGET_LINK_LIBRARIES(gdcm
   gdcmjpeg8 
   gdcmjpeg12
   gdcmjpeg16
-  #  gdcmmpeg2
+  gdcmmpeg2
   gdcmopenjpeg
 )
 IF(WIN32)
