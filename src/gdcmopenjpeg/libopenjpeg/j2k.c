@@ -247,6 +247,9 @@ void j2k_read_siz()
     j2k_img->comps[i].sgnd = tmp >> 7;
     j2k_img->comps[i].dx = cio_read(1);   /* XRsiz_i         */
     j2k_img->comps[i].dy = cio_read(1);   /* YRsiz_i         */
+    /* ===>                                                  */
+    /* ===> FIXME : local variables w and h are never used   */
+    /* ===>                                                  */    
     w = int_ceildiv(j2k_img->x1 - j2k_img->x0, j2k_img->comps[i].dx);
     h = int_ceildiv(j2k_img->y1 - j2k_img->y0, j2k_img->comps[i].dy);
     j2k_img->comps[i].resno_decoded = 0;   /* number of resolution decoded */
