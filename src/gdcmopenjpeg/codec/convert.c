@@ -189,28 +189,28 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       img->numcomps = 3;
       img->color_space = 1;
       img->comps =
-   (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
+        (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
       for (i = 0; i < img->numcomps; i++) {
-   img->comps[i].prec = 8;
-   img->comps[i].bpp = 8;
-   img->comps[i].sgnd = 0;
-   img->comps[i].dx = subsampling_dx;
-   img->comps[i].dy = subsampling_dy;
+        img->comps[i].prec = 8;
+        img->comps[i].bpp = 8;
+        img->comps[i].sgnd = 0;
+        img->comps[i].dx = subsampling_dx;
+        img->comps[i].dy = subsampling_dy;
       }
       Compo0 = fopen("Compo0", "wb");
       if (!Compo0) {
-   fprintf(stderr,
-      "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
+        fprintf(stderr,
+          "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
       }
       Compo1 = fopen("Compo1", "wb");
       if (!Compo1) {
-   fprintf(stderr,
-      "\033[0;33mFailed to open Compo1 for writing !\033[0;39m\n");
+        fprintf(stderr,
+          "\033[0;33mFailed to open Compo1 for writing !\033[0;39m\n");
       }
       Compo2 = fopen("Compo2", "wb");
       if (!Compo2) {
-   fprintf(stderr,
-      "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
+        fprintf(stderr,
+          "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
       }
 
       /* Place the cursor at the beginning of the image information */
@@ -226,32 +226,31 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 
 
       RGB =
-   (unsigned char *) malloc((3 * W + PAD) * H *
-             sizeof(unsigned char));
+        (unsigned char *) malloc((3 * W + PAD) * H * sizeof(unsigned char));
 
       fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN);
 
       for (j = 0; j < (3 * W + PAD) * H; j++) {
-   unsigned char elmt;
-   int Wp = 3 * W + PAD;
+        unsigned char elmt;
+        int Wp = 3 * W + PAD;
 
-   elmt = RGB[(H - (j / Wp + 1)) * Wp + j % Wp];
-   if ((j % Wp) < (3 * W)) {
-     switch (type) {
-     case 0:
-       fprintf(Compo2, "%c", elmt);
-       type = 1;
-       break;
-     case 1:
-       fprintf(Compo1, "%c", elmt);
-       type = 2;
-       break;
-     case 2:
-       fprintf(Compo0, "%c", elmt);
-       type = 0;
-       break;
-     }
-   }
+        elmt = RGB[(H - (j / Wp + 1)) * Wp + j % Wp];
+        if ((j % Wp) < (3 * W)) {
+          switch (type) {
+          case 0:
+            fprintf(Compo2, "%c", elmt);
+            type = 1;
+            break;
+          case 1:
+            fprintf(Compo1, "%c", elmt);
+            type = 2;
+            break;
+          case 2:
+            fprintf(Compo0, "%c", elmt);
+            type = 0;
+            break;
+          }
+        }
       }
 
       fclose(Compo0);
@@ -262,26 +261,24 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       img->x0 = Dim[0];
       img->y0 = Dim[1];
       img->x1 =
-   !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                        1) *
-   subsampling_dx + 1;
+        !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -1) *
+        subsampling_dx + 1;
       img->y1 =
-   !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                        1) *
-   subsampling_dy + 1;
+        !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -1) *
+        subsampling_dy + 1;
 
       table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
       table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
       table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
 
       for (j = 0; j < Info_h.biClrUsed; j++) {
-   table_B[j] = getc(IN);
-   table_G[j] = getc(IN);
-   table_R[j] = getc(IN);
-   getc(IN);
-   if (table_R[j] != table_G[j] && table_R[j] != table_B[j]
-       && table_G[j] != table_B[j])
-     gray_scale = 0;
+        table_B[j] = getc(IN);
+        table_G[j] = getc(IN);
+        table_R[j] = getc(IN);
+        getc(IN);
+        if (table_R[j] != table_G[j] && table_R[j] != table_B[j]
+         && table_G[j] != table_B[j])
+          gray_scale = 0;
       }
 
       /* Place the cursor at the beginning of the image information */
@@ -291,75 +288,75 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       W = Info_h.biWidth;
       H = Info_h.biHeight;
       if (Info_h.biWidth % 2)
-   W++;
+        W++;
 
       RGB = (unsigned char *) malloc(W * H * sizeof(unsigned char));
 
       fread(RGB, sizeof(unsigned char), W * H, IN);
       if (gray_scale) {
-   img->numcomps = 1;
-   img->comps =
-     (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
-   img->comps[0].prec = 8;
-   img->comps[0].bpp = 8;
-   img->comps[0].sgnd = 0;
-   img->comps[0].dx = subsampling_dx;
-   img->comps[0].dy = subsampling_dy;
-   Compo0 = fopen("Compo0", "wb");
-   if (!Compo0) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
-   }
-   for (j = 0; j < W * H; j++) {
-     if ((j % W < W - 1 && Info_h.biWidth % 2)
-         || !(Info_h.biWidth % 2))
-       fprintf(Compo0, "%c",
-          table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
-   }
-   fclose(Compo0);
+        img->numcomps = 1;
+        img->comps =
+          (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
+        img->comps[0].prec = 8;
+        img->comps[0].bpp = 8;
+        img->comps[0].sgnd = 0;
+        img->comps[0].dx = subsampling_dx;
+        img->comps[0].dy = subsampling_dy;
+        Compo0 = fopen("Compo0", "wb");
+        if (!Compo0) {
+          fprintf(stderr,
+            "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
+        }
+        for (j = 0; j < W * H; j++) {
+          if ((j % W < W - 1 && Info_h.biWidth % 2)
+            || !(Info_h.biWidth % 2))
+            fprintf(Compo0, "%c",
+               table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
+        }
+          fclose(Compo0);
       } else {
-   img->numcomps = 3;
-   img->comps =
-     (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
-   for (i = 0; i < img->numcomps; i++) {
-     img->comps[i].prec = 8;
-     img->comps[i].bpp = 8;
-     img->comps[i].sgnd = 0;
-     img->comps[i].dx = subsampling_dx;
-     img->comps[i].dy = subsampling_dy;
-   }
+        img->numcomps = 3;
+        img->comps =
+          (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
+        for (i = 0; i < img->numcomps; i++) {
+          img->comps[i].prec = 8;
+          img->comps[i].bpp = 8;
+          img->comps[i].sgnd = 0;
+          img->comps[i].dx = subsampling_dx;
+          img->comps[i].dy = subsampling_dy;
+        }
 
-   Compo0 = fopen("Compo0", "wb");
-   if (!Compo0) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
-   }
-   Compo1 = fopen("Compo1", "wb");
-   if (!Compo1) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo1 for writing !\033[0;39m\n");
-   }
-   Compo2 = fopen("Compo2", "wb");
-   if (!Compo2) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
-   }
+        Compo0 = fopen("Compo0", "wb");
+        if (!Compo0) {
+          fprintf(stderr,
+             "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
+        }
+        Compo1 = fopen("Compo1", "wb");
+        if (!Compo1) {
+          fprintf(stderr,
+          "\033[0;33mFailed to open Compo1 for writing !\033[0;39m\n");
+        }
+        Compo2 = fopen("Compo2", "wb");
+        if (!Compo2) {
+          fprintf(stderr,
+            "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
+        }
 
-   for (j = 0; j < W * H; j++) {
-     if ((j % W < W - 1 && Info_h.biWidth % 2)
-         || !(Info_h.biWidth % 2)) {
-       fprintf(Compo0, "%c",
-          table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
-       fprintf(Compo1, "%c",
-          table_G[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
-       fprintf(Compo2, "%c",
-          table_B[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
-     }
+        for (j = 0; j < W * H; j++) {
+          if ((j % W < W - 1 && Info_h.biWidth % 2)
+            || !(Info_h.biWidth % 2)) {
+            fprintf(Compo0, "%c",
+              table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
+            fprintf(Compo1, "%c",
+               table_G[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
+            fprintf(Compo2, "%c",
+               table_B[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
+          }
 
-   }
-   fclose(Compo0);
-   fclose(Compo1);
-   fclose(Compo2);
+        }
+        fclose(Compo0);
+        fclose(Compo1);
+        fclose(Compo2);
       }
       free(RGB);
 
@@ -367,26 +364,24 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       img->x0 = Dim[0];
       img->y0 = Dim[1];
       img->x1 =
-   !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                        1) *
-   subsampling_dx + 1;
+        !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
+         subsampling_dx + 1;
       img->y1 =
-   !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                        1) *
-   subsampling_dy + 1;
+       !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
+        subsampling_dy + 1;
 
       table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
       table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
       table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
 
       for (j = 0; j < Info_h.biClrUsed; j++) {
-   table_B[j] = getc(IN);
-   table_G[j] = getc(IN);
-   table_R[j] = getc(IN);
-   getc(IN);
-   if (table_R[j] != table_G[j] && table_R[j] != table_B[j]
-       && table_G[j] != table_B[j])
-     gray_scale = 0;
+        table_B[j] = getc(IN);
+        table_G[j] = getc(IN);
+        table_R[j] = getc(IN);
+        getc(IN);
+        if (table_R[j] != table_G[j] && table_R[j] != table_B[j]
+         && table_G[j] != table_B[j])
+          gray_scale = 0;
       }
 
       /* Place the cursor at the beginning of the image information */
@@ -394,120 +389,117 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       fseek(IN, File_h.bfOffBits, SEEK_SET);
 
       if (gray_scale) {
-   img->numcomps = 1;
-   img->comps = (j2k_comp_t *) malloc(sizeof(j2k_comp_t));
-   img->comps[0].prec = 8;
-   img->comps[0].bpp = 8;
-   img->comps[0].sgnd = 0;
-   img->comps[0].dx = subsampling_dx;
-   img->comps[0].dy = subsampling_dy;
-   Compo0 = fopen("Compo0", "wb");
-   if (!Compo0) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
-   }
+        img->numcomps = 1;
+        img->comps = (j2k_comp_t *) malloc(sizeof(j2k_comp_t));
+        img->comps[0].prec = 8;
+        img->comps[0].bpp = 8;
+        img->comps[0].sgnd = 0;
+        img->comps[0].dx = subsampling_dx;
+        img->comps[0].dy = subsampling_dy;
+        Compo0 = fopen("Compo0", "wb");
+        if (!Compo0) {
+          fprintf(stderr,
+            "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
+        }
       } else {
-   img->numcomps = 3;
-   img->comps =
-     (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
-   for (i = 0; i < img->numcomps; i++) {
-     img->comps[i].prec = 8;
-     img->comps[i].bpp = 8;
-     img->comps[i].sgnd = 0;
-     img->comps[i].dx = subsampling_dx;
-     img->comps[i].dy = subsampling_dy;
-   }
-   Compo0 = fopen("Compo0", "wb");
-   if (!Compo0) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
-   }
-   Compo1 = fopen("Compo1", "wb");
-   if (!Compo1) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo1 for writing !\033[0;39m\n");
-   }
-   Compo2 = fopen("Compo2", "wb");
-   if (!Compo2) {
-     fprintf(stderr,
-        "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
-   }
+        img->numcomps = 3;
+        img->comps =
+          (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
+        for (i = 0; i < img->numcomps; i++) {
+          img->comps[i].prec = 8;
+          img->comps[i].bpp = 8;
+          img->comps[i].sgnd = 0;
+          img->comps[i].dx = subsampling_dx;
+          img->comps[i].dy = subsampling_dy;
+        }
+        Compo0 = fopen("Compo0", "wb");
+        if (!Compo0) {
+          fprintf(stderr,
+             "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
+        }
+        Compo1 = fopen("Compo1", "wb");
+        if (!Compo1) {
+          fprintf(stderr,
+            "\033[0;33mFailed to open Compo1 for writing !\033[0;39m\n");
+        }
+        Compo2 = fopen("Compo2", "wb");
+        if (!Compo2) {
+          fprintf(stderr,
+             "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
+        }
       }
 
       RGB =
-   (unsigned char *) malloc(Info_h.biWidth * Info_h.biHeight *
-             sizeof(unsigned char));
+        (unsigned char *) malloc(Info_h.biWidth * Info_h.biHeight *
+        sizeof(unsigned char));
 
       while (not_end_file) {
-   v = getc(IN);
-   if (v) {
-     v2 = getc(IN);
-     for (i = 0; i < (int) v; i++) {
-       RGB[line * Info_h.biWidth + col] = v2;
-       col++;
-     }
-   } else {
-     v = getc(IN);
-     switch (v) {
-     case 0:
-       col = 0;
-       line++;
-       break;
-     case 1:
-       line++;
-       not_end_file = 0;
-       break;
-     case 2:
-       fprintf(stderr,"No Delta supported\n");
-       return 1;
-       break;
-     default:
-       for (i = 0; i < v; i++) {
-         v2 = getc(IN);
-         RGB[line * Info_h.biWidth + col] = v2;
-         col++;
-       }
-       if (v % 2)
-         v2 = getc(IN);
-     }
-   }
+        v = getc(IN);
+        if (v) {
+          v2 = getc(IN);
+          for (i = 0; i < (int) v; i++) {
+            RGB[line * Info_h.biWidth + col] = v2;
+            col++;
+          }
+        } else {
+          v = getc(IN);
+          switch (v) {
+          case 0:
+            col = 0;
+            line++;
+            break;
+          case 1:
+            line++;
+            not_end_file = 0;
+            break;
+          case 2:
+            fprintf(stderr,"No Delta supported\n");
+            return 1;
+            break;
+          default:
+            for (i = 0; i < v; i++) {
+              v2 = getc(IN);
+              RGB[line * Info_h.biWidth + col] = v2;
+              col++;
+            }
+            if (v % 2)
+              v2 = getc(IN);
+          }
+        }
       }
+      
       if (gray_scale) {
-   for (line = 0; line < Info_h.biHeight; line++)
-     for (col = 0; col < Info_h.biWidth; col++)
-       fprintf(Compo0, "%c", table_R[(int)
+        for (line = 0; line < Info_h.biHeight; line++)
+          for (col = 0; col < Info_h.biWidth; col++)
+            fprintf(Compo0, "%c", table_R[(int)
                  RGB[(Info_h.biHeight - line -
-                      1) * Info_h.biWidth +
-                     col]]);
-   fclose(Compo0);
-      } else {
-   for (line = 0; line < Info_h.biHeight; line++)
-     for (col = 0; col < Info_h.biWidth; col++) {
-       fprintf(Compo0, "%c", table_R[(int)
+                 1) * Info_h.biWidth + col]]);
+          fclose(Compo0);
+        } else {
+          for (line = 0; line < Info_h.biHeight; line++)
+            for (col = 0; col < Info_h.biWidth; col++) {
+              fprintf(Compo0, "%c", table_R[(int)
                  RGB[(Info_h.biHeight - line -
-                      1) * Info_h.biWidth +
-                     col]]);
-       fprintf(Compo1, "%c", table_G[(int)
+                 1) * Info_h.biWidth + col]]);
+              fprintf(Compo1, "%c", table_G[(int)
                  RGB[(Info_h.biHeight - line -
-                      1) * Info_h.biWidth +
-                     col]]);
-       fprintf(Compo2, "%c", table_B[(int)
+                 1) * Info_h.biWidth + col]]);
+             fprintf(Compo2, "%c", table_B[(int)
                  RGB[(Info_h.biHeight - line -
-                      1) * Info_h.biWidth +
-                     col]]);
-     }
-   fclose(Compo0);
-   fclose(Compo1);
-   fclose(Compo2);
-      }
-      free(RGB);
-    } else
-      fprintf(stderr,
-         "Other system than 24 bits/pixels or 8 bits (no RLE coding) is not yet implemented [%d]\n",
-         Info_h.biBitCount);
+                 1) * Info_h.biWidth + col]]);
+            }
+          fclose(Compo0);
+          fclose(Compo1);
+          fclose(Compo2);
+        }
+        free(RGB);
+      } else
+        fprintf(stderr,
+          "Other system than 24 bits/pixels or 8 bits (no RLE coding) is not yet implemented [%d]\n",
+          Info_h.biBitCount);
 
-    fclose(IN);
-    return 1;
+       fclose(IN);
+       return 1;
   }
 }
 
@@ -574,7 +566,6 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
     int max = 0;
     int Y1;
 
-
     comp = &img->comps[compno];
     sprintf(str, "%s", filename);
     
@@ -585,57 +576,39 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
       return 0;
     }
 
-
-
     fseek(f, 0, SEEK_SET);
-
     fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h);
-
-    
 
     i=0;
 
     sign='+';
 
     while (signtmp[i]!='\0') {
-
       if (signtmp[i]=='-') sign='-';
-
-      i++;
-
+         i++;
     }
-
-    
 
     fgetc(f);
     if (endian1=='M' && endian2=='L')
       bigendian = 1;
     else if (endian2=='M' && endian1=='L')
       bigendian = 0;
-
     else {
-
       fprintf(stderr, "Bad pgx header, please check input file\n");
-
       return 0;
-
     }
-
-
     if (compno == 0) {
       img->x0 = Dim[0];
       img->y0 = Dim[1];
       img->x1 =
-   !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-   1) *
-   subsampling_dx + 1;
+        !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
+        subsampling_dx + 1;
       img->y1 =
-   !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-   1) *
-   subsampling_dy + 1;
+        !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
+        subsampling_dy + 1;
     } else {
       if (w != img->x1 || h != img->y1)
-   return 0;
+        return 0;
     }
     
     if (sign == '-') {
@@ -660,38 +633,38 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
     for (i = 0; i < w * h; i++) {
       int v;
       if (i == Y1 * w / subsampling_dy && tdy != -1) {   /* bandtile is full */
-   fclose(src);
-   bandno++;
-   sprintf(tmp, "bandtile%d", bandno);
-   src = fopen(tmp, "wb");
-   if (!src) {
-     fprintf(stderr, "failed to open %s for writing !\n", tmp);
-   }
-   Y1 = cp.ty0 + bandno * cp.tdy <
-     img->y1 ? cp.ty0 + bandno * cp.tdy : img->y1;
-   Y1 -= img->y0;
+        fclose(src);
+        bandno++;
+        sprintf(tmp, "bandtile%d", bandno);
+        src = fopen(tmp, "wb");
+        if (!src) {
+          fprintf(stderr, "failed to open %s for writing !\n", tmp);
+        }
+        Y1 = cp.ty0 + bandno * cp.tdy <
+        img->y1 ? cp.ty0 + bandno * cp.tdy : img->y1;
+        Y1 -= img->y0;
       }
       if (comp->prec <= 8) {
-   if (!comp->sgnd) {
-     v = readuchar(f);
-   } else {
-     v = (char) readuchar(f);
-   }
+        if (!comp->sgnd) {
+          v = readuchar(f);
+        } else {
+          v = (char) readuchar(f);
+        }
       } else if (comp->prec <= 16) {
-   if (!comp->sgnd) {
-     v = readushort(f, bigendian);
-   } else {
-     v = (short) readushort(f, bigendian);
-   }
+        if (!comp->sgnd) {
+          v = readushort(f, bigendian);
+        } else {
+          v = (short) readushort(f, bigendian);
+        }
       } else {
-   if (!comp->sgnd) {
-     v = readuint(f, bigendian);
-   } else {
-     v = (int) readuint(f, bigendian);
-   }
+        if (!comp->sgnd) {
+          v = readuint(f, bigendian);
+        } else {
+          v = (int) readuint(f, bigendian);
+        }
       }
       if (v > max)
-   max = v;
+        max = v;
       fprintf(src, "%d ", v);
     }
     fclose(f);
@@ -745,12 +718,10 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     img->x0 = Dim[0];
     img->y0 = Dim[1];
     img->x1 =
-      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                      1) *
+      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
       subsampling_dx + 1;
     img->y1 =
-      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                      1) *
+      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
       subsampling_dy + 1;
 
     img->numcomps = 1;
@@ -769,7 +740,7 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     }
     for (i = 0; i < w * h; i++) {
       unsigned int l;
-      fscanf(f, "%d", &(unsigned int)l);
+      fscanf(f, "%d", &l);
       fprintf(Compo0, "%c", l);
     }
     fclose(Compo0);
@@ -789,12 +760,10 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     img->x0 = Dim[0];
     img->y0 = Dim[1];
     img->x1 =
-      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                      1) *
+      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
       subsampling_dx + 1;
     img->y1 =
-      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                      1) *
+      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
       subsampling_dy + 1;
 
     img->numcomps = 1;
@@ -832,12 +801,10 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     img->x0 = Dim[0];
     img->y0 = Dim[1];
     img->x1 =
-      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                      1) *
+      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
       subsampling_dx + 1;
     img->y1 =
-      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                      1) *
+      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
       subsampling_dy + 1;
     img->numcomps = 3;
     img->color_space = 1;
@@ -895,12 +862,10 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
     img->x0 = Dim[0];
     img->y0 = Dim[1];
     img->x1 =
-      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                      1) *
+      !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
       subsampling_dx + 1;
     img->y1 =
-      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                      1) *
+      !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
       subsampling_dy + 1;
     img->numcomps = 3;
     img->color_space = 1;
