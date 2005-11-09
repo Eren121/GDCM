@@ -482,7 +482,7 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
               fprintf(Compo1, "%c", table_G[(int)
                  RGB[(Info_h.biHeight - line -
                  1) * Info_h.biWidth + col]]);
-             fprintf(Compo2, "%c", table_B[(int)
+              fprintf(Compo2, "%c", table_B[(int)
                  RGB[(Info_h.biHeight - line -
                  1) * Info_h.biWidth + col]]);
             }
