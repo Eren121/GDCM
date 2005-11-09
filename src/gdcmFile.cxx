@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 10:18:44 $
-  Version:   $Revision: 1.303 $
+  Date:      $Date: 2005/11/09 11:21:47 $
+  Version:   $Revision: 1.304 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1724,7 +1724,7 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
    { 
        // in order not to pollute output we don't warn on 'delimitors'
       if (itemTagGroup != 0xfffe ||  testGroup != 0xfffe )
-         gdcmErrorMacro( "Wrong Item Tag found:"
+         gdcmWarningMacro( "Wrong Item Tag found:"
           << "   We should have found tag ("
           << DictEntry::TranslateToKey(testGroup,testElem) << ")" << std::endl
           << "   but instead we encountered tag ("
