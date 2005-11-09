@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 11:04:20 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2005/11/09 11:22:51 $
+  Version:   $Revision: 1.100 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -367,7 +367,7 @@ bool PixelReadConvert::BuildRGBImage()
       return false;
    }
 
-   gdcmWarningMacro( "--> BuildRGBImage" );
+   gdcmDebugMacro( "--> BuildRGBImage" );
                                                                                 
    // Build RGB Pixels
    AllocateRGB();
