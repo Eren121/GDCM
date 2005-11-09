@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 11:03:22 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/11/09 08:32:50 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,9 @@
 =========================================================================*/
 #include "gdcmFile.h"
 #include "gdcmValidator.h"
+
+#include "gdcmGlobal.h"
+#include "gdcmDictSet.h"
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -51,7 +54,8 @@ int TestValidate(int argc, char *argv[])
                 << " filename.dcm " << std::endl;
       return 1;
    }
-   
+   // Try to track the "FIXME" problem for VM
+   gdcm::Global::GetDicts()->GetDefaultPubDict()->Print();   
 
    int i =0;
    int retVal = 0;  //by default this is an error
