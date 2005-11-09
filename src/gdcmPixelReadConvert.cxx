@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 10:18:44 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2005/11/09 11:04:20 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -638,11 +638,11 @@ void PixelReadConvert::BuildLUTRGBA()
       gdcmWarningMacro( "Wrong Blue LUT descriptor" );
    }
  
-   gdcmWarningMacro(" lengthR " << lengthR << " debR " 
+   gdcmDebugMacro(" lengthR " << lengthR << " debR " 
                  << debR << " nbitsR " << nbitsR);
-   gdcmWarningMacro(" lengthG " << lengthG << " debG " 
+   gdcmDebugMacro(" lengthG " << lengthG << " debG " 
                  << debG << " nbitsG " << nbitsG);
-   gdcmWarningMacro(" lengthB " << lengthB << " debB " 
+   gdcmDebugMacro(" lengthB " << lengthB << " debB " 
                  << debB << " nbitsB " << nbitsB);
 
    if ( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
