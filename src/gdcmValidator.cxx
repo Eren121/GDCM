@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 13:58:00 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/11/09 08:36:47 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,10 +99,14 @@ DocEntry *d;
       if ( v->GetVM() != gdcm::GDCM_UNKNOWN )
          if ( !CheckVM(v) )
          {
+         if (v->GetVM() == "FIXME" )
+             std::cout << "For Tag " <<  v->GetKey() << " VM = ["
+                       << v->GetVM() << "]" << std::endl;
+ 
            std::cout << "Tag (" <<  v->GetKey() 
                      << ")-> [" << v->GetName() << "] contains an illegal VM. "
                      << "value [" << v->GetString() << "] VR :"
-                     << v->GetVR() << ", Expected VM :" << v->GetVM() << " " 
+                     << v->GetVR() << ", Expected VM : [" << v->GetVM() << "] " 
                      << std::endl;
          }
       
