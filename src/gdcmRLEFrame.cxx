@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/06/17 12:27:52 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/09 10:18:44 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -119,7 +119,8 @@ bool RLEFrame::ReadAndDecompressRLEFragment( uint8_t *subRaw,
                                                                                 
       if ( numberOfReadBytes > fragmentSize )
       {
-         gdcmWarningMacro( "Read more bytes than the segment size.");
+         gdcmWarningMacro( "Read more bytes (" << numberOfReadBytes
+              << " ) than the segment size. (" << fragmentSize << ")" );
          return false;
       }
    }

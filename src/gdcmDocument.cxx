@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:23:30 $
-  Version:   $Revision: 1.325 $
+  Date:      $Date: 2005/11/09 10:18:43 $
+  Version:   $Revision: 1.326 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -708,15 +708,15 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
    DocEntry *docEntry = GetDocEntry(group, elem);
    if ( !docEntry )
    {
-      gdcmWarningMacro(std::hex << group << "|" << elem 
-                       <<  "doesn't exist" );
+      gdcmDebugMacro(std::hex << group << "|" << elem 
+                       <<  " doesn't exist" );
       return;
    }
    DataEntry *dataEntry = dynamic_cast<DataEntry *>(docEntry);
    if ( !dataEntry )
    {
       gdcmWarningMacro(std::hex << group << "|" << elem 
-                       <<  "is NOT a DataEntry");
+                       <<  " is NOT a DataEntry");
       return;
    }
    LoadEntryBinArea(dataEntry);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:24:39 $
-  Version:   $Revision: 1.302 $
+  Date:      $Date: 2005/11/09 10:18:44 $
+  Version:   $Revision: 1.303 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -803,7 +803,7 @@ int File::GetBitsStored()
    DataEntry *entry = GetDataEntry(0x0028,0x0101);
    if( !entry )
    {
-      gdcmWarningMacro("(0028,0101) is supposed to be mandatory");
+      gdcmWarningMacro("BitsStored (0028,0101) is supposed to be mandatory");
       return 0;
    }
    return (int)entry->GetValue(0);
@@ -820,7 +820,7 @@ int File::GetBitsAllocated()
    DataEntry *entry = GetDataEntry(0x0028,0x0100);
    if( !entry )
    {
-      gdcmWarningMacro("(0028,0100) is supposed to be mandatory");
+      gdcmWarningMacro("BitsAllocated (0028,0100) is supposed to be mandatory");
       return 0;
    }
    return (int)entry->GetValue(0);
@@ -837,7 +837,7 @@ int File::GetHighBitPosition()
    DataEntry *entry = GetDataEntry(0x0028,0x0102);
    if( !entry )
    {
-      gdcmWarningMacro("(0028,0102) is supposed to be mandatory");
+      gdcmWarningMacro("HighBitPosition (0028,0102) is supposed to be mandatory");
       return 0;
    }
    return (int)entry->GetValue(0);
@@ -854,7 +854,7 @@ int File::GetSamplesPerPixel()
    DataEntry *entry = GetDataEntry(0x0028,0x0002);
    if( !entry )
    {
-      gdcmWarningMacro("(0028,0002) is supposed to be mandatory");
+      gdcmWarningMacro("SamplesPerPixel (0028,0002) is supposed to be mandatory");
       return 1; // Well, it's supposed to be mandatory ...
                 // but sometimes it's missing : *we* assume Gray pixels
    }
@@ -928,7 +928,7 @@ std::string File::GetPixelType()
    std::string bitsAlloc = GetEntryString(0x0028, 0x0100); // Bits Allocated
    if ( bitsAlloc == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "Missing  Bits Allocated (0028,0100)");
+      gdcmWarningMacro( "Bits Allocated (0028,0100) supposed to be mandatory");
       bitsAlloc = "16"; // default and arbitrary value, not to polute the output
    }
 
@@ -972,7 +972,8 @@ bool File::IsSignedPixelData()
    DataEntry *entry = GetDataEntry(0x0028, 0x0103);//"Pixel Representation"
    if( !entry )
    {
-      gdcmWarningMacro( "Missing Pixel Representation (0028,0103)");
+      gdcmWarningMacro( "Pixel Representation (0028,0103) supposed to be "
+                      << "mandatory");
       return false;
    }
    return entry->GetValue(0) != 0;
@@ -993,7 +994,8 @@ bool File::IsMonochrome()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "Not found : Photometric Interpretation (0028,0004)");
+      gdcmWarningMacro( "Photometric Interpretation (0028,0004) supposed to be "
+                         << "mandatory");
    }
    return false;
 }
@@ -1012,7 +1014,8 @@ bool File::IsMonochrome1()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "Not found : Photometric Interpretation (0028,0004)");
+      gdcmWarningMacro( "Photometric Interpretation (0028,0004) : supposed to"
+      << " be mandatory! ");
    }
    return false;
 }
@@ -1031,7 +1034,7 @@ bool File::IsPaletteColor()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "Not found : Palette color (0028,0004)");
+      gdcmDebugMacro( "Not found : Palette color (0028,0004)");
    }
    return false;
 }
@@ -1050,7 +1053,7 @@ bool File::IsYBRFull()
    }
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "Not found : YBR Full (0028,0004)");
+      gdcmDebugMacro( "Not found : YBR Full (0028,0004)");
    }
    return false;
 }
@@ -1161,7 +1164,7 @@ float File::GetRescaleSlope()
    DataEntry *entry = GetDataEntry(0x0028, 0x1053);
    if( !entry )
    {
-      gdcmWarningMacro( "Missing Rescale Slope (0028,1053)");
+      gdcmDebugMacro( "Missing Rescale Slope (0028,1053)");
       return 1.0f;
    }
    return (float)entry->GetValue(0);
@@ -1251,7 +1254,7 @@ size_t File::GetPixelOffset()
    }
    else
    {
-      gdcmDebugMacro( "Big trouble : Pixel Element ("
+      gdcmWarningMacro( "Big trouble : Pixel Element ("
                       << std::hex << GrPixel<<","<< NumPixel<< ") NOT found" );
       return 0;
    }
@@ -1273,7 +1276,7 @@ size_t File::GetPixelAreaLength()
    }
    else
    {
-      gdcmDebugMacro( "Big trouble : Pixel Element ("
+      gdcmWarningMacro( "Big trouble : Pixel Element ("
                       << std::hex << GrPixel<<","<< NumPixel<< ") NOT found" );
       return 0;
    }

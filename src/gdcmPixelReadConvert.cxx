@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 16:35:54 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2005/11/09 10:18:44 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -309,7 +309,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // Default case concerns JPEG family
       if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
-         gdcmWarningMacro( "JPEG decompressor failed." );
+         gdcmWarningMacro( "JPEG decompressor ( ReadAndDecompressJPEGFile()"
+                        << " method ) failed." );
          return false;
       }
    }
@@ -493,6 +494,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
          return true;
       }
       // wow what happen, must be an error
+      gdcmWarningMacro( "gdcm_read_JPEG2000_file() failed "); 
       return false;
    }
    else if ( IsJPEGLS )
@@ -1256,13 +1258,13 @@ void PixelReadConvert::ConvertHandleColor()
       if ( IsYBRFull )
       {
          // [Planar 1] AND [Photo C] (remember YBR_FULL_422 acts as RGB)
-         gdcmWarningMacro("--> YBRFull");
+         gdcmDebugMacro("--> YBRFull");
          ConvertYcBcRPlanesToRGBPixels();
       }
       else
       {
          // [Planar 1] AND [Photo C]
-         gdcmWarningMacro("--> YBRFull");
+         gdcmDebugMacro("--> YBRFull");
          ConvertRGBPlanesToRGBPixels();
       }
       return;
@@ -1273,7 +1275,7 @@ void PixelReadConvert::ConvertHandleColor()
 
    if (IsRLELossless)
    { 
-     gdcmWarningMacro("--> RLE Lossless");
+     gdcmDebugMacro("--> RLE Lossless");
      ConvertRGBPlanesToRGBPixels();
    }
 
