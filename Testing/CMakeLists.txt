@@ -20,6 +20,7 @@ SET(TEST_SOURCES
   TestImageSet.cxx
   TestDicomDirElement.cxx
   TestDicomString.cxx
+  TestEnumVR.cxx
 
 )
 IF(UNIX)
