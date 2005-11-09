@@ -179,13 +179,11 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       img->x0 = Dim[0];
       img->y0 = Dim[1];
       img->x1 =
-   !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-                        1) *
-   subsampling_dx + 1;
+        !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w - 1) *
+        subsampling_dx + 1;
       img->y1 =
-   !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-                        1) *
-   subsampling_dy + 1;
+        !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h - 1) *
+        subsampling_dy + 1;
       img->numcomps = 3;
       img->color_space = 1;
       img->comps =
