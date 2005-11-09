@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractDicomTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/11/09 08:34:29 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
    std::string ProtocolName;
 
 
-// ------------> Region (Organe) : aucun champ DICOM n'est prévu 
-//                        pour contenir cette information
+// ------------> Region (Organ) : *no* DICOM field is expected 
+//                        to hold information
 
 // Get informations on the file : 
 //  Modality, Transfer Syntax, Study Date, Study Time
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
    StudyTime           = f->GetEntryString(0x0008,0x0030);
    PatientName         = f->GetEntryString(0x0010,0x0010);
    PatientID           = f->GetEntryString(0x0010,0x0020);  //patientid
-   PatientSex          = f->GetEntryString(0x0010,0x0040);  //sexe
+   PatientSex          = f->GetEntryString(0x0010,0x0040);  //sex
    SOPInstanceUID      = f->GetEntryString(0x0008,0x0018);  //imageid = SOPinsUID
    StudyInstanceUID    = f->GetEntryString(0x0020,0x000d);  //STUInsUID                                              [Study Instance UID] [1.2.840.113680.1.103.56887.1017329008.714317]
    SeriesInstanceUID   = f->GetEntryString(0x0020,0x000e);  //SerInsUID
@@ -162,12 +162,12 @@ int main(int argc, char *argv[])
 
    ProtocolName = f->GetEntryString(0x0018,0x1030); 
   
-   // --> Big trouble with nz (mb of planes) and nt (number of 'times')
+   // --> Big trouble with nz (number of planes) and nt (number of 'times')
    // --> that belong to LibIDO, not to DICOM.
    // --> DICOM has 'Number of Frames' (0028|0008), 
    //     that's more or less number of 'times'
    // Volumes are generaly stored in a 'Serie' 
-   //  (hope so ... a single Serie be xti-slice xti-times)
+   //  (hope so ... a single Serie may be xti-slice xti-times)
 
 
    std::string Rows;
