@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 09:13:22 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/11/09 10:52:37 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -592,7 +592,7 @@ int InternalTest(std::string const &filename,
 int TestAllReadCompareDicom(int argc, char *argv[]) 
 {
 // Temporarily added, to track BigEndian troubles
-gdcm::Debug::DebugOn();
+gdcm::Debug::WarningOn();
 
    if (argc == 4)
       gdcm::Debug::DebugOn();
