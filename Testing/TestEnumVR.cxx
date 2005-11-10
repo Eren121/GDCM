@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestEnumVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 19:17:26 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/11/10 18:02:26 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
  */
 
 #include <iostream>
-typedef enum VR {
+typedef enum {
   AE = 1,
   AS = 2,
   AT = 4,
@@ -53,7 +53,7 @@ typedef enum VR {
   OB_OW = OB | OW,
   US_SS = US | SS,
   US_SS_OW = US | SS | OW
-};
+} VR;
 
 static const char *VRStrings[] = {
   "AE",
