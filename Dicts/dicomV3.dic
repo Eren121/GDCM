@@ -33,7 +33,7 @@
 0002 0012 UI 1 Implementation Class UID
 0002 0013 SH 1 Implementation Version Name
 0002 0016 AE 1 Source Application Entity Title
-0002 0100 UI 1 Private Information Creator
+0002 0100 UI 1 Private Information Creator UID
 0002 0102 OB 1 Private Information
 
 0004 0000 UL 1 Group Length
@@ -570,7 +570,7 @@
 0018 7026 DS 1-2 Detector Active Dimension(s)
 0018 7028 DS 2 Detector Active Origin
 0018 702a LO 1 Detector Manufacturer Name
-0018 702b LO 1 Detector Manufacturer's Model
+0018 702b LO 1 Detector Manufacturer's Model Name
 0018 7030 DS 2 Field of View Origin
 0018 7032 DS 1 Field of View Rotation
 0018 7034 CS 1 Field of View Horizontal Flip
@@ -618,7 +618,7 @@
 0018 9032 CS 1 Geometry of k-Space Traversal
 0018 9033 CS 1 Segmented k-Space Traversal
 0018 9034 CS 1 Rectilinear Phase Encode Reordering
-0018 9035 CS 1 Tag Thickness
+0018 9035 FD 1 Tag Thickness
 0018 9036 CS 1 Partial Fourier Direction
 0018 9037 CS 1 Cardiac Synchronization Technique
 0018 9041 LO 1 Receive Coil Manufacturer Name
@@ -651,7 +651,7 @@
 0018 9074 DT 1 Frame Acquisition Datetime
 0018 9075 CS 1 Diffusion Directionality
 0018 9076 SQ 1 Diffusion Gradient Direction Sequence
-0018 9077 CS 1 Parallel Acquisition 
+0018 9077 CS 1 Parallel Acquisition
 0018 9078 CS 1 Parallel Acquisition Technique
 0018 9079 FD 1-n Inversion Times
 0018 9080 ST 1 Metabolite Map Description
@@ -768,7 +768,7 @@
 0018 9340 SQ 1 Contrast Administration Profile Sequence
 0018 9341 SQ 1 Contrast/Bolus Usage Sequence
 0018 9342 CS 1 Contrast/Bolus Agent Administered
-0018 9343 CS 1 Contrast/Bolus Agent Detected 
+0018 9343 CS 1 Contrast/Bolus Agent Detected
 0018 9344 CS 1 Contrast/Bolus Agent Phase
 0018 9345 FD 1 CTDIvol
 0018 a001 SQ 1 Contributing Equipment Sequence
@@ -801,7 +801,7 @@
 0020 0060 CS 1 Laterality
 0020 0062 CS 1 Image Laterality
 0020 0070 LO 1 Image Geometry Type (RET)
-0020 0080 LT 1-n Masking Image
+0020 0080 LT 1-n Masking Image (RET)
 0020 0100 IS 1 Temporal Position Identifier
 0020 0105 IS 1 Number of Temporal Positions
 0020 0110 DS 1 Temporal Resolution
@@ -1397,14 +1397,14 @@
 0070 030a SQ 1 Matrix Sequence
 0070 030c CS 1 Frame of Reference Transformation Matrix Type
 0070 030d SQ 1 Registration Type Code Sequence
-0070 030f ST 1 Fiducial Description 
+0070 030f ST 1 Fiducial Description
 0070 0310 SH 1 Fiducial Identifier
 0070 0311 SQ 1 Fiducial Identifier Code Sequence
 0070 0312 FD 1 Contour Uncertainty Radius
 0070 0314 SQ 1 Used Fiducials Sequence
 0070 0318 SQ 1 Graphic Coordinates Data Sequence
 0070 031a UI 1 Fiducial UID
-0070 031c SQ 1 Fiducial Set Sequence 
+0070 031c SQ 1 Fiducial Set Sequence
 0070 031e SQ 1 Fiducial Sequence
 
 0088 0000 UL 1 Storage Media Group Length
