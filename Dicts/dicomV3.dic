@@ -613,7 +613,6 @@
 0018 9027 CS 1 Spatial Pre-saturation
 0018 9028 CS 1 Tagging
 0018 9029 CS 1 Oversampling Phase
-0018 9022 CS 1 Blood Signal Nulling
 0018 9030 FD 1 Tag Spacing First Dimension
 0018 9032 CS 1 Geometry of k-Space Traversal
 0018 9033 CS 1 Segmented k-Space Traversal
