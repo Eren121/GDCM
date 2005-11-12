@@ -1,3 +1,10 @@
+Sat Nov 12 09:59:24 EST 2005 by malaterre
+   * Some more update to the DICOMV3 dic. Tons of fix most of them should not
+	 impact gdcm internal since VR/VM are not used...well except for SQ item
+	 wich should explain some bizarre case :)
+	 -> group 0000 is still in DICOMV3 dict whereas it should clearly be in
+	 ACR-NEMA only.
+
 Mon Oct 24 13:34:45 EDT 2005 by malaterre
    * Adding the OpenJPEG library. It contains a patch from Antonin compared to
 	 the official release that allow us to work around the famous 16bits issues
