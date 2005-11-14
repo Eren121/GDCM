@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:46:36 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/11/14 09:55:46 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,20 +76,20 @@ public:
    bool IsSelfArea() { return SelfArea; }
 
    ///\brief values for current state of a DataEntry (internal use only)
-   typedef enum
+   enum TValueState
    {
       STATE_LOADED    = 0x00,
       STATE_NOTLOADED = 0x01,
       STATE_UNFOUND   = 0x02,
       STATE_UNREAD    = 0x03
-   } TValueState;
+   };
    
    ///\brief values for current pixel status of a DataEntry (internal use only)
-   typedef enum
+   enum TValueFlag
    {
       FLAG_NONE       = 0x00,
       FLAG_PIXELDATA  = 0x01
-   } TValueFlag;
+   };
 
    // State
    void SetState(const TValueState &state) { State = state; }
