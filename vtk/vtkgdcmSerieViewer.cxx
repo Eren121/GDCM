@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:33:18 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/11/14 17:40:48 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 
    // ----------------------- End Arguments Manager ----------------------
   
-   gdcm::SerieHelper *sh = new gdcm::SerieHelper();
+   gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
    sh->SetLoadMode(loadMode);
    if (reverse)
       sh->SetSortOrderToReverse();
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
       if ( !sh->IsCoherent(l) ) // just be sure (?)
       {
          std::cout << "Files are not coherent. Stop everything " << std::endl;
-         delete sh;
+         sh->Delete();
          return 0;
       }
    }
