@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 09:54:42 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/11/14 18:54:04 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -234,17 +234,19 @@ double DataEntry::GetValue(const uint32_t &id) const
  */
 bool DataEntry::IsValueCountValid() const
 {
-  bool valid;
   uint32_t vm;
   const std::string &strVM = GetVM();
   uint32_t vc = GetValueCount();
+  bool valid = vc == 0;
+  if( valid )
+    return true;
   
   // FIXME : what shall we do with VM = "2-n", "3-n", etc
   
   if( strVM == "1-n" )
   {
     // make sure there is at least one ??? FIXME
-    valid = vc >= 1 || vc == 0;
+    valid = vc >= 1;
   }
   else
   {
@@ -269,7 +271,7 @@ bool DataEntry::IsValueCountValid() const
     // Problem : entry type may depend on the modality and/or the Sequence
     //           it's embedded in !
     //          (Get the information in the 'Conformance Statements' ...)  
-    valid = vc == vm || vc == 0;
+    valid = vc == vm;
   }
   return valid;
 }
