@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 16:31:21 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/11/14 15:50:33 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmCommon.h" 
 #include "gdcmTagKey.h" 
 #include "gdcmDebug.h"  // for LEGACY
+#include "gdcmRefCounter.h"
  
 #include <vector>
 #include <iostream>
@@ -55,8 +56,10 @@ class File;
  *    into several XCoherent Filesets 
  *   XCoherent stands for 'Extra Coherent' (same orientation, or same position)
  */
-class GDCM_EXPORT SerieHelper 
+class GDCM_EXPORT SerieHelper  : public RefCounter
 {
+   gdcmTypeMacro(SerieHelper);
+   
 public:
    /// SingleSerieUIDFileSetmap replaces the former CoherentFileListmap
    /// ( List were actually std::vectors, and wher no coherent at all :
@@ -65,9 +68,9 @@ public:
 
    typedef std::vector<File* > FileVector;
 
-  
-   SerieHelper();
-   ~SerieHelper();
+    static SerieHelper *New() {return new SerieHelper();}
+     
+   virtual ~SerieHelper();
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
    /// \todo should return bool or throw error ?
@@ -125,6 +128,9 @@ public:
    XCoherentFileSetmap SplitOnPosition(FileList *fileSet); 
    XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
                                                uint16_t group, uint16_t elem);
+protected :
+   SerieHelper();
+   
 private:
    void ClearAll();
    bool UserOrdering(FileList *fileSet);
