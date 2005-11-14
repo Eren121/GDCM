@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 10:18:43 $
-  Version:   $Revision: 1.326 $
+  Date:      $Date: 2005/11/14 14:23:44 $
+  Version:   $Revision: 1.327 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -931,7 +931,6 @@ uint32_t Document::ReadInt32()
 
 /**
  * \brief skips bytes inside the source file 
- * \warning NOT end user intended method !
  * @return 
  */
 void Document::SkipBytes(uint32_t nBytes)
@@ -988,7 +987,6 @@ int Document::ComputeGroup0002Length( )
 // Private
 /**
  * \brief Loads all the needed Dictionaries
- * \warning NOT end user intended method !   
  */
 void Document::Initialize() 
 {
@@ -1465,7 +1463,6 @@ void Document::FindDocEntryLength( DocEntry *entry )
 
 /**
  * \brief  Find the Length till the next sequence delimiter
- * \warning NOT end user intended method !
  * @return 
  */
 uint32_t Document::FindDocEntryLengthOBOrOW()
@@ -1572,7 +1569,6 @@ bool Document::CheckDocEntryVR(const VRKey &vr)
 
 /**
  * \brief   Skip a given Header Entry 
- * \warning NOT end user intended method !
  * @param   entry entry to skip
  */
 void Document::SkipDocEntry(DocEntry *entry) 
@@ -1582,7 +1578,6 @@ void Document::SkipDocEntry(DocEntry *entry)
 
 /**
  * \brief   Skips to the beginning of the next Header Entry 
- * \warning NOT end user intended method !
  * @param   currentDocEntry entry to skip
  */
 void Document::SkipToNextDocEntry(DocEntry *currentDocEntry) 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 09:55:46 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/14 14:23:43 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ class GDCM_EXPORT DataEntry  : public DocEntry
 
 public:
    static DataEntry *New(DictEntry *e) {return new DataEntry(e);}
-   static DataEntry *New(DocEntry *d) {return new DataEntry(d);}
+   static DataEntry *New(DocEntry *d)  {return new DataEntry(d);}
 
 // Print
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
@@ -49,7 +49,7 @@ public:
    uint32_t ComputeFullLength();
    
 // Set/Get data
-   /// Sets the value (string) of the current Dicom entry
+   // Sets the value (string) of the current Dicom entry
    //virtual void SetValue(std::string const &val);
    /// \brief Returns the 'Value' (e.g. "Dupond^Marcel") converted 
    /// into a 'string', event if it's physically stored on disk as an integer
@@ -57,7 +57,7 @@ public:
    //virtual std::string const &GetValue() const { return Value; }
 
    /// \brief Returns the area value of the current Dicom Entry
-   ///  when it's not string-translatable (e.g : LUT table, overlay, icon)         
+   ///  when it's not string-translatable (e.g : LUT table, overlay, icon)   
    uint8_t *GetBinArea()  { return BinArea; }
    void SetBinArea( uint8_t *area, bool self = true );
    void CopyBinArea( uint8_t *area, uint32_t length );
@@ -101,7 +101,7 @@ public:
    /// \brief true if Entry not read    
    bool IsUnread()    { return State == STATE_UNREAD; }
    /// \brief true if Entry value properly loaded
-   bool IsGoodValue() { return State == 0; }
+   bool IsGoodValue() { return State == STATE_LOADED; }
 
    // Flags
    /// \brief sets the 'pixel data flag'   
@@ -109,7 +109,7 @@ public:
    /// \brief returns the 'pixel data flag'    
    const TValueFlag &GetFlag() const { return Flag; }
    /// \brief true id Entry is a Pixel Data entry
-   bool IsPixelData() { return (Flag & FLAG_PIXELDATA) != 0; }
+   bool IsPixelData() { return (Flag &FLAG_PIXELDATA) != 0; }
 
    void Copy(DocEntry *doc);
 
@@ -117,7 +117,8 @@ public:
    ///        will NOT be *printed* in order no to polute the screen output
    static const uint32_t &GetMaxSizePrintEntry() { return MaxSizePrintEntry; }
    /// \brief Header Elements too long will not be printed
-   static void SetMaxSizePrintEntry(const uint32_t &size) { MaxSizePrintEntry = size; }
+   static void SetMaxSizePrintEntry(const uint32_t &size) 
+                                                 { MaxSizePrintEntry = size; }
 
 protected:
    DataEntry(DictEntry *e);
@@ -141,7 +142,7 @@ protected:
 private:
    /// \brief 0 for straight entries, FLAG_PIXELDATA for Pixel Data entries
    TValueFlag Flag;
-   /// \brief Entry status : STATE_NOTLOADED,STATE_UNFOUND, STATE_UNREAD, 0
+   /// \brief Entry status:STATE_NOTLOADED,STATE_UNFOUND,STATE_UNREAD,STATE_LOADED
    TValueState State;
 
    /// \brief Size threshold above which an element val

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:23:30 $
-  Version:   $Revision: 1.129 $
+  Date:      $Date: 2005/11/14 14:23:44 $
+  Version:   $Revision: 1.130 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,16 +67,6 @@ public:
 // Swap code
    /// 'Swap code' accessor (see \ref SwapCode )
    int GetSwapCode() { return SwapCode; }
-   // System access (meaning endian related !?)
-   uint16_t SwapShort(uint16_t);
-   uint32_t SwapLong(uint32_t);
-   double SwapDouble(double);
-   /// \brief  Unswaps back the bytes of 2-bytes long integer 
-   ///         so they agree with the processor order.
-   uint16_t UnswapShort(uint16_t a) { return SwapShort(a);}
-   /// \brief  Unswaps back the bytes of 4-byte long integer 
-   ///         so they agree with the processor order.
-   uint32_t UnswapLong(uint32_t a) { return SwapLong(a);}
    
 // File I/O
    /// Accessor to \ref Filename
@@ -184,7 +174,19 @@ protected:
 private:
 // Methods
    void Initialize();
-   bool DoTheLoadingDocumentJob();
+   bool DoTheLoadingDocumentJob(); 
+     
+      // System access (meaning endian related !?)
+   uint16_t SwapShort(uint16_t);
+   uint32_t SwapLong(uint32_t);
+   double SwapDouble(double);
+   /// \brief  Unswaps back the bytes of 2-bytes long integer 
+   ///         so they agree with the processor order.
+   uint16_t UnswapShort(uint16_t a) { return SwapShort(a);}
+   /// \brief  Unswaps back the bytes of 4-byte long integer 
+   ///         so they agree with the processor order.
+   uint32_t UnswapLong(uint32_t a) { return SwapLong(a);}
+   
    // Read
    void ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
    void ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);
