@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 10:52:37 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/11/14 12:27:57 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,7 +137,7 @@ TestFile::TestFile()
    Components = 0;
    Data = NULL;
 
-   SwapCode = 1234;
+   //SwapCode = 1234;
 }
 
 TestFile::~TestFile()
@@ -259,7 +259,7 @@ bool TestFile::ReadFileHeader(std::ifstream *fp)
    SizeX = ReadInt32(fp); // Size X
    SizeY = ReadInt32(fp); // Size Y
    SizeZ = ReadInt32(fp); // Size Z
-   ScalarSize = ReadInt16(fp)/8; // bits per scalar
+   ScalarSize = ReadInt16(fp)/8; // bytes per scalar
    Components = ReadInt16(fp);   // Number of components
 
    return(true);
@@ -276,7 +276,12 @@ bool TestFile::ReadFileData(std::ifstream *fp)
 
    // Read data
    fp->read((char *)Data,GetDataSize());
-      
+
+   // Track BigEndian troubles
+   std::cout << " ScalarSize : " << GetScalarSize() 
+          << " SwapCode:" << GetSwapCode()
+          << std::endl;
+        
    if (GetScalarSize() == 1 || GetSwapCode() == 1234)
    {
       return true;
@@ -285,11 +290,8 @@ bool TestFile::ReadFileData(std::ifstream *fp)
    // We *know* DataSize may be 1 or 2 !  
    uint16_t g;
    
-// Track BigEndian troubles
-std::cout << " calarSize : " << GetScalarSize() 
-          << " SwapCode:" << GetSwapCode()
-          << std::endl;
-    
+   std::cout << " Let's swap Pixels" <<std::endl; 
+     
    for (unsigned int i=0; i<GetDataSize()/2; i++)
    {
       g = ((uint16_t *)Data)[i];
