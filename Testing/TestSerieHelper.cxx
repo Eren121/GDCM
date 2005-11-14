@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/17 09:55:36 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/11/14 15:56:55 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ int TestSerieHelper(int argc, char *argv[])
   
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
 
-   s = new gdcm::SerieHelper();
+   s = gdcm::SerieHelper::New();
    s->SetLoadMode(gdcm::LD_ALL);     // Load everything for each File
    //s->AddRestriction(tagKey, valueToCheck); // Keep only files where
                                               // restriction is true
@@ -87,7 +87,7 @@ int TestSerieHelper(int argc, char *argv[])
    } 
      
 
-   delete s;
+   s->Delete();
 
    return 0;
 }
