@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 16:40:02 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/11/14 15:55:17 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
                  
    gdcm::SerieHelper *s;
   
-   s = new gdcm::SerieHelper();
+   s = gdcm::SerieHelper::New();
    s->SetLoadMode(gdcm::LD_ALL);     // Load everything for each File
    //gdcm::TagKey t(0x0020,0x0013);
    //s->AddRestriction(t, "340", gdcm::GDCM_LESS); // Keep only files where
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
       l = s->GetNextSingleSerieUIDFileSet();
    } 
   
-   delete s;
+   s->Delete();
 
    return 0;
 }
