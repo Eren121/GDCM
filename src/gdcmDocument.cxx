@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 14:23:44 $
-  Version:   $Revision: 1.327 $
+  Date:      $Date: 2005/11/15 10:30:46 $
+  Version:   $Revision: 1.328 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -337,21 +337,32 @@ bool Document::SetShaDict(DictKey const &dictName)
  * @return false when we're 150 % sure it's NOT a Dicom/Acr file,
  *         true otherwise. 
  */
-bool Document::IsReadable()
+bool Document::IsParsable()
 {
    if ( Filetype == Unknown )
    {
-      gdcmErrorMacro( "Wrong filetype for " << GetFileName());
+      gdcmWarningMacro( "Wrong filetype for " << GetFileName());
       return false;
    }
 
    if ( IsEmpty() )
    { 
-      gdcmErrorMacro( "No tag in internal hash table.");
+      gdcmWarningMacro( "No tag in internal hash table.");
       return false;
    }
 
    return true;
+}
+/**
+ * \brief  This predicate tells us whether or not the current Document 
+ *         was properly parsed and contains at least *one* Dicom Element
+ *         (and nothing more, sorry).
+ * @return false when we're 150 % sure it's NOT a Dicom/Acr file,
+ *         true otherwise. 
+ */
+bool Document::IsReadable()
+{
+   return IsParsable();
 }
 
 /**

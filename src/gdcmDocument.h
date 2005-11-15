@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 14:23:44 $
-  Version:   $Revision: 1.130 $
+  Date:      $Date: 2005/11/15 10:30:46 $
+  Version:   $Revision: 1.131 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,6 +56,7 @@ public:
    bool SetShaDict(DictKey const &dictName);
 
 // Informations contained in the gdcm::Document
+   bool IsParsable();
    virtual bool IsReadable();
    bool IsDicomV3();
    bool IsPapyrus();
