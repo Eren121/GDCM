@@ -132,7 +132,7 @@
 0008 1052 SQ 1 Performing Physician Identification Sequence
 0008 1060 PN 1-n Name of Physician(s) Reading Study
 0008 1062 SQ 1 Physician(s) Reading Study Identification Sequence
-0008 1070 PN 1-n Operators' Name
+0008 1070 PN 1-n Operator's Name
 0008 1072 SQ 1 Operator Identification Sequence
 0008 1080 LO 1-n Admitting Diagnoses Description
 0008 1084 SQ 1 Admitting Diagnoses Code Sequence
@@ -237,6 +237,7 @@
 0010 21f0 LO 1 Patient's Religious Preference
 0010 4000 LT 1 Patient Comments
 
+0012 0000 UL 1 Group Length
 0012 0010 LO 1 Clinical Trial Sponsor Name
 0012 0020 LO 1 Clinical Trial Protocol ID
 0012 0021 LO 1 Clinical Trial Protocol Name
@@ -771,10 +772,10 @@
 0018 9344 CS 1 Contrast/Bolus Agent Phase
 0018 9345 FD 1 CTDIvol
 0018 a001 SQ 1 Contributing Equipment Sequence
-0018 a002 DT 1 Contribution DateTime
+0018 a002 DT 1 Contribution Date Time
 0018 a003 ST 1 Contribution Description
 
-0020 0000 UL 1 Group Length 
+0020 0000 UL 1 Group Length
 0020 000d UI 1 Study Instance UID
 0020 000e UI 1 Series Instance UID
 0020 0010 SH 1 Study ID
@@ -855,6 +856,7 @@
 0020 9228 UL 1 Concatenation Frame Offset Number
 0020 9238 LO 1 Functional Group Private Creator
 
+0022 0000 UL 1 Group Length
 0022 0001 US 1 Light Path Filter Pass-Through Wavelength
 0022 0002 US 2 Light Path Filter Pass Band
 0022 0003 US 1 Image Path Filter Pass-Through Wavelength
@@ -985,7 +987,7 @@
 0028 9145 SQ 1 Pixel Value Transformation Sequence
 0028 9235 CS 1 Signal Domain Rows
 
-0032 0000 UL 1 Study Group Length
+0032 0000 UL 1 Group Length
 0032 000a CS 1 Study Status ID
 0032 000c CS 1 Study Priority ID
 0032 0012 LO 1 Study ID Issuer
@@ -1261,7 +1263,7 @@
 0050 0016 DS 1 Device Diameter
 0050 0017 CS 1 Device Diameter Units
 0050 0018 DS 1 Device Volume
-0050 0019 DS 1 Inter-marker Distance
+0050 0019 DS 1 Inter-Marker Distance
 0050 0020 LO 1 Device Description
 
 0054 0000 UL 1 Group Length
@@ -1415,7 +1417,7 @@
 0088 0904 LO 1 Topic Title
 0088 0906 ST 1 Topic Subject
 0088 0910 LO 1 Topic Author
-0088 0912 LO 1-32 Topic Key Words
+0088 0912 LO 1-32 Topic Keywords
 
 0100 0000 UL 1 Group Length
 0100 0410 CS 1 SOP Instance Status
@@ -1603,7 +1605,7 @@
 3002 0041 CS 1 Fluence Data Source
 3002 0042 DS 1 Fluence Data Scale
 
-3004 0000 UL 1 DVH Group Length
+3004 0000 UL 1 Group Length
 3004 0001 CS 1 DVH Type
 3004 0002 CS 1 Dose Units
 3004 0004 CS 1 Dose Type
@@ -2024,7 +2026,7 @@
 300e 0005 TM 1 Review Time
 300e 0008 PN 1 Reviewer Name
 
-4000 0000 UL 1 Text Group Length
+4000 0000 UL 1 Group Length
 4000 0010 LT 1-n Text Arbitrary (RET)
 4000 4000 LT 1-n Text Comments (RET)
 
