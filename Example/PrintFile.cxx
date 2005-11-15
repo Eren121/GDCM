@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 10:38:56 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/11/15 10:40:45 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -220,10 +220,6 @@ int main(int argc, char *argv[])
 
    if ( fileName != 0 ) // ====== Deal with a single file ======
    { 
-      // gdcm::File::IsReadable() is no usable here, because we deal with
-      // any kind of gdcm-Parsable *document* 
-      // not only gdcm::File (as opposed to gdcm::DicomDir)
-
       gdcm::File *f = gdcm::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
@@ -235,6 +231,9 @@ int main(int argc, char *argv[])
       }
 
       bool res = f->Load();
+      // gdcm::File::IsReadable() is no usable here, because we deal with
+      // any kind of gdcm-Parsable *document* 
+      // not only gdcm::File (as opposed to gdcm::DicomDir)
       if ( !res )
       {
          std::cout << "Cannot process file [" << fileName << "]" << std::endl;
@@ -445,13 +444,8 @@ int main(int argc, char *argv[])
          ShowLutData(f);
       }
 
-      //if( !f->gdcm::Document::IsReadable())
-      // Try downcast to please MSVC
-      if ( !((gdcm::Document *)f)->IsReadable() )
-      {
-         std::cout <<std::endl<<fileName<<" is NOT 'gdcm parsable'"<<std::endl;
-      }
-     
+      // Parsability of the gdcm::Document already checked, after Load() !
+      
       if ( f->IsReadable() )
       {
          std::cout <<std::endl<<fileName<<" is Readable"<<std::endl;
