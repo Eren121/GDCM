@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 12:27:57 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2005/11/15 11:43:22 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmTS.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 
 #include <iostream>
 
@@ -167,7 +168,14 @@ void TestFile::Write(const std::string &filename)
 
 int TestFile::ComputeSwapCode(uint32_t tag)
 {
+// FIXME : 100 % useless method !
+// "gdcm" was written on disc byte per byte.
+// when you fread if, you'll get *allways* "gdcm"
+// whatever the processor indianess is !
+
    int swap = 0;
+   //std::cout << std::hex << "0x(" << tag << ")" << std::dec << std::endl;
+   
    for(int i=0;i<4;i++)
    {
       switch(tag&0x000000FF)
@@ -282,7 +290,8 @@ bool TestFile::ReadFileData(std::ifstream *fp)
           << " SwapCode:" << GetSwapCode()
           << std::endl;
         
-   if (GetScalarSize() == 1 || GetSwapCode() == 1234)
+   //if (GetScalarSize() == 1 || GetSwapCode() == 1234)
+   if (GetScalarSize() == 1 || !gdcm::Util::IsCurrentProcessorBigEndian() )    
    {
       return true;
    }
@@ -323,6 +332,11 @@ bool TestFile::WriteFileHeader(std::ofstream *fp)
    WriteInt8(fp,'d'); // Bitmap tag - must be 'd'
    WriteInt8(fp,'c'); // Bitmap tag - must be 'c'
    WriteInt8(fp,'m'); // Bitmap tag - must be 'm'
+   
+   // FIXME : Think of writting an int32, better !
+   // (('g' << 8 + 'd') << 8 + 'c') + 'm'
+   // if you want to use it to check the endianess.
+   // (and upload again *all* the .tst files ...)
    WriteInt32(fp,SizeX); // Size X
    WriteInt32(fp,SizeY); // Size Y
    WriteInt32(fp,SizeZ); // Size Z
