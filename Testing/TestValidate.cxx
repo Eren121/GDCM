@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 08:32:50 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/11/17 17:44:25 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ int TestValidate(int argc, char *argv[])
    gdcm::Global::GetDicts()->GetDefaultPubDict()->Print();   
 
    int i =0;
-   int retVal = 0;  //by default this is an error
+   int retVal = 0;  //by default : *no* error
    while( gdcmDataImages[i] != 0 )
    {
       std::string filename = GDCM_DATA_ROOT;
