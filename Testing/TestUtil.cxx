@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:35:13 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/11/17 18:01:59 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,6 +89,14 @@ int TestUtil(int , char *[])
       std::cout << std::endl;
       dbl += 1.0;
    }
+
+
+   std::cout << "Size of short int  " << sizeof(short int) << std::endl;
+   std::cout << "Size of int  " << sizeof(int) << std::endl;
+   std::cout << "Size of int* " << sizeof(int*) << std::endl;
+   std::cout << "Size of long " << sizeof(long) << std::endl;
+   std::cout << "Size of float" << sizeof(float) << std::endl;
+   std::cout << "Size of double" << sizeof(double) << std::endl;
 
    // CreateCleanString
    std::string x = "a#@-bc\tdef";
