@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestValidate.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/17 17:44:25 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/11/18 10:31:22 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,6 +33,7 @@ int Validate(std::string const &filename)
    input->Load();
    gdcm::Validator *v = new gdcm::Validator();
    v->SetInput( input );
+   input->Delete();
    return 1; // allways true (we don't want to break the test suite)
 } 
 
