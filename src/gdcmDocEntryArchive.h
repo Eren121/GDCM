@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntryArchive.h,v $
   Language:  C++
-  Date:      $Date: 2005/02/04 16:51:36 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/18 11:54:01 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,10 @@ namespace gdcm
  */
 class GDCM_EXPORT DocEntryArchive 
 {
-public:
+
+friend class FileHelper;
+
+private:
    DocEntryArchive(File *file);
    ~DocEntryArchive();
 
@@ -48,7 +51,6 @@ public:
 
    void ClearArchive(void);
 
-private:
    /// pointer to the gdcm::File pointer we want to save values from
    File *ArchFile;
    /// H table to save values.
