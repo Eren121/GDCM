@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:12:24 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/11/18 11:42:48 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMORIENTATION_H
 #define GDCMORIENTATION_H
 
-#include "gdcmBase.h"
+#include "gdcmRefCounter.h"
 #include <map>
 
 namespace gdcm 
@@ -92,19 +92,22 @@ typedef enum {
    HeartSagitalInvert = -6
 } OrientationType;
 
-class GDCM_EXPORT Orientation : public Base
+class GDCM_EXPORT Orientation : public RefCounter
 {
+   gdcmTypeMacro(Orientation);
 public:
-/// \brief Constructor
-  Orientation() {}
-/// \brief Canonical Destructor
-  ~Orientation() {}
+   static Orientation *New() {return new Orientation();}
 
   OrientationType GetOrientationType( File *file );
   std::string GetOrientation ( File *file );  
   
   static const char* GetOrientationTypeString(OrientationType const o);
-
+  
+protected:
+/// \brief Constructor
+  Orientation() {}
+/// \brief Canonical Destructor
+  ~Orientation() {}
 private:
    Res VerfCriterion(int typeCriterion, double criterionNew, Res const &res);
    double CalculLikelyhood2Vec(vector3D const &refA, vector3D const &refB, 

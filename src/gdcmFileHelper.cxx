@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/07 14:10:39 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2005/11/18 11:42:48 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1526,8 +1526,9 @@ void FileHelper::CheckMandatoryElements()
    
    // Patient Orientation
    // Can be computed from (0020|0037) :  Image Orientation (Patient)
-   gdcm::Orientation o;
-   std::string ori = o.GetOrientation ( FileInternal );
+   gdcm::Orientation *o = gdcm::Orientation::New();
+   std::string ori = o->GetOrientation ( FileInternal );
+   o->Delete();
    if (ori != "\\" )
       CheckMandatoryEntry(0x0020,0x0020,ori);
    else   

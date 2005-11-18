@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/15 10:40:45 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2005/11/18 11:45:34 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -351,22 +351,23 @@ int main(int argc, char *argv[])
       // Let's compute 'user friendly' results about 'Orientation'
       // ---------------------------------------------------------
  
-      gdcm::Orientation o;
+      gdcm::Orientation *o = gdcm::Orientation::New();
 
       if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
            strImageOrientationRET     != gdcm::GDCM_UNFOUND )
       {
   
-         gdcm::OrientationType orient = o.GetOrientationType( f );
+         gdcm::OrientationType orient = o->GetOrientationType( f );
  
          std::cout << "TypeOrientation = " << orient << " (-> " 
-                   << o.GetOrientationTypeString(orient) << " )" << std::endl;
+                   << o->GetOrientationTypeString(orient) << " )" << std::endl;
       }
 
-      std::string ori = o.GetOrientation ( f );
+      std::string ori = o->GetOrientation ( f );
       if (ori != "\\" )
          std::cout << "Orientation [" << ori << "]" << std::endl;
  
+       o->gdcm::Orientation::Delete(); 
 //------------------------------
 
 
@@ -561,24 +562,26 @@ int main(int argc, char *argv[])
          // Let's compute 'user friendly' results about 'Orientation'
          // ---------------------------------------------------------
     
-         gdcm::Orientation o;
+         gdcm::Orientation *o = gdcm::Orientation::New(); 
+
 
          if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
             strImageOrientationRET     != gdcm::GDCM_UNFOUND )
          {
      
-            gdcm::OrientationType orient = o.GetOrientationType( f );
+            gdcm::OrientationType orient = o->GetOrientationType( f );
     
             std::cout << "TypeOrientation = " << orient << " (-> " 
-                     << o.GetOrientationTypeString(orient) << " )" << std::endl;
+                     << o->GetOrientationTypeString(orient) << " )" << std::endl;
          }
 
-         std::string ori = o.GetOrientation ( f );
+         std::string ori = o->GetOrientation ( f );
          if (ori != "\\" )
             std::cout << "Orientation [" << ori << "]" << std::endl;
+   
+         o->gdcm::Orientation::Delete(); 
 
 //------------------------------- 
-
         
          if (f->IsReadable())
             std::cout <<std::endl<<it->c_str()<<" is Readable"<<std::endl;
