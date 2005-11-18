@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2005/09/02 07:10:03 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/11/18 14:33:24 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,9 @@ namespace gdcm
  */
 class GDCM_EXPORT RLEFrame
 {
-public:
+friend class File;
+friend class RLEFramesInfo;
+private:
    RLEFrame() { NumberOfFragments = 0; }
    void Print( std::ostream &os = std::cout, std::string indent = "" );
 
@@ -62,7 +64,7 @@ public:
    bool ReadAndDecompressRLEFragment( uint8_t *subRaw, long fragmentSize,
                                       long rawSegmentSize, std::ifstream *fp );
 
-private:
+//private:
    unsigned int NumberOfFragments;
    long Offset[15];
    long Length[15];
