@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/17 17:44:24 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/18 11:46:37 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,15 +30,8 @@
 // Which CXX_FLAGS, LINKER_FLAGS, ...,  must we set to see the difference?
 
 #include "gdcmUtil.h"
-#include "TestInLine.h"
-#include <iostream>
 
-#include <time.h>
-#ifdef CMAKE_HAVE_SYS_TIMES_H
-#include <sys/times.h>
-#else
-#include <sys/timeb.h>
-#endif
+#include <iostream>
 
 void        frswap (double &a, double &b);
 void        fpswap (double *a, double *b);
