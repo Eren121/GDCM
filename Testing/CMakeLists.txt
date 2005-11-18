@@ -23,11 +23,11 @@ SET(TEST_SOURCES
   TestEnumVR.cxx
 
 )
-IF(UNIX)
-  SET(TEST_SOURCES ${TEST_SOURCES}
-    TestInline.cxx
-  )
-ENDIF(UNIX)
+#IF(UNIX)
+#  SET(TEST_SOURCES ${TEST_SOURCES}
+#    TestInline.cxx
+#  )
+#ENDIF(UNIX)
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
