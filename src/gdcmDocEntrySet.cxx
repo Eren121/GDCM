@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 09:13:18 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2005/11/21 09:41:46 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,47 +75,11 @@ void *DocEntrySet::GetEntryBinArea(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief   Return the value of the DataEntry if it's "std::string representable"
- * @param   group  Group number of the searched tag.
- * @param   elem Element number of the searched tag.
- * @return  Corresponding element value when it's "std::string representable"
- *          and the string GDCM_NOTASCII otherwise.
- */
-std::string DocEntrySet::GetEntryForcedAsciiValue(uint16_t group, uint16_t elem)
-{
-   DocEntry *d = GetDocEntry(group,elem);
-   if ( !d )
-      return GDCM_UNFOUND;
-
-   DataEntry *de = dynamic_cast<DataEntry *>(d);
-   if ( de )
-   {
-      if( de->IsNotLoaded() )
-         return GDCM_NOTLOADED;
-      if( de->IsUnfound() )
-         return GDCM_UNFOUND;
-      if( de->IsUnread() )
-         return GDCM_UNREAD;
-   }
-
-   if( Global::GetVR()->IsVROfStringRepresentable( de->GetVR() ) )
-      return de->GetString();
-   else
-   {
-      uint8_t *a = de->GetBinArea();
-      if( Util::IsCleanArea(a, de->GetLength()) )
-         return  Util::CreateCleanString(a, de->GetLength());
-   }
-   return GDCM_NOTASCII;
-}
-
-/**
- * \brief   Searches within Header Entries (Dicom Elements) parsed with 
- *          the public and private dictionaries 
+ * \brief   Searches within the DocEntrySet
  *          for the value length of a given tag..
  * @param   group  Group number of the searched tag.
  * @param   elem Element number of the searched tag.
- * @return  Corresponding element length; -2 if not found
+ * @return  Corresponding element length; -1 if not found
  */
 int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
 {
@@ -126,9 +90,8 @@ int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         DataEntry.
+ * \brief  Same as \ref Document::GetDocEntry except it returns a result 
+ *         only when the corresponding entry is of type DataEntry.
  * @param   group  Group number of the searched Dicom Element 
  * @param   elem Element number of the searched Dicom Element  
  * @return When present, the corresponding DataEntry. 
@@ -143,9 +106,8 @@ DataEntry *DocEntrySet::GetDataEntry(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief  Same as \ref Document::GetDocEntry except it only
- *         returns a result when the corresponding entry is of type
- *         SeqEntry.
+ * \brief  Same as \ref Document::GetDocEntry except it returns a result
+ *          only when the corresponding entry is of type SeqEntry.
  * @param   group  Group number of the searched Dicom Element 
  * @param   elem Element number of the searched Dicom Element  
  * @return When present, the corresponding SeqEntry. 
@@ -365,16 +327,15 @@ DataEntry *DocEntrySet::InsertEntryBinArea(uint8_t *binArea, int lgth,
          delete[] tmpArea;
       }
    }
-
    return dataEntry;
 }  
 
 /**
- * \brief   Modifies the value of a given Doc Entry (Dicom Element)
- *          when it exists. Creates it when unexistant.
+ * \brief   Creates a new gdcm::SeqEntry and adds it to the current DocEntrySet.
+ *          (remove any existing entry with same group,elem)
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created SeqEntry (NULL when creation
+ * \return  pointer to the created SeqEntry (NULL when creation
  *          failed).
  */
 SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
@@ -396,8 +357,8 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
       {
          if (!RemoveEntry(currentEntry))
          {
-            gdcmWarningMacro( "Removal of previous DocEntry failed.");
-
+            gdcmWarningMacro( "Removal of previous DocEntry failed for ("
+               <<std::hex << group << "|" << elem <<")" );
             return NULL;
          }
       }
@@ -409,20 +370,21 @@ SeqEntry *DocEntrySet::InsertSeqEntry(uint16_t group, uint16_t elem)
 
       if ( !AddEntry(seqEntry) )
       {
-         gdcmWarningMacro( "AddEntry failed although this is a creation.");
+         gdcmWarningMacro( "AddEntry failed although this is a creation for ("
+            <<std::hex << group << "|" << elem <<")" );
          seqEntry->Delete();
          return NULL;
       }
       seqEntry->Delete();
    }
-
-   // TODO : Find a trick to insert a SequenceDelimitationItem 
-   //       in the SeqEntry, at the end.
+   // Remark :
+   // SequenceDelimitationItem will be added at the end of the SeqEntry,
+   // at write time
    return seqEntry;
 } 
  
 /**
- * \brief   Checks if a given Dicom Element exists within the H table
+ * \brief   Checks if a given Dicom Element exists within the DocEntrySet
  * @param   group   Group number of the searched Dicom Element 
  * @param   elem  Element number of the searched Dicom Element 
  * @return true is found
@@ -433,7 +395,7 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
 }
 
 /**
- * \brief   Build a new Val Entry from all the low level arguments. 
+ * \brief   Build a new DataEntry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
  * @param   group Group number   of the new Entry
@@ -450,14 +412,15 @@ DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
    dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry) 
    {
-      gdcmWarningMacro( "Failed to allocate DataEntry");
+      gdcmWarningMacro( "Failed to allocate DataEntry for ("
+          <<std::hex << group << "|" << elem <<")" );
       return 0;
    }
    return newEntry;
 }
 
 /**
- * \brief   Build a new Seq Entry from all the low level arguments. 
+ * \brief   Build a new SeqEntry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
  *          a default one when absent.
  * @param   group Group   number of the new Entry
@@ -472,7 +435,8 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
    dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry)
    {
-      gdcmWarningMacro( "Failed to allocate SeqEntry");
+      gdcmWarningMacro( "Failed to allocate SeqEntry for ("
+         <<std::hex << group << "|" << elem <<")" );
       return 0;
    }
    return newEntry;
@@ -523,7 +487,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    DictEntry *dictEntry = GetDictEntry(group,elem);
    DictEntry *goodEntry = dictEntry;
    VRKey goodVR = vr;
-
+   TagName vm;
    if (elem == 0x0000) 
       goodVR="UL";
 
@@ -531,18 +495,28 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    {
       if ( goodVR != goodEntry->GetVR()
         && goodVR != GDCM_VRUNKNOWN )
-      {
+      { 
+         gdcmWarningMacro("For (" << std::hex << group << "|"
+            << elem << "), found VR : [" << vr << "]"
+            << " expected: [" << goodEntry->GetVR() << "]" ) ;
+        // avoid confusing further validator with "FIXME" VM
+        // when possible      
+         vm = dictEntry->GetVM();
          goodEntry = NULL;
       }
       dictEntry->Unregister();
    }
-
+   else
+   {
+      vm = "FIXME";
+   }
    // Create a new virtual DictEntry if necessary
    if (!goodEntry)
    {
       if (dictEntry)
       {
-         goodEntry = DictEntry::New(group, elem, goodVR, "FIXME", 
+
+         goodEntry = DictEntry::New(group, elem, goodVR, vm,//"FIXME", 
                                     dictEntry->GetName() );
       }
       else
