@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/03 08:47:51 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2005/11/21 12:15:06 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,10 +128,10 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       else
       {
          binary_write(*fp, vr.str());
-                  
-         if ( (vr == "OB") || (vr == "OW") || (vr == "SQ") /*|| (vr == "UN")*/ )
-// FIXME : what is the status of VR = "UN"
-//         --> uncomment or remove comment !
+
+         // See PS 3.5-2004 page 33, 36                  
+         if ( (vr == "SQ") || (vr == "OB") || (vr == "OW") || (vr == "OF") 
+          ||  (vr == "UN") || (vr == "UT") )
          {
             binary_write(*fp, zero);
             if (vr == "SQ")

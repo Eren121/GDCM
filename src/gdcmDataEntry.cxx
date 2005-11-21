@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:24 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2005/11/21 12:15:06 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -286,14 +286,15 @@ uint32_t DataEntry::GetValueCount( ) const
       return GetLength()/sizeof(uint16_t);
    else if( vr == "UL" || vr == "SL" )
       return GetLength()/sizeof(uint32_t);
-   else if( vr == "FL" )
-      return GetLength()/sizeof(float);
+   else if( vr == "FL" || vr == "OF" )
+      return GetLength()/4 ; // FL has a *4* length! sizeof(float);
    else if( vr == "FD" )
-      return GetLength()/sizeof(double);
+      return GetLength()/8;  // FD has a *8* length! sizeof(double);
    else if( Global::GetVR()->IsVROfStringRepresentable(vr) )
    {
       // Some element in DICOM are allowed to be empty
-      if( !GetLength() ) return 0;
+      if( !GetLength() ) 
+         return 0;
       // Don't use std::string to accelerate processing
       uint32_t count = 1;
       for(uint32_t i=0;i<GetLength();i++)
@@ -303,7 +304,6 @@ uint32_t DataEntry::GetValueCount( ) const
       }
       return count;
    }
-
    return GetLength();
 }
 /**

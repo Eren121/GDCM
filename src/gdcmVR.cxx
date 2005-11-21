@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:16 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/11/21 12:15:06 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,16 +108,14 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
-   //FIXME : either you consider than US, UL, SS, SL *are* string representable
-   //                            and you have to add FD and FL
-   //        or  you consider they are not, and you have to remove them
-   // (I cannot guess your point, reading gdcmDataEntry code :-( )  JPR
- 
+/*
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
           tested == "DA" ||
           tested == "DS" ||
+          tested == "FL" ||
+          tested == "FD" || 
           tested == "IS" || 
           tested == "LO" ||
           tested == "LT" ||
@@ -131,17 +129,15 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested == "UL" ||
           tested == "US" ||
           tested == "UT";
+*/
+   // Should be quicker
 
-   // Should be quicker --> But it doesn't work : revert to old code
-/*
-   return tested != "FL" &&
-          tested != "FD" &&
-          tested != "OB" &&
+   return tested != "OB" &&
           tested != "OW" &&
-          tested != "AT" && // Attribute Tag ?!?
+          tested != "OF" &&
+          tested != "AT" && // Attribute Tag ?!? contain no printable character
           tested != "UN" && // UN is an actual VR !
           tested != "SQ" ;
-*/
 }
 /// \brief returns the length of a elementary elem whose VR is passed
 unsigned short VR::GetAtomicElementLength(VRKey const &tested)
@@ -161,6 +157,9 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
    // Word string
    if( tested == "OW" )
       return 2;
+   // Float string
+   if( tested == "OF" )
+      return 4;   
    return 1;
 }
 
