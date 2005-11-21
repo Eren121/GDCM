@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 08:36:47 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/11/21 09:43:43 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,11 +29,11 @@ namespace gdcm
 //-----------------------------------------------------------------------------
 typedef std::map<uint16_t, int> GroupHT;    //  Hash Table
 //-----------------------------------------------------------------------------
-
+/// \brief Constructor
 Validator::Validator()
 {
 }
-
+///\brief Canonical Destructor
 Validator::~Validator()
 {
 }
@@ -99,15 +99,15 @@ DocEntry *d;
       if ( v->GetVM() != gdcm::GDCM_UNKNOWN )
          if ( !CheckVM(v) )
          {
-         if (v->GetVM() == "FIXME" )
-             std::cout << "For Tag " <<  v->GetKey() << " VM = ["
+            if (v->GetVM() == "FIXME" )
+              std::cout << "For Tag " <<  v->GetKey() << " VM = ["
                        << v->GetVM() << "]" << std::endl;
  
-           std::cout << "Tag (" <<  v->GetKey() 
-                     << ")-> [" << v->GetName() << "] contains an illegal VM. "
-                     << "value [" << v->GetString() << "] VR :"
-                     << v->GetVR() << ", Expected VM : [" << v->GetVM() << "] " 
-                     << std::endl;
+            std::cout << "Tag (" <<  v->GetKey() 
+                      << ")-> [" << v->GetName() << "] VR :" << v->GetVR() 
+                      << " contains an illegal VM. Expected VM :[" 
+                      << v->GetVM() << "], value [" << v->GetString() << "]" 
+                      << std::endl;
          }
       
       if ( v->GetReadLength() % 2 )
