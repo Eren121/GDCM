@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 11:21:47 $
-  Version:   $Revision: 1.304 $
+  Date:      $Date: 2005/11/21 16:28:06 $
+  Version:   $Revision: 1.305 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -155,7 +155,6 @@ bool File::Load( )
  */
 bool File::DoTheLoadingJob( ) 
 {
-
    // for some ACR-NEMA images GrPixel, NumPixel is *not* 7fe0,0010
    // We may encounter the 'RETired' (0x0028, 0x0200) tag
    // (Image Location") . This entry contains the number of
@@ -1816,7 +1815,7 @@ void File::ReadEncapsulatedBasicOffsetTable()
 
 // These are the deprecated method that one day should be removed (after the next release)
 
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /*
  * \ brief   Loader. (DEPRECATED :  temporaryly kept not to break the API)
  * @ param   fileName file to be open for parsing
@@ -1824,6 +1823,7 @@ void File::ReadEncapsulatedBasicOffsetTable()
  *         or no tag was found.
  * @ deprecated Use the Load() [ + SetLoadMode() ] + SetFileName() functions instead
  */
+ /*
 bool File::Load( std::string const &fileName ) 
 {
    GDCM_LEGACY_REPLACED_BODY(File::Load(std::string), "1.2",
@@ -1834,7 +1834,8 @@ bool File::Load( std::string const &fileName )
 
    return DoTheLoadingJob( );
 }
-#endif
+*/
+//#endif
 
 //-----------------------------------------------------------------------------
 // Print
