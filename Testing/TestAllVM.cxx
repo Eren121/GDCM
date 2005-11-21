@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 10:29:44 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/11/21 11:31:06 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ int TestAllVM(int argc, char *argv[])
       filename += "/";
       filename += gdcmDataImages[i];
       
-      if (gdcmDataImages[i] == "00191113.dcm" // Track bug on Darwin
+      if (gdcmDataImages[i] == "00191113.dcm") // Track bug on Darwin
           gdcm::Debug::DebugOn();
       else
          gdcm::Debug::DebugOff();
