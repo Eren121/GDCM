@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/16 17:19:24 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/11/21 10:06:47 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -204,6 +204,8 @@ int VTKTestRead(int argc, char *argv[])
 
       return ret;
    }
+   
+   gdcm::Debug::DebugOn(); // Comment out when no bug is to be tracked
 
    // Test for all images
    int i = 0;
