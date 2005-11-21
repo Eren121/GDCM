@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.70 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,11 +53,11 @@ class GDCM_EXPORT DicomDir: public Document
    gdcmTypeMacro(DicomDir);
 
 public:
+/// \brief Constructs a DicomDir with a RefCounter
    static DicomDir *New() {return new DicomDir();}
 
    typedef void Method(void*);
 
-   GDCM_LEGACY( bool Load(std::string const &filename) );
    bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
    
@@ -69,9 +69,6 @@ public:
    virtual void SetFileName(std::string const &fileName) 
                    { ParseDir = false; if (Filename != fileName)
                               Filename = fileName, IsDocumentModified = true;}
-
-   /// DEPRECATED : use SetDirectoryName
-   GDCM_LEGACY( void SetParseDir(bool parseDir) );
    
    // Informations contained in the parser
    virtual bool IsReadable();

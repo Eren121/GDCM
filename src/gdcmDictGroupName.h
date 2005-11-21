@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:15 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/11/21 09:46:26 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,7 +34,8 @@ typedef std::map<uint16_t, TagName> DictGroupNameHT;
 
 //-----------------------------------------------------------------------------
 /**
- * \brief Container for dicom 'Value Representation' Hash Table.
+ * \brief Container for dicom 'Group Name' Hash Table.
+ *        (formerly NIH defined ACR-NEMA group name)
  * \note   This is a singleton.
  */
 class GDCM_EXPORT DictGroupName : public RefCounter

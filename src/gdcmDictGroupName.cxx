@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictGroupName.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:15 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
-/// \brief auto generated function, to fill up the 'Value Representation'
+/// \brief auto generated function, to fill up the 'Group Name'
 ///        Dictionnary, if relevant file is not found on user's disk
 void FillDefaultDictGroupName(DictGroupNameHT &groupName);
 

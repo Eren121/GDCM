@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 16:31:21 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/11/21 09:46:27 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -213,8 +213,7 @@ void SerieHelper::AddGdcmFile(File *header)
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
- * @param   group  Group number of the target tag.
- * @param   elem Element number of the target tag.
+ * @param   key  Target tag we want restrict on a given value
  * @param value value to be checked to exclude File
  * @param op  operator we want to use to check
  */
@@ -228,16 +227,6 @@ void SerieHelper::AddRestriction(TagKey const &key,
    r.op    = op;
    ExRestrictions.push_back( r ); 
 }
-
-#ifndef GDCM_LEGACY_REMOVE
-void SerieHelper::AddRestriction(TagKey const &key, std::string const &value)
-{
-   Rule r;
-   r.first = key;
-   r.second = value;
-   Restrictions.push_back( r ); 
-}
-#endif
 
 /**
  * \brief Sets the root Directory
@@ -563,11 +552,12 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
 //-----------------------------------------------------------------------------
 // Private
 /**
- * \brief sorts the images, according to their Patient Position
+ * \brief sorts the images, according to their Patient Position.
+ *
  *  We may order, considering :
  *   -# Image Position Patient
  *   -# Image Number
- *   -# File Name
+ *   -# file name
  *   -# More to come :-)
  * \note : FileList = std::vector<File* >
  * @param fileList Coherent File list (same Serie UID) to sort

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 18:54:04 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2005/11/21 09:46:24 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -574,6 +574,7 @@ uint32_t DataEntry::ComputeFullLength()
 
 //-----------------------------------------------------------------------------
 // Protected
+/// \brief Creates a DataEntry owned BinArea (remove previous one if any)
 void DataEntry::NewBinArea(void)
 {
    DeleteBinArea();
@@ -581,7 +582,7 @@ void DataEntry::NewBinArea(void)
       BinArea = new uint8_t[GetLength()];
    SelfArea = true;
 }
-
+/// \brief Removes the BinArea, if owned by the DataEntry
 void DataEntry::DeleteBinArea(void)
 {
    if (BinArea && SelfArea)

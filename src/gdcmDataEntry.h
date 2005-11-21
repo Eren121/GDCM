@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 14:23:43 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,9 @@ class GDCM_EXPORT DataEntry  : public DocEntry
    gdcmTypeMacro(DataEntry);
 
 public:
+/// \brief Contructs a DataEntry with a RefCounter from DictEntry
    static DataEntry *New(DictEntry *e) {return new DataEntry(e);}
+/// \brief Contructs a DataEntry with a RefCounter from DocEntry
    static DataEntry *New(DocEntry *d)  {return new DataEntry(d);}
 
 // Print
@@ -92,8 +94,10 @@ public:
    };
 
    // State
+   /// \brief Sets the state (Loaded, NotLoaded, UnFound, ...) of the DataEntry
    void SetState(const TValueState &state) { State = state; }
-   const TValueState &GetState() const { return State; }
+   /// \brief Returns the state (Loaded, NotLoaded, ...) of the DataEntry
+      const TValueState &GetState() const { return State; }
    /// \brief true when value Entry not loaded  
    bool IsNotLoaded() { return State == STATE_NOTLOADED; }
    /// \brief true if Entry not found  
@@ -145,8 +149,7 @@ private:
    /// \brief Entry status:STATE_NOTLOADED,STATE_UNFOUND,STATE_UNREAD,STATE_LOADED
    TValueState State;
 
-   /// \brief Size threshold above which an element val
-   ///        By default, this upper bound is fixed to 64 bytes.
+   /// \brief Size threshold above which an element is printed
    static uint32_t MaxSizePrintEntry;   
 };
 

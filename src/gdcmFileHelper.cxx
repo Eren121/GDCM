@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/18 11:42:48 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2005/11/21 09:46:26 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -225,13 +225,12 @@ bool FileHelper::Load()
 }
 
 /**
- * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          through it's (group, element) and modifies it's content with
- *          the given value.
+ * \brief   Accesses an existing DataEntry through it's (group, element) 
+ *          and modifies it's content with the given value.
  * @param   content new value (string) to substitute with
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
- * \return  false if DocEntry not found
+ * \return  false if DataEntry not found
  */
 bool FileHelper::SetEntryString(std::string const &content,
                                     uint16_t group, uint16_t elem)
@@ -241,14 +240,13 @@ bool FileHelper::SetEntryString(std::string const &content,
 
 
 /**
- * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          through it's (group, element) and modifies it's content with
- *          the given value.
+ * \brief   Accesses an existing DataEntry through it's (group, element) 
+ *          and modifies it's content with the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param   lgth new value length
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
- * \return  false if DocEntry not found
+ * \return  false if DataEntry not found
  */
 bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
                                      uint16_t group, uint16_t elem)
@@ -257,12 +255,12 @@ bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
 }
 
 /**
- * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Creates it with the given value when unexistant.
- * @param   content (string)value to be set
+ * \brief   Modifies the value of a given DataEntry when it exists.
+ *          Creates it with the given value when unexistant.
+ * @param   content (string) value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Dicom entry (NULL when creation
+ * \return  pointer to the modified/created DataEntry (NULL when creation
  *          failed).
  */ 
 DataEntry *FileHelper::InsertEntryString(std::string const &content,
@@ -272,14 +270,14 @@ DataEntry *FileHelper::InsertEntryString(std::string const &content,
 }
 
 /**
- * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Creates it with the given value when unexistant.
+ * \brief   Modifies the value of a given DataEntry when it exists.
+ *          Creates it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
  * @param   binArea (binary)value to be set
  * @param   lgth new value length
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Dicom entry (NULL when creation
+ * \return  pointer to the modified/created DataEntry (NULL when creation
  *          failed).
  */
 DataEntry *FileHelper::InsertEntryBinArea(uint8_t *binArea, int lgth,
@@ -289,11 +287,11 @@ DataEntry *FileHelper::InsertEntryBinArea(uint8_t *binArea, int lgth,
 }
 
 /**
- * \brief   Modifies the value of a given DocEntry (Dicom entry)
- *          when it exists. Creates it, empty (?!) when unexistant.
+ * \brief   Adds an empty SeqEntry 
+ *          (remove any existing entry with same group,elem)
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * \return  pointer to the modified/created Dicom entry (NULL when creation
+ * \return  pointer to the created SeqEntry (NULL when creation
  *          failed).
  */
 SeqEntry *FileHelper::InsertSeqEntry(uint16_t group, uint16_t elem)
@@ -1148,10 +1146,10 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 
 /**
  * \brief   This method is called automatically, just before writting
- *         in order to produce a 'True Dicom V3' image
+ *         in order to produce a 'True Dicom V3' image.
+ *
  *         We cannot know *how* the user made the File :
  *         (reading an old ACR-NEMA file or a not very clean DICOM file ...) 
- *          
  *          Just before writting :
  *             - we check the Entries
  *             - we create the mandatory entries if they are missing
@@ -1160,6 +1158,7 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
  *          The writing process will restore the entries as they where before 
  *          entering FileHelper::CheckMandatoryElements, so the user will always
  *          see the entries just as they were before he decided to write.
+ *
  * \note
  *       -  Entries whose type is 1 are mandatory, with a mandatory value
  *       -  Entries whose type is 1c are mandatory-inside-a-Sequence,
@@ -1169,7 +1168,8 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
  *                             with an optional value
  *       -  Entries whose type is 3 are optional
  * 
- * \todo : - warn the user if we had to add some entries :
+ * \todo 
+ *         - warn the user if we had to add some entries :
  *         even if a mandatory entry is missing, we add it, with a default value
  *         (we don't want to give up the writting process if user forgot to
  *         specify Lena's Patient ID, for instance ...)

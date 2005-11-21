@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:50:52 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/11/21 09:46:26 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,9 @@ public:
    };
      
 public:
+/// \brief Constructs a FileHelper with a RefCounter
    static FileHelper *New() {return new FileHelper();}
+/// \brief Constructs a FileHelper with a RefCounter from a fileHelper  
    static FileHelper *New(File *header) {return new FileHelper(header);}
    
    virtual ~FileHelper();
@@ -220,8 +222,8 @@ private:
    /// See vtkgdcmSerieViewer for an example
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
    
-   /// if user knows he didn't modify the pixels (e.g. he just anonymized 
-   /// the file), he is allowed to ask to keep the original
+   /// \brief if user knows he didn't modify the pixels (e.g. he just 
+   /// anonymized the file), he is allowed to ask to keep the original
    /// 'Media Storage SOP Class UID' and 'Image Type'  
    bool KeepMediaStorageSOPClassUID;
 };

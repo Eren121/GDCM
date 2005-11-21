@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,7 @@ class GDCM_EXPORT DicomDirSerie : public DicomDirObject
    gdcmTypeMacro(DicomDirSerie);
 
 public:
+/// \brief Constructs a DicomDirSerie with a RefCounter
    static DicomDirSerie *New(bool empty=false) {return new DicomDirSerie(empty);}
 
    void Print( std::ostream &os = std::cout, std::string const &indent = "" );

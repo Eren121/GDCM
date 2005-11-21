@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,9 @@ class GDCM_EXPORT Dict : public RefCounter
    gdcmTypeMacro(Dict);
 
 public:
+/// \brief Contructs an empty Dict with a RefCounter
    static Dict *New() {return new Dict();}
+/// \brief Contructs a Dict with a RefCounter
    static Dict *New(std::string const &filename) {return new Dict(filename);}
 
    bool AddDict(std::string const &filename);

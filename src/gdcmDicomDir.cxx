@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 10:14:44 $
-  Version:   $Revision: 1.172 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.173 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -158,32 +158,6 @@ bool DicomDir::Load( )
    }
    return DoTheLoadingJob( );   
 }
-
-#ifndef GDCM_LEGACY_REMOVE
-/* *
- * \ brief   Loader. (DEPRECATED : kept not to break the API)
- * @ param   fileName file to be open for parsing
- * @ return false if file cannot be open or no swap info was found,
- *         or no tag was found.
- * @ deprecated use SetFileName(n) + Load() instead
- */
-bool DicomDir::Load(std::string const &fileName ) 
-{
-   SetFileName(fileName);
-   return Load();
-}
-
-/// DEPRECATED : use SetDirectoryName(dname) instead
-/* *
- * \brief   Loader. (DEPRECATED : kept not to break the API)
- * @param   paseDir Parse Dir
- * @deprecated use SetDirectoryName(dname) instead
- */
-void DicomDir::SetParseDir(bool parseDir)
-{
-   ParseDir = parseDir;
-}
-#endif
 
 /**
  * \brief   Does the Loading Job (internal use only)

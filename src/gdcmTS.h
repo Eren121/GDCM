@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:16 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/11/21 09:46:27 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,6 +66,7 @@ public:
    };
 
 public:
+/// \brief Constructs a gdcmTS with a RefCounter
    static TS *New() {return new TS();}
 
    virtual void Print(std::ostream &os = std::cout, 

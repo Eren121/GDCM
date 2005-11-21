@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/18 11:42:48 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2005/11/21 09:46:27 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,16 +34,34 @@ typedef struct
 typedef std::pair<double, double> Res;
 class File;
 
+typedef enum {
+   NotApplicable = 0,
+   Axial = 1,
+   AxialInvert = -1,
+   Coronal = 2,
+   CoronalInvert = -2,
+   Sagital = 3,
+   SagitalInvert = -3,
+   HeartAxial = 4,
+   HeartAxialInvert = -4,
+   HeartCoronal = 5,
+   HeartCoronalInvert = -5,
+   HeartSagital = 6,
+   HeartSagitalInvert = -6
+} OrientationType;
+
 //-----------------------------------------------------------------------------
 /**
  * \brief Orientation class for dealing with DICOM image orientation
+ *
  * A gentle reminder for non-medical user:
  * PatientPosition (0x0010,0x5100) tells us the way the patient was introduced in the imager
  *  - HFS : Head First Supine
  *  - FFS : Feet First Supine
  *  - HFP : Head First Prone
  *  - FFP : Feet First Prone
- * Note: HFP and FFP are not very common values, since the position must be pretty unconfortable for the Patient -the patient is lying on his belly; but, if he has handcuffs there is no other way ...-
+ * Note: HFP and FFP are not very common values, since the position must
+ *        be pretty unconfortable for the Patient -the patient is lying on his belly; but, if he has handcuffs there is no other way ...-
  *
  * ImageOrientationPatient (0x0020,0x0037) gives 6 cosines (2 for each plane)
  * Patient Orientation (as found in the optional 0x0020,0x0020, or computed by
@@ -76,26 +94,12 @@ class File;
  * You'll probabely have 3 letters for X axis and  Y axis, and the image remains *perfectly* sagital !
  * The values are given within the 'Patient referential', *not* within the 'Organ referential' ...
  */
-typedef enum {
-   NotApplicable = 0,
-   Axial = 1,
-   AxialInvert = -1,
-   Coronal = 2,
-   CoronalInvert = -2,
-   Sagital = 3,
-   SagitalInvert = -3,
-   HeartAxial = 4,
-   HeartAxialInvert = -4,
-   HeartCoronal = 5,
-   HeartCoronalInvert = -5,
-   HeartSagital = 6,
-   HeartSagitalInvert = -6
-} OrientationType;
 
 class GDCM_EXPORT Orientation : public RefCounter
 {
    gdcmTypeMacro(Orientation);
 public:
+/// \brief Constructs a gdcm::Orientation with a RefCounter
    static Orientation *New() {return new Orientation();}
 
   OrientationType GetOrientationType( File *file );

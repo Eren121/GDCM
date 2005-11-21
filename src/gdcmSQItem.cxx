@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:46:37 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/11/21 09:46:27 $
+  Version:   $Revision: 1.80 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,7 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
    uint16_t itemt[4]= { 0xfffe, 0xe00d, 0xffff, 0xffff };
 
     //we force the writting of an 'Item' Start Element
-    // because we want to write the Item as a 'no Length' item
+    // because we want to write the Item as a 'No Length' item
    for(j=0;j<4;++j)
    {
       binary_write( *fp, item[j]);  // fffe e000 ffff ffff 
@@ -100,8 +100,8 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
 }
 
 /**
- * \brief   Compute the full length of the SQItem (not only value
- *          length) depending on the VR.
+ * \brief   Compute the full length of the SQItem (not only value length)
+ *           depending on the VR.
  */
 uint32_t SQItem::ComputeFullLength()
 {

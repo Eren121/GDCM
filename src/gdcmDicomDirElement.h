@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:15 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,6 +70,7 @@ class GDCM_EXPORT DicomDirElement : public RefCounter
    gdcmTypeMacro(DicomDirElement);
 
 public:
+/// \brief Contructs a DicomDirElement with a RefCounter
    static DicomDirElement *New() {return new DicomDirElement();}
 
    /**

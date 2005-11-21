@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 15:50:33 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/11/21 09:46:27 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,6 @@ namespace gdcm
 {
 class File;
 
-
    typedef std::vector<File* > FileList;
    
    /// \brief XCoherent stands for 'Extra Coherent', 
@@ -46,13 +45,14 @@ class File;
 //-----------------------------------------------------------------------------
 /**
  * \brief  
- * - This class should be used for a stack of 2D dicom images.
- *   It allows to explore (recursively or not) a directory and 
+ *  This class should be used for a stack of 2D dicom images.
+ *
+ *   - It allows to explore (recursively or not) a directory and 
  *   makes a set of 'Single SerieUID Filesets' 
- *   It allows :
- *   - to sort any of the 'Single SerieUID Fileset' on the image position.
- *   - to split any of the Single SerieUID Filesets (better use this name than
- *   'Coherent File List' : it's NOT a std::list, files are NOT coherent ...)
+ *   - It allows :
+ *   - - to sort any of the 'Single SerieUID Fileset' on the image position.
+ *   - - to split any of the Single SerieUID Filesets (better use this name than
+ *   'CoherentFileList' : it's NOT a std::list, files are NOT coherent ...)
  *    into several XCoherent Filesets 
  *   XCoherent stands for 'Extra Coherent' (same orientation, or same position)
  */
@@ -68,6 +68,7 @@ public:
 
    typedef std::vector<File* > FileVector;
 
+/// \brief Constructs a SerieHelper with a RefCounter
     static SerieHelper *New() {return new SerieHelper();}
      
    virtual ~SerieHelper();
@@ -100,7 +101,6 @@ public:
                              { return  (*ItFileSetHt).first; }
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
-   GDCM_LEGACY( void AddRestriction(TagKey const &key, std::string const &value) );
    void AddRestriction(TagKey const &key, std::string const &value, int op);
  
 /**

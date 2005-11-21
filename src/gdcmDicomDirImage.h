@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirImage.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/11/21 09:46:25 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,6 +33,7 @@ namespace gdcm
    gdcmTypeMacro(DicomDirImage);
 
 public:
+/// \brief Constructs a DicomDirImage with a RefCounter
    static DicomDirImage *New(bool empty=false) {return new DicomDirImage(empty);}
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );

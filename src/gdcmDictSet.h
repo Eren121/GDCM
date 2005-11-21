@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:34 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/11/21 09:46:26 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,8 +34,8 @@ typedef std::map<DictKey, Dict*> DictSetHT;
 /**
  * \brief  Container for managing a set of loaded dictionaries (Dict).
  * \note   Hopefully, sharing dictionaries should avoid
- * \par    reloading an already loaded dictionary (saving time)
- * \par    having many in memory representations of the same dictionary
+ *         - reloading an already loaded dictionary (saving time)
+ *         - having many in memory representations of the same dictionary
  *        (saving memory).
  */
 class GDCM_EXPORT DictSet : public RefCounter
@@ -43,6 +43,7 @@ class GDCM_EXPORT DictSet : public RefCounter
    gdcmTypeMacro(DictSet);
 
 public:
+/// \brief Contructs a DictSet with a RefCounter
    static DictSet *New() {return new DictSet();}
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
