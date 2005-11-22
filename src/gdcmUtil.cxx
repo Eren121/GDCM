@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:51:35 $
-  Version:   $Revision: 1.175 $
+  Date:      $Date: 2005/11/22 20:30:46 $
+  Version:   $Revision: 1.176 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 #include <iostream>
+#include <stdarg.h> // for va_list
 
 // For GetCurrentDate, GetCurrentTime
 #include <time.h>
@@ -837,7 +838,7 @@ inline int getlastdigit(unsigned char *data)
 }
 
 /**
- * \brief Encode the mac address on a fixed lenght string of 15 characters.
+ * \brief Encode the mac address on a fixed length string of 15 characters.
  * we save space this way.
  */
 std::string Util::GetMACAddress()
