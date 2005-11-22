@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 12:15:06 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/11/22 12:09:27 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
-/*
+
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
@@ -129,15 +129,17 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested == "UL" ||
           tested == "US" ||
           tested == "UT";
-*/
-   // Should be quicker
 
+   // Should be quicker
+   // --> will *never* work : any rotten value would be considered as OK !
+/*
    return tested != "OB" &&
           tested != "OW" &&
           tested != "OF" &&
           tested != "AT" && // Attribute Tag ?!? contain no printable character
           tested != "UN" && // UN is an actual VR !
           tested != "SQ" ;
+*/
 }
 /// \brief returns the length of a elementary elem whose VR is passed
 unsigned short VR::GetAtomicElementLength(VRKey const &tested)
