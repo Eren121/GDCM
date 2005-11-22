@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/19 22:19:20 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/22 20:31:37 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -354,12 +354,12 @@ int main(int argc, char *argv[])
    std::cerr << "Using quality: " << quality << std::endl;
 
 // Step 1 : Create the header of the image
-   gdcm::File *f = new gdcm::File();
+   gdcm::File *f = gdcm::File::New();
    f->SetLoadMode ( gdcm::LD_ALL ); // Load everything
    f->SetFileName( filename );
    f->Load();
 
-   gdcm::FileHelper *tested = new gdcm::FileHelper( f );
+   gdcm::FileHelper *tested = gdcm::FileHelper::New( f );
    std::string PixelType = tested->GetFile()->GetPixelType();
    int xsize = f->GetXSize();
    int ysize = f->GetYSize();
@@ -423,7 +423,7 @@ int main(int argc, char *argv[])
 
 // Step 1 : Create the header of the image
 
-   gdcm::File *fileToBuild = new gdcm::File();
+   gdcm::File *fileToBuild = gdcm::File::New();
    std::ostringstream str;
 
    // Set the image size
@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
                * samplesPerPixel /* * img.componentSize / 8*/;
 
    uint8_t *imageData = new uint8_t[size];
-   gdcm::FileHelper *fileH = new gdcm::FileHelper(fileToBuild);
+   gdcm::FileHelper *fileH = gdcm::FileHelper::New(fileToBuild);
    //fileH->SetImageData(imageData,size);
    assert( size == testedDataSize );
    size = of->str().size();
@@ -502,10 +502,10 @@ int main(int argc, char *argv[])
    out.close();
 
    delete of;
-   delete f;
-   delete tested;
-   delete fileToBuild;
-   delete fileH;
+   f->Delete();
+   tested->Delete();
+   fileToBuild->Delete();
+   fileH->Delete();
 
    return 0;
 }
