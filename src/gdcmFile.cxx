@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 16:28:06 $
-  Version:   $Revision: 1.305 $
+  Date:      $Date: 2005/11/22 20:28:33 $
+  Version:   $Revision: 1.306 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -600,7 +600,6 @@ float File::GetZSpacing()
    // if no 'Spacing Between Slices' is found, 
    // we assume slices join together
    // (no overlapping, no interslice gap)
-   // if they don't, we're fucked up
    entry = GetDataEntry(0x0018,0x0050);
    if( entry )
    {
@@ -612,6 +611,21 @@ float File::GetZSpacing()
    }
    else
       gdcmWarningMacro("Unfound Slice Thickness (0018,0050)");
+
+   // if no 'Spacing Between Slices' is found, 
+   // we assume slices join together
+   // (no overlapping, no interslice gap)
+   entry = GetDataEntry(0x3004,0x000c);
+   if( entry )
+   {
+      float z1 = (float)entry->GetValue(0);
+      float z2 = (float)entry->GetValue(1);
+      zspacing = z2 - z1; // can be negative...
+
+      if ( zspacing == 0.0 )
+         zspacing = 1.0;
+      return zspacing;
+   }
 
    return zspacing;
 }
