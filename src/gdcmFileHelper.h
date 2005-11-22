@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:26 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/11/22 20:24:46 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -160,6 +160,7 @@ public:
 protected:
    FileHelper( );
    FileHelper( File *header );
+   ~FileHelper();
 
    bool CheckWriteIntegrity();
 
