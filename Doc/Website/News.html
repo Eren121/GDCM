@@ -103,7 +103,9 @@ Any contribution is welcome.
    <UL>
       <LI> 16-bits-LUT full Management
       <LI> User friendly management of <TT>Rescale Slope</TT> and
-           <TT>Rescale Intercept</TT>
+           <TT>Rescale Intercept</TT>.<br>
+           (Well... Maybe it's up to the application to deal with it, not to
+           gdcm ?)
       <LI> Allow manual adjunction / automatic recognition (pfff!...)
            of the private <TT>Dicom Dictionary</TT>
            to be used to parse <TT>Shadow groups</TT> against.
@@ -142,14 +144,24 @@ Any contribution is welcome.
            of gdcm::File*)<br>
            The key is the 'Orientation', the 'Position' 
            or the value of a user choosen 'Tag' <br>
-           -  XCoherentFileSetmap SplitOnOrientation(FileList *fileSet); <br>
-           -  XCoherentFileSetmap SplitOnPosition(FileList *fileSet); <br>
-           -  XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
-                                       uint16_t group, uint16_t element); <br>
+           -  <TT>XCoherentFileSetmap SplitOnOrientation(FileList *fileSet);
+              </TT><br>
+           -  <TT>XCoherentFileSetmap SplitOnPosition(FileList *fileSet);
+              </TT> <br>
+           -  <TT>XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
+                                       uint16_t group, uint16_t element);
+              </TT><br>
            These methods must be called by user, depending on what he wants 
            to do, at application time.- *he* only  knows what his Series 
            contain !-
-      <LI>
+      <LI> To avoid memory leaks and seg faults the user intended classes
+           use now a Reference Counter.<br>
+      <UL>
+         <LI> <TT>new()</TT> and <TT>delete()</TT> are replaced by
+              <TT>New()</TT> and <TT>Delete()</TT>
+         <LI> <TT>Register()</TT> and <TT>Unregister()</TT> methods are 
+         available.
+      </UL>
       <LI>
    </UL>
 
@@ -190,6 +202,9 @@ Any contribution is welcome.
 
   
 <!#######################################################################>
+<A CLASS="anchor" NAME="NewsPreviousVersions">
+<!#######################################################################>
+
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 <H2>
    <A CLASS="anchor" NAME="NewsVersion1_1">
