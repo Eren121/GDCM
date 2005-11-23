@@ -189,7 +189,7 @@ IF( ${CMAKE_HAVE_SYS_SOCKET_H} )
     FILE(WRITE ${GDCM_BINARY_DIR}/CMakeTmp/gdcmTestHAVESALEN.c
       "${POUND}include <sys/types.h>\n"
       "${POUND}include <sys/socket.h>\n"
-      "int main() { struct sockaddr sa; sa.sa_len = 0; }")
+      "int main() { struct sockaddr sa; sa.sa_len = 0; }\n")
     MESSAGE(STATUS "Checking if ifreq has a sa_len")
     TRY_COMPILE(HAVE_SA_LEN
       ${GDCM_BINARY_DIR}
