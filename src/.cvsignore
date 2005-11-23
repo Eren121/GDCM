@@ -6,7 +6,6 @@ Makefile.in
 Makefile
 *.lo
 *.la
-*Debug*
 *Release*
 config.h
 config.h.in
