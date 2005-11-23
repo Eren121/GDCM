@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/18 11:45:34 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/11/23 13:38:17 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -469,7 +469,7 @@ int main(int argc, char *argv[])
  
       std::cout<<std::flush;
       f->Delete();
-      delete fh;
+      fh->Delete();
    }
    else  // ====== Deal with a Directory ======
    {
