@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTestIstringStream.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 16:36:43 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/11/23 16:13:22 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,6 @@
                                                                                 
 =========================================================================*/
 
-#include <stdint.h>
 #include <sstream>
 
 int main()
