@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/25 03:26:41 $
-  Version:   $Revision: 1.307 $
+  Date:      $Date: 2005/11/25 10:29:12 $
+  Version:   $Revision: 1.308 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -561,18 +561,18 @@ float File::GetYSpacing()
  * \brief gets the info from 0018,0088 : Space Between Slices
  *                 else from 0018,0050 : Slice Thickness
  *                 else 1.0
+ *
+ * When an element is missing, we suppose slices join together
+ * (no overlapping, no interslice gap) but we have no way to check it !
+ * For *Dicom* images, ZSpacing *should be* calculated using 
+ * XOrigin, YOrigin, ZOrigin (of the top left image corner)
+ * of 2 consecutive images, and the Orientation
+ * Computing ZSpacing on a single image is not really meaningfull ! 
+ 
  * @return Z dimension of a voxel-to be
  */
 float File::GetZSpacing()
 {
-   // --->
-   // ---> Warning :
-   // --->
-  // For *Dicom* images, ZSpacing should be calculated using 
-  // XOrigin, YOrigin, ZOrigin (of the top left image corner)
-  // of 2 consecutive images, and the Orientation
-  // 
-  // Computing ZSpacing on a single image is not really meaningfull !
 
    float zspacing = 1.0f;
 
