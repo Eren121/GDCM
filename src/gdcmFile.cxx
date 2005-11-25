@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/22 20:28:33 $
-  Version:   $Revision: 1.306 $
+  Date:      $Date: 2005/11/25 03:26:41 $
+  Version:   $Revision: 1.307 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -777,7 +777,8 @@ bool File::GetImageOrientationPatient( float iop[6] )
 {
    std::string strImOriPat;
    //iop is supposed to be float[6]
-   iop[0] = iop[1] = iop[2] = iop[3] = iop[4] = iop[5] = 0.;
+   iop[0] = iop[4] = 1.;
+   iop[1] = iop[2] = iop[3] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
    if ( (strImOriPat = GetEntryString(0x0020,0x0037)) != GDCM_UNFOUND )
