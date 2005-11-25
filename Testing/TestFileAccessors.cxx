@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/11/25 15:56:31 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,10 +54,16 @@ int TestFileAccessors(int, char *[])
 {
    int i = 0;
 
-   float iop[6];
+   double iop[6];
 
    while( gdcmDataImages[i] != 0 )
    {
+   
+      if (gdcmDataImages[i] == "00191113.dcm" )
+         gdcm::Debug::DebugOn();
+      else
+         gdcm::Debug::DebugOff();
+
       std::string filename = GDCM_DATA_ROOT;
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
