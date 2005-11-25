@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/12 14:58:26 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/11/25 18:47:34 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,9 +18,11 @@
 
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 #include <iterator>
 #include <assert.h>
+#include <errno.h>
 #include <sys/stat.h>  //stat function
 
 #ifdef _MSC_VER
@@ -74,6 +76,8 @@ bool DirList::IsDirectory(std::string const &dirName)
     }
   else
     {
+    const char *str = strerror(errno);
+    gdcmErrorMacro( str );
     return false;
     }
 }
@@ -96,6 +100,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    std::string dirName = Util::NormalizePath(dirpath);
 #ifdef _MSC_VER
    WIN32_FIND_DATA fileData;
+   assert( dirName[dirName.size()-1] == '/' );
    HANDLE hFile = FindFirstFile((dirName+"*").c_str(), &fileData);
 
    for(BOOL b = (hFile != INVALID_HANDLE_VALUE); b;
@@ -116,7 +121,13 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
          numberOfFiles++;
       }
    }
+   DWORD dwError = GetLastError();
    if (hFile != INVALID_HANDLE_VALUE) FindClose(hFile);
+   if (dwError != ERROR_NO_MORE_FILES) 
+     {
+     gdcmErrorMacro("FindNextFile error. Error is " << dwError);
+     return -1;
+     }
 
 #else
   // Real POSIX implementation: scandir is a BSD extension only, and doesn't 
@@ -138,7 +149,11 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    for (d = readdir(dir); d; d = readdir(dir))
    {
       fileName = dirName + d->d_name;
-      stat(fileName.c_str(), &buf); //really discard output ?
+      if( stat(fileName.c_str(), &buf) != 0 )
+        {
+        const char *str = strerror(errno);
+        gdcmErrorMacro( str );
+        }
       if ( S_ISREG(buf.st_mode) )    //is it a regular file?
       {
          Filenames.push_back( fileName );
@@ -153,11 +168,15 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
       }
       else
       {
-         // we might need to do a different treament
-         //abort();
+         gdcmErrorMacro( "Unexpected error" );
+         return -1;
       }
    }
-  closedir(dir);
+   if( closedir(dir) != 0 )
+     {
+     const char *str = strerror(errno);
+     gdcmErrorMacro( str );
+     }
 #endif
 
   return numberOfFiles;
