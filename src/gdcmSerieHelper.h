@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:27 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/11/25 13:56:32 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,6 +102,19 @@ public:
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
    void AddRestriction(TagKey const &key, std::string const &value, int op);
+
+   /// \brief Use additional series information such as ProtocolName
+   ///        and SeriesName to identify when a single SeriesUID contains
+   ///        multiple 3D volumes - as can occur with perfusion and DTI imaging
+   void SetUseSeriesDetails( bool useSeriesDetails )
+                                   { m_UseSeriesDetails = useSeriesDetails;}
+   bool GetUseSeriesDetails( ){ return m_UseSeriesDetails; }
+
+   // \brief Create a string that uniquely identifies a series.   By default
+   //         uses the SeriesUID.   If UseSeriesDetails(true) has been called,
+   //         then additional identifying information is used.
+   std::string CreateUniqueSeriesIdentifier( File * inFile );
+
  
 /**
  * \brief Sets the LoadMode as a boolean string. 
@@ -161,7 +174,8 @@ private:
    } ExRule;
    typedef std::vector<ExRule> SerieExRestrictions;
    SerieExRestrictions ExRestrictions;
-
+   bool m_UseSeriesDetails;
+   
    /// \brief Bit string integer (each one considered as a boolean)
    ///        Bit 0 : Skip Sequences,    if possible
    ///        Bit 1 : Skip Shadow Groups if possible

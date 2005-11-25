@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:27 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/11/25 13:56:32 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,6 +40,7 @@ namespace gdcm
  */
 SerieHelper::SerieHelper()
 {
+   m_UseSeriesDetails = false;
    ClearAll();
    UserLessThanFunction = 0;
    DirectOrder = true;
@@ -178,7 +179,7 @@ void SerieHelper::AddGdcmFile(File *header)
                                     ++it)
       {
          const Rule &r = *it;
-         const std::string s;// = header->GetEntryValue( r.first );
+         const std::string s;// = header->GetEntryString( r.first );
          if ( !Util::DicomStringEqual(s, r.second.c_str()) )
          {
            // Argh ! This rule is unmatch let's just quit
@@ -390,7 +391,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
    int nb = fileSet->size();
    if (nb == 0 )
       return CoherentFileSet;
-   float iop[6];
+   double iop[6];
 
    std::string strOrient;
    std::ostringstream ossOrient;   
@@ -567,16 +568,15 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 //based on Jolinda Smith's algorithm
 {
    //iop is calculated based on the file file
-   float cosines[6];
-   float normal[3];
-   float ipp[3];
-   float dist;
-   float min = 0, max = 0;
+   double cosines[6];
+   double normal[3];
+   double ipp[3];
+   double dist;
+   double min = 0, max = 0;
    bool first = true;
-   int n=0;
-   std::vector<float> distlist;
 
-   //!\todo rewrite this for loop.
+   std::multimap<double,File *> distmultimap;
+   // Use a multimap to sort the distances from 0,0,0
    for ( FileList::const_iterator 
          it = fileList->begin();
          it != fileList->end(); ++it )
@@ -603,7 +603,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
             dist += normal[i]*ipp[i];
          }
     
-         distlist.push_back( dist );
+         distmultimap.insert(std::pair<const double,File *>(dist, *it));
 
          max = min = dist;
          first = false;
@@ -620,21 +620,13 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
             dist += normal[i]*ipp[i];
          }
 
-         distlist.push_back( dist );
+         distmultimap.insert(std::pair<const double,File *>(dist, *it));
 
          min = (min < dist) ? min : dist;
          max = (max > dist) ? max : dist;
       }
-      ++n;
-   }
 
-   // Then I order the slices according to the value "dist". Finally, once
-   // I've read in all the slices, I calculate the z-spacing as the difference
-   // between the "dist" values for the first two slices.
-   FileVector CoherentFileVector(n);
-   // CoherentFileVector.reserve( n );
-   CoherentFileVector.resize( n );
-   // gdcmAssertMacro( CoherentFileVector.capacity() >= n );
+   }
 
    // Find out if min/max are coherent
    if ( min == max )
@@ -644,56 +636,50 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
      return false;
    }
 
-   float step = (max - min)/(n - 1);
-   int pos;
-   n = 0;
-    
-   //VC++ don't understand what scope is !! it -> it2
-   for (FileList::const_iterator it2  = fileList->begin();
-        it2 != fileList->end(); ++it2, ++n)
-   {
-      //2*n sort algo !!
-      //Assumption: all files are present (no one missing)
-      pos = (int)( fabs( (distlist[n]-min)/step) + .5 );
-
-      // a Dicom 'Serie' may contain scout views
-      // and images may have differents directions
-      // -> More than one may have the same 'pos'
-      // Sorting has then NO meaning !
-      if (CoherentFileVector[pos]==NULL)
-         CoherentFileVector[pos] = *it2;
-      else
-      {
-         gdcmWarningMacro( "At least 2 files with same position."
-                        << " No PositionPatientOrdering sort performed");
-         return false;
-      }
-   }
-
+   // Check to see if image shares a common position
+    bool ok = true;
+    for (std::multimap<double, File *>::iterator it2 = distmultimap.begin();
+                                                 it2 != distmultimap.end();
+                                                 ++it2)
+    {
+       if (distmultimap.count((*it2).first) != 1)
+       {
+          gdcmErrorMacro("File: "
+               << ((*it2).second->GetFileName())
+               << " Distance: "
+               << (*it2).first
+               << " position is not unique");
+          ok = false;
+       } 
+    }
+    if (!ok)
+    {
+       return false;
+    }
+  
    fileList->clear();  // doesn't delete list elements, only nodes
 
    if (DirectOrder)
    {  
-      //VC++ don't understand what scope is !! it -> it3
-      for (FileVector::const_iterator it3  = CoherentFileVector.begin();
-           it3 != CoherentFileVector.end(); ++it3)
+      for (std::multimap<double, File *>::iterator it3 = distmultimap.begin();
+                                                   it3 != distmultimap.end();
+                                                 ++it3)
       {
-         fileList->push_back( *it3 );
+         fileList->push_back( (*it3).second );
       }
    }
    else // user asked for reverse order
    {
-      FileVector::const_iterator it4;
-      it4 = CoherentFileVector.end();
+      std::multimap<double, File *>::const_iterator it4;
+      it4 = distmultimap.end();
       do
       {
          it4--;
-         fileList->push_back( *it4 );
-      } while (it4 != CoherentFileVector.begin() );
+         fileList->push_back( (*it4).second );
+      } while (it4 != distmultimap.begin() );
    } 
 
-   distlist.clear();
-   CoherentFileVector.clear();
+   distmultimap.clear();
 
    return true;
 }
@@ -789,6 +775,97 @@ bool SerieHelper::UserOrdering(FileList *fileList)
    }
    return true;
 }
+
+std::string SerieHelper::CreateUniqueSeriesIdentifier( File * inFile )
+{
+   if( inFile->IsReadable() )
+   {
+     // 0020 000e UI REL Series Instance UID
+    std::string uid =  inFile->GetEntryString (0x0020, 0x000e);
+    std::string id = uid.c_str();
+    if(m_UseSeriesDetails)
+    {
+    // If the user requests, additional information can be appended
+    // to the SeriesUID to further differentiate volumes in the DICOM
+    // objects being processed.
+ 
+   // 0020 0011 Series Number
+   // A scout scan prior to a CT volume scan can share the same
+   // SeriesUID, but they will sometimes have a different Series Number
+       std::string sNum = inFile->GetEntryString(0x0020, 0x0011);
+       if( sNum == gdcm::GDCM_UNFOUND )
+       {
+           sNum = "";
+       }
+ // 0018 0024 Sequence Name
+ // For T1-map and phase-contrast MRA, the different flip angles and
+ // directions are only distinguished by the Sequence Name
+         std::string sName = inFile->GetEntryString(0x0018, 0x0024);
+         if( sName == gdcm::GDCM_UNFOUND )
+         {
+           sName = "";
+         }
+  // 0018 0050 Slice Thickness
+  // On some CT systems, scout scans and subsequence volume scans will
+  // have the same SeriesUID and Series Number - YET the slice
+  // thickness will differ from the scout slice and the volume slices.
+         std::string sThick = inFile->GetEntryString (0x0018, 0x0050);
+         if( sThick == gdcm::GDCM_UNFOUND )
+         {
+           sThick = "";
+         }
+  // 0028 0010 Rows
+  // If the 2D images in a sequence don't have the same number of rows,
+  // then it is difficult to reconstruct them into a 3D volume.
+         std::string sRows = inFile->GetEntryString (0x0028, 0x0010);
+         if( sRows == gdcm::GDCM_UNFOUND )
+         {
+           sRows = "";
+         }
+  // 0028 0011 Columns
+  // If the 2D images in a sequence don't have the same number of columns,
+  // then it is difficult to reconstruct them into a 3D volume.
+         std::string sColumns = inFile->GetEntryString (0x0028, 0x0011);
+         if( sColumns == gdcm::GDCM_UNFOUND )
+         {
+           sColumns = "";
+         }
+   
+  // Concat the new info
+         std::string num = sNum.c_str();
+         num += sName.c_str();
+         num += sThick.c_str();
+         num += sRows.c_str();
+         num += sColumns.c_str();
+   
+  // Append the new info to the SeriesUID
+         id += ".";
+         id += num.c_str();
+       }
+   
+  // Eliminate non-alnum characters, including whitespace...
+  // that may have been introduced by concats.
+       for(unsigned int i=0; i<id.size(); i++)
+       {
+         while(i<id.size()
+               && !( id[i] == '.'
+                    || (id[i] >= 'a' && id[i] <= 'z')
+                    || (id[i] >= '0' && id[i] <= '9')
+                    || (id[i] >= 'A' && id[i] <= 'Z')))
+         {
+           id.erase(i, 1);
+         }
+       }
+       return id;
+     }
+     else // Could not open inFile
+     {
+       gdcmWarningMacro("Could not parse series info.");
+       std::string id = gdcm::GDCM_UNFOUND;
+       return id;
+     }
+}
+
 
 //-----------------------------------------------------------------------------
 // Print
