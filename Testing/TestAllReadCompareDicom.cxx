@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 13:33:38 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/11/28 16:29:13 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -282,15 +282,17 @@ bool TestFile::ReadFileData(std::ifstream *fp)
    if( !Data )
       return(false);
 
-   // Read data
+   // Read data  Note : .tst images are *always* created 
+   //           on little endian processor !
    fp->read((char *)Data,GetDataSize());
 
    // Track BigEndian troubles
    std::cout << " ScalarSize : " << GetScalarSize() 
-          << " SwapCode:" << GetSwapCode()
+          << " IsCurrentProcessorBigEndian:" 
+          << gdcm::Util::IsCurrentProcessorBigEndian()
           << std::endl;
         
-   //if (GetScalarSize() == 1 || GetSwapCode() == 1234)
+   //if (GetScalarSize() == 1 || GetSwapCode() == 1234)  
    if (GetScalarSize() == 1 || !gdcm::Util::IsCurrentProcessorBigEndian() )    
    {
       return true;
