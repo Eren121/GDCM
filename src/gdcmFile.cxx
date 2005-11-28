@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/25 13:56:31 $
-  Version:   $Revision: 1.309 $
+  Date:      $Date: 2005/11/28 11:54:51 $
+  Version:   $Revision: 1.310 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -773,10 +773,10 @@ float File::GetZOrigin()
   * @return true when one of the tag is found
   *         false when nothing is found
   */
-bool File::GetImageOrientationPatient( double iop[6] )
+bool File::GetImageOrientationPatient( float iop[6] )
 {
    std::string strImOriPat;
-   //iop is supposed to be double[6]
+   //iop is supposed to be float[6]
    iop[0] = iop[4] = 1.;
    iop[1] = iop[2] = iop[3] = iop[5] = 0.;
 

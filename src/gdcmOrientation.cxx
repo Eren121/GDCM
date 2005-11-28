@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/25 13:56:32 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2005/11/28 11:54:51 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ const char* Orientation::GetOrientationTypeString(OrientationType const o)
 ///        (Axial, Coronal, Sagital, ...) of the image
 OrientationType Orientation::GetOrientationType( File *f )
 {
-   double iop[6];
+   float iop[6];
    bool succ = f->GetImageOrientationPatient( iop );
    if ( !succ )
    {
@@ -292,7 +292,7 @@ have multiple letters in as described under "refinements" in C.7.6.1.1.1):
  */
 std::string Orientation::GetOrientation ( File *f )
 {
-   double iop[6];
+   float iop[6];
    if ( !f->GetImageOrientationPatient( iop ) )
    return GDCM_UNFOUND;
 
@@ -304,7 +304,7 @@ std::string Orientation::GetOrientation ( File *f )
 }
 
 
-std::string Orientation::GetSingleOrientation ( double *iop)
+std::string Orientation::GetSingleOrientation ( float *iop)
 {
    std::string orientation;
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/25 13:56:32 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/11/28 11:54:51 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -391,7 +391,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
    int nb = fileSet->size();
    if (nb == 0 )
       return CoherentFileSet;
-   double iop[6];
+   float iop[6];
 
    std::string strOrient;
    std::ostringstream ossOrient;   
@@ -568,14 +568,14 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 //based on Jolinda Smith's algorithm
 {
    //iop is calculated based on the file file
-   double cosines[6];
-   double normal[3];
-   double ipp[3];
-   double dist;
-   double min = 0, max = 0;
+   float cosines[6];
+   float normal[3];
+   float ipp[3];
+   float dist;
+   float min = 0, max = 0;
    bool first = true;
 
-   std::multimap<double,File *> distmultimap;
+   std::multimap<float,File *> distmultimap;
    // Use a multimap to sort the distances from 0,0,0
    for ( FileList::const_iterator 
          it = fileList->begin();
@@ -603,7 +603,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
             dist += normal[i]*ipp[i];
          }
     
-         distmultimap.insert(std::pair<const double,File *>(dist, *it));
+         distmultimap.insert(std::pair<const float,File *>(dist, *it));
 
          max = min = dist;
          first = false;
@@ -620,7 +620,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
             dist += normal[i]*ipp[i];
          }
 
-         distmultimap.insert(std::pair<const double,File *>(dist, *it));
+         distmultimap.insert(std::pair<const float,File *>(dist, *it));
 
          min = (min < dist) ? min : dist;
          max = (max > dist) ? max : dist;
@@ -638,7 +638,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 
    // Check to see if image shares a common position
     bool ok = true;
-    for (std::multimap<double, File *>::iterator it2 = distmultimap.begin();
+    for (std::multimap<float, File *>::iterator it2 = distmultimap.begin();
                                                  it2 != distmultimap.end();
                                                  ++it2)
     {
@@ -661,7 +661,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 
    if (DirectOrder)
    {  
-      for (std::multimap<double, File *>::iterator it3 = distmultimap.begin();
+      for (std::multimap<float, File *>::iterator it3 = distmultimap.begin();
                                                    it3 != distmultimap.end();
                                                  ++it3)
       {
@@ -670,7 +670,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    }
    else // user asked for reverse order
    {
-      std::multimap<double, File *>::const_iterator it4;
+      std::multimap<float, File *>::const_iterator it4;
       it4 = distmultimap.end();
       do
       {

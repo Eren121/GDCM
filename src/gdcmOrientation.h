@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/25 13:56:32 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2005/11/28 11:54:51 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,7 +117,7 @@ private:
    double CalculLikelyhood2Vec(vector3D const &refA, vector3D const &refB, 
                                vector3D const &ori1, vector3D const &ori2);
    vector3D ProductVectorial(vector3D const &vec1, vector3D const &vec2);
-   std::string GetSingleOrientation ( double *iop);
+   std::string GetSingleOrientation ( float *iop);
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

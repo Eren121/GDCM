@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/25 15:56:31 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2005/11/28 11:54:46 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ int TestFileAccessors(int, char *[])
 {
    int i = 0;
 
-   double iop[6];
+   float iop[6];
 
    while( gdcmDataImages[i] != 0 )
    {

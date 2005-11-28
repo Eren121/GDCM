@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 10:55:00 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2005/11/28 11:54:45 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -227,6 +227,12 @@ int main(int argc, char *argv[])
          f->AddForceLoadElement((uint32_t)elemsToForceLoad[2*ri], 
                                 (uint32_t)elemsToForceLoad[2*ri+1] ); 
       }
+// TODO : find why such a polution
+// To avoid polluting the output with messages 
+// 'Last system error was : No such file or directory'
+
+errno = 0; 
+
 
       bool res = f->Load();
       // gdcm::File::IsReadable() is no usable here, because we deal with
