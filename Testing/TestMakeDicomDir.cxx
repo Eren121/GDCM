@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:29 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/11/28 16:31:19 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDirList.h"
+#include "gdcmCommandManager.h"
 #include "gdcmDebug.h"
 
 // ---
@@ -110,13 +111,13 @@ int TestMakeDicomDir(int argc, char *argv[])
  
    gdcm::Command *cmd;
    cmd = CommandStart::New();
-   dcmdir->SetCommand(gdcm::CMD_STARTPROGRESS,cmd);
+   gdcm::CommandManager::SetCommand(dcmdir,gdcm::CMD_STARTPROGRESS,cmd);
    cmd->Delete();
    cmd = CommandProgress::New();
-   dcmdir->SetCommand(gdcm::CMD_PROGRESS,cmd);
+   gdcm::CommandManager::SetCommand(dcmdir,gdcm::CMD_PROGRESS,cmd);
    cmd->Delete();
    cmd = CommandEnd::New();
-   dcmdir->SetCommand(gdcm::CMD_ENDPROGRESS,cmd);
+   gdcm::CommandManager::SetCommand(dcmdir,gdcm::CMD_ENDPROGRESS,cmd);
    cmd->Delete();
 
    // dcmdir->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);

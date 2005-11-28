@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/11/28 16:31:22 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,11 +118,10 @@ std::ostream &Debug::GetOutput ()
       return StandardStream;
 }
 
-void Debug::SendToOutput(unsigned int type,std::string const &msg,const CommandManager *mgr)
+void Debug::SendToOutput(unsigned int type,std::string const &msg,const Base *object)
 {
    bool executed=false;
-   if(mgr)
-      executed=mgr->ConstExecuteCommand(type,msg);
+   executed=CommandManager::ExecuteCommandConst(object,type,msg);
 
    if(!executed)
       GetOutput() << Command::GetCommandAsString(type) << ": " << msg;

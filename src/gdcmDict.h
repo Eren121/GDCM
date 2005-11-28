@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDICT_H
 #define GDCMDICT_H
 
-#include "gdcmCommandManager.h"
+#include "gdcmRefCounter.h"
 #include "gdcmDictEntry.h"
 
 #include <iostream>
@@ -44,7 +44,7 @@ typedef std::map<TagKey, DictEntry *>  TagKeyHT;
  *           combined with all software versions...
  * \see DictSet
  */
-class GDCM_EXPORT Dict : public CommandManager
+class GDCM_EXPORT Dict : public RefCounter
 {
    gdcmTypeMacro(Dict);
 

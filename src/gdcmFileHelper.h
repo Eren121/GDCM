@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #define GDCMFILEHELPER_H
 
 #include "gdcmDebug.h"
-#include "gdcmCommandManager.h"
+#include "gdcmRefCounter.h"
 
 
 namespace gdcm 
@@ -40,7 +40,7 @@ typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, File *);
  * for accessing the image/volume content. One can also use it to
  * write Dicom/ACR-NEMA/RAW files.
  */
-class GDCM_EXPORT FileHelper : public CommandManager
+class GDCM_EXPORT FileHelper : public RefCounter
 {
    gdcmTypeMacro(FileHelper);
 

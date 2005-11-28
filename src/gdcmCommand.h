@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommand.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/11/28 16:31:22 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,10 +55,10 @@ public:
    void SetType(unsigned int type);
    unsigned int GetType() const;
 
-   void SetObject(CommandManager *object);
-   CommandManager *GetObject() const;
-   void SetConstObject(const CommandManager *object);
-   const CommandManager *GetConstObject() const;
+   void SetObject(Base *object);
+   Base *GetObject() const;
+   void SetConstObject(const Base *object);
+   const Base *GetConstObject() const;
 
    void SetText(const std::string &text);
    const std::string &GetText() const;
@@ -73,8 +73,8 @@ protected:
 
 private:
    std::string Text;
-   CommandManager *Object;
-   const CommandManager *ConstObject;
+   Base *Object;
+   const Base *ConstObject;
    unsigned int Cmd;
 };
 } // end namespace gdcm

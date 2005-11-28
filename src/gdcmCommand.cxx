@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/11/28 16:31:22 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,22 +53,22 @@ unsigned int Command::GetType() const
    return Cmd;
 }
 
-void Command::SetObject(CommandManager *object)
+void Command::SetObject(Base *object)
 {
    Object = object;
 }
 
-CommandManager *Command::GetObject() const
+Base *Command::GetObject() const
 {
    return Object;
 }
 
-void Command::SetConstObject(const CommandManager *object)
+void Command::SetConstObject(const Base *object)
 {
    ConstObject = object;
 }
 
-const CommandManager *Command::GetConstObject() const
+const Base *Command::GetConstObject() const
 {
    if(ConstObject)
       return ConstObject;

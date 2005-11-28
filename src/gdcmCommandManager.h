@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandManager.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/11/28 16:31:22 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,8 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 class Command;
-typedef std::map<unsigned int,Command *> CommandHT;
+typedef std::pair<const Base *,unsigned int> CommandKey;
+typedef std::map<CommandKey,Command *> CommandHT;
 
 //-----------------------------------------------------------------------------
 /**
@@ -36,27 +37,35 @@ typedef std::map<unsigned int,Command *> CommandHT;
  *
  * \remarks The execution parameter depends on the
  */
-class GDCM_EXPORT CommandManager : public RefCounter
+class GDCM_EXPORT CommandManager : public Base
 {
    gdcmTypeMacro(CommandManager);
 
 public:
-   /// \brief Contructs an empty Dict with a RefCounter
-   static CommandManager *New() {return new CommandManager();}
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
-   void SetCommand(unsigned int type,Command *command);
-   Command *GetCommand(unsigned int type) const;
+   static void SetCommand(const Base *object,unsigned int type,Command *command);
+   static Command *GetCommand(const Base *object,unsigned int type);
 
-   bool ExecuteCommand(unsigned int type,std::string text = "");
-   bool ConstExecuteCommand(unsigned int type,std::string text = "") const;
+   static bool ExecuteCommand(Base *object,unsigned int type,std::string text = "");
+   static bool ExecuteCommandConst(const Base *object,unsigned int type,std::string text = "");
+
+   static const CommandManager *GetInstance();
 
 protected:
    CommandManager();
    ~CommandManager();
 
+   void InClearCommand(void);
+   void InSetCommand(const Base *object,unsigned int type,Command *command);
+   Command *InGetCommand(const Base *object,unsigned int type);
+
+   bool InExecuteCommand(Base *object,unsigned int type,std::string text = "");
+   bool InExecuteCommandConst(const Base *object,unsigned int type,std::string text = "");
+
 private:
-   mutable CommandHT CommandList;
+   static CommandManager Instance;
+   CommandHT CommandList;
 };
 } // end namespace gdcm
 

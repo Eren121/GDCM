@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:34 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,10 +19,9 @@
 #ifndef GDCMSERIEHELPER_H
 #define GDCMSERIEHELPER_H
 
-#include "gdcmCommon.h" 
+#include "gdcmRefCounter.h"
 #include "gdcmTagKey.h" 
 #include "gdcmDebug.h"  // for LEGACY
-#include "gdcmCommandManager.h"
  
 #include <vector>
 #include <iostream>
@@ -56,7 +55,7 @@ class File;
  *    into several XCoherent Filesets 
  *   XCoherent stands for 'Extra Coherent' (same orientation, or same position)
  */
-class GDCM_EXPORT SerieHelper  : public CommandManager
+class GDCM_EXPORT SerieHelper  : public RefCounter
 {
    gdcmTypeMacro(SerieHelper);
    

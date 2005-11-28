@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandManager.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/11/28 16:31:22 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,9 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+CommandManager CommandManager::Instance;
+
+//-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
  * \brief Constructor used when we want to generate dicom files from scratch
@@ -36,32 +39,73 @@ CommandManager::CommandManager()
  */
 CommandManager::~CommandManager ()
 {
+   if( this == GetInstance() )
+      InClearCommand();
 }
 
 //-----------------------------------------------------------------------------
 // Public
-void CommandManager::SetCommand(unsigned int type,Command *command)
+void CommandManager::SetCommand(const Base *object,unsigned int type,Command *command)
 {
-   Command *cmd=CommandList[type];
-   if(cmd!=command)
+   Instance.InSetCommand(object,type,command);
+}
+
+Command *CommandManager::GetCommand(const Base *object,unsigned int type)
+{
+   return(Instance.InGetCommand(object,type));
+}
+
+bool CommandManager::ExecuteCommand(Base *object,unsigned int type,std::string text)
+{
+   return(Instance.InExecuteCommand(object,type,text));
+}
+
+bool CommandManager::ExecuteCommandConst(const Base *object,unsigned int type,std::string text)
+{
+   return(Instance.InExecuteCommandConst(object,type,text));
+}
+
+const CommandManager *CommandManager::GetInstance()
+{
+   return &Instance;
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+void CommandManager::InClearCommand(void)
+{
+   CommandHT::iterator it;
+   for(it=CommandList.begin();it!=CommandList.end();++it)
    {
-      if(cmd)
-         cmd->Unregister();
-      if(command)
-      {
-         CommandList[type]=command;
-         command->Register();
-      }
-      else
-         CommandList.erase(type);
+      if( it->second )
+         it->second->Delete();
    }
 }
 
-Command *CommandManager::GetCommand(unsigned int type) const
+void CommandManager::InSetCommand(const Base *object,unsigned int type,Command *command)
 {
+   CommandKey key = CommandKey(object,type);
+   Command *cmd = CommandList[key];
+   if( cmd != command )
+   {
+      if( cmd )
+         cmd->Unregister();
+      if( command )
+      {
+         CommandList[key]=command;
+         command->Register();
+      }
+      else
+         CommandList.erase(key);
+   }
+}
+
+Command *CommandManager::InGetCommand(const Base *object,unsigned int type)
+{
+   CommandKey key = CommandKey(object,type);
    try
    {
-      return CommandList[type];
+      return CommandList[key];
    }
    catch(...)
    {
@@ -69,13 +113,13 @@ Command *CommandManager::GetCommand(unsigned int type) const
    }
 }
 
-bool CommandManager::ExecuteCommand(unsigned int type,std::string text)
+bool CommandManager::InExecuteCommand(Base *object,unsigned int type,std::string text)
 {
-   Command *cmd = GetCommand(type);
-   if(cmd)
+   Command *cmd = GetCommand(object,type);
+   if( cmd )
    {
       cmd->SetText(text);
-      cmd->SetObject(this);
+      cmd->SetObject(object);
       cmd->SetType(type);
       cmd->Execute();
       return true;
@@ -83,22 +127,19 @@ bool CommandManager::ExecuteCommand(unsigned int type,std::string text)
    return false;
 }
 
-bool CommandManager::ConstExecuteCommand(unsigned int type,std::string text) const
+bool CommandManager::InExecuteCommandConst(const Base *object,unsigned int type,std::string text)
 {
-   Command *cmd = GetCommand(type);
-   if(cmd)
+   Command *cmd = GetCommand(object,type);
+   if( cmd )
    {
       cmd->SetText(text);
-      cmd->SetConstObject(this);
+      cmd->SetConstObject(object);
       cmd->SetType(type);
       cmd->Execute();
       return true;
    }
    return false;
 }
-
-//-----------------------------------------------------------------------------
-// Protected
 
 //-----------------------------------------------------------------------------
 // Private
@@ -111,9 +152,10 @@ void CommandManager::Print(std::ostream &os, std::string const &indent)
    CommandHT::iterator it;
    for(it=CommandList.begin();it!=CommandList.end();++it)
    {
-      os<<indent<<"   "<<Command::GetCommandAsString(it->first)
-        <<" : "<<typeid(it->second).name()
-        <<" ("<<it->second<<")"<<std::endl;
+      os<<indent<<"   "<<typeid(it->first.first).name()<<" ("<<it->first.first<<") - "
+        <<Command::GetCommandAsString(it->first.second)
+        <<" : "<<typeid(it->second).name()<<" ("<<it->second<<")"
+        <<std::endl;
    }
 }
 

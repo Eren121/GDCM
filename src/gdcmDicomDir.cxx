@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.174 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.175 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,6 +37,7 @@
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmDataEntry.h"
+#include "gdcmCommandManager.h"
 
 #include <fstream>
 #include <string>
@@ -503,7 +504,7 @@ void DicomDir::CallStartMethod()
 {
    Progress = 0.0f;
    Abort    = false;
-   ExecuteCommand(CMD_STARTPROGRESS);
+   CommandManager::ExecuteCommand(this,CMD_STARTPROGRESS);
 }
 
 /**
@@ -511,7 +512,7 @@ void DicomDir::CallStartMethod()
  */
 void DicomDir::CallProgressMethod()
 {
-   ExecuteCommand(CMD_PROGRESS);
+   CommandManager::ExecuteCommand(this,CMD_PROGRESS);
 }
 
 /**
@@ -520,7 +521,7 @@ void DicomDir::CallProgressMethod()
 void DicomDir::CallEndMethod()
 {
    Progress = 1.0f;
-   ExecuteCommand(CMD_ENDPROGRESS);
+   CommandManager::ExecuteCommand(this,CMD_ENDPROGRESS);
 }
 
 //-----------------------------------------------------------------------------

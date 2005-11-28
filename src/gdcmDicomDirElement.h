@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDICOMDIRELEMENT_H
 #define GDCMDICOMDIRELEMENT_H
 
-#include "gdcmCommandManager.h"
+#include "gdcmRefCounter.h"
 
 #include <list>
 
@@ -65,7 +65,7 @@ typedef std::list<DicomElement> ListDicomDirFiducialElem;
  * \brief   Represents elements contained in a DicomDir class
  *          for the chained lists from the file 'Dicts/DicomDir.dic'
  */
-class GDCM_EXPORT DicomDirElement : public CommandManager
+class GDCM_EXPORT DicomDirElement : public RefCounter
 {
    gdcmTypeMacro(DicomDirElement);
 

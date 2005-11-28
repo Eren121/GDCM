@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMDOCENTRYSET_H
 #define GDCMDOCENTRYSET_H
 
-#include "gdcmCommandManager.h"
+#include "gdcmRefCounter.h"
 #include "gdcmVRKey.h"
 #include "gdcmTagKey.h"
 
@@ -58,7 +58,7 @@ class DictEntry;
  *       members to this class since this class is designed as an adapter 
  *       in the form of an abstract base class.
  */
-class GDCM_EXPORT DocEntrySet : public CommandManager
+class GDCM_EXPORT DocEntrySet : public RefCounter
 {
    gdcmTypeMacro(DocEntrySet);
 

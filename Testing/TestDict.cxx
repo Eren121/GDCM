@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:30 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/11/28 16:31:19 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,12 +102,11 @@ int TestDict(int , char *[])
       entry=pubDict->GetNextEntry();
    }
 
-   // Let's play with DicEntry stuff !
-
+/*   // Let's play with DicEntry stuff !
    // First, we try to break an Entry.
    entry=pubDict->GetFirstEntry();
    entry->SetVR("PN");
-   // Should warn us !
+   // Should warn us !*/
 
    return(0);
 }

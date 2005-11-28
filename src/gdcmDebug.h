@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:30:03 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2005/11/28 16:31:23 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ public:
 
    static std::ostream &GetOutput ();
 
-   static void SendToOutput(unsigned int type,std::string const &msg,const CommandManager *mgr = NULL);
+   static void SendToOutput(unsigned int type,std::string const &msg,const Base *object = NULL);
 
 private:
    static bool DebugFlag;
