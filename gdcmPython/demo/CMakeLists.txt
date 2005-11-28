@@ -25,6 +25,9 @@ IF(PYTHON_EXECUTABLE)
   ADD_TEST(Python-PrintDicomDir ${PYTHON_EXECUTABLE}
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDicomDir.py
     )
+  ADD_TEST(Python-MakeDicomDir ${PYTHON_EXECUTABLE}
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDicomDir.py
+    )
 ELSE(PYTHON_EXECUTABLE)
   MESSAGE(FATAL_ERROR "You requested testing for python, but python was not
     found")
@@ -46,6 +49,11 @@ CONFIGURE_FILE(
 CONFIGURE_FILE(
     ${GDCM_SOURCE_DIR}/gdcmPython/demo/PrintDicomDir.py.in
     ${GDCM_BINARY_DIR}/gdcmPython/demo/PrintDicomDir.py
+)
+
+CONFIGURE_FILE(
+    ${GDCM_SOURCE_DIR}/gdcmPython/demo/MakeDicomDir.py.in
+    ${GDCM_BINARY_DIR}/gdcmPython/demo/MakeDicomDir.py
 )
 
 CONFIGURE_FILE(

@@ -12,14 +12,6 @@ def PrintUse():
    print ""
    print ""
 
-### Progress methods
-def startMethod():
-   print "Start"
-def progressMethod():
-   print "Progress",dicomdir.GetProgress()
-def endMethod():
-   print "End"
-
 ### Get filename from command line or default it
 try:
    fileName = sys.argv[1]
@@ -35,10 +27,6 @@ except IndexError:
 
 ### Build the DicomDir element list
 dicomdir = gdcm.DicomDir.New()
-
-dicomdir.SetStartMethod(startMethod)
-dicomdir.SetProgressMethod(progressMethod)
-dicomdir.SetEndMethod(endMethod)
 
 dicomdir.SetFileName(fileName)
 dicomdir.Load()

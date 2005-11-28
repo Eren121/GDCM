@@ -6,6 +6,10 @@
 #include "gdcmCommon.h"
 #include "gdcmBase.h"
 #include "gdcmRefCounter.h"
+#include "gdcmCommand.h"
+#include "gdcmCommandPy.h"
+#include "gdcmDebug.h"
+#include "gdcmCommandManager.h"
 #include "gdcmTagKey.h"
 #include "gdcmVRKey.h"
 #include "gdcmDict.h"
@@ -37,45 +41,6 @@
 #include "gdcmVR.h"
 #include "gdcmTS.h"
 #include "gdcmDictGroupName.h"
-
-////////////////////////////////////////////////////////////////////////////
-/// Refer (below) to the definition of multi-argument typemap
-///   %typemap(python, in)
-///      ( gdcm::DicomDir::Method*, void*, gdcm::DicomDir::Method*)
-/// for detail on gdcmPythonVoidFunc() and gdcmPythonVoidFuncArgDelete().
-void gdcmPythonVoidFunc(void *arg)
-{
-   PyObject *arglist, *result;
-   PyObject *func = (PyObject *)arg;
-
-   arglist = Py_BuildValue("()");
-
-   result = PyEval_CallObject(func, arglist);
-   Py_DECREF(arglist);
-
-   if (result)
-   {
-      Py_XDECREF(result);
-   }
-   else
-   {
-      if (PyErr_ExceptionMatches(PyExc_KeyboardInterrupt))
-      {
-         std::cerr << "Caught a Ctrl-C within python, exiting program.\n";
-         Py_Exit(1);
-      }
-      PyErr_Print();
-   }
-}
-
-void gdcmPythonVoidFuncArgDelete(void *arg)
-{
-   PyObject *func = (PyObject *)arg;
-   if (func)
-   {
-      Py_DECREF(func);
-   }
-}
 
 /// This is required in order to avoid %including all the gdcm include files.
 using namespace gdcm;
@@ -115,36 +80,6 @@ typedef unsigned long long uint64_t;
       newEntry = Py_BuildValue("");
    }
    $result = newEntry;
-}
-
-////////////////////////////////////////////////////////////////////////////
-// Multi-argument typemap designed for wrapping the progress related methods
-// in order to control from an external application the computation of
-// a DicomDir object (see DicomDir::SetStartMethod*,
-// DicomDir::SetProgressMethod* and DicomDir::SetEndMethod*).
-// Motivation: since DicomDir parsing can be quite long, a GUI application
-//             needs to display the avancement and potentially offer a
-//             cancel method to the user (when this one feels things are
-//             longer than expected).
-// Example of usage: refer to demo/DicomDirProgressMethod.py
-// Note: Uses gdcmPythonVoidFunc and gdcmPythonVoidFuncArgDelete defined
-//       in the Swig verbatim section of this gdcm.i i.e. in the above section
-//       enclosed within the %{ ... %} scope operator ).
-%typemap(python, in) (void(*method)(void *),void *arg,void(*argDelete)(void *))
-{
-	if($input!=Py_None)
-	{
-		Py_INCREF($input);
-		$1=gdcmPythonVoidFunc;
-		$2=$input;
-		$3=gdcmPythonVoidFuncArgDelete;
-	}
-	else
-	{
-		$1=NULL;
-		$2=NULL;
-		$3=NULL;
-	}
 }
 
 ////////////////////  STL string versus Python str  ////////////////////////
@@ -244,6 +179,10 @@ typedef unsigned long long uint64_t;
 %include "gdcmCommon.h"
 %include "gdcmBase.h"
 %include "gdcmRefCounter.h"
+%include "gdcmCommand.h"
+%include "gdcmCommandPy.h"
+%include "gdcmDebug.h"
+%include "gdcmCommandManager.h"
 %include "gdcmTagKey.h"
 %include "gdcmVRKey.h"
 %include "gdcmDicomEntry.h"
