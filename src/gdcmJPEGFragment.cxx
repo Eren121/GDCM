@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/11/28 16:50:32 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,7 +82,7 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
       //         NOT the compression method
 
       // other JPEG lossy not supported
-      gdcmStaticErrorMacro( "Unknown jpeg lossy compression ");
+      gdcmErrorMacro( "Unknown jpeg lossy compression ");
    }
 }
 

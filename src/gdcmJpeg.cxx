@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/11/28 16:50:32 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -268,7 +268,7 @@ bool JPEGFragment::ReadJPEGFile (std::ifstream *fp, void *image_buffer, int &sta
     // If we get here, the JPEG code has signaled an error.
     // We need to clean up the JPEG object, close the input file, and return.
 
-    gdcmStaticErrorMacro( "Serious Problem !" );
+    gdcmErrorMacro( "Serious Problem !" );
     jpeg_destroy_decompress(&cinfo);
     return 0;
   }

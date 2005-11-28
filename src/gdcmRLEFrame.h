@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/18 14:33:24 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/11/28 16:50:33 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #ifndef GDCMRLEFRAME_H
 #define GDCMRLEFRAME_H
 
-#include "gdcmCommon.h"
+#include "gdcmBase.h"
 
 #include <iostream>
 #include <fstream>
@@ -43,7 +43,7 @@ namespace gdcm
  *        - the offsets of each segment of the frame,
  *        - the (corresponding) lengths of each segment of the frame.
  */
-class GDCM_EXPORT RLEFrame
+   class GDCM_EXPORT RLEFrame : public Base
 {
 friend class File;
 friend class RLEFramesInfo;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2005/11/28 16:50:32 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -162,7 +162,7 @@ private:
    }                                                           \
 }
 #define gdcmDebugMacro(msg)                                    \
-   gdcmDebugBodyMacro(this,msg)
+   gdcmDebugBodyMacro(NULL,msg)
 #define gdcmStaticDebugMacro(msg)                              \
    gdcmDebugBodyMacro(NULL,msg)
 #endif //NDEBUG

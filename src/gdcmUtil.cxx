@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:34 $
-  Version:   $Revision: 1.177 $
+  Date:      $Date: 2005/11/28 16:50:33 $
+  Version:   $Revision: 1.178 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -453,7 +453,7 @@ bool Util::IsCurrentProcessorBigEndian()
 std::string Util::DicomString(const char *s, size_t l)
 {
    std::string r(s, s+l);
-   gdcmStaticAssertMacro( !(r.size() % 2) ); // == basically 'l' is even
+   gdcmAssertMacro( !(r.size() % 2) ); // == basically 'l' is even
    return r;
 }
 
@@ -476,7 +476,7 @@ std::string Util::DicomString(const char *s)
       l++;
    }
    std::string r(s, s+l);
-   gdcmStaticAssertMacro( !(r.size() % 2) );
+   gdcmAssertMacro( !(r.size() % 2) );
    return r;
 }
 
@@ -528,7 +528,7 @@ bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
      case GDCM_LESSOREQUAL :
         return s1_even <= s2_even;
      default :
-        gdcmStaticDebugMacro(" Wrong operator : " << op);
+        gdcmDebugMacro(" Wrong operator : " << op);
         return false;
   }
 }

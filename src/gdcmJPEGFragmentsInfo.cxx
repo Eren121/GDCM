@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2005/11/28 16:50:32 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ JPEGFragment *JPEGFragmentsInfo::GetFirstFragment()
 
 JPEGFragment *JPEGFragmentsInfo::GetNextFragment()
 {
-   gdcmStaticAssertMacro (ItFragments != Fragments.end());
+   gdcmAssertMacro (ItFragments != Fragments.end());
 
    ++ItFragments;
    if (ItFragments != Fragments.end())
