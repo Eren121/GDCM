@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:09:19 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/11/28 10:32:05 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,9 +130,12 @@ private:
    //int PixelSize; // useless
    bool PixelSign;
    int SwapCode;
-
-   bool IsRaw;
+   
+   // cache whether this is a strange GE transfer syntax (which has   
+   // one transfer syntax for the header and another for the pixel data).
    bool IsPrivateGETransferSyntax;
+    
+   bool IsRaw;
    bool IsJPEG2000;
    bool IsJPEGLS;
    bool IsJPEGLossless;

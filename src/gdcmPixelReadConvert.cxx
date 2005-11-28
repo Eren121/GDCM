@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/10 13:39:55 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2005/11/28 10:32:05 $
+  Version:   $Revision: 1.102 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,21 +115,21 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
  
-   if (! file->IsDicomV3() )  // Should be ACR-NEMA file
-   {
-      IsRaw = true;
-      // Don't loose time checking unexistant Transfer Syntax !
-      IsPrivateGETransferSyntax = IsMPEG
+   IsPrivateGETransferSyntax = IsMPEG
              = IsJPEG2000 = IsJPEGLS = IsJPEGLossy  
              = IsJPEGLossless = IsRLELossless 
              = false;
+     
+   if (! file->IsDicomV3() )  // Should be ACR-NEMA file
+   {
+      IsRaw = true;
    }
    else
    {
       std::string ts = file->GetTransferSyntax();
 
       IsRaw = false;
-      while (true)
+      while (true) // short to write than if elseif elseif elseif ...
       {
          // mind the order : check the most usual first.
          if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian)         break;
@@ -139,12 +139,13 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
          if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian) break;
          break;
       }
-          
+      // cache whether this is a strange GE transfer syntax (which uses
+      // a little endian transfer syntax for the header and a big endian
+      // transfer syntax for the pixel data). 
       IsPrivateGETransferSyntax = 
                 ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
 
       IsMPEG =  IsJPEG2000 =  IsJPEGLS =  IsJPEGLossy =  IsJPEGLossless = IsRLELossless = false;  
-
       if (!IsRaw)
       {     
          while(true)
@@ -156,7 +157,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
             if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
             if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
             if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
-            gdcmWarningMacro("Unexepected Transfer Syntax :[" << ts << "]");
+            gdcmWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
             break;
          } 
       }
@@ -799,7 +800,6 @@ void PixelReadConvert::BuildLUTRGBA()
 void PixelReadConvert::ConvertSwapZone()
 {
    unsigned int i;
-   uint16_t localSwapCode = SwapCode;
    
    // If this file is 'ImplicitVR BigEndian PrivateGE Transfer Syntax', 
    // then the header is in little endian format and the pixel data is in 
@@ -827,26 +827,27 @@ void PixelReadConvert::ConvertSwapZone()
    // Therefore, in either case, if the file is in
    // 'ImplicitVR BigEndian PrivateGE Transfer Syntax', then GDCM needs to switch
    // the byte swapping code when entering the pixel data.
-
+   
+   int tempSwapCode = SwapCode;
    if ( IsPrivateGETransferSyntax )
    {
+      gdcmWarningMacro(" IsPrivateGETransferSyntax found; turn the SwapCode"); 
       // PrivateGETransferSyntax only exists for 'true' Dicom images
       // we assume there is no 'exotic' 32 bits endianess!
-      switch (localSwapCode)
+      if (SwapCode == 1234) 
       {
-         case 1234:
-            localSwapCode = 4321;
-            break;
-         case 4321:
-            localSwapCode = 1234;
-            break;
-      }  
+         tempSwapCode = 4321;
+      }
+      else if (SwapCode == 4321)
+      {
+         tempSwapCode = 1234;
+      }
    }
-  
+    
    if ( BitsAllocated == 16 )
    {
       uint16_t *im16 = (uint16_t*)Raw;
-      switch( localSwapCode )
+      switch( tempSwapCode )
       {
          case 1234:
             break;
@@ -859,7 +860,8 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmWarningMacro("SwapCode value (16 bits) not allowed.");
+            gdcmWarningMacro("SwapCode value (16 bits) not allowed." 
+                        << tempSwapCode);
       }
    }
    else if ( BitsAllocated == 32 )
@@ -868,7 +870,7 @@ void PixelReadConvert::ConvertSwapZone()
       uint16_t high;
       uint16_t low;
       uint32_t *im32 = (uint32_t*)Raw;
-      switch ( localSwapCode )
+      switch ( tempSwapCode )
       {
          case 1234:
             break;
@@ -904,7 +906,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmWarningMacro("SwapCode value (32 bits) not allowed." );
+            gdcmWarningMacro("SwapCode value (32 bits) not allowed." << tempSwapCode );
       }
    }
 }
