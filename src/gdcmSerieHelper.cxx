@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:51 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2005/11/28 17:23:37 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -569,10 +569,10 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 {
    //iop is calculated based on the file file
    float cosines[6];
-   float normal[3];
-   float ipp[3];
-   float dist;
-   float min = 0, max = 0;
+   double normal[3];
+   double ipp[3];
+   double dist;
+   double min = 0, max = 0;
    bool first = true;
 
    std::multimap<float,File *> distmultimap;
