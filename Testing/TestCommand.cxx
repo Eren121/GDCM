@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:19 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/11/28 17:28:58 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #include "gdcmCommandManager.h"
 
 #include <iostream>
-#include <typeinfo.h>
+#include <typeinfo>
 
 class CommandTest : public gdcm::Command
 {
