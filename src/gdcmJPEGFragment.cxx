@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:32 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/11/28 17:24:21 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,7 +99,7 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
  * @param os     Stream to print to.
  * @param indent Indentation string to be prepended during printing.
  */
-void JPEGFragment::Print( std::ostream &os, std::string indent )
+void JPEGFragment::Print( std::ostream &os, std::string const &indent )
 {
    os << indent
       << "JPEG fragment: offset : " <<  Offset
