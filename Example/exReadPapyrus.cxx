@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:28 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2005/11/28 10:55:00 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -232,7 +232,6 @@ int main(int argc, char *argv[])
    if( ! *Fp )
    {
       std::cout <<  "Cannot open file: " << fileName << std::endl;
-      //gdcmDebugMacro( "Cannot open file: " << fileName.c_str() );
       delete Fp;
       Fp = 0;
       return 0;

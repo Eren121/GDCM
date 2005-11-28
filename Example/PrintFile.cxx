@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/23 13:38:17 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2005/11/28 10:55:00 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,6 @@ void ShowLutData(gdcm::File *f)
          std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
          if (   /*lutDescriptor   == GDCM_UNFOUND*/ 0 )
          {
-            //gdcmWarningMacro( "LUT Descriptor is missing" );
             std::cout << "LUT Descriptor is missing" << std::endl;
             return;
          }
@@ -68,8 +67,7 @@ void ShowLutData(gdcm::File *f)
                   << std::endl;
          if ( nbRead != 3 )
          {
-               //gdcmWarningMacro( "Wrong LUT descriptor" );
-               std::cout << "Wrong LUT descriptor" << std::endl;
+            std::cout << "Wrong LUT descriptor" << std::endl;
          }
          //LUT Data (CTX dependent)    
          gdcm::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006); 
@@ -399,7 +397,6 @@ int main(int argc, char *argv[])
                                      &length, &deb, &nbits );
                   if ( nbRead != 3 )
                   {
-                      //gdcmWarningMacro( "Wrong LUT descriptor" );
                       std::cout << "Wrong LUT descriptor" << std::endl;
                   }                                                  
                   gdcm::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006);
