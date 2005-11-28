@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:26 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2005/11/28 17:09:22 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,18 +23,6 @@
 #include "gdcmArgMgr.h"
 
 #include <iostream>
-
-// ---
-void StartMethod(void *toto) {
-  (void)toto;
-   std::cout<<"Start parsing"<<std::endl;
-}
-
-void EndMethod(void *toto) {
-  (void)toto;
-   std::cout<<"End parsing"<<std::endl;
-}
-// ---
 
 /**
   * \brief   Explores recursively the given directory
@@ -104,9 +92,6 @@ int main(int argc, char *argv[])
    // we ask for Directory parsing
 
    dcmdir = gdcm::DicomDir::New( );
-
-   dcmdir->SetStartMethod(StartMethod);
-   dcmdir->SetEndMethod(EndMethod);
 
    dcmdir->SetLoadMode(loadMode);
    dcmdir->SetDirectoryName(dirName);
