@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/11/28 15:30:03 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -215,7 +215,7 @@ private:
    }                                                           \
 }
 #define gdcmAssertMacro(msg)                                   \
-   gdcmAssertBodyMacro(this,msg)
+   gdcmAssertBodyMacro(NULL,msg)
 #define gdcmStaticAssertMacro(msg)                             \
    gdcmAssertBodyMacro(NULL,msg)
 

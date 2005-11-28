@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/28 15:30:04 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #define GDCMDICOMENTRY_H
 
 #include "gdcmCommon.h"
-#include "gdcmCommandManager.h"
+#include "gdcmRefCounter.h"
 #include "gdcmVRKey.h"
 #include "gdcmTagKey.h"
 
@@ -39,7 +39,7 @@ namespace gdcm
  *  - the VM (Value Multiplicity)
  *  - the corresponding name in english
  */
-class GDCM_EXPORT DicomEntry : public CommandManager
+class GDCM_EXPORT DicomEntry : public RefCounter
 {
    gdcmTypeMacro(DicomEntry);
 

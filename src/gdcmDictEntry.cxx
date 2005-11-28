@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 14:12:24 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/11/28 15:30:04 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,14 +71,8 @@ DictEntry *DictEntry::New(uint16_t group, uint16_t elem,
  */
 void DictEntry::SetVR(VRKey const &vr) 
 {
-   if ( IsVRUnknown() )
-   {
-      DicomEntry::SetVR(vr);
-   }
-   else 
-   {
-      gdcmErrorMacro( "Overwriting VR might compromise a dictionary");
-   }
+   gdcmAssertMacro( IsVRUnknown() );
+   DicomEntry::SetVR(vr);
 }
 
 /**
@@ -88,14 +82,8 @@ void DictEntry::SetVR(VRKey const &vr)
  */
 void DictEntry::SetVM(TagName const &vm) 
 {
-   if ( IsVMUnknown() )
-   {
-      VM = vm;
-   }
-   else 
-   {
-      gdcmErrorMacro( "Overwriting VM might compromise a dictionary");
-   }
+   gdcmAssertMacro( IsVMUnknown() );
+   VM = vm;
 }
 
 //-----------------------------------------------------------------------------

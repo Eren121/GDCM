@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:34 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2005/11/28 15:30:04 $
+  Version:   $Revision: 1.104 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -831,7 +831,7 @@ void PixelReadConvert::ConvertSwapZone()
    int tempSwapCode = SwapCode;
    if ( IsPrivateGETransferSyntax )
    {
-      gdcmWarningMacro(" IsPrivateGETransferSyntax found; turn the SwapCode"); 
+      gdcmStaticWarningMacro(" IsPrivateGETransferSyntax found; turn the SwapCode"); 
       // PrivateGETransferSyntax only exists for 'true' Dicom images
       // we assume there is no 'exotic' 32 bits endianess!
       if (SwapCode == 1234) 
