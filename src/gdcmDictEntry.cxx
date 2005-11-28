@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:30:04 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/11/28 18:01:25 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ DictEntry *DictEntry::New(uint16_t group, uint16_t elem,
  */
 void DictEntry::SetVR(VRKey const &vr) 
 {
-   gdcmAssertMacro( IsVRUnknown() );
+   //gdcmAssertMacro( IsVRUnknown() );
    DicomEntry::SetVR(vr);
 }
 
