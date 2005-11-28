@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:25 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/11/28 15:20:32 $
+  Version:   $Revision: 1.71 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,8 +56,6 @@ public:
 /// \brief Constructs a DicomDir with a RefCounter
    static DicomDir *New() {return new DicomDir();}
 
-   typedef void Method(void*);
-
    bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
    
@@ -88,32 +86,8 @@ public:
    // Parsing
    void ParseDirectory();
 
-   // Note: the DicomDir:: namespace prefix is needed by Swig in the 
-   //       following method declarations. Refer to gdcmPython/gdcm.i
-   //       for the reasons of this unnecessary notation at C++ level.
-   void SetStartMethod(    DicomDir::Method *method,
-                           void *arg = NULL );
-   void SetProgressMethod( DicomDir::Method *method,
-                           void *arg = NULL );
-   void SetEndMethod(      DicomDir::Method *method,
-                           void *arg = NULL );
-   // Note: replace DicomDir::Method *method to void(*method)(void *) to
-   //       avoid wrapping problems with the typemap conversions
-   void SetStartMethod(    void(*method)(void *), // DicomDir::Method *method
-                           void *arg,
-                           void(*argDelete)(void *));
-   void SetProgressMethod( void(*method)(void *), // DicomDir::Method *method
-                           void *arg,
-                           void(*argDelete)(void *));
-   void SetEndMethod(      void(*method)(void *), // DicomDir::Method *method
-                           void *arg, 
-                           void(*argDelete)(void *));
-   void SetStartMethodArgDelete   ( DicomDir::Method *method );
-   void SetProgressMethodArgDelete( DicomDir::Method *method );
-   void SetEndMethodArgDelete     ( DicomDir::Method *method );
-
    /// GetProgress GetProgress
-   float GetProgress()   { return Progress; }
+   float GetProgress() const { return Progress; }
    /// AbortProgress AbortProgress
    void  AbortProgress() { Abort = true; }
    /// IsAborted IsAborted
@@ -171,29 +145,12 @@ private:
    ListDicomDirPatient Patients;
    ListDicomDirPatient::iterator ItPatient;
 
-   /// pointer to the initialisation method for any progress bar   
-   Method *StartMethod;
-   /// pointer to the incrementation method for any progress bar
-   Method *ProgressMethod;
-   /// pointer to the termination method for any progress bar
-   Method *EndMethod;
-   /// pointer to the ??? method for any progress bar   
-   Method *StartMethodArgDelete;
-   /// pointer to the ??? method for any progress bar
-   Method* ProgressMethodArgDelete;
-   /// pointer to the ??? method for any progress bar
-   Method *EndMethodArgDelete;
-   /// pointer to the ??? for any progress bar   
-   void *StartArg;
-   /// pointer to the ??? for any progress bar
-   void *ProgressArg;
-   /// pointer to the ??? for any progress bar   
-   void *EndArg;
    /// value of the ??? for any progress bar
    float Progress;
    /// value of the ??? for any progress bar   
-   bool Abort;
    bool ParseDir;
+
+   mutable bool Abort;
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

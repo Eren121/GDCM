@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 10:18:44 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,25 +28,25 @@ namespace gdcm
 // Public
 void RLEFrame::SetOffset(unsigned int id,long offset)
 {
-   gdcmAssertMacro(id<15);
+   gdcmStaticAssertMacro(id<15);
    Offset[id] = offset;
 }
 
 long RLEFrame::GetOffset(unsigned int id)
 {
-   gdcmAssertMacro(id<15);
+   gdcmStaticAssertMacro(id<15);
    return Offset[id];
 }
 
 void RLEFrame::SetLength(unsigned int id,long length)
 {
-   gdcmAssertMacro(id<15);
+   gdcmStaticAssertMacro(id<15);
    Length[id] = length;
 }
 
 long RLEFrame::GetLength(unsigned int id)
 {
-   gdcmAssertMacro(id<15);
+   gdcmStaticAssertMacro(id<15);
    return Length[id];
 }
 
@@ -119,8 +119,9 @@ bool RLEFrame::ReadAndDecompressRLEFragment( uint8_t *subRaw,
                                                                                 
       if ( numberOfReadBytes > fragmentSize )
       {
-         gdcmWarningMacro( "Read more bytes (" << numberOfReadBytes
-              << " ) than the segment size. (" << fragmentSize << ")" );
+         gdcmStaticWarningMacro( "Read more bytes (" << numberOfReadBytes
+                              << " ) than the segment size. (" 
+                              << fragmentSize << ")" );
          return false;
       }
    }

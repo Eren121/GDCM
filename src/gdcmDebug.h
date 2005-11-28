@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:21:32 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2005/11/28 15:20:32 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define GDCMDEBUG_H
 
 #include "gdcmCommon.h"
+#include "gdcmCommand.h"
 
 #include <iostream>
 #include <sstream>
@@ -30,7 +31,9 @@
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
+class CommandManager;
 
+//-----------------------------------------------------------------------------
 /**
  * \brief Debug is an object for debugging in program.
  * It has 2 debugging modes :
@@ -53,8 +56,10 @@ public:
 
    /// \brief This is a global flag that controls whether 
    ///        both debug and warning messages are displayed. 
+   ///        (used to warn user when file contains some oddity)
    static void SetDebugFlag (bool flag);
-   static bool GetDebugFlag ();
+   /// \brief   Gets the debug flag value
+   static bool GetDebugFlag () {return DebugFlag;}
    /// \brief Sets the Debug Flag to true
    static void DebugOn  () { SetDebugFlag(true);  }
    /// \brief Sets the Debug Flag to false
@@ -63,7 +68,8 @@ public:
    /// \brief This is a global flag that controls whether 
    ///        warning messages are displayed.
    static void SetWarningFlag (bool flag);
-   static bool GetWarningFlag ();
+   /// \brief   Gets the warning flag value
+   static bool GetWarningFlag () {return WarningFlag;}
    /// \brief Sets the Warning Flag to true
    static void WarningOn  () { SetWarningFlag(true);  }
    /// \brief Sets the Warning Flag to false
@@ -71,16 +77,28 @@ public:
 
    /// \brief This is a global flag that controls if debug are redirected
    ///        to a file or not
-   static void SetDebugToFile (bool flag);
-   static bool GetDebugToFile ();
+   static void SetOutputToFile (bool flag);
+   static bool GetOutputToFile ();
    /// \brief Next debug messages will be sent in the debug file
-   static void DebugToFileOn  () { SetDebugToFile(true);  }
+   static void OutputToFileOn  () { SetOutputToFile(true);  }
    /// \brief Next debug messages will be sent in the standard output
-   static void DebugToFileOff () { SetDebugToFile(false); }
+   static void OutputToFileOff () { SetOutputToFile(false); }
 
-   static void SetDebugFilename (std::string const &filename);
+   static void SetOutputFileName (std::string const &filename);
 
-   static std::ofstream &GetDebugFile ();
+   static std::ostream &GetOutput ();
+
+   static void SendToOutput(unsigned int type,std::string const &msg,const CommandManager *mgr = NULL);
+
+private:
+   static bool DebugFlag;
+   static bool WarningFlag;
+   static bool OutputToFile;
+
+   static std::ofstream OutputFileStream;
+   static std::ostream &StandardStream;
+
+   static const int LINE_LENGTH;
 };
 
 } // end namespace gdcm
@@ -111,156 +129,95 @@ public:
  * \brief   Debug : To be used to help bug tracking developer
  * @param msg message part
  */
-#ifdef NDEBUG
-#define gdcmDebugMacro(msg) {}
-#else
-#define gdcmDebugMacro(msg)                                 \
-{                                                           \
-   if( Debug::GetDebugFlag() )                              \
-   {                                                        \
-   std::ostringstream osmacro;                              \
-   osmacro << "Debug: In " __FILE__ ", line " << __LINE__   \
-           << ", function " << GDCM_FUNCTION << '\n';       \
-   if( errno )                                              \
-     osmacro  << "Last system error was: " <<               \
-       strerror(errno) << '\n';                             \
-   osmacro << msg << "\n\n";                                \
-   if( Debug::GetDebugToFile() )                            \
-      Debug::GetDebugFile() << osmacro.str() << std::endl;  \
-   else                                                     \
-      std::cerr << osmacro.str() << std::endl;              \
-   }                                                        \
+#define gdcmMessageBodyMacro(type,obj,msg,adds)                \
+{                                                              \
+   std::ostringstream osmacro;                                 \
+   osmacro << "In " __FILE__ ", line " << __LINE__             \
+           << ", function " << GDCM_FUNCTION << "\n"           \
+           << adds << msg << "\n\n";                           \
+   gdcm::Debug::SendToOutput(type,osmacro.str(),obj);          \
 }
-#endif //NDEBUG
 
 /**
- * \brief   Warning : To be used to warn the user when some oddity occurs
+ * \brief Debug : To be used to help bug tracking developer
  * @param msg message part
  */
 #ifdef NDEBUG
-#define gdcmWarningMacro(msg) {}
+#define gdcmDebugBodyMacro(obj,msg) {}
+#define gdcmDebugMacro(msg) {}
+#define gdcmStaticDebugMacro(msg) {}
 #else
-#define gdcmWarningMacro(msg)                               \
-{                                                           \
-   if( Debug::GetWarningFlag() )                            \
-   {                                                        \
-   std::ostringstream osmacro;                              \
-   osmacro << "Warning: In " __FILE__ ", line " << __LINE__ \
-           << ", function " << GDCM_FUNCTION << "\n"        \
-           << msg << "\n\n";                                \
-   if( Debug::GetDebugToFile() )                            \
-      Debug::GetDebugFile() << osmacro.str() << std::endl;  \
-   else                                                     \
-      std::cerr << osmacro.str() << std::endl;              \
-   }                                                        \
+#define gdcmDebugBodyMacro(obj,msg)                            \
+{                                                              \
+   if( Debug::GetDebugFlag() )                                 \
+   {                                                           \
+      std::string adds="";                                     \
+      if( errno )                                              \
+      {                                                        \
+         adds = "Last system error was: ";                     \
+         adds += strerror(errno);                              \
+         adds += "\n";                                         \
+      }                                                        \
+      gdcmMessageBodyMacro(gdcm::CMD_DEBUG,obj,msg,adds);      \
+   }                                                           \
 }
+#define gdcmDebugMacro(msg)                                    \
+   gdcmDebugBodyMacro(this,msg)
+#define gdcmStaticDebugMacro(msg)                              \
+   gdcmDebugBodyMacro(NULL,msg)
 #endif //NDEBUG
+
+/**
+ * \brief Warning : To be used to warn the user when some oddity occurs
+ * @param msg message part
+ */
+// No NDEBUG test to always have a return of warnings !!!
+#define gdcmWarningBodyMacro(obj,msg)                          \
+{                                                              \
+   if( Debug::GetWarningFlag() )                               \
+      gdcmMessageBodyMacro(gdcm::CMD_WARNING,obj,msg,"");      \
+}
+#define gdcmWarningMacro(msg)                                  \
+   gdcmWarningBodyMacro(this,msg)
+#define gdcmStaticWarningMacro(msg)                            \
+   gdcmWarningBodyMacro(NULL,msg)
 
 /**
  * \brief   Error : To be used when unecoverabale error occurs
  *          at a 'deep' level. (don't use it if file is not ACR/DICOM!)
  * @param msg second message part 
  */
-#ifdef NDEBUG
-#define gdcmErrorMacro(msg) {}
-#else
-#define gdcmErrorMacro(msg)                                 \
-{                                                           \
-   std::ostringstream osmacro;                              \
-   osmacro << "Error: In " __FILE__ ", line " << __LINE__   \
-           << ", function " << GDCM_FUNCTION << '\n'        \
-           << msg << "\n\n";                                \
-   if( Debug::GetDebugToFile() )                            \
-      Debug::GetDebugFile() << osmacro.str() << std::endl;  \
-   else                                                     \
-      std::cerr << osmacro.str() << std::endl;              \
+// No NDEBUG test to always have a return of errors !!!
+#define gdcmErrorBodyMacro(obj,msg)                            \
+{                                                              \
+   gdcmMessageBodyMacro(gdcm::CMD_ERROR,obj,msg,"");           \
 }
-#endif //NDEBUG
+#define gdcmErrorMacro(msg)                                    \
+   gdcmErrorBodyMacro(this,msg)
+#define gdcmStaticErrorMacro(msg)                              \
+   gdcmErrorBodyMacro(NULL,msg)
 
 /**
- * \brief   Assert : To be used when an *absolutely* impossible error occurs
- *          No function should be allowed to stop the process instead of
- *          warning the caller!
+ * \brief Assert : To be used when an *absolutely* impossible error occurs
+ *        No function should be allowed to stop the process instead of
+ *        warning the caller!
  * @param arg argument to test
  *        An easy solution to pass also a message is to do:
  *        gdcmAssertMacro( "my message" && 2 < 3 )
  */
-#ifdef NDEBUG
-#define gdcmAssertMacro(arg) {}
-#else
-#define gdcmAssertMacro(arg)                                \
-{                                                           \
-   if( !(arg) )                                             \
-   {                                                        \
-   std::ostringstream osmacro;                              \
-   osmacro << "Assert: In " __FILE__ ", line " << __LINE__  \
-           << ", function " << GDCM_FUNCTION                \
-           << "\n\n";                                       \
-   if( Debug::GetDebugToFile() )                            \
-      Debug::GetDebugFile() << osmacro.str() << std::endl;  \
-   else                                                     \
-      std::cerr << osmacro.str() << std::endl;              \
-   assert ( arg );                                          \
-   }                                                        \
+// No NDEBUG test to always have a return of asserts !!!
+#define gdcmAssertBodyMacro(obj,arg)                           \
+{                                                              \
+   if( !(arg) )                                                \
+   {                                                           \
+      gdcmMessageBodyMacro(gdcm::CMD_ASSERT,obj,"","");        \
+      assert ( arg );                                          \
+   }                                                           \
 }
-#endif //NDEBUG
+#define gdcmAssertMacro(msg)                                   \
+   gdcmAssertBodyMacro(this,msg)
+#define gdcmStaticAssertMacro(msg)                             \
+   gdcmAssertBodyMacro(NULL,msg)
 
 //-----------------------------------------------------------------------------
-//
-// Define GDCM_LEGACY macro to mark legacy methods where they are
-// declared in their class.
-// 
-// WARNING : Don't try to use it with 'inline' methods ! 
-//
-//Example usage:
-//
-//   // @deprecated Replaced by MyOtherMethod() as of gdcm 2.0.
-//   GDCM_LEGACY(void MyMethod());
-#if defined(GDCM_LEGACY_REMOVE)
-  // Remove legacy methods completely.
-# define GDCM_LEGACY(method)
-#elif defined(GDCM_LEGACY_SILENT) || defined(SWIG)
-  // Provide legacy methods with no warnings.
-# define GDCM_LEGACY(method) method
-#else
-  // Setup compile-time warnings for uses of deprecated methods if
-  // possible on this compiler.
-# if defined(__GNUC__) && !defined(__INTEL_COMPILER) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#if defined(__APPLE__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 3)
-// Seems like there is a bug in APPLE gcc for deprecated attribute and ctor
-// This is fixed in g++ 4.0 (Tiger)
-#  define GDCM_LEGACY(method) method
-#else
-#  define GDCM_LEGACY(method) method __attribute__((deprecated))
-#endif
-# elif defined(_MSC_VER) && _MSC_VER >= 1300
-#  define GDCM_LEGACY(method) __declspec(deprecated) method
-# else
-#  define GDCM_LEGACY(method) method
-# endif
-#endif
-
-// Macros to create runtime deprecation warning messages in function
-// bodies.  Example usage:
-//
-//   void MyClass::MyOldMethod()
-//   {
-//     GDCM_LEGACY_BODY(MyClass::MyOldMethod, 2.0);
-//   }
-//
-//   void MyClass::MyMethod()
-//   {
-//     GDCM_LEGACY_REPLACED_BODY(MyClass::MyMethod, 5.0,
-//                               MyClass::MyOtherMethod);
-//   }
-#if defined(GDCM_LEGACY_REMOVE) || defined(GDCM_LEGACY_SILENT)
-# define GDCM_LEGACY_BODY(method, version)
-# define GDCM_LEGACY_REPLACED_BODY(method, version, replace)
-#else
-# define GDCM_LEGACY_BODY(method, version) \
-  gdcmWarningMacro(#method " was deprecated for gdcm" #version " and will be removed in a future version.")
-# define GDCM_LEGACY_REPLACED_BODY(method, version, replace) \
-  gdcmWarningMacro(#method " was deprecated for gdcm" #version " and will be removed in a future version.  Use " #replace " instead.")
-#endif
-
 #endif

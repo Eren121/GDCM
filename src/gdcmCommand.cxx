@@ -1,0 +1,128 @@
+/*=========================================================================
+                                                                                
+  Program:   gdcm
+  Module:    $RCSfile: gdcmCommand.cxx,v $
+  Language:  C++
+  Date:      $Date: 2005/11/28 15:20:35 $
+  Version:   $Revision: 1.1 $
+                                                                                
+  Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
+  l'Image). All rights reserved. See Doc/License.txt or
+  http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
+                                                                                
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+                                                                                
+=========================================================================*/
+// ---------------------------------------------------------------
+#include "gdcmCommand.h"
+
+namespace gdcm 
+{
+//-----------------------------------------------------------------------------
+// Constructor / Destructor
+/**
+ * \brief Constructor used when we want to generate dicom files from scratch
+ */
+Command::Command()
+{
+   Cmd = CMD_UNKNOWN;
+   Object = NULL;
+   ConstObject = NULL;
+   Text = "";
+}
+
+
+/**
+ * \brief   Canonical destructor.
+ */
+Command::~Command ()
+{
+}
+
+//-----------------------------------------------------------------------------
+// Public
+void Command::SetType(unsigned int type)
+{
+   Cmd = type;
+}
+
+unsigned int Command::GetType() const
+{
+   return Cmd;
+}
+
+void Command::SetObject(CommandManager *object)
+{
+   Object = object;
+}
+
+CommandManager *Command::GetObject() const
+{
+   return Object;
+}
+
+void Command::SetConstObject(const CommandManager *object)
+{
+   ConstObject = object;
+}
+
+const CommandManager *Command::GetConstObject() const
+{
+   if(ConstObject)
+      return ConstObject;
+   else
+      return GetObject();
+}
+
+void Command::SetText(const std::string &text)
+{
+   Text = text;
+}
+
+const std::string &Command::GetText(void) const
+{
+   return Text;
+}
+
+void Command::Execute()
+{
+}
+
+const char *Command::GetCommandAsString(unsigned int command)
+{
+   switch(command)
+   {
+      case CMD_UNKNOWN:
+         return "Unknown";
+      case CMD_DEBUG:
+         return "Debug";
+      case CMD_WARNING:
+         return "Warning";
+      case CMD_ERROR:
+         return "Error";
+      case CMD_ASSERT:
+         return "Assert";
+      case CMD_STARTPROGRESS:
+         return "StartProgress";
+      case CMD_ENDPROGRESS:
+         return "EndProgress";
+      case CMD_PROGRESS:
+         return "Progress";
+      default:
+         return "Undefined !!!";
+   }
+}
+
+//-----------------------------------------------------------------------------
+// Protected
+
+//-----------------------------------------------------------------------------
+// Private
+
+//-----------------------------------------------------------------------------
+// Print
+
+//-----------------------------------------------------------------------------
+} // end namespace gdcm

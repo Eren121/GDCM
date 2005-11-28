@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/17 18:01:59 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/11/28 15:20:29 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,7 +159,7 @@ int TestUtil(int , char *[])
 // ----------------------------------------------------------
 // Let's test gdcm::Debug, now.
     std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag() <<std::endl;
-    gdcm::Debug::SetDebugFilename ("DummyFileNameToWriteTo.txt");
+    gdcm::Debug::SetOutputFileName ("DummyFileNameToWriteTo.txt");
     std::cout << "We set a Debug file"   <<std::endl;
     if ( !gdcm::Debug::GetDebugFlag() )
     {
@@ -169,7 +169,7 @@ int TestUtil(int , char *[])
     std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
     gdcm::Debug::SetDebugFlag ( false );
     std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
-    gdcm::Debug::SetDebugFilename ("DummyFileNameToWriteTo2.txt");    
+    gdcm::Debug::SetOutputFileName ("DummyFileNameToWriteTo2.txt");    
 
    return 0;
 }

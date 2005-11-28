@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:25 $
-  Version:   $Revision: 1.173 $
+  Date:      $Date: 2005/11/28 15:20:32 $
+  Version:   $Revision: 1.174 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,10 +129,6 @@ DicomDir::DicomDir()
  */
 DicomDir::~DicomDir() 
 {
-   SetStartMethod(NULL,NULL,NULL);
-   SetProgressMethod(NULL,NULL,NULL);
-   SetEndMethod(NULL,NULL,NULL);
-
    ClearPatient();
    if ( MetaElems )
    {
@@ -345,117 +341,6 @@ void DicomDir::ParseDirectory()
    CreateDicomDir();
 }
 
-void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg )
-{
-   SetStartMethod(method,arg,NULL);
-}
-
-void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg )
-{
-   SetProgressMethod(method,arg,NULL);
-}
-
-void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg )
-{
-   SetEndMethod(method,arg,NULL);
-}
-
-/**
- * \brief   Set the start method to call when the parsing of the
- *          directory starts.
- * @param   method Method to call
- * @param   arg    Argument to pass to the method
- * @param   argDelete    Argument 
- * \warning In python : the arg parameter isn't considered
- */
-void DicomDir::SetStartMethod( DicomDir::Method *method, void *arg, 
-                               DicomDir::Method *argDelete )
-{
-   if ( StartArg && StartMethodArgDelete )
-   {
-      StartMethodArgDelete( StartArg );
-   }
-
-   StartMethod          = method;
-   StartArg             = arg;
-   StartMethodArgDelete = argDelete;
-}
-
-
-/**
- * \brief   Set the progress method to call when the parsing of the
- *          directory progress
- * @param   method Method to call
- * @param   arg    Argument to pass to the method
- * @param   argDelete    Argument  
- * \warning In python : the arg parameter isn't considered
- */
-void DicomDir::SetProgressMethod( DicomDir::Method *method, void *arg, 
-                                  DicomDir::Method *argDelete )
-{
-   if ( ProgressArg && ProgressMethodArgDelete )
-   {
-      ProgressMethodArgDelete( ProgressArg );
-   }
-
-   ProgressMethod          = method;
-   ProgressArg             = arg;
-   ProgressMethodArgDelete = argDelete;
-}
-
-/**
- * \brief   Set the end method to call when the parsing of the directory ends
- * @param   method Method to call
- * @param   arg    Argument to pass to the method
- * @param   argDelete    Argument 
- * \warning In python : the arg parameter isn't considered
- */
-void DicomDir::SetEndMethod( DicomDir::Method *method, void *arg, 
-                             DicomDir::Method *argDelete )
-{
-   if ( EndArg && EndMethodArgDelete )
-   {
-      EndMethodArgDelete( EndArg );
-   }
-
-   EndMethod          = method;
-   EndArg             = arg;
-   EndMethodArgDelete = argDelete;
-}
-
-/**
- * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the
- *          class is destroyed
- * @param   method Method to call to delete the argument
- */
-void DicomDir::SetStartMethodArgDelete( DicomDir::Method *method ) 
-{
-   StartMethodArgDelete = method;
-}
-
-/**
- * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when the 
- *          class is destroyed          
- * @param   method Method to call to delete the argument
- */
-void DicomDir::SetProgressMethodArgDelete( DicomDir::Method *method )
-{
-   ProgressMethodArgDelete = method;
-}
-
-/**
- * \brief   Set the method to delete the argument
- *          The argument is destroyed when the method is changed or when
- *          the class is destroyed
- * @param   method Method to call to delete the argument
- */
-void DicomDir::SetEndMethodArgDelete( DicomDir::Method *method )
-{
-   EndMethodArgDelete = method;
-}
-
 /**
  * \brief    writes on disc a DICOMDIR
  * \ warning does NOT add the missing elements in the header :
@@ -618,10 +503,7 @@ void DicomDir::CallStartMethod()
 {
    Progress = 0.0f;
    Abort    = false;
-   if ( StartMethod )
-   {
-      StartMethod( StartArg );
-   }
+   ExecuteCommand(CMD_STARTPROGRESS);
 }
 
 /**
@@ -629,10 +511,7 @@ void DicomDir::CallStartMethod()
  */
 void DicomDir::CallProgressMethod()
 {
-   if ( ProgressMethod )
-   {
-      ProgressMethod( ProgressArg );
-   }
+   ExecuteCommand(CMD_PROGRESS);
 }
 
 /**
@@ -641,10 +520,7 @@ void DicomDir::CallProgressMethod()
 void DicomDir::CallEndMethod()
 {
    Progress = 1.0f;
-   if ( EndMethod )
-   {
-      EndMethod( EndArg );
-   }
+   ExecuteCommand(CMD_ENDPROGRESS);
 }
 
 //-----------------------------------------------------------------------------
@@ -654,16 +530,6 @@ void DicomDir::CallEndMethod()
  */
 void DicomDir::Initialize()
 {
-   StartMethod             = NULL;
-   ProgressMethod          = NULL;
-   EndMethod               = NULL;
-   StartMethodArgDelete    = NULL;
-   ProgressMethodArgDelete = NULL;
-   EndMethodArgDelete      = NULL;
-   StartArg                = NULL;
-   ProgressArg             = NULL;
-   EndArg                  = NULL;
-
    Progress = 0.0;
    Abort = false;
 

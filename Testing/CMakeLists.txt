@@ -11,6 +11,7 @@ SET(TEST_SOURCES
   TestUtil.cxx
   TestBug.cxx
   TestHash.cxx
+  TestCommand.cxx
   TestTS.cxx
   TestVR.cxx
   TestDictGroupName.cxx

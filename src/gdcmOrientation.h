@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:51 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMORIENTATION_H
 #define GDCMORIENTATION_H
 
-#include "gdcmRefCounter.h"
+#include "gdcmCommandManager.h"
 #include <map>
 
 namespace gdcm 
@@ -95,7 +95,7 @@ typedef enum {
  * The values are given within the 'Patient referential', *not* within the 'Organ referential' ...
  */
 
-class GDCM_EXPORT Orientation : public RefCounter
+class GDCM_EXPORT Orientation : public CommandManager
 {
    gdcmTypeMacro(Orientation);
 public:

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 10:32:05 $
-  Version:   $Revision: 1.102 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.103 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -157,7 +157,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
             if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
             if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
             if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
-            gdcmWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
+            gdcmStaticWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
             break;
          } 
       }
@@ -207,7 +207,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
       if ( ! LutRedData )
       {
-         gdcmWarningMacro("Unable to read Red Palette Color Lookup Table data");
+         gdcmStaticWarningMacro("Unable to read Red Palette Color Lookup Table data");
       }
 
       // //// Green round:
@@ -215,7 +215,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
       if ( ! LutGreenData)
       {
-         gdcmWarningMacro("Unable to read Green Palette Color Lookup Table data");
+         gdcmStaticWarningMacro("Unable to read Green Palette Color Lookup Table data");
       }
 
       // //// Blue round:
@@ -223,7 +223,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
       if ( ! LutBlueData )
       {
-         gdcmWarningMacro("Unable to read Blue Palette Color Lookup Table data");
+         gdcmStaticWarningMacro("Unable to read Blue Palette Color Lookup Table data");
       }
    }
    FileInternal = file;   
@@ -243,14 +243,14 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    //// First stage: get our hands on the Pixel Data.
    if ( !fp )
    {
-      gdcmWarningMacro( "Unavailable file pointer." );
+      gdcmStaticWarningMacro( "Unavailable file pointer." );
       return false;
    }
 
    fp->seekg( PixelOffset, std::ios::beg );
    if ( fp->fail() || fp->eof() )
    {
-      gdcmWarningMacro( "Unable to find PixelOffset in file." );
+      gdcmStaticWarningMacro( "Unable to find PixelOffset in file." );
       return false;
    }
 
@@ -270,8 +270,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // variable). But RawSize is the right size of the image !
       if ( PixelDataLength != RawSize )
       {
-         gdcmWarningMacro( "Mismatch between PixelReadConvert : "
-                          << PixelDataLength << " and RawSize : " << RawSize );
+         gdcmStaticWarningMacro( "Mismatch between PixelReadConvert : "
+                              << PixelDataLength << " and RawSize : " << RawSize );
       }
       if ( PixelDataLength > RawSize )
       {
@@ -284,7 +284,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
 
       if ( fp->fail() || fp->eof())
       {
-         gdcmWarningMacro( "Reading of Raw pixel data failed." );
+         gdcmStaticWarningMacro( "Reading of Raw pixel data failed." );
          return false;
       }
    } 
@@ -293,13 +293,13 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       if ( ! RLEInfo->DecompressRLEFile
                                ( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
       {
-         gdcmWarningMacro( "RLE decompressor failed." );
+         gdcmStaticWarningMacro( "RLE decompressor failed." );
          return false;
       }
    }
    else if ( IsMPEG )
    {
-      //gdcmWarningMacro( "Sorry, MPEG not yet taken into account" );
+      //gdcmStaticWarningMacro( "Sorry, MPEG not yet taken into account" );
       //return false;
       // fp has already been seek to start of mpeg
       //ReadMPEGFile(fp, (char*)Raw, PixelDataLength); 
@@ -310,8 +310,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       // Default case concerns JPEG family
       if ( ! ReadAndDecompressJPEGFile( fp ) )
       {
-         gdcmWarningMacro( "JPEG decompressor ( ReadAndDecompressJPEGFile()"
-                        << " method ) failed." );
+         gdcmStaticWarningMacro( "JPEG decompressor ( ReadAndDecompressJPEGFile()"
+                              << " method ) failed." );
          return false;
       }
    }
@@ -368,7 +368,7 @@ bool PixelReadConvert::BuildRGBImage()
       return false;
    }
 
-   gdcmDebugMacro( "--> BuildRGBImage" );
+   gdcmStaticDebugMacro( "--> BuildRGBImage" );
                                                                                 
    // Build RGB Pixels
    AllocateRGB();
@@ -477,7 +477,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
          inputlength += jpegfrag->GetLength();
          jpegfrag = JPEGInfo->GetNextFragment();
       }
-      gdcmAssertMacro( inputlength != 0);
+      gdcmStaticAssertMacro( inputlength != 0);
       uint8_t *inputdata = new uint8_t[inputlength];
       char *pinputdata = (char*)inputdata;
       jpegfrag = JPEGInfo->GetFirstFragment();
@@ -495,7 +495,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
          return true;
       }
       // wow what happen, must be an error
-      gdcmWarningMacro( "gdcm_read_JPEG2000_file() failed "); 
+      gdcmStaticWarningMacro( "gdcm_read_JPEG2000_file() failed "); 
       return false;
    }
    else if ( IsJPEGLS )
@@ -519,7 +519,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
          inputlength += jpegfrag->GetLength();
          jpegfrag = JPEGInfo->GetNextFragment();
       }
-      gdcmAssertMacro( inputlength != 0);
+      gdcmStaticAssertMacro( inputlength != 0);
       uint8_t *inputdata = new uint8_t[inputlength];
       char *pinputdata = (char*)inputdata;
       jpegfrag = JPEGInfo->GetFirstFragment();
@@ -539,7 +539,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
   delete[] inputdata;
 #endif
 
-      gdcmWarningMacro( "Sorry, JPEG-LS not yet taken into account" );
+      gdcmStaticWarningMacro( "Sorry, JPEG-LS not yet taken into account" );
       fp->seekg( JPEGInfo->GetFirstFragment()->GetOffset(), std::ios::beg);
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
@@ -598,7 +598,7 @@ void PixelReadConvert::BuildLUTRGBA()
        || LutGreenDescriptor == GDCM_UNFOUND
        || LutBlueDescriptor  == GDCM_UNFOUND )
    {
-      gdcmWarningMacro( "(At least) a LUT Descriptor is missing" );
+      gdcmStaticWarningMacro( "(At least) a LUT Descriptor is missing" );
       return;
    }
 
@@ -614,7 +614,7 @@ void PixelReadConvert::BuildLUTRGBA()
                         &lengthR, &debR, &nbitsR );
    if ( nbRead != 3 )
    {
-      gdcmWarningMacro( "Wrong Red LUT descriptor" );
+      gdcmStaticWarningMacro( "Wrong Red LUT descriptor" );
    }                                                                                
    int lengthG;  // Green LUT length in Bytes
    int debG;     // Subscript of the first Lut Value
@@ -625,7 +625,7 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthG, &debG, &nbitsG );  
    if ( nbRead != 3 )
    {
-      gdcmWarningMacro( "Wrong Green LUT descriptor" );
+      gdcmStaticWarningMacro( "Wrong Green LUT descriptor" );
    }
                                                                                 
    int lengthB;  // Blue LUT length in Bytes
@@ -636,15 +636,15 @@ void PixelReadConvert::BuildLUTRGBA()
                     &lengthB, &debB, &nbitsB );
    if ( nbRead != 3 )
    {
-      gdcmWarningMacro( "Wrong Blue LUT descriptor" );
+      gdcmStaticWarningMacro( "Wrong Blue LUT descriptor" );
    }
  
-   gdcmDebugMacro(" lengthR " << lengthR << " debR " 
-                 << debR << " nbitsR " << nbitsR);
-   gdcmDebugMacro(" lengthG " << lengthG << " debG " 
-                 << debG << " nbitsG " << nbitsG);
-   gdcmDebugMacro(" lengthB " << lengthB << " debB " 
-                 << debB << " nbitsB " << nbitsB);
+   gdcmStaticDebugMacro(" lengthR " << lengthR << " debR " 
+                      << debR << " nbitsR " << nbitsR);
+   gdcmStaticDebugMacro(" lengthG " << lengthG << " debG " 
+                      << debG << " nbitsG " << nbitsG);
+   gdcmStaticDebugMacro(" lengthB " << lengthB << " debB " 
+                      << debB << " nbitsB " << nbitsB);
 
    if ( !lengthR ) // if = 2^16, this shall be 0 see : CP-143
       lengthR=65536;
@@ -657,7 +657,7 @@ void PixelReadConvert::BuildLUTRGBA()
 
    if ( ( ! LutRedData ) || ( ! LutGreenData ) || ( ! LutBlueData ) )
    {
-      gdcmWarningMacro( "(At least) a LUT is missing" );
+      gdcmStaticWarningMacro( "(At least) a LUT is missing" );
       return;
    }
 
@@ -735,7 +735,7 @@ void PixelReadConvert::BuildLUTRGBA()
       // with 65536 entries LUT ?!?
       // Still looking for accurate info on the web :-(
 
-      gdcmWarningMacro( "Sorry Palette Color Lookup Tables not yet dealt with"
+      gdcmStaticWarningMacro( "Sorry Palette Color Lookup Tables not yet dealt with"
                          << " for 16 Bits Per Pixel images" );
 
       // forge the 4 * 16 Bits Red/Green/Blue/Alpha LUT
@@ -860,7 +860,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmWarningMacro("SwapCode value (16 bits) not allowed." 
+            gdcmStaticWarningMacro("SwapCode value (16 bits) not allowed." 
                         << tempSwapCode);
       }
    }
@@ -906,7 +906,7 @@ void PixelReadConvert::ConvertSwapZone()
             }
             break;
          default:
-            gdcmWarningMacro("SwapCode value (32 bits) not allowed." << tempSwapCode );
+            gdcmStaticWarningMacro("SwapCode value (32 bits) not allowed." << tempSwapCode );
       }
    }
 }
@@ -1096,7 +1096,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else
       {
-         gdcmWarningMacro("Weird image (BitsAllocated !=8, 12, 16, 32)");
+         gdcmStaticWarningMacro("Weird image (BitsAllocated !=8, 12, 16, 32)");
          throw FormatError( "Weird image !?" );
       }
    }
@@ -1109,7 +1109,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
  */
 void PixelReadConvert::ConvertRGBPlanesToRGBPixels()
 {
-   gdcmWarningMacro("--> ConvertRGBPlanesToRGBPixels");
+   gdcmStaticWarningMacro("--> ConvertRGBPlanesToRGBPixels");
 
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
@@ -1145,7 +1145,7 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
   // On such images, RLE achieves a compression ratio that is much better 
   // than the compression ratio on an equivalent RGB image. 
  
-   gdcmWarningMacro("--> ConvertYcBcRPlanesToRGBPixels");
+   gdcmStaticWarningMacro("--> ConvertYcBcRPlanesToRGBPixels");
    
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
@@ -1245,13 +1245,13 @@ void PixelReadConvert::ConvertHandleColor()
    // - [Planar 1] AND [Photo C] handled with ConvertYcBcRPlanesToRGBPixels()
    // - [Planar 2] OR  [Photo D] requires LUT intervention.
 
-   gdcmDebugMacro("--> ConvertHandleColor "
-                    << "Planar Configuration " << PlanarConfiguration );
+   gdcmStaticDebugMacro("--> ConvertHandleColor "
+                     << "Planar Configuration " << PlanarConfiguration );
 
    if ( ! IsRawRGB() )
    {
       // [Planar 2] OR  [Photo D]: LUT intervention done outside
-      gdcmDebugMacro("--> RawRGB : LUT intervention done outside");
+      gdcmStaticDebugMacro("--> RawRGB : LUT intervention done outside");
       return;
    }
                                                                                 
@@ -1260,13 +1260,13 @@ void PixelReadConvert::ConvertHandleColor()
       if ( IsYBRFull )
       {
          // [Planar 1] AND [Photo C] (remember YBR_FULL_422 acts as RGB)
-         gdcmDebugMacro("--> YBRFull");
+         gdcmStaticDebugMacro("--> YBRFull");
          ConvertYcBcRPlanesToRGBPixels();
       }
       else
       {
          // [Planar 1] AND [Photo C]
-         gdcmDebugMacro("--> YBRFull");
+         gdcmStaticDebugMacro("--> YBRFull");
          ConvertRGBPlanesToRGBPixels();
       }
       return;
@@ -1277,7 +1277,7 @@ void PixelReadConvert::ConvertHandleColor()
 
    if (IsRLELossless)
    { 
-     gdcmDebugMacro("--> RLE Lossless");
+     gdcmStaticDebugMacro("--> RLE Lossless");
      ConvertRGBPlanesToRGBPixels();
    }
 
@@ -1352,7 +1352,7 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
       }
       else
       {
-         gdcmWarningMacro("Set as RLE file but NO RLEinfo present.");
+         gdcmStaticWarningMacro("Set as RLE file but NO RLEinfo present.");
       }
    }
 
@@ -1364,7 +1364,7 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
       }
       else
       {
-         gdcmWarningMacro("Set as JPEG file but NO JPEGinfo present.");
+         gdcmStaticWarningMacro("Set as JPEG file but NO JPEGinfo present.");
       }
    }
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:27 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.4 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMVALIDATOR_H
 #define GDCMVALIDATOR_H
 
-#include "gdcmRefCounter.h"
+#include "gdcmCommandManager.h"
 
 namespace gdcm 
 {
@@ -27,7 +27,7 @@ namespace gdcm
  * \brief Class to perform some verifications on a gdcm::Document
  */
 class ElementSet;
-class GDCM_EXPORT Validator : public RefCounter
+class GDCM_EXPORT Validator : public CommandManager
 {
    gdcmTypeMacro(Validator);
    

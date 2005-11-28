@@ -21,6 +21,9 @@ INCLUDE_DIRECTORIES(
 SET(libgdcm_la_SOURCES
    gdcmArgMgr.cxx
    gdcmBase.cxx
+   gdcmCallbackCommand.cxx
+   gdcmCommand.cxx
+   gdcmCommandManager.cxx
    gdcmDataEntry.cxx
    gdcmDebug.cxx
    gdcmDicomDir.cxx

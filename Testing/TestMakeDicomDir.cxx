@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/11/28 15:20:29 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,11 +22,55 @@
 #include "gdcmDebug.h"
 
 // ---
-void StartMethod(void *startMethod) 
+class CommandStart : public gdcm::Command
 {
-  (void)startMethod;
-   std::cout<<"Start parsing"<<std::endl;
-}
+   gdcmTypeMacro(CommandStart);
+   gdcmNewMacro(CommandStart);
+
+public :
+   virtual void Execute()
+   {
+      std::cerr << "Start parsing" << std::endl;
+   }
+
+protected :
+   CommandStart() {}
+};
+
+class CommandEnd : public gdcm::Command
+{
+   gdcmTypeMacro(CommandEnd);
+   gdcmNewMacro(CommandEnd);
+
+public :
+   virtual void Execute()
+   {
+      std::cerr << "End parsing" << std::endl;
+   }
+
+protected :
+   CommandEnd() {}
+};
+
+class CommandProgress : public gdcm::Command
+{
+   gdcmTypeMacro(CommandProgress);
+   gdcmNewMacro(CommandProgress);
+
+public :
+   virtual void Execute()
+   {
+      gdcm::DicomDir *dd=dynamic_cast<gdcm::DicomDir *>(GetObject());
+
+      if(dd)
+         std::cerr << "Progress parsing (" << dd->GetProgress() << ")" << std::endl;
+      else
+         std::cerr << "Progress parsing (NULL)" << std::endl;
+   }
+
+protected :
+   CommandProgress() {}
+};
 
 void EndMethod(void *endMethod) 
 {
@@ -64,15 +108,23 @@ int TestMakeDicomDir(int argc, char *argv[])
    // new style (user is allowed no to load Sequences an/or Shadow Groups)
    dcmdir = gdcm::DicomDir::New( );
  
+   gdcm::Command *cmd;
+   cmd = CommandStart::New();
+   dcmdir->SetCommand(gdcm::CMD_STARTPROGRESS,cmd);
+   cmd->Delete();
+   cmd = CommandProgress::New();
+   dcmdir->SetCommand(gdcm::CMD_PROGRESS,cmd);
+   cmd->Delete();
+   cmd = CommandEnd::New();
+   dcmdir->SetCommand(gdcm::CMD_ENDPROGRESS,cmd);
+   cmd->Delete();
+
    // dcmdir->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    // some images have a wrong length for element 0x0000 of private groups
    dcmdir->SetLoadMode(gdcm::LD_NOSEQ);
    dcmdir->SetDirectoryName(dirName);
-   dcmdir->Load( );
+   dcmdir->Load();
 
-   dcmdir->SetStartMethod(StartMethod);
-   dcmdir->SetEndMethod(EndMethod);
-   
    if ( !dcmdir->GetFirstPatient() ) 
    {
       std::cout << "makeDicomDir: no patient found. Exiting."

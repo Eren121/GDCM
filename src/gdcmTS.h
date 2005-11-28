@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:27 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #ifndef GDCMTS_H
 #define GDCMTS_H
 
-#include "gdcmRefCounter.h"
+#include "gdcmCommandManager.h"
 
 #include <map>
 #include <string>
@@ -38,7 +38,7 @@ typedef std::map<TSKey, TSAtr> TSHT;    // Transfer Syntax Hash Table
  * \brief Container for dicom 'Transfer Syntax' Hash Table
  * \note   This is a singleton
  */
-class GDCM_EXPORT TS : public RefCounter
+class GDCM_EXPORT TS : public CommandManager
 {
    gdcmTypeMacro(TS);
 

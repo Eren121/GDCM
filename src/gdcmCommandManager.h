@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: gdcmDictGroupName.h,v $
+  Module:    $RCSfile: gdcmCommandManager.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:32 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2005/11/28 15:20:35 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,46 +16,47 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMDICTGROUPNAME_H
-#define GDCMDICTGROUPNAME_H
+#ifndef GDCMCOMMANDMANAGER_H
+#define GDCMCOMMANDMANAGER_H
 
-#include "gdcmCommandManager.h"
+#include "gdcmRefCounter.h"
 
 #include <map>
-#include <string>
 #include <iostream>
 
 namespace gdcm 
 {
-
 //-----------------------------------------------------------------------------
-/// Group Name Hash Table
-typedef std::map<uint16_t, TagName> DictGroupNameHT;
+class Command;
+typedef std::map<unsigned int,Command *> CommandHT;
 
 //-----------------------------------------------------------------------------
 /**
- * \brief Container for dicom 'Group Name' Hash Table.
- *        (formerly NIH defined ACR-NEMA group name)
- * \note   This is a singleton.
+ * \brief CommandManager base class to react on a gdcm event
+ *
+ * \remarks The execution parameter depends on the
  */
-class GDCM_EXPORT DictGroupName : public CommandManager
+class GDCM_EXPORT CommandManager : public RefCounter
 {
-   gdcmTypeMacro(DictGroupName);
+   gdcmTypeMacro(CommandManager);
 
 public:
-   static DictGroupName *New() {return new DictGroupName();}
+   /// \brief Contructs an empty Dict with a RefCounter
+   static CommandManager *New() {return new CommandManager();}
+   void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
-   virtual void Print(std::ostream &os = std::cout, 
-                      std::string const &indent = "" );
+   void SetCommand(unsigned int type,Command *command);
+   Command *GetCommand(unsigned int type) const;
 
-   const TagName &GetName(uint16_t group);
+   bool ExecuteCommand(unsigned int type,std::string text = "");
+   bool ConstExecuteCommand(unsigned int type,std::string text = "") const;
 
 protected:
-   DictGroupName();
-   ~DictGroupName();
+   CommandManager();
+   ~CommandManager();
 
 private:
-   DictGroupNameHT groupName;
+   mutable CommandHT CommandList;
 };
 } // end namespace gdcm
 

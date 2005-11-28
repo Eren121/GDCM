@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/07 08:49:58 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ RLEFrame *RLEFramesInfo::GetFirstFrame()
 
 RLEFrame *RLEFramesInfo::GetNextFrame()
 {
-   gdcmAssertMacro (ItFrames != Frames.end());
+   gdcmStaticAssertMacro (ItFrames != Frames.end());
 
    ++ItFrames;
    if (ItFrames != Frames.end())

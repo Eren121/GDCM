@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/22 20:30:46 $
-  Version:   $Revision: 1.176 $
+  Date:      $Date: 2005/11/28 15:20:34 $
+  Version:   $Revision: 1.177 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+
 #include <iostream>
 #include <stdarg.h> // for va_list
 
@@ -452,7 +453,7 @@ bool Util::IsCurrentProcessorBigEndian()
 std::string Util::DicomString(const char *s, size_t l)
 {
    std::string r(s, s+l);
-   gdcmAssertMacro( !(r.size() % 2) ); // == basically 'l' is even
+   gdcmStaticAssertMacro( !(r.size() % 2) ); // == basically 'l' is even
    return r;
 }
 
@@ -475,7 +476,7 @@ std::string Util::DicomString(const char *s)
       l++;
    }
    std::string r(s, s+l);
-   gdcmAssertMacro( !(r.size() % 2) );
+   gdcmStaticAssertMacro( !(r.size() % 2) );
    return r;
 }
 
@@ -527,7 +528,7 @@ bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
      case GDCM_LESSOREQUAL :
         return s1_even <= s2_even;
      default :
-        gdcmDebugMacro(" Wrong operator : " << op);
+        gdcmStaticDebugMacro(" Wrong operator : " << op);
         return false;
   }
 }
@@ -871,7 +872,7 @@ std::string Util::GetMACAddress()
    }
    else
    {
-      gdcmWarningMacro("Problem in finding the MAC Address");
+      gdcmStaticWarningMacro("Problem in finding the MAC Address");
       return "";
    }
 }
@@ -913,7 +914,7 @@ std::string Util::CreateUniqueUID(const std::string &root)
    // If append is too long we need to rehash it
    if ( (prefix + append).size() > 64 )
    {
-      gdcmErrorMacro( "Size of UID is too long." );
+      gdcmStaticErrorMacro( "Size of UID is too long." );
       // we need a hash function to truncate this number
       // if only md5 was cross plateform
       // MD5(append);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:21:32 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/11/28 15:20:32 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,28 +17,33 @@
 =========================================================================*/
 
 #include "gdcmDebug.h"
+#include "gdcmCommandManager.h"
+
 #include <iostream>
 
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
 // Warning message level to be displayed
-static bool DebugFlag     = false;
-static bool WarningFlag   = false;
-static bool DebugToFile   = false;
-static std::ofstream DebugFile;
+const int Debug::LINE_LENGTH = 79;
+
+bool Debug::DebugFlag     = false;
+bool Debug::WarningFlag   = false;
+bool Debug::OutputToFile  = false;
+
+std::ofstream Debug::OutputFileStream;
+std::ostream &Debug::StandardStream = std::cerr;
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 Debug::Debug()
 {
-
 }
 
 Debug::~Debug()
 {
-  if ( DebugFile.is_open() )
-      DebugFile.close();     
+  if ( OutputFileStream.is_open() )
+      OutputFileStream.close();     
 }
 
 //-----------------------------------------------------------------------------
@@ -56,16 +61,6 @@ void Debug::SetDebugFlag (bool flag)
 }
 
 /**
- * \brief   Gets the debug flag value
- *          (used to warn user when file contains some oddity)
- * @return debug flag value
- */ 
-bool Debug::GetDebugFlag ()
-{
-   return DebugFlag;
-}
-
-/**
  * \brief   Sets the warning flag
  * @param   flag Set the warning flag
  */ 
@@ -78,28 +73,20 @@ void Debug::SetWarningFlag (bool flag)
 }
 
 /**
- * \brief   Gets the warning flag value
- * @return warning flag value
- */ 
-bool Debug::GetWarningFlag ()
-{
-   return WarningFlag;
-}
-/**
  * \brief   Accessor
  * @param   flag whether we want to redirect to file
  */ 
-void Debug::SetDebugToFile (bool flag) 
+void Debug::SetOutputToFile (bool flag) 
 {
-   DebugToFile = flag;
+   OutputToFile = flag;
 }
 
 /**
  * \brief   Accessor to know whether debug info are redirected to file
  */ 
-bool Debug::GetDebugToFile ()
+bool Debug::GetOutputToFile ()
 {
-   return DebugToFile;
+   return OutputToFile;
 }
 
 /**
@@ -109,13 +96,13 @@ bool Debug::GetDebugToFile ()
  *          Absolutely nothing is check. You have to pass in
  *          a correct filename
  */ 
-void Debug::SetDebugFilename (std::string const &filename)
+void Debug::SetOutputFileName (std::string const &filename)
 {
-   DebugToFile = true;  // Just in case ... 
+   OutputToFile = true;  // Just in case ... 
    DebugFlag   = true;  // Just in case ...
-   if ( DebugFile.is_open() )
-      DebugFile.close();
-   DebugFile.open( filename.c_str() );
+   if ( OutputFileStream.is_open() )
+      OutputFileStream.close();
+   OutputFileStream.open( filename.c_str() );
 }
 
 /**
@@ -123,9 +110,22 @@ void Debug::SetDebugFilename (std::string const &filename)
  *        in gdcm code
  * @return Debug file
  */
-std::ofstream &Debug::GetDebugFile ()
+std::ostream &Debug::GetOutput ()
 {
-  return DebugFile;
+   if(OutputToFile)
+      return OutputFileStream;
+   else
+      return StandardStream;
+}
+
+void Debug::SendToOutput(unsigned int type,std::string const &msg,const CommandManager *mgr)
+{
+   bool executed=false;
+   if(mgr)
+      executed=mgr->ConstExecuteCommand(type,msg);
+
+   if(!executed)
+      GetOutput() << Command::GetCommandAsString(type) << ": " << msg;
 }
 
 //-----------------------------------------------------------------------------
