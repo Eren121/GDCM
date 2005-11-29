@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/11/29 17:11:52 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ public:
    static TS *New() {return new TS();}
 
    virtual void Print(std::ostream &os = std::cout, 
-                      std::string const &indent = "" );
+                      std::string const & = "" );
 
    int Count(TSKey const &key);
    TSAtr const &GetValue(TSKey const &key);
