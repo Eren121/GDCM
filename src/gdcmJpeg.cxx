@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:32 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2005/11/29 08:32:44 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -207,13 +207,13 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {
 //   (*cinfo->err->format_message) (cinfo, buffer);
 //
 //   // Custom display message, we could be more fancy and throw an exception:
-//   gdcmErrorMacro( buffer );
+//   gdcmStaticErrorMacro( buffer );
 //}
 
 }
 //-----------------------------------------------------------------------------
  
- /**
+/**
  * \brief   routine for JPEG decompression 
  * @param fp pointer to an already open file descriptor 
  *                      8 significant bits per pixel
