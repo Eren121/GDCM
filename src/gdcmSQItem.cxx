@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:47 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2005/11/29 17:14:17 $
+  Version:   $Revision: 1.82 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -157,7 +157,6 @@ bool SQItem::AddEntry(DocEntry *entry)
   
    ++it;
    insertSpot = it;
-   //++insertSpot; // ?!?
    DocEntries.insert(insertSpot, entry); 
    entry->Register();
    return true;
