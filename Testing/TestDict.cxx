@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:19 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2005/11/29 17:08:54 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,9 +96,9 @@ int TestDict(int , char *[])
    entry=pubDict->GetFirstEntry();
    while(entry)
    {
-      std::cout << entry->GetGroup() << "|" << entry->GetElement()
-                << " [" << entry->GetVR() << "] - M" << entry->GetVM()
-                << " : " << entry->GetName() << " ( " << entry->GetKey() << ")\n";
+      std::cout << std::hex << entry->GetGroup() << "|" << entry->GetElement()
+                << " [" << entry->GetVR() << "] - VM [" << entry->GetVM()
+                << "] : " << entry->GetName() << " ( " << entry->GetKey() << ")\n";
       entry=pubDict->GetNextEntry();
    }
 
