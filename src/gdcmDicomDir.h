@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:46 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2005/11/29 17:21:34 $
+  Version:   $Revision: 1.73 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,9 +117,6 @@ protected:
    ~DicomDir();
 
    void CreateDicomDirChainedList(std::string const &path);
-   void CallStartMethod();
-   void CallProgressMethod();
-   void CallEndMethod();
 
 private:
    void Initialize();
@@ -147,12 +144,9 @@ private:
    ListDicomDirPatient Patients;
    ListDicomDirPatient::iterator ItPatient;
 
-   /// value of the ??? for any progress bar
-   float Progress;
    /// value of the ??? for any progress bar   
    bool ParseDir;
 
-   mutable bool Abort;
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

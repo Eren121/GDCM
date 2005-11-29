@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:32 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2005/11/29 17:21:34 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,8 @@ public:
 
    static std::ostream &GetOutput ();
 
-   static void SendToOutput(unsigned int type,std::string const &msg,const Base *object = NULL);
+   static void SendToOutput(unsigned int type,std::string const &msg,
+                            const Base *object = NULL);
 
 private:
    static bool DebugFlag;
@@ -129,7 +130,7 @@ private:
  * \brief   Debug : To be used to help bug tracking developer
  * @param msg message part
  */
-#define gdcmMessageBodyMacro(type,obj,msg,adds)                \
+#define gdcmMessageBodyMacro(type, obj, msg, adds)             \
 {                                                              \
    std::ostringstream osmacro;                                 \
    osmacro << "In " __FILE__ ", line " << __LINE__             \
@@ -143,11 +144,11 @@ private:
  * @param msg message part
  */
 #ifdef NDEBUG
-#define gdcmDebugBodyMacro(obj,msg) {}
+#define gdcmDebugBodyMacro(obj, msg) {}
 #define gdcmDebugMacro(msg) {}
 #define gdcmStaticDebugMacro(msg) {}
 #else
-#define gdcmDebugBodyMacro(obj,msg)                            \
+#define gdcmDebugBodyMacro(obj, msg)                           \
 {                                                              \
    if( Debug::GetDebugFlag() )                                 \
    {                                                           \
@@ -172,7 +173,8 @@ private:
  * @param msg message part
  */
 // No NDEBUG test to always have a return of warnings !!!
-#define gdcmWarningBodyMacro(obj,msg)                          \
+// -> Rien compris! JPRx
+#define gdcmWarningBodyMacro(obj, msg)                         \
 {                                                              \
    if( Debug::GetWarningFlag() )                               \
       gdcmMessageBodyMacro(gdcm::CMD_WARNING,obj,msg,"");      \
@@ -188,7 +190,8 @@ private:
  * @param msg second message part 
  */
 // No NDEBUG test to always have a return of errors !!!
-#define gdcmErrorBodyMacro(obj,msg)                            \
+// -> Rien compris! JPRx
+#define gdcmErrorBodyMacro(obj, msg)                           \
 {                                                              \
    gdcmMessageBodyMacro(gdcm::CMD_ERROR,obj,msg,"");           \
 }
@@ -206,7 +209,8 @@ private:
  *        gdcmAssertMacro( "my message" && 2 < 3 )
  */
 // No NDEBUG test to always have a return of asserts !!!
-#define gdcmAssertBodyMacro(obj,arg)                           \
+// -> Rien compris! JPRx
+#define gdcmAssertBodyMacro(obj, arg)                          \
 {                                                              \
    if( !(arg) )                                                \
    {                                                           \

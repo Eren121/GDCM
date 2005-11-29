@@ -35,7 +35,6 @@ SET(libgdcm_la_SOURCES
    gdcmDicomDirVisit.cxx
    gdcmDicomDirSerie.cxx
    gdcmDicomDirStudy.cxx
-   gdcmDicomEntry.cxx
    gdcmDict.cxx
    gdcmDictEntry.cxx
    gdcmDictGroupName.cxx

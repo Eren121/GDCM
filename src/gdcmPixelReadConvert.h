@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 10:32:05 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2005/11/29 17:21:35 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,10 @@
 #define GDCMPIXELREADCONVERT_H
 
 #include "gdcmBase.h"
+#include "gdcmFileHelper.h"
 #include "gdcmException.h"
+#include "gdcmCommandManager.h"
+
 #include <fstream>
 
 namespace gdcm
@@ -67,7 +70,7 @@ private:
    bool IsRawRGB();
 
 // In progress
-   void GrabInformationsFromFile( File *file );
+   void GrabInformationsFromFile( File *file, FileHelper *fileHelper );
    bool ReadAndDecompressPixelData( std::ifstream *fp );
    void Squeeze();
    bool BuildRGBImage();
@@ -96,6 +99,10 @@ private:
    void AllocateRGB();
    void AllocateRaw();
 
+   void CallStartMethod();
+   void CallProgressMethod();
+   void CallEndMethod();
+   
 // Variables
 /**
  * \brief Pixel data represented as RGB after LUT color interpretation.
@@ -164,6 +171,10 @@ private:
    
    File *FileInternal; // must be passed to User Function
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
+   /// Needed for the progression bar stuff
+   FileHelper *FH;
+   mutable bool Abort;
+   float Progress;
 };
 } // end namespace gdcm
 

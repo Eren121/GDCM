@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:24:21 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2005/11/29 17:21:34 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -188,7 +188,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
  * \brief   Print method
  * @param os ostream to write to 
  */
-void DirList::Print(std::ostream &os, std::string const &indent)
+void DirList::Print(std::ostream &os, std::string const &)
 {
    std::copy(Filenames.begin(), Filenames.end(), 
              std::ostream_iterator<std::string>(os, "\n"));

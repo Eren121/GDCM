@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:45 $
-  Version:   $Revision: 1.176 $
+  Date:      $Date: 2005/11/29 17:21:34 $
+  Version:   $Revision: 1.177 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -202,13 +202,13 @@ bool DicomDir::DoTheLoadingJob( )
          char buf[2048];
          const char *cwd = getcwd(buf, 2048);
          if( cwd )
-           {
+         {
            SetFileName( buf ); // will be converted into a string
-           }
+         }
          else
-           {
+         {
            gdcmErrorMacro( "Path was too long to fit on 2048 bytes" );
-           }
+         }
       }
       NewMeta();
       gdcmDebugMacro( "Parse directory and create the DicomDir : " 
@@ -523,32 +523,6 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
    }
 }
 
-/**
- * \brief   CallStartMethod
- */
-void DicomDir::CallStartMethod()
-{
-   Progress = 0.0f;
-   Abort    = false;
-   CommandManager::ExecuteCommand(this,CMD_STARTPROGRESS);
-}
-
-/**
- * \brief   CallProgressMethod
- */
-void DicomDir::CallProgressMethod()
-{
-   CommandManager::ExecuteCommand(this,CMD_PROGRESS);
-}
-
-/**
- * \brief   CallEndMethod
- */
-void DicomDir::CallEndMethod()
-{
-   Progress = 1.0f;
-   CommandManager::ExecuteCommand(this,CMD_ENDPROGRESS);
-}
 
 //-----------------------------------------------------------------------------
 // Private
@@ -1029,15 +1003,16 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
  * @param dst destination SQItem
  * @param src source SQItem
  */
-void DicomDir::MoveSQItem(DocEntrySet *dst,DocEntrySet *src)
+void DicomDir::MoveSQItem(DocEntrySet *dst, DocEntrySet *src)
 { 
    DocEntry *entry;
-
+// todo : rewrite the whole stuff, without using RemoveEntry an AddEntry,
+//        to save time
    entry = src->GetFirstEntry();
    while(entry)
    {
+      dst->AddEntry(entry);  // use it, *before* removing it!
       src->RemoveEntry(entry);
-      dst->AddEntry(entry);
       // we destroyed -> the current iterator is not longer valid
       entry = src->GetFirstEntry();
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:32 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2005/11/29 17:21:35 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,7 +82,8 @@ bool PixelReadConvert::IsRawRGB()
  * \brief Gets various usefull informations from the file header
  * @param file gdcm::File pointer
  */
-void PixelReadConvert::GrabInformationsFromFile( File *file )
+void PixelReadConvert::GrabInformationsFromFile( File *file, 
+                                                 FileHelper *fileHelper )
 {
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
    // when absent from the file.
@@ -227,7 +228,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file )
       }
    }
    FileInternal = file;   
-
+   FH = fileHelper;
    ComputeRawAndRGBSizes();
 }
 
@@ -257,8 +258,18 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    AllocateRaw();
 
    //////////////////////////////////////////////////
+   
+   CallStartMethod(); // for progress bar
+   unsigned int count = 0;
+   unsigned int frameSize;
+   unsigned int bitsAllocated = BitsAllocated;
+   if(bitsAllocated == 12)
+      bitsAllocated = 16;
+   frameSize = XSize*YSize*SamplesPerPixel*bitsAllocated/8;
+   
    //// Second stage: read from disk and decompress.
-   if ( BitsAllocated == 12 )
+   
+   if ( BitsAllocated == 12 ) // We suppose 'BitsAllocated' = 12 only exist for uncompressed files
    {
       ReadAndDecompress12BitsTo16Bits( fp);
    }
@@ -273,14 +284,38 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
          gdcmWarningMacro( "Mismatch between PixelReadConvert : "
                               << PixelDataLength << " and RawSize : " << RawSize );
       }
+      
+      //todo : is it the right patch?
+      char *raw = (char*)Raw;
+      uint32_t remainingLength;
+      unsigned int i; 
+      unsigned int lengthToRead;
+       
       if ( PixelDataLength > RawSize )
-      {
-         fp->read( (char*)Raw, RawSize);
-      }
+        lengthToRead =  RawSize;
       else
+        lengthToRead = PixelDataLength;
+ 
+      // perform a frame by frame reading
+      remainingLength = lengthToRead;
+      unsigned int nbFrames = lengthToRead / frameSize;
+      for (i=0;i<nbFrames; i++)
       {
-         fp->read( (char*)Raw, PixelDataLength);
+         fp->read( raw, frameSize);
+         raw +=  frameSize;
+         remainingLength -=  frameSize;
       }
+      if (remainingLength !=0 )
+        fp->read( raw, remainingLength);
+                 
+      //if ( PixelDataLength > RawSize )
+      //{
+      //   fp->read( (char*)Raw, RawSize); // Read all the frames with a single fread    
+      //}
+      //else
+      //{
+      //   fp->read( (char*)Raw, PixelDataLength); // Read all the frames with a single fread
+      //}
 
       if ( fp->fail() || fp->eof())
       {
@@ -1368,6 +1403,34 @@ void PixelReadConvert::Print( std::ostream &os, std::string const &indent )
       }
    }
 }
+
+/**
+ * \brief   CallStartMethod
+ */
+void PixelReadConvert::CallStartMethod()
+{
+   Progress = 0.0f;
+   Abort    = false;
+   CommandManager::ExecuteCommand(FH,CMD_STARTPROGRESS);
+}
+
+/**
+ * \brief   CallProgressMethod
+ */
+void PixelReadConvert::CallProgressMethod()
+{
+   CommandManager::ExecuteCommand(FH,CMD_PROGRESS);
+}
+
+/**
+ * \brief   CallEndMethod
+ */
+void PixelReadConvert::CallEndMethod()
+{
+   Progress = 1.0f;
+   CommandManager::ExecuteCommand(FH,CMD_ENDPROGRESS);
+}
+
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

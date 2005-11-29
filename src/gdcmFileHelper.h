@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2005/11/29 17:21:35 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,6 +154,10 @@ public:
    void SetKeepMediaStorageSOPClassUID (bool v) 
                               { KeepMediaStorageSOPClassUID = v; }
    // no GetKeepMediaStorageSOPClassUID() method, on purpose!
+
+   void CallStartMethod();
+   void CallProgressMethod();
+   void CallEndMethod();
    
 protected:
    FileHelper( );

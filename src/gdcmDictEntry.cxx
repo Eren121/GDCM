@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 18:01:25 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2005/11/29 17:21:34 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,13 +39,22 @@ namespace gdcm
 DictEntry::DictEntry(uint16_t group, uint16_t elem,
                      VRKey const &vr, 
                      TagName const &vm,
-                     TagName const &name):
-   DicomEntry(group,elem,vr)
+                     TagName const &name)
+
 {
+   Tag.SetGroup(group);
+   Tag.SetElement(elem);
+   VR      = vr;
    VM      = vm;
    Name    = name;
 }
 
+/**
+ * \brief   Destructor
+ */
+DictEntry::~DictEntry()
+{
+}
 //-----------------------------------------------------------------------------
 // Public
 /**
@@ -65,25 +74,18 @@ DictEntry *DictEntry::New(uint16_t group, uint16_t elem,
 }
 
 /**
- * \brief       If-and only if-the V(alue) R(epresentation)
- * \            is unset then overwrite it.
- * @param vr    New V(alue) R(epresentation) to be set.
+ * \brief   concatenates 2 uint16_t (supposed to be a Dicom group number 
+ *                                              and a Dicom element number)
+ * @param  group the Dicom group number used to build the tag
+ * @param  elem the Dicom element number used to build the tag
+ * @return the built tag
  */
-void DictEntry::SetVR(VRKey const &vr) 
+TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
 {
-   //gdcmAssertMacro( IsVRUnknown() );
-   DicomEntry::SetVR(vr);
-}
-
-/**
- * \brief       If-and only if-the V(alue) M(ultiplicity)
- * \            is unset then overwrite it.
- * @param vm    New V(alue) M(ultiplicity) to be set.
- */
-void DictEntry::SetVM(TagName const &vm) 
-{
-   gdcmAssertMacro( IsVMUnknown() );
-   VM = vm;
+   // according to 'Purify', TranslateToKey is one of the most
+   // time consuming methods.
+   // Let's try to shorten it !
+   return TagKey(group,elem);
 }
 
 //-----------------------------------------------------------------------------
@@ -101,7 +103,8 @@ void DictEntry::SetVM(TagName const &vm)
  */
 void DictEntry::Print(std::ostream &os, std::string const &indent )
 {
-   DicomEntry::Print(os,indent);
+   os << GetKey(); 
+   os << " [" << VR  << "] ";
 
    std::ostringstream s;
 

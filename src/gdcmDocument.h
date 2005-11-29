@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 16:28:06 $
-  Version:   $Revision: 1.136 $
+  Date:      $Date: 2005/11/29 17:21:34 $
+  Version:   $Revision: 1.137 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,7 @@
 #include "gdcmElementSet.h"
 #include "gdcmException.h"
 #include "gdcmDebug.h"  // for LEGACY
+#include "gdcmCommandManager.h"
 
 #include <map>
 #include <list>
@@ -112,7 +113,11 @@ protected:
    // gdcm::DicomDir are meaningfull).
    Document();
    virtual ~Document();
-   
+
+   virtual void CallStartMethod();
+   virtual void CallProgressMethod();
+   virtual void CallEndMethod();
+      
    uint16_t ReadInt16() throw ( FormatError );
    uint32_t ReadInt32() throw ( FormatError );
    void     SkipBytes(uint32_t);
@@ -218,6 +223,11 @@ private:
    DocEntry *Backtrack(DocEntry *docEntry);
 
 // Variables
+protected:
+   /// value of the ??? for any progress bar
+   float Progress;
+   mutable bool Abort;
+   
    /// Public dictionary used to parse this header
    Dict *RefPubDict;
    /// \brief Optional "shadow dictionary" (private elements) used to parse
