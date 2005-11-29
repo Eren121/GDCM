@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:24 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2005/11/29 17:10:12 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ public:
    static VR *New() {return new VR();}
 
    virtual void Print(std::ostream &os = std::cout, 
-                      std::string const &indent = "" );
+                      std::string const & = "" );
 
    /// \brief   Get the count for an element
    int Count(VRKey const &key) { return vr.count(key); };
@@ -63,7 +63,7 @@ public:
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
    bool IsValidVR(VRKey const &key);
 #else
-/// \brief checks is a supposed-to-be VR is a 'legal' one.
+/// \brief checks if a supposed-to-be VR is a 'legal' one.
    bool IsValidVR(VRKey const &key) { return vr.find(key) != vr.end(); }
 #endif
 
