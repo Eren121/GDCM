@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/18 11:46:37 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2005/11/29 13:02:44 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,7 @@
 
 #include "gdcmUtil.h"
 
+#include <sys/times.h>
 #include <iostream>
 
 void        frswap (double &a, double &b);
@@ -38,9 +39,13 @@ void        fpswap (double *a, double *b);
 inline void ifrswap(double &a, double &b);
 inline void ifpswap(double *a, double *b);
 
-uint16_t     passDirect(uint16_t a,  uint16_t b);
-uint16_t     passRef(uint16_t &a, uint16_t &b);
-uint16_t     passPtr(uint16_t *a, uint16_t *b);
+uint8_t     passDirect8(uint8_t a,  uint8_t b);
+uint8_t     passRef8(uint8_t &a, uint8_t &b);
+uint8_t     passPtr8(uint8_t *a, uint8_t *b);
+
+uint16_t     passDirect16(uint16_t a,  uint16_t b);
+uint16_t     passRef16(uint16_t &a, uint16_t &b);
+uint16_t     passPtr16(uint16_t *a, uint16_t *b);
 
 uint32_t     passDirect32(uint32_t a,  uint32_t b);
 uint32_t     passRef32(uint32_t &a, uint32_t &b);
@@ -53,7 +58,7 @@ double     passPtr(double *a, double *b);
 #define       \
 mswap(a, b)   \
 {             \
-   tmp = a;   \
+   double tmp = a;   \
    a   = b;   \
    b   = tmp; \
 }
@@ -107,15 +112,41 @@ uint32_t passDirect32(uint32_t a, uint32_t b)
 } 
 
 
-uint16_t passRef(uint16_t &a, uint16_t &b)
+uint16_t passRef16(uint16_t &a, uint16_t &b)
 {
    return a + b;
 } 
-uint16_t passPtr(uint16_t *a, uint16_t *b)
+uint16_t passPtr16(uint16_t *a, uint16_t *b)
 {
    return *a + *b;
 } 
-uint16_t passDirect(uint16_t a, uint16_t b)
+uint16_t passDirect16(uint16_t a, uint16_t b)
+{
+   return a + b;
+} 
+
+uint8_t passRef8(uint8_t &a, uint8_t &b)
+{
+   return a + b;
+} 
+uint8_t passPtr8(uint8_t *a, uint8_t *b)
+{
+   return *a + *b;
+} 
+uint8_t passDirect8(uint8_t a, uint8_t b)
+{
+   return a + b;
+} 
+
+float passRefFloat(float &a, float &b)
+{
+   return a + b;
+} 
+float passPtrFloat(float *a, float *b)
+{
+   return *a + *b;
+} 
+float passDirectFloat(float a, float b)
 {
    return a + b;
 } 
@@ -142,15 +173,36 @@ int TestInline(int argc, char *argv[])
    if (argc > 1)
       nbLoop = atoi(argv[1]);
    else
-      nbLoop = 10000000;      
+      nbLoop = 500000000;
 
    //clock_t r1, r2;
    struct tms tms1, tms2;
    
    double a = 1, b = 2;
-   double tmp;
    
-   uint16_t x=1, y=2;    
+   uint8_t  x8 =1, y8 =2;    
+   uint16_t x16=1, y16=2;    
+   uint32_t x32=1, y32=2;    
+   float  fx =1.0f, fy=1.0f;
+   double dx =1.0 , dy=1.0;
+ // ----------------------------------------
+ 
+   std::cout << "Direct "<< std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+      double tmp;
+      tmp=a;
+      a=b;
+      b=tmp;
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+    std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl;
+   
  // ----------------------------------------
  
    std::cout << "Use a macro "<< std::endl;
@@ -231,14 +283,14 @@ int TestInline(int argc, char *argv[])
 //To check the 2 following cases, we just put the two 'static' functions
 //hifpswap and  hNoifpswap in gdcmUtil.h
     
-   std::cout << "Use inline, .h defined, WITH inline keyword pointer function"
+   std::cout << "Use inline, .h defined, WITH inline keyword pointer method"
              << std::endl;
    //r1 = times(&tms1);
+   gdcm::Util util;
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      //gdcm::Util::hifpswap (&a, &b);
-      hifpswap (&a, &b);  
+      util.hifpswap (&a, &b);
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -249,14 +301,62 @@ int TestInline(int argc, char *argv[])
    
  // ----------------------------------------
 
-   std::cout << "Use inline, .h defined, NO inline keyword pointer function"
+   std::cout << "Use inline, .h defined, NO inline keyword pointer method"
              << std::endl;
    //r1 = times(&tms1);
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      //gdcm::Util::hNoifpswap (&a, &b);
-      hNoifpswap (&a, &b);  
+      util.hNoifpswap (&a, &b);
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
+
+   std::cout << "Use , .h defined, NO inline keyword pointer method"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      util.hfpswap (&a, &b);
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime))
+        <<std::endl;
+ 
+ // ----------------------------------------
+
+   std::cout << "Use inline, .h defined, WITH inline keyword pointer static method"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      gdcm::Util::sthifpswap (&a, &b);
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl;  
+
+   
+ // ----------------------------------------
+
+   std::cout << "Use inline, .h defined, NO inline keyword pointer static method"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      gdcm::Util::sthNoifpswap (&a, &b);
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -267,13 +367,61 @@ int TestInline(int argc, char *argv[])
 
  // ----------------------------------------
  
+   std::cout << "Pass uint_8 param directly"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      passDirect8 (x8, y8);  
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
+ 
+   std::cout << "Pass uint_8 param as ref"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      passRef8 (x8, y8);  
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
+ 
+   std::cout << "Pass uint_8 param as ptr"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      passPtr8 (&x8, &y8);  
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
+ 
    std::cout << "Pass uint_16 param directly"
              << std::endl;
    //r1 = times(&tms1);
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      passDirect (x, y);  
+      passDirect16 (x16, y16);  
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -289,7 +437,7 @@ int TestInline(int argc, char *argv[])
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      passRef (x, y);  
+      passRef16 (x16, y16);  
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -305,7 +453,7 @@ int TestInline(int argc, char *argv[])
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      passPtr (&x, &y);  
+      passPtr16 (&x16, &y16);  
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -317,14 +465,13 @@ int TestInline(int argc, char *argv[])
 
  // ----------------------------------------
 
-   uint32_t m =1, n=2; 
    std::cout << "Pass uint_32 param directly"
              << std::endl;
    //r1 = times(&tms1);
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      passDirect32 (m, n);  
+      passDirect32 (x32, y32);  
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -340,7 +487,7 @@ int TestInline(int argc, char *argv[])
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      passRef32 (m, n);  
+      passRef32 (x32, y32 );  
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -356,7 +503,7 @@ int TestInline(int argc, char *argv[])
    times(&tms1);   
     for(i = 0 ; i< nbLoop ; i++)
    {
-      passPtr32 (&m, &n);  
+      passPtr32 (&x32, &y32);  
    }
    //r2 = times(&tms2);
    times(&tms2);   
@@ -366,9 +513,57 @@ int TestInline(int argc, char *argv[])
 
  // ----------------------------------------
  
+   std::cout << "Pass float param directly"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      passDirectFloat (fx, fy);  
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
  
-   double dx=1.0, dy=2.0;
-   
+   std::cout << "Pass float param as ref"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      passRefFloat (fx, fy);  
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
+ 
+   std::cout << "Pass float param as ptr"
+             << std::endl;
+   //r1 = times(&tms1);
+   times(&tms1);   
+    for(i = 0 ; i< nbLoop ; i++)
+   {
+      passPtrFloat (&fx, &fy);  
+   }
+   //r2 = times(&tms2);
+   times(&tms2);   
+
+   std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl; 
+
+ // ----------------------------------------
+ 
    std::cout << "Pass double param directly"
              << std::endl;
    //r1 = times(&tms1);

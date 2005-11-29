@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:33 $
-  Version:   $Revision: 1.178 $
+  Date:      $Date: 2005/11/29 13:02:46 $
+  Version:   $Revision: 1.179 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1145,6 +1145,14 @@ std::string Util::GetIPAddress()
    // If an error occur r == -1
    // Most of the time it will return 127.0.0.1...
    return str;
+}
+
+void Util::hfpswap(double *a, double *b)
+{
+   double tmp;
+   tmp=*a;
+   *a=*b;
+   *b=tmp;
 }
 
 //-------------------------------------------------------------------------

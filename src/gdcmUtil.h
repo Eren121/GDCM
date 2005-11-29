@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 17:04:36 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2005/11/29 13:02:47 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,14 +82,29 @@ public:
 // hifpswap and  hNoifpswap in a .h
 // They will be remove ASAP
 
-   static inline void hifpswap(double *a, double *b)    
+   inline void hifpswap(double *a, double *b)     
    {
       double tmp;
       tmp = *a;
       *a = *b;
       *b = tmp;
    }
-   static void hNoifpswap(double *a, double *b)    
+   void hNoifpswap(double *a, double *b)    
+   {
+      double tmp;
+      tmp = *a;
+      *a = *b;
+      *b = tmp;
+   }    
+   void hfpswap(double *a, double *b);   
+   static inline void sthifpswap(double *a, double *b)     
+   {
+      double tmp;
+      tmp = *a;
+      *a = *b;
+      *b = tmp;
+   }
+   static void sthNoifpswap(double *a, double *b)    
    {
       double tmp;
       tmp = *a;
