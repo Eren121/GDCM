@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:27 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2005/11/29 12:48:47 $
+  Version:   $Revision: 1.81 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -201,15 +201,6 @@ void SQItem::ClearEntry()
 }
 
 /**
- * \brief  Move all the entries from a given Sequence Item 
- */
-void SQItem::MoveObject(SQItem *source)
-{
-   DocEntries = source->DocEntries;
-   source->DocEntries.clear();
-}
-
-/**
  * \brief   Get the first Dicom entry while visiting the SQItem
  * \return  The first DocEntry if found, otherwhise 0
  */
@@ -249,6 +240,30 @@ DocEntry *SQItem::GetDocEntry(uint16_t group, uint16_t elem)
          return *i;
    }
    return NULL;
+}
+
+/**
+ * \brief Copies all the attributes from an other DocEntrySet 
+ * @param set entry to copy from
+ * @remarks The contained DocEntries a not copied, only referenced
+ */
+void SQItem::Copy(DocEntrySet *set)
+{
+   // Remove all previous entries
+   ClearEntry();
+
+   DocEntrySet::Copy(set);
+
+   SQItem *sq = dynamic_cast<SQItem *>(set);
+   if( sq )
+   {
+      SQDepthLevel = sq->SQDepthLevel;
+      SQItemNumber = sq->SQItemNumber;
+
+      DocEntries = sq->DocEntries;
+      for(ItDocEntries = DocEntries.begin();ItDocEntries != DocEntries.end();++ItDocEntries)
+         (*ItDocEntries)->Register();
+   }
 }
 
 //-----------------------------------------------------------------------------

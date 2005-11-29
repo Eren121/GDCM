@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:27 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2005/11/29 12:48:47 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,17 +60,16 @@ public:
       
    /// Sets the delimitor mode
    void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
-
-   
    void SetDelimitationItem(DocEntry *e);
-
    /// Gets the Sequence Delimitation Item
-   DocEntry *GetDelimitationItem()       { return SeqTerm;}
+   DocEntry *GetDelimitationItem() { return SeqTerm;}
 
    /// Gets the depth level
    int GetDepthLevel() const { return SQDepthLevel; }
    /// Sets the depth level of a Sequence Entry embedded in a SeQuence
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
+
+   virtual void Copy(DocEntry *doc);
 
 protected:
 

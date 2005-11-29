@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 11:39:34 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2005/11/29 12:48:47 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,6 +168,29 @@ DocEntry *ElementSet::GetDocEntry(uint16_t group, uint16_t elem)
    if ( it!=TagHT.end() )
       return it->second;
    return NULL;
+}
+
+/**
+ * \brief Copies all the attributes from an other DocEntrySet 
+ * @param set entry to copy from
+ * @remarks The contained DocEntries a not copied, only referenced
+ */
+void ElementSet::Copy(DocEntrySet *set)
+{
+   // Remove all previous entries
+   ClearEntry();
+
+   DocEntrySet::Copy(set);
+
+   ElementSet *eltSet = dynamic_cast<ElementSet *>(set);
+   if( eltSet )
+   {
+      TagHT = eltSet->TagHT;
+      for(ItTagHT = TagHT.begin();ItTagHT != TagHT.end();++ItTagHT)
+      {
+         (ItTagHT->second)->Register();
+      }
+   }
 }
 
 //-----------------------------------------------------------------------------

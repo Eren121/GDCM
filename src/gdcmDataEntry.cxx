@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 12:15:06 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2005/11/29 12:48:45 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -452,9 +452,11 @@ std::string const &DataEntry::GetString() const
    }
    return StrArea;
 }
+
 /**
- * \brief   Copies all the attributes from an other DocEntry 
+ * \brief Copies all the attributes from an other DocEntry 
  * @param doc entry to copy from
+ * @remarks The content BinArea is copied too
  */
 void DataEntry::Copy(DocEntry *doc)
 {
@@ -468,6 +470,7 @@ void DataEntry::Copy(DocEntry *doc)
       CopyBinArea(entry->BinArea,entry->GetLength());
    }
 }
+
 /**
  * \brief   Writes the 'value' area of a DataEntry
  * @param fp already open ofstream pointer

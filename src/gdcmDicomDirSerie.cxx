@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/11/29 12:48:46 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,6 +118,27 @@ DicomDirImage *DicomDirSerie::GetNextImage()
    if (ItImage != Images.end())      
       return *ItImage;
    return NULL;
+}
+
+/**
+ * \brief Copies all the attributes from an other DocEntrySet 
+ * @param set entry to copy from
+ * @remarks The contained DocEntries a not copied, only referenced
+ */
+void DicomDirSerie::Copy(DocEntrySet *set)
+{
+   // Remove all previous childs
+   ClearImage();
+
+   DicomDirObject::Copy(set);
+
+   DicomDirSerie *ddEntry = dynamic_cast<DicomDirSerie *>(set);
+   if( ddEntry )
+   {
+      Images = ddEntry->Images;
+      for(ItImage = Images.begin();ItImage != Images.end();++ItImage)
+         (*ItImage)->Register();
+   }
 }
 
 //-----------------------------------------------------------------------------

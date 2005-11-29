@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:46:37 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2005/11/29 12:48:47 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,6 @@ public:
    bool AddEntry(DocEntry *Entry); // add to the List
    bool RemoveEntry(DocEntry *EntryToRemove);
    void ClearEntry();
-   void MoveObject(SQItem *source);
   
    DocEntry *GetFirstEntry();
    DocEntry *GetNextEntry();
@@ -72,6 +71,8 @@ public:
    ///  \brief Accessor on \ref SQDepthLevel.
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
+   virtual void Copy(DocEntrySet *set);
+
 protected:
    SQItem(int depthLevel);
    ~SQItem();
@@ -81,8 +82,6 @@ protected:
    ListDocEntry DocEntries;
    /// Iterator, used to visit the entries
    ListDocEntry::iterator ItDocEntries;
-   /// Iterator, used to visit the Val Entries (for Python users)
-   ListDocEntry::iterator ItValEntries;
   
 private:
    /// \brief Sequences can be nested. This \ref SQDepthLevel represents

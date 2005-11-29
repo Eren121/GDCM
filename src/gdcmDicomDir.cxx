@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.175 $
+  Date:      $Date: 2005/11/29 12:48:45 $
+  Version:   $Revision: 1.176 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,7 +118,6 @@ namespace gdcm
  * \brief   Constructor : creates an empty DicomDir
  */
 DicomDir::DicomDir()
-         :Document( )
 {
    Initialize();  // sets all private fields to NULL
    ParseDir = false;
@@ -436,6 +435,33 @@ bool DicomDir::Anonymize()
    return true;
 }
 
+/**
+ * \brief Copies all the attributes from an other DocEntrySet 
+ * @param set entry to copy from
+ * @remarks The contained DocEntries a not copied, only referenced
+ */
+void DicomDir::Copy(DocEntrySet *set)
+{
+   // Remove all previous childs
+   ClearPatient();
+
+   Document::Copy(set);
+
+   DicomDir *dd = dynamic_cast<DicomDir *>(set);
+   if( dd )
+   {
+      if(MetaElems)
+         MetaElems->Unregister();
+      MetaElems = dd->MetaElems;
+      if(MetaElems)
+         MetaElems->Register();
+
+      Patients = dd->Patients;
+      for(ItPatient = Patients.begin();ItPatient != Patients.end();++ItPatient)
+         (*ItPatient)->Register();
+   }
+}
+
 //-----------------------------------------------------------------------------
 // Protected
 /**
@@ -653,7 +679,7 @@ void DicomDir::CreateDicomDir()
         continue;
       }
       if ( si )
-         si->MoveObject(tmpSI);  // New code : Copies the List
+         si->Copy(tmpSI);
 
       tmpSI=s->GetNextSQItem();
    }

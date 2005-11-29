@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:46:36 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2005/11/29 12:48:47 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -230,9 +230,36 @@ void SeqEntry::SetDelimitationItem(DocEntry *e)
    }
 }
 
+/**
+ * \brief Copies all the attributes from an other DocEntry 
+ * @param doc entry to copy from
+ * @remarks The contained SQItems a not copied, only referenced
+ */
+void SeqEntry::Copy(DocEntry *doc)
+{
+   // Delete previous SQ items
+   ClearSQItem();
+
+   DocEntry::Copy(doc);
+   SeqEntry *entry = dynamic_cast<SeqEntry *>(doc);
+   if ( entry )
+   {
+      DelimitorMode = entry->DelimitorMode;
+      SQDepthLevel = entry->SQDepthLevel;
+
+      SeqTerm = entry->SeqTerm;
+      if(SeqTerm)
+         SeqTerm->Register();
+      Items = entry->Items;
+      for(ItSQItem = Items.begin();ItSQItem != Items.end(); ++ItSQItem)
+      {
+         (*ItSQItem)->Register();
+      }
+   }
+}
+
 //-----------------------------------------------------------------------------
 // Protected
-
 
 //-----------------------------------------------------------------------------
 // Private

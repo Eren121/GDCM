@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:46:25 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/11/29 12:48:46 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,6 +53,8 @@ public:
    DicomDirStudy *GetFirstStudy();
    DicomDirStudy *GetNextStudy();
    DicomDirStudy *GetLastStudy();
+
+   virtual void Copy(DocEntrySet *set);
 
 protected:
    DicomDirPatient(bool empty=false); 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 12:15:06 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2005/11/29 12:48:46 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,7 +219,7 @@ bool DocEntry::IsSequenceDelimitor()
 }
 
 /**
- * \brief   Copies all the attributes from an other DocEntry 
+ * \brief Copies all the attributes from an other DocEntry 
  * @param doc entry to copy from
  */
 void DocEntry::Copy(DocEntry *doc)

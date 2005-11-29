@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:33 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2005/11/29 12:48:46 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -211,6 +211,32 @@ DicomDirVisit *DicomDirStudy::GetLastVisit()
       return *ItVisit;
    }
    return NULL;
+}
+
+/**
+ * \brief Copies all the attributes from an other DocEntrySet 
+ * @param set entry to copy from
+ * @remarks The contained DocEntries a not copied, only referenced
+ */
+void DicomDirStudy::Copy(DocEntrySet *set)
+{
+   // Remove all previous childs
+   ClearSerie();
+   ClearVisit();
+
+   DicomDirObject::Copy(set);
+
+   DicomDirStudy *ddEntry = dynamic_cast<DicomDirStudy *>(set);
+   if( ddEntry )
+   {
+      Series = ddEntry->Series;
+      for(ItSerie = Series.begin();ItSerie != Series.end();++ItSerie)
+         (*ItSerie)->Register();
+
+      Visits = ddEntry->Visits;
+      for(ItVisit = Visits.begin();ItVisit != Visits.end();++ItVisit)
+         (*ItVisit)->Register();
+   }
 }
 
 //-----------------------------------------------------------------------------
