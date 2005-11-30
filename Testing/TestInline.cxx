@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 13:02:44 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2005/11/30 11:40:26 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,12 +55,12 @@ double     passDirect(double a,  double b);
 double     passRef(double &a, double &b);
 double     passPtr(double *a, double *b);
 
-#define       \
-mswap(a, b)   \
-{             \
-   double tmp = a;   \
-   a   = b;   \
-   b   = tmp; \
+#define           \
+mswap(a, b)       \
+{                 \
+   double tmp = a;\
+   a   = b;       \
+   b   = tmp;     \
 }
 
 void frswap(double &a, double &b)
@@ -167,13 +167,21 @@ double passDirectDouble(double a, double b)
 int TestInline(int argc, char *argv[])
 {
 
+   // just to know, on every proc
+   std::cout << "Size of short int " << sizeof(short int) << std::endl;
+   std::cout << "Size of int  "      << sizeof(int)       << std::endl;
+   std::cout << "Size of long "      << sizeof(long)      << std::endl;
+   std::cout << "Size of float"      << sizeof(float)     << std::endl;
+   std::cout << "Size of double"     << sizeof(double)    << std::endl;
+   std::cout << "Size of int* "      << sizeof(int*)      << std::endl;
+   std::cout <<  "-----------------" << std::endl;
    unsigned int nbLoop; 
    unsigned int i;
       
    if (argc > 1)
       nbLoop = atoi(argv[1]);
    else
-      nbLoop = 500000000;
+      nbLoop = 10000000;
 
    //clock_t r1, r2;
    struct tms tms1, tms2;
