@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:35 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2005/11/30 13:42:19 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -194,6 +194,13 @@ private:
    uint8_t *GetRaw();
 
 // members variables:
+protected:
+   /// value of the ??? for any progress bar
+   float Progress;
+   mutable bool Abort;
+   
+private:
+
    /// gdcm::File to use to load the file
    File *FileInternal;
 

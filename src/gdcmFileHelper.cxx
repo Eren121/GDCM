@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/29 17:21:35 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2005/11/30 13:42:19 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1651,6 +1651,34 @@ void FileHelper::RestoreWriteMandatory()
 
    Archive->Restore(0x0020,0x000d);
    Archive->Restore(0x0020,0x000e);
+}
+
+
+/**
+ * \brief   CallStartMethod
+ */
+void FileHelper::CallStartMethod()
+{
+   Progress = 0.0f;
+   Abort    = false;
+   CommandManager::ExecuteCommand(this,CMD_STARTPROGRESS);
+}
+
+/**
+ * \brief   CallProgressMethod
+ */
+void FileHelper::CallProgressMethod()
+{
+   CommandManager::ExecuteCommand(this,CMD_PROGRESS);
+}
+
+/**
+ * \brief   CallEndMethod
+ */
+void FileHelper::CallEndMethod()
+{
+   Progress = 1.0f;
+   CommandManager::ExecuteCommand(this,CMD_ENDPROGRESS);
 }
 
 //-----------------------------------------------------------------------------

@@ -13,7 +13,6 @@
 #include "gdcmTagKey.h"
 #include "gdcmVRKey.h"
 #include "gdcmDict.h"
-#include "gdcmDicomEntry.h"
 #include "gdcmDictEntry.h"
 #include "gdcmDictSet.h"
 #include "gdcmDicomDir.h"
@@ -150,14 +149,6 @@ typedef unsigned long long uint64_t;
 %ignore gdcm::TagKey::operator[](const unsigned int &_id) const;
 %ignore gdcm::TagKey::operator[](const unsigned int &_id);
 
-%ignore gdcm::DicomDir::SetStartMethod(DicomDir::Method *method,void *arg = NULL);
-%ignore gdcm::DicomDir::SetProgressMethod(DicomDir::Method *method,void *arg = NULL);
-%ignore gdcm::DicomDir::SetEndMethod(DicomDir::Method *method,void *arg = NULL);
-
-%ignore gdcm::FileHelper::SetStartMethod(FileHelper::Method *method,void *arg = NULL);
-%ignore gdcm::FileHelper::SetProgressMethod(FileHelper::Method *method,void *arg = NULL);
-%ignore gdcm::FileHelper::SetEndMethod(FileHelper::Method *method,void *arg = NULL);
-
 // Ignore all placed in gdcmCommon.h
 %ignore GDCM_UNKNOWN;
 %ignore GDCM_UNFOUND;
@@ -189,7 +180,6 @@ typedef unsigned long long uint64_t;
 %include "gdcmCommandManager.h"
 %include "gdcmTagKey.h"
 %include "gdcmVRKey.h"
-%include "gdcmDicomEntry.h"
 %include "gdcmDictEntry.h"
 %include "gdcmDict.h"
 %include "gdcmDictSet.h"
