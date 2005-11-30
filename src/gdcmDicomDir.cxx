@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.177 $
+  Date:      $Date: 2005/11/30 10:58:27 $
+  Version:   $Revision: 1.178 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -438,7 +438,7 @@ bool DicomDir::Anonymize()
 /**
  * \brief Copies all the attributes from an other DocEntrySet 
  * @param set entry to copy from
- * @remarks The contained DocEntries a not copied, only referenced
+ * @remarks The contained DocEntries are not copied, only referenced
  */
 void DicomDir::Copy(DocEntrySet *set)
 {

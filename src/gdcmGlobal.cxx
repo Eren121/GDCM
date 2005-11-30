@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2005/11/30 10:58:27 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,9 +65,9 @@ Global Glob;
  */
 Global::Global()
 {
-   if (ValRes || TranSyn || Dicts || ddElem)
+   if (ValRes || TranSyn || Dicts || ddElem || GroupName )
    {
-      gdcmStaticWarningMacro( "VR or TS or Dicts already allocated");
+      gdcmStaticWarningMacro( "VR or TS or Dicts or ... already allocated");
       return;
    }
    Dicts     = DictSet::New();
@@ -91,45 +91,6 @@ Global::~Global()
 
 //-----------------------------------------------------------------------------
 // Public
-/**
- * \brief   returns a pointer to Dictionaries Table 
- */
-DictSet *Global::GetDicts()
-{
-   return Dicts;
-}
-
-/**
- * \brief   returns a pointer to the 'Value Representation Table' 
- */
-VR *Global::GetVR()
-{
-   return ValRes;
-}
-
-/**
- * \brief   returns a pointer to the 'Transfer Syntax Table' 
- */
-TS *Global::GetTS()
-{
-   return TranSyn;
-}
-
-/**
- * \brief   returns a pointer to the Group name correspondance table
- */
-DictGroupName *Global::GetDictGroupName()
-{
-   return GroupName;
-}
-
-/**
- * \brief   returns a pointer to the DicomDir related elements Table 
- */
-DicomDirElement *Global::GetDicomDirElements()
-{
-   return ddElem;
-}
 
 //-----------------------------------------------------------------------------
 // Protected

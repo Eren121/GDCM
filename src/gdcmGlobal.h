@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2005/04/05 10:56:25 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2005/11/30 10:58:28 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,17 +33,23 @@ class DicomDirElement;
  * \brief   This class contains all globals elements that might be
  *          instanciated only once (singletons).
  */
+class Dict;
 class GDCM_EXPORT Global
 {
 public:
    Global();
    ~Global();
 
-   static DictSet *GetDicts();
-   static VR *GetVR();
-   static TS *GetTS();
-   static DictGroupName *GetDictGroupName();
-   static DicomDirElement *GetDicomDirElements();
+   /// \brief   returns a pointer to Dictionaries Table 
+   static DictSet *GetDicts() { return Dicts;}
+   /// \brief   returns a pointer to the 'Value Representation Table' 
+   static VR *GetVR(){ return ValRes; }
+   /// \brief   returns a pointer to the 'Transfer Syntax Table'
+   static TS *GetTS(){ return TranSyn; }
+   /// \brief   returns a pointer to the Group name correspondance table
+   static DictGroupName *GetDictGroupName() { return GroupName; }
+   /// \brief   returns a pointer to the DicomDir related elements Table 
+   static DicomDirElement *GetDicomDirElements(){ return ddElem; }
 
 private:
    /// Pointer to a container, holding _all_ the Dicom Dictionaries.
