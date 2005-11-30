@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 10:58:27 $
-  Version:   $Revision: 1.178 $
+  Date:      $Date: 2005/11/30 11:41:35 $
+  Version:   $Revision: 1.179 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -477,12 +477,12 @@ void DicomDir::CreateDicomDirChainedList(std::string const &path)
    File *f;
 
    DirListType fileList = dirList.GetFilenames();
-
+   unsigned int nbFile = fileList.size();
    for( DirListType::iterator it  = fileList.begin();
                               it != fileList.end();
                               ++it )
    {
-      Progress = (float)(count+1)/(float)fileList.size();
+      Progress = (float)(count+1)/(float)nbFile;
       CallProgressMethod();
       if ( Abort )
       {
