@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:28:58 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/11/30 08:48:15 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ void CallbackTest(gdcm::CallbackCommand *cmd)
    fctExecuted = true;
 }
 
-int TestCommand(int argc, char *argv[]) 
+int TestCommand(int , char *[]) 
 {
    int error=0;
 

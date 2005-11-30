@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2005/11/30 08:48:17 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,7 @@ TagKey DictEntry::TranslateToKey(uint16_t group, uint16_t elem)
  * @param   os ostream we want to print in
  * @param indent Indentation string to be prepended during printing
  */
-void DictEntry::Print(std::ostream &os, std::string const &indent )
+void DictEntry::Print(std::ostream &os, std::string const & )
 {
    os << GetKey(); 
    os << " [" << VR  << "] ";

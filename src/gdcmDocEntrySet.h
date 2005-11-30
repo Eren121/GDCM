@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:47 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2005/11/30 08:48:17 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,7 +111,7 @@ public:
                          VRKey const &vr = GDCM_VRUNKNOWN);
    SeqEntry *NewSeqEntry(uint16_t group, uint16_t elem);
 
-   virtual void Copy(DocEntrySet *set) {};
+   virtual void Copy(DocEntrySet *) {};
 
 protected:
    /// Canonical Constructor
