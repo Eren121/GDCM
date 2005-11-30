@@ -154,6 +154,10 @@ typedef unsigned long long uint64_t;
 %ignore gdcm::DicomDir::SetProgressMethod(DicomDir::Method *method,void *arg = NULL);
 %ignore gdcm::DicomDir::SetEndMethod(DicomDir::Method *method,void *arg = NULL);
 
+%ignore gdcm::FileHelper::SetStartMethod(FileHelper::Method *method,void *arg = NULL);
+%ignore gdcm::FileHelper::SetProgressMethod(FileHelper::Method *method,void *arg = NULL);
+%ignore gdcm::FileHelper::SetEndMethod(FileHelper::Method *method,void *arg = NULL);
+
 // Ignore all placed in gdcmCommon.h
 %ignore GDCM_UNKNOWN;
 %ignore GDCM_UNFOUND;
