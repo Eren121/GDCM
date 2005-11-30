@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:35 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2005/11/30 11:44:38 $
+  Version:   $Revision: 1.107 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -301,9 +301,11 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       unsigned int nbFrames = lengthToRead / frameSize;
       for (i=0;i<nbFrames; i++)
       {
+         Progress = (float)(count+1)/(float)nbFrames;
          fp->read( raw, frameSize);
          raw +=  frameSize;
          remainingLength -=  frameSize;
+         count++;
       }
       if (remainingLength !=0 )
         fp->read( raw, remainingLength);
