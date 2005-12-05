@@ -1,0 +1,5 @@
+(0019, 1108) patient position (HF or FF).
+(0019, 1109) From where I am looking at the patient (VFF or VFH).
+(0019, 110A) patient position (SU, PR, etc.)
+(0019, 110B) Location.
+(0019, 110C) Scano View Direction. (VSR=View Scano Reverse, or VSN = View Scano Normal).
