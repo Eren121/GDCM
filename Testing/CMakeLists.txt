@@ -134,11 +134,11 @@ SET(BLACK_LIST
   "ETIAM_video_002.dcm"
   #Something stupid occured in the code for LibIDO images.
   #I Black list them for a while. JP
-  "gdcm-ACR-LibIDO.acr"
+  #"gdcm-ACR-LibIDO.acr"
   "LIBIDO-24-ACR_NEMA-Rectangle.dcm"
   #16 Bits per pixel images with LUT 16 Bits.
   #I wait to be 100% sure before releasing them. JP
-  "rle16sti.dcm"
+  #rle16sti.dcm"
   "rle16loo.dcm"   
   # Jasper cannot handle this image, only kakadu so far, unless you patch jasper
   # but then it breaks other images...
@@ -149,13 +149,14 @@ SET(BLACK_LIST
   # I probabely messed up smething with the .png, .tst of
   # the images I recently added to the Test Suite
   # I Black list them, until I find where is the pb.
-  "US-RGB-8-esopecho.dcm"
-  "MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm"
-  "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
-  "MR_SIEMENS_forceLoad29-1010_29-1020.dcm"
-  # An element contains a value of 4, but no data follows
-  # So, the next (group, elem) is not correctly read
-  "gdcm-MR-PHILIPS-16-Multi-Seq.dcm"
+  #"US-RGB-8-esopecho.dcm"
+  #"MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm"
+  #"MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
+  #"MR_SIEMENS_forceLoad29-1010_29-1020.dcm"
+  
+  #Still cause troubles (see the .README.txt file for more details)
+  "MR_Philips_Intera_in_SQ_2001_e05f_item_wrong_lgt_use_NOSHADOWSEQ.dcm"
+  "MR_Philips_Intera_PrivateSequenceExplicitVR.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
