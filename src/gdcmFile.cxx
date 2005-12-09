@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:51 $
-  Version:   $Revision: 1.310 $
+  Date:      $Date: 2005/12/09 12:22:49 $
+  Version:   $Revision: 1.311 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -768,17 +768,19 @@ float File::GetZOrigin()
 /**
   * \brief gets the info from 0020,0037 : Image Orientation Patient
   *                   or from 0020 0035 : Image Orientation (RET)
+  *
   * (needed to organize DICOM files based on their x,y,z position)
-  * @param iop adress of the (6)float array to receive values
-  * @return true when one of the tag is found
-  *         false when nothing is found
+  *
+  * @param iop adress of the (6)float array to receive values.
+  *        (defaulted as 1.,0.,0.,0.,1.,0. if nothing -or inconsistent stuff-
+  *        is found.
+  * @return true when one of the tag -with consistent values- is found
+  *         false when nothing or inconsistent stuff - is found
   */
 bool File::GetImageOrientationPatient( float iop[6] )
 {
    std::string strImOriPat;
    //iop is supposed to be float[6]
-   iop[0] = iop[4] = 1.;
-   iop[1] = iop[2] = iop[3] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
    if ( (strImOriPat = GetEntryString(0x0020,0x0037)) != GDCM_UNFOUND )
@@ -786,10 +788,14 @@ bool File::GetImageOrientationPatient( float iop[6] )
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
+         iop[0] = iop[4] = 1.;
+         iop[1] = iop[2] = iop[3] = iop[5] = 0.;
          gdcmWarningMacro( "Wrong Image Orientation Patient (0020,0037)."
                         << " Less than 6 values were found." );
          return false;
       }
+      else 
+         return true;
    }
    //For ACR-NEMA
    // 0020 0035 DS REL Image Orientation (RET)
@@ -798,12 +804,16 @@ bool File::GetImageOrientationPatient( float iop[6] )
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
+         iop[0] = iop[4] = 1.;
+         iop[1] = iop[2] = iop[3] = iop[5] = 0.;
          gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). "
                         << "Less than 6 values were found." );
          return false;
       }
+      else
+         return true;
    }
-   return true;
+   return false;
 }
 
 /**
