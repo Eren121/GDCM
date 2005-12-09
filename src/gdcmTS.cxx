@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/26 08:04:16 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2005/12/09 12:23:39 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,10 +27,14 @@
 #include <ctype.h> // for isdigit
 
 // TODO
-// a lot of troubles expected with TS : 1.2.840.113619.5.2
+// troubles expected with TS : 1.2.840.113619.5.2
 // Implicit VR - Big Endian
 // http://www.gemedicalsystemseurope.com/euen/it_solutions/pdf/lsqxi_rev2.pdf
-// 
+// G.E. deliberately violated a lot of Dicom rules are
+// (probabely to to avoid other people to read their images)
+// Just try and error on new images :
+// PrintFile debug filein=...
+// and fix the bugs
 
 namespace gdcm 
 {
@@ -39,7 +43,7 @@ namespace gdcm
 static const char *SpecialStrings[] =  {
   // Implicit VR Little Endian
   "1.2.840.10008.1.2",
-  // Implicit VR Big Endian DLX (G.E Private)
+  // Implicit VR Big Endian (G.E Private)
   "1.2.840.113619.5.2",
   // Explicit VR Little Endian
   "1.2.840.10008.1.2.1",

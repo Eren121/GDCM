@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.332 $
+  Date:      $Date: 2005/12/09 12:23:38 $
+  Version:   $Revision: 1.333 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1041,7 +1041,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    bool delim_mode_intern = delim_mode;
    bool first = true;
    gdcmDebugMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
-                     << " at offset " << std::hex << offset ); 
+                     << " at offset " << std::hex << "0x(" << offset << ")" ); 
    while (true)
    {
       if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
@@ -1088,8 +1088,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
             gdcmDebugMacro( "in ParseDES : cannot add a DataEntry "
                                  << newDataEntry->GetKey()  
-                                 << " (at offset : " 
-                                 << newDataEntry->GetOffset() << " )" );
+                                 << " (at offset : 0x(" 
+                                 << newDataEntry->GetOffset() << ") )" );
             used=false;
          }
          else
@@ -1196,8 +1196,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {  // Don't try to parse zero-length sequences
 
             gdcmDebugMacro( "Entry in ParseSQ, delim " << delim_mode_intern
-                               << " at offset " << std::hex
-                               << newDocEntry->GetOffset() );
+                               << " at offset 0x(" << std::hex
+                               << newDocEntry->GetOffset() << ")");
 
             ParseSQ( newSeqEntry, 
                      newDocEntry->GetOffset(),
@@ -1210,8 +1210,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
             gdcmWarningMacro( "in ParseDES : cannot add a SeqEntry "
                                 << newSeqEntry->GetKey()
-                                << " (at offset : " 
-                                << newSeqEntry->GetOffset() << " )" ); 
+                                << " (at offset : 0x(" 
+                                << newSeqEntry->GetOffset() << ") )" ); 
             used = false;
          }
          else
@@ -1322,8 +1322,8 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    long offset    = PreviousDocEntry->GetOffset();
 
    gdcmDebugMacro( "Backtrack :" << std::hex << group 
-                                   << "|" << elem
-                                   << " at offset " << offset );
+                                 << "|" << elem
+                                 << " at offset 0x(" <<offset << ")" );
    RemoveEntry( PreviousDocEntry );
 
    // forge the Seq Entry
@@ -1574,7 +1574,7 @@ VRKey Document::FindDocEntryVR()
       if ( CurrentGroup != 0xfffe )
          gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
-                        << ") at offset :" << positionOnEntry );
+                        << ") at offset : 0x(" << positionOnEntry<< ")" );
       Fp->seekg(positionOnEntry, std::ios::beg);
       return GDCM_VRUNKNOWN;
    }

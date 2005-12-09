@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:45 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2005/12/09 12:23:38 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,6 +76,8 @@ DataEntry::~DataEntry ()
 // Public
 /**
  * \brief Sets the value (non string) of the current Dicom Header Entry
+ * @param area area
+ * @param self self
  */
 void DataEntry::SetBinArea( uint8_t *area, bool self )  
 { 
@@ -88,6 +90,8 @@ void DataEntry::SetBinArea( uint8_t *area, bool self )
 }
 /**
  * \brief Inserts the value (non string) into the current Dicom Header Entry
+ * @param area area
+ * @param length length 
  */
 void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
 {
@@ -107,6 +111,11 @@ void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
    }
 }
 
+/**
+ * \brief Inserts the value (non string) into the current Dicom Header Entry
+ * @param id id
+ * @param val val 
+ */
 void DataEntry::SetValue(const uint32_t &id, const double &val)
 {
    if( !BinArea )
@@ -151,9 +160,10 @@ void DataEntry::SetValue(const uint32_t &id, const double &val)
 }
 /**
  * \brief returns, as a double (?!?) one of the values 
- //      (when entry is multivaluated), identified by its index.
- //      Returns 0.0 if index is wrong
- //     FIXME : warn the user there was a problem ! 
+ *      (when entry is multivaluated), identified by its index.
+ *      Returns 0.0 if index is wrong
+ *     FIXME : warn the user there was a problem ! 
+ * @param id id
  */
 double DataEntry::GetValue(const uint32_t &id) const
 {
@@ -578,7 +588,7 @@ uint32_t DataEntry::ComputeFullLength()
 //-----------------------------------------------------------------------------
 // Protected
 /// \brief Creates a DataEntry owned BinArea (remove previous one if any)
-void DataEntry::NewBinArea(void)
+void DataEntry::NewBinArea( )
 {
    DeleteBinArea();
    if( GetLength() > 0 )

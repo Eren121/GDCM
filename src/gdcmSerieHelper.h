@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2005/12/09 12:23:38 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,7 +164,7 @@ private:
    typedef std::vector<Rule> SerieRestrictions;
    SerieRestrictions Restrictions;
    
-   // New style for (extented) Rules (Moreover old one doesn't compile)
+   // New style for (extented) Rules
    typedef struct {
       uint16_t group;
       uint16_t elem;
