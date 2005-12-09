@@ -12,7 +12,8 @@ SET(EXAMPLE_SOURCES
   exGrey2RGB
   exGC
   exImageLighten
-  exOverlaysACR
+  #exOverlaysACR
+  exOverlaysDCM
   exCurveData
   exExtractTag
   exSerieHelper
