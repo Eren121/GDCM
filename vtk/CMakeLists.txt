@@ -73,6 +73,11 @@ TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer
   vtkgdcm
   vtkRendering
 )
+ADD_EXECUTABLE(vtkgdcmSerieViewer2 ${GUI_EXECUTABLE} vtkgdcmSerieViewer2.cxx)
+TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer2
+  vtkgdcm
+  vtkRendering
+)
 #-----------------------------------------------------------------------------
 SET(vtkWriteDicom_SOURCES
   vtkWriteDicom.cxx
