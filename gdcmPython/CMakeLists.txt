@@ -126,9 +126,16 @@ IF(WIN32)
        "${GDCM_BINARY_DIR}\n"
        "${GDCM_BINARY_DIR}/bin/release\n"
   )
+  FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/InstallOnly/gdcmPython.pth
+       "${GDCM_SOURCE_DIR}\n"
+       "${GDCM_SOURCE_DIR}/bin\n"
+  )
 ELSE(WIN32)
   FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/gdcmPython.pth
        "${CMAKE_INSTALL_PREFIX}/lib/gdcm\n"
+  )
+  FILE(WRITE ${GDCM_BINARY_DIR}/gdcmPython/InstallOnly/gdcmPython.pth
+       "/usr/lib/gdcm\n"
   )
 ENDIF(WIN32)
 
@@ -144,7 +151,7 @@ IF(UNIX)
   STRING(REGEX REPLACE "/usr" "" PYTHON_DIR ${PYTHON_DIR})
 
   INSTALL_FILES(${PYTHON_DIR}/site-packages FILES 
-    "${GDCM_BINARY_DIR}/gdcmPython/gdcmPython.pth"
+    "${GDCM_BINARY_DIR}/gdcmPython/InstallOnly/gdcmPython.pth"
   )
   INSTALL_FILES(/lib/gdcm/gdcmPython FILES 
     "gdcm.py" 
