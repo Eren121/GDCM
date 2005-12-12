@@ -47,7 +47,7 @@ Source: "${INNO_DATA_DIR}\DICOMDIR";                 DestDir: "{app}\data";     
 
 ; Python
 Source: "${INNO_BINARY_DIR}\gdcmPython\*.py";        DestDir: "{app}\gdcmPython";              CopyMode: alwaysoverwrite; Components: python
-Source: "${INNO_BINARY_DIR}\gdcmPython\*.pth";       DestDir: "{app}\gdcmPython";              CopyMode: alwaysoverwrite; Components: python
+Source: "${INNO_BINARY_DIR}\gdcmPython\InstallOnly\*.pth";DestDir: "{app}\gdcmPython";              CopyMode: alwaysoverwrite; Components: python
 Source: "${INNO_BINARY_DIR}\gdcmPython\demo\*.py";   DestDir: "{app}\gdcmPython\demo";         CopyMode: alwaysoverwrite; Components: python
 Source: "${INNO_DATA_DIR}\test.acr";                 DestDir: "{app}\gdcmPython\demo";         CopyMode: alwaysoverwrite; Components: python
 Source: "${INNO_DATA_DIR}\DICOMDIR";                 DestDir: "{app}\gdcmPython\demo";         CopyMode: alwaysoverwrite; Components: python
@@ -74,6 +74,5 @@ Source: "${INNO_SOURCE_DIR}\Doc\License.txt";        DestDir: "{app}";          
 Source: "${INNO_SOURCE_DIR}\AUTHORS";                DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_SOURCE_DIR}\DEVELOPPER";             DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_SOURCE_DIR}\INSTALL";                DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
-Source: "${INNO_SOURCE_DIR}\NEWS";                   DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
 Source: "${INNO_SOURCE_DIR}\README";                 DestDir: "{app}";                         CopyMode: alwaysoverwrite; Components: core
 
