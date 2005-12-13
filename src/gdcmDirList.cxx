@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2005/12/13 13:37:50 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -122,10 +122,20 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
       }
    }
    DWORD dwError = GetLastError();
-   if (hFile != INVALID_HANDLE_VALUE) FindClose(hFile);
+   if (hFile != INVALID_HANDLE_VALUE) 
+      FindClose(hFile);
    if (dwError != ERROR_NO_MORE_FILES) 
    {
-      gdcmErrorMacro("FindNextFile error. Error is " << dwError);
+      LPVOID lpMsgBuf;
+      FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|
+                    FORMAT_MESSAGE_FROM_SYSTEM|
+                    FORMAT_MESSAGE_IGNORE_INSERTS,
+                    NULL,GetLastError(),
+                    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+                    (LPTSTR) &lpMsgBuf,0,NULL);
+
+      gdcmErrorMacro("FindNextFile error. Error is " << (char *)lpMsgBuf
+                   <<" for the directory : "<<dirName);
       return -1;
    }
 
