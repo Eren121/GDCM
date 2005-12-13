@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 11:41:35 $
-  Version:   $Revision: 1.179 $
+  Date:      $Date: 2005/12/13 15:08:17 $
+  Version:   $Revision: 1.180 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -353,7 +353,7 @@ bool DicomDir::Write(std::string const &fileName)
 {  
    int i;
    uint16_t sq[6] = { 0x0004, 0x1220, 0x5153, 0x0000, 0xffff, 0xffff };
-   uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0xffff, 0xffff };
+   uint16_t sqt[4]= { 0xfffe, 0xe0dd, 0x0000, 0x0000 };
 
    std::ofstream *fp = new std::ofstream(fileName.c_str(),  
                                          std::ios::out | std::ios::binary);
@@ -387,7 +387,7 @@ bool DicomDir::Write(std::string const &fileName)
    // force writing Sequence Delimitation Item
    for(i=0;i<4;++i)
    {
-      binary_write(*fp, sqt[i]);  // fffe e0dd ffff ffff 
+      binary_write(*fp, sqt[i]);  // fffe e0dd 0000 0000 
    }
 
    fp->close();
