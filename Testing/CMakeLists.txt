@@ -151,12 +151,12 @@ SET(BLACK_LIST
   # I Black list them, until I find where is the pb.
   #"US-RGB-8-esopecho.dcm"
   #"MR_Philips_Intera_No_PrivateSequenceImplicitVR.dcm"
-  #"MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
   #"MR_SIEMENS_forceLoad29-1010_29-1020.dcm"
   
   #Still cause troubles (see the .README.txt file for more details)
   "MR_Philips_Intera_in_SQ_2001_e05f_item_wrong_lgt_use_NOSHADOWSEQ.dcm"
   "MR_Philips_Intera_PrivateSequenceExplicitVR.dcm"
+  "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
