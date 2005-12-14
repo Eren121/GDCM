@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
    unsigned int dimXY=dimX*dimY;
    std::cout <<"DimX : "<<dimX<<"DimY : "<<dimY<<"DimXY : "<<dimXY << std::endl;
-   unsigned char outputData[dimXY];
+   unsigned char *outputData = new unsigned char[dimXY];
 
    unsigned char *result=outputData;
    for (int i=0;i<(dimXY/8);i++) 
@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
    fh->WriteDcmExplVR(outputFileName);
    std::cout <<"End WriteOverlayImage" << std::endl;
 
+   delete outputData;
    f->Delete();   
    fh->Delete();
    return 0;
