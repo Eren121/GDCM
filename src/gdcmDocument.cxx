@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/09 12:23:38 $
-  Version:   $Revision: 1.333 $
+  Date:      $Date: 2005/12/14 10:00:28 $
+  Version:   $Revision: 1.334 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1098,7 +1098,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             // Load only if we can add (not a duplicate key)
             LoadDocEntry( newDataEntry );
          }
-
          if ( newDataEntry->GetElement() == 0x0000 ) // if on group length
          {
             if ( newDataEntry->GetGroup()%2 != 0 )   // if Shadow Group
@@ -1106,8 +1105,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                if ( LoadMode & LD_NOSHADOW ) // if user asked to skip shad.gr
                {
                   std::string strLgrGroup = newDataEntry->GetString();
+
                   int lgrGroup;
-                  if ( newDataEntry->IsUnfound() )
+                  //if ( newDataEntry->IsUnfound() ) /?!? JPR
                   {
                      lgrGroup = atoi(strLgrGroup.c_str());
                      Fp->seekg(lgrGroup, std::ios::cur);
