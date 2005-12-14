@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:45 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2005/12/14 09:51:33 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
       loadMode |= gdcm::LD_NOSHADOWSEQ;
    else 
    {
-   if ( am->ArgMgrDefined("noshadow") )
+      if ( am->ArgMgrDefined("noshadow") )
          loadMode |= gdcm::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
          loadMode |= gdcm::LD_NOSEQ;
