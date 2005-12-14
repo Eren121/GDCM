@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/11/30 13:42:19 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2005/12/14 10:02:13 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1359,11 +1359,11 @@ void FileHelper::CheckMandatoryElements()
 
    std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
    if ( pixelSpacing == GDCM_UNKNOWN )
+   {
       pixelSpacing = "1.0\\1.0";
-   else
        // if missing, Pixel Spacing forced to "1.0\1.0"
-   CopyMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
-
+      CopyMandatoryEntry(0x0028,0x0030,"1.0\\1.0");
+   }
    // 'Imager Pixel Spacing' : defaulted to 'Pixel Spacing'
    // --> This one is the *legal* one !
    // FIXME : we should write it only when we are *sure* the image comes from
