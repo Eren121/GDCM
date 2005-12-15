@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/15 13:52:17 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/12/15 17:06:39 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    " \n RawToDicom : \n                                                       ",
    " Writes a Dicom file from a Raw File                                      ",
-   " usage: RawToDicom {filein=inputFileName|dirin=inputDirectoryName}        ",
+   " usage: RawToDicom filein=inputFileName                                   ",
    "                   rows=nb of Rows, lines=nb of Lines,                    ",
    "                   [frames = nb of Frames] //defaulted to 1               ",
    "                   pixeltype={8U|8S|16U|16S}                              ",
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
    char *inputFileName  = am->ArgMgrGetString("filein",(char *)0);
    char *outputFileName = am->ArgMgrGetString("fileout",(char *)0);   
-   char *dirName        = am->ArgMgrGetString("dirin",(char *)0);
+   //char *dirName        = am->ArgMgrGetString("dirin",(char *)0);
    
    int nX = am->ArgMgrWantInt("rows", usage);
    int nY = am->ArgMgrWantInt("lines", usage);
@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
    
-   
   
  // Read the Raw file  
    std::ifstream *Fp = new std::ifstream(inputFileName, std::ios::in | std::ios::binary);
@@ -97,7 +96,6 @@ int main(int argc, char *argv[])
    }  
 
    std::string strPixelType(pixelType);
-   int pixelLength;
    int pixelSign;
    int pixelSize;
    
