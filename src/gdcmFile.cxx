@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/09 12:22:49 $
-  Version:   $Revision: 1.311 $
+  Date:      $Date: 2005/12/15 13:36:55 $
+  Version:   $Revision: 1.312 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1163,7 +1163,7 @@ int File::GetLUTNbits()
 
 /**
  *\brief gets the info from 0028,1052 : Rescale Intercept
- * @return Rescale Intercept
+ * @return Rescale Intercept. defaulted to 0.0 is not found or empty
  */
 float File::GetRescaleIntercept()
 {
@@ -1180,7 +1180,7 @@ float File::GetRescaleIntercept()
 
 /**
  *\brief   gets the info from 0028,1053 : Rescale Slope
- * @return Rescale Slope
+ * @return Rescale Slope. defaulted to 0.0 is not found or empty
  */
 float File::GetRescaleSlope()
 {
