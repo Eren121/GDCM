@@ -29,6 +29,7 @@ SET(EXAMPLE_SOURCES
   AnonymizeNoLoad   # without loading the Pixel Data 
   PatchHeader
   ReWrite
+  RawToDicom
   TestValidate
   
 #the following will be transformed into 'examples', or 'utilities'
