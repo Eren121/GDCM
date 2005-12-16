@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/15 17:06:39 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/12/16 15:42:54 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
    "                   pixeltype={8U|8S|16U|16S}                              ",
    "                   [samples = {1|3}}       //defaulted to 1; 3 = RGB      ",
    "                   fileout=outputFileName                                 ",
-   "                   [debug] [warning]                                      ",
+   "                   [debug]                                                ",
    "      debug      : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
    
