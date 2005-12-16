@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
    unsigned char *outputData = new unsigned char[dimXY];
 
    unsigned char *result=outputData;
-   for (int i=0;i<(dimXY/8);i++) 
+   for (unsigned int i=0;i<(dimXY/8);i++) 
    {
       explodeByte(overlay[i], result);
       result+=8;
