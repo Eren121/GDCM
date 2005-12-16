@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/12/09 12:23:38 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2005/12/16 13:48:46 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,7 +100,12 @@ public:
                              { return  (*ItFileSetHt).first; }
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
+   /// \todo : find a trick to allow user to say the retrictetons are ored
+   ///         (not only anded) 
+   ///         ex : keep the images whose SerieNumber is 101 or 102 or 103.
    void AddRestriction(TagKey const &key, std::string const &value, int op);
+   void AddRestriction(uint16_t group, uint16_t elem, std::string const &value,
+                                                                    int op);
 
    /// \brief Use additional series information such as ProtocolName
    ///        and SeriesName to identify when a single SeriesUID contains
@@ -108,7 +113,9 @@ public:
    void SetUseSeriesDetails( bool useSeriesDetails )
                                    { m_UseSeriesDetails = useSeriesDetails;}
    bool GetUseSeriesDetails( ){ return m_UseSeriesDetails; }
-
+   
+   void AddSeriesDetail(uint16_t group, uint16_t elem);
+   
    // \brief Create a string that uniquely identifies a series.   By default
    //         uses the SeriesUID.   If UseSeriesDetails(true) has been called,
    //         then additional identifying information is used.
@@ -173,6 +180,14 @@ private:
    } ExRule;
    typedef std::vector<ExRule> SerieExRestrictions;
    SerieExRestrictions ExRestrictions;
+   
+   typedef struct {
+      uint16_t group;
+      uint16_t elem;
+   } ExDetail;
+   typedef std::vector<ExDetail> SeriesExDetails; 
+   SeriesExDetails ExDetails;
+    
    bool m_UseSeriesDetails;
    
    /// \brief Bit string integer (each one considered as a boolean)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 08:48:17 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2005/12/16 13:48:46 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -209,11 +209,13 @@ void SerieHelper::AddGdcmFile(File *header)
 }
 
 /**
- * \brief add a rules for restricting a DICOM file to be in the serie we are
- * trying to find. For example you can select only the DICOM file from a
+ * \brief add a rule for restricting a DICOM file to be in the serie we are
+ * trying to find. For example you can select only the DICOM files from a
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
+ * \todo find a trick to allow user if he wants the Rectrictions to be *ored*
+ *       (and not only *anded*)
  * @param   key  Target tag we want restrict on a given value
  * @param value value to be checked to exclude File
  * @param op  operator we want to use to check
@@ -229,6 +231,45 @@ void SerieHelper::AddRestriction(TagKey const &key,
    ExRestrictions.push_back( r ); 
 }
 
+/**
+ * \brief add a rule for restricting a DICOM file to be in the serie we are
+ * trying to find. For example you can select only the DICOM file from a
+ * directory which would have a particular EchoTime==4.0.
+ * This method is a user level, value is not required to be formatted as a DICOM
+ * string
+ * \todo find a trick to allow user if he wants the Rectrictions to be *ored*
+ *       (and not only *anded*)
+ * @param   group tag group number we want restrict on a given value
+ * @param   elem  tag element number we want restrict on a given value 
+ * @param value value to be checked to exclude File
+ * @param op  operator we want to use to check
+ */
+void SerieHelper::AddRestriction(uint16_t group, uint16_t elem, 
+                                 std::string const &value, int op)
+{
+   ExRule r;
+   r.group = group;
+   r.elem  = elem;
+   r.value = value;
+   r.op    = op;
+   ExRestrictions.push_back( r ); 
+}
+
+/**
+ * \brief add an extra  'SerieDetail' for building a 'Serie Identifier'
+ *        that ensures (hope so) File constistency (Series Instance UID doesn't.
+ * @param   group tag group number we want restrict on a given value
+ * @param   elem  tag element number we want restrict on a given value 
+ */
+void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem)
+{
+   m_UseSeriesDetails = true;
+   
+   ExDetail d;
+   d.group = group;
+   d.elem  = elem;
+   ExDetails.push_back( d ); 
+}
 /**
  * \brief Sets the root Directory
  * @param   dir Name of the directory to deal with
@@ -768,7 +809,7 @@ bool SerieHelper::FileNameOrdering(FileList *fileList)
 bool SerieHelper::UserOrdering(FileList *fileList)
 {
    std::sort(fileList->begin(), fileList->end(), 
-                                    SerieHelper::UserLessThanFunction);
+                                             SerieHelper::UserLessThanFunction);
    if (!DirectOrder) 
    {
       std::reverse(fileList->begin(), fileList->end());
@@ -776,7 +817,18 @@ bool SerieHelper::UserOrdering(FileList *fileList)
    return true;
 }
 
-std::string SerieHelper::CreateUniqueSeriesIdentifier( File * inFile )
+/**
+ * \brief Heuritics to *try* to build a Serie Identifier that would ensure
+ *        all the images are coherent.
+ *
+ *  We allow user to add his own critierions, using AddSerieDetail
+ *        (he knows more than we do about his images!)
+ *        ex : in tagging series, the only pertnent tag is
+ *        0018|1312 [In-plane Phase Encoding Direction] value : ROW/COLUMN
+ * @param inFile gdcm::File we want to build a Serie Identifier for.
+ * @return the SeriesIdentifier
+ */
+std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
 {
    if( inFile->IsReadable() )
    {
@@ -830,13 +882,29 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File * inFile )
          {
            sColumns = "";
          }
-   
+
   // Concat the new info
          std::string num = sNum.c_str();
          num += sName.c_str();
          num += sThick.c_str();
          num += sRows.c_str();
          num += sColumns.c_str();
+ 
+  // Add a loop, here, to deal with any extra user supplied tag.
+  //      We allow user to add his own critierions 
+  //      (he knows more than we do about his images!)
+  //      ex : in tagging series, the only pertinent tag is
+  //          0018|1312 [In-plane Phase Encoding Direction] value : ROW/COLUMN
+  
+      std::string s;  
+      for(SeriesExDetails::iterator it2 = ExDetails.begin();
+          it2 != ExDetails.end();
+          ++it2)
+      {
+         const ExDetail &r = *it2;
+         s = inFile->GetEntryString( r.group, r.elem );        
+         num += s.c_str();
+      }
    
   // Append the new info to the SeriesUID
          id += ".";
@@ -848,7 +916,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File * inFile )
        for(unsigned int i=0; i<id.size(); i++)
        {
          while(i<id.size()
-               && !( id[i] == '.'
+               && !( id[i] == '.' || id[i] == '-'
                     || (id[i] >= 'a' && id[i] <= 'z')
                     || (id[i] >= '0' && id[i] <= '9')
                     || (id[i] >= 'A' && id[i] <= 'Z')))
