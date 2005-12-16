@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/16 15:42:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2005/12/16 16:38:24 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 
 /**
  * Writes a Dicom file from a Raw File
- * The image content is a horizontal grayscale from 
+ * User has to supply parameters. 
  * 
  */
 #include "gdcmFile.h"
@@ -38,12 +38,15 @@ int main(int argc, char *argv[])
    " \n RawToDicom : \n                                                       ",
    " Writes a Dicom file from a Raw File                                      ",
    " usage: RawToDicom filein=inputFileName                                   ",
-   "                   rows=nb of Rows, lines=nb of Lines,                    ",
-   "                   [frames = nb of Frames] //defaulted to 1               ",
-   "                   pixeltype={8U|8S|16U|16S}                              ",
-   "                   [samples = {1|3}}       //defaulted to 1; 3 = RGB      ",
    "                   fileout=outputFileName                                 ",
+   "                   rows=nb of Rows                                        ",
+   "                   lines=nb of Lines,                                     ",
+   "                   pixeltype={8U|8S|16U|16S}                              ",
+   "                   [frames = nb of Frames] //defaulted to 1               ",
+   "                   [samples = {1|3}}       //defaulted to 1(1:Gray,3:RGB) ",
+   "                   [patientname = Patient's name]                         ",
    "                   [debug]                                                ",
+   "                                                                          ",
    "      debug      : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
    
@@ -62,10 +65,13 @@ int main(int argc, char *argv[])
    char *outputFileName = am->ArgMgrGetString("fileout",(char *)0);   
    //char *dirName        = am->ArgMgrGetString("dirin",(char *)0);
    
+   char *patientName = am->ArgMgrGetString("patientname",(char *)0);
+   
    int nX = am->ArgMgrWantInt("rows", usage);
    int nY = am->ArgMgrWantInt("lines", usage);
    int nZ = am->ArgMgrGetInt("frames", 1);
    int samplesPerPixel = am->ArgMgrGetInt("samples", 1);
+   
    
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
    
@@ -168,6 +174,8 @@ int main(int argc, char *argv[])
    str << samplesPerPixel;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
 
+   if (strlen(patientName) != 0)
+      fileToBuild->InsertEntryString(patientName,0x0010,0x0010); // Patient's Name
 
 // Set the image Pixel Data
    fileH->SetImageData(pixels,dataSize);
