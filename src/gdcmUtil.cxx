@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 13:02:46 $
-  Version:   $Revision: 1.179 $
+  Date:      $Date: 2005/12/21 14:41:34 $
+  Version:   $Revision: 1.180 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -327,7 +327,9 @@ std::string Util::GetName(std::string const &fullName)
 
   std::string::size_type slash_pos = filename.rfind("/");
   std::string::size_type backslash_pos = filename.rfind("\\");
-  slash_pos = slash_pos > backslash_pos ? slash_pos : backslash_pos;
+  // At least with my gcc4.0.1, unfound char results in pos =4294967295 ...
+  //slash_pos = slash_pos > backslash_pos ? slash_pos : backslash_pos;
+  slash_pos = slash_pos < backslash_pos ? slash_pos : backslash_pos;
   if (slash_pos != std::string::npos )
     {
     return filename.substr(slash_pos + 1);
@@ -483,8 +485,8 @@ std::string Util::DicomString(const char *s)
 /**
  * \brief Safely check the equality of two Dicom String:
  *        - Both strings should be of even length
- *        - We allow padding of even length string by either a null 
- *          character of a space
+ *        - We allow padding of even length string by either 
+ *           a null character of a space
  */
 bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 {
@@ -501,8 +503,8 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 /**
  * \brief Safely compare two Dicom String:
  *        - Both strings should be of even length
- *        - We allow padding of even length string by either a null 
- *          character of a space
+ *        - We allow padding of even length string by either  
+ *          a null character of a space
  */
 bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
 {
