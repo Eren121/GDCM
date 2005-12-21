@@ -30,9 +30,9 @@ studyElem   0004 1410 "65535"                // Record in use flag : 65535 = 0xF
 studyElem   0004 1420 "0"                    // Offset of referenced lower-level dir entity : to be computed later
 studyElem   0004 1430 "STUDY "               // Directory Record Type    don't remove trailing space !
 studyElem   0008 0005 "ISO_IR 100"           // Specific Character Set
-studyElem   0008 0020 ""                     // Study Date
-studyElem   0008 0030 ""                     // Study Time
-studyElem   0008 0050 ""                     // Accession Number
+studyElem   0008 0020 "UNKNOWN"              // Study Date       // Type 1C Conditional Element
+studyElem   0008 0030 "UNKNOWN"              // Study Time       // Type 1C Conditional Element
+studyElem   0008 0050 "UNKNOWN"              // Accession Number // Type 1C Conditional Element
 studyElem   0008 1030 ""                     // Study Description
 studyElem   0020 000d ""                     // Study Instance UID : may be forged later
 studyElem   0020 0010 ""                     // Study ID :           may be forged later
