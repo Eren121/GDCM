@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/12/16 13:48:46 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2005/12/21 14:48:09 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,13 +114,11 @@ public:
                                    { m_UseSeriesDetails = useSeriesDetails;}
    bool GetUseSeriesDetails( ){ return m_UseSeriesDetails; }
    
-   void AddSeriesDetail(uint16_t group, uint16_t elem);
+   void AddSeriesDetail(uint16_t group, uint16_t elem, bool convert);
    
-   // \brief Create a string that uniquely identifies a series.   By default
-   //         uses the SeriesUID.   If UseSeriesDetails(true) has been called,
-   //         then additional identifying information is used.
    std::string CreateUniqueSeriesIdentifier( File * inFile );
-
+   
+   std::string CreateUserDefinedFileIdentifier( File * inFile );
  
 /**
  * \brief Sets the LoadMode as a boolean string. 
@@ -184,6 +182,7 @@ private:
    typedef struct {
       uint16_t group;
       uint16_t elem;
+      bool convert;
    } ExDetail;
    typedef std::vector<ExDetail> SeriesExDetails; 
    SeriesExDetails ExDetails;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/16 13:48:46 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2005/12/21 14:48:09 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -214,8 +214,8 @@ void SerieHelper::AddGdcmFile(File *header)
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
- * \todo find a trick to allow user if he wants the Rectrictions to be *ored*
- *       (and not only *anded*)
+ * \todo find a trick to allow user to say if he wants the Rectrictions 
+ *       to be *ored* (and not only *anded*)
  * @param   key  Target tag we want restrict on a given value
  * @param value value to be checked to exclude File
  * @param op  operator we want to use to check
@@ -259,15 +259,17 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
  * \brief add an extra  'SerieDetail' for building a 'Serie Identifier'
  *        that ensures (hope so) File constistency (Series Instance UID doesn't.
  * @param   group tag group number we want restrict on a given value
- * @param   elem  tag element number we want restrict on a given value 
+ * @param   elem  tag element number we want restrict on a given value
+ * @param  convert wether we want 'convertion', to allow further ordering
+ *         e.g : 100 would be *before* 20; 000020.00 vs 00100.00 : OK 
  */
-void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem)
+void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem, bool convert)
 {
-   m_UseSeriesDetails = true;
    
    ExDetail d;
-   d.group = group;
-   d.elem  = elem;
+   d.group   = group;
+   d.elem    = elem;
+   d.convert = convert;
    ExDetails.push_back( d ); 
 }
 /**
@@ -818,10 +820,12 @@ bool SerieHelper::UserOrdering(FileList *fileList)
 }
 
 /**
- * \brief Heuritics to *try* to build a Serie Identifier that would ensure
+ * \brief Heuristics to *try* to build a Serie Identifier that would ensure
  *        all the images are coherent.
  *
- *  We allow user to add his own critierions, using AddSerieDetail
+ * By default, uses the SeriesUID.  If UseSeriesDetails(true) has been called,
+ *         then additional identifying information is used.
+ *  We allow user to add his own critierions, using AddSeriesDetail
  *        (he knows more than we do about his images!)
  *        ex : in tagging series, the only pertnent tag is
  *        0018|1312 [In-plane Phase Encoding Direction] value : ROW/COLUMN
@@ -857,6 +861,10 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
          {
            sName = "";
          }
+ 
+  // You can think on checking Image Orientation (0020,0037), as well.
+  
+
   // 0018 0050 Slice Thickness
   // On some CT systems, scout scans and subsequence volume scans will
   // have the same SeriesUID and Series Number - YET the slice
@@ -894,15 +902,15 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
   //      We allow user to add his own critierions 
   //      (he knows more than we do about his images!)
   //      ex : in tagging series, the only pertinent tag is
-  //          0018|1312 [In-plane Phase Encoding Direction] value : ROW/COLUMN
+  //          0018|1312 [In-plane Phase Encoding Direction] values : ROW/COLUMN
   
-      std::string s;  
+      std::string s; 
       for(SeriesExDetails::iterator it2 = ExDetails.begin();
           it2 != ExDetails.end();
           ++it2)
       {
          const ExDetail &r = *it2;
-         s = inFile->GetEntryString( r.group, r.elem );        
+         s = inFile->GetEntryString( r.group, r.elem );      
          num += s.c_str();
       }
    
@@ -911,12 +919,12 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
          id += num.c_str();
        }
    
-  // Eliminate non-alnum characters, including whitespace...
+  // Eliminate non-alphanum characters, including whitespace...
   // that may have been introduced by concats.
        for(unsigned int i=0; i<id.size(); i++)
        {
          while(i<id.size()
-               && !( id[i] == '.' || id[i] == '-'
+               && !( id[i] == '.' || id[i] == '-' || id[i] == '_'
                     || (id[i] >= 'a' && id[i] <= 'z')
                     || (id[i] >= '0' && id[i] <= '9')
                     || (id[i] >= 'A' && id[i] <= 'Z')))
@@ -934,7 +942,61 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
      }
 }
 
-
+/**
+ * \brief Allow user to build is own File Identifier (to be able to sort
+ *        temporal series just as he wants)
+ *        Criterions will be set with AddSeriesDetail.
+ *        (Maybe the method should be moved elsewhere 
+ *       -File class? FileHelper class?-
+ * @return FileIdentifier (Tokenizable on '_')
+ */
+std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
+{
+  //     Deal with all user supplied tags.
+  //      (user knows more than we do about his images!)
+  
+   float converted;
+   std::string id;
+   std::string s; 
+   char charConverted[17]; 
+   
+   for(SeriesExDetails::iterator it2 = ExDetails.begin();
+      it2 != ExDetails.end();
+      ++it2)
+   {
+      const ExDetail &r = *it2;
+      s = inFile->GetEntryString( r.group, r.elem );
+      
+      // User is allowed to ask 'convertion', to allow further ordering
+      // e.g : 100 would be *before* 20; 000020.00 vs 00100.00 : OK
+      if (it2->convert)
+      {
+         converted = atof(s.c_str());
+         // probabely something much more complicated is possible, 
+         // using C++ features
+         /// \todo check the behaviour when there are >0 and <0 numbers
+         sprintf(charConverted, "%016.6f",converted);
+         s = charConverted;
+      }
+      // Eliminate non-alphanum characters, including whitespace.
+      for(unsigned int i=0; i<s.size(); i++)
+      {
+         while(i<s.size()
+            && !( s[i] == '.' || s[i] == '-'
+                    || (s[i] >= 'a' && s[i] <= 'z')
+                    || (s[i] >= '0' && s[i] <= '9')
+                    || (s[i] >= 'A' && s[i] <= 'Z')))
+         {
+            s.erase(i, 1);
+         }
+      }
+      
+      id += s.c_str();
+      id += "_"; // make the FileIdentifier Tokenizable
+   }
+   
+   return id;             
+}
 //-----------------------------------------------------------------------------
 // Print
 /**
