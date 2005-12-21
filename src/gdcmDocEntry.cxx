@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:46 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2005/12/21 14:52:12 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,7 @@
 =========================================================================*/
 
 #include "gdcmDocEntry.h"
+#include "gdcmDataEntry.h"
 #include "gdcmTS.h"
 #include "gdcmVR.h"
 #include "gdcmGlobal.h"
@@ -70,17 +71,21 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
+   
+   ///\todo allow skipping Shadow groups 
+   
    VRKey vr       = GetVR();
-   uint16_t el    = GetElement();
+   uint16_t elem  = GetElement();
    uint32_t lgth  = GetLength();
 
-   if ( group == 0xfffe && el == 0x0000 )
+   if ( group == 0xfffe && elem == 0x0000 )
    {
      // Fix in order to make some MR PHILIPS images e-film readable
      // see gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm:
      // we just *always* ignore spurious fffe|0000 tag !   
       return;
    }
+ 
    //
    // ----------- Writes the common part
    //
@@ -91,7 +96,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    
  // ----------- Writes the common part : the Tag   
    binary_write( *fp, group); //group number
-   binary_write( *fp, el);    //element number
+   binary_write( *fp, elem);  //element number
 
    // Dicom V3 group 0x0002 is *always* Explicit VR !
    if ( filetype == ExplicitVR || filetype == JPEG || group == 0x0002 )

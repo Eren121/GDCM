@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/09 12:23:38 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2005/12/21 14:52:12 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -495,7 +495,7 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
       return; //delimitors have NO value
    }
    
-   // --> We only deal with Little Endian writting
+   // --> We only deal with Little Endian writting.
    // --> forget Big Endian Transfer Syntax writting!
    //     Next DICOM version will give it up ...
  
@@ -567,7 +567,8 @@ gdcmDebugMacro ("AtomicLength = 2 found; lgt =" << l);
       //  --> WARNING : nothing is written; 
       //  --> the initial data (on the the source image) is lost
       //  --> user is *not* informed !
-      
+      gdcmDebugMacro ("Nothing was loaded, but we need to skip space on disc. "
+                      << "Length =" << l );   
       fp->seekp(l, std::ios::cur);
    }
    // to avoid gdcm to propagate oddities

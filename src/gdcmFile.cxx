@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/15 13:36:55 $
-  Version:   $Revision: 1.312 $
+  Date:      $Date: 2005/12/21 14:52:12 $
+  Version:   $Revision: 1.313 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1506,7 +1506,7 @@ bool File::Write(std::string fileName, FileType writetype)
       e0000->SetString(sLen.str());
    }
 
-   // FIXME : Derma?.dcm does not have it...let's remove it ?!? JPRx
+   /// \todo FIXME : Derma?.dcm does not have it...let's remove it ?!? JPRx
    if( writetype != JPEG )
    {
       int i_lgPix = GetEntryLength(GrPixel, NumPixel);
@@ -1525,6 +1525,7 @@ bool File::Write(std::string fileName, FileType writetype)
 
    return true;
 }
+
 
 //-----------------------------------------------------------------------------
 // Protected

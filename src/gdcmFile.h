@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:51 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2005/12/21 14:52:13 $
+  Version:   $Revision: 1.123 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -171,9 +171,10 @@ public:
    void AnonymizeNoLoad();
    /// Replace patient's own information by info from the Anonymization list
    bool AnonymizeFile();
-
+  
    bool Write(std::string fileName, FileType filetype);
 
+   
 protected:
    File();
    ~File();
