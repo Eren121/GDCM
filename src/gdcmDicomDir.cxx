@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/13 16:32:20 $
-  Version:   $Revision: 1.181 $
+  Date:      $Date: 2005/12/21 14:50:59 $
+  Version:   $Revision: 1.182 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -927,52 +927,67 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          if ( tmpGr == 0x0004 ) // never present in File !     
          {
             switch (tmpEl)
-           {
-           case 0x1130: // File-set ID
-              // force to the *end* File Name
-              val = Util::GetName( path );
-              break;
+            {
+            case 0x1130: // File-set ID
+               // force to the *end* File Name
+               val = Util::GetName( path );
+               break;
       
-           case 0x1500: // Only used for image    
+            case 0x1500: // Only used for image    
                if ( header->GetFileName().substr(0, path.length()) != path )
-               {
-                  gdcmWarningMacro( "The base path of file name is incorrect");
-                  val = header->GetFileName();
+               { 
+                 gdcmWarningMacro( "The base path of file name is incorrect");
+                 val = header->GetFileName();
                }
                else
-               {
-                  //val = &(header->GetFileName().c_str()[path.length()+1]);
-                  val = &(header->GetFileName().c_str()[path.length()]);
+               { 
+                 // avoid the first '/' in File name !
+                 //val = &(header->GetFileName().c_str()[path.length()]);
+                 val = &(header->GetFileName().c_str()[path.length()+1]);
                }
-       break;
+               break;
     
-       case 0x1510:  // Referenced SOP Class UID in File
-          referencedVal = header->GetEntryString(0x0008, 0x0016);
-          // FIXME : probabely something to check
-          val = referencedVal;
-          break;
+             case 0x1510:  // Referenced SOP Class UID in File
+               referencedVal = header->GetEntryString(0x0008, 0x0016);
+               // FIXME : probabely something to check
+               val = referencedVal;
+               break;
        
-       case 0x1511: // Referenced SOP Instance UID in File
-          referencedVal = header->GetEntryString(0x0008, 0x0018);
-          // FIXME : probabely something to check
-          val = referencedVal;
-          break;
+             case 0x1511: // Referenced SOP Instance UID in File
+               referencedVal = header->GetEntryString(0x0008, 0x0018);
+               // FIXME : probabely something to check
+               val = referencedVal;
+               break;
     
-       case 0x1512: // Referenced Transfer Syntax UID in File
-          referencedVal = header->GetEntryString(0x0002, 0x0010);
-          // FIXME : probabely something to check
-          val = referencedVal;
-          break;
+            case 0x1512: // Referenced Transfer Syntax UID in File
+               referencedVal = header->GetEntryString(0x0002, 0x0010);
+               // FIXME : probabely something to check
+               val = referencedVal;
+               break;
     
-       default :
-         val = it->Value;   
-    } 
+            default :
+               val = it->Value;   
+            } 
          }
+         else
+         {
+            // If the entry is not found in the Header, don't write its 'value' in the DICOMDIR !
+            entry->Delete();
+            continue;
+          }
       }
       else
       {
          if ( header->GetEntryLength(tmpGr,tmpEl) == 0 )
+         {
             val = it->Value;
+            // Don't polute the DICOMDIR with empty fields
+            if (val == "")
+            {
+               entry->Delete();
+               continue;
+            }  
+         }    
       }
 
 /* FIX later the pb of creating the 'Implementation Version Name'!
@@ -987,12 +1002,14 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
          val += Util::GetVersion();
       }
 */ 
-      entry->SetString( val ); // troubles expected when vr=SQ ...
+      if (val == "") 
+        entry->SetString( val ); // troubles expected when vr=SQ ...
 
       if ( type == GDCM_DICOMDIR_META ) // fusible : should never print !
       {
          gdcmDebugMacro("GDCM_DICOMDIR_META ?!? should never print that");
       }
+      
       si->AddEntry(entry);
       entry->Delete();
    }
