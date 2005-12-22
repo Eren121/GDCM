@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/09/20 09:21:35 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2005/12/22 14:46:06 $
+  Version:   $Revision: 1.16 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -405,7 +405,10 @@ char **ArgMgr::ArgMgrGetListOfString ( const char *label, int *number )
   char **elem;
   char  *chainecur; 
   if (!value)
+  {
+     *number = 0;
      return 0;
+  }
   *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
   taille = *number;
   liste = (char **) malloc (sizeof(char*) * taille + strlen(value)+1);
@@ -435,14 +438,17 @@ int *ArgMgr::ArgMgrGetListOfInt ( const char *label, int *number )
   int *elem;
   int taille;
   if (!value)
+  {
+     *number = 0;
      return 0;
-  *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */
+  }          
+  *number = IdStrCountChar(value,',')+1; /* nb Elements = nb Commas +1 */ 
   taille= *number;
   liste = (int *) calloc (1,sizeof(int)*taille );
   if ( !liste )
      return 0;
   elem = liste;
-  *number = 1;
+  //*number = 1;
 
   while ( taille>0 ) 
   {
@@ -477,9 +483,12 @@ float *ArgMgr::ArgMgrGetListOfFloat ( const char *label, int *number )
   taille= *number;
   liste = (float *) calloc (1,sizeof(float)*taille );
   if ( !liste )
+  {
+     *number = 0;
      return 0;
+  }
   elem = liste;
-  *number = 1;
+  //*number = 1;
 
   while ( taille>0 ) 
   {
