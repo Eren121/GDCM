@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:41:34 $
-  Version:   $Revision: 1.180 $
+  Date:      $Date: 2005/12/22 14:46:36 $
+  Version:   $Revision: 1.181 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -278,7 +278,8 @@ std::string Util::CreateCleanString(uint8_t *s, int l)
    return str;
 }
 /**
- * \brief   Add a SEPARATOR to the end of the name is necessary
+ * \brief   Add a SEPARATOR to the end of the name if necessary
+ * \todo ask the writer of this method *why* he always add a /
  * @param   pathname file/directory name to normalize 
  */
 std::string Util::NormalizePath(std::string const &pathname)
