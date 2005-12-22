@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/22 15:03:52 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2005/12/22 16:23:02 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmDicomDir.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmFile.h"
+#include "gdcmFileHelper.h"
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
 #include "gdcmArgMgr.h"
@@ -42,7 +43,6 @@ typedef std::map<std::string, gdcm::File*> SortedFiles;
 
 int main(int argc, char *argv[]) 
 {
-
    START_USAGE(usage)
    " \n PhilipsToBrucker :\n                                                  ",
    " - explores recursively the given directory,                              ",
@@ -119,7 +119,6 @@ int main(int argc, char *argv[])
    int nbSeriesToDrop;
    int *seriesToDrop = am->ArgMgrGetListOfInt("drop", &nbSeriesToDrop);
  
-   std::cout << nbSeriesToKeep << "  " <<   nbSeriesToDrop << std::endl;
    if ( nbSeriesToKeep!=0 && nbSeriesToDrop!=0)
    {
       std::cout << "KEEP and DROP are mutually exclusive !" << std::endl;
@@ -162,7 +161,7 @@ int main(int argc, char *argv[])
    gdcm::DirList dirList(strDirNamein, true); // get recursively the list of files
    
  /*  
-   std::cout << "---------------File list found ------------" << std::endl;
+   std::cout << "---------------List of found files ------------" << std::endl;
    dirList.Print();
  */   
 
@@ -180,7 +179,7 @@ int main(int argc, char *argv[])
 */
   
    gdcm::File *f;
-
+   gdcm::FileHelper *fh;
 /*    
    std::cout << "---------------Print Unique Series identifiers---------"  
              << std::endl;     
@@ -300,10 +299,7 @@ int main(int argc, char *argv[])
        
       fullFilename =  currentFile->GetFileName();
       lastFilename =  gdcm::Util::GetName( fullFilename ); 
-      if (verbose)
-         std::cout << "==== === === ===    " << it2->first << "  " 
-                   << (it2->second)->GetFileName() << " " 
-                   << gdcm::Util::GetName( fullFilename ) <<std::endl;
+
       
       tokens.clear();
       gdcm::Util::Tokenize (it2->first, tokens, "_");
@@ -319,9 +315,9 @@ int main(int argc, char *argv[])
          if (verbose)   
             std::cout << "==== new Patient " << currentPatientName << std::endl;
          previousPatientName            = currentPatientName;
-         previousSerieInstanceUID       = currentSerieInstanceUID;
-         previousImagePosition          = currentImagePosition;
-         previousPhaseEncodingDirection = currentPhaseEncodingDirection;
+         previousSerieInstanceUID       = ""; //currentSerieInstanceUID;
+         previousImagePosition          = ""; //currentImagePosition;
+         previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
  
          currentWriteDir = writeDir + currentPatientName;
          if ( ! gdcm::DirList::IsDirectory(currentWriteDir) )
@@ -337,17 +333,17 @@ int main(int argc, char *argv[])
             std::cout << "==== === new Serie " << currentSerieInstanceUID 
                       << std::endl;
          previousSerieInstanceUID       = currentSerieInstanceUID;
-         previousImagePosition          = currentImagePosition;
-         previousPhaseEncodingDirection = currentPhaseEncodingDirection;
+         previousImagePosition          = ""; //currentImagePosition;
+         previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
       }
 
       if (previousImagePosition != currentImagePosition)
       {        
          if (verbose)   
-            std::cout << "==== === === new Position " << currentImagePosition 
+            std::cout << "=== === === new Position " << currentImagePosition 
                       << std::endl;
          previousImagePosition          = currentImagePosition;
-         previousPhaseEncodingDirection = currentPhaseEncodingDirection;
+         previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
          sliceIndex += 1;
       }      
 
@@ -355,12 +351,15 @@ int main(int argc, char *argv[])
       {        
          if (verbose)   
             std::cout << "==== === === === new PhaseEncodingDirection " 
-                      << currentImagePosition << std::endl;
+                      << currentPhaseEncodingDirection << std::endl;
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
-      }
+      }      
+      frameIndex++; 
       
-      frameIndex++;
-      
+      if (verbose)
+         std::cout << "--- --- --- --- --- " << it2->first << "  " 
+                   << (it2->second)->GetFileName() << " " 
+                   << gdcm::Util::GetName( fullFilename ) <<std::endl;           
       
       // Transform the image to be 'Brucker-Like'
       // ----------------------------------------   
@@ -372,7 +371,6 @@ int main(int argc, char *argv[])
       float pxSzY = currentFile->GetYSpacing();
       char fov[64];
       sprintf(fov, "%f\\%f",nX*pxSzX, nY*pxSzY);
-      std::cout << fov << std::endl;      
       currentFile->InsertEntryString(fov, 0x0019, 0x1000, "DS");
      
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'
@@ -394,11 +392,20 @@ int main(int argc, char *argv[])
       sprintf(chFrameIndex, "%04d", frameIndex);
       currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "IS"); 
                     
-      std::string strExtent(extent);    
-      systemCommand  = "cp " + fullFilename + " " + currentWriteDir + 
-                       "/" + lastFilename + strExtent;
+      std::string strExtent(extent);
+      std::string fullWriteFilename = currentWriteDir + "/" + lastFilename + strExtent;
+      
+      /*    
+      systemCommand  = "cp " + fullFilename + " " + fullWriteFilename;
       std::cout << systemCommand << std::endl;
-      //system (  systemCommand.c_str() );
-           
+      system (  systemCommand.c_str() );
+      */
+            
+      // Load the pixels in RAM.
+      fh = gdcm::FileHelper::New(f);     
+      fh->GetImageDataRaw(); // Don't convert Grey Pixels + LUT into RGB pixels (?!?)
+      fh->SetWriteTypeToDcmExplVR();
+      fh->Write(fullWriteFilename);
+      fh->gdcm::FileHelper::Delete();          
    }
  }
