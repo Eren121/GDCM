@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 15:01:04 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2005/12/22 15:03:52 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
   *          - explores recursively the given directory
   *          - keeps the requested series
   *          - orders the gdcm-readable found Files
-  *            according their Patient/Study/Serie/Image characteristics
+  *            according to their Patient/Study/Serie/Image characteristics
   *          - fills a single level Directory with *all* the files,
   *            converted into a Brucker-like Dicom, Intags compliant
   *          
@@ -42,24 +42,47 @@ typedef std::map<std::string, gdcm::File*> SortedFiles;
 
 int main(int argc, char *argv[]) 
 {
-/*
+
    START_USAGE(usage)
    " \n PhilipsToBrucker :\n                                                  ",
-   " Explores recursively the given directory,                                ",
-   "                                                                          ", 
-   " usage: PhilipsToBrucker dirin=rootDirectoryName                          ",
-   "                         dirout=outputDirectoryName                       ",
-   "        [noshadowseq][noshadow][noseq] [debug]                            ",
+   " - explores recursively the given directory,                              ",
+   " - keeps the requested series/ drops the unrequested series               ",
+   " - orders the gdcm-readable found Files according to their                ",
+   "           (0x0010, 0x0010) Patient's Name                                ",
+   "           (0x0020, 0x000e) Series Instance UID                           ",
+   "           (0x0020, 0x0032) Image Position (Patient)                      ",
+   "           (0x0018, 0x1312) In-plane Phase Encoding Direction             ",
+   "           (0x0018, 0x1060) Trigger Time                                  ",
+   " - fills a single level (*) Directory with *all* the files,               ",
+   "           converted into a Brucker-like Dicom, InTags compliant          ",
+   "   (*) actually : creates as many directories as Patients                 ",
+   "                  -that shouldn't appear, but being carefull is better ! -",
    "                                                                          ",
-   "        noshadowseq: user doesn't want to load Private Sequences          ",
-   "        noshadow : user doesn't want to load Private groups (odd number)  ",
-   "        noseq    : user doesn't want to load Sequences                    ",
-   "        debug    : user wants to run the program in 'debug mode'          ",
+   " usage:                                                                   ",
+   " PhilipsToBrucker dirin=rootDirectoryName                                 ",
+   "                  dirout=outputDirectoryName                              ",
+   "                  {  [keep= list of seriesNumber to process]              ",
+   "                   | [drop= list of seriesNumber to ignore] }             ",
+   "                  [extent=image suffix (.IMA, .NEMA, .DCM, ...)]          ",
+   "                  [noshadowseq][noshadow][noseq] [verbose] [debug]        ",
+   "                                                                          ",
+   " dirout : will be created if doesn't exist                                ",
+   " keep : if user wants to process a limited number of series               ",
+   "            he gives the list of 'SeriesNumber' (tag 0020|0011)           ",
+   " drop : if user wants to ignore a limited number of series                ",
+   "            he gives the list of 'SeriesNumber' (tag 0020|0011)           ",   
+   "        SeriesNumber are short enough to be human readable                ",
+   "        e.g : 1030,1035,1043                                              ",
+   " extent : DO NOT forget the leading '.' !                                 ",  
+   " noshadowseq: user doesn't want to load Private Sequences                 ",
+   " noshadow : user doesn't want to load Private groups (odd number)         ",
+   " noseq    : user doesn't want to load Sequences                           ",
+   " verbose  : user wants to run the program in 'verbose mode'               ",
+   " debug    : *developer*  wants to run the program in 'debug mode'         ",
    FINISH_USAGE
-*/
-const char **usage;
 
-   // ----- Initialize Arguments Manager ------   
+   // ----- Initialize Arguments Manager ------
+      
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
@@ -88,7 +111,24 @@ const char **usage;
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
+      
+   bool verbose = am->ArgMgrDefined("verbose");
+   
+   int nbSeriesToKeep;
+   int *seriesToKeep = am->ArgMgrGetListOfInt("keep", &nbSeriesToKeep);
+   int nbSeriesToDrop;
+   int *seriesToDrop = am->ArgMgrGetListOfInt("drop", &nbSeriesToDrop);
  
+   std::cout << nbSeriesToKeep << "  " <<   nbSeriesToDrop << std::endl;
+   if ( nbSeriesToKeep!=0 && nbSeriesToDrop!=0)
+   {
+      std::cout << "KEEP and DROP are mutually exclusive !" << std::endl;
+      delete am;
+      return 0;         
+   }
+   
+   char *extent  = am->ArgMgrGetString("extent",".DCM");
+        
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -96,13 +136,30 @@ const char **usage;
       delete am;
       return 0;
    }
-
    delete am;  // we don't need Argument Manager any longer
 
    // ----- Begin Processing -----
-
+   
+   if ( ! gdcm::DirList::IsDirectory(dirNamein) )
+   {
+      std::cout << "not a directory : [" << dirNamein << "]" << std::endl;
+      exit(0);
+   }
+   std::string systemCommand;
+   if ( ! gdcm::DirList::IsDirectory(dirNameout) ) // dirout not found
+   {
+      std::string strDirNameout(dirNameout); // to please gcc 4
+      systemCommand = "mkdir " +strDirNameout;      // create it!
+      system (systemCommand.c_str());
+      if ( ! gdcm::DirList::IsDirectory(dirNameout) ) // be sure it worked
+      {
+          std::cout << "not a dir : [" << dirNameout << "]" << std::endl;
+          exit(0);
+      }
+   }
+    
    std::string strDirNamein(dirNamein);
-   gdcm::DirList dirList(strDirNamein, true); 
+   gdcm::DirList dirList(strDirNamein, true); // get recursively the list of files
    
  /*  
    std::cout << "---------------File list found ------------" << std::endl;
@@ -111,7 +168,7 @@ const char **usage;
 
    gdcm::DirListType fileNames;
    fileNames = dirList.GetFilenames();
-   gdcm::SerieHelper *s;  
+   gdcm::SerieHelper *s;     // Needed only to may use SerieHelper::AddSeriesDetail()
    s = gdcm::SerieHelper::New();
 
 /*       
@@ -121,13 +178,12 @@ const char **usage;
    s->AddSeriesDetail(0x0018, 0x1312);   
    s->Print();
 */
-   
-
-   
+  
    gdcm::File *f;
 
 /*    
-   std::cout << "---------------Print Unique Series identifiers---------"  << std::endl;     
+   std::cout << "---------------Print Unique Series identifiers---------"  
+             << std::endl;     
    std::string uniqueSeriesIdentifier;
  
    for (gdcm::DirListType::iterator it = fileNames.begin();  
@@ -142,17 +198,17 @@ const char **usage;
         
       uniqueSeriesIdentifier=s->CreateUniqueSeriesIdentifier(f);
       std::cout << "                           [" <<
-               uniqueSeriesIdentifier  << "]" << std::endl;
-       
+               uniqueSeriesIdentifier  << "]" << std::endl;       
       f->Delete();
    }
 */
    
-   std::cout << "------------------Print Break levels-----------------" << std::endl;
+   if (verbose)
+      std::cout << "------------------Print Break levels-----------------" 
+                << std::endl;
 
    std::string userFileIdentifier; 
    SortedFiles sf;
-
 
    s->AddSeriesDetail(0x0010, 0x0010, false); // Patient's Name
    s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
@@ -164,44 +220,91 @@ const char **usage;
                                     it != fileNames.end();
                                   ++it)
    {
-      //std::cout << "File Name : " << *it << std::endl;
       f = gdcm::File::New();
-      f->SetLoadMode(gdcm::LD_ALL);
+      f->SetLoadMode(loadMode);
       f->SetFileName( *it );
       f->Load();
+      
+      // keep only requested Series
+      std::string strSeriesNumber;
+      int seriesNumber;
+      int j;
+      
+      bool keep = false;
+      if (nbSeriesToKeep != 0)
+      {     
+         strSeriesNumber = f->GetEntryString(0x0020, 0x0011 );
+         seriesNumber = atoi( strSeriesNumber.c_str() );
+         for (j=0;j<nbSeriesToKeep; j++)
+         {
+            if(seriesNumber == seriesToKeep[j])
+            {
+               keep = true;
+               break;
+            }
+         }
+         if ( !keep)
+            continue; 
+      }
+      // drop all unrequested Series
+      bool drop = false;
+      if (nbSeriesToDrop != 0)
+      {     
+         strSeriesNumber = f->GetEntryString(0x0020, 0x0011 );
+         seriesNumber = atoi( strSeriesNumber.c_str() );
+         for (j=0;j<nbSeriesToDrop; j++)
+         {
+            if(seriesNumber == seriesToDrop[j])
+            { 
+               drop = true;
+               break;
+            }
+        }
+        if (drop)
+           continue;
+      }      
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f);        
       //std::cout << "                           [" <<
       //        userFileIdentifier  << "]" << std::endl;
+      
       // storing in a map ensures automatic sorting !      
       sf[userFileIdentifier] = f;
    }
       
    std::vector<std::string> tokens;
-   std::string fullFilename;
+   std::string fullFilename, lastFilename;
    std::string previousPatientName, currentPatientName;
    std::string previousSerieInstanceUID, currentSerieInstanceUID;
    std::string previousImagePosition, currentImagePosition;
    std::string previousPhaseEncodingDirection, currentPhaseEncodingDirection;
    
-   SortedFiles::iterator it2 = sf.begin();
+   std::string writeDir, currentWriteDir;
+   
+   writeDir = gdcm::Util::NormalizePath(dirNameout);     
+   SortedFiles::iterator it2;
+ 
+   previousPatientName            = "";
+   previousSerieInstanceUID       = "";   
+   previousImagePosition          = "";
+   previousPhaseEncodingDirection = "";
+   
+   int sliceIndex = 0;
+   int frameIndex = 0;
       
-   gdcm::Util::Tokenize (it2->first, tokens, "_");
-   
-   previousPatientName            = tokens[0];
-   previousSerieInstanceUID       = tokens[1];
-   previousImagePosition          = tokens[2];
-   previousPhaseEncodingDirection = tokens[3];
-   std::cout << "==== new Patient "                            << currentPatientName      << std::endl;   
-   std::cout << "==== === new Serie "                          << currentSerieInstanceUID << std::endl;
-   std::cout << "==== === === new Position "                   << currentImagePosition    << std::endl; 
-   std::cout << "==== === === === new PhaseEncodingDirection " << currentImagePosition    << std::endl;
-   std::cout << "==== === === ===    "                         << it2->first              << std::endl; 
-    
-   it2++;
-   
-   for ( ; it2 != sf.end(); ++it2)
-   {
+   gdcm::File *currentFile;
+     
+   for (it2 = sf.begin() ; it2 != sf.end(); ++it2)
+   {  
+      currentFile = it2->second;
+       
+      fullFilename =  currentFile->GetFileName();
+      lastFilename =  gdcm::Util::GetName( fullFilename ); 
+      if (verbose)
+         std::cout << "==== === === ===    " << it2->first << "  " 
+                   << (it2->second)->GetFileName() << " " 
+                   << gdcm::Util::GetName( fullFilename ) <<std::endl;
+      
       tokens.clear();
       gdcm::Util::Tokenize (it2->first, tokens, "_");
       
@@ -213,16 +316,26 @@ const char **usage;
       if (previousPatientName != currentPatientName)
       {
          previousPatientName = currentPatientName;
-         std::cout << "==== new Patient " << currentPatientName << std::endl;
+         if (verbose)   
+            std::cout << "==== new Patient " << currentPatientName << std::endl;
          previousPatientName            = currentPatientName;
          previousSerieInstanceUID       = currentSerieInstanceUID;
          previousImagePosition          = currentImagePosition;
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
+ 
+         currentWriteDir = writeDir + currentPatientName;
+         if ( ! gdcm::DirList::IsDirectory(currentWriteDir) )
+           {
+              systemCommand   = "mkdir " + currentWriteDir;
+              system ( systemCommand.c_str() );
+         }
       }
 
       if (previousSerieInstanceUID != currentSerieInstanceUID)
       {        
-         std::cout << "==== === new Serie " << currentSerieInstanceUID << std::endl;
+         if (verbose)   
+            std::cout << "==== === new Serie " << currentSerieInstanceUID 
+                      << std::endl;
          previousSerieInstanceUID       = currentSerieInstanceUID;
          previousImagePosition          = currentImagePosition;
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
@@ -230,20 +343,62 @@ const char **usage;
 
       if (previousImagePosition != currentImagePosition)
       {        
-         std::cout << "==== === === new Position " << currentImagePosition << std::endl;
+         if (verbose)   
+            std::cout << "==== === === new Position " << currentImagePosition 
+                      << std::endl;
          previousImagePosition          = currentImagePosition;
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
+         sliceIndex += 1;
       }      
 
       if (previousPhaseEncodingDirection != currentPhaseEncodingDirection)
       {        
-         std::cout << "==== === === === new PhaseEncodingDirection " << currentImagePosition << std::endl;
+         if (verbose)   
+            std::cout << "==== === === === new PhaseEncodingDirection " 
+                      << currentImagePosition << std::endl;
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
-      } 
-      fullFilename =  (it2->second)->GetFileName();          
-      std::cout << "==== === === ===    " << it2->first << "  " << (it2->second)->GetFileName() << " " 
-                << gdcm::Util::GetName( fullFilename ) <<std::endl;
+      }
       
+      frameIndex++;
+      
+      
+      // Transform the image to be 'Brucker-Like'
+      // ----------------------------------------   
+    
+      // Deal with 0x0019, 0x1000 : 'FOV'
+      int nX = currentFile->GetXSize();
+      int nY = currentFile->GetYSize();
+      float pxSzX = currentFile->GetXSpacing();
+      float pxSzY = currentFile->GetYSpacing();
+      char fov[64];
+      sprintf(fov, "%f\\%f",nX*pxSzX, nY*pxSzY);
+      std::cout << fov << std::endl;      
+      currentFile->InsertEntryString(fov, 0x0019, 0x1000, "DS");
+     
+      // Deal with 0x0020, 0x0012 : 'SESSION INDEX'
+      std::string chSessionIndex;
+      if (currentPhaseEncodingDirection == "ROW")
+         chSessionIndex = "1";
+      else
+         chSessionIndex = "2"; // suppose it's "COLUMN" !
+      currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
+   
+      // Deal with  0x0021, 01020 : 'SLICE INDEX'
+      char chSliceIndex[5];
+      sprintf(chSliceIndex, "%04d", sliceIndex);
+      std::string strChSliceIndex(chSliceIndex);
+      currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, "IS");
+       
+      // Deal with  0x0021, 01040 : 'FRAME INDEX' 
+      char chFrameIndex[5];
+      sprintf(chFrameIndex, "%04d", frameIndex);
+      currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "IS"); 
+                    
+      std::string strExtent(extent);    
+      systemCommand  = "cp " + fullFilename + " " + currentWriteDir + 
+                       "/" + lastFilename + strExtent;
+      std::cout << systemCommand << std::endl;
+      //system (  systemCommand.c_str() );
+           
    }
  }
-
