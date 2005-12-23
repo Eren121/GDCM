@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:52:12 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2005/12/23 10:26:41 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -516,8 +516,8 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
         
    uint8_t *data = BinArea; //safe notation
    size_t l = GetLength(); 
-   gdcmDebugMacro ("in DataEntry::WriteContent " << GetKey() 
-             << " : " << Global::GetVR()->GetAtomicElementLength(this->GetVR())
+   gdcmDebugMacro("in DataEntry::WriteContent " << GetKey() << " AtomicLength: "
+              << Global::GetVR()->GetAtomicElementLength(this->GetVR() ) // << " BinArea in :" << &BinArea
              );
    if (BinArea) // the binArea was *actually* loaded
    {
@@ -534,7 +534,6 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
          }     
          case 2:
          {
-gdcmDebugMacro ("AtomicLength = 2 found; lgt =" << l); 
             uint16_t *data16 = (uint16_t *)data;
             for(i=0;i<l/vrLgth;i++)
                binary_write( *fp, data16[i]);
@@ -562,14 +561,16 @@ gdcmDebugMacro ("AtomicLength = 2 found; lgt =" << l);
    }
    else
    {
-      // nothing was loaded, but we need to skip space on disc
-      
+      // nothing was loaded, but we need to skip space on disc     
+      if (l != 0)
+      {
       //  --> WARNING : nothing is written; 
       //  --> the initial data (on the the source image) is lost
-      //  --> user is *not* informed !
-      gdcmDebugMacro ("Nothing was loaded, but we need to skip space on disc. "
-                      << "Length =" << l );   
-      fp->seekp(l, std::ios::cur);
+      //  --> user is *not* informed !      
+         gdcmDebugMacro ("Nothing was loaded, but we need to skip space on disc. "
+                      << "Length =" << l << " for " << GetKey() );   
+         fp->seekp(l, std::ios::cur);
+      }
    }
    // to avoid gdcm to propagate oddities
    // (length was already modified)  
