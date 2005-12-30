@@ -392,3 +392,26 @@
 0045 1020 SS 1 Cross Talk Calibration Time
 0045 1021 SS 1 Iterbone Flag
 0045 1022 SS 1 Perisstaltic Flag
+0045 1030 CS 1 Cardiac Recon Algorithm
+0045 1031 CS 1 Avg Heart Rate For Image
+0045 1032 FL 1 Temporal Resolution
+0045 1033 CS 1 Pct Rpeak Delay
+
+0049 0000 UL 1 Group Length
+0049 0010 LO 1 Private Creator Identification (GEMS_CT_CARDIAC_001)
+0049 1001 SQ 1 CT Cardiac Sequence 
+0049 1002 CS 1 Heart Rate At Confirm 
+0049 1003 FL 1 Avg Heart Rate Prior To Confirm 
+0049 1004 CS 1 Min Heart Rate Prior To Confirm
+0049 1005 CS 1 Max Heart Rate Prior To Confirm
+0049 1006 FL 1 Std Dev Heart Rate Prior To Confirm
+0049 1007 US 1 Num Heart Rate Samples Prior To Confirm
+0049 1008 CS 1 Auto Heart Rate Detect Predict
+0049 1009 CS 1 System Optimized Heart Rate
+0049 100a ST 1 Ekg Monitor Type
+0049 100b CS 1 Num Recon Sectors
+0049 100c FL 256 Rpeak Time Stamps
+
+0051 0000 UL 1 Group Length
+0051 0010 LO 1 Private Creator Identification (GEMS_CT_VES_01)
+0051 1001 SQ 1 CT VES Sequence 
