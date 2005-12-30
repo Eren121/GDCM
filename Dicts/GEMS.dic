@@ -167,7 +167,6 @@
 0021 1005 SH 1 Genesis Version - now
 0021 1007 UL 1 Series Record checksum
 0021 1018 SH 1 Genesis version - Now
-0021 1019 UL 1 Acq recon record checksum
 0021 1019 UL 1 Acqrecon record checksum
 0021 1020 DS 1 Table start location
 0021 1035 SS 1 Series from which prescribed
@@ -353,8 +352,7 @@
 0043 1060 IS 8 slop_int_10...slop_int_17
 0043 1061 UI 1 Scanner Study Entity UID
 0043 1062 SH 1 Scanner Study ID
-0043 106f DS 3 Scanner Table Entry (single gradient coil systems only)
-0043 106f DS 4 Scanner Table Entry + Gradient Coil Selected
+0043 106f DS 3 Scanner Table Entry (single gradient coil systems only) 0043 106f DS 4 Scanner Table Entry + Gradient Coil Selected
 
 0045 0000 UL 1 Group Length
 0045 0010 LO 1 Private Creator Identification (GEMS_HELIOS_01) 
