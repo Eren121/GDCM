@@ -329,3 +329,6 @@ http://www.medical.siemens.com/siemens/en_US/rg_marcom_FBAs/files/brochures/DICO
 
 More Toshiba at:
 http://www.toshiba-medical.co.jp/tmd/english/dicom/index_files/miims0013ea.pdf
+
+Adding 0045, 0049 and 0051 from GE found in:
+http://gehealthcare.com/usen/interoperability/dicom/docs/2341967_100r0.pdf
