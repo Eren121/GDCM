@@ -332,3 +332,19 @@ http://www.toshiba-medical.co.jp/tmd/english/dicom/index_files/miims0013ea.pdf
 
 Adding 0045, 0049 and 0051 from GE found in:
 http://gehealthcare.com/usen/interoperability/dicom/docs/2341967_100r0.pdf
+
+WTF:, why would you put the same thing twice...
+(ref: http://www.gehealthcare.com/eude/interoperability/docs/cs_cti_41_53.pdf)
+D 0021|1003 [UN]                                       [Series from which Prescribed] [gdcm::Binary data loaded;length = 2]
+D 0021|1035 [UN]                                       [Series from which prescribed] [gdcm::Binary data loaded;length = 2]
+
+TODO:
+D 0009|10cb [FL]                                                      [gdcm::Unknown] [0]
+D 0009|10cc [FL]                                                      [gdcm::Unknown] [0]
+D 0009|10cd [FL]                                                      [gdcm::Unknown] [0]
+D 0009|10ce [FL]                                                      [gdcm::Unknown] [0]
+D 0009|10cf [FL]                                                      [gdcm::Unknown] [49]
+D 0009|10d0 [FL]                                                      [gdcm::Unknown] [0]
+D 0009|10d5 [FL]                                                      [gdcm::Unknown] [3.91]
+Can be found here:
+http://gehealthcare.com/usen/interoperability/dicom/docs/5101336GDOr1_1.pdf
