@@ -11,6 +11,14 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: Problem with PrintFile and OB field
+Date: 2005 Dec 30
+Attributed: Mathieu
+Details:
+  Doing a PrintFile on RickAvila DataSet we get:
+D 0043|1028 lg :        x(2)        2 Off.:      x(bb2)     2994 [OB]                                                  [Unique image iden] [00]
+Whereas hexedit shows 3030 ??
+-----------------------------------------------------------------------------
 Description: Make sure that that gdcm lib can be dlopen'ed/dlclose
 Date: 2005 Sep 14
 Attributed: Mathieu
