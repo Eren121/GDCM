@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 09:53:53 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/01/02 15:16:38 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
    " \n Anonymize :\n                                                         ",
    " Anonymize a full gdcm-readable Dicom image                               ",
    "          Warning : probably segfaults if pixels are not gdcm readable.   ",
-   "                    Use exAnonymizeNoLoad instead.                        ",
+   "                    Use AnonymizeNoLoad instead.                        ",
    " usage: Anonymize filein=inputFileName fileout=anonymizedFileName[debug]  ",
    "        debug    : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE
