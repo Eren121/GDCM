@@ -42,6 +42,7 @@ SET(EXAMPLE_SOURCES
   Volume2Dicom
   WriteDicomSimple
   WriteRead
+  exCTPET
 )
 
 FOREACH(name ${EXAMPLE_SOURCES})
