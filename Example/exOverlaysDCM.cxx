@@ -135,9 +135,9 @@ int main(int argc, char *argv[])
 
    char temp[256];
    
-   sprintf(temp,"%d\0",dimX);
+   sprintf(temp,"%d ",dimX);
    f->InsertEntryString(temp,0x0028,0x0011); // Columns
-   sprintf(temp,"%d\0",dimY);
+   sprintf(temp,"%d ",dimY);
    f->InsertEntryString(temp,0x0028,0x0010); // Rows
 
    f->InsertEntryString("8",0x0028,0x0100); // Bits Allocated
