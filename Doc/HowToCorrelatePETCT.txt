@@ -51,4 +51,41 @@ http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/ab94a61
 [presentation context ID]
 http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/a4bb2647d5a91001/d0fbff58a644ce7c
 
+***************************
+Adding comment by Doug Sluis (dsluis at clinical-knowledge.com)
+To your numbered questions:
+1.  Yes they are separate SOP Instances. (What is alternative?)
+2. Yes. (although the recent Spatial Registration SOP Class is a possible option)
+
+There is no guarantee that CT and PET slices are one-to-one or
+that the slices are spatially coincident. Attempts to spatially sort
+may not succeed.
+
+> I am trying to gather some information about CT-PET acquisition and how
+> to order/link slices together properly(*).
+>
+> 1. I understand there is not and there won't be any SOP Class for
+> CT-PET. But should we still consider this as two *independent* SOP
+> Class Instances ?
+>
+> 2. Image acquired in this dual modality *have* to have the same Frame
+> of Reference UID, right ?
+>
+> In this case I'll add the following strategy in gdcm to organize the
+> slices:
+>
+> 1. Open a DICOM file A
+> 2. Open another DICOM file B
+> 3. Same Serie/Study ?
+>  * No -> return
+>  * Yes -> continue
+> 4. Same Frame of Reference ?
+>  * No -> Return
+>  * Yes -> continue
+> 5 A is CT and B is PT ?
+>  * No -> return
+>  * Yes -> continue
+> 6 Same Image Position ?
+>  * No -> Return
+>  * Yes: We found a match !
 
