@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:32 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2006/01/03 14:28:53 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,7 @@ namespace gdcm
 const int Debug::LINE_LENGTH = 79;
 
 bool Debug::DebugFlag     = false;
+bool Debug::LogFlag       = false;
 bool Debug::WarningFlag   = false;
 bool Debug::OutputToFile  = false;
 
@@ -66,10 +67,26 @@ void Debug::SetDebugFlag (bool flag)
  */ 
 void Debug::SetWarningFlag (bool flag) 
 {
-   // Cannot unset Warning flag if Debug flag is on.
-   if (flag == false && DebugFlag == true)
-      return;
+   // Cannot unset Warning flag if Debug flag is on or if LogFlag is on.
+   if (flag == false)
+   { 
+      if (DebugFlag == true)
+         return;
+      if (LogFlag == true)
+         return;
+   }
    WarningFlag = flag;
+}
+
+/**
+ * \brief   Sets the log flag
+ * @param   flag Set the log flag
+ */ 
+void Debug::SetLogFlag (bool flag) 
+{
+   // To log oddities, both flags are necessary      
+   WarningFlag = flag;   
+   LogFlag = flag;
 }
 
 /**

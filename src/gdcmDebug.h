@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2006/01/03 14:28:53 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,11 +35,13 @@ class CommandManager;
 
 //-----------------------------------------------------------------------------
 /**
- * \brief Debug is an object for debugging in program.
- * It has 2 debugging modes :
+ * \brief Debug is an object for warning/logging/tracing programs.
+ * It has the following modes :
  *  - error : for bad library use, seriously wrong DICOM
  *  - debug : for information/debug messages
- *  - warning : for warning about DICOM quality (kosher)
+ *  - warning : Warns the user when some oddity occured.
+ *  - log     : we display messages when anything is not Dicom Kosher
+ *  - debug : we help developper to trace, at a glance, the execution
  *  - assert : design by contract implementation. A function should have 
  *             proper input and proper output. 
  *             (should not happen, not user controlled)
@@ -47,7 +49,24 @@ class CommandManager;
  * A debugging message is only shown if the flag is on (DebugFlag)
  * This is static var and can be set at beginning of code:
  *         gdcm::Debug::SetDebugOn();
+ *
+ * Warning  : Warns the user when some oddity occured, and we used an heuristics
+ *            to bypass the trouble.
+ *            e.g.  : SamplesPerPixel missing, we assume it's a grey level image
+ *            e.g   : Pixel Representation missing : we assume 'unsigned'
+ *            (we hope our assumption is OK, but user may disagree.)
+ * Log      : we display messages when anything is not Dicom Kosher 
+ *            e.g. : non even length field
+ *            e.g  : file is declared as Explicit VR, but a DataElement
+ *                 is Implicit
+ *            e.g  : a file holds an illegal group (0x0005, ...)    
+ * Debug : We help developper to trace, at a glance, the execution.
+ *         (before refining with a debugging tool)
+ *
+ * Setting ON Debug leads to set ON Warning (but not Log)
+ * Setting ON Log   leads to set ON Warning (but not Debug)
  */
+
 class GDCM_EXPORT Debug
 {
 public:
@@ -66,6 +85,16 @@ public:
    static void DebugOff () { SetDebugFlag(false); }
    
    /// \brief This is a global flag that controls whether 
+   ///        log messages are displayed.
+   static void SetLogFlag (bool flag);
+   /// \brief   Gets the Log flag value
+   static bool GetLogFlag () {return LogFlag;}
+   /// \brief Sets the Log Flag to true
+   static void LogOn  () { SetLogFlag(true);  }
+   /// \brief Sets the Log Flag to false
+   static void LogOff () { SetLogFlag(false); } 
+   
+   /// \brief This is a global flag that controls whether 
    ///        warning messages are displayed.
    static void SetWarningFlag (bool flag);
    /// \brief   Gets the warning flag value
@@ -73,7 +102,7 @@ public:
    /// \brief Sets the Warning Flag to true
    static void WarningOn  () { SetWarningFlag(true);  }
    /// \brief Sets the Warning Flag to false
-   static void WarningOff () { SetWarningFlag(false); }   
+   static void WarningOff () { SetWarningFlag(false); }      
 
    /// \brief This is a global flag that controls if debug are redirected
    ///        to a file or not
@@ -92,8 +121,10 @@ public:
                             const Base *object = NULL);
 
 private:
-   static bool DebugFlag;
    static bool WarningFlag;
+   static bool LogFlag;
+   static bool DebugFlag;
+
    static bool OutputToFile;
 
    static std::ofstream OutputFileStream;
@@ -139,6 +170,8 @@ private:
    gdcm::Debug::SendToOutput(type,osmacro.str(),obj);          \
 }
 
+// ------------------------------------------------------------------------
+
 /**
  * \brief Debug : To be used to help bug tracking developer
  * @param msg message part
@@ -168,6 +201,26 @@ private:
    gdcmDebugBodyMacro(NULL,msg)
 #endif //NDEBUG
 
+// ------------------------------------------------------------------------
+
+/**
+ * \brief Log : we display messages when anything is not Dicom Kosher
+ * @param msg message part
+ */
+// No NDEBUG test to always have a return of warnings !!!
+// -> Rien compris! JPRx
+#define gdcmLogBodyMacro(obj, msg)                         \
+{                                                              \
+   if( Debug::GetLogFlag() )                               \
+      gdcmMessageBodyMacro(gdcm::CMD_LOG,obj,msg,"");      \
+}
+#define gdcmLogMacro(msg)                                  \
+   gdcmLogBodyMacro(this,msg)
+#define gdcmStaticLogMacro(msg)                            \
+   gdcmLogBodyMacro(NULL,msg)
+   
+// ------------------------------------------------------------------------
+
 /**
  * \brief Warning : To be used to warn the user when some oddity occurs
  * @param msg message part
@@ -184,6 +237,8 @@ private:
 #define gdcmStaticWarningMacro(msg)                            \
    gdcmWarningBodyMacro(NULL,msg)
 
+// ------------------------------------------------------------------------
+
 /**
  * \brief   Error : To be used when unecoverabale error occurs
  *          at a 'deep' level. (don't use it if file is not ACR/DICOM!)
@@ -199,6 +254,8 @@ private:
    gdcmErrorBodyMacro(this,msg)
 #define gdcmStaticErrorMacro(msg)                              \
    gdcmErrorBodyMacro(NULL,msg)
+
+// ------------------------------------------------------------------------
 
 /**
  * \brief Assert : To be used when an *absolutely* impossible error occurs
