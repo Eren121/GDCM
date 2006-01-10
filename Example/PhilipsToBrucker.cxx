@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/22 16:23:02 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/01/10 16:04:18 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,33 +141,49 @@ int main(int argc, char *argv[])
    
    if ( ! gdcm::DirList::IsDirectory(dirNamein) )
    {
-      std::cout << "not a directory : [" << dirNamein << "]" << std::endl;
+      std::cout << "KO : [" << dirNamein << "] is not a Directory : " << std::endl;
       exit(0);
    }
-   std::string systemCommand;
-   if ( ! gdcm::DirList::IsDirectory(dirNameout) ) // dirout not found
+   else
    {
-      std::string strDirNameout(dirNameout); // to please gcc 4
-      systemCommand = "mkdir " +strDirNameout;      // create it!
+      std::cout << "OK : [" << dirNamein << "]" << " is a Directory" << std::endl;
+   }
+
+
+   std::string systemCommand;
+   if ( ! gdcm::DirList::IsDirectory(dirNameout) )     // dirout not found
+   {
+      std::string strDirNameout(dirNameout);          // to please gcc 4
+      systemCommand = "mkdir " +strDirNameout;        // create it!
+      if (verbose)
+         std::cout << systemCommand << std::endl;
       system (systemCommand.c_str());
       if ( ! gdcm::DirList::IsDirectory(dirNameout) ) // be sure it worked
       {
-          std::cout << "not a dir : [" << dirNameout << "]" << std::endl;
+          std::cout << "KO : not a dir : [" << dirNameout << "] (creation failure ?)" << std::endl;
           exit(0);
       }
+      else
+     {
+        std::cout << "Directory [" << dirNameout << "]" << " created" << std::endl;
+     }
+   }
+   else
+   {
+       std::cout << "Output Directory [" << dirNameout << "]" << " already exists; Used as is." << std::endl;
    }
     
    std::string strDirNamein(dirNamein);
    gdcm::DirList dirList(strDirNamein, true); // get recursively the list of files
    
- /*  
+/*   
    std::cout << "---------------List of found files ------------" << std::endl;
    dirList.Print();
  */   
 
    gdcm::DirListType fileNames;
    fileNames = dirList.GetFilenames();
-   gdcm::SerieHelper *s;     // Needed only to may use SerieHelper::AddSeriesDetail()
+   gdcm::SerieHelper *s;              // Needed only to may use SerieHelper::AddSeriesDetail()
    s = gdcm::SerieHelper::New();
 
 /*       
@@ -180,7 +196,7 @@ int main(int argc, char *argv[])
   
    gdcm::File *f;
    gdcm::FileHelper *fh;
-/*    
+/*   
    std::cout << "---------------Print Unique Series identifiers---------"  
              << std::endl;     
    std::string uniqueSeriesIdentifier;
@@ -243,7 +259,10 @@ int main(int argc, char *argv[])
             }
          }
          if ( !keep)
-            continue; 
+         {
+            f->Delete();
+            continue;
+         } 
       }
       // drop all unrequested Series
       bool drop = false;
@@ -260,7 +279,10 @@ int main(int argc, char *argv[])
             }
         }
         if (drop)
+        {
+           f->Delete();
            continue;
+        }
       }      
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f);        
@@ -323,6 +345,8 @@ int main(int argc, char *argv[])
          if ( ! gdcm::DirList::IsDirectory(currentWriteDir) )
            {
               systemCommand   = "mkdir " + currentWriteDir;
+              if (verbose)
+                 std::cout << systemCommand << std::endl;
               system ( systemCommand.c_str() );
          }
       }
@@ -355,11 +379,13 @@ int main(int argc, char *argv[])
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
       }      
       frameIndex++; 
-      
       if (verbose)
+         std::cout << "--- --- --- --- --- " << (it2->second)->GetFileName() 
+                   << std::endl;
+      if ( gdcm::Debug::GetDebugFlag())
          std::cout << "--- --- --- --- --- " << it2->first << "  " 
                    << (it2->second)->GetFileName() << " " 
-                   << gdcm::Util::GetName( fullFilename ) <<std::endl;           
+                   << gdcm::Util::GetName( fullFilename ) << std::endl;           
       
       // Transform the image to be 'Brucker-Like'
       // ----------------------------------------   
@@ -393,19 +419,21 @@ int main(int argc, char *argv[])
       currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "IS"); 
                     
       std::string strExtent(extent);
-      std::string fullWriteFilename = currentWriteDir + "/" + lastFilename + strExtent;
+      std::string fullWriteFilename = currentWriteDir + gdcm::GDCM_FILESEPARATOR + lastFilename + strExtent;
       
-      /*    
+      /*           
       systemCommand  = "cp " + fullFilename + " " + fullWriteFilename;
       std::cout << systemCommand << std::endl;
       system (  systemCommand.c_str() );
       */
             
       // Load the pixels in RAM.
-      fh = gdcm::FileHelper::New(f);     
-      fh->GetImageDataRaw(); // Don't convert Grey Pixels + LUT into RGB pixels (?!?)
+      
+      
+      fh = gdcm::FileHelper::New(currentFile);     
+      fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       fh->SetWriteTypeToDcmExplVR();
       fh->Write(fullWriteFilename);
-      fh->gdcm::FileHelper::Delete();          
+      fh->gdcm::FileHelper::Delete();                
    }
  }
