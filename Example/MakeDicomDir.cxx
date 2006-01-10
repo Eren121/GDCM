@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:09:22 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006/01/10 16:10:02 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -98,6 +98,9 @@ int main(int argc, char *argv[])
    //dcmdir->SetParseDir(true);
    dcmdir->Load();
 
+   if ( gdcm::Debug::GetDebugFlag() )
+      std::cout << "======================= End Parsing Directory" << std::endl;
+      
     // ----- Check the result
     
    if ( !dcmdir->GetFirstPatient() ) 
@@ -112,11 +115,15 @@ int main(int argc, char *argv[])
 
    dcmdir->Write("NewDICOMDIR");
    dcmdir->Delete();
+   if ( gdcm::Debug::GetDebugFlag() )
+      std::cout << "======================= End Writting DICOMDIR" << std::endl;
 
    // Read from disc the just written DicomDir
    gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
    newDicomDir->SetFileName( "NewDICOMDIR" );
    newDicomDir->Load();
+   if ( gdcm::Debug::GetDebugFlag() )
+      std::cout << "======================= End Parsing DICOMDIR" << std::endl;   
    if( !newDicomDir->IsReadable() )
    {
       std::cout<<"          Written DicomDir 'NewDICOMDIR'"
