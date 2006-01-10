@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/13 13:37:50 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2006/01/10 15:54:03 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,9 @@ DirList::~DirList()
 bool DirList::IsDirectory(std::string const &dirName)
 {
    struct stat fs;
-   assert( dirName[dirName.size()-1] != '/' );
+   // std::cout << "dirName[dirName.size()-1] [" << dirName[dirName.size()-1] << "]"
+   //           << std::endl;
+   //assert( dirName[dirName.size()-1] != GDCM_FILESEPARATOR );
    if ( stat(dirName.c_str(), &fs) == 0 )
    {
 #if _WIN32
@@ -100,7 +102,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    std::string dirName = Util::NormalizePath(dirpath);
 #ifdef _MSC_VER
    WIN32_FIND_DATA fileData;
-   assert( dirName[dirName.size()-1] == '/' );
+   //assert( dirName[dirName.size()-1] == '' );
    HANDLE hFile = FindFirstFile((dirName+"*").c_str(), &fileData);
 
    for(BOOL b = (hFile != INVALID_HANDLE_VALUE); b;

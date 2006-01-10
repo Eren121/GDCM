@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:32:30 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2006/01/10 15:54:03 $
+  Version:   $Revision: 1.102 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,6 +61,8 @@ GDCM_EXPORT extern const std::string GDCM_NOTASCII;
 GDCM_EXPORT extern const std::string GDCM_PIXELDATA;
 
 GDCM_EXPORT extern const std::string GDCM_VRUNKNOWN;
+
+GDCM_EXPORT extern const char GDCM_FILESEPARATOR;
 
 /// \brief TagKey is made to hold the standard Dicom Tag 
 ///               (Group number, Element number)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/22 14:46:36 $
-  Version:   $Revision: 1.181 $
+  Date:      $Date: 2006/01/10 15:54:03 $
+  Version:   $Revision: 1.182 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -194,7 +194,6 @@ int Util::CountSubstring (const std::string &str,
  */
 bool Util::IsCleanString(std::string const &s)
 {
-   //std::cout<< std::endl << s << std::endl;
    for(unsigned int i=0; i<s.size(); i++)
    {
       if (!isprint((unsigned char)s[i]) )
@@ -279,20 +278,26 @@ std::string Util::CreateCleanString(uint8_t *s, int l)
 }
 /**
  * \brief   Add a SEPARATOR to the end of the name if necessary
- * \todo ask the writer of this method *why* he always add a /
  * @param   pathname file/directory name to normalize 
  */
 std::string Util::NormalizePath(std::string const &pathname)
 {
+/*
    const char SEPARATOR_X      = '/';
    const char SEPARATOR_WIN    = '\\';
+#ifdef _WIN32
+   const std::string SEPARATOR = "\\";
+#else
    const std::string SEPARATOR = "/";
+#endif
+*/
    std::string name = pathname;
    int size = name.size();
 
-   if ( name[size-1] != SEPARATOR_X && name[size-1] != SEPARATOR_WIN )
+//   if ( name[size-1] != SEPARATOR_X && name[size-1] != SEPARATOR_WIN )
+   if ( name[size-1] != GDCM_FILESEPARATOR )
    {
-      name += SEPARATOR;
+      name += GDCM_FILESEPARATOR;
    }
    return name;
 }
@@ -304,6 +309,8 @@ std::string Util::NormalizePath(std::string const &pathname)
 std::string Util::GetPath(std::string const &fullName)
 {
    std::string res = fullName;
+/*
+   
    int pos1 = res.rfind("/");
    int pos2 = res.rfind("\\");
    if ( pos1 > pos2 )
@@ -314,7 +321,9 @@ std::string Util::GetPath(std::string const &fullName)
    {
       res.resize(pos2);
    }
-
+*/
+   int pos = res.rfind(GDCM_FILESEPARATOR);
+   res.resize(pos);
    return res;
 }
 
@@ -325,12 +334,14 @@ std::string Util::GetPath(std::string const &fullName)
 std::string Util::GetName(std::string const &fullName)
 {   
   std::string filename = fullName;
-
+/*
   std::string::size_type slash_pos = filename.rfind("/");
   std::string::size_type backslash_pos = filename.rfind("\\");
   // At least with my gcc4.0.1, unfound char results in pos =4294967295 ...
-  //slash_pos = slash_pos > backslash_pos ? slash_pos : backslash_pos;
+  //slash_pos = slash_pos > backslash_pos ? slash_pos : backslash_pos;  
   slash_pos = slash_pos < backslash_pos ? slash_pos : backslash_pos;
+*/
+  std::string::size_type slash_pos = filename.rfind(GDCM_FILESEPARATOR);
   if (slash_pos != std::string::npos )
     {
     return filename.substr(slash_pos + 1);
