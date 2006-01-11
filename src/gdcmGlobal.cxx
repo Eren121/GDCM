@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 10:58:27 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2006/01/11 10:44:24 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,6 +44,12 @@ const std::string GDCM_NOTASCII  = "gdcm::NotAscii";
 const std::string GDCM_PIXELDATA = "gdcm::Pixel Data to be loaded";
 
 const std::string GDCM_VRUNKNOWN = "  ";
+
+#ifdef _WIN32
+const char GDCM_FILESEPARATOR = '\\';
+#else
+const char GDCM_FILESEPARATOR = '/';
+#endif
 
 //-----------------------------------------------------------------------------
 DictSet         *Global::Dicts     = (DictSet *)0;
