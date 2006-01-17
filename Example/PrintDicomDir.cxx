@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2006/01/17 15:36:26 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -218,6 +218,7 @@ int main(int argc, char* argv[])
             { // on degouline les STUDY de ce patient
                std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
                std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
+               std::cout << " Stud.Inst.UID:["    << st->GetEntryString(0x0020, 0x000d) << "]"; // Study Instance UID
                std::cout << std::endl;
 
                vs = st->GetFirstVisit();
@@ -225,9 +226,9 @@ int main(int argc, char* argv[])
                { // on degouline les VISIT de cette study
                   std::cout << "--- --- VISIT: ";
                   std::cout << " Ref. File ID :[" << vs->GetEntryString(0x0004, 0x1500) << "]"; // Referenced File ID
-                  std::cout << " Inst.Name:["    << vs->GetEntryString(0x0008,0x0080)   << "]"; // Institution Name
-                  std::cout << " Adm.ID:["      << vs->GetEntryString(0x0038, 0x0010)   << "]"; // Admission ID
-                  std::cout << " Adm. date:["   << vs->GetEntryString(0x0038, 0x0020)   << "]"; // Admitting Date
+                  std::cout << " Inst.Name:["     << vs->GetEntryString(0x0008,0x0080)  << "]"; // Institution Name
+                  std::cout << " Adm.ID:["        << vs->GetEntryString(0x0038, 0x0010) << "]"; // Admission ID
+                  std::cout << " Adm. date:["     << vs->GetEntryString(0x0038, 0x0020) << "]"; // Admitting Date
                   std::cout << std::endl;    
                   vs = st->GetNextVisit();    
                }
@@ -235,9 +236,10 @@ int main(int argc, char* argv[])
                se = st->GetFirstSerie();
                while ( se ) 
                { // on degouline les SERIES de cette study
-                  std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e)<< "]";  // Series Description
-                  std::cout << " Ser.nb:["         <<  se->GetEntryString(0x0020, 0x0011);        // Series number
-                  std::cout << "] Mod.:["          <<  se->GetEntryString(0x0008, 0x0060) << "]"; // Modality
+                  std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e) << "]";  // Series Description
+                  std::cout << " Ser.nb:["          <<  se->GetEntryString(0x0020, 0x0011) << "]";  // Series number
+                  std::cout << " Mod.:["            <<  se->GetEntryString(0x0008, 0x0060) << "]";  // Modality
+                  std::cout << " Serie Inst.UID.:[" <<  se->GetEntryString(0x0020, 0x000e) << "]";  // Series Instance UID
                   std::cout << std::endl;    
 
                   im = se->GetFirstImage();
