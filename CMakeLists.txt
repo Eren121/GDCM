@@ -1,6 +1,7 @@
 PROJECT(GDCM)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
 # okay in fact you need at least cmake 2.0.4 to get swig working properly
+# and you cannot use cmake 2.0.6 out of the box due to a bug (patched in debian package)
 
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
@@ -181,7 +182,7 @@ IF(UNIX) #Avoid polluting Win32 cmakecache
 ENDIF(UNIX)
 
 #-----------------------------------------------------------------------------
-# Test if os defines a lenght for sockaddr
+# Test if os defines a length for sockaddr
 # only doing the test when we have sys/socket
 IF( ${CMAKE_HAVE_SYS_SOCKET_H} )
   IF("HAVE_SA_LEN" MATCHES "^HAVE_SA_LEN$")
