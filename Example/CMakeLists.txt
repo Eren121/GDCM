@@ -28,6 +28,8 @@ SET(EXAMPLE_SOURCES
   Anonymize         # for full gdcm readable files
   AnonymizeNoLoad   # without loading the Pixel Data 
   PatchHeader
+  PhilipsToBrucker
+  PhilipsToBrucker2    
   ReWrite
   RawToDicom
   TestValidate
