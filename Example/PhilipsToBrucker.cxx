@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/10 16:04:18 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2006/01/18 15:45:20 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
   *            according to their Patient/Study/Serie/Image characteristics
   *          - fills a single level Directory with *all* the files,
   *            converted into a Brucker-like Dicom, Intags compliant
-  *          
+  * 
   */  
 
 typedef std::map<std::string, gdcm::File*> SortedFiles;
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
       return 0;
    }
 
-   char *dirNamein;   
+   char *dirNamein;
    dirNamein  = am->ArgMgrGetString("dirin",(char *)"."); 
 
    char *dirNameout;   
@@ -172,7 +172,6 @@ int main(int argc, char *argv[])
    {
        std::cout << "Output Directory [" << dirNameout << "]" << " already exists; Used as is." << std::endl;
    }
-    
    std::string strDirNamein(dirNamein);
    gdcm::DirList dirList(strDirNamein, true); // get recursively the list of files
    
@@ -273,7 +272,7 @@ int main(int argc, char *argv[])
          for (j=0;j<nbSeriesToDrop; j++)
          {
             if(seriesNumber == seriesToDrop[j])
-            { 
+            {
                drop = true;
                break;
             }
@@ -427,13 +426,12 @@ int main(int argc, char *argv[])
       system (  systemCommand.c_str() );
       */
             
-      // Load the pixels in RAM.
-      
+      // Load the pixels in RAM.      
       
       fh = gdcm::FileHelper::New(currentFile);     
       fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       fh->SetWriteTypeToDcmExplVR();
       fh->Write(fullWriteFilename);
-      fh->gdcm::FileHelper::Delete();                
+      fh->Delete();       
    }
  }

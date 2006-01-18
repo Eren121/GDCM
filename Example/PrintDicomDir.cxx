@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/17 15:36:26 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2006/01/18 15:45:21 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
    START_USAGE(usage)
    " \n PrintDicomDir :\n",
    " Display the tree-like structure of a DICOMDIR File",
-   " usage: PrintDicomDir filein=fileName [level=n] [debug] ",
+   " usage: PrintDicomDir filein=fileName [level=n][detail=m][debug]   ",
    "        detail = 1 : Patients, 2 : Studies, 3 : Series, 4 : Images ",
    "                 5 : Full Content ",
    "        level = 0,1,2 : depending on user (what he wants to see)",

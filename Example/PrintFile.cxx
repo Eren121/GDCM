@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/14 09:51:33 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2006/01/18 15:45:21 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -371,7 +371,7 @@ errno = 0;
       if (ori != "\\" )
          std::cout << "Orientation [" << ori << "]" << std::endl;
  
-       o->gdcm::Orientation::Delete(); 
+      o->Delete();  
 //------------------------------
 
 
@@ -581,8 +581,7 @@ errno = 0;
          std::string ori = o->GetOrientation ( f );
          if (ori != "\\" )
             std::cout << "Orientation [" << ori << "]" << std::endl;
-   
-         o->gdcm::Orientation::Delete(); 
+         o->Delete(); 
 
 //------------------------------- 
         

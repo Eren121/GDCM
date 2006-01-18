@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 10:21:37 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/01/18 15:45:21 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -522,7 +522,7 @@ int main(int argc, char *argv[])
       {
          std::cout << "Fail to write :[" << fullWriteFilename << "]"
                    << std::endl;
-      }
-      fh->gdcm::FileHelper::Delete();                
+      } 
+      fh->Delete();                
    }
  }
