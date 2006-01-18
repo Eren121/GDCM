@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: BatchUncompress.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/12 23:46:52 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/01/18 10:21:37 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,9 @@
  * Someone at some point could update it to have more option, like not copying the private tags,
  * sequence...
  */
+ 
+ // Well ... ReWrite.cxx does the same thing
+ 
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDocument.h"

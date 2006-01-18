@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/17 15:58:30 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/01/18 10:21:37 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,8 +89,8 @@ int main(int argc, char *argv[])
    "        - Patient                                                         ",
    "        -- Serie                                                          ",
    "        --- Position                                                      ",
-   "        ---- Images (sorted by Trigger Time)                              ",
-   "        ----- Phase Encoding Direction (Row, Column)                      ",
+   "            Images are (sorted by Trigger Time /                          ",
+   "                     Encoding Direction (Row, Column)                     ",
    " noshadowseq: user doesn't want to load Private Sequences                 ",
    " noshadow : user doesn't want to load Private groups (odd number)         ",
    " noseq    : user doesn't want to load Sequences                           ",
@@ -409,7 +409,7 @@ int main(int argc, char *argv[])
 
       if (previousImagePosition != currentImagePosition)
       {
-      
+         frameIndex = 1;
          flag = 0;        
          if (verbose)   
             std::cout << "=== === === new Position [" << currentImagePosition  << "]"
