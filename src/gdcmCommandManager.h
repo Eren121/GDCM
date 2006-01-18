@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandManager.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:22 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/01/18 15:25:07 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,9 +52,10 @@ public:
 
    static const CommandManager *GetInstance();
 
+   ~CommandManager();
+
 protected:
    CommandManager();
-   ~CommandManager();
 
    void InClearCommand(void);
    void InSetCommand(const Base *object,unsigned int type,Command *command);

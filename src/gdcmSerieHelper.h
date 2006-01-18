@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:48:09 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2006/01/18 15:25:07 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -203,6 +203,7 @@ private:
    ///        he may supply his own comparison function.
     BOOL_FUNCTION_PFILE_PFILE_POINTER UserLessThanFunction;
 
+    void Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *file2) );
 };
 
 } // end namespace gdcm

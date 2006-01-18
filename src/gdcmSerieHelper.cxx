@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:48:09 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2006/01/18 15:25:07 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -768,11 +768,13 @@ bool SerieHelper::ImageNumberOrdering(FileList *fileList)
       return false;
    }
    if (DirectOrder) 
-      std::sort(fileList->begin(), fileList->end(), 
-                                          SerieHelper::ImageNumberLessThan );
+        Sort(fileList,SerieHelper::ImageNumberLessThan);
+//      std::sort(fileList->begin(), fileList->end(), 
+//                                          SerieHelper::ImageNumberLessThan );
    else
-      std::sort(fileList->begin(), fileList->end(),
-                                          SerieHelper::ImageNumberGreaterThan );
+        Sort(fileList,SerieHelper::ImageNumberGreaterThan);
+//      std::sort(fileList->begin(), fileList->end(),
+//                                          SerieHelper::ImageNumberGreaterThan );
 
    return true;
 }
@@ -794,11 +796,13 @@ bool SerieHelper::FileNameGreaterThan(File *file1, File *file2)
 bool SerieHelper::FileNameOrdering(FileList *fileList)
 {
    if (DirectOrder) 
-      std::sort(fileList->begin(), fileList->end(), 
-                                       SerieHelper::FileNameLessThan);
+        Sort(fileList,SerieHelper::FileNameLessThan);
+//      std::sort(fileList->begin(), fileList->end(), 
+//                                       SerieHelper::FileNameLessThan);
    else
-      std::sort(fileList->begin(), fileList->end(), 
-                                       SerieHelper::FileNameGreaterThan);
+        Sort(fileList,SerieHelper::FileNameGreaterThan);   
+//      std::sort(fileList->begin(), fileList->end(), 
+//                                       SerieHelper::FileNameGreaterThan);
 
    return true;
 }
@@ -810,8 +814,9 @@ bool SerieHelper::FileNameOrdering(FileList *fileList)
  */
 bool SerieHelper::UserOrdering(FileList *fileList)
 {
-   std::sort(fileList->begin(), fileList->end(), 
-                                             SerieHelper::UserLessThanFunction);
+        Sort(fileList,SerieHelper::UserLessThanFunction);   
+//   std::sort(fileList->begin(), fileList->end(), 
+//                                             SerieHelper::UserLessThanFunction);
    if (!DirectOrder) 
    {
       std::reverse(fileList->begin(), fileList->end());
@@ -1024,6 +1029,16 @@ void SerieHelper::Print(std::ostream &os, std::string const &indent)
       }
       ++itl;
    }
+}
+
+//-----------------------------------------------------------------------------
+// Sort
+/**
+ * \brief   Sort FileList.
+ */
+void SerieHelper::Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *file2) )
+{
+ std::sort(fileList->begin(), fileList->end(), pt2Func );
 }
 
 //-----------------------------------------------------------------------------
