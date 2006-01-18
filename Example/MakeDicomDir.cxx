@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/10 16:10:02 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2006/01/18 10:20:56 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@
   *          orders the gdcm-readable found Files
   *          according their Patient/Study/Serie/Image characteristics
   *          makes the gdcmDicomDir 
-  *          and writes a file named NewDICOMDIR..
+  *          and writes a file named DICOMDIR. (user may choose an other name)
   */  
 
 int main(int argc, char *argv[]) 
@@ -40,12 +40,15 @@ int main(int argc, char *argv[])
    "          and writes it as 'NewDICOMDIR'                                  ",
    "                                                                          ", 
    " usage: MakeDicomDir dirname=rootDirectoryName                            ",
-   "        [noshadowseq][noshadow][noseq] [debug]                            ",
+   "                     name=DICOMDIR file name                              ",
+   "        [noshadowseq][noshadow][noseq] [debug] [check]                    ",
    "                                                                          ",
+   "        name : the default name for the generated dicomdir is 'DICOMDIR'  ",
    "        noshadowseq: user doesn't want to load Private Sequences          ",
    "        noshadow : user doesn't want to load Private groups (odd number)  ",
    "        noseq    : user doesn't want to load Sequences                    ",
    "        debug    : user wants to run the program in 'debug mode'          ",
+   "        check    : the dicomdir is checked as 'gdcm readable'             ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
@@ -61,9 +64,12 @@ int main(int argc, char *argv[])
    char *dirName;   
    dirName  = am->ArgMgrGetString("dirName",(char *)"."); 
 
+   char *name;
+   name  = am->ArgMgrGetString("name",(char *)"DICOMDIR");
+   
    int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= gdcm::LD_NOSHADOWSEQ; 
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
@@ -74,7 +80,9 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
- 
+      
+   int check = am->ArgMgrDefined("check"); 
+   
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -82,7 +90,7 @@ int main(int argc, char *argv[])
       delete am;
       return 0;
    }
-
+   
    delete am;  // we don't need Argument Manager any longer
 
    // ----- Begin Processing -----
@@ -113,39 +121,44 @@ int main(int argc, char *argv[])
     
    // ----- Create the corresponding DicomDir
 
-   dcmdir->Write("NewDICOMDIR");
+   dcmdir->Write(name);
    dcmdir->Delete();
-   if ( gdcm::Debug::GetDebugFlag() )
-      std::cout << "======================= End Writting DICOMDIR" << std::endl;
-
-   // Read from disc the just written DicomDir
-   gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
-   newDicomDir->SetFileName( "NewDICOMDIR" );
-   newDicomDir->Load();
-   if ( gdcm::Debug::GetDebugFlag() )
-      std::cout << "======================= End Parsing DICOMDIR" << std::endl;   
-   if( !newDicomDir->IsReadable() )
+   
+   if (check) 
    {
-      std::cout<<"          Written DicomDir 'NewDICOMDIR'"
-               <<" is not readable"<<std::endl
-               <<"          ...Failed"<<std::endl;
+      if ( gdcm::Debug::GetDebugFlag() )
+         std::cout << "======================= End Writting DICOMDIR" 
+                   << std::endl;
 
-      newDicomDir->Delete();
-      return 1;
+     // Read from disc the just written DicomDir
+    
+      gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
+      newDicomDir->SetFileName( name );
+      newDicomDir->Load();
+      if ( gdcm::Debug::GetDebugFlag() )
+         std::cout << "======================= End Parsing DICOMDIR" 
+                   << std::endl;   
+      if( !newDicomDir->IsReadable() )
+      {
+         std::cout<<"          Written DicomDir [" << name << "] "
+                  <<" is not readable"<<std::endl
+                  <<"          ...Failed"<<std::endl;
+
+         newDicomDir->Delete();
+         return 1;
+      }
+
+      if( !newDicomDir->GetFirstPatient() )
+      {
+         std::cout <<"          Written DicomDir [" << name << "] "
+                   <<" has no patient"<<std::endl
+                   <<"          ...Failed"<<std::endl;
+
+         newDicomDir->Delete();
+         return(1);
+      } 
+      std::cout<<std::flush;
+      newDicomDir->Delete();        
    }
-
-   if( !newDicomDir->GetFirstPatient() )
-   {
-      std::cout<<"          Written DicomDir 'NewDICOMDIR'"
-               <<" has no patient"<<std::endl
-               <<"          ...Failed"<<std::endl;
-
-      newDicomDir->Delete();
-      return(1);
-   }
-
-   std::cout<<std::flush;
-
-   newDicomDir->Delete();
    return 0;
 }
