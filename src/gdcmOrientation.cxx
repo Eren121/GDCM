@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:51 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2006/01/18 10:18:30 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -288,7 +288,7 @@ have multiple letters in as described under "refinements" in C.7.6.1.1.1):
  *          - Refinements in the orientation descriptions are designated 
  *          by one or two additional letters in each value.
  *          Use it when "Patient Orientation" (0020,0020) is not found 
- * @return orientation string as "rawOrientation\columnsOrientation"
+ * @return orientation string as "rowsOrientation\columnsOrientation"
  */
 std::string Orientation::GetOrientation ( File *f )
 {
