@@ -94,6 +94,10 @@ IF (WIN32)
   ENDIF (BUILD_SHARED_LIBS)
 ENDIF (WIN32)
 
+# By default support DICOMObjects bug, if this is a speed penalty for you
+# you should consider disabling it
+SET(SUPPORT_DICOMOBJECTS_BUG ON)
+
 CONFIGURE_FILE(${GDCMJPEG_SOURCE_DIR}/.NoDartCoverage
                ${GDCMJPEG_BINARY_DIR}/.NoDartCoverage)
 

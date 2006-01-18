@@ -201,17 +201,17 @@ decompress_data (j_decompress_ptr cinfo, JSAMPIMAGE output_buf)
     compptr = cinfo->cur_comp_info[comp];
     ci = compptr->component_index;
     for (row = 0, prev_row = compptr->v_samp_factor - 1;
-   row < (cinfo->input_iMCU_row == last_iMCU_row ?
-    compptr->last_row_height : compptr->v_samp_factor);
-   prev_row = row, row++) {
+      row < (cinfo->input_iMCU_row == last_iMCU_row ?
+        compptr->last_row_height : compptr->v_samp_factor);
+      prev_row = row, row++) {
       (*losslsd->predict_undifference[ci]) (cinfo, ci,
-              diff->diff_buf[ci][row],
-              diff->undiff_buf[ci][prev_row],
-              diff->undiff_buf[ci][row],
-              compptr->width_in_data_units);
+                                            diff->diff_buf[ci][row],
+                                            diff->undiff_buf[ci][prev_row],
+                                            diff->undiff_buf[ci][row],
+                                            compptr->width_in_data_units);
       (*losslsd->scaler_scale) (cinfo, diff->undiff_buf[ci][row],
-        output_buf[ci][row],
-        compptr->width_in_data_units);
+                                output_buf[ci][row],
+                                compptr->width_in_data_units);
     }
   }
 
