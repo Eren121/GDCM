@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/23 10:25:23 $
-  Version:   $Revision: 1.183 $
+  Date:      $Date: 2006/01/18 10:17:40 $
+  Version:   $Revision: 1.184 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -588,7 +588,7 @@ void DicomDir::CreateDicomDir()
 
       // A decent DICOMDIR has much more images than series,
       // more series than studies, and so on.
-      // This is the right order to preform the tests
+      // This is the right order to perform the tests
 
       if ( v == "IMAGE " ) 
       {
@@ -942,8 +942,11 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
                else
                { 
                  // avoid the first '/' in File name !
-                 //val = &(header->GetFileName().c_str()[path.length()]);
-                 val = &(header->GetFileName().c_str()[path.length()+1]);
+                 if ( header->GetFileName().c_str()[path.length()] 
+                                                      == GDCM_FILESEPARATOR )
+                    val = &(header->GetFileName().c_str()[path.length()+1]);
+                 else  
+                    val = &(header->GetFileName().c_str()[path.length()]);   
                }
                break;
     
