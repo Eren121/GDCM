@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 15:45:21 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/01/19 11:43:48 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",
+   "                  [input = {ACR|DCM}]                                     ", 
    "                  [extent=image suffix (.IMA, .NEMA, .DCM, ...)]          ",
    "                  [listonly] [split]                                      ",
    "                  [noshadowseq][noshadow][noseq] [verbose] [debug]        ",
@@ -146,7 +147,9 @@ int main(int argc, char *argv[])
    }
    
    char *extent  = am->ArgMgrGetString("extent",".DCM");
-        
+   
+   char *input =  am->ArgMgrGetString("input","DCM"); 
+         
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
