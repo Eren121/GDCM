@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 10:18:30 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2006/01/19 11:46:46 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -276,6 +276,7 @@ have multiple letters in as described under "refinements" in C.7.6.1.1.1):
 /**
  * \brief Computes the Patient Orientation relative to the image plane
  *          from the 'Image Orientation (Patient)'
+ *          - or from 0020 0035Image Orientation (RET) -
  *          - The first entry is the direction of the rows, given by the 
  *          direction of the last pixel in the first row from the first 
  *          pixel in that row. 

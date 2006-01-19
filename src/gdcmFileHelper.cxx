@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2005/12/15 13:35:38 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2006/01/19 11:46:45 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1183,6 +1183,73 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 /* -------------------------------------------------------------------------------------
 To be moved to User's guide / WIKI  ?
 
+We have to deal with 4 *very* different cases :
+-1) user created ex nihilo his own image  and wants to write it as a Dicom image.
+-2) user modified the pixels of an existing image.
+-3) user created a new image, using existing images (eg MIP, MPR, cartography image)
+-4) user anonymized an image without processing the pixels.
+
+gdcm::FileHelper::CheckMandatoryElements() deals automatically with these cases.
+
+1)2)3)4)
+0008 0012 Instance Creation Date
+0008 0013 Instance Creation Time
+0008 0018 SOP Instance UID
+are *always* created with the current values; user has *no* possible intervention on
+them.
+
+'Serie Instance UID'(0x0020,0x000e)
+'Study Instance UID'(0x0020,0x000d) are kept as is if already exist,
+                                    created  if it doesn't.
+ The user is allowed to create his own Series/Studies, 
+     keeping the same 'Serie Instance UID' / 'Study Instance UID' for various images
+ Warning :     
+ The user shouldn't add any image to a 'Manufacturer Serie'
+     but there is no way no to allowed him to do that
+     
+ None of the 'shadow elements' are droped out.
+     
+
+1)
+'Modality' (0x0008,0x0060)       is defaulted to "OT" (other) if missing.
+'Conversion Type (0x0008,0x0064) is forced to 'SYN' (Synthetic Image).
+'Study Date', 'Study Time' are defaulted to current Date and Time.
+ 
+1)2)3)
+'Media Storage SOP Class UID' (0x0002,0x0002)
+'SOP Class UID'               (0x0008,0x0016) are set to 
+                                               [Secondary Capture Image Storage]
+'Image Type'                  (0x0008,0x0008) is forced to  "DERIVED\PRIMARY"
+Conversion Type               (0x0008,0x0064) is forced to 'SYN' (Synthetic Image)
+
+2)4)
+If 'SOP Class UID' exists in the native image  ('true DICOM' image)
+    we create the 'Source Image Sequence' SeqEntry (0x0008, 0x2112)    
+    --> 'Referenced SOP Class UID' (0x0008, 0x1150)
+         whose value is the original 'SOP Class UID'
+    --> 'Referenced SOP Instance UID' (0x0008, 0x1155)
+         whose value is the original 'SOP Class UID'
+
+3) TODO : find a trick to allow user to pass to the writter the list of the Dicom images 
+          or the Series, (or the Study ?) he used to created his image 
+          (MIP, MPR, cartography image, ...)
+           These info should be stored (?)
+          0008 1110 SQ 1 Referenced Study Sequence
+          0008 1115 SQ 1 Referenced Series Sequence
+          0008 1140 SQ 1 Referenced Image Sequence
+       
+4) When user *knows* he didn't modified the pixels, he may ask the writer to keep some
+informations unchanged :
+'Media Storage SOP Class UID' (0x0002,0x0002)
+'SOP Class UID'               (0x0008,0x0016)
+'Image Type'                  (0x0008,0x0008)
+'Conversion Type'             (0x0008,0x0064)
+He has to use gdcm::FileHelper::SetKeepMediaStorageSOPClassUID(true)
+(probabely name has to be changed)
+
+
+Bellow follows the full description (hope so !) of the consistency checks performed 
+by gdcm::FileHelper::CheckMandatoryElements()
 
 
 -->'Media Storage SOP Class UID' (0x0002,0x0002)
@@ -1198,7 +1265,12 @@ To be moved to User's guide / WIKI  ?
      (The written image is no longer an 'ORIGINAL' one)
   Except if user told he wants to keep MediaStorageSOPClassUID,
   when *he* knows he didn't modify the image (e.g. : he just anonymized the file)
-       
+   
+ -->  Conversion Type (0x0008,0x0064)
+     is forced to 'SYN' (Synthetic Image)
+  Except if user told he wants to keep MediaStorageSOPClassUID,
+  when *he* knows he didn't modify the image (e.g. : he just anonymized the file)
+            
 --> 'Modality' (0x0008,0x0060)   
     is defaulted to "OT" (other) if missing.   
     (a fully user created image belongs to *no* modality)
@@ -1228,16 +1300,17 @@ To be moved to User's guide / WIKI  ?
 --> Bits Stored, Bits Allocated, Hight Bit Position are checked for consistency
 --> Pixel Spacing     (0x0028,0x0030) is defaulted to "1.0\1.0"
 --> Samples Per Pixel (0x0028,0x0002) is defaulted to 1 (grayscale)
+
 --> Imager Pixel Spacing (0x0018,0x1164) : defaulted to Pixel Spacing value
 
---> Instance Creation Date, Instance Creation Time, Study Date, Study Time
-    are force to current Date and Time
-    
--->  Conversion Type (0x0008,0x0064)
-     is forced to 'SYN' (Synthetic Image)
+--> Instance Creation Date, Instance Creation Time are forced to current Date and Time
+
+--> Study Date, Study Time are defaulted to current Date and Time
+   (they remain unchanged if they exist)
 
 --> Patient Orientation : (0x0020,0x0020), if not present, is deduced from 
-    Image Orientation (Patient) : (0020|0037)
+    Image Orientation (Patient) : (0020|0037) or from
+    Image Orientation (RET)     : (0020 0035)
    
 --> Study ID, Series Number, Instance Number, Patient Orientation (Type 2)
     are created, with empty value if there are missing.
@@ -1481,9 +1554,9 @@ void FileHelper::CheckMandatoryElements()
    CopyMandatoryEntry(0x0008,0x0013,time);
 
    // Study Date
-   CopyMandatoryEntry(0x0008,0x0020,date);
+   CheckMandatoryEntry(0x0008,0x0020,date);
    // Study Time
-   CopyMandatoryEntry(0x0008,0x0030,time);
+   CheckMandatoryEntry(0x0008,0x0030,time);
 
    // Accession Number
    //CopyMandatoryEntry(0x0008,0x0050,"");
