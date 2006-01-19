@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/18 11:44:33 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2006/01/19 11:00:28 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,7 @@ int TestPrintAllDocument(int, char *[])
          gdcm::OrientationType orient = o->GetOrientationType( f );
          std::cout << " ---------------------- Orientation " << orient
                    << std::endl;
-         o->gdcm::Orientation::Delete(); 
+         o->Delete(); 
       }
 
       if( f->IsReadable() )
