@@ -127,8 +127,8 @@ Any contribution is welcome.
    <UL>    
       <LI>
          <a href="uml-gdcm.pdf">gdcm UML Class Diagram</a> current version.
-      <LI> <a href= "Doc1.2/html.user/index.html">User Documentation</a>
-      <LI> <a href= "Doc1.2/html.developper/index.html">Developper
+      <LI> <a href= "DocCVS/html.user/index.html">User Documentation</a>
+      <LI> <a href= "DocCVS/html.developper/index.html">Developper
          Documentation</a> 
    <LI> New Features
    <UL>
@@ -137,7 +137,31 @@ Any contribution is welcome.
            Only <TT>gdcm::DataEntry</TT> exist, now. 
            Should have been considered as a 'Bug Fix'.<br>
            Actually, it's an API breaking modification ...
-           <br> <TT>DocEntrySet::GetEntryValue()</TT> replaced by
+      <UL>
+         <LI>
+            <TT>std::string const &DataEntry::GetString() const</TT><br>
+            returns as a string (when possible) the value of the DataEntry
+         <LI>
+            <TT>void DataEntry::SetString(std::string const &value)</TT><br>
+             Sets the 'value' of a DataEntry, passed as a std::string 
+         <LI>
+            <TT>void DataEntry::SetBinArea( uint8_t *area, bool self ) </TT><br>
+             Sets the value (non string) of the current Dicom DataEntry
+         <LI>
+              <TT>void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )</TT><br>
+               Inserts the value (non string) into the current DataEntry 
+         <LI>
+               <TT>void DataEntry::SetValue(const uint32_t &id, const double
+ &val)</TT><br>
+               Inserts the elementary (non string) value into the current
+               (multivaluated) DataEntry, at the <TT>id></TT> position.
+         <LI>
+               <TT>double DataEntry::GetValue(const uint32_t &id) const </TT><br>
+               returns, as a double one of the values (when entry is 
+               multivaluated), identified by its index <TT>id</TT>. 
+      </UL>
+      <LI> 
+   <TT>DocEntrySet::GetEntryValue()</TT> replaced by
            <TT>DocEntrySet::GetEntryString()</TT> <br>
       <LI> SerieHelper : <br>     
            Add some methods, to split a 'SingleSerieUID' Fileset into 
