@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:45 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2006/01/20 09:17:25 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,10 +53,6 @@ public:
 // Set/Get data
    // Sets the value (string) of the current Dicom entry
    //virtual void SetValue(std::string const &val);
-   /// \brief Returns the 'Value' (e.g. "Dupond^Marcel") converted 
-   /// into a 'string', event if it's physically stored on disk as an integer
-   /// (e.g. : 0x000c returned as "12")
-   //virtual std::string const &GetValue() const { return Value; }
 
    /// \brief Returns the area value of the current Dicom Entry
    ///  when it's not string-translatable (e.g : LUT table, overlay, icon)   

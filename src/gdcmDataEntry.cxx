@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/23 10:26:41 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2006/01/20 09:17:25 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,7 +75,7 @@ DataEntry::~DataEntry ()
 //-----------------------------------------------------------------------------
 // Public
 /**
- * \brief Sets the value (non string) of the current Dicom Header Entry
+ * \brief Sets the value (non string) of the current DataEntry
  * @param area area
  * @param self self
  */
@@ -89,7 +89,7 @@ void DataEntry::SetBinArea( uint8_t *area, bool self )
    State = STATE_LOADED;
 }
 /**
- * \brief Inserts the value (non string) into the current Dicom Header Entry
+ * \brief Inserts the value (non string) into the current DataEntry
  * @param area area
  * @param length length 
  */
@@ -112,9 +112,9 @@ void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
 }
 
 /**
- * \brief Inserts the value (non string) into the current Dicom Header Entry
- * @param id id
- * @param val val 
+ * \brief Inserts the elementary (non string) value into the current DataEntry
+ * @param id index of the elementary value to be set
+ * @param val value, passed as a double 
  */
 void DataEntry::SetValue(const uint32_t &id, const double &val)
 {
@@ -317,7 +317,7 @@ uint32_t DataEntry::GetValueCount( ) const
    return GetLength();
 }
 /**
- * \brief Sets the 'value' of an Entry, passed as a std::string
+ * \brief Sets the 'value' of a DataEntry, passed as a std::string
  * @param value string representation of the value to be set
  */ 
 void DataEntry::SetString(std::string const &value)
