@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/24 20:38:43 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2006/01/24 20:40:09 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,8 +131,8 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
       opj_cio_close(cio);
 
   /* free the memory containing the code-stream */
-  //delete[] src;  //FIXME
-  //src = NULL;
+  delete[] src;  //FIXME
+  src = NULL;
 
 
    // Copy buffer
