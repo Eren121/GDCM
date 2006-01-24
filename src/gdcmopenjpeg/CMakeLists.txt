@@ -36,6 +36,7 @@ IF(OPJ_STANDALONE)
     ENABLE_TESTING()
   ENDIF(BUILD_TESTING)
 ENDIF(OPJ_STANDALONE)
+
 # TODO, technically we should add tests, e.g:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
 
