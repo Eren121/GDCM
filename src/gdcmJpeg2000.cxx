@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/24 20:25:23 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2006/01/24 20:38:43 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,9 +93,18 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 
   /* set decoding parameters to default values */
   opj_set_default_decoder_parameters(&parameters);
+ 
+   // default blindly copied
+   parameters.cp_layer=0;
+   parameters.cp_reduce=0;
+//   parameters.decod_format=-1;
+//   parameters.cod_format=-1;
 
       /* JPEG-2000 codestream */
+    parameters.decod_format = J2K_CFMT;
     assert(parameters.decod_format == J2K_CFMT);
+  parameters.cod_format = PGX_DFMT;
+  assert(parameters.cod_format == PGX_DFMT);
 
       /* get a decoder handle */
       dinfo = opj_create_decompress(CODEC_J2K);
@@ -122,8 +131,9 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
       opj_cio_close(cio);
 
   /* free the memory containing the code-stream */
-  delete[] src;  //FIXME
-  src = NULL;
+  //delete[] src;  //FIXME
+  //src = NULL;
+
 
    // Copy buffer
    for (int compno = 0; compno < image->numcomps; compno++)
@@ -174,7 +184,8 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 
   /* free image data structure */
   opj_image_destroy(image);
-   return true;
+
+  return true;
 }
 
 #if 0
