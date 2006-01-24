@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/24 20:40:09 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2006/01/24 20:48:10 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -110,7 +110,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
       dinfo = opj_create_decompress(CODEC_J2K);
       
       /* catch events using our callbacks and give a local context */
-      opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);      
+      opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, NULL);      
 
       /* setup the decoder decoding parameters using user parameters */
       opj_setup_decoder(dinfo, &parameters);
@@ -121,7 +121,6 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
       /* decode the stream and fill the image structure */
       image = opj_decode(dinfo, cio);
       if(!image) {
-        fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
         opj_destroy_decompress(dinfo);
         opj_cio_close(cio);
         return 1;
