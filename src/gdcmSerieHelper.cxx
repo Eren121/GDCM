@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 15:25:07 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2006/01/24 20:53:54 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -960,7 +960,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
   //     Deal with all user supplied tags.
   //      (user knows more than we do about his images!)
   
-   float converted;
+   double converted;
    std::string id;
    std::string s; 
    char charConverted[17]; 
