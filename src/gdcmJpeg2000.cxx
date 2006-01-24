@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2006/01/24 20:25:23 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,6 +36,149 @@ namespace gdcm
  * @return 1 on success, 0 on error
  */
 
+/**
+sample error callback expecting a FILE* client object
+*/
+void error_callback(const char *msg, void *) {
+  std::cerr << "Error in gdcmopenjpeg" << msg << std::endl;
+}
+/**
+sample warning callback expecting a FILE* client object
+*/
+void warning_callback(const char *msg, void *) {
+  std::cerr << "Warning in gdcmopenjpeg" << msg << std::endl;
+}
+/**
+sample debug callback expecting no client object
+*/
+void info_callback(const char *msg, void *) {
+  std::cerr << "Info in gdcmopenjpeg" << msg << std::endl;
+}
+
+#define J2K_CFMT 0
+#define JP2_CFMT 1
+#define JPT_CFMT 2
+#define MJ2_CFMT 3
+#define PXM_DFMT 0
+#define PGX_DFMT 1
+#define BMP_DFMT 2
+#define YUV_DFMT 3
+/*
+ * Divide an integer by a power of 2 and round upwards.
+ *
+ * a divided by 2^b
+ */
+static int int_ceildivpow2(int a, int b) {
+  return (a + (1 << b) - 1) >> b;
+}
+
+/*
+ * The following function was copy paste from j2k_to_image.c with part from convert.c
+ */
+bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
+{
+  opj_dparameters_t parameters;  /* decompression parameters */
+  opj_event_mgr_t event_mgr;    /* event manager */
+  opj_image_t *image = NULL;
+  opj_dinfo_t* dinfo = NULL;  /* handle to a decompressor */
+  opj_cio_t *cio = NULL;
+  unsigned char *src = (unsigned char*)inputdata; 
+  int file_length = inputlength;
+
+  /* configure the event callbacks (not required) */
+  memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
+  event_mgr.error_handler = error_callback;
+  event_mgr.warning_handler = warning_callback;
+  event_mgr.info_handler = info_callback;
+
+  /* set decoding parameters to default values */
+  opj_set_default_decoder_parameters(&parameters);
+
+      /* JPEG-2000 codestream */
+    assert(parameters.decod_format == J2K_CFMT);
+
+      /* get a decoder handle */
+      dinfo = opj_create_decompress(CODEC_J2K);
+      
+      /* catch events using our callbacks and give a local context */
+      opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);      
+
+      /* setup the decoder decoding parameters using user parameters */
+      opj_setup_decoder(dinfo, &parameters);
+
+      /* open a byte stream */
+      cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
+
+      /* decode the stream and fill the image structure */
+      image = opj_decode(dinfo, cio);
+      if(!image) {
+        fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
+        opj_destroy_decompress(dinfo);
+        opj_cio_close(cio);
+        return 1;
+      }
+      
+      /* close the byte stream */
+      opj_cio_close(cio);
+
+  /* free the memory containing the code-stream */
+  delete[] src;  //FIXME
+  src = NULL;
+
+   // Copy buffer
+   for (int compno = 0; compno < image->numcomps; compno++)
+   {
+      opj_image_comp_t *comp = &image->comps[compno];
+  
+      int w = image->comps[compno].w;
+      int wr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
+  
+      //int h = image.comps[compno].h;
+      int hr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
+  
+      if (comp->prec <= 8)
+      {
+         uint8_t *data8 = (uint8_t*)raw;
+         for (int i = 0; i < wr * hr; i++) 
+         {
+            int v = image->comps[compno].data[i / wr * w + i % wr];
+            *data8++ = (uint8_t)v;
+         }
+      }
+      else if (comp->prec <= 16)
+      {
+         uint16_t *data16 = (uint16_t*)raw;
+         for (int i = 0; i < wr * hr; i++) 
+         {
+            int v = image->comps[compno].data[i / wr * w + i % wr];
+            *data16++ = (uint16_t)v;
+         }
+      }
+      else
+      {
+         uint32_t *data32 = (uint32_t*)raw;
+         for (int i = 0; i < wr * hr; i++) 
+         {
+            int v = image->comps[compno].data[i / wr * w + i % wr];
+            *data32++ = (uint32_t)v;
+         }
+      }
+      //free(image.comps[compno].data);
+   }
+ 
+
+  /* free remaining structures */
+  if(dinfo) {
+    opj_destroy_decompress(dinfo);
+  }
+
+  /* free image data structure */
+  opj_image_destroy(image);
+   return true;
+}
+
+#if 0
+// For openjpeg 0.97
 bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
 {
    j2k_image_t img;
@@ -107,6 +250,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
  
    return true;
 }
+#endif
 
 #if 0
 bool gdcm_read_JASPER_file (void* raw, char *inputdata, size_t inputlength)
