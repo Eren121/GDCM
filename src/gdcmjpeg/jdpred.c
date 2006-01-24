@@ -175,12 +175,13 @@ jpeg_undifference6(j_decompress_ptr cinfo, int comp_index,
     Rb = GETJSAMPLE(prev_row[0]);
     Ra = (diff_buf[0] + PREDICTOR2) & 0xFFFF;
     undiff_buf[0] = Ra;
-    min = max = undiff_buf[0];
+    temp = min = max = undiff_buf[0];
 
     for (xindex = 1; xindex < width; xindex++) {
       Rc = Rb;
       Rb = GETJSAMPLE(prev_row[xindex]);
       Ra = (diff_buf[xindex] + PREDICTOR6) & 0xFFFF;
+      temp = Ra;
       min = temp < min ? temp : min;
       max = temp > max ? temp : max;
     }
