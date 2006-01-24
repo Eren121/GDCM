@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,7 +29,6 @@
  */
 
 #include "fix.h"
-#include <math.h>   /*Add Antonin : multbug1*/
 
 #ifdef WIN32
 #define int64 __int64
@@ -33,31 +36,10 @@
 #define int64 long long
 #endif
 
-/*
- * Multiply two fixed-precision rational numbers.
- */
-
-/*int fix_mul(int a, int b)
-{
-  return (int) ((int64) a * (int64) b >> 13);
-}*/
-
-
-/*Mod Antonin : multbug1*/
-/*
-int fix_mul(int a, int b)
-{
-  double tmp= (double) ((int64) a * (int64) b);
-  int64 v = (int64) ((fabs(tmp/8192.0)>=floor(fabs(tmp/8192.0))+0.5)?fabs(tmp/8192.0)+1.0:fabs(tmp/8192.0));
-  v = (tmp<0)?-v:v;
-  return (int) v;
-}
-*/
-/*doM*/
-
-int fix_mul(int a, int b)   /* Luke Lee optimized : 11/16/2004*/
-{
+int fix_mul(int a, int b) {
     int64 temp = (int64) a * (int64) b >> 12;
     return (int) ((temp >> 1) + (temp & 1)) ;
 }
+
+
 

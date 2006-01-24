@@ -1,9 +1,5 @@
 /*
- * Copyright (c) 2001-2003, David Janssens
- * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
- * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,26 +23,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __J2K_CONVERT_H
-#define __J2K_CONVERT_H
+#ifndef __IMAGE_H
+#define __IMAGE_H
+/**
+@file image.h
+@brief Implementation of operations on images (IMAGE)
 
-opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters);
+The functions in IMAGE.C have for goal to realize operations on images.
+*/
 
-int imagetobmp(opj_image_t *image, char *outfile);
+/** @defgroup IMAGE IMAGE - Implementation of operations on images */
+/*@{*/
 
 /**
-Load a single image component encoded in PGX file format
-@param filename Name of the PGX file to load
-@param parameters *List ?*
-@return Returns a greyscale image if successful, returns NULL otherwise
+Create an empty image
+@todo this function should be removed
+@return returns an empty image if successful, returns NULL otherwise
 */
-opj_image_t* pgxtoimage(char *filename, opj_cparameters_t *parameters);
+opj_image_t* opj_image_create0();
 
-int imagetopgx(opj_image_t *image, char *outfile);
+/*@}*/
 
-opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters);
-
-int imagetopnm(opj_image_t *image, char *outfile);
-
-#endif /* __J2K_CONVERT_H */
+#endif /* __IMAGE_H */
 
