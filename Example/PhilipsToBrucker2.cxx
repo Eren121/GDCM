@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/19 11:43:48 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2006/01/24 03:06:46 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -148,8 +148,6 @@ int main(int argc, char *argv[])
    
    char *extent  = am->ArgMgrGetString("extent",".DCM");
    
-   char *input =  am->ArgMgrGetString("input","DCM"); 
-         
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
