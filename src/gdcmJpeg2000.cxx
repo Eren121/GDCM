@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/24 20:48:10 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2006/01/24 20:56:13 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,12 +63,13 @@ void info_callback(const char *msg, void *) {
 #define PGX_DFMT 1
 #define BMP_DFMT 2
 #define YUV_DFMT 3
+
 /*
  * Divide an integer by a power of 2 and round upwards.
  *
  * a divided by 2^b
  */
-static int int_ceildivpow2(int a, int b) {
+inline int int_ceildivpow2(int a, int b) {
   return (a + (1 << b) - 1) >> b;
 }
 
