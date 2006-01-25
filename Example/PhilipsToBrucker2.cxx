@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/25 14:48:45 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006/01/25 17:02:00 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,6 +219,7 @@ int main(int argc, char *argv[])
   
    gdcm::File *f;
    gdcm::FileHelper *fh;
+   std::vector<std::string> tokens;
 /*   
    std::cout << "---------------Print Unique Series identifiers---------"  
              << std::endl;     
@@ -310,14 +311,23 @@ int main(int argc, char *argv[])
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
      // userFileIdentifier += "_";
       //userFileIdentifier += *it;       
-      std::cout << "                           [" <<
-              userFileIdentifier  << "]" << std::endl;
       
+      tokens.clear();
+      gdcm::Util::Tokenize (userFileIdentifier, tokens, "_"); 
+   
+      if ( tokens[3] == "gdcmUnfound")  // sometimes Trigger Time is not found. CreateUserDefinedFileIdentifier is not aware of the pb.
+      {
+         tokens[3] = gdcm::Util::GetName( *it );
+         userFileIdentifier = tokens[0] + "_" + tokens[1] + "_" + tokens[2] + "_" + tokens[3] + "_" + tokens[4];
+      }   
+ 
+       std::cout << "                           [" <<
+              userFileIdentifier  << "]" << std::endl;
+               
       // storing in a map ensures automatic sorting !      
       sf[userFileIdentifier] = f;
    }
       
-   std::vector<std::string> tokens;
    std::string fullFilename, lastFilename;
    std::string previousPatientName, currentPatientName;
    std::string previousSerieInstanceUID, currentSerieInstanceUID;
@@ -353,7 +363,7 @@ int main(int argc, char *argv[])
        
       fullFilename =  currentFile->GetFileName();
       lastFilename =  gdcm::Util::GetName( fullFilename ); 
-      std::cout << "Try to write" <<lastFilename << std::endl;
+      std::cout << "Try to write [" <<lastFilename << "]" << std::endl;
      
       tokens.clear();
       gdcm::Util::Tokenize (it2->first, tokens, "_");
@@ -474,16 +484,17 @@ int main(int argc, char *argv[])
      
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)
       std::string chSessionIndex;
-      if (currentPhaseEncodingDirection == "COL")
+      // CLEANME
+      if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
          chSessionIndex = "1";
-      else if (currentPhaseEncodingDirection == "RAW")
+      else if (currentPhaseEncodingDirection == "RAW" || currentPhaseEncodingDirection == "RAW "|| currentPhaseEncodingDirection == " RAW")
          chSessionIndex = "2"; 
       else
       {
          std::cout << "====================== PhaseEncodingDirection "
-                   << " neither COL nor ROW (?!?) : [ "
+                   << " neither COL nor RAW (?!?) : [ "
                    << currentPhaseEncodingDirection << "]" << std::endl;
-         chSessionIndex = "3";
+         chSessionIndex = "2";
       }
       currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
    
