@@ -31,6 +31,5 @@ IF (WIN32)
   ENDIF (BUILD_SHARED_LIBS)
 ENDIF (WIN32)
 
-ADD_LIBRARY(${PARENT_PREFIX}openjpeg ${openjpeg_SRCS})
-
+ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${openjpeg_SRCS})
 
