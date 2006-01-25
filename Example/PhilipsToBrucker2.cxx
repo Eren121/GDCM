@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/25 11:08:18 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/01/25 11:41:22 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -424,7 +424,10 @@ int main(int argc, char *argv[])
          }
          previousImagePosition          = currentImagePosition;
          previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
-         sliceIndex += 1;
+         if (split)
+            sliceIndex = 1; // only *one* slice in a given directory
+         else
+            sliceIndex += 1;
       }      
 
 // We don't split on Row/Column!
