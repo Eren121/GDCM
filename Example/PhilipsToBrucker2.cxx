@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/25 11:41:22 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/01/25 14:48:45 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -474,10 +474,17 @@ int main(int argc, char *argv[])
      
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)
       std::string chSessionIndex;
-      if (currentPhaseEncodingDirection == "ROW")
+      if (currentPhaseEncodingDirection == "COL")
          chSessionIndex = "1";
+      else if (currentPhaseEncodingDirection == "RAW")
+         chSessionIndex = "2"; 
       else
-         chSessionIndex = "2"; // suppose it's "COLUMN" !
+      {
+         std::cout << "====================== PhaseEncodingDirection "
+                   << " neither COL nor ROW (?!?) : [ "
+                   << currentPhaseEncodingDirection << "]" << std::endl;
+         chSessionIndex = "3";
+      }
       currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
    
       // Deal with  0x0021, 0x1020 : 'SLICE INDEX'
