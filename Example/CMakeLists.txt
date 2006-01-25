@@ -29,7 +29,8 @@ SET(EXAMPLE_SOURCES
   AnonymizeNoLoad   # without loading the Pixel Data 
   PatchHeader
   PhilipsToBrucker
-  PhilipsToBrucker2    
+  PhilipsToBrucker2 
+  MagnetomVisionToBrucker   
   ReWrite
   RawToDicom
   TestValidate

@@ -1,10 +1,10 @@
 /*=========================================================================
                                                                                 
   Program:   gdcm
-  Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
+  Module:    $RCSfile: MagnetomVisionToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/25 11:08:18 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/01/25 11:08:17 $
+  Version:   $Revision: 1.1 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,15 +44,14 @@ typedef std::map<std::string, gdcm::File*> SortedFiles;
 int main(int argc, char *argv[]) 
 {
    START_USAGE(usage)
-   " \n PhilipsToBrucker :\n                                                  ",
+   " \n MagnetomVisionToBrucker :\n                                           ",
    " - explores recursively the given directory,                              ",
    " - keeps the requested series/ drops the unrequested series               ",
    " - orders the gdcm-readable found Files according to their                ",
    "           (0x0010, 0x0010) Patient's Name                                ",
    "           (0x0020, 0x000e) Series Instance UID                           ",
-   "           (0x0020, 0x0032) Image Position (Patient)                      ",
+   "           (0x0020, 0x0032) Image Position (RET)                          ",
    "           (0x0018, 0x1060) Trigger Time                                  ",
-   "           (0x0018, 0x1312) In-plane Phase Encoding Direction             ",
    " - fills a single level (*) Directory with *all* the files,               ",
    "           converted into a Brucker-like Dicom, InTags compliant          ",
    "   (*) actually : creates as many directories as Patients                 ",
@@ -91,7 +90,6 @@ int main(int argc, char *argv[])
    "        -- Serie                                                          ",
    "        --- Position                                                      ",
    "            Images are (sorted by Trigger Time /                          ",
-   "                     Encoding Direction (Row, Column)                     ",
    " noshadowseq: user doesn't want to load Private Sequences                 ",
    " noshadow : user doesn't want to load Private groups (odd number)         ",
    " noseq    : user doesn't want to load Sequences                           ",
@@ -148,6 +146,8 @@ int main(int argc, char *argv[])
    
    char *extent  = am->ArgMgrGetString("extent",".DCM");
    
+   char *input =  am->ArgMgrGetString("input","DCM"); 
+         
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -248,10 +248,10 @@ int main(int argc, char *argv[])
    SortedFiles sf;
 
    s->AddSeriesDetail(0x0010, 0x0010, false); // Patient's Name
-   s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
-   s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)     
-   s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
-   s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction 
+   s->AddSeriesDetail(0x0020, 0x0010, false); // Study ID - Siemens, in that time!
+   s->AddSeriesDetail(0x0020, 0x0030, false); // Image Position (RET)     
+   s->AddSeriesDetail(0x0020, 0x0013, false);  // Instance Number
+            //(called 'Trigger Time' in order not to change too much the code)
       
    for (gdcm::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
@@ -322,12 +322,12 @@ int main(int argc, char *argv[])
    std::string previousPatientName, currentPatientName;
    std::string previousSerieInstanceUID, currentSerieInstanceUID;
    std::string previousImagePosition, currentImagePosition;
-   std::string previousPhaseEncodingDirection, currentPhaseEncodingDirection;
+   //std::string previousPhaseEncodingDirection, currentPhaseEncodingDirection;
    std::string previousTriggerTime, currentTriggerTime;
       
    std::string writeDir, currentWriteDir;
    std::string currentPatientWriteDir, currentSerieWriteDir, 
-               currentPositionWriteDir, currentPhaseEncodingDirectionWriteDir;
+               currentPositionWriteDir; // currentPhaseEncodingDirectionWriteDir;
 
    std::string fullWriteFilename;
    std::string strExtent(extent); 
@@ -338,10 +338,10 @@ int main(int argc, char *argv[])
    previousPatientName            = "";
    previousSerieInstanceUID       = "";   
    previousImagePosition          = "";
-   previousPhaseEncodingDirection = "";
+   //previousPhaseEncodingDirection = "";
    previousTriggerTime            = "";
    
-   int sliceIndex = 0; // Is incremented *at the beginning* of processing
+   int sliceIndex = 1;
    int frameIndex = 1;
    int flag       = 0;
        
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
       currentSerieInstanceUID       = tokens[1];
       currentImagePosition          = tokens[2];
       currentTriggerTime            = tokens[3];
-      currentPhaseEncodingDirection = tokens[4];           
+      //currentPhaseEncodingDirection = tokens[4];           
       
       if ( currentImagePosition[0] == '-')
           currentImagePosition[0] = 'M';
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
          previousSerieInstanceUID       = ""; //currentSerieInstanceUID;
          previousImagePosition          = ""; //currentImagePosition;
          previousTriggerTime            = "";
-         previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
+        // previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
   
          currentPatientWriteDir = writeDir + currentPatientName;
          //if ( ! gdcm::DirList::IsDirectory(currentPatientWriteDir) )
@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
          }
          previousSerieInstanceUID       = currentSerieInstanceUID;
          previousImagePosition          = ""; //currentImagePosition;
-         previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
+         //previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
       }
 
       if (previousImagePosition != currentImagePosition)
@@ -423,7 +423,7 @@ int main(int argc, char *argv[])
              system (systemCommand.c_str()); 
          }
          previousImagePosition          = currentImagePosition;
-         previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
+         //previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
          sliceIndex += 1;
       }      
 
@@ -470,13 +470,14 @@ int main(int argc, char *argv[])
       currentFile->InsertEntryString(fov, 0x0019, 0x1000, "DS");
      
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)
-      std::string chSessionIndex;
+      std::string chSessionIndex = "1";
+      /*
       if (currentPhaseEncodingDirection == "ROW")
          chSessionIndex = "1";
       else
          chSessionIndex = "2"; // suppose it's "COLUMN" !
       currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
-   
+     */
       // Deal with  0x0021, 0x1020 : 'SLICE INDEX'
       char chSliceIndex[5];
       sprintf(chSliceIndex, "%04d", sliceIndex);
