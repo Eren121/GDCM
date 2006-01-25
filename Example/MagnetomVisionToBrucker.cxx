@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MagnetomVisionToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/25 11:08:17 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/01/25 16:59:19 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -146,8 +146,6 @@ int main(int argc, char *argv[])
    
    char *extent  = am->ArgMgrGetString("extent",".DCM");
    
-   char *input =  am->ArgMgrGetString("input","DCM"); 
-         
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
