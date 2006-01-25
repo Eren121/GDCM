@@ -2,7 +2,7 @@
 # Rebuild gdcm whenever a file starting with gdcm* is modified
 INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 
-SET(PARENT_PREFIX gdcm)
+SET(OPJ_PREFIX gdcm)
 SUBDIRS(
   gdcmjpeg
   #gdcmmpeg2
