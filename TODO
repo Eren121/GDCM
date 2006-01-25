@@ -11,6 +11,13 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: gdcm does not handle deflate TS
+Date: 2006 Jan 25
+Attributed: Mathieu
+Details:
+image_dfl from dclunie website is not working since the *whole* dataset
+is compressed. Therefore we cannot even parse the file.
+-----------------------------------------------------------------------------
 Description: Problem with PrintFile and OB field
 Date: 2005 Dec 30
 Attributed: Mathieu
