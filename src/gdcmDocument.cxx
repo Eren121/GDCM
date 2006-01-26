@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/14 10:00:28 $
-  Version:   $Revision: 1.334 $
+  Date:      $Date: 2006/01/26 09:22:23 $
+  Version:   $Revision: 1.335 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2156,17 +2156,6 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       // if Transfer Syntax is Big Endian we have to change CheckSwap
 
       std::string ts = GetTransferSyntax();
-      if ( ts == GDCM_UNKNOWN )
-      {
-         gdcmDebugMacro("True DICOM File, with NO Transfer Syntax (?!) " );
-         return;      
-      }
-      if ( !Global::GetTS()->IsTransferSyntax(ts) )
-      {
-         gdcmWarningMacro("True DICOM File, with illegal Transfer Syntax: [" 
-                          << ts << "]");
-         return;
-      }
 
       // Group 0002 is always 'Explicit ...' 
       // even when Transfer Syntax says 'Implicit ..." 
@@ -2178,7 +2167,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       }
        
       // FIXME Strangely, this works with 
-      //'Implicit VR BigEndian Transfer Syntax (GE Private)
+      //'Implicit VR BigEndian Transfer Syntax' (GE Private)
       //
       // --> Probabely normal, since we considered we never have 
       // to trust manufacturers.
@@ -2193,6 +2182,33 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          group = SwapShort(group);
          elem  = SwapShort(elem);
       }
+      
+      /// \todo  find a trick to warn user and stop processing
+            
+      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
+                                             TS::DeflatedExplicitVRLittleEndian)
+      {
+           gdcmWarningMacro("Transfer Syntax [" 
+                        << GetTransferSyntaxName() << "] :"
+                        << " not yet dealt with ");
+           return;       
+      }
+      
+      // The following shouldn't occur very often
+      // Let's check at the very end.
+
+      if ( ts == GDCM_UNKNOWN )
+      {
+         gdcmDebugMacro("True DICOM File, with NO Transfer Syntax (?!) " );
+         return;      
+      }
+      
+      if ( !Global::GetTS()->IsTransferSyntax(ts) )
+      {
+         gdcmWarningMacro("True DICOM File, with illegal Transfer Syntax: [" 
+                          << ts << "]");
+         return;
+      }      
    }
 }
 
