@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 16:01:04 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2006/01/26 18:26:04 $
+  Version:   $Revision: 1.19 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,11 @@
 #include <iostream>
 #include <ctype.h>
 #include <string.h>  // For strlen
+
+// No strcasecmp in borland, but stricmp
+#ifdef __BORLANDC__
+#define strcasecmp stricmp
+#endif
 
 #include <string.h>  // For strtok and strlen
 #include <stdlib.h>  // For strtol and strtod
