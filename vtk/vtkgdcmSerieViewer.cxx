@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 17:40:48 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2006/01/26 16:01:06 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
    int check   = am->ArgMgrDefined("check");
   
    // This is so ugly, a cstring is NOT a char * (god damit!)
-   bool bname = ( strcmp(am->ArgMgrGetString("order", (char*)"not found"),"name")==0 );
+   bool bname = ( strcmp(am->ArgMgrGetString("order", "not found"),"name")==0 );
    if (bname)
       elemsToOrderOn = am->ArgMgrGetXInt16Enum("order", &orderNb);
 

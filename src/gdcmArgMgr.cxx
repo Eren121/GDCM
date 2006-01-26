@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:56 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006/01/26 16:01:04 $
+  Version:   $Revision: 1.18 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -162,7 +162,7 @@ char *ArgMgr::ArgMgrValue ( const char *param )
  * \brief  Search for the first not yet used label
  * @return Pointer to the char array holding the first non used label
  */
-char *ArgMgr::ArgMgrUnused ( )
+const char *ArgMgr::ArgMgrUnused ( )
 {
    int i ;
    for ( i=ArgCount-1; i>0; i-- )
@@ -182,7 +182,7 @@ char *ArgMgr::ArgMgrUnused ( )
  */
 int ArgMgr::ArgMgrPrintUnusedLabels ()
 {
-   char *label;
+   const char *label;
    int i=0;
    while ( (label=ArgMgrUnused())!=0 )
    {
@@ -217,7 +217,7 @@ int ArgMgr::ArgMgrUsage(const char **usage )
  * @param param  char. array that defines the parameter
  * @return   Entier correspondant au rang dans la liste de labels
  */
-int ArgMgr::ArgMgrSave ( char *param )
+int ArgMgr::ArgMgrSave ( const char *param )
 {
    static int   deja = 0;
    FILE         *fd;
@@ -295,7 +295,7 @@ const char *ArgMgr::ArgMgrGetString(const char *param, const char *defaultVal)
  * @param val  number of default value
  * @return   int : range of value amongst the values list
  */
-int ArgMgr::ArgMgrGetLabel (const char *param, char *liste, int val )
+int ArgMgr::ArgMgrGetLabel (const char *param, const char *liste, int val )
 {
   char *lab;
   const char *vallab;
@@ -327,6 +327,7 @@ int ArgMgr::ArgMgrGetLabel (const char *param, char *liste, int val )
  * @param liste  character Chain describing the various values.
  *               Labels are separated by  '\\'.
  *               No case sensitive.
+ *               WARNING this will be changed (not const)
  * @param usage Usage program (displayed if label not found)
  * @return   int : range of value amongst the values list
  */
@@ -762,7 +763,7 @@ char *ArgMgr::Majuscule (const char *chaine )
 * Valeur retournee . : false if OK.                                       *
 *                      true if KO.                                        *
 **************************************************************************/
-int ArgMgr::FiltreLong ( char *arg  )
+int ArgMgr::FiltreLong ( const char *arg  )
 {
   int  n = 0 ;
   while ( (n++<ARG_LONG_MAX) && (*(arg++) != '\0') ) ;
@@ -825,7 +826,7 @@ const char *ArgMgr::LoadedParam ( const char *param, FILE *fd )
  |              Role     : parameter File name
  |
  +------------------------------------------------------------------------*/
-int ArgMgr::ArgLoadFromFile ( char *filename )
+int ArgMgr::ArgLoadFromFile ( const char *filename )
 {
   int   nbl = 0;
   char  param[ARG_LONG_MAX+1];

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:56 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2006/01/26 16:01:04 $
+  Version:   $Revision: 1.12 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,15 +56,15 @@ public:
 
    int    ArgMgrDefined           (const char *param);  // Checks if Param is defined
    char  *ArgMgrValue             (const char *param);  // Returns Param value 
-   char  *ArgMgrUnused            (void);               // Returns a never used arg.
-   int    ArgMgrSave              (char *);             // Save of parameters out
+   const char  *ArgMgrUnused      (void);               // Returns a never used arg.
+   int    ArgMgrSave              (const char *);       // Save of parameters out
    int    ArgMgrUsage             (const char **usage); // Display program usage 
    int    ArgMgrPrintUnusedLabels (void);               // Prints unused labels
 
    int    ArgMgrGetInt   (const char *param, int);  // Gets an int   (with default value)
    float  ArgMgrGetFloat (const char *param, float);// Gets a float  (with default value)
    const char  *ArgMgrGetString(const char *param, const char* ext = 0);// Gets a string (with default value)
-   int    ArgMgrGetLabel (const char *param, char *, int);
+   int    ArgMgrGetLabel (const char *param, const char *, int);
   
    int    ArgMgrWantInt   (const char *param, const char **usage);  // Demands an int 
    float  ArgMgrWantFloat (const char *param, const char **usage);  // Demands a float
@@ -81,9 +81,9 @@ public:
 
 private :
 
-   int    FiltreLong       (char *);
+   int    FiltreLong       (const char *);
    const char  *LoadedParam(const char *, FILE *);
-   int    ArgLoadFromFile  (char *);
+   int    ArgLoadFromFile  (const char *);
    void   ArgStdArgs       (void);
 
    // These ones are 'general purpose methods'
