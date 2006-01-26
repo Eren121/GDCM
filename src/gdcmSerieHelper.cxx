@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/24 20:53:54 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2006/01/26 09:07:15 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -976,12 +976,15 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       // e.g : 100 would be *before* 20; 000020.00 vs 00100.00 : OK
       if (it2->convert)
       {
-         converted = atof(s.c_str());
-         // probabely something much more complicated is possible, 
-         // using C++ features
-         /// \todo check the behaviour when there are >0 and <0 numbers
-         sprintf(charConverted, "%016.6f",converted);
-         s = charConverted;
+         if ( s != GDCM_UNFOUND) // Don't convert unfound fields !
+         {
+            converted = atof(s.c_str());
+            // probabely something much more complicated is possible, 
+            // using C++ features
+            /// \todo check the behaviour when there are >0 and <0 numbers
+            sprintf(charConverted, "%016.6f",converted);
+            s = charConverted;
+         }
       }
       // Eliminate non-alphanum characters, including whitespace.
       for(unsigned int i=0; i<s.size(); i++)
