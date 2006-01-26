@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2005/08/28 16:56:05 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/01/26 15:52:56 $
+  Version:   $Revision: 1.11 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,7 @@ public:
 
    int    ArgMgrGetInt   (const char *param, int);  // Gets an int   (with default value)
    float  ArgMgrGetFloat (const char *param, float);// Gets a float  (with default value)
-   char  *ArgMgrGetString(const char *param, char*);// Gets a string (with default value)
+   const char  *ArgMgrGetString(const char *param, const char* ext = 0);// Gets a string (with default value)
    int    ArgMgrGetLabel (const char *param, char *, int);
   
    int    ArgMgrWantInt   (const char *param, const char **usage);  // Demands an int 

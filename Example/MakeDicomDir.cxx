@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 10:20:56 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2006/01/26 15:52:42 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,11 +61,11 @@ int main(int argc, char *argv[])
       return 0;
    }
 
-   char *dirName;   
-   dirName  = am->ArgMgrGetString("dirName",(char *)"."); 
+   const char *dirName;   
+   dirName  = am->ArgMgrGetString("dirName","."); 
 
-   char *name;
-   name  = am->ArgMgrGetString("name",(char *)"DICOMDIR");
+   const char *name;
+   name  = am->ArgMgrGetString("name","DICOMDIR");
    
    int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )

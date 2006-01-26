@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MagnetomVisionToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/25 16:59:19 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/01/26 15:52:42 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,11 +108,11 @@ int main(int argc, char *argv[])
       return 0;
    }
 
-   char *dirNamein;   
-   dirNamein  = am->ArgMgrGetString("dirin",(char *)"."); 
+   const char *dirNamein;   
+   dirNamein  = am->ArgMgrGetString("dirin","."); 
 
-   char *dirNameout;   
-   dirNameout  = am->ArgMgrGetString("dirout",(char *)".");  
+   const char *dirNameout;   
+   dirNameout  = am->ArgMgrGetString("dirout",".");  
    
    int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
       return 0;         
    }
    
-   char *extent  = am->ArgMgrGetString("extent",".DCM");
+   const char *extent  = am->ArgMgrGetString("extent",".DCM");
    
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )

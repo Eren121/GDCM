@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/19 11:43:48 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2006/01/26 15:52:43 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -151,8 +151,8 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   char *fileName = am->ArgMgrGetString("filein",(char *)0);
-   char *dirName  = am->ArgMgrGetString("dirin",(char *)0);
+   const char *fileName = am->ArgMgrGetString("filein");
+   const char *dirName  = am->ArgMgrGetString("dirin");
 
    if ( (fileName == 0 && dirName == 0) ||
         (fileName != 0 && dirName != 0) )
@@ -191,11 +191,11 @@ int main(int argc, char *argv[])
    bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
 
    bool ddict = am->ArgMgrDefined("dict") ? true : false;
-   char *dict = 0;
+   const char *dict = 0;
 
    if (ddict)
    {
-     dict = am->ArgMgrGetString("dict",(char *)0);
+     dict = am->ArgMgrGetString("dict",0);
    }
 
    /* if unused Param we give up */

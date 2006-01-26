@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 15:55:17 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/01/26 15:52:43 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
          loadMode |= gdcm::LD_NOSEQ;
    }
 
-   char *dirName  = am->ArgMgrGetString("dirin",(char *)0);
+   const char *dirName  = am->ArgMgrGetString("dirin");
    if (dirName == 0)
    {
        std::cout <<std::endl

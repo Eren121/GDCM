@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/02 15:16:38 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2006/01/26 15:52:42 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
 
-   char *fileName = am->ArgMgrGetString("filein",(char *)0);
-   char *dirName  = am->ArgMgrGetString("dirin",(char *)0);
+   const char *fileName = am->ArgMgrGetString("filein");
+   const char *dirName  = am->ArgMgrGetString("dirin");
 
    if ( (fileName == 0 && dirName == 0)
         ||

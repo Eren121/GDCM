@@ -5,10 +5,13 @@
 # Generate our own 'DICOM' dictionary, based on the following dictionaries:
 SET(ALL_DICTS
   dicomV3.dic
-  Papyrus.dic
-  NIH.dic     #the forbidden one...
-  SPI.dic
+  #Papyrus.dic
+  #NIH.dic     #the forbidden one...
+  #  SPI.dic
   #  PHILIPS-Intera.dic # uncomment me if you want
+  GEMS.dic
+  #GEMS-HiSpeed.dic
+  #  GEMS-Advance.dic
   )
 
 # Better solution

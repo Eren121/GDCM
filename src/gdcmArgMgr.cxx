@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/22 14:46:06 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2006/01/26 15:52:56 $
+  Version:   $Revision: 1.17 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -277,7 +277,7 @@ float ArgMgr::ArgMgrGetFloat(const char *param, float defaultVal)
  * @param defaultVal default value
  * @return parameter value
  */
-char *ArgMgr::ArgMgrGetString(const char *param, char *defaultVal)
+const char *ArgMgr::ArgMgrGetString(const char *param, const char *defaultVal)
 {
    return    ( (ArgMgrDefined(param)) 
               ? (ArgMgrValue(param))
@@ -298,19 +298,20 @@ char *ArgMgr::ArgMgrGetString(const char *param, char *defaultVal)
 int ArgMgr::ArgMgrGetLabel (const char *param, char *liste, int val )
 {
   char *lab;
-  char *vallab;
+  const char *vallab;
   int i = 1;
   char *tmp;
   tmp = (char *) malloc(strlen(liste)+1);
   strcpy(tmp,liste);
 
-  if ( (vallab = ArgMgrGetString(param,(char *)NULL)) != 0 ) 
+  if ( (vallab = ArgMgrGetString(param,(const char *)NULL)) != 0 ) 
   { 
      for ( lab = strtok (tmp,"\\"); 
            lab != 0; 
            lab = strtok(0L,"\\"), i++ )
      { 
-        if ( strcmp(maj(lab),maj(vallab))==0)
+        // strcmp ignoring case
+        if( strcasecmp(lab, vallab) == 0)
            return i;
      } 
      val=0;
@@ -332,12 +333,12 @@ int ArgMgr::ArgMgrGetLabel (const char *param, char *liste, int val )
 int ArgMgr::ArgMgrWantLabel (const char *param, char *liste, const char **usage )
 {
    char *lab;
-   char *vallab;
+   const char *vallab;
    int i = 1;
    if ( (vallab = ArgMgrGetString(param,0)) != 0 ) 
    {
       for ( lab = strtok (liste,"\\"); lab != 0; lab = strtok(0L,"\\"), i++ )
-        if ( strcmp(maj(lab),maj(vallab))==0) 
+        if ( strcasecmp(lab,vallab)==0) 
            return i;
       return 0;
    }

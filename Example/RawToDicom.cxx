@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/16 16:38:24 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2006/01/26 15:52:43 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,11 +61,11 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   char *inputFileName  = am->ArgMgrGetString("filein",(char *)0);
-   char *outputFileName = am->ArgMgrGetString("fileout",(char *)0);   
-   //char *dirName        = am->ArgMgrGetString("dirin",(char *)0);
+   const char *inputFileName  = am->ArgMgrGetString("filein");
+   const char *outputFileName = am->ArgMgrGetString("fileout");
+   //const char *dirName        = am->ArgMgrGetString("dirin");
    
-   char *patientName = am->ArgMgrGetString("patientname",(char *)0);
+   const char *patientName = am->ArgMgrGetString("patientname");
    
    int nX = am->ArgMgrWantInt("rows", usage);
    int nY = am->ArgMgrWantInt("lines", usage);
