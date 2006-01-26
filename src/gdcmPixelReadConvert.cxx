@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 11:44:38 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2006/01/26 09:16:41 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,14 +130,16 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
       std::string ts = file->GetTransferSyntax();
 
       IsRaw = false;
-      while (true) // short to write than if elseif elseif elseif ...
+      while (true) // shorter to write than 'if elseif elseif elseif' ...
       {
          // mind the order : check the most usual first.
          if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian)         break;
          if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )        break;
          if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian)            break;
          if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE)   break;
-         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian) break;
+         // DeflatedExplicitVRLittleEndian syntax means the whole Dataset (Header + Pixels) is compressed !
+         // Not dealt with ! (Parser hangs)
+         //if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian) break;
          break;
       }
       // cache whether this is a strange GE transfer syntax (which uses
@@ -158,6 +160,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
             if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
             if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
             if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
+            // DeflatedExplicitVRLittleEndian is considered as 'Unexpected' (we don't know yet haow to process !)
             gdcmWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
             break;
          } 
