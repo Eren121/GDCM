@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 08:32:44 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2006/01/27 10:01:34 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,11 @@
 
 #include <setjmp.h>
 #include <fstream>
+
+#if defined(__BORLANDC__)
+   #include <mem.h> // for memset
+#endif 
+
 #include "jdatasrc.cxx"
 #include "jdatadst.cxx"
 

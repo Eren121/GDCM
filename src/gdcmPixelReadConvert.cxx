@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 09:16:41 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2006/01/27 10:01:34 $
+  Version:   $Revision: 1.109 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,10 @@
 
 #include <fstream>
 #include <stdio.h> //for sscanf
+
+#if defined(__BORLANDC__)
+   #include <mem.h> // for memset
+#endif 
 
 namespace gdcm
 {
