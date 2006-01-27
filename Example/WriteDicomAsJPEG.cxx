@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/22 20:31:37 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/01/27 10:03:23 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,10 @@ extern "C" {
 #include "gdcmjpeg/8/jinclude.h"
 #include "gdcmjpeg/8/jerror.h"
 }
+
+#if defined(__BORLANDC__)
+ #include <mem.h> // for memcpy
+#endif
 
 #include "gdcmJPEGFragment.h"
 #include <setjmp.h>

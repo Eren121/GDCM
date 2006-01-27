@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/01/27 10:03:23 $
+  Version:   $Revision: 1.11 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 
 /**
  * This example was proposed by Jean-Michel Rouet
- * It was patch by Mathieu Malaterre to remove ITK reference and be more
+ * It was patched by Mathieu Malaterre to remove ITK reference and be more
  * independant from other toolkit
  * It's aim is to show people how to write their data volume into DICOM slices
  */
@@ -36,6 +36,10 @@
 #ifdef WIN32
    #define stat _stat
 #endif
+
+#if defined(__BORLANDC__)
+ #include <mem.h> // for memset, memcpy
+#endif 
 
 //const unsigned int Dimension = 3;
 
