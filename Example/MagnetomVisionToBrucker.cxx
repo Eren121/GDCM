@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MagnetomVisionToBrucker.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:42 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/01/31 11:42:08 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,9 +128,9 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
       
-   bool verbose  = am->ArgMgrDefined("verbose");
-   bool split    = am->ArgMgrDefined("split");
-   bool listonly = am->ArgMgrDefined("listonly");
+   int verbose  = am->ArgMgrDefined("verbose");
+   int split    = am->ArgMgrDefined("split");
+   int listonly = am->ArgMgrDefined("listonly");
          
    int nbSeriesToKeep;
    int *seriesToKeep = am->ArgMgrGetListOfInt("keep", &nbSeriesToKeep);
