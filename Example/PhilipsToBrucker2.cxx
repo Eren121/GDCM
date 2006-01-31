@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/31 14:09:26 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2006/01/31 15:28:54 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",
-   "                  [taggrid]                                               ",
+   "                  [taggrid] [skel]                                        ",
    "                  [input = {ACR|DCM}]                                     ", 
    "                  [extent=image suffix (.IMA, .NEMA, .DCM, ...)]          ",
    "                  [listonly] [split]                                      ",
@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
    "        e.g : 1030,1035,1043                                              ", 
    " taggrid : user knows all the images are 'grid' -ie : not 'col', not 'raw'",
    " extent : DO NOT forget the leading '.' !                                 ",
+   " skel: name skeleton eg : patName_1.nema -> skel=patName_                 ",
    " split: creates a tree-like structure of directories as :                 ",
    "        - Patient                                                         ",
    "        -- Serie                                                          ",
@@ -149,6 +150,11 @@ int main(int argc, char *argv[])
    }
    
    int taggrid = am->ArgMgrDefined("taggrid");
+   
+   int hasSkel = am->ArgMgrDefined("skel");
+   const char *skel;
+   if (hasSkel)
+      skel = am->ArgMgrGetString("skel");   
       
    const char *extent  = am->ArgMgrGetString("extent",".DCM");
    
@@ -225,6 +231,7 @@ int main(int argc, char *argv[])
    gdcm::File *f;
    gdcm::FileHelper *fh;
    std::vector<std::string> tokens;
+   std::vector<std::string> tokensForFileName;
 /*   
    std::cout << "---------------Print Unique Series identifiers---------"  
              << std::endl;     
@@ -314,18 +321,32 @@ int main(int argc, char *argv[])
       }      
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
-     // userFileIdentifier += token;
-      //userFileIdentifier += *it;       
-      std::cout << "userFileIdentifier1: "<< userFileIdentifier << std::endl;
       tokens.clear();
       gdcm::Util::Tokenize (userFileIdentifier, tokens, token); 
    
+      int imageNum; // Within FileName
+      char newName[1024];
+      
       if ( tokens[3] == "gdcmUnfound")  // sometimes Trigger Time is not found. CreateUserDefinedFileIdentifier is not aware of the pb.
       {
-         tokens[3] = gdcm::Util::GetName( *it );
+         ///this is a trick to build up a lexicographical compliant name :
+         ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
+         std::string name = gdcm::Util::GetName( *it );
+         if (hasSkel)
+         {
+            gdcm::Util::Tokenize (name, tokensForFileName, skel);
+            imageNum = atoi ( tokensForFileName[0].c_str() );
+            // probabely we could write something much more complicated using C++ !
+            sprintf (newName, "%s%06d%s", skel, imageNum, extent);
+            tokens[3] = newName;
+            tokensForFileName.clear();    
+         }
+         else 
+            tokens[3] = name;
+ 
+ 
          userFileIdentifier = tokens[0] + token + tokens[1] + token + tokens[2] + token 
                     + tokens[3] + token + tokens[4] + token;
-      std::cout << "userFileIdentifier2: "<< userFileIdentifier << std::endl;
       }   
  
        std::cout << "                           [" <<
