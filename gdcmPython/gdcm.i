@@ -159,6 +159,7 @@ typedef unsigned long long uint64_t;
 %ignore GDCM_PIXELDATA;
 %ignore GDCM_LEGACY;
 %ignore GDCM_VRUNKNOWN;
+%ignore GDCM_FILESEPARATOR;
 
 %constant const char *UNKNOWN        = "gdcm::Unknown";
 %constant const char *UNFOUND        = "gdcm::Unfound";
@@ -168,7 +169,7 @@ typedef unsigned long long uint64_t;
 %constant const char *GDCM_NOTASCII  = "gdcm::NotAscii";
 %constant const char *GDCM_PIXELDATA = "gdcm::Pixel Data to be loaded";
 %constant const char *VRUNKNOWN      = "  ";
-
+%constant const char GDCM_FILESEPARATOR = '\\';
 ////////////////////////////////////////////////////////////////////////////
 // Warning: Order matters !
 %include "gdcmCommon.h"
