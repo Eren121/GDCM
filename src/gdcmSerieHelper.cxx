@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 09:07:15 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2006/01/31 11:29:41 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -953,7 +953,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
  *        Criterions will be set with AddSeriesDetail.
  *        (Maybe the method should be moved elsewhere 
  *       -File class? FileHelper class?-
- * @return FileIdentifier (Tokenizable on '_')
+ * @return FileIdentifier (Tokenizable on '%%%'. Hope it's enough !)
  */
 std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
 {
@@ -990,7 +990,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       for(unsigned int i=0; i<s.size(); i++)
       {
          while(i<s.size()
-            && !( s[i] == '.' || s[i] == '-'
+            && !( s[i] == '.' || s[i] == '%'
                     || (s[i] >= 'a' && s[i] <= 'z')
                     || (s[i] >= '0' && s[i] <= '9')
                     || (s[i] >= 'A' && s[i] <= 'Z')))
@@ -1000,7 +1000,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       }
       
       id += s.c_str();
-      id += "_"; // make the FileIdentifier Tokenizable
+      id += "%%%"; // make the FileIdentifier Tokenizable
    }
    
    return id;             
