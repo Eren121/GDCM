@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:43 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/01/31 11:45:43 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -209,6 +209,7 @@ int main(int argc, char *argv[])
    gdcm::SerieHelper *s;              // Needed only to may use SerieHelper::AddSeriesDetail()
    s = gdcm::SerieHelper::New();
 
+   std::string token = "%%%"; // Hope it's enough!
 /*       
    std::cout << "---------------Print Serie--------------" << std::endl; 
    s->SetDirectory(dirNamein, true); // true : recursive exploration 
@@ -309,16 +310,18 @@ int main(int argc, char *argv[])
       }      
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
-     // userFileIdentifier += "_";
+     // userFileIdentifier += token;
       //userFileIdentifier += *it;       
-      
+      std::cout << "userFileIdentifier1: "<< userFileIdentifier << std::endl;
       tokens.clear();
-      gdcm::Util::Tokenize (userFileIdentifier, tokens, "_"); 
+      gdcm::Util::Tokenize (userFileIdentifier, tokens, token); 
    
       if ( tokens[3] == "gdcmUnfound")  // sometimes Trigger Time is not found. CreateUserDefinedFileIdentifier is not aware of the pb.
       {
          tokens[3] = gdcm::Util::GetName( *it );
-         userFileIdentifier = tokens[0] + "_" + tokens[1] + "_" + tokens[2] + "_" + tokens[3] + "_" + tokens[4];
+         userFileIdentifier = tokens[0] + token + tokens[1] + token + tokens[2] + token 
+                    + tokens[3] + token + tokens[4] + token;
+      std::cout << "userFileIdentifier2: "<< userFileIdentifier << std::endl;
       }   
  
        std::cout << "                           [" <<
@@ -366,14 +369,14 @@ int main(int argc, char *argv[])
       std::cout << "Try to write [" <<lastFilename << "]" << std::endl;
      
       tokens.clear();
-      gdcm::Util::Tokenize (it2->first, tokens, "_");
+      gdcm::Util::Tokenize (it2->first, tokens, token);
       
       currentPatientName            = tokens[0];
       currentSerieInstanceUID       = tokens[1];
       currentImagePosition          = tokens[2];
       currentTriggerTime            = tokens[3];
-      currentPhaseEncodingDirection = tokens[4];           
-      
+      currentPhaseEncodingDirection = tokens[4]; 
+
       if ( currentImagePosition[0] == '-')
           currentImagePosition[0] = 'M';
       if ( currentImagePosition[0] == '+')
@@ -480,34 +483,52 @@ int main(int argc, char *argv[])
       float pxSzY = currentFile->GetYSpacing();
       char fov[64];
       sprintf(fov, "%f\\%f",nX*pxSzX, nY*pxSzY);
-      currentFile->InsertEntryString(fov, 0x0019, 0x1000, "DS");
+      if (currentFile->IsVRCoherent(0x0019) == 1 )
+         currentFile->InsertEntryString(fov, 0x0019, 0x1000, "  ");
+      else     
+         currentFile->InsertEntryString(fov, 0x0019, 0x1000, "DS");
+
      
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)
       std::string chSessionIndex;
       // CLEANME
       if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
          chSessionIndex = "1";
-      else if (currentPhaseEncodingDirection == "RAW" || currentPhaseEncodingDirection == "RAW "|| currentPhaseEncodingDirection == " RAW")
+      else if (currentPhaseEncodingDirection == "ROW" ||
+      currentPhaseEncodingDirection == "ROW "|| currentPhaseEncodingDirection == " ROW")
          chSessionIndex = "2"; 
       else
       {
          std::cout << "====================== PhaseEncodingDirection "
-                   << " neither COL nor RAW (?!?) : [ "
+                   << " neither COL nor ROW (?!?) : [ "
                    << currentPhaseEncodingDirection << "]" << std::endl;
-         chSessionIndex = "2";
+         chSessionIndex = "1";
       }
-      currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
-   
+       if (currentFile->IsVRCoherent(0x0020) == 1 )     
+         currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "  ");
+       else
+         currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
+ 
       // Deal with  0x0021, 0x1020 : 'SLICE INDEX'
       char chSliceIndex[5];
       sprintf(chSliceIndex, "%04d", sliceIndex);
       std::string strChSliceIndex(chSliceIndex);
-      currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, "IS");
        
       // Deal with  0x0021, 0x1040 : 'FRAME INDEX' 
       char chFrameIndex[5];
       sprintf(chFrameIndex, "%04d", frameIndex);
-      currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "IS"); 
+
+       
+      if (currentFile->IsVRCoherent(0x0021) == 1 )
+      {
+         currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, "  ");
+         currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "  ");
+      }
+      else
+      {
+        currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, "IS");
+        currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "IS");       
+      }   
       
       if (flag == 0)
       {       
