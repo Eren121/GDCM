@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:47 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2006/01/31 11:39:47 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,6 +192,51 @@ void ElementSet::Copy(DocEntrySet *set)
       }
    }
 }
+
+/**
+ * \brief Checks whether *all* the DataEntries of the group have all
+ *        the same type for VR (ImplicitVR or ExplicitVR) 
+ * @param group group number to be checked
+ * @return 1:ImplicitVR 2:ExplicitVR -1:NotCoherent 
+ */
+int ElementSet::IsVRCoherent( uint16_t group )
+{
+   uint16_t currentGroup;
+   int codeVR = -1;
+   int currentCodeVR;
+   for(TagDocEntryHT::iterator cc = TagHT.begin();cc != TagHT.end(); ++cc)
+   {
+      currentGroup = cc->second->GetGroup();
+
+      if ( currentGroup < group )
+         continue;   
+      if ( currentGroup > group )
+         break;
+      // currentGroup == group
+      if (codeVR == -1)
+      {
+         if (cc->second->IsImplicitVR() )
+            codeVR = 1;
+         else 
+            codeVR = 2;
+         continue;
+      }
+      else
+      {
+         if (cc->second->IsImplicitVR() )
+            currentCodeVR = 1; //Implicit
+         else 
+            currentCodeVR = 2; // Explicit  
+  
+         if ( currentCodeVR == codeVR )
+           continue;
+         else
+            return -1;    // -1 : not coherent 
+      }
+   }   
+   return codeVR;
+}
+
 
 //-----------------------------------------------------------------------------
 // Protected
