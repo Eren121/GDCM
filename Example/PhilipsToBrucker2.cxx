@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/31 11:45:43 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2006/01/31 14:09:26 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",
+   "                  [taggrid]                                               ",
    "                  [input = {ACR|DCM}]                                     ", 
    "                  [extent=image suffix (.IMA, .NEMA, .DCM, ...)]          ",
    "                  [listonly] [split]                                      ",
@@ -84,7 +85,8 @@ int main(int argc, char *argv[])
    " drop : if user wants to ignore a limited number of series                ",
    "            he gives the list of 'SeriesNumber' (tag 0020|0011)           ",   
    "        SeriesNumber are short enough to be human readable                ",
-   "        e.g : 1030,1035,1043                                              ",
+   "        e.g : 1030,1035,1043                                              ", 
+   " taggrid : user knows all the images are 'grid' -ie : not 'col', not 'raw'",
    " extent : DO NOT forget the leading '.' !                                 ",
    " split: creates a tree-like structure of directories as :                 ",
    "        - Patient                                                         ",
@@ -146,6 +148,8 @@ int main(int argc, char *argv[])
       return 0;         
    }
    
+   int taggrid = am->ArgMgrDefined("taggrid");
+      
    const char *extent  = am->ArgMgrGetString("extent",".DCM");
    
    // if unused Param we give up
@@ -203,7 +207,7 @@ int main(int argc, char *argv[])
       std::cout << "------------List of found files ------------" << std::endl;
       dirList.Print();
    }
-
+   
    gdcm::DirListType fileNames;
    fileNames = dirList.GetFilenames();
    gdcm::SerieHelper *s;              // Needed only to may use SerieHelper::AddSeriesDetail()
@@ -492,17 +496,21 @@ int main(int argc, char *argv[])
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)
       std::string chSessionIndex;
       // CLEANME
-      if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
+      if (taggrid) 
          chSessionIndex = "1";
-      else if (currentPhaseEncodingDirection == "ROW" ||
-      currentPhaseEncodingDirection == "ROW "|| currentPhaseEncodingDirection == " ROW")
-         chSessionIndex = "2"; 
       else
       {
-         std::cout << "====================== PhaseEncodingDirection "
-                   << " neither COL nor ROW (?!?) : [ "
-                   << currentPhaseEncodingDirection << "]" << std::endl;
-         chSessionIndex = "1";
+         if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
+            chSessionIndex = "1";
+         else if (currentPhaseEncodingDirection == "ROW" || currentPhaseEncodingDirection == "ROW "|| currentPhaseEncodingDirection == " ROW")
+            chSessionIndex = "2"; 
+         else
+         {
+            std::cout << "====================== PhaseEncodingDirection "
+                      << " neither COL nor ROW (?!?) : [ "
+                      << currentPhaseEncodingDirection << "]" << std::endl;
+            chSessionIndex = "1";
+         }
       }
        if (currentFile->IsVRCoherent(0x0020) == 1 )     
          currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "  ");
@@ -518,18 +526,14 @@ int main(int argc, char *argv[])
       char chFrameIndex[5];
       sprintf(chFrameIndex, "%04d", frameIndex);
 
-       
+      std::string stringVR;       
       if (currentFile->IsVRCoherent(0x0021) == 1 )
-      {
-         currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, "  ");
-         currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "  ");
-      }
+         stringVR = "  ";
       else
-      {
-        currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, "IS");
-        currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, "IS");       
-      }   
-      
+        stringVR = "IS";  
+      currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, stringVR);
+      currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, stringVR); 
+           
       if (flag == 0)
       {       
          flag = 1;
