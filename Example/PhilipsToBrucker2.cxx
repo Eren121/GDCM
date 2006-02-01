@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/31 15:28:54 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2006/02/01 10:46:53 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -586,6 +586,12 @@ int main(int argc, char *argv[])
       fh = gdcm::FileHelper::New(currentFile);     
       fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       fh->SetWriteTypeToDcmExplVR();
+      // We didn't modify pixels -> keep unchanged the following :
+      // 'Media Storage SOP Class UID' (0x0002,0x0002)
+      // 'SOP Class UID'               (0x0008,0x0016)
+      // 'Image Type'                  (0x0008,0x0008)
+      // 'Conversion Type'             (0x0008,0x0064)
+      fh->SetKeepMediaStorageSOPClassUID(true);
       if (!fh->Write(fullWriteFilename))
       {
          std::cout << "Fail to write :[" << fullWriteFilename << "]"
