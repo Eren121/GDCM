@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/01 10:46:53 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2006/02/02 12:52:38 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -348,9 +348,8 @@ int main(int argc, char *argv[])
          userFileIdentifier = tokens[0] + token + tokens[1] + token + tokens[2] + token 
                     + tokens[3] + token + tokens[4] + token;
       }   
- 
-       std::cout << "                           [" <<
-              userFileIdentifier  << "]" << std::endl;
+      if (verbose) 
+         std::cout << "[" << userFileIdentifier  << "]" << std::endl;
                
       // storing in a map ensures automatic sorting !      
       sf[userFileIdentifier] = f;
@@ -391,7 +390,7 @@ int main(int argc, char *argv[])
        
       fullFilename =  currentFile->GetFileName();
       lastFilename =  gdcm::Util::GetName( fullFilename ); 
-      std::cout << "Try to write [" <<lastFilename << "]" << std::endl;
+      std::cout << "Rewrite [" <<lastFilename << "]" << std::endl;
      
       tokens.clear();
       gdcm::Util::Tokenize (it2->first, tokens, token);
