@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/02 15:16:38 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006/02/02 11:26:02 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
    if ( imageData == 0 )
    {
        std::cerr << "Sorry, Pixels of" << fileName <<"  are not "
-           << " gdcm-readable."       << std::endl
+                 << " gdcm-readable."       << std::endl
                  << "Use exAnonymizeNoLoad" << std::endl;
        f->Delete();
        fh->Delete();
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
    // Institution name 
    f->AddAnonymizeElement(0x0008, 0x0080, "Xanadoo"); 
    // Patient's name 
-   f->AddAnonymizeElement(0x0010, 0x0010, "Fantomas");   
+   f->AddAnonymizeElement(0x0010, 0x0010, "Fantomas^X");   
    // Patient's ID
    f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );   
    // Study Instance UID
