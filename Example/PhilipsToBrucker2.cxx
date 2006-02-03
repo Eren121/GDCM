@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/02 12:52:38 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2006/02/03 17:51:13 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -550,20 +550,23 @@ int main(int argc, char *argv[])
       if (currentFile->IsVRCoherent(0x0021) == 1 )
          stringVR = "  ";
       else
-        stringVR = "IS";  
+        stringVR = "IS";
+  
       currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, stringVR);
       currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, stringVR); 
-           
-      if (flag == 0)
-      {       
-         flag = 1;
-      }
-      else
-      {
-         frameIndex++;
-         flag = 0;
-      }
-                    
+      
+      if (!taggrid)
+      {     
+         if (flag == 0)
+         {       
+            flag = 1;
+         }
+         else
+         {
+            frameIndex++;
+            flag = 0;
+         }
+      }                   
       if (split)
       
          //fullWriteFilename = currentPhaseEncodingDirectionWriteDir + gdcm::GDCM_FILESEPARATOR 
