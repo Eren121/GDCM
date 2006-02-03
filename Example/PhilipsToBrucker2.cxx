@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/03 17:51:13 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2006/02/03 18:00:53 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -555,7 +555,9 @@ int main(int argc, char *argv[])
       currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, stringVR);
       currentFile->InsertEntryString(chFrameIndex, 0x0021, 0x1040, stringVR); 
       
-      if (!taggrid)
+      if (taggrid)
+         frameIndex++;
+      else     
       {     
          if (flag == 0)
          {       
@@ -566,7 +568,8 @@ int main(int argc, char *argv[])
             frameIndex++;
             flag = 0;
          }
-      }                   
+      } 
+                 
       if (split)
       
          //fullWriteFilename = currentPhaseEncodingDirectionWriteDir + gdcm::GDCM_FILESEPARATOR 
