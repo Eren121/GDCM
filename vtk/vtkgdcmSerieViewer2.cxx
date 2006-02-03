@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 16:01:06 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/02/03 16:37:50 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -219,6 +219,7 @@ int main(int argc, char *argv[])
       {
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
          sh->OrderFileList(l);  // sort the list
+         std::cout << "List sorted" << std::endl;
          break;  // The first one is OK. user will have to check
       }
       else

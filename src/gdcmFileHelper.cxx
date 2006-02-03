@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/01/27 10:01:34 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2006/02/03 16:37:48 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1640,12 +1640,19 @@ void FileHelper::CheckMandatoryElements()
    // if (0028 0008)Number of Frames exists
    //    Push out (0020 0052),Frame of Reference UID
    //    (only meaningfull within a Serie)
+   
+   // Well ... 
+   // Maybe not!
+   // dciodvfy complains when missing (Type 1 element)
+   /// todo add it when missing (?)
+   /*
    DataEntry *e_0028_0008 = FileInternal->GetDataEntry(0x0028, 0x0008);
    if ( !e_0028_0008 )
    {
       Archive->Push(0x0020, 0x0052);
    }
- 
+  */
+   
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
  /*

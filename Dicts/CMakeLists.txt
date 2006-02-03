@@ -9,7 +9,7 @@ SET(ALL_DICTS
   #NIH.dic     #the forbidden one...
   #  SPI.dic
   #  PHILIPS-Intera.dic # uncomment me if you want
-  GEMS.dic
+  #GEMS.dic #Commented out to avoid polluting 'non GEMS' images
   #GEMS-HiSpeed.dic
   #  GEMS-Advance.dic
   )

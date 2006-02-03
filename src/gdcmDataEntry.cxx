@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:01:33 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2006/02/03 16:37:48 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -642,13 +642,8 @@ void DataEntry::Print(std::ostream &os, std::string const & )
       v = GetString();
       const VRKey &vr = GetVR();
 
-      if( vr == "US" || vr == "SS" )
-         s << " [" << GetString() << "]";
-      else if( vr == "UL" || vr == "SL" )
-         s << " [" << GetString() << "]";
-      else if ( vr == "FL" )
-         s << " [" << GetString() << "]";
-      else if ( vr == "FD" )
+      if( vr == "US" || vr == "SS" || vr == "UL" || vr == "SL" 
+       || vr == "FL" || vr == "FD")
          s << " [" << GetString() << "]";
       else
       { 
