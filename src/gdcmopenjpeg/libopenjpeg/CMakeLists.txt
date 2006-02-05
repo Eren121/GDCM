@@ -1,13 +1,11 @@
 INCLUDE_REGULAR_EXPRESSION("^.*$")
-# Create the lib
-SET(openjpeg_SRCS
+# Defines the source code for the library
+SET(OpenJPEG_SRCS
   bio.c
   cio.c
   dwt.c
   event.c
-  fix.c
   image.c
-  int.c
   j2k.c
   j2k_lib.c
   jp2.c
@@ -23,13 +21,18 @@ SET(openjpeg_SRCS
   tgt.c
 )
 
+# Pass proper definition to preprocessor to generate shared lib
 IF (WIN32)
   IF (BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_SHARED)
+    ADD_DEFINITIONS(-DOPJ_EXPORTS)
   ELSE (BUILD_SHARED_LIBS)
     ADD_DEFINITIONS(-DOPJ_STATIC)
   ENDIF (BUILD_SHARED_LIBS)
 ENDIF (WIN32)
 
-ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${openjpeg_SRCS})
+# Create the library
+ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${OpenJPEG_SRCS})
+
+# Install library
+INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjpeg)
 

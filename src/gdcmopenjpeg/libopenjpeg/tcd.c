@@ -945,7 +945,7 @@ void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final) {
                 dd = pass->distortiondec - cblk->passes[n - 1].distortiondec;
               }
               if (!dr) {
-                if (dd)
+                if (dd != 0)
                   n = passno + 1;
                 continue;
               }
@@ -1056,7 +1056,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
     double hi = max;
     int success = 0;
     int maxlen = tcd_tcp->rates[layno] ? int_min(tcd_tcp->rates[layno], len) : len;
-    double goodthresh;
+    double goodthresh = 0;
     int i;
     double distotarget;    /* fixed_quality */
     

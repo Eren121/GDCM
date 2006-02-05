@@ -417,7 +417,6 @@ opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters) {
               opj_image_destroy(image);
               fclose(IN);
               return NULL;
-              break;
             default:
               for (i = 0; i < v; i++) {
                 v2 = getc(IN);
@@ -597,7 +596,6 @@ int imagetobmp(opj_image_t * image, char *outfile) {
     fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,  ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
     fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
     fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
-  }
 
   for (i = 0; i < 256; i++) {
     fprintf(fdest, "%c%c%c%c", i, i, i, 0);
@@ -615,6 +613,7 @@ int imagetobmp(opj_image_t * image, char *outfile) {
     }
   }
   fclose(fdest);
+  }
 
   return 0;
 }
