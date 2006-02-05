@@ -34,6 +34,7 @@ SET(EXAMPLE_SOURCES
   ReWrite
   RawToDicom
   TestValidate
+  #BatchUncompress
   
 #the following will be transformed into 'examples', or 'utilities'
 #              or will be removed

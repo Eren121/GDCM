@@ -25,8 +25,7 @@ MARK_AS_ADVANCED(GDCM_LEGACY_REMOVE GDCM_LEGACY_SILENT)
 
 #-----------------------------------------------------------------------------
 # Build shared lib by default
-OPTION(GDCM_BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
-SET(BUILD_SHARED_LIBS ${GDCM_BUILD_SHARED_LIBS})
+OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
 
 OPTION(GDCM_DEBUG "Turn verbosity of some statement ON." OFF)
 MARK_AS_ADVANCED(GDCM_DEBUG)

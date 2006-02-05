@@ -73,6 +73,14 @@ SET(libgdcm_la_SOURCES
    ${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx
    )
 
+# Since OpenJPEG does not used configured headers we have to 
+# do the -D alternative
+IF(NOT BUILD_SHARED_LIBS)
+ SET_SOURCE_FILES_PROPERTIES(
+   ${GDCM_SOURCE_DIR}/src/gdcmJpeg2000.cxx
+   COMPILE_FLAGS -DOPJ_STATIC)
+ENDIF(NOT BUILD_SHARED_LIBS)
+
 ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES})
 TARGET_LINK_LIBRARIES(gdcm 
   gdcmjpeg8 

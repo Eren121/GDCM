@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/31 11:29:41 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2006/02/05 23:13:36 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -971,7 +971,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
    {
       const ExDetail &r = *it2;
       s = inFile->GetEntryString( r.group, r.elem );
-      
+
       // User is allowed to ask 'convertion', to allow further ordering
       // e.g : 100 would be *before* 20; 000020.00 vs 00100.00 : OK
       if (it2->convert)
