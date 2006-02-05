@@ -654,7 +654,7 @@ int main(int argc, char **argv) {
   }
 
   if(parameters.cp_comment == NULL) {
-    parameters.cp_comment = "Created by OpenJPEG version 0.9";
+    parameters.cp_comment = "Created by OpenJPEG version 1.0";
     /* no need to delete parameters.cp_comment on exit */
     delete_comment = false;
   }
