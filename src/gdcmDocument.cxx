@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/31 11:32:06 $
-  Version:   $Revision: 1.337 $
+  Date:      $Date: 2006/02/07 12:37:19 $
+  Version:   $Revision: 1.338 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,11 +118,11 @@ bool Document::DoTheLoadingDocumentJob(  )
    Group0002Parsed = false;
 
    gdcmDebugMacro( "Starting parsing of file: " << Filename.c_str());
-
-   Fp->seekg(0, std::ios::end);
-   long lgt = Fp->tellg();       // total length of the file
-
-   Fp->seekg(0, std::ios::beg);
+   
+   // Computes the total length of the file
+   Fp->seekg(0, std::ios::end);  // Once for a given Document !
+   long lgt = Fp->tellg();       // Once for a given Document !   
+   Fp->seekg(0, std::ios::beg);  // Once for a given Document !
 
    // CheckSwap returns a boolean 
    // (false if no swap info of any kind was found)
@@ -151,7 +151,7 @@ bool Document::DoTheLoadingDocumentJob(  )
    }
    IsDocumentAlreadyLoaded = true;
 
-   Fp->seekg( 0, std::ios::beg);
+   Fp->seekg( 0, std::ios::beg);  // Once per Document
    
    // Load 'non string' values
       
@@ -415,7 +415,10 @@ std::string Document::GetTransferSyntax()
 
    // The entry might be present but not loaded (parsing and loading
    // happen at different stages): try loading and proceed with check...
-   LoadDocEntrySafe(entry);
+   
+   // Well ...
+   // (parsing and loading happen at the very same stage!) 
+   //LoadDocEntrySafe(entry); //JPRx
    if (DataEntry *dataEntry = dynamic_cast<DataEntry *>(entry) )
    {
       std::string transfer = dataEntry->GetString();
@@ -621,7 +624,7 @@ std::ifstream *Document::OpenFile()
    }
  
    //-- DICOM --
-   Fp->seekg(126L, std::ios::cur);
+   Fp->seekg(126L, std::ios::cur);  // Once for a given Document
    char dicm[4]; // = {' ',' ',' ',' '};
    Fp->read(dicm,  (size_t)4);
    if ( Fp->eof() )
@@ -735,13 +738,17 @@ void Document::LoadEntryBinArea(DataEntry *entry)
 {
    if( entry->GetBinArea() )
       return;
+// to be coherent with LoadEntryBinArea(uint16_t group, uint16_t elem)
+// (and save time !)
+// :-(
+// TestAllReadCompareDicom hangs on rle16sti.dcm
 
    bool openFile = !Fp;
    if ( openFile )
       OpenFile();
-
+// -------
    size_t o =(size_t)entry->GetOffset();
-   Fp->seekg(o, std::ios::beg);
+   Fp->seekg(o, std::ios::beg);  // FIXME : for each BinEntry LoadEntryBinArea
 
    size_t l = entry->GetLength();
    uint8_t *data = new uint8_t[l];
@@ -801,24 +808,29 @@ void Document::LoadEntryBinArea(DataEntry *entry)
    }
    
    entry->SetBinArea(data);
+   
+// to be coherent with LoadEntryBinArea(uint16_t group, uint16_t elem)
+// (and save time !)
 
    if ( openFile )
       CloseFile();
+// ---------------
 }
 
 /**
  * \brief  Loads the element while preserving the current
  *         underlying file position indicator as opposed to
- *        LoadDocEntry that modifies it.
+ *        LoadDocEntry that modifies it
+ * \note seems to be unused!.
  * @param entry   DocEntry whose value will be loaded. 
  */
 void Document::LoadDocEntrySafe(DocEntry *entry)
 {
    if ( Fp )
    {
-      long PositionOnEntry = Fp->tellg();
+      long PositionOnEntry = Fp->tellg();        // LoadDocEntrySafe is not used
       LoadDocEntry(entry);
-      Fp->seekg(PositionOnEntry, std::ios::beg);
+      Fp->seekg(PositionOnEntry, std::ios::beg); // LoadDocEntrySafe is not used
    }
 }
 
@@ -934,16 +946,6 @@ uint32_t Document::ReadInt32()
 }
 
 /**
- * \brief skips bytes inside the source file 
- * @return 
- */
-void Document::SkipBytes(uint32_t nBytes)
-{
-   //FIXME don't dump the returned value
-   Fp->seekg((long)nBytes, std::ios::cur);
-}
-
-/**
  * \brief   Re-computes the length of the Dicom group 0002.
  */
 int Document::ComputeGroup0002Length( ) 
@@ -1048,7 +1050,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      << " at offset " << std::hex << "0x(" << offset << ")" ); 
    while (true)
    {
-      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
+      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry
       {
          break;
       }
@@ -1114,7 +1116,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                   //if ( newDataEntry->IsUnfound() ) /?!? JPR
                   {
                      lgrGroup = atoi(strLgrGroup.c_str());
-                     Fp->seekg(lgrGroup, std::ios::cur);
+                     Fp->seekg(lgrGroup, std::ios::cur); // Only when NOSHADOW
                      //used = false;  // never used
                      RemoveEntry( newDocEntry );  // Remove and delete
                      // bcc 5.5 is right "assigned a value that's never used"
@@ -1128,7 +1130,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          bool delimitor = newDataEntry->IsItemDelimitor();
 
          if ( (delimitor) || 
-               (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) )
+              (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) ) // Once per DataEntry
          {
             if ( !used )
                newDocEntry->Delete();
@@ -1160,7 +1162,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
            // User asked to skip SeQuences *only* if they belong to Shadow Group
             if ( newDocEntry->GetGroup()%2 != 0 )
             {
-                Fp->seekg( l, std::ios::cur);
+                Fp->seekg( l, std::ios::cur);  // once per SQITEM, when NOSHADOWSEQ
                 newDocEntry->Delete();  // Delete, not in the set 
                 continue;  
             } 
@@ -1168,7 +1170,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          if ( (LoadMode & LD_NOSEQ) && ! delim_mode_intern ) 
          {
            // User asked to skip *any* SeQuence
-            Fp->seekg( l, std::ios::cur);
+            Fp->seekg( l, std::ios::cur); // Once per SQ, when NOSEQ
             newDocEntry->Delete(); // Delete, not in the set
             continue;
          }
@@ -1223,7 +1225,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             newDocEntry->Delete();
          }
  
-         if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
+         if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry
          {
             if ( !used )
                newDocEntry->Delete();
@@ -1270,7 +1272,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
             break;
          }
       }
-      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max)
+      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per SQItem
       {
          newDocEntry->Delete();
          break;
@@ -1289,18 +1291,21 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       }
 
       // remove fff0,e000, created out of the SQItem
-      Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);
+      
+      //Fp->seekg(offsetStartCurrentSQItem, std::ios::beg); //JPRx
+      
       // fill up the current SQItem, starting at the beginning of fff0,e000
 
       ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
 
-      offsetStartCurrentSQItem = Fp->tellg();
+      offsetStartCurrentSQItem = Fp->tellg();  // Once per SQItem
  
       seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
       itemSQ->Delete();
       newDocEntry->Delete();
       SQItemNumber++;
-      if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max )
+      //if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max ) //JPRx
+      if ( !delim_mode && (offsetStartCurrentSQItem-offset ) >= l_max )
       {
          break;
       }
@@ -1336,8 +1341,8 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    newEntry->SetOffset(offset);
 
    // Move back to the beginning of the Sequence
-   Fp->seekg( 0, std::ios::beg);
-   Fp->seekg(offset, std::ios::cur);
+   Fp->seekg( 0, std::ios::beg);      // Only for Shadow Implicit VR SQ
+   Fp->seekg(offset, std::ios::cur);  // Only for Shadow Implicit VR SQ
 
    return newEntry;
 }
@@ -1355,7 +1360,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    const VRKey  &vr = entry->GetVR();
    uint32_t length = entry->GetLength();
 
-   Fp->seekg((long)entry->GetOffset(), std::ios::beg);
+ //  Fp->seekg((long)entry->GetOffset(), std::ios::beg); // JPRx
 
    // A SeQuence "contains" a set of Elements.  
    //          (fffe e000) tells us an Element is beginning
@@ -1397,8 +1402,8 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
          dataEntryPtr->SetState(DataEntry::STATE_NOTLOADED);
 
          // to be sure we are at the end of the value ...
-         Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
-                   std::ios::beg);
+       //  Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
+       //           std::ios::beg);  //JPRx
          return;
       }
    }
@@ -1424,7 +1429,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
-         Fp->seekg( 2L, std::ios::cur);
+ 
+         Fp->seekg( 2L, std::ios::cur); // Once per OW,OB,SQ DocEntry
          uint32_t length32 = ReadInt32();
 
          if ( (vr == "OB" || vr == "OW") && length32 == 0xffffffff ) 
@@ -1432,7 +1438,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
             uint32_t lengthOB;
             try 
             {
-               lengthOB = FindDocEntryLengthOBOrOW();
+               lengthOB = FindDocEntryLengthOBOrOW();// for encapsulation of encoded pixel 
             }
             catch ( FormatUnexpected )
             {
@@ -1444,11 +1450,11 @@ void Document::FindDocEntryLength( DocEntry *entry )
                gdcmWarningMacro( " Computing the length failed for " << 
                                    entry->GetKey() <<" in " <<GetFileName());
 
-               long currentPosition = Fp->tellg();
-               Fp->seekg(0L,std::ios::end);
+               long currentPosition = Fp->tellg(); // Only for gdcm-JPEG-LossLess3a.dcm-like
+               Fp->seekg(0L,std::ios::end);        // Only for gdcm-JPEG-LossLess3a.dcm-like
 
-               long lengthUntilEOF = (long)(Fp->tellg())-currentPosition;
-               Fp->seekg(currentPosition, std::ios::beg);
+               long lengthUntilEOF = (long)(Fp->tellg())-currentPosition; // Only for gdcm-JPEG-LossLess3a.dcm-like
+               Fp->seekg(currentPosition, std::ios::beg);                 // Only for gdcm-JPEG-LossLess3a.dcm-like
 
                entry->SetReadLength(lengthUntilEOF);
                entry->SetLength(lengthUntilEOF);
@@ -1500,7 +1506,8 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
    throw( FormatUnexpected )
 {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
-   long positionOnEntry = Fp->tellg();
+   long positionOnEntry = Fp->tellg(); // Only for OB,OW DataElements
+   
    bool foundSequenceDelimiter = false;
    uint32_t totalLength = 0;
 
@@ -1522,13 +1529,14 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       totalLength += 4;     
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
-         long filePosition = Fp->tellg();
+         // long filePosition = Fp->tellg(); JPRx
          gdcmWarningMacro( 
               "Neither an Item tag nor a Sequence delimiter tag on :" 
            << std::hex << group << " , " << elem 
-           << ") -before- position x(" << filePosition << ")" );
+           //<< ") -before- position x(" << filePosition // JPRx
+           << ")" );
   
-         Fp->seekg(positionOnEntry, std::ios::beg);
+         Fp->seekg(positionOnEntry, std::ios::beg); // Oncd per fragment (if any) of OB,OW DataElements
          throw FormatUnexpected( 
                "Neither an Item tag nor a Sequence delimiter tag.");
       }
@@ -1546,7 +1554,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
          break;
       }
    }
-   Fp->seekg( positionOnEntry, std::ios::beg);
+   Fp->seekg( positionOnEntry, std::ios::beg); // Only for OB,OW DataElements
    return totalLength;
 }
 
@@ -1559,12 +1567,15 @@ VRKey Document::FindDocEntryVR()
    if ( Filetype != ExplicitVR )
       return GDCM_VRUNKNOWN;
 
-   long positionOnEntry = Fp->tellg();
+   long positionOnEntry = Fp->tellg(); // FIXME : for each VR !
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag and/or
    // 'Transfer Syntax' told us it is.
    // Alas this doesn't guarantee that all the tags will be in explicit VR. 
-   // In some cases one finds implicit VR tags mixed within an explicit VR file.
+   // In some cases one finds implicit VR tags mixed within an explicit VR file
+   // Well...
+   // 'Normaly' the only case is : group 0002 Explicit, and other groups Implicit
+   //
    // Hence we make sure the present tag is in explicit VR and try to fix things
    // if it happens not to be the case.
 
@@ -1579,7 +1590,7 @@ VRKey Document::FindDocEntryVR()
          gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ") at offset : 0x(" << positionOnEntry<< ")" );
-      Fp->seekg(positionOnEntry, std::ios::beg);
+      Fp->seekg(positionOnEntry, std::ios::beg); // FIXME : for each VR !
       return GDCM_VRUNKNOWN;
    }
    return vr;
@@ -1731,7 +1742,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // test is useless (and might even look a bit paranoid), when we
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
-         long filePosition = Fp->tellg();
+         long filePosition = Fp->tellg(); // Only when elem 0x0000 length is not 0 (?!?)
          gdcmWarningMacro( "Erroneous Group Length element length  on : (" 
            << std::hex << group << " , " << elem
            << ") -before- position x(" << filePosition << ")"
@@ -1827,9 +1838,9 @@ bool Document::CheckSwap()
       // Position the file position indicator at first tag 
       // (i.e. after the file preamble and the "DICM" string).
 
-      Fp->seekg(0, std::ios::beg); // FIXME : Is it usefull?
+      //Fp->seekg(0, std::ios::beg); // FIXME : Is it usefull?
 
-      Fp->seekg ( 132L, std::ios::beg);
+      Fp->seekg ( 132L, std::ios::beg); // Once per Document
       return true;
    } // ------------------------------- End of DicomV3 ----------------
 
@@ -1839,7 +1850,7 @@ bool Document::CheckSwap()
 
    gdcmWarningMacro( "Not a Kosher DICOM Version3 file (no preamble)");
 
-   Fp->seekg(0, std::ios::beg);
+   Fp->seekg(0, std::ios::beg); // Once per ACR-NEMA Document
 
    // Let's check 'No Preamble Dicom File' :
    // Should start with group 0x0002
@@ -1958,7 +1969,7 @@ bool Document::CheckSwap()
 void Document::SwitchByteSwapCode() 
 {
    gdcmDebugMacro( "Switching Byte Swap code from "<< SwapCode
-                     << " at: 0x" << std::hex << Fp->tellg() );
+                     << " at: 0x" << std::hex << Fp->tellg() );  // Only when DEBUG
    if ( SwapCode == 1234 ) 
    {
       SwapCode = 4321;
@@ -2076,7 +2087,7 @@ DocEntry *Document::ReadNextDocEntry()
          if ( newEntry->GetGroup() != 0xfffe )
          { 
             std::string msg;
-            int offset = Fp->tellg();
+            int offset = Fp->tellg(); // FIXME : Only when heuristic for Explicit/Implicit was wrong
             msg = Util::Format(
                         "Entry (%04x,%04x) at x(%x) should be Explicit VR\n", 
                         newEntry->GetGroup(), newEntry->GetElement(), offset );
@@ -2097,7 +2108,7 @@ DocEntry *Document::ReadNextDocEntry()
       return 0;
    }
 
-   newEntry->SetOffset(Fp->tellg());  
+   newEntry->SetOffset(Fp->tellg());  // for each DocEntry
    
    return newEntry;
 }

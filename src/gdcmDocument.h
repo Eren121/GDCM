@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.137 $
+  Date:      $Date: 2006/02/07 12:37:19 $
+  Version:   $Revision: 1.138 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,9 @@ protected:
       
    uint16_t ReadInt16() throw ( FormatError );
    uint32_t ReadInt32() throw ( FormatError );
-   void     SkipBytes(uint32_t);
+   
+   /// \brief skips bytes inside the source file
+   void     SkipBytes(uint32_t nBytes) { Fp->seekg((long)nBytes, std::ios::cur);} 
    int ComputeGroup0002Length( );
 
 // Variables

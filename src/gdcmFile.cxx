@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:52:12 $
-  Version:   $Revision: 1.313 $
+  Date:      $Date: 2006/02/07 12:37:19 $
+  Version:   $Revision: 1.314 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1591,7 +1591,7 @@ void File::ComputeRLEInfo()
       // Offset Table information on fragments of this current Frame.
       // Note that the fragment pixels themselves are not loaded
       // (but just skipped).
-      long frameOffset = Fp->tellg();
+      long frameOffset = Fp->tellg(); // once per fragment
 
       uint32_t nbRleSegments = ReadInt32();
       if ( nbRleSegments > 16 )
@@ -1638,7 +1638,7 @@ void File::ComputeRLEInfo()
 
    // Make sure that  we encounter a 'Sequence Delimiter Item'
    // at the end of the item :
-   if ( !ReadTag(0xfffe, 0xe0dd) )
+   if ( !ReadTag(0xfffe, 0xe0dd) ) // once per RLE File
    {
       gdcmWarningMacro( "No sequence delimiter item at end of RLE item sequence");
    }
@@ -1666,7 +1666,7 @@ void File::ComputeJPEGFragmentInfo()
    long fragmentLength;
    int i=0;
    uint32_t sum = 0;
-   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) != 0 )
+   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) != 0 ) 
    { 
       // Since we have read the basic offset table, let's check the value were correct
       // or else produce a warning:
@@ -1691,7 +1691,7 @@ void File::ComputeJPEGFragmentInfo()
         i++;
         }
 
-      long fragmentOffset = Fp->tellg();
+      long fragmentOffset = Fp->tellg(); // Once per fragment
       // Store the collected info
       JPEGFragment *newFragment = new JPEGFragment;
       newFragment->SetOffset(fragmentOffset);
@@ -1724,8 +1724,8 @@ void File::ComputeJPEGFragmentInfo()
  */
 bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
 {
-   long positionOnEntry = Fp->tellg();
-   long currentPosition = Fp->tellg();          // On debugging purposes
+   long positionOnEntry = Fp->tellg(); // Only when reading fragments
+   //long currentPosition = positionOnEntry;      // On debugging purposes
 
    // Read the Item Tag group and element, and make
    // sure they are what we expected:
@@ -1755,7 +1755,7 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
           << "   but instead we encountered tag ("
           << DictEntry::TranslateToKey(itemTagGroup,itemTagElem) << ")"
           << "  at address: " << "  0x(" << std::hex 
-          << (unsigned int)currentPosition  << std::dec << ")" 
+          << (unsigned int)positionOnEntry  << std::dec << ")" 
           ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
 
@@ -1792,10 +1792,12 @@ uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
    }
                                                                                 
    //// Then read the associated Item Length
-   long currentPosition = Fp->tellg();
+   
+   // long currentPosition = Fp->tellg(); // save time // JPRx
    uint32_t itemLength  = ReadInt32();
    gdcmDebugMacro( "Basic Item Length is: " << itemLength 
-        << "  at address: " << std::hex << (unsigned int)currentPosition);
+//        << "  at address: " << std::hex << (unsigned int)currentPosition
+   );
    return itemLength;
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/03 16:37:48 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2006/02/07 12:37:19 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -575,13 +575,13 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
       //  --> user is *not* informed !      
          gdcmDebugMacro ("Nothing was loaded, but we need to skip space on disc. "
                       << "Length =" << l << " for " << GetKey() );   
-         fp->seekp(l, std::ios::cur);
+         fp->seekp(l, std::ios::cur); // At Write time, for unloaded elems
       }
    }
    // to avoid gdcm to propagate oddities
    // (length was already modified)  
    if (l%2)
-      fp->seekp(1, std::ios::cur);  
+      fp->seekp(1, std::ios::cur);  // At Write time, for non even length elems
 }
 
 /**
