@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/07 12:37:19 $
-  Version:   $Revision: 1.338 $
+  Date:      $Date: 2006/02/07 17:15:28 $
+  Version:   $Revision: 1.339 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1068,7 +1068,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       }
 
        // an Item Starter found elsewhere but the first position
-       // of a SeqEntry  means previous entry was a Sequence
+       // of a SeqEntry means previous entry was a Sequence
        // but we didn't get it (private Sequence + Implicit VR)
        // we have to backtrack.
       if ( !first && newDocEntry->IsItemStarter() )
@@ -1117,10 +1117,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                   {
                      lgrGroup = atoi(strLgrGroup.c_str());
                      Fp->seekg(lgrGroup, std::ios::cur); // Only when NOSHADOW
-                     //used = false;  // never used
                      RemoveEntry( newDocEntry );  // Remove and delete
-                     // bcc 5.5 is right "assigned a value that's never used"
-                     // newDocEntry = 0;
                      continue;
                   }
                }
@@ -1138,7 +1135,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          }
 
          // Just to make sure we are at the beginning of next entry.
-         SkipToNextDocEntry(newDocEntry);
+        SkipToNextDocEntry(newDocEntry); // FIXME : once per DocEntry, segfault if commented out
       }
       else
       {
@@ -1341,9 +1338,9 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    newEntry->SetOffset(offset);
 
    // Move back to the beginning of the Sequence
-   Fp->seekg( 0, std::ios::beg);      // Only for Shadow Implicit VR SQ
-   Fp->seekg(offset, std::ios::cur);  // Only for Shadow Implicit VR SQ
-
+  // Fp->seekg( 0, std::ios::beg);      // JPRx
+  // Fp->seekg(offset, std::ios::cur);  // JPRx
+   Fp->seekg(offset, std::ios::beg); // Only for Shadow Implicit VR SQ
    return newEntry;
 }
 
@@ -1567,7 +1564,8 @@ VRKey Document::FindDocEntryVR()
    if ( Filetype != ExplicitVR )
       return GDCM_VRUNKNOWN;
 
-   long positionOnEntry = Fp->tellg(); // FIXME : for each VR !
+   //long positionOnEntry = Fp->tellg(); // JPRx
+   
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag and/or
    // 'Transfer Syntax' told us it is.
@@ -1589,8 +1587,12 @@ VRKey Document::FindDocEntryVR()
       if ( CurrentGroup != 0xfffe )
          gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
-                        << ") at offset : 0x(" << positionOnEntry<< ")" );
-      Fp->seekg(positionOnEntry, std::ios::beg); // FIXME : for each VR !
+                        << ")"  
+                      //<< "at offset : 0x(" << positionOnEntry<< ")"
+                        );
+
+      //Fp->seekg(positionOnEntry, std::ios::beg); //JPRx
+      Fp->seekg((long)-2, std::ios::cur);// FIXME : for each VR !
       return GDCM_VRUNKNOWN;
    }
    return vr;
@@ -1624,14 +1626,15 @@ void Document::SkipDocEntry(DocEntry *entry)
  */
 void Document::SkipToNextDocEntry(DocEntry *currentDocEntry) 
 {
-   int l = currentDocEntry->GetReadLength();
+   long l = currentDocEntry->GetReadLength();
    if ( l == -1 ) // length = 0xffff shouldn't appear here ...
                   // ... but PMS imagers happen !
       return;
-   Fp->seekg((long)(currentDocEntry->GetOffset()), std::ios::beg);
+   Fp->seekg((long)(currentDocEntry->GetOffset()), std::ios::beg); //FIXME :each DocEntry
    if (currentDocEntry->GetGroup() != 0xfffe)  // for fffe pb
    {
-      Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
+      //Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
+      Fp->seekg( l,std::ios::cur); //FIXME :each DocEntry
    }
 }
 
@@ -1742,7 +1745,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // test is useless (and might even look a bit paranoid), when we
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
-         long filePosition = Fp->tellg(); // Only when elem 0x0000 length is not 0 (?!?)
+         long filePosition = Fp->tellg(); // Only when elem 0x0000 length is not 4 (?!?)
          gdcmWarningMacro( "Erroneous Group Length element length  on : (" 
            << std::hex << group << " , " << elem
            << ") -before- position x(" << filePosition << ")"
@@ -1838,7 +1841,7 @@ bool Document::CheckSwap()
       // Position the file position indicator at first tag 
       // (i.e. after the file preamble and the "DICM" string).
 
-      //Fp->seekg(0, std::ios::beg); // FIXME : Is it usefull?
+      //Fp->seekg(0, std::ios::beg); // JPRx
 
       Fp->seekg ( 132L, std::ios::beg); // Once per Document
       return true;
