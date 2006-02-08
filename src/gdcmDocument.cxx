@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/07 17:15:28 $
-  Version:   $Revision: 1.339 $
+  Date:      $Date: 2006/02/08 17:34:47 $
+  Version:   $Revision: 1.340 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,9 +120,9 @@ bool Document::DoTheLoadingDocumentJob(  )
    gdcmDebugMacro( "Starting parsing of file: " << Filename.c_str());
    
    // Computes the total length of the file
-   Fp->seekg(0, std::ios::end);  // Once for a given Document !
-   long lgt = Fp->tellg();       // Once for a given Document !   
-   Fp->seekg(0, std::ios::beg);  // Once for a given Document !
+   Fp->seekg(0, std::ios::end);  // Once per Document !
+   long lgt = Fp->tellg();       // Once per Document !   
+   Fp->seekg(0, std::ios::beg);  // Once per Document !
 
    // CheckSwap returns a boolean 
    // (false if no swap info of any kind was found)
@@ -624,7 +624,7 @@ std::ifstream *Document::OpenFile()
    }
  
    //-- DICOM --
-   Fp->seekg(126L, std::ios::cur);  // Once for a given Document
+   Fp->seekg(126L, std::ios::cur);  // Once per Document
    char dicm[4]; // = {' ',' ',' ',' '};
    Fp->read(dicm,  (size_t)4);
    if ( Fp->eof() )
@@ -1050,11 +1050,13 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      << " at offset " << std::hex << "0x(" << offset << ")" ); 
    while (true)
    {
-      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry
-      {
-         break;
-      }
-
+   // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry
+   
+      if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
+         if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry, when no delim mode
+         {
+            break;
+         }
       newDocEntry = ReadNextDocEntry( );
 
       // Uncoment this cerr line to be able to 'follow' the DocEntries
@@ -1093,7 +1095,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          if ( !set->AddEntry( newDataEntry ) )
          {
             gdcmDebugMacro( "in ParseDES : cannot add a DataEntry "
-                                 << newDataEntry->GetKey()  
+                                 << newDataEntry->GetKey()
                                  << " (at offset : 0x(" 
                                  << newDataEntry->GetOffset() << ") )" );
             used=false;
@@ -1124,10 +1126,17 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
          }
 
-         bool delimitor = newDataEntry->IsItemDelimitor();
+         bool delimitor = newDataEntry->IsItemDelimitor(); 
+         bool outOfBounds = false;
+         if (!delim_mode )
+            if ( ((long)(Fp->tellg())-offset) >= l_max ) //Once per DataEntry when no delim mode
+               outOfBounds = true;
 
-         if ( (delimitor) || 
-              (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) ) // Once per DataEntry
+  //       'and then', 'or else' don't exist in C++ :-(
+  //       if ( (delimitor) || 
+  //             (!delim_mode && ((long)(Fp->tellg())-offset) >= l_max) ) // Once per DataEntry
+
+         if ( delimitor || outOfBounds )
          {
             if ( !used )
                newDocEntry->Delete();
@@ -1135,7 +1144,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          }
 
          // Just to make sure we are at the beginning of next entry.
-        SkipToNextDocEntry(newDocEntry); // FIXME : once per DocEntry, segfault if commented out
+         SkipToNextDocEntry(newDocEntry); // FIXME : once per DocEntry, segfault if commented out
       }
       else
       {
@@ -1221,8 +1230,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
             newDocEntry->Delete();
          }
+
+      // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry
  
-         if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry
+         if ( !delim_mode ) // andthen doesn't exist in C++ :-(
+            if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry when no delim mode
+     
          {
             if ( !used )
                newDocEntry->Delete();
@@ -1269,11 +1282,12 @@ void Document::ParseSQ( SeqEntry *seqEntry,
             break;
          }
       }
-      if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per SQItem
-      {
-         newDocEntry->Delete();
-         break;
-      }
+      if ( !delim_mode ) // andthen doesn't exist in C++ :-(
+         if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per SQItem when no delim mode
+         {
+            newDocEntry->Delete();
+            break;
+         }
       // create the current SQItem
       SQItem *itemSQ = SQItem::New( seqEntry->GetDepthLevel() );
       unsigned int l = newDocEntry->GetReadLength();
@@ -1533,7 +1547,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
            //<< ") -before- position x(" << filePosition // JPRx
            << ")" );
   
-         Fp->seekg(positionOnEntry, std::ios::beg); // Oncd per fragment (if any) of OB,OW DataElements
+         Fp->seekg(positionOnEntry, std::ios::beg); // Once per fragment (if any) of OB,OW DataElements
          throw FormatUnexpected( 
                "Neither an Item tag nor a Sequence delimiter tag.");
       }
@@ -1564,7 +1578,13 @@ VRKey Document::FindDocEntryVR()
    if ( Filetype != ExplicitVR )
       return GDCM_VRUNKNOWN;
 
-   //long positionOnEntry = Fp->tellg(); // JPRx
+   // Delimiters (0xfffe), are not explicit VR ... 
+   if ( CurrentGroup == 0xfffe )
+      return GDCM_VRUNKNOWN;
+         
+   long positionOnEntry;     
+   if( Debug::GetWarningFlag() ) 
+     positionOnEntry = Fp->tellg(); // Only in Warning Mode
    
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag and/or
@@ -1582,17 +1602,23 @@ VRKey Document::FindDocEntryVR()
 
    if ( !CheckDocEntryVR(vr) )
    {
-      // Don't warn user with useless messages
-      // Often, delimiters (0xfffe), are not explicit VR ...
-      if ( CurrentGroup != 0xfffe )
-         gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
+/*   
+      std::cout << "================================================================Unknown VR" 
+               << std::hex << "0x(" 
+                        << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
+                        << ")" << "for : " <<  CurrentGroup
+                        << " at offset : 0x(" << positionOnEntry << ")"
+                        << std::endl;
+*/
+      gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ")"  
-                      //<< "at offset : 0x(" << positionOnEntry<< ")"
+                        << " at offset : 0x(" << positionOnEntry<< ") for group " << CurrentGroup
                         );
 
       //Fp->seekg(positionOnEntry, std::ios::beg); //JPRx
-      Fp->seekg((long)-2, std::ios::cur);// FIXME : for each VR !
+      Fp->seekg((long)-2, std::ios::cur);// only for unrecognized VR (?!?) 
+                                         //see :MR_Philips_Intera_PrivateSequenceExplicitVR.dcm
       return GDCM_VRUNKNOWN;
    }
    return vr;
@@ -1633,8 +1659,7 @@ void Document::SkipToNextDocEntry(DocEntry *currentDocEntry)
    Fp->seekg((long)(currentDocEntry->GetOffset()), std::ios::beg); //FIXME :each DocEntry
    if (currentDocEntry->GetGroup() != 0xfffe)  // for fffe pb
    {
-      //Fp->seekg( (long)(currentDocEntry->GetReadLength()),std::ios::cur);
-      Fp->seekg( l,std::ios::cur); //FIXME :each DocEntry
+      Fp->seekg( l,std::ios::cur);                                 //FIXME :each DocEntry
    }
 }
 
@@ -1881,7 +1906,8 @@ bool Document::CheckSwap()
            memcmp(entCur, "AE", (size_t)2) == 0 ||
            memcmp(entCur, "OB", (size_t)2) == 0 )
          {
-            Filetype = ExplicitVR;
+            Filetype = ExplicitVR;  // FIXME : not enough to say it's Explicit
+                                    // Wait untill reading Transfer Syntax
             gdcmDebugMacro( "Group 0002 : Explicit Value Representation");
             return true;
           }
@@ -2031,13 +2057,16 @@ DocEntry *Document::ReadNextDocEntry()
       return 0;
    }
 
-   // Sometimes file contains groups of tags with reversed endianess.
-   HandleBrokenEndian(CurrentGroup, CurrentElem);
-
    // In 'true DICOM' files Group 0002 is always little endian
-   if ( HasDCMPreamble )
-      HandleOutOfGroup0002(CurrentGroup, CurrentElem);
- 
+   if ( HasDCMPreamble ) 
+   {
+      if ( !Group0002Parsed && CurrentGroup != 0x0002) // avoid calling a function when useless
+         HandleOutOfGroup0002(CurrentGroup, CurrentElem);
+      else
+         // Sometimes file contains groups of tags with reversed endianess.
+         HandleBrokenEndian(CurrentGroup, CurrentElem);  
+    }
+        
    VRKey vr = FindDocEntryVR();
    
    VRKey realVR = vr;
@@ -2070,10 +2099,10 @@ DocEntry *Document::ReadNextDocEntry()
          }
       }
    }
-  // gdcmDebugMacro( "Found VR: " << vr << " / Real VR: " << realVR );
-
+   
    DocEntry *newEntry;
-   if ( Global::GetVR()->IsVROfSequence(realVR) )
+   //if ( Global::GetVR()->IsVROfSequence(realVR) )
+   if (realVR == "SQ")
       newEntry = NewSeqEntry(CurrentGroup, CurrentElem);
    else 
    {
@@ -2090,7 +2119,7 @@ DocEntry *Document::ReadNextDocEntry()
          if ( newEntry->GetGroup() != 0xfffe )
          { 
             std::string msg;
-            int offset = Fp->tellg(); // FIXME : Only when heuristic for Explicit/Implicit was wrong
+            int offset = Fp->tellg();//Only when heuristic for Explicit/Implicit was wrong
             msg = Util::Format(
                         "Entry (%04x,%04x) at x(%x) should be Explicit VR\n", 
                         newEntry->GetGroup(), newEntry->GetElement(), offset );
@@ -2172,19 +2201,21 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
 {
    // Endian reversion. 
    // Some files contain groups of tags with reversed endianess.
-   if ( !Group0002Parsed && group != 0x0002)
-   {
+   
       Group0002Parsed = true;
       // we just came out of group 0002
       // if Transfer Syntax is Big Endian we have to change CheckSwap
 
       std::string ts = GetTransferSyntax();
+      TS::SpecialType s = Global::GetTS()->GetSpecialTransferSyntax(ts);
 
       // Group 0002 is always 'Explicit ...' 
       // even when Transfer Syntax says 'Implicit ..." 
 
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
-                                                    TS::ImplicitVRLittleEndian )
+      if ( s == TS::ImplicitVRLittleEndian 
+        ||
+          s == TS::ImplicitVRBigEndianPrivateGE  
+         )
       {
          Filetype = ImplicitVR;
       }
@@ -2196,8 +2227,8 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       // to trust manufacturers.
       // (we find very often 'Implicit VR' tag, 
       // even when Transfer Syntax tells us it's Explicit ...
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
-                                                       TS::ExplicitVRBigEndian )
+      
+      if ( s ==  TS::ExplicitVRBigEndian )
       {
          gdcmDebugMacro("Transfer Syntax Name = [" 
                         << GetTransferSyntaxName() << "]" );
@@ -2208,8 +2239,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       
       /// \todo  find a trick to warn user and stop processing
             
-      if ( Global::GetTS()->GetSpecialTransferSyntax(ts) == 
-                                             TS::DeflatedExplicitVRLittleEndian)
+      if ( s == TS::DeflatedExplicitVRLittleEndian)
       {
            gdcmWarningMacro("Transfer Syntax [" 
                         << GetTransferSyntaxName() << "] :"
@@ -2232,7 +2262,6 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
                           << ts << "]");
          return;
       }      
-   }
 }
 
 //-----------------------------------------------------------------------------
