@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/02/03 16:37:48 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2006/02/08 10:13:55 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1606,7 +1606,7 @@ void FileHelper::CheckMandatoryElements()
    gdcm::Orientation *o = gdcm::Orientation::New();
    std::string ori = o->GetOrientation ( FileInternal );
    o->Delete();
-   if (ori != "\\" )
+   if (ori != "\\" && ori != GDCM_UNFOUND)
       CheckMandatoryEntry(0x0020,0x0020,ori);
    else   
       CheckMandatoryEntry(0x0020,0x0020,"");
