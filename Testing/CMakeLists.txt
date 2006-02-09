@@ -146,7 +146,7 @@ SET(BLACK_LIST
   #
   # ------------
   #
-  # I probabely messed up smething with the .png, .tst of
+  # I probabely messed up something with the .png, .tst of
   # the images I recently added to the Test Suite
   # I Black list them, until I find where is the pb.
   #"US-RGB-8-esopecho.dcm"
@@ -155,7 +155,10 @@ SET(BLACK_LIST
   
   #Still cause troubles (see the .README.txt file for more details)  
   "MR_Philips_Intera_in_SQ_2001_e05f_item_wrong_lgt_use_NOSHADOWSEQ.dcm"  
-  "MR_Philips_Intera_PrivateSequenceExplicitVR.dcm"
+  "MR_Philips_Intera_PrivateSequenceExplicitVR.dcm" 
+  #The 2 previous images are identical !
+  #hexedit shows something *very* strange around offset 0x76e !
+  #the images looks *over*corrupted (on disc, not from the manufacturer!)
   "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
   )
 
