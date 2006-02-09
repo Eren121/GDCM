@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/08 17:34:47 $
-  Version:   $Revision: 1.340 $
+  Date:      $Date: 2006/02/09 10:48:04 $
+  Version:   $Revision: 1.341 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -151,7 +151,7 @@ bool Document::DoTheLoadingDocumentJob(  )
    }
    IsDocumentAlreadyLoaded = true;
 
-   Fp->seekg( 0, std::ios::beg);  // Once per Document
+   //Fp->seekg(0, std::ios::beg);  // Once per Document!
    
    // Load 'non string' values
       
@@ -204,13 +204,13 @@ bool Document::DoTheLoadingDocumentJob(  )
    }
  
    //FIXME later : how to use it?
-   SeqEntry *modLutSeq = GetSeqEntry(0x0028,0x3000);
+   SeqEntry *modLutSeq = GetSeqEntry(0x0028,0x3000); // Modality LUT Sequence
    if ( modLutSeq !=0 )
    {
       SQItem *sqi= modLutSeq->GetFirstSQItem();
       if ( sqi != 0 )
       {
-         DataEntry *dataEntry = sqi->GetDataEntry(0x0028,0x3006);
+         DataEntry *dataEntry = sqi->GetDataEntry(0x0028,0x3006); // LUT Data
          if ( dataEntry != 0 )
          {
             if ( dataEntry->GetLength() != 0 )
@@ -237,7 +237,7 @@ bool Document::DoTheLoadingDocumentJob(  )
   
       if ( d == NULL)
       {
-         gdcmWarningMacro( "You asked toForce Load "  << std::hex
+         gdcmWarningMacro( "You asked to ForceLoad "  << std::hex
                           << (*it).Group <<"|"<< (*it).Elem
                           << " that doesn't exist" );
          continue;
@@ -735,20 +735,16 @@ void Document::LoadEntryBinArea(uint16_t group, uint16_t elem)
  * @param entry  Entry whose binArea is going to be loaded
  */
 void Document::LoadEntryBinArea(DataEntry *entry) 
-{
+{ 
    if( entry->GetBinArea() )
       return;
-// to be coherent with LoadEntryBinArea(uint16_t group, uint16_t elem)
-// (and save time !)
-// :-(
-// TestAllReadCompareDicom hangs on rle16sti.dcm
 
    bool openFile = !Fp;
    if ( openFile )
       OpenFile();
-// -------
-   size_t o =(size_t)entry->GetOffset();
-   Fp->seekg(o, std::ios::beg);  // FIXME : for each BinEntry LoadEntryBinArea
+
+   //size_t o =(size_t)entry->GetOffset();
+   Fp->seekg((size_t)entry->GetOffset(), std::ios::beg);  // FIXME : for each DataEntry !
 
    size_t l = entry->GetLength();
    uint8_t *data = new uint8_t[l];
@@ -808,13 +804,9 @@ void Document::LoadEntryBinArea(DataEntry *entry)
    }
    
    entry->SetBinArea(data);
-   
-// to be coherent with LoadEntryBinArea(uint16_t group, uint16_t elem)
-// (and save time !)
 
-   if ( openFile )
+   if ( openFile ) // The file is left in the state (open/close) it was at entrance
       CloseFile();
-// ---------------
 }
 
 /**
@@ -824,15 +816,15 @@ void Document::LoadEntryBinArea(DataEntry *entry)
  * \note seems to be unused!.
  * @param entry   DocEntry whose value will be loaded. 
  */
-void Document::LoadDocEntrySafe(DocEntry *entry)
-{
-   if ( Fp )
-   {
-      long PositionOnEntry = Fp->tellg();        // LoadDocEntrySafe is not used
-      LoadDocEntry(entry);
-      Fp->seekg(PositionOnEntry, std::ios::beg); // LoadDocEntrySafe is not used
-   }
-}
+//void Document::LoadDocEntrySafe(DocEntry *entry)
+//{
+//   if ( Fp )
+//   {
+//      long PositionOnEntry = Fp->tellg();        // LoadDocEntrySafe is not used
+//      LoadDocEntry(entry);
+//      Fp->seekg(PositionOnEntry, std::ios::beg); // LoadDocEntrySafe is not used
+//   }
+//}
 
 /**
  * \brief   Compares two documents, according to \ref DicomDir rules
@@ -1118,7 +1110,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                   //if ( newDataEntry->IsUnfound() ) /?!? JPR
                   {
                      lgrGroup = atoi(strLgrGroup.c_str());
-                     Fp->seekg(lgrGroup, std::ios::cur); // Only when NOSHADOW
+                     Fp->seekg(lgrGroup, std::ios::cur); // Once per Shadow group, when NOSHADOW
                      RemoveEntry( newDocEntry );  // Remove and delete
                      continue;
                   }
@@ -1233,7 +1225,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 
       // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry
  
-         if ( !delim_mode ) // andthen doesn't exist in C++ :-(
+         if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
             if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry when no delim mode
      
          {
@@ -1403,8 +1395,6 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    // The elements whose length is bigger than the specified upper bound
    // are not loaded.
 
-   std::ostringstream s;
-
    if (!forceLoad)
    {
       if (length > MaxSizeLoadEntry)
@@ -1412,13 +1402,20 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
          dataEntryPtr->SetBinArea(NULL,true);
          dataEntryPtr->SetState(DataEntry::STATE_NOTLOADED);
 
-         // to be sure we are at the end of the value ...
+       // to be sure we are at the end of the value ...
        //  Fp->seekg((long)entry->GetOffset()+(long)entry->GetLength(),
        //           std::ios::beg);  //JPRx
          return;
       }
    }
-
+   
+   /// \todo: a method that *doesn't* load anything (maybe with MaxSizeLoadEntry=0 ?)
+   ///       + a ForceLoad call on the +/- 20 'usefull' fields  
+   ///       Allow user to tell the fields he wants to ForceLoad 
+   ///       during initial stage.
+   ///       Later, a GetString or GetBinArea will load the value from disk, if not loaded
+   ///       + a method that load *everything* that's not yet loaded
+   
    LoadEntryBinArea(dataEntryPtr); // last one, not to erase length !
 }
 
@@ -1656,7 +1653,7 @@ void Document::SkipToNextDocEntry(DocEntry *currentDocEntry)
    if ( l == -1 ) // length = 0xffff shouldn't appear here ...
                   // ... but PMS imagers happen !
       return;
-   Fp->seekg((long)(currentDocEntry->GetOffset()), std::ios::beg); //FIXME :each DocEntry
+   Fp->seekg((size_t)(currentDocEntry->GetOffset()), std::ios::beg); //FIXME :each DocEntry
    if (currentDocEntry->GetGroup() != 0xfffe)  // for fffe pb
    {
       Fp->seekg( l,std::ios::cur);                                 //FIXME :each DocEntry
