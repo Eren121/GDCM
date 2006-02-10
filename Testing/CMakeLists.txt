@@ -138,8 +138,8 @@ SET(BLACK_LIST
   "LIBIDO-24-ACR_NEMA-Rectangle.dcm"
   #16 Bits per pixel images with LUT 16 Bits.
   #I wait to be 100% sure before releasing them. JP
-  #rle16sti.dcm"
-  "rle16loo.dcm"   
+  "rle16sti.dcm"
+  #"rle16loo.dcm"   
   # Jasper cannot handle this image, only kakadu so far, unless you patch jasper
   # but then it breaks other images...
   "CT_Phillips_JPEG2K_Decompr_Problem.dcm"
