@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/02/08 10:13:55 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2006/02/15 21:58:54 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1634,24 +1634,6 @@ void FileHelper::CheckMandatoryElements()
 
    // Referring Physician's Name :'type 2' entry -> must exist, value not mandatory
    CheckMandatoryEntry(0x0008,0x0090,"");
-   
-   // Remove some inconstencies (probably some more will be added)
-
-   // if (0028 0008)Number of Frames exists
-   //    Push out (0020 0052),Frame of Reference UID
-   //    (only meaningfull within a Serie)
-   
-   // Well ... 
-   // Maybe not!
-   // dciodvfy complains when missing (Type 1 element)
-   /// todo add it when missing (?)
-   /*
-   DataEntry *e_0028_0008 = FileInternal->GetDataEntry(0x0028, 0x0008);
-   if ( !e_0028_0008 )
-   {
-      Archive->Push(0x0020, 0x0052);
-   }
-  */
    
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
