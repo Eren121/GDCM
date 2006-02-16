@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2006/02/16 21:27:41 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -237,7 +237,7 @@ bool FileHelper::Load()
  * \return  false if DataEntry not found
  */
 bool FileHelper::SetEntryString(std::string const &content,
-                                    uint16_t group, uint16_t elem)
+                                uint16_t group, uint16_t elem)
 { 
    return FileInternal->SetEntryString(content, group, elem);
 }
@@ -253,7 +253,7 @@ bool FileHelper::SetEntryString(std::string const &content,
  * \return  false if DataEntry not found
  */
 bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
-                                     uint16_t group, uint16_t elem)
+                                 uint16_t group, uint16_t elem)
 {
    return FileInternal->SetEntryBinArea(content, lgth, group, elem);
 }
@@ -285,7 +285,7 @@ DataEntry *FileHelper::InsertEntryString(std::string const &content,
  *          failed).
  */
 DataEntry *FileHelper::InsertEntryBinArea(uint8_t *binArea, int lgth,
-                                                 uint16_t group, uint16_t elem)
+                                          uint16_t group, uint16_t elem)
 {
    return FileInternal->InsertEntryBinArea(binArea, lgth, group, elem);
 }
@@ -1329,11 +1329,11 @@ by gdcm::FileHelper::CheckMandatoryElements()
     are created, with empty value if there are missing.  
 
  -------------------------------------------------------------------------------------*/
- 
+
 void FileHelper::CheckMandatoryElements()
 {
    std::string sop =  Util::CreateUniqueUID();
-   
+
    // just to remember : 'official' 0002 group
    if ( WriteType != ACR && WriteType != ACR_LIBIDO )
    {
@@ -1354,7 +1354,7 @@ void FileHelper::CheckMandatoryElements()
    // Always modify the value
    // Push the entries to the archive.
       CopyMandatoryEntry(0x0002,0x0000,"0");
- 
+
       DataEntry *e_0002_0001 = CopyDataEntry(0x0002,0x0001, "OB");
       e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
                                false);
@@ -1370,13 +1370,13 @@ void FileHelper::CheckMandatoryElements()
    // Potentialy this is a post-processed image 
    // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
          CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");    
-       
+
    // 'Media Storage SOP Instance UID'   
       CopyMandatoryEntry(0x0002,0x0003,sop);
       
    // 'Implementation Class UID'
    // FIXME : in all examples we have, 0x0002,0x0012 is not so long :
-   //         semms to be Root UID + 4 digits (?)
+   //         seems to be Root UID + 4 digits (?)
       CopyMandatoryEntry(0x0002,0x0012,Util::CreateUniqueUID());
 
    // 'Implementation Version Name'
@@ -1452,7 +1452,7 @@ void FileHelper::CheckMandatoryElements()
    
    // Samples Per Pixel (type 1) : default to grayscale 
    CheckMandatoryEntry(0x0028,0x0002,"1");
-   
+
    // --- Check UID-related Entries ---
 
    // If 'SOP Class UID' exists ('true DICOM' image)
@@ -1547,7 +1547,7 @@ void FileHelper::CheckMandatoryElements()
    }   
            
    // ---- The user will never have to take any action on the following ----
-   
+
    // new value for 'SOP Instance UID'
    //SetMandatoryEntry(0x0008,0x0018,Util::CreateUniqueUID());
 
@@ -1612,7 +1612,7 @@ void FileHelper::CheckMandatoryElements()
       CheckMandatoryEntry(0x0020,0x0020,ori);
    else   
       CheckMandatoryEntry(0x0020,0x0020,"");
-   
+
    // Modality : if missing we set it to 'OTher'
    CheckMandatoryEntry(0x0008,0x0060,"OT");
 
@@ -1636,7 +1636,7 @@ void FileHelper::CheckMandatoryElements()
 
    // Referring Physician's Name :'type 2' entry -> must exist, value not mandatory
    CheckMandatoryEntry(0x0008,0x0090,"");
-   
+
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
  /*
@@ -1758,7 +1758,7 @@ void FileHelper::Initialize()
 {
    UserFunction = 0;
    KeepMediaStorageSOPClassUID = false;
-   
+
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
 
