@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/02/15 21:58:54 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -381,7 +381,7 @@ uint8_t *FileHelper::GetImageData()
  *          - DOES NOT transform Grey plane + 3 Palettes into a RGB Plane
  * @return  Pointer to newly allocated pixel data.
  *          (uint8_t is just for prototyping. feel free to cast)
- *          NULL if alloc fails 
+ *          NULL if alloc fails
  */
 uint8_t *FileHelper::GetImageDataRaw ()
 {
@@ -390,7 +390,7 @@ uint8_t *FileHelper::GetImageDataRaw ()
 
 #ifndef GDCM_LEGACY_REMOVE
 /*
- * \ brief   Useless function, since PixelReadConverter forces us 
+ * \brief   Useless function, since PixelReadConverter forces us 
  *          copy the Pixels anyway.  
  *          Reads the pixels from disk (uncompress if necessary),
  *          Transforms YBR pixels, if any, into RGB pixels
@@ -398,7 +398,7 @@ uint8_t *FileHelper::GetImageDataRaw ()
  *          Transforms single Grey plane + 3 Palettes into a RGB Plane   
  *          Copies at most MaxSize bytes of pixel data to caller allocated
  *          memory space.
- * \ warning This function allows people that want to build a volume
+ * \warning This function allows people that want to build a volume
  *          from an image stack *not to* have, first to get the image pixels, 
  *          and then move them to the volume area.
  *          It's absolutely useless for any VTK user since vtk chooses 
@@ -407,12 +407,12 @@ uint8_t *FileHelper::GetImageDataRaw ()
  *          to load the image line by line, starting from the end.
  *          VTK users have to call GetImageData
  *     
- * @ param   destination Address (in caller's memory space) at which the
+ * @param   destination Address (in caller's memory space) at which the
  *          pixel data should be copied
- * @ param   maxSize Maximum number of bytes to be copied. When MaxSize
+ * @param   maxSize Maximum number of bytes to be copied. When MaxSize
  *          is not sufficient to hold the pixel data the copy is not
  *          executed (i.e. no partial copy).
- * @ return  On success, the number of bytes actually copied. Zero on
+ * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
 size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
@@ -684,7 +684,6 @@ bool FileHelper::Write(std::string const &fileName)
          break;
       case JPEG:
          SetWriteFileTypeToJPEG();
-         std::cerr << "Writting as JPEG" << std::endl;
          break;
    }
    CheckMandatoryElements();
@@ -1000,7 +999,7 @@ void FileHelper::SetWriteFileTypeToACR()
 }
 
 /**
- * \brief Sets in the File the TransferSyntax to 'Explicit VR Little Endian"   
+ * \brief Sets in the File the TransferSyntax to 'JPEG'
  */ 
 void FileHelper::SetWriteFileTypeToJPEG()
 {
@@ -1014,6 +1013,9 @@ void FileHelper::SetWriteFileTypeToJPEG()
    tss->Delete();
 }
 
+/**
+ * \brief Sets in the File the TransferSyntax to 'Explicit VR Little Endian"   
+ */ 
 void FileHelper::SetWriteFileTypeToExplicitVR()
 {
    std::string ts = Util::DicomString( 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/10 15:54:03 $
-  Version:   $Revision: 1.182 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.183 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -497,8 +497,8 @@ std::string Util::DicomString(const char *s)
 /**
  * \brief Safely check the equality of two Dicom String:
  *        - Both strings should be of even length
- *        - We allow padding of even length string by either 
- *           a null character of a space
+ *        - We allow padding of even length string by either
+ *          a null character of a space
  */
 bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 {
@@ -515,7 +515,7 @@ bool Util::DicomStringEqual(const std::string &s1, const char *s2)
 /**
  * \brief Safely compare two Dicom String:
  *        - Both strings should be of even length
- *        - We allow padding of even length string by either  
+ *        - We allow padding of even length string by either
  *          a null character of a space
  */
 bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
@@ -569,6 +569,29 @@ bool Util::CompareDicomString(const std::string &s1, const char *s2, int op)
    typedef BOOL(WINAPI * pSnmpExtensionInitEx) (
            OUT AsnObjectIdentifier * supportedView);
 #endif //_WIN32
+
+#ifdef __sgi
+static int SGIGetMacAddress(unsigned char *addr)
+{
+  FILE *f = popen("/etc/nvram eaddr","r");
+  if(f == 0)
+    {
+    return -1;
+    }
+  unsigned int x[6];
+  if(fscanf(f,"%02x:%02x:%02x:%02x:%02x:%02x",
+            x,x+1,x+2,x+3,x+4,x+5) != 6)
+    {
+    pclose(f);
+    return -1;
+    }
+  for(unsigned int i = 0; i < 6; i++)
+    {
+    addr[i] = static_cast<unsigned char>(x[i]);
+    }
+  return 0;
+}
+#endif
 
 /// \brief gets current M.A.C adress (for internal use only)
 int GetMacAddrSys ( unsigned char *addr );
@@ -701,6 +724,10 @@ int GetMacAddrSys ( unsigned char *addr )
    SNMP_FreeVarBind(&varBind[1]);
    return 0;
 #endif //Win32 version
+
+#if defined(__sgi)
+   return SGIGetMacAddress(addr);
+#endif // __sgi
 
 
 // implementation for POSIX system
@@ -985,7 +1012,6 @@ std::ostream &binary_write(std::ostream &os, const uint32_t &val)
 #endif //GDCM_WORDS_BIGENDIAN
 }
 
-
 /**
  * \brief binary_write binary_write
  * @param os ostream to write to
@@ -1012,7 +1038,6 @@ std::ostream &binary_write(std::ostream &os, const double &val)
    return os.write(reinterpret_cast<const char*>(&val), 8);
 #endif //GDCM_WORDS_BIGENDIAN
 }
-
 
 /**
  * \brief  binary_write binary_write

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFrame.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:24:21 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ namespace gdcm
  *        - the offsets of each segment of the frame,
  *        - the (corresponding) lengths of each segment of the frame.
  */
-   class GDCM_EXPORT RLEFrame : public Base
+class GDCM_EXPORT RLEFrame : public Base
 {
 friend class File;
 friend class RLEFramesInfo;
@@ -64,7 +64,6 @@ private:
    bool ReadAndDecompressRLEFragment( uint8_t *subRaw, long fragmentSize,
                                       long rawSegmentSize, std::ifstream *fp );
 
-//private:
    unsigned int NumberOfFragments;
    long Offset[15];
    long Length[15];

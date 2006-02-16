@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:01:33 $
-  Version:   $Revision: 1.185 $
+  Date:      $Date: 2006/02/16 20:06:13 $
+  Version:   $Revision: 1.186 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@
 
 #if defined(__BORLANDC__)
    #include <mem.h> // for memset
-#endif 
+#endif
 
 // ----------------------------------------------------------------------------
 //         Note for future developpers
@@ -129,6 +129,36 @@ DicomDir::DicomDir()
    NewMeta();
 }
 
+#ifndef GDCM_LEGACY_REMOVE
+/**
+ * \brief Constructor Parses recursively the directory and creates the DicomDir
+ *        or uses an already built DICOMDIR, depending on 'parseDir' value.
+ * @param fileName  name 
+ *                      - of the root directory (parseDir = true)
+ *                      - of the DICOMDIR       (parseDir = false)
+ * @param parseDir boolean
+ *                      - true if user passed an entry point 
+ *                        and wants to explore recursively the directories
+ *                      - false if user passed an already built DICOMDIR file
+ *                        and wants to use it 
+ * @deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
+ *              or : new DicomDir() + SetFileName(name)
+ */
+DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
+   Document( )
+{
+   // At this step, Document constructor is already executed,
+   // whatever user passed (either a root directory or a DICOMDIR)
+   // and whatever the value of parseDir was.
+   // (nothing is cheked in Document constructor, to avoid overhead)
+
+   ParseDir = parseDir;
+   SetLoadMode (LD_ALL); // concerns only dicom files
+   SetFileName( fileName );
+   Load( );
+}
+#endif
+
 /**
  * \brief  Canonical destructor 
  */
@@ -159,6 +189,28 @@ bool DicomDir::Load( )
    }
    return DoTheLoadingJob( );   
 }
+#ifndef GDCM_LEGACY_REMOVE
+/**
+ * \brief   Loader. (DEPRECATED : kept not to break the API)
+ * @param   fileName file to be open for parsing
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ * @deprecated use SetFileName(n) + Load() instead
+ */
+bool DicomDir::Load(std::string const &fileName ) 
+{
+   // We should clean out anything that already exists.
+   Initialize();  // sets all private fields to NULL
+
+   SetFileName( fileName );
+   if (!ParseDir)
+   {
+      if ( ! this->Document::Load( ) )
+         return false;
+   }
+   return DoTheLoadingJob( );
+}
+#endif
 
 /**
  * \brief   Does the Loading Job (internal use only)
@@ -208,11 +260,11 @@ bool DicomDir::DoTheLoadingJob( )
          const char *cwd = getcwd(buf, 2048);
          if( cwd )
          {
-           SetFileName( buf ); // will be converted into a string
+            SetFileName( buf ); // will be converted into a string
          }
          else
          {
-           gdcmErrorMacro( "Path was too long to fit on 2048 bytes" );
+            gdcmErrorMacro( "Path was too long to fit on 2048 bytes" );
          }
       }
       NewMeta();
@@ -893,9 +945,9 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       default:
          return;
    }
-   
+
    // FIXME : troubles found when it's a SeqEntry
-      
+
    // removed all the seems-to-be-useless stuff about Referenced Image Sequence
    // to avoid further troubles
    // imageElem 0008 1140 "" // Referenced Image Sequence
@@ -919,8 +971,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       {
          // NULL when we Build Up (ex nihilo) a DICOMDIR
          //   or when we add the META elems
- 
-            val = header->GetEntryString(tmpGr, tmpEl); 
+         val = header->GetEntryString(tmpGr, tmpEl); 
       }
       else
       {
@@ -928,7 +979,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
       }
 
       if ( val == GDCM_UNFOUND) 
-      {       
+      {
          if ( tmpGr == 0x0004 ) // never present in File !     
          {
             switch (tmpEl)

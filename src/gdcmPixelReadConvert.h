@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:35 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@ typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, File *);
 /**
  * \brief Utility container for gathering the various forms the pixel data
  *        migth take during the user demanded processes.
- * WARNING : *none* of these functions may be invoked by gdm user
+ * WARNING : *none* of these functions may be invoked by gdcm user
  *           (internal use only)
  */
 class GDCM_EXPORT PixelReadConvert : public Base
@@ -137,11 +137,11 @@ private:
    //int PixelSize; // useless
    bool PixelSign;
    int SwapCode;
-   
+
    // cache whether this is a strange GE transfer syntax (which has   
    // one transfer syntax for the header and another for the pixel data).
    bool IsPrivateGETransferSyntax;
-    
+
    bool IsRaw;
    bool IsJPEG2000;
    bool IsJPEGLS;

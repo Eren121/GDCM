@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:01:33 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,7 +121,7 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
    DocEntry *currentEntry = GetDocEntry(group, elem);
    if ( !currentEntry )
       return NULL;
-      
+
    return dynamic_cast<SeqEntry*>(currentEntry);
 }
 
@@ -214,8 +214,8 @@ bool DocEntrySet::SetEntryBinArea(uint8_t *content, int lgth, DataEntry *entry)
  *          failed).
  */ 
 DataEntry *DocEntrySet::InsertEntryString(std::string const &value, 
-                                             uint16_t group, uint16_t elem,
-                                             VRKey const &vr )
+                                          uint16_t group, uint16_t elem,
+                                          VRKey const &vr )
 {
    DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
@@ -272,8 +272,8 @@ DataEntry *DocEntrySet::InsertEntryString(std::string const &value,
  *          failed).
  */
 DataEntry *DocEntrySet::InsertEntryBinArea(uint8_t *binArea, int lgth, 
-                                              uint16_t group, uint16_t elem,
-                                              VRKey const &vr )
+                                           uint16_t group, uint16_t elem,
+                                           VRKey const &vr )
 {
    DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
@@ -492,14 +492,14 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
    DictEntry *goodEntry = dictEntry;
    VRKey goodVR = vr;
    TagName vm;
-   if (elem == 0x0000) 
+   if (elem == 0x0000)
       goodVR="UL";
 
    if ( goodEntry )
    {
       if ( goodVR != goodEntry->GetVR()
         && goodVR != GDCM_VRUNKNOWN )
-      { 
+      {
          gdcmWarningMacro("For (" << std::hex << group << "|"
             << elem << "), found VR : [" << vr << "]"
             << " expected: [" << goodEntry->GetVR() << "]" ) ;
@@ -520,7 +520,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
       if (dictEntry)
       {
 
-         goodEntry = DictEntry::New(group, elem, goodVR, vm,//"FIXME", 
+         goodEntry = DictEntry::New(group, elem, goodVR, vm,
                                     dictEntry->GetName() );
       }
       else

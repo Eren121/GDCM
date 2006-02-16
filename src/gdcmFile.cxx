@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/07 12:37:19 $
-  Version:   $Revision: 1.314 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.315 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,7 +124,7 @@ File::File():
 /**
  * \brief   Canonical destructor.
  */
-File::~File ()
+File::~File()
 {
    if ( RLEInfo )
       delete RLEInfo;
@@ -568,7 +568,6 @@ float File::GetYSpacing()
  * XOrigin, YOrigin, ZOrigin (of the top left image corner)
  * of 2 consecutive images, and the Orientation
  * Computing ZSpacing on a single image is not really meaningfull ! 
- 
  * @return Z dimension of a voxel-to be
  */
 float File::GetZSpacing()
@@ -781,6 +780,8 @@ bool File::GetImageOrientationPatient( float iop[6] )
 {
    std::string strImOriPat;
    //iop is supposed to be float[6]
+   iop[0] = iop[4] = 1.;
+   iop[1] = iop[2] = iop[3] = iop[5] = 0.;
 
    // 0020 0037 DS REL Image Orientation (Patient)
    if ( (strImOriPat = GetEntryString(0x0020,0x0037)) != GDCM_UNFOUND )
@@ -788,14 +789,11 @@ bool File::GetImageOrientationPatient( float iop[6] )
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         iop[0] = iop[4] = 1.;
-         iop[1] = iop[2] = iop[3] = iop[5] = 0.;
          gdcmWarningMacro( "Wrong Image Orientation Patient (0020,0037)."
                         << " Less than 6 values were found." );
          return false;
       }
-      else 
-         return true;
+      return true;
    }
    //For ACR-NEMA
    // 0020 0035 DS REL Image Orientation (RET)
@@ -804,14 +802,11 @@ bool File::GetImageOrientationPatient( float iop[6] )
       if ( sscanf( strImOriPat.c_str(), "%f \\ %f \\%f \\%f \\%f \\%f ", 
           &iop[0], &iop[1], &iop[2], &iop[3], &iop[4], &iop[5]) != 6 )
       {
-         iop[0] = iop[4] = 1.;
-         iop[1] = iop[2] = iop[3] = iop[5] = 0.;
          gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). "
                         << "Less than 6 values were found." );
          return false;
       }
-      else
-         return true;
+      return true;
    }
    return false;
 }
@@ -1180,7 +1175,7 @@ float File::GetRescaleIntercept()
 
 /**
  *\brief   gets the info from 0028,1053 : Rescale Slope
- * @return Rescale Slope. defaulted to 0.0 is not found or empty
+ * @return Rescale Slope. defaulted to 1.0 is not found or empty
  */
 float File::GetRescaleSlope()
 {
@@ -1526,7 +1521,6 @@ bool File::Write(std::string fileName, FileType writetype)
    return true;
 }
 
-
 //-----------------------------------------------------------------------------
 // Protected
 
@@ -1666,7 +1660,7 @@ void File::ComputeJPEGFragmentInfo()
    long fragmentLength;
    int i=0;
    uint32_t sum = 0;
-   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) != 0 ) 
+   while ( (fragmentLength = ReadTagLength(0xfffe, 0xe000)) != 0 )
    { 
       // Since we have read the basic offset table, let's check the value were correct
       // or else produce a warning:
@@ -1746,7 +1740,7 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
       return false;
    }
    if ( itemTagGroup != testGroup || itemTagElem != testElem )
-   { 
+   {
        // in order not to pollute output we don't warn on 'delimitors'
       if (itemTagGroup != 0xfffe ||  testGroup != 0xfffe )
          gdcmWarningMacro( "Wrong Item Tag found:"
@@ -1843,15 +1837,14 @@ void File::ReadEncapsulatedBasicOffsetTable()
 
 // These are the deprecated method that one day should be removed (after the next release)
 
-//#ifndef GDCM_LEGACY_REMOVE
+#ifndef GDCM_LEGACY_REMOVE
 /*
  * \ brief   Loader. (DEPRECATED :  temporaryly kept not to break the API)
  * @ param   fileName file to be open for parsing
  * @ return false if file cannot be open or no swap info was found,
  *         or no tag was found.
- * @ deprecated Use the Load() [ + SetLoadMode() ] + SetFileName() functions instead
+ * @deprecated Use the Load() [ + SetLoadMode() ] + SetFileName() functions instead
  */
- /*
 bool File::Load( std::string const &fileName ) 
 {
    GDCM_LEGACY_REPLACED_BODY(File::Load(std::string), "1.2",
@@ -1862,8 +1855,7 @@ bool File::Load( std::string const &fileName )
 
    return DoTheLoadingJob( );
 }
-*/
-//#endif
+#endif
 
 //-----------------------------------------------------------------------------
 // Print

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/18 14:33:24 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,6 @@ private:
    RLEFrame *GetFirstFrame();
    RLEFrame *GetNextFrame();
 
-//private::
    typedef std::list<RLEFrame *> RLEFrameList;
 
    RLEFrameList Frames;

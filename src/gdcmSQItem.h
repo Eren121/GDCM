@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:11:52 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ public:
    static SQItem *New(int depthLevel) {return new SQItem(depthLevel);}
 
    virtual void Print(std::ostream &os = std::cout, 
-                                               std::string const &indent = "" ); 
+                      std::string const &indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
    uint32_t ComputeFullLength();
 

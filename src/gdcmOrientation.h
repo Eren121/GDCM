@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,6 @@
 #define GDCMORIENTATION_H
 
 #include "gdcmRefCounter.h"
-
 #include <map>
 
 namespace gdcm 
@@ -107,7 +106,7 @@ public:
   std::string GetOrientation ( File *file );  
   
   static const char* GetOrientationTypeString(OrientationType const o);
-  
+
 protected:
 /// \brief Constructor
   Orientation() {}

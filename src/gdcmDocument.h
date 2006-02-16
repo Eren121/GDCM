@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/09 10:48:05 $
-  Version:   $Revision: 1.139 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.140 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,8 +48,9 @@ public:
 
 // Loading
    //Deprecated : use SetFileName() + Load()
-   //GDCM_LEGACY(  virtual bool Load( std::string const &filename )  ); 
-   //virtual bool Load( std::string const &filename );
+#ifndef GDCM_LEGACY_REMOVE 
+   virtual bool Load( std::string const &filename ); 
+#endif
    virtual bool Load( ); 
 
 // Dictionaries
@@ -88,7 +89,7 @@ public:
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);
    virtual void LoadEntryBinArea(DataEntry *entry);
 
-   //void LoadDocEntrySafe(DocEntry *entry);
+   void SetMaxSizeLoadEntry(long);
    void AddForceLoadElement(uint16_t group, uint16_t elem);
  
 // Ordering of Documents
@@ -184,7 +185,7 @@ protected:
 private:
 // Methods
    void Initialize();
-   bool DoTheLoadingDocumentJob(); 
+   bool DoTheLoadingDocumentJob();
      
       // System access (meaning endian related !?)
    uint16_t SwapShort(uint16_t);
@@ -215,7 +216,6 @@ private:
 
    bool CheckSwap();
    void SwitchByteSwapCode();
-   void SetMaxSizeLoadEntry(long);
 
    // DocEntry related utilities
    DocEntry *ReadNextDocEntry();

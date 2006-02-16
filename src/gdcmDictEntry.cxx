@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 08:48:17 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2006/02/16 20:06:13 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,6 @@ DictEntry::DictEntry(uint16_t group, uint16_t elem,
                      VRKey const &vr, 
                      TagName const &vm,
                      TagName const &name)
-
 {
    Tag.SetGroup(group);
    Tag.SetElement(elem);

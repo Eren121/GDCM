@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/09 10:48:04 $
-  Version:   $Revision: 1.341 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.342 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,6 +95,20 @@ bool Document::Load(  )
    return DoTheLoadingDocumentJob( );
 }
 
+#ifndef GDCM_LEGACY_REMOVE
+/**
+ * \brief   Loader. (DEPRECATED : not to break the API)   
+ * @param   fileName 'Document' (File or DicomDir) to be open for parsing
+ * @return false if file cannot be open or no swap info was found,
+ *         or no tag was found.
+ */
+bool Document::Load( std::string const &fileName ) 
+{
+   Filename = fileName;
+   return DoTheLoadingDocumentJob( );
+}
+#endif
+
 /**
  * \brief   Performs the Loading Job (internal use only)  
  * @return false if file cannot be open or no swap info was found,
@@ -118,7 +132,7 @@ bool Document::DoTheLoadingDocumentJob(  )
    Group0002Parsed = false;
 
    gdcmDebugMacro( "Starting parsing of file: " << Filename.c_str());
-   
+
    // Computes the total length of the file
    Fp->seekg(0, std::ios::end);  // Once per Document !
    long lgt = Fp->tellg();       // Once per Document !   
@@ -640,7 +654,7 @@ std::ifstream *Document::OpenFile()
 
    // -- Neither ACR/No Preamble Dicom nor DICOMV3 file
    CloseFile();
-   // Don't user Warning nor Error, not to polute the output
+   // Don't user Warning nor Error, not to pollute the output
    // while directory recursive parsing ...
    gdcmDebugMacro( "Neither ACR/No Preamble Dicom nor DICOMV3 file: "
                       << Filename.c_str()); 
@@ -969,7 +983,6 @@ int Document::ComputeGroup0002Length( )
                   // explicit VR AND (OB, OW, SQ, UT) : 4 more bytes
                   groupLength +=  4;
                }
- 
             groupLength += 2 + 2 + 4 + entry->GetLength();   
          }
       }
@@ -1012,6 +1025,7 @@ void Document::CallEndMethod()
 // Private
 /**
  * \brief Loads all the needed Dictionaries
+ * \warning NOT end user intended method !
  */
 void Document::Initialize() 
 {
@@ -1066,9 +1080,9 @@ void Document::ParseDES(DocEntrySet *set, long offset,
        // but we didn't get it (private Sequence + Implicit VR)
        // we have to backtrack.
       if ( !first && newDocEntry->IsItemStarter() )
-      { 
-        // Debug message within the method !      
-        newDocEntry = Backtrack(newDocEntry); 
+      {
+         // Debug message within the method !
+         newDocEntry = Backtrack(newDocEntry);
       }
       else
       { 
@@ -1344,8 +1358,7 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    newEntry->SetOffset(offset);
 
    // Move back to the beginning of the Sequence
-  // Fp->seekg( 0, std::ios::beg);      // JPRx
-  // Fp->seekg(offset, std::ios::cur);  // JPRx
+
    Fp->seekg(offset, std::ios::beg); // Only for Shadow Implicit VR SQ
    return newEntry;
 }
@@ -1369,7 +1382,6 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
    //          (fffe e000) tells us an Element is beginning
    //          (fffe e00d) tells us an Element just ended
    //          (fffe e0dd) tells us the current SeQuence just ended
-   //
    //          (fffe 0000) is an 'impossible' tag value, 
    //                                    found in MR-PHILIPS-16-Multi-Seq.dcm
    
@@ -1437,7 +1449,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
- 
+
          Fp->seekg( 2L, std::ios::cur); // Once per OW,OB,SQ DocEntry
          uint32_t length32 = ReadInt32();
 
@@ -1500,7 +1512,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
      // Well ... group 0002 is always coded in 'Explicit VR Litle Endian'
      // even if Transfer Syntax is 'Implicit VR ...'
      // --> Except for 'Implicit VR Big Endian Transfer Syntax GE Private' 
-      
+
       FixDocEntryFoundLength( entry, ReadInt32() );
       return;
    }
@@ -1508,6 +1520,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
 
 /**
  * \brief  Find the Length till the next sequence delimiter
+ * \warning NOT end user intended method !
  * @return 
  */
 uint32_t Document::FindDocEntryLengthOBOrOW()
@@ -1515,7 +1528,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
 {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
    long positionOnEntry = Fp->tellg(); // Only for OB,OW DataElements
-   
+
    bool foundSequenceDelimiter = false;
    uint32_t totalLength = 0;
 
@@ -1537,11 +1550,9 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       totalLength += 4;     
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
       {
-         // long filePosition = Fp->tellg(); JPRx
          gdcmWarningMacro( 
               "Neither an Item tag nor a Sequence delimiter tag on :" 
            << std::hex << group << " , " << elem 
-           //<< ") -before- position x(" << filePosition // JPRx
            << ")" );
   
          Fp->seekg(positionOnEntry, std::ios::beg); // Once per fragment (if any) of OB,OW DataElements
@@ -1863,8 +1874,6 @@ bool Document::CheckSwap()
       // Position the file position indicator at first tag 
       // (i.e. after the file preamble and the "DICM" string).
 
-      //Fp->seekg(0, std::ios::beg); // JPRx
-
       Fp->seekg ( 132L, std::ios::beg); // Once per Document
       return true;
    } // ------------------------------- End of DicomV3 ----------------
@@ -2055,7 +2064,7 @@ DocEntry *Document::ReadNextDocEntry()
    }
 
    // In 'true DICOM' files Group 0002 is always little endian
-   if ( HasDCMPreamble ) 
+   if ( HasDCMPreamble )
    {
       if ( !Group0002Parsed && CurrentGroup != 0x0002) // avoid calling a function when useless
          HandleOutOfGroup0002(CurrentGroup, CurrentElem);
@@ -2096,7 +2105,7 @@ DocEntry *Document::ReadNextDocEntry()
          }
       }
    }
-   
+
    DocEntry *newEntry;
    //if ( Global::GetVR()->IsVROfSequence(realVR) )
    if (realVR == "SQ")
@@ -2233,7 +2242,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          group = SwapShort(group);
          elem  = SwapShort(elem);
       }
-      
+
       /// \todo  find a trick to warn user and stop processing
             
       if ( s == TS::DeflatedExplicitVRLittleEndian)

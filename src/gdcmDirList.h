@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:24:21 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ typedef std::vector<std::string> DirListType;
 
 /**
  * \brief   List containing the file headers of all the 'gdcm readable' files
- *          found by exploring (possibely recursively) a root directory. 
+ *          found by exploring (possibly recursively) a root directory. 
  */
 class GDCM_EXPORT DirList : public Base
 {

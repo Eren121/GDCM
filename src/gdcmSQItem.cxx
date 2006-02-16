@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/13 09:22:05 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.84 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,7 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
     // because we wrote the Item as a 'no Length' item
    for(j=0;j<4;++j)
    {
-      binary_write( *fp, itemt[j]);  // fffe e000 0000 0000 
+      binary_write( *fp, itemt[j]);  // fffe e000 0000 0000
    } 
 }
 

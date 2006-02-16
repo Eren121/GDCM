@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 09:43:43 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,9 +20,9 @@
 #include "gdcmElementSet.h"
 #include "gdcmDataEntry.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h" // hidden way to include sstream
 #include <map>
 
-#include <sstream>
 
 namespace gdcm 
 {
@@ -43,11 +43,11 @@ Validator::~Validator()
 bool CheckVM(DataEntry *entry)
 {
   // Don't waste time checking tags where VM is OB and OW, since we know
-  // it's allways 1, whatever the actual length (found on disc)
+  // it's always 1, whatever the actual length (found on disc)
   
   if ( entry->GetVR() == "OB" ||  entry->GetVR() == "OW" )
      return true;
-     
+
   const std::string &s = entry->GetString();
 
   unsigned int n = Util::CountSubstring( s , "\\");

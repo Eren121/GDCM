@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 15:25:07 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,13 +32,16 @@ namespace gdcm
 class File;
 
    typedef std::vector<File* > FileList;
-   
-   /// \brief XCoherent stands for 'Extra Coherent', 
+#ifndef GDCM_LEGACY_REMOVE
+typedef std::vector<File* > GdcmFileList;
+#endif
+
+   /// \brief XCoherent stands for 'Extra Coherent',
    ///        (The name 'Coherent' would be enough but it was used before;
    ///        I don't want to put a bomb in the code)
    ///        Any 'better name' is welcome !
-   typedef std::map<std::string, FileList *> XCoherentFileSetmap; 
-      
+   typedef std::map<std::string, FileList *> XCoherentFileSetmap;
+
    typedef bool (*BOOL_FUNCTION_PFILE_PFILE_POINTER)(File *, File *);
 
 //-----------------------------------------------------------------------------
@@ -75,12 +78,16 @@ public:
 
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
-   void AddGdcmFile(File *header);
+   bool AddFile(File *header);
+#ifndef GDCM_LEGACY_REMOVE
+   bool AddGdcmFile(File* header) { return AddFile(header); }
+#endif
 
    void SetDirectory(std::string const &dir, bool recursive=false);
    bool IsCoherent(FileList *fileSet);
    void OrderFileList(FileList *fileSet);
-   
+   void Clear() { ClearAll(); }
+
    /// \brief Gets the FIRST Single SerieUID Fileset.
    ///        Deprecated; kept not to break the API
    /// \note Caller must call OrderFileList first
@@ -103,6 +110,7 @@ public:
    /// \todo : find a trick to allow user to say the retrictetons are ored
    ///         (not only anded) 
    ///         ex : keep the images whose SerieNumber is 101 or 102 or 103.
+   void AddRestriction(TagKey const &key);
    void AddRestriction(TagKey const &key, std::string const &value, int op);
    void AddRestriction(uint16_t group, uint16_t elem, std::string const &value,
                                                                     int op);
@@ -111,14 +119,31 @@ public:
    ///        and SeriesName to identify when a single SeriesUID contains
    ///        multiple 3D volumes - as can occur with perfusion and DTI imaging
    void SetUseSeriesDetails( bool useSeriesDetails )
-                                   { m_UseSeriesDetails = useSeriesDetails;}
-   bool GetUseSeriesDetails( ){ return m_UseSeriesDetails; }
-   
+     {
+     m_UseSeriesDetails = useSeriesDetails;
+     }
+   bool GetUseSeriesDetails()
+     {
+     return m_UseSeriesDetails;
+     }
+   /// \brief This function will add the following DICOM tag as being part of a
+   /// 'fake' uid. This is usefull when the Serie UID is not enough to disseminate
+   /// into multiple sub serie when needed:
+   /// 0020 0011 Series Number
+   /// 0018 0024 Sequence Name
+   /// 0018 0050 Slice Thickness
+   /// 0028 0010 Rows
+   /// 0028 0011 Columns
+   void CreateDefaultUniqueSeriesIdentifier();
+
    void AddSeriesDetail(uint16_t group, uint16_t elem, bool convert);
-   
-   std::string CreateUniqueSeriesIdentifier( File * inFile );
-   
+
    std::string CreateUserDefinedFileIdentifier( File * inFile );
+
+   /// \brief Create a string that uniquely identifies a series.   By default
+   //         uses the SeriesUID.   If UseSeriesDetails(true) has been called,
+   //         then additional identifying information is used.
+   std::string CreateUniqueSeriesIdentifier( File * inFile );
  
 /**
  * \brief Sets the LoadMode as a boolean string. 
@@ -144,7 +169,7 @@ public:
    XCoherentFileSetmap SplitOnOrientation(FileList *fileSet); 
    XCoherentFileSetmap SplitOnPosition(FileList *fileSet); 
    XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
-                                               uint16_t group, uint16_t elem);
+                                               uint16_t group, uint16_t element);
 protected :
    SerieHelper();
    
@@ -164,11 +189,13 @@ private:
    
    SingleSerieUIDFileSetmap SingleSerieUIDFileSetHT;
    SingleSerieUIDFileSetmap::iterator ItFileSetHt;
-   
+
+#ifndef GDCM_LEGACY_REMOVE
    typedef std::pair<TagKey, std::string> Rule;
    typedef std::vector<Rule> SerieRestrictions;
    SerieRestrictions Restrictions;
-   
+#endif
+
    // New style for (extented) Rules
    typedef struct {
       uint16_t group;
@@ -178,7 +205,8 @@ private:
    } ExRule;
    typedef std::vector<ExRule> SerieExRestrictions;
    SerieExRestrictions ExRestrictions;
-   
+   SerieExRestrictions ExRefine;
+
    typedef struct {
       uint16_t group;
       uint16_t elem;
@@ -187,7 +215,6 @@ private:
    typedef std::vector<ExDetail> SeriesExDetails; 
    SeriesExDetails ExDetails;
     
-   bool m_UseSeriesDetails;
    
    /// \brief Bit string integer (each one considered as a boolean)
    ///        Bit 0 : Skip Sequences,    if possible
@@ -201,9 +228,11 @@ private:
 
    /// \brief If user knows more about his images than gdcm does,
    ///        he may supply his own comparison function.
-    BOOL_FUNCTION_PFILE_PFILE_POINTER UserLessThanFunction;
+   BOOL_FUNCTION_PFILE_PFILE_POINTER UserLessThanFunction;
 
-    void Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *file2) );
+   void Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *file2) );
+
+   bool m_UseSeriesDetails;
 };
 
 } // end namespace gdcm

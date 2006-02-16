@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/05 23:13:36 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,13 +25,12 @@
 
 #include <math.h>
 #include <vector>
-#include <map>
 #include <algorithm>
+#include <map>
 #include <stdio.h>  //for sscanf
 
-namespace gdcm 
+namespace gdcm
 {
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -75,6 +74,8 @@ void SerieHelper::ClearAll()
       delete l;     // remove the container
       l = GetNextSingleSerieUIDFileSet();
    }
+   // Need to clear that too:
+   SingleSerieUIDFileSetHT.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -96,48 +97,7 @@ void SerieHelper::AddFileName(std::string const &filename)
 
    if ( header->IsReadable() )
    {
-      int allrules = 1;
-      // First step : the user defined a set of rules for the DICOM file
-      // he is looking for.
-      // Make sure the file corresponds to his set of rules:
-
-      std::string s;
-      for(SerieExRestrictions::iterator it2 = ExRestrictions.begin();
-          it2 != ExRestrictions.end();
-          ++it2)
-      {
-         const ExRule &r = *it2;
-         s = header->GetEntryString( r.group, r.elem );
-         if ( !Util::CompareDicomString(s, r.value.c_str(), r.op) )
-         {
-           // Argh ! This rule is unmatched; let's just quit
-
-           allrules = 0;
-           break;
-         }
-      }
-
-      if ( allrules ) // all rules are respected:
-      {
-         // Allright! we have a found a DICOM that matches the user expectation. 
-         // Let's add it!
-
-         // 0020 000e UI REL Series Instance UID
-         const std::string &uid = header->GetEntryString(0x0020, 0x000e);
-         // if uid == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
-         // no need here to do anything special
-
-
-         if ( SingleSerieUIDFileSetHT.count(uid) == 0 )
-         {
-            gdcmDebugMacro(" New Serie UID :[" << uid << "]");
-            // create a std::list in 'uid' position
-            SingleSerieUIDFileSetHT[uid] = new FileList;
-         }
-         // Current Serie UID and DICOM header seems to match; add the file:
-         SingleSerieUIDFileSetHT[uid]->push_back( header );
-      }
-      else
+      if ( !AddFile( header ) )
       {
          // at least one rule was unmatched we need to deallocate the file:
          header->Delete();
@@ -167,45 +127,55 @@ void SerieHelper::AddFileName(std::string const &filename)
  *           *no* coherence check is performed, but those specified
  *           by SerieHelper::AddRestriction()
  * @param   header gdcm::File* of the file to deal with
+ * @return  true if file was added, false if file was rejected
  */
-void SerieHelper::AddGdcmFile(File *header)
+bool SerieHelper::AddFile(File *header)
 {
-      int allrules = 1;
-      // First step the user has defined a set of rules for the DICOM 
-      // he is looking for.
-      // make sure the file correspond to his set of rules:
-      for(SerieRestrictions::iterator it =  Restrictions.begin();
-                                      it != Restrictions.end();
-                                    ++it)
-      {
-         const Rule &r = *it;
-         const std::string s;// = header->GetEntryString( r.first );
-         if ( !Util::DicomStringEqual(s, r.second.c_str()) )
-         {
-           // Argh ! This rule is unmatch let's just quit
-           allrules = 0;
-           break;
-         }
-      }
-      if ( allrules ) // all rules are respected:
-      {
-         // Allright ! we have a found a DICOM that match the user expectation. 
-         // Let's add it !
+   int allrules = 1;
+   // First step the user has defined a set of rules for the DICOM 
+   // he is looking for.
+   // make sure the file correspond to his set of rules:
 
-         const std::string &uid = "0";
-         // Serie UID of the gdcm::File* may be different.
-         // User is supposed to know what he wants
-
-         if ( SingleSerieUIDFileSetHT.count(uid) == 0 )
-         {
-            gdcmDebugMacro(" New Serie UID :[" << uid << "]");
-            // create a std::list in 'uid' position
-            SingleSerieUIDFileSetHT[uid] = new FileList;
-         }
-         // Current Serie UID and DICOM header seems to match; add the file:
-         SingleSerieUIDFileSetHT[uid]->push_back( header );
+   std::string s;
+   for(SerieExRestrictions::iterator it2 = ExRestrictions.begin();
+     it2 != ExRestrictions.end();
+     ++it2)
+   {
+      const ExRule &r = *it2;
+      s = header->GetEntryString( r.group, r.elem );
+      if ( !Util::CompareDicomString(s, r.value.c_str(), r.op) )
+      {
+         // Argh ! This rule is unmatched; let's just quit
+         allrules = 0;
+         break;
       }
-         // Even if a rule was unmatch we don't deallocate the gdcm::File:
+   }
+
+   if ( allrules ) // all rules are respected:
+   {
+      // Allright! we have a found a DICOM that matches the user expectation. 
+      // Let's add it to the specific 'id' which by default is uid (Serie UID)
+      // but can be `refined` by user with more paramater (see AddRestriction(g,e))
+ 
+      std::string id = CreateUniqueSeriesIdentifier( header );
+      // if id == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
+      // no need here to do anything special
+ 
+      if ( SingleSerieUIDFileSetHT.count(id) == 0 )
+      {
+         gdcmDebugMacro(" New Serie UID :[" << id << "]");
+         // create a std::list in 'id' position
+         SingleSerieUIDFileSetHT[id] = new FileList;
+      }
+      // Current Serie UID and DICOM header seems to match add the file:
+      SingleSerieUIDFileSetHT[id]->push_back( header );
+   }
+   else
+   {
+      // one rule not matched, tell user:
+      return false;
+   }
+   return true;
 }
 
 /**
@@ -231,29 +201,35 @@ void SerieHelper::AddRestriction(TagKey const &key,
    ExRestrictions.push_back( r ); 
 }
 
+void SerieHelper::AddRestriction(TagKey const &key)
+{
+  ExRule r;
+  r.group = key[0];
+  r.elem  = key[1];
+  ExRefine.push_back( r );
+}
+
+#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief add a rule for restricting a DICOM file to be in the serie we are
- * trying to find. For example you can select only the DICOM file from a
+ * trying to find. For example you can select only the DICOM files from a
  * directory which would have a particular EchoTime==4.0.
  * This method is a user level, value is not required to be formatted as a DICOM
  * string
- * \todo find a trick to allow user if he wants the Rectrictions to be *ored*
- *       (and not only *anded*)
  * @param   group tag group number we want restrict on a given value
  * @param   elem  tag element number we want restrict on a given value 
  * @param value value to be checked to exclude File
  * @param op  operator we want to use to check
+ * @deprecated use : AddRestriction(TagKey const &key, 
+ *                                 std::string const &value, int op);
  */
 void SerieHelper::AddRestriction(uint16_t group, uint16_t elem, 
                                  std::string const &value, int op)
 {
-   ExRule r;
-   r.group = group;
-   r.elem  = elem;
-   r.value = value;
-   r.op    = op;
-   ExRestrictions.push_back( r ); 
+  TagKey t(group, elem);
+  AddRestriction(t, value, op);
 }
+#endif
 
 /**
  * \brief add an extra  'SerieDetail' for building a 'Serie Identifier'
@@ -346,13 +322,17 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
          return false;
       if ( (*it)->IsSignedPixelData() != signedPixelData )
          return false;
-      // probabely more is to be checked (?)      
+      // probabely more is to be checked (?)
    }
    return true;
 }
 
 #ifndef GDCM_LEGACY_REMOVE
-
+/**
+ * \brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
+ *          Warning : 'coherent' means here they have the same Serie UID
+ * @return  The first FileList if found, otherwhise NULL
+ */
 FileList *SerieHelper::GetFirstCoherentFileList()
 {
    ItFileSetHt = SingleSerieUIDFileSetHT.begin();
@@ -361,7 +341,12 @@ FileList *SerieHelper::GetFirstCoherentFileList()
    return NULL;
 }
 
-
+/**
+ * \brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
+ *          Warning : 'coherent' means here they have the same Serie UID
+ * \note : meaningfull only if GetFirstCoherentFileList() already called 
+ * @return  The next FileList if found, otherwhise NULL
+ */
 FileList *SerieHelper::GetNextCoherentFileList()
 {
    gdcmAssertMacro (ItFileSetHt != SingleSerieUIDFileSetHT.end());
@@ -372,7 +357,12 @@ FileList *SerieHelper::GetNextCoherentFileList()
    return NULL;
 }
 
-
+/**
+ * \brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
+  *          Warning : 'coherent' means here they have the same Serie UID
+ * @param SerieUID SerieUID
+ * \return  pointer to the FileList if found, otherwhise NULL
+ */
 FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {
    if ( SingleSerieUIDFileSetHT.count(SerieUID) == 0 )
@@ -435,9 +425,9 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
    if (nb == 0 )
       return CoherentFileSet;
    float iop[6];
-
    std::string strOrient;
-   std::ostringstream ossOrient;   
+   std::ostringstream ossOrient;
+
    FileList::const_iterator it = fileSet->begin();
    it ++;
    for ( ;
@@ -459,8 +449,6 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
       }      
       strOrient = ossOrient.str();
       ossOrient.str("");
-      // FIXME : is it a 'cleaner' way to initialize an ostringstream? 
-
       if ( CoherentFileSet.count(strOrient) == 0 )
       {
          gdcmDebugMacro(" New Orientation :[" << strOrient << "]");
@@ -469,7 +457,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
       }
       // Current Orientation and DICOM header match; add the file:
       CoherentFileSet[strOrient]->push_back( (*it) );
-   } 
+   }
    return CoherentFileSet;
 }
 
@@ -533,7 +521,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
       }      
       strPosition = ossPosition.str();
       ossPosition.str("");
-            
+
       if ( CoherentFileSet.count(strPosition) == 0 )
       {
          gdcmDebugMacro(" New Position :[" << strPosition << "]");
@@ -556,7 +544,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
  */
 
 XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet, 
-                                               uint16_t group, uint16_t elem)
+                                               uint16_t group, uint16_t element)
 {
    XCoherentFileSetmap CoherentFileSet;
 
@@ -576,7 +564,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       // 0020,0032 : Image Position Patient
       // 0020,0030 : Image Position (RET)
 
-      strTagValue = (*it)->GetEntryString(group,elem);
+      strTagValue = (*it)->GetEntryString(group,element);
       
       if ( CoherentFileSet.count(strTagValue) == 0 )
       {
@@ -656,7 +644,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          ipp[0] = (*it)->GetXOrigin();
          ipp[1] = (*it)->GetYOrigin();
          ipp[2] = (*it)->GetZOrigin();
-  
+
          dist = 0;
          for ( int i = 0; i < 3; ++i )
          {
@@ -668,7 +656,6 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          min = (min < dist) ? min : dist;
          max = (max > dist) ? max : dist;
       }
-
    }
 
    // Find out if min/max are coherent
@@ -680,33 +667,34 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    }
 
    // Check to see if image shares a common position
-    bool ok = true;
-    for (std::multimap<double, File *>::iterator it2 = distmultimap.begin();
-                                                 it2 != distmultimap.end();
-                                                 ++it2)
-    {
-       if (distmultimap.count((*it2).first) != 1)
-       {
-          gdcmErrorMacro("File: "
-               << ((*it2).second->GetFileName())
-               << " Distance: "
-               << (*it2).first
-               << " position is not unique");
-          ok = false;
-       } 
-    }
-    if (!ok)
-    {
-       return false;
-    }
-  
+   bool ok = true;
+   for (std::multimap<double, File *>::iterator it2 = distmultimap.begin();
+        it2 != distmultimap.end();
+        ++it2)
+   {
+      if (distmultimap.count((*it2).first) != 1)
+      {
+         gdcmErrorMacro("File: "
+              << ((*it2).second->GetFileName())
+              << " Distance: "
+              << (*it2).first
+              << " position is not unique");
+
+         ok = false;
+      }
+   }
+   if (!ok)
+   {
+      return false;
+   }
+
    fileList->clear();  // doesn't delete list elements, only nodes
 
    if (DirectOrder)
    {  
       for (std::multimap<double, File *>::iterator it3 = distmultimap.begin();
-                                                   it3 != distmultimap.end();
-                                                 ++it3)
+           it3 != distmultimap.end();
+           ++it3)
       {
          fileList->push_back( (*it3).second );
       }
@@ -720,7 +708,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          it4--;
          fileList->push_back( (*it4).second );
       } while (it4 != distmultimap.begin() );
-   } 
+   }
 
    distmultimap.clear();
 
@@ -742,7 +730,7 @@ bool SerieHelper::ImageNumberGreaterThan(File *file1, File *file2)
  * \note Works only on bona fide files  (i.e image number is a character string
  *                                      corresponding to an integer)
  *             within a bona fide serie (i.e image numbers are consecutive)
- * @param fileList  File set (same Serie UID) to sort 
+ * @param fileList File set (same Serie UID) to sort 
  * @return false if non bona fide stuff encountered
  */
 bool SerieHelper::ImageNumberOrdering(FileList *fileList) 
@@ -767,14 +755,10 @@ bool SerieHelper::ImageNumberOrdering(FileList *fileList)
                         << " No ImageNumberOrdering sort performed.");
       return false;
    }
-   if (DirectOrder) 
-        Sort(fileList,SerieHelper::ImageNumberLessThan);
-//      std::sort(fileList->begin(), fileList->end(), 
-//                                          SerieHelper::ImageNumberLessThan );
+   if (DirectOrder)
+      Sort(fileList,SerieHelper::ImageNumberLessThan);
    else
-        Sort(fileList,SerieHelper::ImageNumberGreaterThan);
-//      std::sort(fileList->begin(), fileList->end(),
-//                                          SerieHelper::ImageNumberGreaterThan );
+      Sort(fileList,SerieHelper::ImageNumberGreaterThan);
 
    return true;
 }
@@ -796,13 +780,9 @@ bool SerieHelper::FileNameGreaterThan(File *file1, File *file2)
 bool SerieHelper::FileNameOrdering(FileList *fileList)
 {
    if (DirectOrder) 
-        Sort(fileList,SerieHelper::FileNameLessThan);
-//      std::sort(fileList->begin(), fileList->end(), 
-//                                       SerieHelper::FileNameLessThan);
+      Sort(fileList,SerieHelper::FileNameLessThan);
    else
-        Sort(fileList,SerieHelper::FileNameGreaterThan);   
-//      std::sort(fileList->begin(), fileList->end(), 
-//                                       SerieHelper::FileNameGreaterThan);
+      Sort(fileList,SerieHelper::FileNameGreaterThan);   
 
    return true;
 }
@@ -814,14 +794,70 @@ bool SerieHelper::FileNameOrdering(FileList *fileList)
  */
 bool SerieHelper::UserOrdering(FileList *fileList)
 {
-        Sort(fileList,SerieHelper::UserLessThanFunction);   
-//   std::sort(fileList->begin(), fileList->end(), 
-//                                             SerieHelper::UserLessThanFunction);
+   Sort(fileList,SerieHelper::UserLessThanFunction);   
    if (!DirectOrder) 
    {
       std::reverse(fileList->begin(), fileList->end());
    }
    return true;
+}
+
+//-----------------------------------------------------------------------------
+// Print
+/**
+ * \brief   Canonical printer.
+ */
+void SerieHelper::Print(std::ostream &os, std::string const &indent)
+{
+   // For all the Coherent File lists of the gdcm::Serie
+   SingleSerieUIDFileSetmap::iterator itl = SingleSerieUIDFileSetHT.begin();
+   if ( itl == SingleSerieUIDFileSetHT.end() )
+   {
+      gdcmWarningMacro( "No SingleSerieUID File set found" );
+      return;
+   }
+   while (itl != SingleSerieUIDFileSetHT.end())
+   { 
+      os << "Serie UID :[" << itl->first << "]" << std::endl;
+
+      // For all the files of a SingleSerieUID File set
+      for (FileList::iterator it =  (itl->second)->begin();
+                                  it != (itl->second)->end(); 
+                                ++it)
+      {
+         os << indent << " --- " << (*it)->GetFileName() << std::endl;
+      }
+      ++itl;
+   }
+}
+
+void SerieHelper::CreateDefaultUniqueSeriesIdentifier()
+{
+   // If the user requests, additional information can be appended
+   // to the SeriesUID to further differentiate volumes in the DICOM
+   // objects being processed.
+ 
+   // 0020 0011 Series Number
+   // A scout scan prior to a CT volume scan can share the same
+   //   SeriesUID, but they will sometimes have a different Series Number
+   AddRestriction( TagKey(0x0020, 0x0011) );
+   // 0018 0024 Sequence Name
+   // For T1-map and phase-contrast MRA, the different flip angles and
+   //   directions are only distinguished by the Sequence Name
+   AddRestriction( TagKey(0x0018, 0x0024) );
+   // 0018 0050 Slice Thickness
+   // On some CT systems, scout scans and subsequence volume scans will
+   //   have the same SeriesUID and Series Number - YET the slice 
+   //   thickness will differ from the scout slice and the volume slices.
+   AddRestriction( TagKey(0x0018, 0x0050));
+   // 0028 0010 Rows
+   // If the 2D images in a sequence don't have the same number of rows,
+   // then it is difficult to reconstruct them into a 3D volume.
+   AddRestriction( TagKey(0x0028, 0x0010));
+   // 0028 0011 Columns
+   // If the 2D images in a sequence don't have the same number of columns,
+   // then it is difficult to reconstruct them into a 3D volume.
+   AddRestriction( TagKey(0x0028, 0x0011));
 }
 
 /**
@@ -841,110 +877,49 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
 {
    if( inFile->IsReadable() )
    {
-     // 0020 000e UI REL Series Instance UID
-    std::string uid =  inFile->GetEntryString (0x0020, 0x000e);
+    // 0020 000e UI REL Series Instance UID
+    std::string uid = inFile->GetEntryString (0x0020, 0x000e);
     std::string id = uid.c_str();
     if(m_UseSeriesDetails)
-    {
-    // If the user requests, additional information can be appended
-    // to the SeriesUID to further differentiate volumes in the DICOM
-    // objects being processed.
- 
-   // 0020 0011 Series Number
-   // A scout scan prior to a CT volume scan can share the same
-   // SeriesUID, but they will sometimes have a different Series Number
-       std::string sNum = inFile->GetEntryString(0x0020, 0x0011);
-       if( sNum == gdcm::GDCM_UNFOUND )
-       {
-           sNum = "";
-       }
- // 0018 0024 Sequence Name
- // For T1-map and phase-contrast MRA, the different flip angles and
- // directions are only distinguished by the Sequence Name
-         std::string sName = inFile->GetEntryString(0x0018, 0x0024);
-         if( sName == gdcm::GDCM_UNFOUND )
-         {
-           sName = "";
-         }
- 
-  // You can think on checking Image Orientation (0020,0037), as well.
-  
-
-  // 0018 0050 Slice Thickness
-  // On some CT systems, scout scans and subsequence volume scans will
-  // have the same SeriesUID and Series Number - YET the slice
-  // thickness will differ from the scout slice and the volume slices.
-         std::string sThick = inFile->GetEntryString (0x0018, 0x0050);
-         if( sThick == gdcm::GDCM_UNFOUND )
-         {
-           sThick = "";
-         }
-  // 0028 0010 Rows
-  // If the 2D images in a sequence don't have the same number of rows,
-  // then it is difficult to reconstruct them into a 3D volume.
-         std::string sRows = inFile->GetEntryString (0x0028, 0x0010);
-         if( sRows == gdcm::GDCM_UNFOUND )
-         {
-           sRows = "";
-         }
-  // 0028 0011 Columns
-  // If the 2D images in a sequence don't have the same number of columns,
-  // then it is difficult to reconstruct them into a 3D volume.
-         std::string sColumns = inFile->GetEntryString (0x0028, 0x0011);
-         if( sColumns == gdcm::GDCM_UNFOUND )
-         {
-           sColumns = "";
-         }
-
-  // Concat the new info
-         std::string num = sNum.c_str();
-         num += sName.c_str();
-         num += sThick.c_str();
-         num += sRows.c_str();
-         num += sColumns.c_str();
- 
-  // Add a loop, here, to deal with any extra user supplied tag.
-  //      We allow user to add his own critierions 
-  //      (he knows more than we do about his images!)
-  //      ex : in tagging series, the only pertinent tag is
-  //          0018|1312 [In-plane Phase Encoding Direction] values : ROW/COLUMN
-  
-      std::string s; 
-      for(SeriesExDetails::iterator it2 = ExDetails.begin();
-          it2 != ExDetails.end();
-          ++it2)
       {
-         const ExDetail &r = *it2;
-         s = inFile->GetEntryString( r.group, r.elem );      
-         num += s.c_str();
+      for(SerieExRestrictions::iterator it2 = ExRefine.begin();
+        it2 != ExRefine.end();
+        ++it2)
+        {
+        const ExRule &r = *it2;
+        std::string s = inFile->GetEntryString( r.group, r.elem );
+        if( s == gdcm::GDCM_UNFOUND )
+          {
+          s = "";
+          }
+        if( id == uid && !s.empty() )
+          {
+          id += "."; // add separator
+          }
+        id += s;
+        }
       }
-   
-  // Append the new info to the SeriesUID
-         id += ".";
-         id += num.c_str();
-       }
-   
-  // Eliminate non-alphanum characters, including whitespace...
-  // that may have been introduced by concats.
-       for(unsigned int i=0; i<id.size(); i++)
-       {
-         while(i<id.size()
-               && !( id[i] == '.' || id[i] == '-' || id[i] == '_'
-                    || (id[i] >= 'a' && id[i] <= 'z')
-                    || (id[i] >= '0' && id[i] <= '9')
-                    || (id[i] >= 'A' && id[i] <= 'Z')))
-         {
-           id.erase(i, 1);
-         }
-       }
-       return id;
-     }
-     else // Could not open inFile
-     {
-       gdcmWarningMacro("Could not parse series info.");
-       std::string id = gdcm::GDCM_UNFOUND;
-       return id;
-     }
+    // Eliminate non-alnum characters, including whitespace...
+    //   that may have been introduced by concats.
+    for(unsigned int i=0; i<id.size(); i++)
+      {
+      while(i<id.size() 
+        && !( id[i] == '.'
+          || (id[i] >= 'a' && id[i] <= 'z')
+          || (id[i] >= '0' && id[i] <= '9')
+          || (id[i] >= 'A' && id[i] <= 'Z')))
+        {
+        id.erase(i, 1);
+        }
+      }
+    return id;
+    }
+  else // Could not open inFile
+    {
+    gdcmWarningMacro("Could not parse series info.");
+    std::string id = gdcm::GDCM_UNFOUND;
+    return id;
+    }
 }
 
 /**
@@ -1004,34 +979,6 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
    }
    
    return id;             
-}
-//-----------------------------------------------------------------------------
-// Print
-/**
- * \brief   Canonical printer.
- */
-void SerieHelper::Print(std::ostream &os, std::string const &indent)
-{
-   // For all the Coherent File lists of the gdcm::Serie
-   SingleSerieUIDFileSetmap::iterator itl = SingleSerieUIDFileSetHT.begin();
-   if ( itl == SingleSerieUIDFileSetHT.end() )
-   {
-      gdcmWarningMacro( "No SingleSerieUID File set found" );
-      return;
-   }
-   while (itl != SingleSerieUIDFileSetHT.end())
-   { 
-      os << "Serie UID :[" << itl->first << "]" << std::endl;
-
-      // For all the files of a SingleSerieUID File set
-      for (FileList::iterator it =  (itl->second)->begin();
-                                  it != (itl->second)->end(); 
-                                ++it)
-      {
-         os << indent << " --- " << (*it)->GetFileName() << std::endl;
-      }
-      ++itl;
-   }
 }
 
 //-----------------------------------------------------------------------------

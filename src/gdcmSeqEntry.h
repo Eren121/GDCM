@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:47 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2006/02/16 20:06:15 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ public:
    void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
    uint32_t ComputeFullLength();
-     
+
    void AddSQItem(SQItem *it, int itemNumber);
    void ClearSQItem();
    SQItem *GetFirstSQItem();
@@ -60,7 +60,9 @@ public:
       
    /// Sets the delimitor mode
    void SetDelimitorMode(bool dm) { DelimitorMode = dm; }
+   /// Sets the Sequence Delimitation Item
    void SetDelimitationItem(DocEntry *e);
+
    /// Gets the Sequence Delimitation Item
    DocEntry *GetDelimitationItem() { return SeqTerm;}
 

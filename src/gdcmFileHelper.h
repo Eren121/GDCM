@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 13:42:19 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -220,7 +220,7 @@ private:
    // Write variables
    /// \brief (WMODE_RAW, WMODE_RGB)
    FileMode WriteMode;
-   
+
    /// \brief (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType WriteType;
    

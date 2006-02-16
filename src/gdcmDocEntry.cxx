@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:52:12 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,9 +71,9 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
-   
+
    ///\todo allow skipping Shadow groups 
-   
+ 
    VRKey vr       = GetVR();
    uint16_t elem  = GetElement();
    uint32_t lgth  = GetLength();
@@ -85,7 +85,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
      // we just *always* ignore spurious fffe|0000 tag !   
       return;
    }
- 
+
    //
    // ----------- Writes the common part
    //
@@ -101,10 +101,9 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // Dicom V3 group 0x0002 is *always* Explicit VR !
    if ( filetype == ExplicitVR || filetype == JPEG || group == 0x0002 )
    {
-
 // ----------- Writes the common part : the VR + the length 
   
-          // Special case of delimiters:
+      // Special case of delimiters:
       if (group == 0xfffe)
       {
          // Delimiters have NO Value Representation

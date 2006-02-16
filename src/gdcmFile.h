@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2005/12/21 14:52:13 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.124 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ public:
    static File *New() {return new File();}
 
    // Loading
-   //GDCM_LEGACY(bool Load( std::string const &filename ));
+   GDCM_LEGACY(bool Load( std::string const &filename ));
    bool Load(); 
    // Standard values and informations contained in the header
    bool IsReadable();
@@ -171,13 +171,12 @@ public:
    void AnonymizeNoLoad();
    /// Replace patient's own information by info from the Anonymization list
    bool AnonymizeFile();
-  
+
    bool Write(std::string fileName, FileType filetype);
 
-   
 protected:
    File();
-   ~File();
+   virtual ~File();
    /// \brief Protect the Writer from writing illegal groups
    bool MayIWrite(uint16_t group)
      { if (group < 8 &&  group !=2 ) return false; else return true; }

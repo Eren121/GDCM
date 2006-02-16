@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:01:34 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2006/02/16 20:06:14 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ bool PixelReadConvert::IsRawRGB()
  * \brief Gets various usefull informations from the file header
  * @param file gdcm::File pointer
  */
-void PixelReadConvert::GrabInformationsFromFile( File *file, 
+void PixelReadConvert::GrabInformationsFromFile( File *file,
                                                  FileHelper *fileHelper )
 {
    // Number of Bits Allocated for storing a Pixel is defaulted to 16
@@ -119,12 +119,12 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
    //PixelSize       = file->GetPixelSize();  Useless
    PixelSign       = file->IsSignedPixelData();
    SwapCode        = file->GetSwapCode();
- 
+
    IsPrivateGETransferSyntax = IsMPEG
              = IsJPEG2000 = IsJPEGLS = IsJPEGLossy  
              = IsJPEGLossless = IsRLELossless 
              = false;
-     
+
    if (! file->IsDicomV3() )  // Should be ACR-NEMA file
    {
       IsRaw = true;
@@ -289,7 +289,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       if ( PixelDataLength != RawSize )
       {
          gdcmWarningMacro( "Mismatch between PixelReadConvert : "
-                              << PixelDataLength << " and RawSize : " << RawSize );
+                            << PixelDataLength << " and RawSize : " << RawSize );
       }
       
       //todo : is it the right patch?
@@ -317,15 +317,6 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       if (remainingLength !=0 )
         fp->read( raw, remainingLength);
                  
-      //if ( PixelDataLength > RawSize )
-      //{
-      //   fp->read( (char*)Raw, RawSize); // Read all the frames with a single fread    
-      //}
-      //else
-      //{
-      //   fp->read( (char*)Raw, PixelDataLength); // Read all the frames with a single fread
-      //}
-
       if ( fp->fail() || fp->eof())
       {
          gdcmWarningMacro( "Reading of Raw pixel data failed." );
@@ -607,7 +598,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
  *         and
  *         - (0028,1101),(0028,1102),(0028,1102)
  *            xxx Palette Color Lookup Table Descriptor are found
- *          and 
+ *          and
  *         - (0028,1201),(0028,1202),(0028,1202)
  *           xxx Palette Color Lookup Table Data - are found
  * \warning does NOT deal with :
@@ -844,7 +835,7 @@ void PixelReadConvert::BuildLUTRGBA()
 void PixelReadConvert::ConvertSwapZone()
 {
    unsigned int i;
-   
+
    // If this file is 'ImplicitVR BigEndian PrivateGE Transfer Syntax', 
    // then the header is in little endian format and the pixel data is in 
    // big endian format.  When reading the header, GDCM has already established
