@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/02/16 21:27:41 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2006/02/21 15:55:41 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1612,6 +1612,9 @@ void FileHelper::CheckMandatoryElements()
       CheckMandatoryEntry(0x0020,0x0020,ori);
    else   
       CheckMandatoryEntry(0x0020,0x0020,"");
+
+   // Default Patient Position to HFS
+   CheckMandatoryEntry(0x0018,0x5100,"HFS");
 
    // Modality : if missing we set it to 'OTher'
    CheckMandatoryEntry(0x0008,0x0060,"OT");
