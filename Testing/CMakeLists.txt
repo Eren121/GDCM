@@ -145,8 +145,7 @@ SET(BLACK_LIST
   "CT_Phillips_JPEG2K_Decompr_Problem.dcm"
   #
   # ------------
-  #
-   
+  #  
   #Still cause troubles (see the .README.txt file for more details)  
   "MR_Philips_Intera_in_SQ_2001_e05f_item_wrong_lgt_use_NOSHADOWSEQ.dcm"  
   "MR_Philips_Intera_PrivateSequenceExplicitVR.dcm" 
