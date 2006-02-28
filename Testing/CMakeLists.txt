@@ -156,6 +156,11 @@ SET(BLACK_LIST
   #hexedit shows something *very* strange around offset 0x76e !
   #the images looks *over*corrupted (on disc, not from the manufacturer!)
   "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
+  
+  # Seems this one hangs on 64 bits processors ?!?
+  # I blacklist it untill the pb is solved.
+  # (to get some more green on the Dasboards)
+  "MR_Philips-Intera_BreaksNOSHADOW.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
