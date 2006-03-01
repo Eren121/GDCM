@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: BatchUncompress.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 10:21:37 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/03/01 09:51:56 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,6 +55,9 @@ int main(int argc, char *argv[])
     uint8_t *imageData = output->GetImageData();
 
     output->SetImageData( imageData, dataSize);
+    // lossy compression would be a pixel modification.
+    // uncompress is *not* 
+    fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);    
     output->WriteDcmExplVR( outputfilename );
 
     delete output;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:43 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006/03/01 09:51:56 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
    // Since we just ReWrite the image, we know no modification 
    // was performed on the pixels.
    // We don't want this image appears as a 'Secondary Captured image'
-   fh->SetKeepMediaStorageSOPClassUID(true);
+   fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
 
    switch (mode[0])
    {

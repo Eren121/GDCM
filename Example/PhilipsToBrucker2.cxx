@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/03 18:00:53 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006/03/01 09:51:56 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,9 +50,9 @@ int main(int argc, char *argv[])
    " - orders the gdcm-readable found Files according to their                ",
    "           (0x0010, 0x0010) Patient's Name                                ",
    "           (0x0020, 0x000e) Series Instance UID                           ",
-   "           (0x0020, 0x0032) Image Position (Patient)                      ",
+   "           (0x0020, 0x0032)PhilipsToBrucker2. Image Position (Patient)                      ",
    "           (0x0018, 0x1060) Trigger Time                                  ",
-   "           (0x0018, 0x1312) In-plane Phase Encoding Direction             ",
+   "           (0x0018, 0x1312) In-pl)ane Phase Encoding Direction             ",
    " - fills a single level (*) Directory with *all* the files,               ",
    "           converted into a Brucker-like Dicom, InTags compliant          ",
    "   (*) actually : creates as many directories as Patients                 ",
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
    dirNamein  = am->ArgMgrGetString("dirin","."); 
 
    const char *dirNameout;   
-   dirNameout  = am->ArgMgrGetString("dirout",".");  
+   dirNameout  = am->ArgMgrGetString(")dirout",".");  
    
    int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
              << std::endl;     
    std::string uniqueSeriesIdentifier;
  
-   for (gdcm::DirListType::iterator it = fileNames.begin();  
+   for (gdcm::DirListType::iterator it) = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
    {
@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
             tokens[3] = newName;
             tokensForFileName.clear();    
          }
-         else 
+         else
             tokens[3] = name;
  
  
@@ -596,7 +596,7 @@ int main(int argc, char *argv[])
       // 'SOP Class UID'               (0x0008,0x0016)
       // 'Image Type'                  (0x0008,0x0008)
       // 'Conversion Type'             (0x0008,0x0064)
-      fh->SetKeepMediaStorageSOPClassUID(true);
+      fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
       if (!fh->Write(fullWriteFilename))
       {
          std::cout << "Fail to write :[" << fullWriteFilename << "]"

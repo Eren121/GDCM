@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/02 11:26:02 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/03/01 09:51:56 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -138,8 +138,10 @@ int main(int argc, char *argv[])
    
    // Since we just Anonymized the file, we know no modification 
    // was performed on the pixels.
-   // We don't want this image appears as a 'Secondary Captured image'
-   fh->SetKeepMediaStorageSOPClassUID(true);
+   // The written image will not appear as a 'Secondary Captured image'
+   // nor as a DERIVED one  
+
+   fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
    
    fh->WriteDcmExplVR(outputFileName);
    std::cout <<"End Anonymize" << std::cout;

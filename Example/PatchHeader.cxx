@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PatchHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:42 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/03/01 09:51:56 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
 
       // 
       //      No need to load the pixels in memory.      
-   //      File will be overwritten
+      //      File will be overwritten
       // 
 
       // open the file
