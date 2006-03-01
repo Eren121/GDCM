@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/24 19:58:13 $
-  Version:   $Revision: 1.104 $
+  Date:      $Date: 2006/03/01 09:53:24 $
+  Version:   $Revision: 1.105 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,6 +126,24 @@ enum LodModeType
                                 // (*exclusive* from LD_NOSEQ and LD_NOSHADOW)
 };
 
+/// \brief Only user knows what kind of image he is going to write  !
+///
+/// -1) user created ex nihilo his own image and wants to write it as a Dicom image.
+///    USER_OWN_IMAGE
+/// -2) user modified the pixels of an existing image.
+///    FILTERED_IMAGE
+/// -3) user created a new image, using existing images (eg MIP, MPR, cartography image)
+///   CREATED_IMAGE
+/// -4) user anonymized an image without processing the pixels.
+///   ANONYMIZED_IMAGE
+enum ImageContentType
+{
+      USER_OWN_IMAGE,
+      FILTERED_IMAGE,
+      CREATED_IMAGE,      
+      UNMODIFIED_PIXELS_IMAGE            
+}; 
+  
 /**
  * \brief structure, for internal use only
  */  
