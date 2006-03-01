@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/07 12:37:19 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2006/03/01 09:29:29 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,13 +168,13 @@ void DataEntry::SetValue(const uint32_t &id, const double &val)
  * \brief returns, as a double (?!?) one of the values 
  *      (when entry is multivaluated), identified by its index.
  *      Returns 0.0 if index is wrong
- *     FIXME : warn the user there was a problem ! 
  * @param id id
  */
 double DataEntry::GetValue(const uint32_t &id) const
 {
    if( !BinArea )
    {
+   /// \todo warn the user there was a problem !
       gdcmErrorMacro("BinArea not set. Can't get the value");
       return 0.0;
    }
@@ -182,14 +182,17 @@ double DataEntry::GetValue(const uint32_t &id) const
    uint32_t count = GetValueCount();
    if( id > count )
    {
-      gdcmErrorMacro("Index (" << id << ")is greater than the data size");
+      gdcmErrorMacro("Index (" << id << ") is greater than the data size");
       return 0.0;
    }
 
-   // FIX the API : user *knows* that entry contains a US
-   //               and he receives a double ?!?
+   /// \todo FIX the API : user *knows* that entry contains a US
+   ///               and he receives a double ?!?
    
    const VRKey &vr = GetVR();
+   /// \todo FIX the API : user *knows* that entry contains a US,
+   ///       the method is supposed to return a double
+   ///       but sends a US ?!? 
    if( vr == "US" || vr == "SS" )
       return ((uint16_t *)BinArea)[id];
    else if( vr == "UL" || vr == "SL" )
@@ -200,6 +203,7 @@ double DataEntry::GetValue(const uint32_t &id) const
       return ((double *)BinArea)[id];
    else if( Global::GetVR()->IsVROfStringRepresentable(vr) )
    {
+      // this is for VR = "DS", ...
       if( GetLength() )
       {
          // Don't use std::string to accelerate processing
@@ -322,6 +326,32 @@ uint32_t DataEntry::GetValueCount( ) const
    }
    return GetLength();
 }
+
+/**
+ * \brief Gets a std::vector <double> holding the value(s) of a DS DataEntry
+ * @param valueVector std::vector <double> of value(s)
+ * \return false if VR not "DS" or DataEntry empty
+ */
+ bool DataEntry::GetDSValue(std::vector <double> &valueVector)
+ {
+    /// \todo rewrite the whole method, in order *not to use* std::string !
+    std::vector<std::string> tokens;
+    
+    if (GetVR() != "DS") // never trust a user !
+       return false;    
+       
+    Util::Tokenize ( GetString().c_str(), tokens, "\\" );
+        
+    int nbValues= tokens.size();
+    if (nbValues == 0)
+       return false;
+               
+    for (int loop=0; loop<nbValues; loop++) 
+       valueVector.push_back(atof(tokens[loop].c_str()));
+    
+    return true;  
+ }
+ 
 /**
  * \brief Sets the 'value' of a DataEntry, passed as a std::string
  * @param value string representation of the value to be set

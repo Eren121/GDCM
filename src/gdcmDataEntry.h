@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/20 09:17:25 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2006/03/01 09:29:29 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 
 #include "gdcmDocEntry.h"
 
+#include <vector> // for GetDSValue
 #include <iostream>
 
 namespace gdcm 
@@ -62,7 +63,7 @@ public:
 
    void SetValue(const uint32_t &id,const double &val);
    double GetValue(const uint32_t &id) const;
-   uint32_t GetValueCount(void) const;
+   uint32_t GetValueCount() const;
    bool IsValueCountValid() const;
 
    void SetString(std::string const &value);
@@ -120,14 +121,16 @@ public:
    static void SetMaxSizePrintEntry(const uint32_t &size) 
                                                  { MaxSizePrintEntry = size; }
 
+   bool GetDSValue(std::vector <double> &valueVector);
+
 protected:
    DataEntry(DictEntry *e);
    DataEntry(DocEntry *d); 
    ~DataEntry();
 
 // Methods :
-   void NewBinArea(void);
-   void DeleteBinArea(void);
+   void NewBinArea( );
+   void DeleteBinArea( );
 
 // Members :
    /// \brief memory area to hold 'non std::string' representable values 
