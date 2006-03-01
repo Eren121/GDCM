@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:53:24 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2006/03/01 15:32:52 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,8 +134,8 @@ enum LodModeType
 ///    FILTERED_IMAGE
 /// -3) user created a new image, using existing images (eg MIP, MPR, cartography image)
 ///   CREATED_IMAGE
-/// -4) user anonymized an image without processing the pixels.
-///   ANONYMIZED_IMAGE
+/// -4) user modified/added some tags *without processing* the pixels (anonymization...
+///   UNMODIFIED_PIXELS_IMAGE
 enum ImageContentType
 {
       USER_OWN_IMAGE,
