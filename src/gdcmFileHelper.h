@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2006/03/01 09:45:04 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,8 +50,7 @@ public:
       WMODE_RAW,
       WMODE_RGB
    };
-     
-public:
+
 /// \brief Constructs a FileHelper with a RefCounter
    static FileHelper *New() {return new FileHelper();}
 /// \brief Constructs a FileHelper with a RefCounter from a fileHelper  
@@ -148,13 +147,20 @@ public:
    bool WriteDcmExplVR(std::string const &fileName);
    bool WriteAcr      (std::string const &fileName);
    bool Write         (std::string const &fileName);
-   /// \brief if user knows he didn't modify the pixels (e.g. he just anonymized 
-   ///        the file), he is allowed to ask to keep the original
-   ///        'Media Storage SOP Class UID' and 'Image Type'   
-   void SetKeepMediaStorageSOPClassUID (bool v) 
-                              { KeepMediaStorageSOPClassUID = v; }
-   // no GetKeepMediaStorageSOPClassUID() method, on purpose!
+   
+/// \brief We have to deal with 4 *very* different cases :
+/// -1) user created ex nihilo his own image and wants to write it as a Dicom image.
+///    USER_OWN_IMAGE
+/// -2) user modified the pixels of an existing image.
+///    FILTERED_IMAGE
+/// -3) user created a new image, using existing images (eg MIP, MPR, cartography image)
+///   CREATED_IMAGE
+/// -4) user anonymized an image without processing the pixels.
+///   ANONYMIZED_IMAGE
 
+   void SetContentType (ImageContentType c) { ContentType = c; }
+   // no GetContentType() method, on purpose!
+   
    void CallStartMethod();
    void CallProgressMethod();
    void CallEndMethod();
@@ -232,10 +238,13 @@ private:
    /// See vtkgdcmSerieViewer for an example
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
    
-   /// \brief if user knows he didn't modify the pixels (e.g. he just 
-   /// anonymized the file), he is allowed to ask to keep the original
-   /// 'Media Storage SOP Class UID' and 'Image Type'  
-   bool KeepMediaStorageSOPClassUID;
+   /// \brief only user knows what he did before asking the image to be written
+   /// - he created ex nihilo his own image
+   /// - he just applied a mathematical process on the pixels
+   /// - he created a new image, using existing images (eg MIP, MPR,cartography)
+   /// - he anonymized and image (*no* modif on the pixels)
+   ImageContentType ContentType;
+
 };
 } // end namespace gdcm
 
