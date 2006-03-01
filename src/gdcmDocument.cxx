@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.342 $
+  Date:      $Date: 2006/03/01 10:15:12 $
+  Version:   $Revision: 1.343 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1056,8 +1056,18 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      << " at offset " << std::hex << "0x(" << offset << ")" ); 
    while (true)
    {
-   // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry
    
+   ///\todo FIXME : On 64 bits processors, tellg gives unexpected results after a while ?
+   ///              Probabely a bug in gdcm code somwhere (some memory erased ?)
+
+// Uncomment to track the bug
+/*   
+   if( Debug::GetDebugFlag() )   
+      std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) 
+                << std::hex << " 0x(" <<(long)(Fp->tellg()) <<  ")" << std::endl;
+*/
+
+   // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry   
       if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
          if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry, when no delim mode
          {
@@ -1512,7 +1522,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
      // Well ... group 0002 is always coded in 'Explicit VR Litle Endian'
      // even if Transfer Syntax is 'Implicit VR ...'
      // --> Except for 'Implicit VR Big Endian Transfer Syntax GE Private' 
-
+     //     where Group 0x0002 is *also* encoded in Implicit VR !
+      
       FixDocEntryFoundLength( entry, ReadInt32() );
       return;
    }
@@ -1676,17 +1687,21 @@ void Document::SkipToNextDocEntry(DocEntry *currentDocEntry)
  *          the parser went Jabberwocky) one can hope improving things by
  *          applying some heuristics.
  * @param   entry entry to check
- * @param   foundLength first assumption about length    
+ * @param   foundLength first assumption about length (before bug fix, or set to zero if =0xffffffff)    
  */
 void Document::FixDocEntryFoundLength(DocEntry *entry,
                                       uint32_t foundLength)
 {
    entry->SetReadLength( foundLength );// will be updated only if a bug is found
+   
    if ( foundLength == 0xffffffff)
    {
-      foundLength = 0;
+      //foundLength = 0;
+      //entry->SetLength(foundLength);
+      entry->SetLength(0);
+      return;  // return ASAP; don't waist time on useless tests
    }
-   
+      
    uint16_t gr   = entry->GetGroup();
    uint16_t elem = entry->GetElement(); 
      
@@ -1716,7 +1731,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    // Occurence of such images is quite low (unless one leaves close to a
    // 'Leonardo' source. Hence, one might consider commenting out the
    // following fix on efficiency reasons.
-   else if ( gr   == 0x0009 && ( elem == 0x1113 || elem == 0x1114 ) )
+   else if ( gr == 0x0009 && ( elem == 0x1113 || elem == 0x1114 ) )
    {
       foundLength = 4;
       entry->SetReadLength(4); // a bug is to be fixed !
@@ -1735,7 +1750,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      // According to the norm, fffe|0000 shouldn't exist. BUT the Philips
      // image gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm happens to
      // causes extra troubles...
-     if ( entry->GetElement() != 0x0000 )
+     if ( elem != 0x0000 )
      {
         foundLength = 0;
      }

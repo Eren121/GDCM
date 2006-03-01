@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.315 $
+  Date:      $Date: 2006/03/01 10:15:12 $
+  Version:   $Revision: 1.316 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1192,7 +1192,7 @@ float File::GetRescaleSlope()
 /**
  * \brief This function is intended to user who doesn't want 
  *   to have to manage a LUT and expects to get an RBG Pixel image
- *   (or a monochrome one ...) 
+ *   (or a monochrome one, if no LUT found ...) 
  * \warning to be used with GetImagePixels()
  * @return 1 if Gray level, 3 if Color (RGB, YBR, *or PALETTE COLOR*)
  */
