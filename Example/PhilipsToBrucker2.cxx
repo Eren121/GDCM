@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:51:56 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2006/03/02 17:12:19 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
    dirNamein  = am->ArgMgrGetString("dirin","."); 
 
    const char *dirNameout;   
-   dirNameout  = am->ArgMgrGetString(")dirout",".");  
+   dirNameout  = am->ArgMgrGetString("dirout",".");  
    
    int loadMode = gdcm::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
