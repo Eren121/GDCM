@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 10:15:12 $
-  Version:   $Revision: 1.343 $
+  Date:      $Date: 2006/03/10 10:52:10 $
+  Version:   $Revision: 1.344 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1298,12 +1298,14 @@ void Document::ParseSQ( SeqEntry *seqEntry,
             break;
          }
       }
-      if ( !delim_mode ) // andthen doesn't exist in C++ :-(
+      else // ! delim_mode
+      {
          if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per SQItem when no delim mode
          {
             newDocEntry->Delete();
             break;
          }
+      }
       // create the current SQItem
       SQItem *itemSQ = SQItem::New( seqEntry->GetDepthLevel() );
       unsigned int l = newDocEntry->GetReadLength();
@@ -1316,16 +1318,12 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       {
          dlm_mod = false;
       }
-
-      // remove fff0,e000, created out of the SQItem
-      
-      //Fp->seekg(offsetStartCurrentSQItem, std::ios::beg); //JPRx
-      
+            
       // fill up the current SQItem, starting at the beginning of fff0,e000
-
+      
+      Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);        // Once per SQItem
       ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
-
-      offsetStartCurrentSQItem = Fp->tellg();  // Once per SQItem
+      offsetStartCurrentSQItem = Fp->tellg();                    // Once per SQItem
  
       seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
       itemSQ->Delete();
@@ -2077,7 +2075,7 @@ DocEntry *Document::ReadNextDocEntry()
       // header parsing has to be considered as finished.
       return 0;
    }
-
+   
    // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
    {
@@ -2100,7 +2098,7 @@ DocEntry *Document::ReadNextDocEntry()
       }
       // Commented out in order not to generate 'Shadow Groups' where some 
       // Data Elements are Explicit VR and some other ones Implicit VR
-      // (Stupid MatLab DICOM Reader couln't read gdcm-written images)
+      // (Stupid MatLab DICOM Reader couldn't read gdcm-written images)
       /*
       else if (CurrentGroup%2 == 1 &&  
                                (CurrentElem >= 0x0010 && CurrentElem <=0x00ff ))
