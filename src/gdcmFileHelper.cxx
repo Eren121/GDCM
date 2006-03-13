@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/03/01 09:45:04 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2006/03/13 14:44:07 $
+  Version:   $Revision: 1.97 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,13 +26,14 @@
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmDataEntry.h"
+#include "gdcmDocEntry.h"
 #include "gdcmFile.h"
 #include "gdcmPixelReadConvert.h"
 #include "gdcmPixelWriteConvert.h"
 #include "gdcmDocEntryArchive.h"
 #include "gdcmDictSet.h"
 #include "gdcmOrientation.h"
-
+ 
 #if defined(__BORLANDC__)
    #include <mem.h> // for memset
 #endif 
@@ -73,7 +74,7 @@ fh->SetImageData( userPixels, userPixelsLength);
 fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
                      // (WriteMode is set)
  
-fh->SetWriteTypeToDcmExpl(); // he wants Explicit Value Representation
+fh->SetWriteTypeToDcmExpl();  // he wants Explicit Value Representation
                               // Little Endian is the default
                               // no other value is allowed
                                 (-->SetWriteType(ExplicitVR);)
@@ -660,15 +661,44 @@ bool FileHelper::WriteAcr (std::string const &fileName)
  */
 bool FileHelper::Write(std::string const &fileName)
 {
+   bool flag = false;
+   DocEntry *e;   
    switch(WriteType)
    {
       case ImplicitVR:
          SetWriteFileTypeToImplicitVR();
          break;
+ 
       case Unknown:  // should never happen; ExplicitVR is the default value
       case ExplicitVR:
-         SetWriteFileTypeToExplicitVR();
+      
+   // User should ask gdcm to write an image in Explicit VR mode
+   // only when he is sure *all* the VR of *all* the DataElements is known.
+   // i.e : when there are *only* Public Groups
+   // or *all* the Shadow Groups are fully described in the relevant Shadow
+   // Dictionnary
+   // Let's just *dream* about it; *never* trust a user !
+   // We turn to Implicit VR if at least the VR of one element is unknown.
+   
+         e = FileInternal->GetFirstEntry();
+         while (e != 0)
+         {
+            if (e->GetVR() == "  ")
+            {
+               SetWriteTypeToDcmImplVR();
+               SetWriteFileTypeToImplicitVR();
+               flag = true;
+               break;         
+            } 
+            e = FileInternal->GetNextEntry();
+         }        
+
+         if (!flag)
+         {
+            SetWriteFileTypeToExplicitVR();
+         }
          break;
+ 
       case ACR:
       case ACR_LIBIDO:
       // NOTHING is done here just for LibIDO.
@@ -682,10 +712,13 @@ bool FileHelper::Write(std::string const &fileName)
          SetWriteFileTypeToACR();
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
+ 
+      /// \todo FIXME : JPEG may be either ExplicitVR or ImplicitVR
       case JPEG:
          SetWriteFileTypeToJPEG();
          break;
    }
+   
    CheckMandatoryElements();
 
    // --------------------------------------------------------------
@@ -1023,7 +1056,6 @@ void FileHelper::SetWriteFileTypeToExplicitVR()
 
    DataEntry *tss = CopyDataEntry(0x0002,0x0010);
    tss->SetString(ts);
-
    Archive->Push(tss);
    tss->Delete();
 }
@@ -1038,7 +1070,6 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
 
    DataEntry *tss = CopyDataEntry(0x0002,0x0010);
    tss->SetString(ts);
-
    Archive->Push(tss);
    tss->Delete();
 }
@@ -1635,10 +1666,10 @@ void FileHelper::CheckMandatoryElements()
    // Referring Physician's Name :'type 2' entry -> must exist, value not mandatory
    CheckMandatoryEntry(0x0008,0x0090,"");
 
+ /*
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
    
- /*
   GroupHT grHT;
   DocEntry *d = FileInternal->GetFirstEntry();
   while(d)
@@ -1652,7 +1683,8 @@ void FileHelper::CheckMandatoryElements()
       CheckMandatoryEntry(it->first, 0x0000, "0"); 
   }    
   // Third stage : update all 'zero level' groups length
-*/   
+*/ 
+
 } 
 
 void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value)

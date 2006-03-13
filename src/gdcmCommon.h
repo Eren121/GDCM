@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 15:32:52 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2006/03/13 14:44:07 $
+  Version:   $Revision: 1.107 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -91,6 +91,8 @@ enum FileType {
    ImplicitVR,
    ACR,
    ACR_LIBIDO,
+   /// \todo FIXME : an encapsulated JPEG file may be 
+   ///              either ExplicitVR or ImplicitVR, right?
    JPEG
 };
 
