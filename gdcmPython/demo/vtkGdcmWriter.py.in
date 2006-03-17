@@ -51,7 +51,7 @@ viewer.SetColorLevel(0.5 * (rng[1] + rng[0]))
 dim = reader.GetOutput().GetDimensions()
 viewer.SetSize(dim[0],dim[1])
 if(dim[2] != 1):
-   # For multifame dicom, take a snapshot of the center slice (+/- 1)
+   # For multiframe dicom, take a snapshot of the center slice (+/- 1)
    viewer.SetZSlice(dim[2] / 2)
 else:
    viewer.SetZSlice(0)

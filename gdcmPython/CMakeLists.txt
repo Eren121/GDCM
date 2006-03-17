@@ -29,6 +29,11 @@ SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES CPLUSPLUS ON)
 # BUG: This is only needed with cmake <= 2.0.5
 SET_SOURCE_FILES_PROPERTIES(gdcm.i PROPERTIES SWIG_FLAGS "")
 # END OF BUG
+#FIXME :
+#where must we put the keyword SHARED 
+#- just like in ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmWrapSOURCES}) -
+#to allow use of a static/shared libray ?
+# JPRx
 SWIG_ADD_MODULE(gdcm python gdcm.i)  #gdcm_wrap.cxx, or gdcmPYTHON_wrap.cxx
 SWIG_LINK_LIBRARIES(gdcm gdcm ${PYTHON_LIBRARIES})
 
