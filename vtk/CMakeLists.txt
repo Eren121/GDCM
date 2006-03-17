@@ -78,9 +78,14 @@ TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer2
   vtkgdcm
   vtkRendering
 )
+
+
 #-----------------------------------------------------------------------------
 SET(vtkWriteDicom_SOURCES
   vtkWriteDicom.cxx
+)
+SET(vtkWriteDicomExtended_SOURCES
+  vtkWriteDicomExtended.cxx  
 )
 ADD_EXECUTABLE(vtkWriteDicom ${vtkWriteDicom_SOURCES})
 TARGET_LINK_LIBRARIES(vtkWriteDicom
@@ -88,7 +93,12 @@ TARGET_LINK_LIBRARIES(vtkWriteDicom
   vtkIO
   vtkRendering
 )
-
+ADD_EXECUTABLE(vtkWriteDicomExtended ${vtkWriteDicomExtended_SOURCES})
+TARGET_LINK_LIBRARIES(vtkWriteDicomExtended
+  vtkgdcm
+  vtkIO
+  vtkRendering
+)
 #-----------------------------------------------------------------------------
 # Install vtk header
 INSTALL_FILES(/include/gdcm FILES vtkGdcmReader.h)

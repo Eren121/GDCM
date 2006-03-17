@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/08/30 15:13:10 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2006/03/17 14:46:18 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,6 +117,12 @@ int main(int argc, char *argv[])
    }
    else
    {
+   
+   // For a single medical image, it would be more efficient to use
+   // 0028|1050 [DS] [Window Center]
+   // 0028|1051 [DS] [Window Width]
+   // but vtkgdcmReader doesn't know about them :-(
+
       vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
       viewer->SetColorLevel (0.5 * (range[1] + range[0]));
       viewer->SetColorWindow (range[1] - range[0]);

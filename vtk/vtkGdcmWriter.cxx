@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:37 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2006/03/17 14:46:18 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.26 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.27 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 //-----------------------------------------------------------------------------
@@ -41,6 +41,8 @@ vtkGdcmWriter::vtkGdcmWriter()
    this->LookupTable = NULL;
    this->FileDimensionality = 3;
    this->WriteType = VTK_GDCM_WRITE_TYPE_EXPLICIT_VR;
+   this->GdcmFile = 0;
+   this->ContentType = VTK_GDCM_WRITE_TYPE_USER_OWN_IMAGE;
 }
 
 vtkGdcmWriter::~vtkGdcmWriter()
@@ -244,8 +246,8 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *image,
        image->GetScalarType() == VTK_DOUBLE )
    {
       vtkErrorMacro(<< "Bad input type. Scalar type must not be of type "
-                    << "VTK_FLOAT or VTKDOUBLE (found:"
-                    << image->GetScalarTypeAsString());
+                    << "VTK_FLOAT or VTK_DOUBLE (found:"
+                    << image->GetScalarTypeAsString() << ")" );
       return;
    }
 
@@ -331,9 +333,14 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
 
 void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
 {
+   gdcm::FileHelper *dcmFile;
+   if ( GdcmFile != 0)
+      dcmFile = gdcm::FileHelper::New(GdcmFile);
+   else
+      dcmFile = gdcm::FileHelper::New();
+   
    // From here, the write of the file begins
-   gdcm::FileHelper *dcmFile = gdcm::FileHelper::New();
-
+   
    // Set the image informations
    SetImageInformation(dcmFile, image);
 
