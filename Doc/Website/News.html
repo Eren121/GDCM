@@ -132,6 +132,24 @@ Any contribution is welcome.
          Documentation</a> 
    <LI> New Features
    <UL>
+      <LI> To <i>try to</i> make gdcm images PACS usable, user is now allowed to
+           gdcm what kind of image he wants to write, using :  <br>
+   <TT>void FileHelper::SetContentType (ImageContentType c);</TT> <br>
+   Four different types are identify (probabely more will be added) :
+      <UL> 
+         <LI>
+      1) user created ex nihilo his own image and wants to write it as a Dicom image.<br>
+          c : <TT>USER_OWN_IMAGE</TT>
+         <LI>
+      2) user modified the pixels of an existing image, using mathematical operations.<br>
+          c : <TT>FILTERED_IMAGE</TT>
+         <LI>
+      3) user created a new image, using existing images (eg MIP, MPR, cartography image)<br>
+          c : <TT>CREATED_IMAGE</TT>
+         wq<LI>
+       4) user modified/added some tags *without processing* the pixels (anonymization, etc)<br>
+         c : <TT>UNMODIFIED_PIXELS_IMAGE</TT> 
+      </UL>
       <LI> Stupid difference between <TT>gdcm::ValEntry</TT> 
            and <TT>gdcm::BinEntry</TT> removed. <br>
            Only <TT>gdcm::DataEntry</TT> exist, now. 

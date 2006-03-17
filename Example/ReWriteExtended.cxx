@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWriteExtended.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:40:47 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/03/17 14:56:29 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n ReWriteExtended :\n",
-   " Re write a full gdcm-readable Dicom image                              ",
-   "     (usefull when the file header is not very straight).               ",
+   " Re write a full gdcm-readable Dicom image using new features           ",
+   "     (DO NOT use right now; checking no achieved !).                    ",
    "                                                                        ",
    " usage: ReWriteExtended filein=inputFileName fileout=outputFileName     ",
    "      filecontent = 1 : USER_OWN_IMAGE                                  ",
