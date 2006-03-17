@@ -32,6 +32,7 @@ SET(EXAMPLE_SOURCES
   PhilipsToBrucker2 
   MagnetomVisionToBrucker   
   ReWrite
+  ReWriteExtended
   RawToDicom
   TestValidate
   #BatchUncompress

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:51:56 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/03/17 14:36:37 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,13 +24,18 @@
 
 #include <iostream>
 
+
+/// \todo : AnonymizeDirectory
+///         That should split the images : Patient/Study/Serie
+///         and keeps coherent the StudyInstanceUID, SeriesInstanceUID
+///         (Now, a new one is generated fore each image :-( )
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n Anonymize :\n                                                         ",
    " Anonymize a full gdcm-readable Dicom image                               ",
    "          Warning : probably segfaults if pixels are not gdcm readable.   ",
-   "                    Use AnonymizeNoLoad instead.                        ",
+   "                    Use AnonymizeNoLoad instead.                          ",
    " usage: Anonymize filein=inputFileName fileout=anonymizedFileName[debug]  ",
    "        debug    : user wants to run the program in 'debug mode'          ",
    FINISH_USAGE

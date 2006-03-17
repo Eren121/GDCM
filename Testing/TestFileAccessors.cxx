@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 11:54:46 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/03/17 14:33:54 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,9 +59,12 @@ int TestFileAccessors(int, char *[])
    while( gdcmDataImages[i] != 0 )
    {
    
-      if (gdcmDataImages[i] == "00191113.dcm" )
-         gdcm::Debug::DebugOn();
-      else
+     // Keep the comment to be able to track a bug on a given image
+     // for all the OS.
+     
+     // if (gdcmDataImages[i] == "00191113.dcm" )
+     //    gdcm::Debug::DebugOn();
+     // else
          gdcm::Debug::DebugOff();
 
       std::string filename = GDCM_DATA_ROOT;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:51:56 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2006/03/17 14:36:37 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
    " Re write a full gdcm-readable Dicom image                              ",
    "     (usefull when the file header is not very straight).               ",
    "                                                                        ",
-   " usage: ReWrite filein=inputFileName fileout=anonymizedFileName         ", 
+   " usage: ReWrite filein=inputFileName fileout=outputFileName             ", 
    "       [mode=write mode] [noshadow] [noseq][debug]                      ", 
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PhilipsToBrucker2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/02 17:12:19 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2006/03/17 14:36:37 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
    " - orders the gdcm-readable found Files according to their                ",
    "           (0x0010, 0x0010) Patient's Name                                ",
    "           (0x0020, 0x000e) Series Instance UID                           ",
-   "           (0x0020, 0x0032)PhilipsToBrucker2. Image Position (Patient)                      ",
+   "           (0x0020, 0x0032)PhilipsToBrucker2. Image Position (Patient)    ",
    "           (0x0018, 0x1060) Trigger Time                                  ",
    "           (0x0018, 0x1312) In-pl)ane Phase Encoding Direction             ",
    " - fills a single level (*) Directory with *all* the files,               ",
