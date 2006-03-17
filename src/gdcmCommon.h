@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/13 14:44:07 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2006/03/17 14:31:43 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,6 +86,7 @@ typedef std::string TagName;
 
 /// \brief various types of a DICOM file (for internal use only)
 enum FileType {
+// note to developer : don't forget to add as well in vtkGdcmWriter.h !
    Unknown = 0,
    ExplicitVR, // DicomDir is in this case. Except when it's ImplicitVR !...
    ImplicitVR,
@@ -140,7 +141,8 @@ enum LodModeType
 ///   UNMODIFIED_PIXELS_IMAGE
 enum ImageContentType
 {
-      USER_OWN_IMAGE,
+// note to developer : don't forget to add as well in vtkGdcmWriter.h !
+      USER_OWN_IMAGE = 1,
       FILTERED_IMAGE,
       CREATED_IMAGE,      
       UNMODIFIED_PIXELS_IMAGE            
