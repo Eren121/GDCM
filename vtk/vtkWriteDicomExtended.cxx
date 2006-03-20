@@ -18,6 +18,7 @@
 #endif
 
 #include "gdcmArgMgr.h" // for Argument Manager functions
+#include "gdcmFile.h"
 
 //----------------------------------------------------------------------------
 int main(int argc, char *argv[])
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
    int filecontent =  am->ArgMgrGetInt("filecontent", 1);
    
    char *filein = am->ArgMgrWantString("filein",usage);
-   char *fileout = am->ArgMgrWantString("fileout",usage);
+   char *fileout = (char *)(am->ArgMgrGetString("fileout","fileout"));
    
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
@@ -80,11 +81,19 @@ int main(int argc, char *argv[])
       return 0;
    }
    
-// ------------------------------------------------------------           
+// ------------------------------------------------------------  
+   std::vector<gdcm::File* > cfl;
+         
+   gdcm::File *f = gdcm::File::New();
+   f->SetFileName(filein);
+   f->Load();
+   cfl.push_back(f);
   
    vtkGdcmReader *reader = vtkGdcmReader::New();
    reader->AllowLookupTableOff();
-   reader->SetFileName( argv[1] );
+   //reader->SetFileName( filein );
+   // in order not to parse twice the input file.
+   reader->SetCoherentFileList(&cfl);
    reader->Update();
 
    vtkImageData *output;
@@ -123,30 +132,37 @@ int main(int argc, char *argv[])
  
       case 2:
          writer->SetContentTypeToFilteredImage();
+         writer->SetGdcmFile( f );
          fileName = fileName + "_FilteredImage.dcm";
          break;
  
       case 3:
          writer->SetContentTypeToUserCreatedImage();
-         fileName = fileName + "_FilteredImage.dcm";
+         writer->SetGdcmFile( f );
+         fileName = fileName + "_UserCreatedImage.dcm";
          break;
  
       case 4:
          writer->SetContentTypeToUserCreatedImage();
+         writer->SetGdcmFile( f ); 
          fileName = fileName + "_UnmodifiedPixelsImage.dcm";
          break; 
    }
    
-   fileName += ".dcm";
+/// \todo : fix stupid generated image names (later : JPRx)
 
-   // For 3D
-   writer->SetFileDimensionality(3);
-   writer->SetFileName(fileName.c_str());
    if(deuxD)
    {
          writer->SetFileDimensionality(2);
          writer->SetFilePrefix(fileout);
          writer->SetFilePattern("%s%d.dcm");
+   }
+   else
+   {
+      fileName += ".dcm";
+      // For 3D
+      writer->SetFileDimensionality(3);
+      writer->SetFileName(fileName.c_str());   
    }
 
    writer->SetInput(output);

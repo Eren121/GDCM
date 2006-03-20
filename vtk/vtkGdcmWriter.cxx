@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:46:18 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2006/03/20 14:32:20 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.27 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.28 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 //-----------------------------------------------------------------------------
@@ -362,13 +362,14 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
       default :
          dcmFile->SetWriteTypeToDcmExplVR();
    }
-
+  
+   dcmFile->SetContentType((gdcm::ImageContentType)ContentType);
+ 
    if(!dcmFile->Write(fileName))
    {
       vtkErrorMacro( << "File "  <<  this->FileName  <<  "cannot be written by "
                      << " the gdcm library");
    }
-
    // Clean up
    if( dcmFile->GetUserData() && dcmFile->GetUserDataSize()>0 )
    {
