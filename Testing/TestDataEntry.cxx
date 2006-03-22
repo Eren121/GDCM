@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/24 16:00:46 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/03/22 13:20:36 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,12 +42,17 @@ int TestDataEntry(int , char *[])
    gdcm::DataEntry *entry;
 
    //------------------------------------------------------------------
-   dict = gdcm::DictEntry::New(0x0000,0x0000);
+   dict = gdcm::DictEntry::New(0x0003,0x0004);
+   // SetVR *before* making the DataEntry!
+   dict->SetVR("US");   
    entry = gdcm::DataEntry::New(dict);
-   dict->SetVR("US");
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
 
+   std::cout << "TagKey : [" << entry->GetKey() << "]" << std::endl;
+   std::cout << "Group : [" << entry->GetGroup() << "]" << std::endl; 
+   std::cout << "Element : [" << entry->GetElement() << "]" << std::endl; 
+      
    entry->SetString("1");
    std::cout << "1: ";
    entry->Print(std::cout);
@@ -99,8 +104,9 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = gdcm::DataEntry::New(dict);
+   // SetVR *before* making the DataEntry!   
    dict->SetVR("LT");
+   entry = gdcm::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(data);
@@ -165,8 +171,10 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = gdcm::DataEntry::New(dict);
+   // SetVR *before* making the DataEntry! 
    dict->SetVR("US");
+   entry = gdcm::DataEntry::New(dict);
+
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(data);
@@ -264,8 +272,8 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("UL");
+   entry = gdcm::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(data);
@@ -363,8 +371,8 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("FL");
+   entry = gdcm::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(fdata);
@@ -462,8 +470,8 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    dict = gdcm::DictEntry::New(0x0000,0x0000);
-   entry = gdcm::DataEntry::New(dict);
    dict->SetVR("FD");
+   entry = gdcm::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(fdata);
