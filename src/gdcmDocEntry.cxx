@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,6 +48,9 @@ DocEntry::DocEntry(DictEntry *in)
 
    gdcmAssertMacro(DicomDict);
    DicomDict->Register();
+
+   VR = in->GetVR();
+   Key = in->GetKey();
 }
 
 /**

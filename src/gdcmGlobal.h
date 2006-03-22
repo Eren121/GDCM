@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 10:58:28 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,6 +36,8 @@ class DicomDirElement;
 class Dict;
 class GDCM_EXPORT Global
 {
+friend class DictSet; // to allow setting DefaultPubDict without 
+                      // providing any body an accesor !
 public:
    Global();
    ~Global();
@@ -65,6 +67,9 @@ private:
    /// \brief Pointer to the hash table containing the Dicom Elements necessary 
    ///        to describe each part of a DICOMDIR 
    static DicomDirElement *ddElem;
+   /// pointer to the Default Public Dictionnary, redundantly store here, 
+   /// in order not to acces the HTable every time!
+   static Dict *DefaultPubDict; 
 };
 } // end namespace gdcm
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 
 #include "gdcmRefCounter.h"
 #include "gdcmDict.h"
+#include "gdcmGlobal.h"
 
 #include <map>
 #include <list>
@@ -58,8 +59,9 @@ public:
    Dict *GetDict( DictKey const &DictName );
 
    /// \brief   Returns the default reference DICOM V3 public dictionary.
-   Dict* GetDefaultPubDict() { return GetDict(PUB_DICT_NAME); }
-
+   //Dict* GetDefaultPubDict() { return GetDict(PUB_DICT_NAME); }
+   Dict* GetDefaultPubDict() { return Global::DefaultPubDict; } 
+   
    // \ brief   Returns the virtual references DICOM dictionary.
    // \ warning : not end user intended
    // Dict *GetVirtualDict() { return &VirtualEntries; }

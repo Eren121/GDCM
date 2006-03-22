@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/11 10:44:24 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,6 +57,8 @@ VR              *Global::ValRes    = (VR *)0;
 TS              *Global::TranSyn   = (TS *)0;
 DictGroupName   *Global::GroupName = (DictGroupName *)0;
 DicomDirElement *Global::ddElem    = (DicomDirElement *)0;
+
+Dict            *Global::DefaultPubDict = (Dict *)0;
 
 //-----------------------------------------------------------------------------
 /**

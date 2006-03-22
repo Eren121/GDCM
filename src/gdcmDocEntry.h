@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,13 +48,16 @@ public:
    DictEntry * GetDictEntry() { return DicomDict; } 
 
    /// Returns the Dicom Group number of the current Dicom entry
-   const uint16_t &GetGroup() const   { return DicomDict->GetGroup();  }
+   const uint16_t GetGroup() const   { return Key.GetGroup();  }
+   //const uint16_t &GetGroup() const   { return DicomDict->GetGroup();  }
 
    /// Returns the Dicom Element number of the current Dicom entry
-   const uint16_t &GetElement() const { return DicomDict->GetElement();}
+   const uint16_t GetElement() const { return Key.GetElement();}   
+   //const uint16_t &GetElement() const { return DicomDict->GetElement();}
 
    /// Returns the 'key' of the current Dicom entry
-   TagKey GetKey() const { return DicomDict->GetKey(); }
+   TagKey GetKey() const { return Key; }   
+   //TagKey GetKey() const { return DicomDict->GetKey(); }
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
@@ -63,7 +66,8 @@ public:
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom header or in the Dicom
    /// Dictionnary, of the current Dicom entry
-   VRKey const &GetVR() const { return DicomDict->GetVR(); }
+   VRKey const &GetVR() const { return VR; }   
+   //VRKey const &GetVR() const { return DicomDict->GetVR(); }
 
    /// \brief Returns the 'Value Multiplicity' (e.g. "1", "6", "1-n", "3-n"),
    /// found in the Dicom entry or in the Dicom Dictionnary
@@ -83,7 +87,7 @@ public:
    void SetReadLength(uint32_t l) { ReadLength = l; }
    /// \brief Returns the 'read length' of the current Dicom entry
    /// \warning this value is the one stored in the Dicom header but not
-   ///          mandatoryly the one thats's used (in case on SQ, or delimiters,
+   ///          mandatoryly the one thats's used (in case of SQ, or delimiters,
    ///          the usable length is set to zero)
    const uint32_t &GetReadLength() const { return ReadLength; }
 
@@ -98,7 +102,8 @@ public:
    uint32_t GetFullLength();
    virtual uint32_t ComputeFullLength() = 0;
 
-// The following 3 members, for internal use only ! 
+// The following members, for internal use only !
+
    /// \brief   Sets the offset of the Dicom entry
    /// \warning use with caution !
    /// @param   of offset to be set
@@ -107,6 +112,16 @@ public:
    /// Sets to TRUE the ImplicitVr flag of the current Dicom entry
    void SetImplicitVR() { ImplicitVR = true; }
  
+    /// Sets the 'Value Representation' of the current Dicom entry
+   /// @param   vr VR to be set    
+   void SetVR( VRKey const &vr) { VR = vr; } 
+
+    /// Sets the 'Value Representation' of the current Dicom entry
+   /// @param   key TagKey to be set
+   void SetTag( TagKey const &key) { Key = key; } 
+  
+// -----------end of members to be used with caution
+   
    /// \brief Tells us if the current Dicom entry was checked as ImplicitVr
    /// @return true if the current Dicom entry was checked as ImplicitVr
    bool IsImplicitVR() const { return ImplicitVR; }
@@ -131,8 +146,8 @@ protected:
 
    /// \brief pointer to the underlying Dicom dictionary element
    DictEntry *DicomDict;
-   
-   /// \brief Correspond to the real length of the data
+      
+   /// \brief Corresponds to the real length of the data
    /// This length might always be even
    uint32_t Length; 
   
@@ -147,7 +162,14 @@ protected:
    /// Offset from the beginning of file for direct user access
    size_t Offset; 
 
+   /// \brief Value Representation (to avoid accessing Dicom Dict every time!)
+   VRKey VR; // JPRx
+      
+   /// \brief Dicom \ref TagKey. Contains Dicom Group number and Dicom Element number
+   ///        (to avoid accessing Dicom Dict every time !) // JPRx
+   TagKey Key; // JPRx
 private:
+
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

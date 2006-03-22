@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -442,7 +442,7 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
       gdcmWarningMacro( "Failed to allocate SeqEntry for ("
          <<std::hex << group << "|" << elem <<")" );
       return 0;
-   }
+   }     
    return newEntry;
 }
 
@@ -461,6 +461,8 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
 DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem) 
 {
    DictEntry *found = 0;
+   /// \todo store the DefaultPubDict somwhere, in order not to access the HTable
+   ///       every time !
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    if (!pubDict) 
    {
@@ -478,7 +480,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
 /**
  * \brief   Searches [both] the public [and the shadow dictionary (when they
  *          exist)] for the presence of the DictEntry with given
- *          group and element, and create a new virtual DictEntry if necessary
+ *          group and element, and creates a new virtual DictEntry if necessary
  * @param   group  group number of the searched DictEntry
  * @param   elem element number of the searched DictEntry
  * @param   vr V(alue) R(epresentation) to use, if necessary 

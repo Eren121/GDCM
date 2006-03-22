@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:33 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2006/03/22 13:19:25 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,6 +18,7 @@
 
 #include "gdcmDictSet.h"
 #include "gdcmDebug.h"
+#include "gdcmGlobal.h"
 #include <fstream>
 #include <stdlib.h>  // For getenv
 #include <stdio.h>   // For sprintf
@@ -37,6 +38,8 @@ DictSet::DictSet()
    std::string pubDictFile(DictPath);
    pubDictFile += PUB_DICT_FILENAME;
    Dicts[PUB_DICT_NAME] = Dict::New(pubDictFile);
+   // Stored redundantly to avoid at access HTable DictSet every time.
+   Global::DefaultPubDict = Dicts[PUB_DICT_NAME];
 }
 
 /**
