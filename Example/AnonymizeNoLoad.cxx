@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:42 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2006/03/27 19:02:43 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
       // Patient's ID
       f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
       // Patient's Birthdate
-      f->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
+      f->AddAnonymizeElement( 0x0010, 0x0030,"11111111" );
       // Patient's Adress
       f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
       // Patient's Mother's Birth Name
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
          // Patient's ID
          f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
          // Patient's Birthdate
-         f->AddAnonymizeElement( 0x0010, 0x0030,"11.11.1111" );
+         f->AddAnonymizeElement( 0x0010, 0x0030,"11111111" );
          // Patient's Adress
          f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
          // Patient's Mother's Birth Name
