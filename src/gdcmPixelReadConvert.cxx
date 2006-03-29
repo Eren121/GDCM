@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.110 $
+  Date:      $Date: 2006/03/29 16:09:48 $
+  Version:   $Revision: 1.111 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,6 +115,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
    XSize           = file->GetXSize();
    YSize           = file->GetYSize();
    ZSize           = file->GetZSize();
+   TSize           = file->GetTSize();   
    SamplesPerPixel = file->GetSamplesPerPixel();
    //PixelSize       = file->GetPixelSize();  Useless
    PixelSign       = file->IsSignedPixelData();
@@ -326,7 +327,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    else if ( IsRLELossless )
    {
       if ( ! RLEInfo->DecompressRLEFile
-                               ( fp, Raw, XSize, YSize, ZSize, BitsAllocated ) )
+                               ( fp, Raw, XSize, YSize, ZSize, TSize, BitsAllocated ) )
       {
          gdcmWarningMacro( "RLE decompressor failed." );
          return false;
@@ -448,7 +449,8 @@ bool PixelReadConvert::BuildRGBImage()
 void PixelReadConvert::ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
                throw ( FormatError )
 {
-   int nbPixels = XSize * YSize;
+   /// \todo Fix the 3D, 4D pb
+   int nbPixels = XSize * YSize * TSize;
    uint16_t *localDecompres = (uint16_t*)Raw;
 
    for( int p = 0; p < nbPixels; p += 2 )
@@ -584,7 +586,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      // make sure this is the right JPEG compression
      assert( !IsJPEGLS || !IsJPEG2000 );
      // Precompute the offset localRaw will be shifted with
-     int length = XSize * YSize * SamplesPerPixel;
+     int length = XSize * YSize * ZSize * SamplesPerPixel;
      int numberBytes = BitsAllocated / 8;
 
      JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
@@ -1191,7 +1193,9 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
    // and be *very* affraid
    //
-   int l        = XSize * YSize;
+   
+   /// \todo : find an example to see how 3rd dim and 4th dim work together
+   int l        = XSize * YSize * TSize;
    int nbFrames = ZSize;
 
    uint8_t *a = copyRaw + 0;
@@ -1331,7 +1335,7 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
       bitsAllocated = 16;
    }
                                                                                 
-   RawSize =  XSize * YSize * ZSize
+   RawSize =  XSize * YSize * ZSize * TSize
                      * ( bitsAllocated / 8 )
                      * SamplesPerPixel;
    if ( HasLUT )

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2006/03/29 16:09:48 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,9 +49,9 @@ private:
    ~RLEFramesInfo();
    void Print( std::ostream &os = std::cout, std::string indent = "" );
    bool DecompressRLEFile( std::ifstream *fp, uint8_t *subRaw, int xSize, 
-                           int ySize, int zSize, int bitsAllocated );
-   bool ConvertRLE16BitsFromRLE8Bits( uint8_t *subRaw, int xSize, int ySize, 
-                                      int numberOfFrames );
+                           int ySize, int zSize, int tSize, int bitsAllocated );
+   bool ConvertRLE16BitsFromRLE8Bits( uint8_t *subRaw, int xSize, int ySize,
+                                      int tSize, int numberOfFrames);
 
    void AddFrame(RLEFrame *frame);
 

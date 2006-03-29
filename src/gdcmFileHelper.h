@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 15:32:52 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2006/03/29 16:09:48 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,11 +21,11 @@
 
 #include "gdcmDebug.h"
 #include "gdcmRefCounter.h"
-
+#include "gdcmFile.h"
 
 namespace gdcm 
 {
-class File;
+//class File;
 class DataEntry;
 class SeqEntry;
 class PixelReadConvert;
@@ -116,7 +116,11 @@ public:
    ///        (as opposed to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  }
    /// \brief Sets the Write Mode ( )
-   void SetWriteMode(FileMode mode)   { WriteMode = mode;         }
+   void SetWriteMode(FileMode mode)   { 
+      WriteMode = mode;
+      // Deal with Samples per Pixel    
+      //if (mode == WMODE_RGB) FileInternal->InsertEntryString("3",0x0028,0x0002);
+   }
    /// \brief Gets the Write Mode ( )
    FileMode GetWriteMode()            { return WriteMode;         }
 

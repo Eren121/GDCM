@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2006/03/29 16:09:48 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -130,6 +130,7 @@ private:
    int XSize;
    int YSize;
    int ZSize;
+   int TSize;
    int BitsAllocated;
    int BitsStored;
    int HighBitPosition;

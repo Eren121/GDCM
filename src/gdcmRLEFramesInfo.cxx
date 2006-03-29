@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:01:34 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2006/03/29 16:09:48 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,15 +71,16 @@ RLEFrame *RLEFramesInfo::GetNextFrame()
  * @param xSize x Size
  * @param ySize y Size
  * @param zSize z Size
+ * @param tSize t Size 
  * @param bitsAllocated Bits allocated
  * @return    Boolean
  */
 bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw, 
                                        int xSize, int ySize, int zSize, 
-                                       int bitsAllocated )
+                                       int tSize, int bitsAllocated )
 {
    uint8_t *subRaw = raw;
-   long rawSegmentSize = xSize * ySize;
+   long rawSegmentSize = xSize * ySize * tSize;
 
    // Loop on the frame[s]
    for(RLEFrameList::iterator it = Frames.begin(); it != Frames.end(); ++it)
@@ -90,7 +91,7 @@ bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw,
    if ( bitsAllocated == 16 )
    {
       // Try to deal with RLE 16 Bits
-      ConvertRLE16BitsFromRLE8Bits( raw, xSize, ySize, zSize );
+      ConvertRLE16BitsFromRLE8Bits( raw, xSize, ySize, zSize, tSize );
    }
 
    return true;
@@ -103,13 +104,15 @@ bool RLEFramesInfo::DecompressRLEFile( std::ifstream *fp , uint8_t *raw,
  * @param raw raw 
  * @param xSize x Size
  * @param ySize y Size
+ * @param tSize t Size 
  * @param numberOfFrames number of frames 
  * @return    Boolean always true
  */
 bool RLEFramesInfo::ConvertRLE16BitsFromRLE8Bits(uint8_t *raw, int xSize, 
-                                                 int ySize, int numberOfFrames)
+                                                 int ySize, int tSize,
+                                                 int numberOfFrames)
 {
-   size_t pixelNumber = xSize * ySize;
+   size_t pixelNumber = xSize * ySize * tSize;
    size_t rawSize     = pixelNumber * numberOfFrames * 2;
 
    // We assumed Raw contains the decoded RLE pixels but as
@@ -175,6 +178,8 @@ void RLEFramesInfo::Print( std::ostream &os, std::string indent )
       << "Total number of Frames : " << Frames.size()
       << std::endl;
    int frameNumber = 0;
+   /// \todo : find an example, to know haow 3rd and 4th dimension
+   ///         works together
    for(RLEFrameList::iterator it = Frames.begin(); it != Frames.end(); ++it)
    {
       os << indent

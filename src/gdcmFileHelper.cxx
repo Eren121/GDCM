@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/03/13 14:44:07 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2006/03/29 16:09:48 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -798,6 +798,7 @@ bool FileHelper::CheckWriteIntegrity()
       size_t decSize = FileInternal->GetXSize()
                      * FileInternal->GetYSize() 
                      * FileInternal->GetZSize()
+                     * FileInternal->GetTSize()     
                      * FileInternal->GetSamplesPerPixel()
                      * ( numberBitsAllocated / 8 );
       size_t rgbSize = decSize;
