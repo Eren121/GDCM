@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:43 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2006/03/29 16:15:01 $
+  Version:   $Revision: 1.80 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -126,10 +126,11 @@ int main(int argc, char *argv[])
    " Display the header of a ACR-NEMA/PAPYRUS/DICOM File                      ",
    " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]",
    "                       [forceload=listOfElementsToForceLoad]              ",
-   "                       [dict= privateDirectory]                           ",
+   "                       [4DLoc= ][dict= privateDirectory]                  ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ]          ",
    "                       [debug] [warning]                                  ",
    "      level = 0,1,2 : depending on the amount of details user wants to see",
+   "      4DLoc: group-elem(in hexa, no space) of the DataEntry holdind 4thDim",
    "      listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)",
    "                                of Elements to load whatever their length ",
    "      privateDirectory : source file full path name of Shadow Group elems ",
@@ -187,6 +188,20 @@ int main(int argc, char *argv[])
    int forceLoadNb;
    uint16_t *elemsToForceLoad 
                            = am->ArgMgrGetXInt16Enum("forceload", &forceLoadNb);
+   
+   int nbP;
+   uint16_t *FourthDimLoc;
+   if ( am->ArgMgrDefined("4DLoc") )
+   {
+      FourthDimLoc = am->ArgMgrGetXInt16Enum("4DLoc", &nbP);
+   
+      if (nbP != 1) 
+      {   
+         std::cout << "4DLoc must have 2 and only 2 components!" << std::endl;
+         delete am;
+         return 1;      
+      }
+   }
 
    bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
 
@@ -250,6 +265,8 @@ errno = 0;
          f->Delete();
          return 0;
       }
+      if (nbP == 1)
+         f->SetFourthDimensionLocation(FourthDimLoc[0],FourthDimLoc[1]);
 
       gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
       fh->SetPrintLevel( level );
@@ -262,12 +279,14 @@ errno = 0;
       std::cout <<" dataSize    " << fh->GetImageDataSize()    << std::endl;
       std::cout <<" dataSizeRaw " << fh->GetImageDataRawSize() << std::endl;
 
-      int nX,nY,nZ,sPP,planarConfig;
+      int nX,nY,nZ,nT,sPP,planarConfig;
       std::string pixelType;
       nX=f->GetXSize();
       nY=f->GetYSize();
       nZ=f->GetZSize();
-      std::cout << " DIMX=" << nX << " DIMY=" << nY << " DIMZ=" << nZ 
+      nT=f->GetTSize();
+      std::cout << " DIMX=" << nX << " DIMY=" << nY 
+                << " DIMZ=" << nZ << " DIMT=" << nT
                 << std::endl;
 
       pixelType    = f->GetPixelType();
