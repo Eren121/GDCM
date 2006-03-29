@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:37 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2006/03/29 11:23:43 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.85 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.86 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ vtkGdcmReader::vtkGdcmReader()
    this->UserFunction     = 0;
 
    this->OwnFile=true;
-   this->Execution=false;
+   // this->Execution=false; // For VTK5.0
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -156,10 +156,10 @@ void vtkGdcmReader::SetFileName(const char *name)
  */
 void vtkGdcmReader::ExecuteInformation()
 {
-   if(this->Execution)
-      return;
-
-   this->Execution=true;
+//   if(this->Execution)  // For VTK5.0
+//      return;
+//
+//   this->Execution=true; // end For VTK5.0
    this->RemoveAllInternalFile();
    if(this->MTime>this->fileTime)
    {
@@ -266,13 +266,13 @@ void vtkGdcmReader::ExecuteInformation()
       this->fileTime=this->MTime;
    }
 
-   this->Superclass::ExecuteInformation();
+   this->Superclass::ExecuteInformation();  
 
-   this->GetOutput()->SetUpdateExtentToWholeExtent();
-   this->BuildData(this->GetOutput());
+   //this->GetOutput()->SetUpdateExtentToWholeExtent();// For VTK5.0
+   //this->BuildData(this->GetOutput());
 
-   this->Execution=false;
-   this->RemoveAllInternalFile();
+   //this->Execution=false;
+   //this->RemoveAllInternalFile();                   // End For VTK5.0
 }
  
 /*
@@ -301,11 +301,23 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       return;
    }
 */
-}
+  
+  // data->AllocateScalars();  // For VTK5.0
+  // if (this->UpdateExtentIsEmpty(output))
+  // {
+  //    return;
+  // }
+//}                           // end For VTK5.0
 
-void vtkGdcmReader::BuildData(vtkDataObject *output)
-{
-   vtkImageData *data = this->AllocateOutputData(output);
+   data->AllocateScalars();  // For VTK5.0
+   if (this->UpdateExtentIsEmpty(output))
+   {
+      return;
+   }
+   
+//void vtkGdcmReader::BuildData(vtkDataObject *output)  // For VTK5.0
+//{
+//   vtkImageData *data = this->AllocateOutputData(output);  // end For VTK5.0
 
    data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");
 
@@ -345,6 +357,7 @@ void vtkGdcmReader::BuildData(vtkDataObject *output)
          Dest += size;
       }
    }
+   this->RemoveAllInternalFile(); // For VTK5.0
 }
 
 /*
@@ -696,7 +709,8 @@ void vtkGdcmReader::IncrementProgress(const unsigned long updateProgressTarget,
    {
       if (!(updateProgressCount%updateProgressTarget))
       {
-         this->UpdateProgress(updateProgressCount/(50.0*updateProgressTarget));
+         this->UpdateProgress(
+             updateProgressCount/(50.0*updateProgressTarget));
       }
    }
 }
@@ -814,7 +828,8 @@ void vtkGdcmReader::LoadImageInMemory(
          // Update progress related:
          if (!(updateProgressCount%updateProgressTarget))
          {
-            this->UpdateProgress(updateProgressCount/(50.0*updateProgressTarget));
+            this->UpdateProgress(
+               updateProgressCount/(50.0*updateProgressTarget));
          }
          updateProgressCount++;
       }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:46:17 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2006/03/29 11:23:43 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,7 +89,7 @@ protected:
    virtual void ExecuteInformation();
    virtual void ExecuteData(vtkDataObject *output);
 
-   virtual void BuildData(vtkDataObject *output);
+   //virtual void BuildData(vtkDataObject *output); // for VTK5.0
    virtual void BuildFileListFromPattern();
    virtual void LoadFileInformation();
    virtual void UpdateFileInformation();
@@ -155,7 +155,7 @@ private:
    //    files patterned
    std::list<std::string> InternalFileNameList;
    gdcmFileList InternalFileList;
-   bool Execution;
+   //bool Execution;  // For VTK5.0
   
    //ETX
 
