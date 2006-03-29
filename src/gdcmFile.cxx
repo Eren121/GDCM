@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 10:15:12 $
-  Version:   $Revision: 1.316 $
+  Date:      $Date: 2006/03/29 16:13:00 $
+  Version:   $Revision: 1.317 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,6 +118,7 @@ File::File():
    GrPixel  = 0x7fe0;  // to avoid further troubles
    NumPixel = 0x0010;
    BasicOffsetTableItemValue = 0;
+   FourthDimensionLocation = TagKey(0,0);
 }
 
 
@@ -246,6 +247,7 @@ bool File::DoTheLoadingJob( )
    }
    return true;
 }
+
 /**
  * \brief  This predicate, based on hopefully reasonable heuristics,
  *         decides whether or not the current File was properly parsed
@@ -451,6 +453,34 @@ int File::GetZSize()
 }
 
 /**
+ * \brief   Retrieve the -unnormalized- number of 'times' of '4D image'.
+ *          User has to tell gdcm the location of this '4th Dimension component'
+ *          using SetFourthDimensionLocation() method before.
+ * \warning The defaulted value is 1.
+ * @return  The encountered size when found, 1 by default 
+ *          (The file doesn't contain a '4D image'.).
+ */
+int File::GetTSize()
+{
+   if (FourthDimensionLocation == TagKey(0,0) )// 4D location is not set : not a 4D object
+      return 1;
+      
+   DataEntry *entry = GetDataEntry(FourthDimensionLocation.GetGroup(),
+                                   FourthDimensionLocation.GetElement() );
+   if( !entry )   
+   {
+      gdcmWarningMacro( " FourthDimensionLocation not found at : " <<
+                    std::hex << FourthDimensionLocation.GetGroup()
+                  << "|" << FourthDimensionLocation.GetElement());
+      return 1;
+   }
+   else
+   {
+      return (int)entry->GetValue(0);
+   }      
+}  
+
+/**
   * \brief gets the info from 0018,1164 : ImagerPixelSpacing
   *                      then 0028,0030 : Pixel Spacing
   *             else 1.0
@@ -511,7 +541,6 @@ float File::GetXSpacing()
    {
       gdcmWarningMacro( "Unfound Pixel Spacing (0028,0030)" );
    }
-
    return xspacing;
 }
 

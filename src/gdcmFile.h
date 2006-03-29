@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2006/03/29 16:13:00 $
+  Version:   $Revision: 1.125 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include "gdcmDebug.h"
 #include "gdcmDocument.h"
-
+#include "gdcmTagKey.h"
 
 
 namespace gdcm 
@@ -108,6 +108,9 @@ public:
    bool Load(); 
    // Standard values and informations contained in the header
    bool IsReadable();
+   
+   void SetFourthDimensionLocation(uint16_t group, uint16_t elem) {
+                   FourthDimensionLocation = TagKey(group, elem); }
 
    // Some heuristic based accessors, end user intended 
    int GetImageNumber();
@@ -116,7 +119,8 @@ public:
    int GetXSize();
    int GetYSize();
    int GetZSize();
-
+   int GetTSize(); // unnormalized in DICOM V3
+   
    float GetXSpacing();
    float GetYSpacing();
    float GetZSpacing();
@@ -196,6 +200,9 @@ protected:
    /// In order to make things easier the parser shall store the proper value
    /// in GrPixel to provide a unique access facility.
    uint16_t GrPixel;
+   /// \brief allows user to tell gdcm in which DataElement is stored 
+   ///the -unnormalized- 4th Dimension   
+   TagKey FourthDimensionLocation;
 
 private:
    bool DoTheLoadingJob();
