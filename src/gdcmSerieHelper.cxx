@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/30 16:51:29 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2006/03/30 17:19:24 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -274,7 +274,10 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
  */
 void SerieHelper::OrderFileList(FileList *fileSet)
 {
-
+   // Only computed during ImagePositionPatientOrdering
+   // (need to sort the FileList using IPP and IOP !)
+   ZSpacing = -1.0;
+   
    if ( SerieHelper::UserLessThanFunction )
    {
       UserOrdering( fileSet );
