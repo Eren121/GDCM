@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/30 16:41:22 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2006/03/30 16:51:29 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -599,8 +599,6 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
 bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 //based on Jolinda Smith's algorithm
 {
-gdcmDebugMacro( "In ImagePositionPatientOrdering()" << std::endl );
-std::cout << "In ImagePositionPatientOrdering()" << std::endl;
 //Tags always use the same coordinate system, where "x" is left
 //to right, "y" is posterior to anterior, and "z" is foot to head (RAH).
 

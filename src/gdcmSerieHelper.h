@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2006/03/30 16:51:29 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ class GDCM_EXPORT SerieHelper  : public RefCounter
    
 public:
    /// SingleSerieUIDFileSetmap replaces the former CoherentFileListmap
-   /// ( List were actually std::vectors, and wher no coherent at all :
+   /// ( List were actually std::vectors, and where no coherent at all :
    ///   They were only Single SeriesInstanceUID File sets)
    typedef std::map<std::string, FileList *> SingleSerieUIDFileSetmap;
 
@@ -105,9 +105,17 @@ public:
    /// brief returns the 'Series Instance UID' Single SerieUID FileSet
    std::string GetCurrentSerieUIDFileSetUID()
                              { return  (*ItFileSetHt).first; }
+     
+   /// \brief returns the distance between the 2 first -adjacent- slices, 
+   ///        along the slice normal; -1.0 if process failed
+   ///        Computed during  ImagePositionPatientOrdering() process.
+   ///        To be use *immediately after* ImagePositionPatientOrdering()
+   ///        (it's a member of the FileHelper, *not* of the FileList !)   
+   double GetZSpacing() { return ZSpacing; }
+   
    /// All the following allow user to restrict DICOM file to be part
    /// of a particular serie
-   /// \todo : find a trick to allow user to say the retrictetons are ored
+   /// \todo : find a trick to allow user to say the restrictions are ored
    ///         (not only anded) 
    ///         ex : keep the images whose SerieNumber is 101 or 102 or 103.
    void AddRestriction(TagKey const &key);
@@ -233,6 +241,12 @@ private:
    void Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *file2) );
 
    bool m_UseSeriesDetails;
+   /// \brief distance between the 2 first -adjancent- slices, along the slice normal
+   ///        Computed during  ImagePositionPatientOrdering() process.
+   ///        (we need to sort the whole image set to do that)
+   ///        To be used *immediately after* ImagePositionPatientOrdering()
+   ///        (it's a member of the FileHelper, *not* of the FileList !)  
+   double ZSpacing; 
 };
 
 } // end namespace gdcm
