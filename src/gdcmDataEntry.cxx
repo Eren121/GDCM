@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/13 14:44:07 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2006/03/30 17:29:00 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -174,8 +174,11 @@ double DataEntry::GetValue(const uint32_t &id) const
 {
    if( !BinArea )
    {
+      if (GetLength() != 0) // avoid stupid messages
    /// \todo warn the user there was a problem !
-      gdcmErrorMacro("BinArea not set" << std::hex << GetGroup() << " " << GetElement() << " Can't get the value");
+         gdcmErrorMacro("BinArea not set " << std::hex 
+        :             << GetGroup() << " " << GetElement() 
+                     << " Can't get the value");
       return 0.0;
    }
 
