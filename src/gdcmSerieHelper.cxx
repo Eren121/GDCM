@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2006/03/30 16:41:22 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -585,7 +585,8 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
 // Private
 /**
  * \brief sorts the images, according to their Patient Position.
- *
+ *  As a side effect, it computes the ZSpacing, according to Jolinda Smith'
+ *  algorithm. (get it with double GetZSpacing() !)
  *  We may order, considering :
  *   -# Image Position Patient
  *   -# Image Number
@@ -598,6 +599,11 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
 bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
 //based on Jolinda Smith's algorithm
 {
+gdcmDebugMacro( "In ImagePositionPatientOrdering()" << std::endl );
+std::cout << "In ImagePositionPatientOrdering()" << std::endl;
+//Tags always use the same coordinate system, where "x" is left
+//to right, "y" is posterior to anterior, and "z" is foot to head (RAH).
+
    //iop is calculated based on the file file
    float cosines[6];
    double normal[3];
@@ -605,6 +611,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    double dist;
    double min = 0, max = 0;
    bool first = true;
+   ZSpacing = -1.0;  // will be updated if process doesn't fail
 
    std::multimap<double,File *> distmultimap;
    // Use a multimap to sort the distances from 0,0,0
@@ -615,7 +622,20 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       if ( first ) 
       {
          (*it)->GetImageOrientationPatient( cosines );
-      
+
+   // The "Image Orientation Patient" tag gives the direction cosines 
+   // for the rows and columns for the three axes defined above. 
+   // Typical axial slices will have a value 1/0/0/0/1/0: 
+   // rows increase from left to right, 
+   // columns increase from posterior to anterior. This is your everyday
+   // "looking up from the bottom of the head with the eyeballs up" image. 
+   
+   // The "Image Position Patient" tag gives the coordinates of the first
+   // voxel in the image in the "RAH" coordinate system, relative to some
+   // origin.   
+
+   // First, calculate the slice normal from IOP : 
+          
          // You only have to do this once for all slices in the volume. Next, 
          // for each slice, calculate the distance along the slice normal 
          // using the IPP ("Image Position Patient") tag.
@@ -623,7 +643,10 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          normal[0] = cosines[1]*cosines[5] - cosines[2]*cosines[4];
          normal[1] = cosines[2]*cosines[3] - cosines[0]*cosines[5];
          normal[2] = cosines[0]*cosines[4] - cosines[1]*cosines[3];
-  
+
+   // For each slice (here : the first), calculate the distance along 
+   // the slice normal using the IPP tag 
+    
          ipp[0] = (*it)->GetXOrigin();
          ipp[1] = (*it)->GetYOrigin();
          ipp[2] = (*it)->GetZOrigin();
@@ -641,6 +664,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       }
       else 
       {
+   // Next, for each slice, calculate the distance along the slice normal
+   // using the IPP tag 
          ipp[0] = (*it)->GetXOrigin();
          ipp[1] = (*it)->GetYOrigin();
          ipp[2] = (*it)->GetZOrigin();
@@ -688,8 +713,23 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       return false;
    }
 
+// Now, we could calculate Z Spacing as the difference
+// between the "dist" values for the first two slices.
+
+// The following (un)-commented out code is let here
+// to be re-used by whomsoever is interested...
+
+    std::multimap<double, File *>::iterator it5 = distmultimap.begin();
+    double d1 = (*it5).first;
+    it5++;
+    double d2 = (*it5).first;
+    ZSpacing = d1-d2;
+    if (ZSpacing < 0.0)
+       ZSpacing = - ZSpacing;
+
    fileList->clear();  // doesn't delete list elements, only nodes
 
+// Acording to user requierement, we sort direct order or reverse order.
    if (DirectOrder)
    {  
       for (std::multimap<double, File *>::iterator it3 = distmultimap.begin();
