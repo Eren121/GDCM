@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/03 16:37:50 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/03/30 17:11:11 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@
 #endif
 
 void userSuppliedMirrorFunction (uint8_t *im, gdcm::File *f);
-void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f);
+void userSuppliedUpsideDownFunction(uint8_t *im, gdcm::File *f);
 bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2);
 bool userSuppliedLessThanFunction2(gdcm::File *f1, gdcm::File *f2);
 
@@ -108,14 +108,14 @@ int main(int argc, char *argv[])
    "                           [order=] [check][debug]                        ",
    "      sourcedirectory : name of the directory holding the images          ",
    "                        if it holds more than one serie,                  ",
-   "                        only the first one id displayed.                  ",
+   "                        only the first one is displayed.                  ",
    "      noshadowseq: user doesn't want to load Private Sequences            ",
    "      noshadow   : user doesn't want to load Private groups (odd number)  ",
    "      noseq      : user doesn't want to load Sequences                    ",
    "      reverse    : user wants to sort the images reverse order            ",
-   "      mirror     : user wants to 'mirror' the images | just some simple   ",
-   "      topdown    : user wants to 'topdown' the images| examples of user   ",
-   "      rotate     : NOT YET MADE (useless?)           | supplied functions ",
+   "      mirror     : user wants to 'mirror' the images    | just some simple",
+   "      upsidedown : user wants to 'upsidedown' the images| examples of user",
+   "                                                        | definedfunctions",
    "      check      : user wants to force more coherence checking            ",
    "      order=     : group1-elem1,group2-elem2,... (in hexa, no space)      ",
    "                   if we want to use them as a sort criterium             ",
@@ -151,21 +151,15 @@ int main(int argc, char *argv[])
 
    int reverse = am->ArgMgrDefined("reverse");
 
-   int mirror  = am->ArgMgrDefined("mirror");
-   int topdown = am->ArgMgrDefined("topdown");
-   int rotate  = am->ArgMgrDefined("rotate");
+   int mirror     = am->ArgMgrDefined("mirror");
+   int upsidedown = am->ArgMgrDefined("upsidedown");
 
-   if ( mirror && topdown )
+   if ( mirror && upsidedown )
    {
-      std::cout << "mirror *OR* topDown !"
+      std::cout << "*EITHER* mirror *OR* upsidedown !"
                 << std::endl;
       delete am;
       return 0;
-   }
-   if ( rotate )
-   {
-      std::cout << "'rotate' undealt with -> ignored !"
-                << std::endl;
    }
 
    int check   = am->ArgMgrDefined("check");
@@ -219,7 +213,8 @@ int main(int argc, char *argv[])
       {
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
          sh->OrderFileList(l);  // sort the list
-         std::cout << "List sorted" << std::endl;
+         double zsp = sh->GetZSpacing();
+         std::cout << "List sorted, ZSpacing = " << zsp << std::endl;
          break;  // The first one is OK. user will have to check
       }
       else
@@ -245,8 +240,8 @@ int main(int argc, char *argv[])
 
    if (mirror)
       reader->SetUserFunction (userSuppliedMirrorFunction);
-   else if (topdown)
-      reader->SetUserFunction (userSuppliedTopDownFunction);
+   else if (upsidedown)
+      reader->SetUserFunction (userSuppliedUpsideDownFunction);
 
    // Only the first FileList is dealt with (just an example)
    // (The files will not be parsed twice by the reader)
@@ -384,7 +379,7 @@ void userSuppliedMirrorFunction(uint8_t *im, gdcm::File *f)
 
 // --------------------------------------------------------
 // This is just a *very* simple example of user supplied function
-//      to topdown (why not ?) the image
+//      to upsidedown (why not ?) the image
 // It's *not* part of gdcm.
 // --------------------------------------------------------
 
@@ -404,7 +399,7 @@ void userSuppliedMirrorFunction(uint8_t *im, gdcm::File *f)
       }                                 \
    }
 
-void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f)
+void userSuppliedUpsideDownFunction(uint8_t *im, gdcm::File *f)
 {
    if (f->GetZSize() != 1)
    {
