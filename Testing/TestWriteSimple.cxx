@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/28 13:16:48 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2006/04/07 10:58:51 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,6 +25,8 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDebug.h"
+#include "gdcmGlobal.h"
+#include "gdcmDictSet.h"
 
 #include <iostream>
 #include <sstream>
@@ -45,16 +47,17 @@ typedef struct
 } Image;
 
 Image Images [] = {
-
    {128, 128, 1, 1, 8,  8,  0, 'e'},
+   {256, 128, 1, 1, 8,  8,  0, 'a'},
+   {128, 128, 1, 1, 8,  8,  0, 'i'},
+
+   {128, 128, 1, 1, 8,  8,  0, 'a'},    
+   {256, 128, 1, 1, 8,  8,  0, 'i'},
+     
+
    {256, 128, 1, 1, 8,  8,  0, 'e'},
    {128, 128, 1, 1, 16, 16, 0, 'e'},      
    {128, 256, 1, 1, 16, 16, 0, 'e'},   
-        
-   {128, 128, 1, 1, 8,  8,  0, 'i'},
-   {256, 128, 1, 1, 8,  8,  0, 'i'},
-   {256, 128, 1, 1, 8,  8,  0, 'a'},
-   {128, 128, 1, 1, 8,  8,  0, 'a'},
    
    {128, 256, 1, 1, 8,  8,  0, 'e'},
    {128, 256, 1, 1, 8,  8,  0, 'i'},
@@ -63,7 +66,7 @@ Image Images [] = {
    {128, 256, 1, 1, 16, 16, 0, 'i'},
    {128, 256, 1, 1, 16, 16, 0, 'i'},
    {128, 256, 1, 1, 16, 16, 0, 'a'},
-   {128, 256, 1, 1, 16, 16, 0, 'a'},  
+   {128, 256, 1, 1, 16, 16, 0, 'a'},
 
    {256, 128, 10, 1, 8, 8,  0, 'e'},
    {256, 128, 10, 3, 8, 8,  0, 'e'},
@@ -106,6 +109,8 @@ const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
 
 int WriteSimple(Image &img)
 {
+   
+   std::cout << "======================= WriteSimple =========(begin of processing current image)" << std::endl;
    std::ostringstream fileName;
    fileName.str("");
    fileName << "TestWriteSimple";
@@ -212,9 +217,9 @@ int WriteSimple(Image &img)
    fileH->SetImageData(imageData,size);
 
 // Step 4 : Set the writting mode and write the image
-   std::cout << "4...";
 
    fileH->SetWriteModeToRaw();
+   std::cout << "4'...";   
    switch (img.writeMode)
    {
       case 'a' : // Write an ACR file
@@ -238,10 +243,13 @@ int WriteSimple(Image &img)
          return 1;
    }
 
+   std::cout << std::endl;
+   fileToBuild->Print();
+
    if( !fileH->Write(fileName.str()) )
    {
       std::cout << "Failed for [" << fileName.str() << "]\n"
-                << "           File is unwrittable\n";
+                << "           File is unwrittable" << std::endl;
 
       fileH->Delete();
 
@@ -250,20 +258,28 @@ int WriteSimple(Image &img)
    }
 
 // Step 5 : Read the written image
-   std::cout << "5...";
+   std::cout << "5..." << std::endl;
    // old form.
    //gdcm::FileHelper *reread = new gdcm::FileHelper( fileName.str() );
    // Better use :
-   gdcm::FileHelper *reread = gdcm::FileHelper::New( );
-   reread->SetFileName( fileName.str() );
-   reread->SetLoadMode(gdcm::LD_ALL); // Load everything
+   gdcm::File *f = gdcm::File::New( );
+   f->SetLoadMode(gdcm::LD_ALL);
+   f->SetFileName( fileName.str() );
+   
+   //reread->SetFileName( fileName.str() );
+   //reread->SetLoadMode(gdcm::LD_ALL); // Load everything
                            // Possible values are 
                            //              gdcm::LD_ALL, 
                            //              gdcm::LD_NOSEQ, 
                            //              gdcm::LD_NOSHADOW,
                            //              gdcm::LD_NOSEQ|gdcm::LD_NOSHADOW, 
                            //              gdcm::LD_NOSHADOWSEQ
-   reread->Load();
+   
+   f->Load();
+  // reread->Load();
+   gdcm::FileHelper *reread = gdcm::FileHelper::New( f );  
+
+   reread->Print();
 
    if( !reread->GetFile()->IsReadable() )
    {
@@ -277,7 +293,7 @@ int WriteSimple(Image &img)
    }
 
 // Step 6 : Compare to the written image
-   std::cout << "6...";
+   std::cout << "6..." << std::endl;
    size_t dataSizeWritten = reread->GetImageDataSize();
    uint8_t *imageDataWritten = reread->GetImageData();
 
@@ -331,7 +347,7 @@ int WriteSimple(Image &img)
       return 1;
    }
 
-   // Test the data's content
+   // Test the data content
    if ( memcmp(imageData, imageDataWritten, size) !=0 )
    {
       std::cout << "Failed" << std::endl
@@ -361,12 +377,9 @@ int WriteSimple(Image &img)
       return 1;
    }
 
-   std::cout << "OK" << std::endl;
-
    fileH->Delete();
    reread->Delete();
    delete[] imageData;
-
    return 0;
 }
 
@@ -380,15 +393,16 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-   gdcm::Debug::DebugOn();
-       
+  // gdcm::Debug::DebugOn();
+   char c;   
    int ret=0;
    int i=0;
    while( Images[i].sizeX>0 && Images[i].sizeY>0 )
    {
-      std::cout << "Test n :" << i; 
+      std::cout << "Test n :" << i <<std::endl;; 
       ret += WriteSimple(Images[i] );
       i++;
+
    }
 
    return ret;

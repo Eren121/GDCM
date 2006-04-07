@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:20:36 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/04/07 10:58:51 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,6 +42,10 @@ int TestDataEntry(int , char *[])
    gdcm::DataEntry *entry;
 
    //------------------------------------------------------------------
+   
+   /* Most of the tests are out of date! 
+   (we don't use any longer DictEntry to build a DocEntry!
+   
    dict = gdcm::DictEntry::New(0x0003,0x0004);
    // SetVR *before* making the DataEntry!
    dict->SetVR("US");   
@@ -571,5 +575,6 @@ int TestDataEntry(int , char *[])
 
    //------------------------------------------------------------------
    std::cout<<std::flush;
+   */
    return 0;
 }

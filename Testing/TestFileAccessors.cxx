@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:33:54 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006/04/07 10:58:51 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,25 +37,30 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-#define TestMethodMacro(mode,obj,name) \
-   try \
-   { \
-      std::cout << "   " << #name << "() : "      << mode << obj->name() << std::endl; \
-   } \
-   catch(...) \
-   { \
-      std::cout << "   --> Can't access to the '" << #name << "' method !" << std::endl; \
-      f->Delete(); \
-      return 1; \
+#define TestMethodMacro(mode,obj,name)                \
+   try                                                \
+   {                                                  \
+      std::cout <<"   "<< #name << "() : "            \
+                << std::endl;                         \
+      std::cout << "                     "            \
+                << mode << obj->name() << std::endl;  \
+   }                                                  \
+   catch(...)                                         \
+   {                                                  \
+      std::cout << "   --> Can't access to the '"     \
+                << #name << "' method !" << std::endl;\
+      f->Delete();                                    \
+      return 1;                                       \
    }
 
-
-int TestFileAccessors(int, char *[])
+int TestFileAccessors(int argc, char *argv[])
 {
    int i = 0;
 
    float iop[6];
 
+  // gdcm::Debug::DebugOn();
+   
    while( gdcmDataImages[i] != 0 )
    {
    
@@ -65,13 +70,23 @@ int TestFileAccessors(int, char *[])
      // if (gdcmDataImages[i] == "00191113.dcm" )
      //    gdcm::Debug::DebugOn();
      // else
-         gdcm::Debug::DebugOff();
+     //    gdcm::Debug::DebugOff();
 
-      std::string filename = GDCM_DATA_ROOT;
-      filename += "/";  //doh!
-      filename += gdcmDataImages[i];
+      std::string filename;      
+      if (argc ==2)
+      {
+         filename = argv[1];
+      }
+      else
+      {
+         filename = GDCM_DATA_ROOT;
+         filename += "/";  //doh!      
+         filename += gdcmDataImages[i];
+      }
       
-      std::cout << "Begin with " << filename << std::endl;
+      std::cout << " ----------------------------------------------"
+                << "Begin with " << filename << std::endl;
+
       gdcm::File *f= gdcm::File::New( );
       f->SetFileName( filename );
       f->Load( );
@@ -146,9 +161,11 @@ int TestFileAccessors(int, char *[])
          f->Delete();
          return 1;
       }
-
       f->Delete();
-      std::cout << "End with " << filename << std::endl;
+
+      if (argc ==2)
+         break; // user asked to check a single file.
+
       i++;
    }
    return 0;

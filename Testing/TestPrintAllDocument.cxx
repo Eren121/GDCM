@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/19 11:00:28 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2006/04/07 10:58:51 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@
 //Generated file:
 #include "gdcmDataImages.h"
 
-int TestPrintAllDocument(int, char *[])
+int TestPrintAllDocument(int argc, char *argv[])
 {
    //std::ostringstream s;
    int i = 0;
@@ -47,11 +47,25 @@ int TestPrintAllDocument(int, char *[])
    std::string pixelType, photomInterp;
    int l;
    l = strlen("PALETTE COLOR ");
+   
+   //gdcm::Debug::DebugOn();
+   
    while( gdcmDataImages[i] != 0 )
    {
-      std::string filename = GDCM_DATA_ROOT;
-      filename += "/";  //doh!
-      filename += gdcmDataImages[i];
+      std::string filename;      
+      if (argc ==2)
+      {
+         filename = argv[1];
+      }
+      else
+      {
+         filename = GDCM_DATA_ROOT;
+         filename += "/";  //doh!      
+         filename += gdcmDataImages[i];
+      }
+      
+      std::cout << " ----------------------------------------------"
+                << "Begin with " << filename << std::endl;
 
       gdcm::File *f= gdcm::File::New( );
       f->SetFileName( filename );
@@ -59,8 +73,7 @@ int TestPrintAllDocument(int, char *[])
 
       f->SetPrintLevel(2);
       f->Print();
-      // just to be able to grep the display result, for some usefull info
- 
+      
       //s.setf(std::ios::left);
       //s << std::setw(60-filename.length()) << " ";
       //std::cout << s.str() << gdcmDataImages[i];
@@ -122,6 +135,10 @@ int TestPrintAllDocument(int, char *[])
          return 1;
       }
       f->Delete();
+      
+      if (argc ==2)
+         break; // user asked to check a single file.      
+      
       i++;
    }
    return 0;
