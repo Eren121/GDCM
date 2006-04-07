@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/07 10:58:51 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2006/04/07 14:14:40 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,15 +37,13 @@ const double GDCM_EPS = 1e-6;
   */  
 int TestDataEntry(int , char *[])
 {
-   unsigned int i;
-   gdcm::DictEntry *dict;
-   gdcm::DataEntry *entry;
-
-   //------------------------------------------------------------------
-   
    /* Most of the tests are out of date! 
    (we don't use any longer DictEntry to build a DocEntry!
    
+   unsigned int i;
+   gdcm::DictEntry *dict;
+   gdcm::DataEntry *entry;
+      
    dict = gdcm::DictEntry::New(0x0003,0x0004);
    // SetVR *before* making the DataEntry!
    dict->SetVR("US");   
