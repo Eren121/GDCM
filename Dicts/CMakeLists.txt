@@ -97,8 +97,8 @@ SET(DICOM_DIR_DICTIONARY "")
 
 FOREACH(line ${ENT_DIR})
   STRING(REGEX REPLACE
-    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"](.*)$"
-    "  {\"\\1\" , 0x\\2 , 0x\\3 , \"\\4\"}, \\5" nline "${line}")
+    "^(metaElem|patientElem|studyElem|serieElem|imageElem) *([a-f0-9]+) ([a-f0-9]+) [\"](.*)[\"] [\"](.*)[\"] (.*)$"
+    "  {\"\\1\" , 0x\\2 , 0x\\3 , \"\\4\", \"\\5\"}, \\6" nline "${line}")
   SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY}\n${nline}")
 ENDFOREACH(line)
 
