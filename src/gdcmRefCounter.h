@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRefCounter.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:34 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,8 @@
 #define GDCMREFCOUNTER_H
 
 #include "gdcmBase.h"
+//#include "gdcmDebug.h"
+#include <typeinfo>
 
 namespace gdcm 
 {
@@ -47,9 +49,10 @@ public:
    /// \remarks It decrements the reference counting
    void Unregister()
    {
+//std::cout <<"================Unreg " << typeid(*this).name() << std::endl;
       RefCount--;
       if(RefCount<=0)
-         delete this;
+        delete this;
    }
    /// \brief Get the reference counting
    /// \return Reference count

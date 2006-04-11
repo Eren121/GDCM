@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 16:13:00 $
-  Version:   $Revision: 1.317 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.318 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -216,6 +216,11 @@ bool File::DoTheLoadingJob( )
       // The changed DictEntry will have 
       // - a correct PixelVR OB or OW)
       // - the name to "Pixel Data"
+      
+       //==>Take it easy!
+       //==> Just change the VR !
+
+/* 
       DataEntry *oldEntry = dynamic_cast<DataEntry *>(entry);
       if (oldEntry)
       {
@@ -229,21 +234,34 @@ bool File::DoTheLoadingJob( )
 
          // Change only made if usefull
          if ( PixelVR != oldEntry->GetVR() )
-         {
-            DictEntry* newDict = DictEntry::New(GrPixel,NumPixel,
-                                                PixelVR,"1","Pixel Data");
+         {       
+            //DictEntry* newDict = DictEntry::New(GrPixel,NumPixel,
+            //                                    PixelVR,"1","Pixel Data");
+            //DataEntry *newEntry = DataEntry::New(newDict);
+            //newDict->Delete();
+            //newEntry->Copy(entry);
+            //newEntry->SetBinArea(oldEntry->GetBinArea(),oldEntry->IsSelfArea());
+            //oldEntry->SetSelfArea(false);
 
-            DataEntry *newEntry = DataEntry::New(newDict);
-            newDict->Delete();
-            newEntry->Copy(entry);
-            newEntry->SetBinArea(oldEntry->GetBinArea(),oldEntry->IsSelfArea());
-            oldEntry->SetSelfArea(false);
-
-            RemoveEntry(oldEntry);
-            AddEntry(newEntry);
-            newEntry->Delete();
+            //RemoveEntry(oldEntry);
+            //AddEntry(newEntry);
+            //newEntry->Delete();
+  
          }
       }
+*/
+         VRKey PixelVR;
+         // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
+         // more than 8 (i.e 12, 16) is a 'O Words'
+         if ( GetBitsAllocated() == 8 || GetBitsAllocated() == 24 ) 
+            PixelVR = "OB";
+         else
+            PixelVR = "OW";
+         // Change only made if usefull
+         if ( PixelVR != entry->GetVR() )
+         { 
+            entry->SetVR(PixelVR);  
+         }         
    }
    return true;
 }
@@ -1539,7 +1557,7 @@ bool File::Write(std::string fileName, FileType writetype)
          // no (GrPixel, NumPixel) element
          std::string s_lgPix = Util::Format("%d", i_lgPix+12);
          s_lgPix = Util::DicomString( s_lgPix.c_str() );
-         InsertEntryString(s_lgPix,GrPixel, 0x0000);   
+         InsertEntryString(s_lgPix,GrPixel, 0x0000, "UL");   
       }
    }
    Document::WriteContent(fp, writetype);

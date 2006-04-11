@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:19:25 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -205,7 +205,7 @@ bool DocEntrySet::SetEntryBinArea(uint8_t *content, int lgth, DataEntry *entry)
 
 /**
  * \brief   Modifies the value of a given Doc Entry (Dicom Element)
- *          when it exists. Create it with the given value when unexistant.
+ *          when it exists. Creates it with the given value when unexistant.
  * @param   value (string) Value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
@@ -219,7 +219,7 @@ DataEntry *DocEntrySet::InsertEntryString(std::string const &value,
 {
    DataEntry *dataEntry = 0;
    DocEntry *currentEntry = GetDocEntry( group, elem );
-   
+   VRKey localVR = vr;
    if (currentEntry)
    {
       dataEntry = dynamic_cast<DataEntry *>(currentEntry);
@@ -239,19 +239,35 @@ DataEntry *DocEntrySet::InsertEntryString(std::string const &value,
          }
       }
    }
+  
+   else // the 'currentEntry' was not found
+   {
+      if ( vr == GDCM_VRUNKNOWN ) // user didn't specify a VR.
+                                  //  Probabely he trusts the Dicom Dict !
+      {
+          DictEntry *e = 
+            Global::GetDicts()->GetDefaultPubDict()->GetEntry(group, elem);
+          if ( e )
+          {
+             localVR = e->GetVR();  
+             e->Register(); // ?? JPRx
+         }
+      }
+   }
 
    // Create a new dataEntry if necessary
    if ( !dataEntry )
    {
-      dataEntry = NewDataEntry( group, elem, vr );
+      dataEntry = NewDataEntry( group, elem, localVR );
 
       if ( !AddEntry(dataEntry) )
       {
-         gdcmWarningMacro("AddEntry failed although this is a creation.");
+         gdcmWarningMacro("AddEntry " << dataEntry->GetKey() 
+                 << " failed although this is a creation.");
          dataEntry->Delete();
          return NULL;
       }
-      dataEntry->Delete();
+      dataEntry->Delete(); // ?!? JPRx
    }
 
    // Set the dataEntry value
@@ -398,6 +414,7 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
    return GetDocEntry(group,elem)!=NULL;
 }
 
+
 /**
  * \brief   Build a new DataEntry from all the low level arguments. 
  *          Check for existence of dictionary entry, and build
@@ -410,10 +427,8 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
 DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
                                      VRKey const &vr) 
 {
-   DictEntry *dictEntry = GetDictEntry(group, elem, vr);
 
-   DataEntry *newEntry = DataEntry::New(dictEntry);
-   dictEntry->Unregister(); // GetDictEntry register it
+   DataEntry *newEntry = DataEntry::New(group,elem,vr);
    if (!newEntry) 
    {
       gdcmWarningMacro( "Failed to allocate DataEntry for ("
@@ -433,10 +448,11 @@ DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
  */
 SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem) 
 {
-   DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
+   //DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
 
-   SeqEntry *newEntry = SeqEntry::New( dictEntry );
-   dictEntry->Unregister(); // GetDictEntry register it
+   //SeqEntry *newEntry = SeqEntry::New( dictEntry );
+   SeqEntry *newEntry = SeqEntry::New( group,elem );
+   //dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry)
    {
       gdcmWarningMacro( "Failed to allocate SeqEntry for ("
@@ -462,7 +478,7 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
 {
    DictEntry *found = 0;
    /// \todo store the DefaultPubDict somwhere, in order not to access the HTable
-   ///       every time !
+   ///       every time ! --> Done!
    Dict *pubDict = Global::GetDicts()->GetDefaultPubDict();
    if (!pubDict) 
    {
@@ -475,66 +491,6 @@ DictEntry *DocEntrySet::GetDictEntry(uint16_t group,uint16_t elem)
          found->Register();
    }
    return found;
-}
-
-/**
- * \brief   Searches [both] the public [and the shadow dictionary (when they
- *          exist)] for the presence of the DictEntry with given
- *          group and element, and creates a new virtual DictEntry if necessary
- * @param   group  group number of the searched DictEntry
- * @param   elem element number of the searched DictEntry
- * @param   vr V(alue) R(epresentation) to use, if necessary 
- * @return  Corresponding DictEntry when it exists, NULL otherwise.
- * \remarks The returned DictEntry is registered
- */
-DictEntry *DocEntrySet::GetDictEntry(uint16_t group, uint16_t elem,
-                                     VRKey const &vr)
-{
-   DictEntry *dictEntry = GetDictEntry(group,elem);
-   DictEntry *goodEntry = dictEntry;
-   VRKey goodVR = vr;
-   TagName vm;
-   if (elem == 0x0000)
-      goodVR="UL";
-
-   if ( goodEntry )
-   {
-      if ( goodVR != goodEntry->GetVR()
-        && goodVR != GDCM_VRUNKNOWN )
-      {
-         gdcmWarningMacro("For (" << std::hex << group << "|"
-            << elem << "), found VR : [" << vr << "]"
-            << " expected: [" << goodEntry->GetVR() << "]" ) ;
-        // avoid confusing further validator with "FIXME" VM
-        // when possible      
-         vm = dictEntry->GetVM();
-         goodEntry = NULL;
-      }
-      dictEntry->Unregister();
-   }
-   else
-   {
-      vm = "FIXME";
-   }
-   // Create a new virtual DictEntry if necessary
-   if (!goodEntry)
-   {
-      if (dictEntry)
-      {
-
-         goodEntry = DictEntry::New(group, elem, goodVR, vm,
-                                    dictEntry->GetName() );
-      }
-      else
-      {
-         goodEntry = DictEntry::New(group, elem, goodVR);
-      }
-   }
-   else
-   {
-      goodEntry->Register();
-   }
-   return goodEntry;
 }
 
 //-----------------------------------------------------------------------------

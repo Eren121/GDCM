@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,10 +43,13 @@ class GDCM_EXPORT SeqEntry : public DocEntry
 
 public:
 /// \brief Contructs a SeqEntry with a RefCounter from DictEntry
-   static SeqEntry *New(DictEntry *e) {return new SeqEntry(e);}
+   //static SeqEntry *New(DictEntry *e) {return new SeqEntry(e);}
 /// \brief Contructs a SeqEntry with a RefCounter from DocEntry
    static SeqEntry *New(DocEntry *d, int depth) {return new SeqEntry(d,depth);}
-
+/// \brief Contructs a SeqEntry with a RefCounter from elementary values
+   static SeqEntry *New(uint16_t group,uint16_t elem, VRKey const &vr = GDCM_VRUNKNOWN) 
+                           {return new SeqEntry(group,elem);}
+   
    void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
    void WriteContent(std::ofstream *fp, FileType filetype);
    uint32_t ComputeFullLength();
@@ -76,8 +79,9 @@ public:
 protected:
 
 private:
-   SeqEntry( DictEntry *e);
+   //SeqEntry( DictEntry *e);
    SeqEntry( DocEntry *d, int depth );
+   SeqEntry( uint16_t group, uint16_t elem );
    ~SeqEntry();
 
 // Variables

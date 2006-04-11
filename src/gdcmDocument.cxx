@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/14 12:09:18 $
-  Version:   $Revision: 1.345 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.346 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -695,7 +695,6 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
       fp->write(filePreamble, 128);
       fp->write("DICM", 4);
    }
-
    /*
     * \todo rewrite later, if really usefull
     *       - 'Group Length' element is optional in DICOM
@@ -1053,7 +1052,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    bool delim_mode_intern = delim_mode;
    bool first = true;
    gdcmDebugMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
-                     << " at offset " << std::hex << "0x(" << offset << ")" ); 
+                     << " at offset " << std::hex << "0x(" << offset << ")" );    
    while (true)
    {
    
@@ -1063,10 +1062,10 @@ void Document::ParseDES(DocEntrySet *set, long offset,
 // Uncomment to track the bug
 /*   
    if( Debug::GetDebugFlag() )   
-      std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) 
+      std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) // in Debug mode
                 << std::hex << " 0x(" <<(long)(Fp->tellg()) <<  ")" << std::endl;
-*/
-
+*/   
+ 
    // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry   
       if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
          if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry, when no delim mode
@@ -1232,7 +1231,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                      l, delim_mode_intern);
 
             gdcmDebugMacro( "Exit from ParseSQ, delim " << delim_mode_intern);
- 
          }
          if ( !set->AddEntry( newSeqEntry ) )
          {
@@ -1593,7 +1591,9 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
 VRKey Document::FindDocEntryVR()
 {
    if ( Filetype != ExplicitVR )
+   {
       return GDCM_VRUNKNOWN;
+   }
 
    // Delimiters (0xfffe), are not explicit VR ... 
    if ( CurrentGroup == 0xfffe )
@@ -1620,7 +1620,7 @@ VRKey Document::FindDocEntryVR()
    if ( !CheckDocEntryVR(vr) )
    {
 /*   
-      std::cout << "================================================================Unknown VR" 
+//      std::cout << "================================================================Unknown VR" 
                << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ")" << "for : " <<  CurrentGroup
@@ -2052,7 +2052,7 @@ void Document::SwitchByteSwapCode()
  * \brief  during parsing, Header Elements too long are not loaded in memory
  * @param newSize new size
  */
-void Document::SetMaxSizeLoadEntry(long newSize) 
+void Document::SetMaxSizeLoadEntry(long newSize)
 {
    if ( newSize < 0 )
    {
@@ -2071,7 +2071,7 @@ void Document::SetMaxSizeLoadEntry(long newSize)
  *          (read the 'Group Number', the 'Element Number',
  *          gets the Dict Entry
  *          gets the VR, gets the length, gets the offset value)
- * @return  On succes : the newly created DocEntry, NULL on failure.      
+ * @return  On succes : the newly created DocEntry, NULL on failure.
  */
 DocEntry *Document::ReadNextDocEntry()
 {
@@ -2082,11 +2082,11 @@ DocEntry *Document::ReadNextDocEntry()
    }
    catch ( FormatError )
    {
-      // We reached the EOF (or an error occured) therefore 
+      // We reached the EOF (or an error occured) therefore
       // header parsing has to be considered as finished.
       return 0;
    }
-   
+
    // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
    {
@@ -2094,11 +2094,10 @@ DocEntry *Document::ReadNextDocEntry()
          HandleOutOfGroup0002(CurrentGroup, CurrentElem);
       else
          // Sometimes file contains groups of tags with reversed endianess.
-         HandleBrokenEndian(CurrentGroup, CurrentElem);  
+         HandleBrokenEndian(CurrentGroup, CurrentElem);
     }
-        
+
    VRKey vr = FindDocEntryVR();
-   
    VRKey realVR = vr;
 
    if ( vr == GDCM_VRUNKNOWN )
@@ -2107,6 +2106,11 @@ DocEntry *Document::ReadNextDocEntry()
       {
          realVR = "UL";     // must be UL
       }
+      else if (CurrentGroup == 0xfffe) // Don't get DictEntry for Delimitors
+      {
+         realVR = "UL";
+      }
+
       // Commented out in order not to generate 'Shadow Groups' where some 
       // Data Elements are Explicit VR and some other ones Implicit VR
       // (Stupid MatLab DICOM Reader couldn't read gdcm-written images)
@@ -2121,11 +2125,11 @@ DocEntry *Document::ReadNextDocEntry()
       */
       else
       {
-         DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);
+         DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);//only when ImplicitVR
          if ( dictEntry )
          {
             realVR = dictEntry->GetVR();
-            dictEntry->Unregister();
+            dictEntry->Unregister(); // GetDictEntry registered it 
          }
       }
    }
@@ -2133,8 +2137,10 @@ DocEntry *Document::ReadNextDocEntry()
    DocEntry *newEntry;
    //if ( Global::GetVR()->IsVROfSequence(realVR) )
    if (realVR == "SQ")
+   {
       newEntry = NewSeqEntry(CurrentGroup, CurrentElem);
-   else 
+   }
+   else
    {
       newEntry = NewDataEntry(CurrentGroup, CurrentElem, realVR);
       static_cast<DataEntry *>(newEntry)->SetState(DataEntry::STATE_NOTLOADED);
@@ -2146,14 +2152,14 @@ DocEntry *Document::ReadNextDocEntry()
       {
          // We thought this was explicit VR, but we end up with an
          // implicit VR tag. Let's backtrack.
-         if ( newEntry->GetGroup() != 0xfffe )
+ 
+         //if ( newEntry->GetGroup() != 0xfffe )
+         if (CurrentGroup != 0xfffe )
          { 
-            std::string msg;
             int offset = Fp->tellg();//Only when heuristic for Explicit/Implicit was wrong
-            msg = Util::Format(
-                        "Entry (%04x,%04x) at x(%x) should be Explicit VR\n", 
-                        newEntry->GetGroup(), newEntry->GetElement(), offset );
-            gdcmWarningMacro( msg.c_str() );
+
+            gdcmWarningMacro("Entry (" << newEntry->GetKey() << ") at x("
+                     <<  offset << ") should be Explicit VR");
           }
       }
       newEntry->SetImplicitVR();

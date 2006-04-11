@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/05 13:25:26 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ Dict::Dict( )
  */
 Dict::Dict(std::string const &filename)
 {
-
+   gdcmDebugMacro( "in Dict::Dict, filename =[" << filename << "]" );
    std::ifstream from( filename.c_str() );
    if ( !from )
    {
@@ -57,6 +57,8 @@ Dict::Dict(std::string const &filename)
    }
    else
    {
+      gdcmDebugMacro( "in Dict::Dict, DoTheLoadingJob filename =[" 
+                    << filename << "]" );
       DoTheLoadingJob(from);
       Filename = filename;
    }
@@ -160,7 +162,10 @@ bool Dict::AddEntry(DictEntry *newEntry)
  * @param   newEntry new entry (overwrites any previous one with same tag)
  * @return  false if Dicom Element doesn't exist
  */
-bool Dict::ReplaceEntry(DictEntry *newEntry)
+ 
+ /* seems to be useless
+ 
+bool Dict::ReplaceEntry(DictEntry *newEntry) // seems to be useless
 {
    const TagKey &key = newEntry->GetKey();
    if ( RemoveEntry(key) )
@@ -171,7 +176,7 @@ bool Dict::ReplaceEntry(DictEntry *newEntry)
    } 
    return false;
 }
-
+*/
 /**
  * \brief  removes an already existing Dicom Dictionary Entry,
  *         identified by its Tag
@@ -183,8 +188,8 @@ bool Dict::RemoveEntry(TagKey const &key)
    TagKeyHT::const_iterator it = KeyHt.find(key);
    if ( it != KeyHt.end() ) 
    {
-      it->second->Unregister();
-      KeyHt.erase(key);
+      it->second->Unregister(); // delete the entry
+      KeyHt.erase(key);         // remove pointer from HTable
 
       return true;
    } 
@@ -215,9 +220,11 @@ void Dict::ClearEntry()
    // we assume all the pointed DictEntries are already cleaned-up
    // when we clean KeyHt.
    TagKeyHT::const_iterator it;
+
    for(it = KeyHt.begin();it!=KeyHt.end();++it)
-      it->second->Unregister();
-   KeyHt.clear();
+      it->second->Unregister(); // delete the entry
+   KeyHt.clear();               // remove all the entries from HTable
+
 }
 
 /**
@@ -322,19 +329,23 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
  */
 void Dict::Print(std::ostream &os, std::string const & )
 {
-   os << "Dict file name : " << Filename << std::endl;
+   os << "Dict file name : [" << Filename << "]" << std::endl;
    std::ostringstream s;
 
    for (TagKeyHT::iterator tag = KeyHt.begin(); tag != KeyHt.end(); ++tag)
-   {
+   {  
+std::cout << tag->second->GetKey() << " " << tag->second->GetName() 
+          << std::endl;
       s << "Entry : ";
       s << "(" << tag->second->GetKey() << ") = "
         << std::dec;
       s << tag->second->GetVR() << ", ";
       s << tag->second->GetVM() << ", ";
       s << tag->second->GetName() << "."  << std::endl;
+     
    }
    os << s.str();
+
 }
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMacro.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:20:34 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,13 +20,13 @@
 #define GDCMMACRO_H
 
 //-----------------------------------------------------------------------------
-#define gdcmTypeMacro(type) \
-   private : \
+#define gdcmTypeMacro(type)               \
+   private :                              \
       type(type &); /* Not implemented */ \
       type &operator=(type &) /* Not implemented */
 
-#define gdcmNewMacro(type) \
-   public : \
+#define gdcmNewMacro(type)                \
+   public :                               \
       static type *New() {return new type(); } /* Not implemented */
 
 //-----------------------------------------------------------------------------

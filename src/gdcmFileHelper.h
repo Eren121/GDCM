@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 16:09:48 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 
 #include "gdcmDebug.h"
 #include "gdcmRefCounter.h"
+#include "gdcmVRKey.h"
 #include "gdcmFile.h"
 
 namespace gdcm 
@@ -191,11 +192,14 @@ protected:
    void RestoreWriteOfLibido();
 
    DataEntry *CopyDataEntry(uint16_t group, uint16_t elem, 
-                               const TagName &vr = GDCM_VRUNKNOWN);
+                               const VRKey &vr = GDCM_VRUNKNOWN);
    void CheckMandatoryElements();
-   void CheckMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
-   void SetMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
-   void CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
+   void CheckMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
+                               const VRKey &vr = GDCM_VRUNKNOWN);
+   void SetMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
+                               const VRKey &vr = GDCM_VRUNKNOWN);
+   void CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
+                               const VRKey &vr = GDCM_VRUNKNOWN);
    void RestoreWriteMandatory();
 
 private:

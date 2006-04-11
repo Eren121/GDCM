@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 15:29:59 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,10 +50,10 @@ DicomDirElement::DicomDirElement()
    else
    {
       char buff[1024];
+      char buff2[1024];
       std::string strType;
       DicomElement elem;
       DicomDirType type;
-
       while (!from.eof())
       {
          from >> std::ws;
@@ -80,14 +80,20 @@ DicomDirElement::DicomDirElement()
 
          if ( type!=DD_UNKNOWN )
          {
-            from >> std::hex >> elem.Group >> elem.Elem;
+            from >> std::hex >> elem.Group >> elem.Elem;//  >> elem.VR;
 
+            from.getline(buff2, 1024, '"');
+            from >> std::ws;
+            from.getline(buff2, 1024, '"');
+            elem.VR[0] = buff2[0];
+            elem.VR[1] = buff2[1];
+    
             from >> std::ws;
             from.getline(buff, 1024, '"');
             from >> std::ws;
             from.getline(buff, 1024, '"');
             elem.Value = buff;
-
+    
             AddEntry(type, elem);
          }
          from.getline(buff, 1024, '\n');
@@ -147,13 +153,15 @@ bool DicomDirElement::AddEntry(DicomDirType type, DicomElement const &elem)
  * @param type Element type (DD_PATIENT, DD_STUDY, DD_SERIE, DD_IMAGE) 
  * @param group  Group number of the entry to be added
  * @param elem Element number of the entry to be added
+ * @param vr Value Representation of the entry to be added
  */
 void DicomDirElement::AddDicomDirElement(DicomDirType type,
-                                         uint16_t group, uint16_t elem)
+                                         uint16_t group, uint16_t elem, VRKey vr)
 {
    DicomElement el;
    el.Group = group;
    el.Elem  = elem;
+   el.VR    = vr;
    el.Value = "";
    AddEntry(type, el);
 }
@@ -174,7 +182,6 @@ void DicomDirElement::Print(std::ostream &os,std::string const &)
 {
    std::ostringstream s;
    std::list<DicomElement>::iterator it;
-   //char greltag[10];  //group element tag
    TagKey greltag;
 
    s << "Meta Elements :"<<std::endl;

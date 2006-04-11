@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:19:25 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
-
+#include "gdcmDictSet.h"
 #include <iomanip> // for std::ios::left, ...
 #include <fstream>
 
@@ -34,23 +34,22 @@ namespace gdcm
 // Constructor / Destructor
 /**
  * \brief   Constructor from a given DictEntry
- * @param   in Pointer to existing dictionary entry
+ * @param   group Group number
+ * @param   elem Element number
+ * @param   vr VR 
  */
-DocEntry::DocEntry(DictEntry *in)
+DocEntry::DocEntry(uint16_t group, uint16_t elem, VRKey const &vr)
 {
    ImplicitVR = false;
-   DicomDict  = in;
+   DicomDict  = 0;   
    Offset     = 0 ; // To avoid further missprinting
 
    // init some variables
    ReadLength = 0;
    Length = 0;
 
-   gdcmAssertMacro(DicomDict);
-   DicomDict->Register();
-
-   VR = in->GetVR();
-   Key = in->GetKey();
+   VR = vr;
+   Key.SetGroupElem(group,elem);
 }
 
 /**
@@ -58,9 +57,11 @@ DocEntry::DocEntry(DictEntry *in)
  */
 DocEntry::~DocEntry()
 {
-   gdcmAssertMacro(DicomDict);
-
-   DicomDict->Unregister();
+   if (DicomDict)
+   {
+      gdcmAssertMacro(DicomDict);
+      DicomDict->Unregister();
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -80,7 +81,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    VRKey vr       = GetVR();
    uint16_t elem  = GetElement();
    uint32_t lgth  = GetLength();
-
+  
    if ( group == 0xfffe && elem == 0x0000 )
    {
      // Fix in order to make some MR PHILIPS images e-film readable
@@ -108,7 +109,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
   
       // Special case of delimiters:
       if (group == 0xfffe)
-      {
+      {   
          // Delimiters have NO Value Representation
          // Hence we skip writing the VR.
          //
@@ -121,7 +122,6 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          binary_write(*fp, ff);
          return;
       }
-
       uint16_t zero = 0;
       uint16_t shortLgr = (uint16_t)lgth;
 
@@ -129,13 +129,11 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       {
          // GDCM_VRUNKNOWN was stored in the Entry VR;
          // deal with Entry as if TS were Implicit VR
- 
          binary_write(*fp, lgth);
       }
       else
       {
          binary_write(*fp, vr.str());
-
          // See PS 3.5-2004 page 33, 36                  
          if ( (vr == "SQ") || (vr == "OB") || (vr == "OW") || (vr == "OF") 
           ||  (vr == "UN") || (vr == "UT") )
@@ -170,6 +168,39 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       {
          binary_write(*fp, lgth);
       }
+   }
+}
+
+/// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
+/// Dictionnary of the current Dicom Header Entry
+std::string const &DocEntry::GetName() 
+{ 
+   if (DicomDict == 0)
+      DicomDict =
+                 Global::GetDicts()->GetDefaultPubDict()->GetEntry(Key[0],Key[1]);
+   if (DicomDict == 0)
+      return GDCM_UNKNOWN;
+   else
+   {
+      DicomDict->Register();
+      return DicomDict->GetName();
+   }
+}
+
+   /// \brief Returns the 'Value Multiplicity' (e.g. "1", "6", "1-n", "3-n"),
+   /// found in the Dicom entry or in the Dicom Dictionnary
+   /// of the current Dicom entry
+std::string const &DocEntry::GetVM()
+{
+   if (DicomDict == 0)
+      DicomDict =
+                 Global::GetDicts()->GetDefaultPubDict()->GetEntry(Key[0],Key[1]);
+   if (DicomDict == 0)
+      return GDCM_UNKNOWN;
+   else
+   {
+      DicomDict->Register();
+      return DicomDict->GetVM();
    }
 }
 

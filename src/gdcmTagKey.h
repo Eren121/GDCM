@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 09:35:44 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ namespace gdcm
 class TagKey
 {
 public :
-   TagKey(uint16_t gr, uint16_t elt) { tag[0] = gr;tag[1] = elt;}
+   TagKey(uint16_t group, uint16_t elem) { tag[0] = group;tag[1] = elem;}
    TagKey() { tag[0] = tag[1] = 0x0000;}
 
    friend std::ostream& operator<<(std::ostream& _os, const TagKey &_val);
@@ -43,13 +43,18 @@ public :
       sprintf(res,"%04x|%04x",tag[0],tag[1]);
       return std::string(res);
    }
-
+   ///\brief sets the Group Number for the TagKey
    void SetGroup(uint16_t group) { tag[0] = group; }
    uint16_t GetGroup() const { return tag[0]; }
 
-   void SetElement(uint16_t elem) { tag[1] = elem; }
+   ///\brief sets the Element Number for the TagKey
+   void SetElement(uint16_t elem) { tag[1] = elem; }   
    uint16_t GetElement() const { return tag[1]; }
 
+   ///\brief sets the Group Number and Element Number for the TagKey
+   void SetGroupElem(uint16_t group, uint16_t elem) 
+                               { tag[0] = group;tag[1] = elem; }
+   
    TagKey &operator=(const TagKey &_val)
    {
       tag[0] = _val.tag[0];

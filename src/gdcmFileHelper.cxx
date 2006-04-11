@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/03/29 16:09:48 $
-  Version:   $Revision: 1.98 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.99 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -661,6 +661,9 @@ bool FileHelper::WriteAcr (std::string const &fileName)
  */
 bool FileHelper::Write(std::string const &fileName)
 {
+
+   CheckMandatoryElements(); //called once, here !
+   
    bool flag = false;
    DocEntry *e;   
    switch(WriteType)
@@ -671,7 +674,7 @@ bool FileHelper::Write(std::string const &fileName)
  
       case Unknown:  // should never happen; ExplicitVR is the default value
       case ExplicitVR:
-      
+
    // User should ask gdcm to write an image in Explicit VR mode
    // only when he is sure *all* the VR of *all* the DataElements is known.
    // i.e : when there are *only* Public Groups
@@ -680,10 +683,11 @@ bool FileHelper::Write(std::string const &fileName)
    // Let's just *dream* about it; *never* trust a user !
    // We turn to Implicit VR if at least the VR of one element is unknown.
    
+ 
          e = FileInternal->GetFirstEntry();
          while (e != 0)
          {
-            if (e->GetVR() == "  ")
+            if (e->GetVR() == "  ")  
             {
                SetWriteTypeToDcmImplVR();
                SetWriteFileTypeToImplicitVR();
@@ -698,7 +702,9 @@ bool FileHelper::Write(std::string const &fileName)
             SetWriteFileTypeToExplicitVR();
          }
          break;
- 
+
+  SetWriteFileTypeToExplicitVR(); // to see JPRx
+  break;
       case ACR:
       case ACR_LIBIDO:
       // NOTHING is done here just for LibIDO.
@@ -708,7 +714,8 @@ bool FileHelper::Write(std::string const &fileName)
       // (shame on him !)
       // We add Recognition Code (RET)
         if ( ! FileInternal->GetDataEntry(0x0008, 0x0010) )
-            FileInternal->InsertEntryString("ACR-NEMA V1.0 ", 0x0008, 0x0010);
+            FileInternal->InsertEntryString("ACR-NEMA V1.0 ", 
+                                             0x0008, 0x0010, "LO");
          SetWriteFileTypeToACR();
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
@@ -718,9 +725,7 @@ bool FileHelper::Write(std::string const &fileName)
          SetWriteFileTypeToJPEG();
          break;
    }
-   
-   CheckMandatoryElements();
-
+ 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
    //
@@ -757,9 +762,10 @@ bool FileHelper::Write(std::string const &fileName)
       check = FileInternal->Write(fileName,WriteType);
    }
 
-   RestoreWrite();
-   RestoreWriteFileType();
-   RestoreWriteMandatory();
+   RestoreWrite(); 
+  // RestoreWriteFileType();
+  // RestoreWriteMandatory();
+   
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -845,7 +851,7 @@ void FileHelper::SetWriteToRaw()
    } 
    else
    {
-      DataEntry *photInt = CopyDataEntry(0x0028,0x0004);
+      DataEntry *photInt = CopyDataEntry(0x0028,0x0004,"CS");
       if (FileInternal->HasLUT() )
       {
          photInt->SetString("PALETTE COLOR ");
@@ -890,13 +896,13 @@ void FileHelper::SetWriteToRGB()
    {
       PixelReadConverter->BuildRGBImage();
       
-      DataEntry *spp = CopyDataEntry(0x0028,0x0002);
+      DataEntry *spp = CopyDataEntry(0x0028,0x0002,"US");
       spp->SetString("3 ");
 
-      DataEntry *planConfig = CopyDataEntry(0x0028,0x0006);
+      DataEntry *planConfig = CopyDataEntry(0x0028,0x0006,"US");
       planConfig->SetString("0 ");
 
-      DataEntry *photInt = CopyDataEntry(0x0028,0x0004);
+      DataEntry *photInt = CopyDataEntry(0x0028,0x0004,"CS");
       photInt->SetString("RGB ");
 
       if ( PixelReadConverter->GetRGB() )
@@ -947,13 +953,13 @@ void FileHelper::SetWriteToRGB()
       // samples per pixels = 1 (in the read file)
       if ( FileInternal->GetBitsAllocated()==24 ) 
       {
-         DataEntry *bitsAlloc = CopyDataEntry(0x0028,0x0100);
+         DataEntry *bitsAlloc = CopyDataEntry(0x0028,0x0100,"US");
          bitsAlloc->SetString("8 ");
 
-         DataEntry *bitsStored = CopyDataEntry(0x0028,0x0101);
+         DataEntry *bitsStored = CopyDataEntry(0x0028,0x0101,"US");
          bitsStored->SetString("8 ");
 
-         DataEntry *highBit = CopyDataEntry(0x0028,0x0102);
+         DataEntry *highBit = CopyDataEntry(0x0028,0x0102,"US");
          highBit->SetString("7 ");
 
          Archive->Push(bitsAlloc);
@@ -976,8 +982,10 @@ void FileHelper::SetWriteToRGB()
  */ 
 void FileHelper::RestoreWrite()
 {
+
    Archive->Restore(0x0028,0x0002);
    Archive->Restore(0x0028,0x0004);
+   
    Archive->Restore(0x0028,0x0006);
    Archive->Restore(GetFile()->GetGrPixel(),GetFile()->GetNumPixel());
 
@@ -997,7 +1005,6 @@ void FileHelper::RestoreWrite()
    // For the Palette Color Lookup Table UID
    Archive->Restore(0x0028,0x1203); 
 
-
    // group 0002 may be pushed out for ACR-NEMA writting purposes 
    Archive->Restore(0x0002,0x0000);
    Archive->Restore(0x0002,0x0001);
@@ -1009,6 +1016,7 @@ void FileHelper::RestoreWrite()
    Archive->Restore(0x0002,0x0016);
    Archive->Restore(0x0002,0x0100);
    Archive->Restore(0x0002,0x0102);
+
 }
 
 /**
@@ -1040,7 +1048,7 @@ void FileHelper::SetWriteFileTypeToJPEG()
    std::string ts = Util::DicomString( 
       Global::GetTS()->GetSpecialTransferSyntax(TS::JPEGBaselineProcess1) );
 
-   DataEntry *tss = CopyDataEntry(0x0002,0x0010);
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010,"UI");
    tss->SetString(ts);
 
    Archive->Push(tss);
@@ -1055,7 +1063,7 @@ void FileHelper::SetWriteFileTypeToExplicitVR()
    std::string ts = Util::DicomString( 
       Global::GetTS()->GetSpecialTransferSyntax(TS::ExplicitVRLittleEndian) );
 
-   DataEntry *tss = CopyDataEntry(0x0002,0x0010);
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010,"UI");
    tss->SetString(ts);
    Archive->Push(tss);
    tss->Delete();
@@ -1069,7 +1077,7 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
    std::string ts = Util::DicomString(
       Global::GetTS()->GetSpecialTransferSyntax(TS::ImplicitVRLittleEndian) );
 
-   DataEntry *tss = CopyDataEntry(0x0002,0x0010);
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010,"UI");
    tss->SetString(ts);
    Archive->Push(tss);
    tss->Delete();
@@ -1095,9 +1103,12 @@ void FileHelper::SetWriteToLibido()
    {
       std::string rows, columns; 
 
-      DataEntry *newRow=DataEntry::New(oldRow->GetDictEntry());
-      DataEntry *newCol=DataEntry::New(oldCol->GetDictEntry());
-
+      //DataEntry *newRow=DataEntry::New(oldRow->GetDictEntry());
+      //DataEntry *newCol=DataEntry::New(oldCol->GetDictEntry());
+      
+      DataEntry *newRow=DataEntry::New(0x0028, 0x0010, "US");
+      DataEntry *newCol=DataEntry::New(0x0028, 0x0011, "US");
+      
       newRow->Copy(oldCol);
       newCol->Copy(oldRow);
 
@@ -1111,7 +1122,7 @@ void FileHelper::SetWriteToLibido()
       newCol->Delete();
    }
 
-   DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010);
+   DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010,"LO");
    libidoCode->SetString("ACRNEMA_LIBIDO_1.1");
    Archive->Push(libidoCode);
    libidoCode->Delete();
@@ -1127,7 +1138,7 @@ void FileHelper::SetWriteToNoLibido()
    {
       if ( recCode->GetString() == "ACRNEMA_LIBIDO_1.1" )
       {
-         DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010);
+         DataEntry *libidoCode = CopyDataEntry(0x0008,0x0010,"LO");
          libidoCode->SetString("");
          Archive->Push(libidoCode);
          libidoCode->Delete();
@@ -1156,11 +1167,10 @@ void FileHelper::RestoreWriteOfLibido()
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
  * @param   vr  Value Representation of the Entry
- *          FIXME : what is it used for?
  * \return  pointer to the new Bin Entry (NULL when creation failed).
  */ 
 DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
-                                   const TagName &vr)
+                                   const VRKey &vr)
 {
    DocEntry *oldE = FileInternal->GetDocEntry(group, elem);
    DataEntry *newE;
@@ -1171,7 +1181,8 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 
    if ( oldE )
    {
-      newE = DataEntry::New(oldE->GetDictEntry());
+      //newE = DataEntry::New(oldE->GetDictEntry());
+      newE = DataEntry::New(group, elem, vr);
       newE->Copy(oldE);
    }
    else
@@ -1378,7 +1389,7 @@ void FileHelper::CheckMandatoryElements()
    // Create them if not found
    // Always modify the value
    // Push the entries to the archive.
-      CopyMandatoryEntry(0x0002,0x0000,"0");
+      CopyMandatoryEntry(0x0002,0x0000,"0","UL");
 
       DataEntry *e_0002_0001 = CopyDataEntry(0x0002,0x0001, "OB");
       e_0002_0001->SetBinArea((uint8_t*)Util::GetFileMetaInformationVersion(),
@@ -1390,117 +1401,35 @@ void FileHelper::CheckMandatoryElements()
       if ( ContentType == FILTERED_IMAGE || ContentType == UNMODIFIED_PIXELS_IMAGE)
       {      
    // we keep the original 'Media Storage SOP Class UID', we default it if missing
-         CheckMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7"); 
+         CheckMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7","UI"); 
       }
       else
       {
    // It's *not* an image comming straight from a source. We force
    // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
-         CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7");
+         CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7","UI");
       }
       
    // 'Media Storage SOP Instance UID'   
-      CopyMandatoryEntry(0x0002,0x0003,sop);
+      CopyMandatoryEntry(0x0002,0x0003,sop,"UI");
       
    // 'Implementation Class UID'
    // FIXME : in all examples we have, 0x0002,0x0012 is not so long :
    //         seems to be Root UID + 4 digits (?)
-      CopyMandatoryEntry(0x0002,0x0012,Util::CreateUniqueUID());
+      CopyMandatoryEntry(0x0002,0x0012,Util::CreateUniqueUID(),"UI");
 
    // 'Implementation Version Name'
       std::string version = "GDCM ";
       version += Util::GetVersion();
-      CopyMandatoryEntry(0x0002,0x0013,version);
+      CopyMandatoryEntry(0x0002,0x0013,version,"SH");
    }
 
    // --------------------- For DataSet ---------------------
-      
-   if ( ContentType == FILTERED_IMAGE || ContentType == UNMODIFIED_PIXELS_IMAGE)
-   {      
-   // we keep the original 'Media Storage SOP Class UID', we default it if missing (it should be present !)
-         CheckMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");      
-   }
-   else
-   {
-   // It's *not* an image comming straight from a source. We force
-   // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
-         CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7");      
-   }   
-
-   // Push out 'LibIDO-special' entries, if any
-   Archive->Push(0x0028,0x0015);
-   Archive->Push(0x0028,0x0016);
-   Archive->Push(0x0028,0x0017);
-   Archive->Push(0x0028,0x00199);
-
-   // Deal with the pb of (Bits Stored = 12)
-   // - we're gonna write the image as Bits Stored = 16
-   if ( FileInternal->GetEntryString(0x0028,0x0100) ==  "12")
-   {
-      CopyMandatoryEntry(0x0028,0x0100,"16");
-   }
-
-   // Check if user wasn't drunk ;-)
-
-   std::ostringstream s;
-   // check 'Bits Allocated' vs decent values
-   int nbBitsAllocated = FileInternal->GetBitsAllocated();
-   if ( nbBitsAllocated == 0 || nbBitsAllocated > 32)
-   {
-      CopyMandatoryEntry(0x0028,0x0100,"16");
-      gdcmWarningMacro("(0028,0100) changed from "
-         << nbBitsAllocated << " to 16 for consistency purpose");
-      nbBitsAllocated = 16; 
-   }
-   // check 'Bits Stored' vs 'Bits Allocated'   
-   int nbBitsStored = FileInternal->GetBitsStored();
-   if ( nbBitsStored == 0 || nbBitsStored > nbBitsAllocated )
-   {
-      s.str("");
-      s << nbBitsAllocated;
-      CopyMandatoryEntry(0x0028,0x0101,s.str());
-      gdcmWarningMacro("(0028,0101) changed from "
-                       << nbBitsStored << " to " << nbBitsAllocated
-                       << " for consistency purpose" );
-      nbBitsStored = nbBitsAllocated; 
-    }
-   // check 'Hight Bit Position' vs 'Bits Allocated' and 'Bits Stored'
-   int highBitPosition = FileInternal->GetHighBitPosition();
-   if ( highBitPosition == 0 || 
-        highBitPosition > nbBitsAllocated-1 ||
-        highBitPosition < nbBitsStored-1  )
-   {
-      s.str("");
-      s << nbBitsStored - 1; 
-      CopyMandatoryEntry(0x0028,0x0102,s.str());
-      gdcmWarningMacro("(0028,0102) changed from "
-                       << highBitPosition << " to " << nbBitsAllocated-1
-                       << " for consistency purpose");
-   }
-
-   std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
-   if ( pixelSpacing == GDCM_UNFOUND )
-   {
-      pixelSpacing = "1.0\\1.0";
-       // if missing, Pixel Spacing forced to "1.0\1.0"
-      CopyMandatoryEntry(0x0028,0x0030,pixelSpacing);
-   }
-   
-   // 'Imager Pixel Spacing' : defaulted to 'Pixel Spacing'
-   // --> This one is the *legal* one !
-   if ( ContentType != USER_OWN_IMAGE)
-   //  we write it only when we are *sure* the image comes from
-   //         an imager (see also 0008,0x0064)          
-      CheckMandatoryEntry(0x0018,0x1164,pixelSpacing);
-   
-   // Samples Per Pixel (type 1) : default to grayscale 
-   CheckMandatoryEntry(0x0028,0x0002,"1");
-
-   // --- Check UID-related Entries ---
-
 
    if ( ContentType != USER_OWN_IMAGE) // when it's not a user made image
    { 
+   
+      gdcmDebugMacro( "USER_OWN_IMAGE (1)");
     // If 'SOP Class UID' exists ('true DICOM' image)
    // we create the 'Source Image Sequence' SeqEntry
    // to hold informations about the Source Image
@@ -1509,21 +1438,24 @@ void FileHelper::CheckMandatoryElements()
       if ( e_0008_0016 )
       {
       // Create 'Source Image Sequence' SeqEntry
-      SeqEntry *sis = SeqEntry::New (
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
+//     SeqEntry *sis = SeqEntry::New (
+//            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
+      SeqEntry *sis = SeqEntry::New (0x0008, 0x2112);
       SQItem *sqi = SQItem::New(1);
       // (we assume 'SOP Instance UID' exists too) 
       // create 'Referenced SOP Class UID'
-      DataEntry *e_0008_1150 = DataEntry::New(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
+//     DataEntry *e_0008_1150 = DataEntry::New(
+//            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
+      DataEntry *e_0008_1150 = DataEntry::New(0x0008, 0x1150, "UI");
       e_0008_1150->SetString( e_0008_0016->GetString());
       sqi->AddEntry(e_0008_1150);
       e_0008_1150->Delete();
       
       // create 'Referenced SOP Instance UID'
       DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
-      DataEntry *e_0008_1155 = DataEntry::New(
-            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
+//      DataEntry *e_0008_1155 = DataEntry::New(
+//            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
+      DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI");
       e_0008_1155->SetString( e_0008_0018->GetString());
       sqi->AddEntry(e_0008_1155);
       e_0008_1155->Delete();
@@ -1539,17 +1471,101 @@ void FileHelper::CheckMandatoryElements()
        if ( ContentType == FILTERED_IMAGE)      
       // the user *knows* he just modified the pixels
       // the image is no longer an 'Original' one
-         CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY");    
+         CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY","CS");    
       }
-   }    
+   }
+      
+   if ( ContentType == FILTERED_IMAGE || ContentType == UNMODIFIED_PIXELS_IMAGE)
+   {      
+   // we keep the original 'Media Storage SOP Class UID', we default it if missing (it should be present !)
+         CheckMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7","UI");      
+   }
+   else
+   {
+   // It's *not* an image comming straight from a source. We force
+   // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
+         CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7", "UI");      
+   }   
 
+   // Push out 'LibIDO-special' entries, if any
+   Archive->Push(0x0028,0x0015);
+   Archive->Push(0x0028,0x0016);
+   Archive->Push(0x0028,0x0017);
+   Archive->Push(0x0028,0x00199);
+
+   // Deal with the pb of (Bits Stored = 12)
+   // - we're gonna write the image as Bits Stored = 16
+   if ( FileInternal->GetEntryString(0x0028,0x0100) ==  "12")
+   {
+      CopyMandatoryEntry(0x0028,0x0100,"16","US");
+   }
+
+   // Check if user wasn't drunk ;-)
+
+   std::ostringstream s;
+   // check 'Bits Allocated' vs decent values
+   int nbBitsAllocated = FileInternal->GetBitsAllocated();
+   if ( nbBitsAllocated == 0 || nbBitsAllocated > 32)
+   {
+      CopyMandatoryEntry(0x0028,0x0100,"16","US");
+      gdcmWarningMacro("(0028,0100) changed from "
+         << nbBitsAllocated << " to 16 for consistency purpose");
+      nbBitsAllocated = 16; 
+   }
+   // check 'Bits Stored' vs 'Bits Allocated'   
+   int nbBitsStored = FileInternal->GetBitsStored();
+   if ( nbBitsStored == 0 || nbBitsStored > nbBitsAllocated )
+   {
+      s.str("");
+      s << nbBitsAllocated;
+      CopyMandatoryEntry(0x0028,0x0101,s.str(),"US");
+      gdcmWarningMacro("(0028,0101) changed from "
+                       << nbBitsStored << " to " << nbBitsAllocated
+                       << " for consistency purpose" );
+      nbBitsStored = nbBitsAllocated; 
+    }
+   // check 'Hight Bit Position' vs 'Bits Allocated' and 'Bits Stored'
+   int highBitPosition = FileInternal->GetHighBitPosition();
+   if ( highBitPosition == 0 || 
+        highBitPosition > nbBitsAllocated-1 ||
+        highBitPosition < nbBitsStored-1  )
+   {
+      s.str("");
+      s << nbBitsStored - 1; 
+      CopyMandatoryEntry(0x0028,0x0102,s.str(),"US");
+      gdcmWarningMacro("(0028,0102) changed from "
+                       << highBitPosition << " to " << nbBitsAllocated-1
+                       << " for consistency purpose");
+   }
+
+   std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
+   if ( pixelSpacing == GDCM_UNFOUND )
+   {
+      pixelSpacing = "1.0\\1.0";
+       // if missing, Pixel Spacing forced to "1.0\1.0"
+      CopyMandatoryEntry(0x0028,0x0030,pixelSpacing,"DS");
+   }
+   
+   // 'Imager Pixel Spacing' : defaulted to 'Pixel Spacing'
+   // --> This one is the *legal* one !
+   if ( ContentType != USER_OWN_IMAGE)
+   //  we write it only when we are *sure* the image comes from
+   //         an imager (see also 0008,0x0064)          
+      CheckMandatoryEntry(0x0018,0x1164,pixelSpacing,"DS");
+   
+   // Samples Per Pixel (type 1) : default to grayscale 
+   CheckMandatoryEntry(0x0028,0x0002,"1","US");
+
+   // --- Check UID-related Entries ---
+ 
    // At the end, not to overwrite the original ones,
    // needed by 'Referenced SOP Instance UID', 'Referenced SOP Class UID'   
    // 'SOP Instance UID'  
-   CopyMandatoryEntry(0x0008,0x0018,sop);
+   CopyMandatoryEntry(0x0008,0x0018,sop,"UI");
 
    if ( ContentType == USER_OWN_IMAGE)
    {
+      gdcmDebugMacro( "USER_OWN_IMAGE (2)");   
        // Conversion Type.
        // Other possible values are :
        // See PS 3.3, Page 408
@@ -1563,7 +1579,7 @@ void FileHelper::CheckMandatoryElements()
        // DRW = Drawing
        // SYN = Synthetic Image
            
-      CheckMandatoryEntry(0x0008,0x0064,"SYN"); // Why not?
+      CheckMandatoryEntry(0x0008,0x0064,"SYN","CS"); // Why not?
    } 
 /*
    if ( ContentType == CREATED_IMAGE)
@@ -1580,20 +1596,20 @@ void FileHelper::CheckMandatoryElements()
 
    // Instance Creation Date
    const std::string &date = Util::GetCurrentDate();
-   CopyMandatoryEntry(0x0008,0x0012,date);
+   CopyMandatoryEntry(0x0008,0x0012,date,"DA");
  
    // Instance Creation Time
    const std::string &time = Util::GetCurrentTime();
-   CopyMandatoryEntry(0x0008,0x0013,time);
+   CopyMandatoryEntry(0x0008,0x0013,time,"TM");
 
    // Study Date
-   CheckMandatoryEntry(0x0008,0x0020,date);
+   CheckMandatoryEntry(0x0008,0x0020,date,"DA");
    // Study Time
-   CheckMandatoryEntry(0x0008,0x0030,time);
+   CheckMandatoryEntry(0x0008,0x0030,time,"TM");
 
    // Accession Number
    //CopyMandatoryEntry(0x0008,0x0050,"");
-   CheckMandatoryEntry(0x0008,0x0050,"");
+   CheckMandatoryEntry(0x0008,0x0050,"","SH");
    
 
    // ----- Add Mandatory Entries if missing ---
@@ -1611,7 +1627,7 @@ void FileHelper::CheckMandatoryElements()
    //          keeping the same 'Study Instance UID' for various images
    // The user may add images to a 'Manufacturer Study',
    //          adding new Series to an already existing Study 
-   CheckMandatoryEntry(0x0020,0x000d,Util::CreateUniqueUID());
+   CheckMandatoryEntry(0x0020,0x000d,Util::CreateUniqueUID(),"UI");
 
    // 'Serie Instance UID'
    // Keep the value if exists
@@ -1619,16 +1635,16 @@ void FileHelper::CheckMandatoryElements()
    // keeping the same 'Serie Instance UID' for various images
    // The user shouldn't add any image to a 'Manufacturer Serie'
    // but there is no way no to prevent him for doing that 
-   CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID());
+   CheckMandatoryEntry(0x0020,0x000e,Util::CreateUniqueUID(),"UI");
 
    // Study ID
-   CheckMandatoryEntry(0x0020,0x0010,"");
+   CheckMandatoryEntry(0x0020,0x0010,"","SH");
 
    // Series Number
-   CheckMandatoryEntry(0x0020,0x0011,"");
+   CheckMandatoryEntry(0x0020,0x0011,"","IS");
 
    // Instance Number
-   CheckMandatoryEntry(0x0020,0x0013,"");
+   CheckMandatoryEntry(0x0020,0x0013,"","IS");
    
    // Patient Orientation
    // Can be computed from (0020|0037) :  Image Orientation (Patient)
@@ -1636,36 +1652,36 @@ void FileHelper::CheckMandatoryElements()
    std::string ori = o->GetOrientation ( FileInternal );
    o->Delete();
    if (ori != "\\" && ori != GDCM_UNFOUND)
-      CheckMandatoryEntry(0x0020,0x0020,ori);
+      CheckMandatoryEntry(0x0020,0x0020,ori,"CS");
    else   
-      CheckMandatoryEntry(0x0020,0x0020,"");
+      CheckMandatoryEntry(0x0020,0x0020,"","CS");
 
    // Default Patient Position to HFS
-   CheckMandatoryEntry(0x0018,0x5100,"HFS");
+   CheckMandatoryEntry(0x0018,0x5100,"HFS","CS");
 
    // Modality : if missing we set it to 'OTher'
-   CheckMandatoryEntry(0x0008,0x0060,"OT");
+   CheckMandatoryEntry(0x0008,0x0060,"OT","CS");
 
    // Manufacturer : if missing we set it to 'GDCM Factory'
-   CheckMandatoryEntry(0x0008,0x0070,"GDCM Factory");
+   CheckMandatoryEntry(0x0008,0x0070,"GDCM Factory","LO");
 
    // Institution Name : if missing we set it to 'GDCM Hospital'
-   CheckMandatoryEntry(0x0008,0x0080,"GDCM Hospital");
+   CheckMandatoryEntry(0x0008,0x0080,"GDCM Hospital","LO");
 
    // Patient's Name : if missing, we set it to 'GDCM^Patient'
-   CheckMandatoryEntry(0x0010,0x0010,"GDCM^Patient");
+   CheckMandatoryEntry(0x0010,0x0010,"GDCM^Patient","PN");
 
    // Patient ID
-   CheckMandatoryEntry(0x0010,0x0020,"");
+   CheckMandatoryEntry(0x0010,0x0020,"","LO");
 
    // Patient's Birth Date : 'type 2' entry -> must exist, value not mandatory
-   CheckMandatoryEntry(0x0010,0x0030,"");
+   CheckMandatoryEntry(0x0010,0x0030,"","DA");
 
    // Patient's Sex :'type 2' entry -> must exist, value not mandatory
-   CheckMandatoryEntry(0x0010,0x0040,"");
+   CheckMandatoryEntry(0x0010,0x0040,"","CS");
 
    // Referring Physician's Name :'type 2' entry -> must exist, value not mandatory
-   CheckMandatoryEntry(0x0008,0x0090,"");
+   CheckMandatoryEntry(0x0008,0x0090,"","PN");
 
  /*
    // Deal with element 0x0000 (group length) of each group.
@@ -1688,29 +1704,32 @@ void FileHelper::CheckMandatoryElements()
 
 } 
 
-void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
+void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value,const VRKey &vr )
 {
    DataEntry *entry = FileInternal->GetDataEntry(group,elem);
    if ( !entry )
    {
-      entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+      //entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+      entry = DataEntry::New(group,elem,vr);
       entry->SetString(value);
       Archive->Push(entry);
       entry->Delete();
-   }
+   }    
 }
 
-void FileHelper::SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
+/// \todo : what is it used for ? (FileHelper::SetMandatoryEntry) 
+void FileHelper::SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value,const VRKey &vr)
 {
-   DataEntry *entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+   //DataEntry *entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));
+   DataEntry *entry = DataEntry::New(group,elem,vr);
    entry->SetString(value);
    Archive->Push(entry);
    entry->Delete();
 }
 
-void FileHelper::CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string value)
+void FileHelper::CopyMandatoryEntry(uint16_t group,uint16_t elem,std::string value,const VRKey &vr)
 {
-   DataEntry *entry = CopyDataEntry(group,elem);
+   DataEntry *entry = CopyDataEntry(group,elem,vr);
    entry->SetString(value);
    Archive->Push(entry);
    entry->Delete();

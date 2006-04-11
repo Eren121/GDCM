@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/03 14:28:53 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -210,7 +210,7 @@ private:
 // No NDEBUG test to always have a return of warnings !!!
 // -> Rien compris! JPRx
 #define gdcmLogBodyMacro(obj, msg)                         \
-{                                                              \
+{                                                          \
    if( Debug::GetLogFlag() )                               \
       gdcmMessageBodyMacro(gdcm::CMD_LOG,obj,msg,"");      \
 }

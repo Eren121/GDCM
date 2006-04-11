@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 15:30:04 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,8 @@ public:
    const TagKey &GetKey() const { return Tag; }
 
 // Key creation
-   static TagKey TranslateToKey(uint16_t group, uint16_t elem);
+   static TagKey TranslateToKey(uint16_t group, uint16_t elem)
+                                { return TagKey(group,elem); }
 
 protected:
    DicomEntry(const uint16_t &group,const uint16_t &elt,

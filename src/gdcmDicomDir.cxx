@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:13 $
-  Version:   $Revision: 1.186 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.187 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -962,9 +962,10 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    {
       tmpGr     = it->Group;
       tmpEl     = it->Elem;
-      dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
-
-      entry     = DataEntry::New( dictEntry ); 
+      //dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
+      //entry     = DataEntry::New( dictEntry );
+       
+      entry     = DataEntry::New(tmpGr, tmpEl, GDCM_VRUNKNOWN); /// \todo : modify dicomelements file, to store VR
       entry->SetOffset(0); // just to avoid further missprinting
 
       if ( header )

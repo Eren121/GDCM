@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirObject.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 09:22:15 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,17 +57,18 @@ void DicomDirObject::FillObject(ListDicomDirMetaElem const &elemList)
 {
   // FillObject fills up the SQItem that will be connected to the right place
    ListDicomDirMetaElem::const_iterator it;
-   uint16_t tmpGr,tmpEl;
-   DictEntry *dictEntry;
+   //uint16_t tmpGr,tmpEl;
+   //DictEntry *dictEntry;
    DataEntry *entry;
       
    // for all the Elements found in they own part of the DicomDir dict.     
    for(it = elemList.begin(); it != elemList.end(); ++it)
    {
-      tmpGr = it->Group;
-      tmpEl = it->Elem;
-      dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetEntry(tmpGr,tmpEl);
-      entry = DataEntry::New(dictEntry);
+      //tmpGr = it->Group;
+      //tmpEl = it->Elem;
+      //dictEntry = Global::GetDicts()->GetDefaultPubDict()->GetEntry(tmpGr,tmpEl);
+      //entry = DataEntry::New(dictEntry);
+      entry = DataEntry::New(it->Group, it->Elem, it->VR );
       entry->SetOffset(0); // just to avoid further missprinting
       entry->SetString(it->Value);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 18:34:13 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.21 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,8 +99,13 @@ namespace gdcm
    }
 
    /* Set labels to upper-case (labels are not case sensitive ) *********/
+   char *secu;
    for ( i=0; i<ArgCount; i++)
+   {
+      secu = ArgLab[i];
       ArgLab[i] = Majuscule ( ArgLab[i] ) ;
+      //free (secu); //we still need it in the caller pgm.
+   }
 
   /* Standard arguments are managed by ArgStdArgs **********************/
    ArgStdArgs(); 
@@ -137,6 +142,7 @@ int ArgMgr::ArgMgrDefined( const char *param )
     trouve = ( strcmp( ArgLab[i], temp )==0 ) ;
     if ( trouve )
     {
+      free (temp);
       ArgUsed[i] = true ;           
       for ( int j=1; j<i; j++)
       {                     
@@ -144,8 +150,9 @@ int ArgMgr::ArgMgrDefined( const char *param )
             ArgUsed[j] = i ;
       }
       return i ;
-    }
+    }   
   }
+  free (temp);
   return 0 ;
 }
 

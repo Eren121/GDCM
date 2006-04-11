@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:29:29 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,10 +40,13 @@ class GDCM_EXPORT DataEntry  : public DocEntry
 
 public:
 /// \brief Contructs a DataEntry with a RefCounter from DictEntry
-   static DataEntry *New(DictEntry *e) {return new DataEntry(e);}
+//   static DataEntry *New(DictEntry *e) {return new DataEntry(e);}
 /// \brief Contructs a DataEntry with a RefCounter from DocEntry
    static DataEntry *New(DocEntry *d)  {return new DataEntry(d);}
-
+/// \brief Contructs a DataEntry with a RefCounter from elementary items
+   static DataEntry *New(uint16_t group,uint16_t elem, VRKey const &vr)  
+           {return new DataEntry(group,elem,vr);}
+   
 // Print
    void Print(std::ostream &os = std::cout, std::string const &indent = "");
 
@@ -64,7 +67,7 @@ public:
    void SetValue(const uint32_t &id,const double &val);
    double GetValue(const uint32_t &id) const;
    uint32_t GetValueCount() const;
-   bool IsValueCountValid() const;
+   bool IsValueCountValid() /*const*/; // GetVM may update the pointer DicomDict
 
    void SetString(std::string const &value);
    std::string const &GetString() const;
@@ -107,7 +110,7 @@ public:
    // Flags
    /// \brief sets the 'pixel data flag'   
    void SetFlag(const TValueFlag &flag) { Flag = flag; }
-   /// \brief returns the 'pixel data flag'    
+   /// \brief returns the 'pixel data flag'
    const TValueFlag &GetFlag() const { return Flag; }
    /// \brief true id Entry is a Pixel Data entry
    bool IsPixelData() { return (Flag &FLAG_PIXELDATA) != 0; }
@@ -124,8 +127,9 @@ public:
    bool GetDSValue(std::vector <double> &valueVector);
 
 protected:
-   DataEntry(DictEntry *e);
-   DataEntry(DocEntry *d); 
+  // DataEntry(DictEntry *e);
+   DataEntry(DocEntry *d);
+   DataEntry(uint16_t group,uint16_t elem,VRKey const &vr); 
    ~DataEntry();
 
 // Methods :

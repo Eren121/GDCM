@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,11 +31,13 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
+
+// Constructor / Destructor
 /**
  * \brief   Constructor from a given SeqEntry
  */
-SeqEntry::SeqEntry( DictEntry *e ) 
-             : DocEntry(e)
+SeqEntry::SeqEntry( uint16_t group,uint16_t elem ) 
+             : DocEntry(group, elem, "SQ")
 {
    Length       = 0;
    ReadLength   = 0xffffffff;
@@ -51,7 +53,8 @@ SeqEntry::SeqEntry( DictEntry *e )
  * @param   depth depth level of the current Seq entry
  */
 SeqEntry::SeqEntry( DocEntry *e, int depth )
-             : DocEntry( e->GetDictEntry() )
+             //: DocEntry( e->GetDictEntry() )
+            : DocEntry( e->GetGroup(), e->GetElement(), e->GetVR() )
 {
    Length       = 0;
    ReadLength   = 0xffffffff;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:31:43 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.109 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 #include "gdcmConfigure.h"
 #include "gdcmSystem.h"
 #include "gdcmMacro.h"
-
+#include "gdcmVRKey.h"
 #include <string>
 
 //-----------------------------------------------------------------------------
@@ -157,6 +157,8 @@ struct DicomElement
    unsigned short int Group;
    /// Dicom Element number
    unsigned short int Elem;
+   /// Value Representation
+   VRKey VR;
    /// value (coded as a std::string) of the Element
    std::string Value;
 };

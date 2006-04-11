@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:19:25 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,11 +48,11 @@ public:
    DictEntry * GetDictEntry() { return DicomDict; } 
 
    /// Returns the Dicom Group number of the current Dicom entry
-   const uint16_t GetGroup() const   { return Key.GetGroup();  }
+   const uint16_t GetGroup() const   { return Key[0];  }
    //const uint16_t &GetGroup() const   { return DicomDict->GetGroup();  }
 
    /// Returns the Dicom Element number of the current Dicom entry
-   const uint16_t GetElement() const { return Key.GetElement();}   
+   const uint16_t GetElement() const { return Key[1];}   
    //const uint16_t &GetElement() const { return DicomDict->GetElement();}
 
    /// Returns the 'key' of the current Dicom entry
@@ -61,7 +61,7 @@ public:
 
    /// \brief Returns the 'Name' '(e.g. "Patient's Name") found in the Dicom
    /// Dictionnary of the current Dicom Header Entry
-   std::string const &GetName() const { return DicomDict->GetName(); }
+   std::string const &GetName();
 
    /// \brief Returns the 'Value Representation' (e.g. "PN" : Person Name,
    /// "SL" : Signed Long), found in the Dicom header or in the Dicom
@@ -72,11 +72,12 @@ public:
    /// \brief Returns the 'Value Multiplicity' (e.g. "1", "6", "1-n", "3-n"),
    /// found in the Dicom entry or in the Dicom Dictionnary
    /// of the current Dicom entry
-   std::string const &GetVM() const { return DicomDict->GetVM(); }
+   std::string const &GetVM();
 
    /// Sets the 'Value Multiplicity' of the current Dicom entry
-   void SetVM( TagName const &v) { DicomDict->SetVM(v); } 
-
+   //void SetVM( TagName const &v) { DicomDict->SetVM(v); } 
+   void SetVM( TagName &v) { std::cout << "-----------------FIXME : SetVM "; }
+    
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom entry
    /// \warning offset of the *value*, not of the Dicom entry
@@ -128,12 +129,13 @@ public:
 
    /// \brief Tells us if the VR of the current Dicom entry is Unknown
    /// @return true if the VR is unknown
-   bool IsVRUnknown() const { return DicomDict->IsVRUnknown(); }
+//   bool IsVRUnknown() const { return DicomDict->IsVRUnknown(); }
+     bool IsVRUnknown() const { return VR == GDCM_VRUNKNOWN; }
 
    /// \brief Tells us if the VM of the current Dicom entry is Unknown
    /// @return true if the VM is unknown
-   bool IsVMUnknown() const { return DicomDict->IsVMUnknown(); }
-
+//   bool IsVMUnknown() const { return DicomDict->IsVMUnknown(); }
+   bool IsVMUnknown() { return GetVM() == GDCM_UNKNOWN; }
    bool IsItemDelimitor();
    bool IsItemStarter();
    bool IsSequenceDelimitor();   
@@ -141,7 +143,8 @@ public:
    virtual void Copy(DocEntry *doc);
 
 protected:
-   DocEntry(DictEntry*);
+  // DocEntry(DictEntry*);
+   DocEntry(uint16_t group, uint16_t elem, VRKey const &vr);
    virtual ~DocEntry();
 
    /// \brief pointer to the underlying Dicom dictionary element

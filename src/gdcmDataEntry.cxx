@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/31 07:52:23 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,8 +43,9 @@ uint32_t DataEntry::MaxSizePrintEntry = MAX_SIZE_PRINT_ELEMENT_VALUE;
  * \brief   Constructor for a given DictEntry
  * @param   e Pointer to existing dictionary entry
  */
-DataEntry::DataEntry(DictEntry *e) 
-            : DocEntry(e)
+DataEntry::DataEntry(uint16_t group,uint16_t elem,
+                                     VRKey const &vr) 
+            : DocEntry(group,elem,vr)
 {
    State = STATE_LOADED;
    Flag = FLAG_NONE;
@@ -58,7 +59,8 @@ DataEntry::DataEntry(DictEntry *e)
  * @param   e Pointer to existing Doc entry
  */
 DataEntry::DataEntry(DocEntry *e)
-            : DocEntry(e->GetDictEntry())
+            //: DocEntry(e->GetDictEntry())
+            : DocEntry(e->GetGroup(),e->GetElement(), e->GetVR()  )
 {
    Flag = FLAG_NONE;
    BinArea = 0;
@@ -255,7 +257,7 @@ double DataEntry::GetValue(const uint32_t &id) const
 /**
  * \brief Checks if the multiplicity of the value follows Dictionary VM
  */
-bool DataEntry::IsValueCountValid() const
+bool DataEntry::IsValueCountValid() /*const*/
 {
   uint32_t vm;
   const std::string &strVM = GetVM();
@@ -414,7 +416,7 @@ void DataEntry::SetString(std::string const &value)
    }
    else
    {
-      if( value.size() > 0 )
+      //if( value.size() > 0 )  // when user sets a string to 0, *do* the job.
       {
          size_t l =  value.size();    
          SetLength(l + l%2);
@@ -422,7 +424,7 @@ void DataEntry::SetString(std::string const &value)
          memcpy(BinArea, value.c_str(), l);
          if (l%2)
             BinArea[l] = '\0';
-      }
+      }      
    }
    State = STATE_LOADED;
 }
@@ -495,7 +497,7 @@ std::string const &DataEntry::GetString() const
    else
    {
       StrArea.append((const char *)BinArea,GetLength());
-      // to avoid gdcm propagate oddities in lengthes
+      // to avoid gdcm to propagate oddities in lengthes
       if ( GetLength()%2)
          StrArea.append(" ",1);  
    }
@@ -555,9 +557,9 @@ void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
         
    uint8_t *data = BinArea; //safe notation
    size_t l = GetLength(); 
-   gdcmDebugMacro("in DataEntry::WriteContent " << GetKey() << " AtomicLength: "
-              << Global::GetVR()->GetAtomicElementLength(this->GetVR() ) // << " BinArea in :" << &BinArea
-             );
+//   gdcmDebugMacro("in DataEntry::WriteContent " << GetKey() << " AtomicLength: "
+//              << Global::GetVR()->GetAtomicElementLength(this->GetVR() ) // << " BinArea in :" << &BinArea
+//             );
    if (BinArea) // the binArea was *actually* loaded
    {
 #if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)

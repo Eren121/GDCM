@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 08:48:17 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,8 +121,8 @@ protected:
 
 // DictEntry  related utilities
    DictEntry *GetDictEntry(uint16_t group, uint16_t elem);
-   DictEntry *GetDictEntry(uint16_t group, uint16_t elem,
-                           VRKey const &vr);
+ //  DictEntry *GetDictEntry(uint16_t group, uint16_t elem,
+ //                          VRKey const &vr);
    /// To be able to backtrack (Private Sequence, Implicit VR related pb)
    DocEntry *PreviousDocEntry;
 

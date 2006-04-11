@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:23 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2006/04/11 16:03:26 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define GDCMDICOMDIRELEMENT_H
 
 #include "gdcmRefCounter.h"
+#include "gdcmVRKey.h"
 
 #include <list>
 
@@ -125,7 +126,7 @@ public:
 
    // Only one instance of ddElem 
    void AddDicomDirElement(DicomDirType type,
-                           uint16_t group, uint16_t elem);
+                           uint16_t group, uint16_t elem, VRKey vr);
 
 protected:
    DicomDirElement();
