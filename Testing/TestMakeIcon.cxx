@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/04/11 16:05:03 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,16 +73,16 @@ int TestMakeIcon (int argc, char *argv[])
 
    uint16_t binVal[3]={0x52f7,0xf358,0xad9b};
  
-   sqi->InsertEntryString( "MONOCHROME2", 0x0028,0x0004);
-   sqi->InsertEntryString( "128", 0x0028,0x0010);
-   sqi->InsertEntryString( "8",   0x0028,0x0100);
-   sqi->InsertEntryString( "8",   0x0028,0x0101);
-   sqi->InsertEntryString( "7",   0x0028,0x0102);
-   sqi->InsertEntryString( "0",   0x0028,0x0103);
+   sqi->InsertEntryString( "MONOCHROME2", 0x0028,0x0004, "CS");
+   sqi->InsertEntryString( "128", 0x0028,0x0010, "US");
+   sqi->InsertEntryString( "8",   0x0028,0x0100, "US");
+   sqi->InsertEntryString( "8",   0x0028,0x0101, "US");
+   sqi->InsertEntryString( "7",   0x0028,0x0102, "US");
+   sqi->InsertEntryString( "0",   0x0028,0x0103, "US");
    sqi->InsertEntryBinArea(  (uint8_t *)binVal, 3*2, 0x0005,0x0010,"OW");
    sqi->InsertEntryBinArea(  pixels, lgth, 0x7fe0,0x0010);
    // just to see if it's stored a the right place
-   sqi->InsertEntryString( "128", 0x0028,0x0011);
+   sqi->InsertEntryString( "128", 0x0028,0x0011, "US");
     
    fh->WriteDcmExplVR(output);
 

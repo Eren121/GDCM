@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/04/11 16:05:03 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -152,19 +152,19 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
    std::ostringstream str;
 
    // Set the image size
-   file->InsertEntryString("256",0x0028,0x0011); // Columns
-   file->InsertEntryString("256",0x0028,0x0010); // Rows
+   file->InsertEntryString("256",0x0028,0x0011,"US"); // Columns
+   file->InsertEntryString("256",0x0028,0x0010,"US"); // Rows
 
    // Set the pixel type
-   file->InsertEntryString("8",0x0028,0x0100); // Bits Allocated
-   file->InsertEntryString("8",0x0028,0x0101); // Bits Stored
-   file->InsertEntryString("7",0x0028,0x0102); // High Bit
+   file->InsertEntryString("8",0x0028,0x0100,"US"); // Bits Allocated
+   file->InsertEntryString("8",0x0028,0x0101,"US"); // Bits Stored
+   file->InsertEntryString("7",0x0028,0x0102,"US"); // High Bit
 
    // Set the pixel representation
-   file->InsertEntryString("0",0x0028,0x0103); // Pixel Representation
+   file->InsertEntryString("0",0x0028,0x0103,"US"); // Pixel Representation
 
    // Set the samples per pixel
-   file->InsertEntryString("1",0x0028,0x0002); // Samples per Pixel
+   file->InsertEntryString("1",0x0028,0x0002,"US"); // Samples per Pixel
 
    // The so called 'prepared image', built ex nihilo just before,
    // has NO Pixel Element yet.
@@ -252,10 +252,10 @@ int TestImageSet(int argc, char *argv[])
       // It's up to the user to initialize Serie UID and Study UID
       // Study Instance UID
       studyUID = gdcm::Util::CreateUniqueUID();
-      file->InsertEntryString(studyUID, 0x0020, 0x000d);
+      file->InsertEntryString(studyUID, 0x0020, 0x000d, "UI");
       // Series Instance UID
       serieUID = gdcm::Util::CreateUniqueUID();
-      file->InsertEntryString(serieUID, 0x0020, 0x000e);
+      file->InsertEntryString(serieUID, 0x0020, 0x000e, "UI");
 
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
@@ -287,8 +287,8 @@ int TestImageSet(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = gdcm::File::New();
-      file->InsertEntryString(studyUID, 0x0020, 0x000d);
-      file->InsertEntryString(serieUID, 0x0020, 0x000e);
+      file->InsertEntryString(studyUID, 0x0020, 0x000d, "UI");
+      file->InsertEntryString(serieUID, 0x0020, 0x000e, "UI");
 
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
@@ -319,9 +319,9 @@ int TestImageSet(int argc, char *argv[])
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
       file = gdcm::File::New();
-      file->InsertEntryString(studyUID, 0x0020, 0x000d);
+      file->InsertEntryString(studyUID, 0x0020, 0x000d, "UI");
       serieUID = gdcm::Util::CreateUniqueUID();
-      file->InsertEntryString(serieUID, 0x0020, 0x000e);
+      file->InsertEntryString(serieUID, 0x0020, 0x000e, "UI");
       newFile = WriteImage(file, fileName.str());
       if( !newFile )
       {

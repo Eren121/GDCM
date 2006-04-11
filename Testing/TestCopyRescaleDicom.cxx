@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2006/04/11 16:05:03 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,10 +114,10 @@ int CopyRescaleDicom(std::string const &filename,
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyF.InsertEntryString( "8", 0x0028, 0x0100); // Bits Allocated
-      copyF.InsertEntryString( "8", 0x0028, 0x0101); // Bits Stored
-      copyF.InsertEntryString( "7", 0x0028, 0x0102); // High Bit
-      copyF.InsertEntryString( "0", 0x0028, 0x0103); // Pixel Representation
+      copyF.InsertEntryString( "8", 0x0028, 0x0100, "US"); // Bits Allocated
+      copyF.InsertEntryString( "8", 0x0028, 0x0101, "US"); // Bits Stored
+      copyF.InsertEntryString( "7", 0x0028, 0x0102, "US"); // High Bit
+      copyF.InsertEntryString( "0", 0x0028, 0x0103, "US"); // Pixel Representation
 
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;

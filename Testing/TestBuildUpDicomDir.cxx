@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:30 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006/04/11 16:05:03 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,9 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    {
       std::cerr << "Usage: " << argv[0] << " dummy " << std::endl;
    }
-
+   
+ //gdcm::Debug::DebugOn();
+ 
    bool errorFound = false; 
    gdcm::DicomDir *dcmdir;
    std::string dirName;  
@@ -74,17 +76,17 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    s11 = p1->NewStudy();  
    s11->SetEntryString("StudyDescrOne.One_",0x0008, 0x1030);
    // we know entry (0008,1060) is not yet created
-   s11->InsertEntryString("Dr Mabuse",     0x0008, 0x1060);
+   s11->InsertEntryString("Dr^Mabuse",     0x0008, 0x1060, "PN");
    // fill here other Study characteristics
 
    gdcm::DicomDirStudy *s12 = p1->NewStudy();    
    s12->SetEntryString("StudyDescrOne.Two",0x0008, 0x1030);
-   s12->InsertEntryString("Dr Zorglub",    0x0008, 0x1060);
+   s12->InsertEntryString("Dr^Zorglub",    0x0008, 0x1060, "PN");
    // fill here other Study characteristics
 
    gdcm::DicomDirStudy *s13 = p1->NewStudy();  
    s13->SetEntryString("StudyDescrOne.Tree",0x0008, 0x1030);
-   s13->InsertEntryString("Dr Follamour",   0x0008, 0x1060);
+   s13->InsertEntryString("Dr^Follamour",   0x0008, 0x1060, "PN");
    // fill here other Study characteristics
  
    gdcm::DicomDirSerie *s111;
@@ -251,7 +253,9 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                 << "]" << std::endl;
  
       valueStuff = s11->GetEntryString(0x0008, 0x1060);
-      if (!gdcm::Util::DicomStringEqual(valueStuff, "Dr Mabuse") )
+std::cout << "----------------length-----------------" << valueStuff.length() <<
+std::endl;     
+      if (!gdcm::Util::DicomStringEqual(valueStuff, "Dr^Mabuse") )
       {
          std::cout << "2 : 0x0008,0x1060 [" 
                    << s11->GetEntryString(0x0008,0x1060)
@@ -259,7 +263,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
          errorFound = true;
          break;
       }
-      std::cout << "Pysician : [" 
+      std::cout << "Physician : [" 
                 << valueStuff
                 << "]" << std::endl;
       if ( (s12 = p1->GetNextStudy()) == 0 )
@@ -281,7 +285,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                 << "]" << std::endl;
 
       if ( gdcm::Util::DicomStringEqual(s12->GetEntryString(0x0008,
-                                           0x1060),"Dr Zorglub " ))
+                                           0x1060),"Dr^Zorglub " ))
       {
          std::cout << "4 0x0008,0x1060 [" 
                    << s12->GetEntryString(0x0008,0x1060)
@@ -289,7 +293,8 @@ int TestBuildUpDicomDir(int argc, char *argv[])
          errorFound = true;
          break;
       }
-      std::cout << "Pysician : [" 
+   std::cout << "___________________________________" << std::endl;
+      std::cout << "Pysician Reading Study: [" 
                 << s12->GetEntryString(0x0008,0x1060)
                 << "]" << std::endl;
 
@@ -308,7 +313,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
                 << "]" << std::endl;
 
       valueStuff = s13->GetEntryString(0x0008, 0x1060);
-      if (!gdcm::Util::DicomStringEqual(valueStuff, "Dr Follamour") )
+      if (!gdcm::Util::DicomStringEqual(valueStuff, "Dr^Follamour") )
       {
          std::cout << "5 0x0008,0x1060 [" 
                    << valueStuff
