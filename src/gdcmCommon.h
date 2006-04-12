@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2006/04/12 10:55:49 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,10 @@ namespace gdcm
 #ifndef PUB_DICT_PATH
 #  define PUB_DICT_PATH   "../Dicts/"
 #endif
-#define PUB_DICT_NAME     "DicomV3Dict"
+#define PUB_DICT_NAME     "dicomV3Dict"
+// dicomV3.dic replaced by the generated gdcm.dic/
+// if gdcm.dic not found, method FillDefaultDataDict() is invoked
+//#define PUB_DICT_FILENAME "dicomV3.dic"
 #define PUB_DICT_FILENAME "gdcm.dic"
 #define DICT_ELEM         "DicomDir.dic"
 #define DICT_TS           "dicomTS.dic"

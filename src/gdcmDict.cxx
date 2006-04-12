@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2006/04/12 10:55:49 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ Dict::Dict(std::string const &filename)
       FillDefaultDataDict( this );
    }
    else
-   {
+   { 
       gdcmDebugMacro( "in Dict::Dict, DoTheLoadingJob filename =[" 
                     << filename << "]" );
       DoTheLoadingJob(from);
@@ -82,7 +82,6 @@ Dict::~Dict()
  */
 bool Dict::AddDict(std::string const &filename)
 {
-
    std::ifstream from( filename.c_str() );
    if ( !from )
    {
@@ -95,7 +94,6 @@ bool Dict::AddDict(std::string const &filename)
       return true;
    }
 }
-
 
 /**
  * \brief   Removes from the current Dicom Dict all the entries held in a source dictionary
@@ -118,10 +116,14 @@ bool Dict::RemoveDict(std::string const &filename)
       TagName vm;
       TagName name;
 
-      while (!from.eof() && from)
+      while ( true )
       {
          from >> std::hex;
          from >> group;
+
+         if (from.eof())
+            break;
+
          from >> elem;
          from >> vr;
          from >> vm;
@@ -157,10 +159,10 @@ bool Dict::AddEntry(DictEntry *newEntry)
    }
 }
 
-/**
- * \brief  replaces an already existing Dicom Element by a new one
- * @param   newEntry new entry (overwrites any previous one with same tag)
- * @return  false if Dicom Element doesn't exist
+/*
+ * \ brief  replaces an already existing Dicom Element by a new one
+ * @ param   newEntry new entry (overwrites any previous one with same tag)
+ * @ return  false if Dicom Element doesn't exist
  */
  
  /* seems to be useless
@@ -177,6 +179,7 @@ bool Dict::ReplaceEntry(DictEntry *newEntry) // seems to be useless
    return false;
 }
 */
+
 /**
  * \brief  removes an already existing Dicom Dictionary Entry,
  *         identified by its Tag
@@ -296,6 +299,9 @@ DictEntry *Dict::GetNextEntry()
  */
 void Dict::DoTheLoadingJob(std::ifstream &from)
 {
+   if (!from)
+      return;
+      
    uint16_t group;
    uint16_t elem;
    VRKey vr;
@@ -303,16 +309,20 @@ void Dict::DoTheLoadingJob(std::ifstream &from)
    TagName name;
 
    DictEntry *newEntry;
-   while (!from.eof() && from)
+   while ( true )
    {
       from >> std::hex;
-      from >> group;
+      from >> group;      
       from >> elem;
       from >> vr;
       from >> vm;
       from >> std::ws;  //remove white space
       std::getline(from, name);
-
+      
+      if(from.eof()) {
+         break;
+      }
+      
       newEntry = DictEntry::New(group, elem, vr, vm, name);
       AddEntry(newEntry);
       newEntry->Delete();
