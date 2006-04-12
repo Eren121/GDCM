@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.99 $
+  Date:      $Date: 2006/04/12 13:57:32 $
+  Version:   $Revision: 1.100 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1671,8 +1671,8 @@ void FileHelper::CheckMandatoryElements()
    // Patient's Name : if missing, we set it to 'GDCM^Patient'
    CheckMandatoryEntry(0x0010,0x0010,"GDCM^Patient","PN");
 
-   // Patient ID
-   CheckMandatoryEntry(0x0010,0x0020,"","LO");
+   // Patient ID : some clinical softwares *demand* it although it's a 'type 2' entry.
+   CheckMandatoryEntry(0x0010,0x0020,"gdcm ID","LO");
 
    // Patient's Birth Date : 'type 2' entry -> must exist, value not mandatory
    CheckMandatoryEntry(0x0010,0x0030,"","DA");
