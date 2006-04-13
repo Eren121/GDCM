@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/04/13 08:06:56 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,6 +55,10 @@ public:
    /// @return the Dicom Element Number
    const uint16_t &GetElement() const { return Tag[1]; }
 
+   /// \brief  Returns the Dicom Tag Key
+   /// @return the Dicom Tag Key
+   const TagKey &GetKey() const { return Tag; }
+   
    /// \brief  Set the Dicom Value Representation 
    /// \param vr the Dicom Value Representation
    virtual void SetVR(VRKey const &vr) { VR = vr; }
