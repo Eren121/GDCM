@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2006/04/13 08:05:52 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ SeqEntry::SeqEntry( uint16_t group,uint16_t elem )
  */
 SeqEntry::SeqEntry( DocEntry *e, int depth )
              //: DocEntry( e->GetDictEntry() )
-            : DocEntry( e->GetGroup(), e->GetElement(), e->GetVR() )
+            : DocEntry( e->GetGroup(), e->GetElement(), "SQ" /*e->GetVR()*/ )
 {
    Length       = 0;
    ReadLength   = 0xffffffff;

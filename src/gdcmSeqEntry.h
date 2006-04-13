@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2006/04/13 08:05:52 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,8 +46,8 @@ public:
    //static SeqEntry *New(DictEntry *e) {return new SeqEntry(e);}
 /// \brief Contructs a SeqEntry with a RefCounter from DocEntry
    static SeqEntry *New(DocEntry *d, int depth) {return new SeqEntry(d,depth);}
-/// \brief Contructs a SeqEntry with a RefCounter from elementary values
-   static SeqEntry *New(uint16_t group,uint16_t elem, VRKey const &vr = GDCM_VRUNKNOWN) 
+/// \brief Constructs a SeqEntry with a RefCounter from elementary values
+   static SeqEntry *New(uint16_t group,uint16_t elem/*, VRKey const &vr = GDCM_VRUNKNOWN*/) 
                            {return new SeqEntry(group,elem);}
    
    void Print(std::ostream &os = std::cout, std::string const &indent = "" ); 
