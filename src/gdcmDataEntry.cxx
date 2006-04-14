@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2006/04/14 08:10:02 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -433,76 +433,89 @@ void DataEntry::SetString(std::string const &value)
  */
 std::string const &DataEntry::GetString() const
 {
-   static std::ostringstream s;
-   const VRKey &vr = GetVR();
+  static std::ostringstream s;
+  const VRKey &vr = GetVR();
+  s.str("");
+  StrArea="";
 
-   s.str("");
-   StrArea="";
-
-   if( !BinArea )
-      return StrArea;
-      
-   // When short integer(s) are stored, convert the following (n * 2) characters 
-   // as a displayable string, the values being separated by a back-slash
-
-   if( vr == "US" || vr == "SS" )
-   {
-      uint16_t *data=(uint16_t *)BinArea;
-
-      for (unsigned int i=0; i < GetValueCount(); i++)
-      {
-         if( i!=0 )
-            s << '\\';
-         s << data[i];
-      }
-      StrArea=s.str();
-   }
-   // See above comment on multiple short integers (mutatis mutandis).
-   else if( vr == "UL" || vr == "SL" )
-   {
-      uint32_t *data=(uint32_t *)BinArea;
-
-      for (unsigned int i=0; i < GetValueCount(); i++)
-      {
-         if( i!=0 )
-            s << '\\';
-         s << data[i];
-      }
-      StrArea=s.str();
-   }
-   else if( vr == "FL" )
-   {
-      float *data=(float *)BinArea;
-
-      for (unsigned int i=0; i < GetValueCount(); i++)
-      {
-         if( i!=0 )
-            s << '\\';
-         s << data[i];
-      }
-      StrArea=s.str();
-   }
-   else if( vr == "FD" )
-   {
-      double *data=(double *)BinArea;
-
-      for (unsigned int i=0; i < GetValueCount(); i++)
-      {
-         if( i!=0 )
-            s << '\\';
-         s << data[i];
-      }
-      StrArea=s.str();
-   }
-   else
-   {
-      StrArea.append((const char *)BinArea,GetLength());
-      // to avoid gdcm to propagate oddities in lengthes
-      if ( GetLength()%2)
-         StrArea.append(" ",1);  
-   }
-   return StrArea;
+  if( !BinArea )
+     return StrArea;
+      // When short integer(s) are stored, convert the following (n * 2) characters
+  // as a displayable string, the values being separated by a back-slash
+  if( vr == "US" )
+  {
+     uint16_t *data=(uint16_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        if( i!=0 )
+           s << '\\';
+        s << data[i];
+     }
+     StrArea=s.str();
+  }
+  else if (vr == "SS" )
+  {
+     int16_t *data=(int16_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        if( i!=0 )
+           s << '\\';
+        s << data[i];
+     }
+     StrArea=s.str();
+  }      // See above comment on multiple short integers (mutatis mutandis).
+  else if( vr == "UL" )
+  {
+     uint32_t *data=(uint32_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        if( i!=0 )
+           s << '\\';
+        s << data[i];
+     }
+     StrArea=s.str();
+  }
+  else if( vr == "SL" )
+  {
+     int32_t *data=(int32_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        if( i!=0 )
+           s << '\\';
+        s << data[i];
+     }
+     StrArea=s.str();
+  }    else if( vr == "FL" )
+  {
+     float *data=(float *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        if( i!=0 )
+           s << '\\';
+        s << data[i];
+     }
+     StrArea=s.str();
+  }
+  else if( vr == "FD" )
+  {
+     double *data=(double *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        if( i!=0 )
+           s << '\\';
+        s << data[i];
+     }
+     StrArea=s.str();
+  }
+  else
+  {
+     StrArea.append((const char *)BinArea,GetLength());
+     // to avoid gdcm to propagate oddities in lengthes
+     if ( GetLength()%2)
+        StrArea.append(" ",1);   }
+  return StrArea;
 }
+
 
 /**
  * \brief Copies all the attributes from an other DocEntry 
