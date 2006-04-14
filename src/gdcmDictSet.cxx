@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:19:25 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2006/04/14 08:22:13 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,6 +47,7 @@ DictSet::DictSet()
  */
 DictSet::~DictSet() 
 {
+   Global::DefaultPubDict = 0; // just a pointer!
    // Remove dictionaries
    for (DictSetHT::iterator tag = Dicts.begin(); tag != Dicts.end(); ++tag) 
    {
@@ -69,6 +70,8 @@ DictSet::~DictSet()
 Dict *DictSet::LoadDictFromFile(std::string const &filename, 
                                 DictKey const &name) 
 {
+   assert(Dicts.find(name)==Dicts.end());
+   ///\todo RemoveDict(name); when Dict already exist
    Dict *newDict = Dict::New(filename);
    Dicts[name] = newDict;
 
@@ -128,7 +131,7 @@ Dict *DictSet::GetNextDict()
 std::string DictSet::BuildDictPath() 
 {
    std::string resultPath;
-   const char *envPath;
+   /*const*/ char *envPath;
    envPath = getenv("GDCM_DICT_PATH");
 
    if (envPath && (strlen(envPath) != 0)) 
@@ -144,7 +147,7 @@ std::string DictSet::BuildDictPath()
    {
       resultPath += '/';
    }
-
+   free (envPath);
    return resultPath;
 }
 
