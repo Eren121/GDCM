@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:36:37 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2006/04/19 10:23:56 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
    "     (usefull when the file header is not very straight).               ",
    "                                                                        ",
    " usage: ReWrite filein=inputFileName fileout=outputFileName             ", 
-   "       [mode=write mode] [noshadow] [noseq][debug]                      ", 
+   "       [mode=write mode] [noshadow] [noseq][debug]                      ",
+   "       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]         ",
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
    "        noshadowseq: user doesn't want to load Private Sequences        ",
@@ -83,6 +84,27 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
+      
+   bool fail = false;
+   int *boundVal;
+   int ruboutVal;
+   bool rubout = false; 
+   if (am->ArgMgrDefined("rubout"))
+   {
+      int nbBound;
+      boundVal = am->ArgMgrGetListOfInt("rubout", &nbBound);
+
+      if (nbBound !=4)
+      {
+         std::cout << "Illegal number of 'rubout' boundary values (expected : 4, found:" 
+                   << nbBound << "); 'rubout' ignored" << std::endl;
+         fail = true;
+      }
+            
+      ruboutVal = am->ArgMgrGetInt("ruboutvalue", 0);
+      rubout = true;   
+   }
+
  
    // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -164,6 +186,54 @@ int main(int argc, char *argv[])
    // was performed on the pixels.
    // We don't want this image appears as a 'Secondary Captured image'
    fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+   
+
+   if (rubout)
+   {     
+      if (boundVal[0]<0 || boundVal[0]>nX)
+      { 
+         std::cout << "xBegin out of bounds; 'rubout' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundVal[1]<0 || boundVal[1]>nX)
+      { 
+         std::cout << "xEnd out of bounds; 'rubout' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundVal[0] > boundVal[1])
+      { 
+         std::cout << "xBegin greater than xEnd; 'rubout' ignored" << std::endl;
+         fail = true;      
+      }       
+      if (boundVal[2]<0 || boundVal[2]>nY)
+      { 
+         std::cout << "yBegin out of bounds; 'rubout' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundVal[3]<0 || boundVal[3]>nY)
+      { 
+         std::cout << "yEnd out of bounds; 'rubout' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundVal[2] > boundVal[3])
+      { 
+         std::cout << "yBegin greater than yEnd; 'rubout' ignored" << std::endl;
+         fail = true;      
+      }  
+      if (!fail)
+      {
+         int pixelLength = f->GetBitsAllocated()/8;
+         int lineLength = nX * sPP * pixelLength;
+         size_t lengthToRubout = (boundVal[1]-boundVal[0])*sPP*pixelLength;
+         int offsetToBeginOfRubout = boundVal[0]*sPP*pixelLength+lineLength*boundVal[2];
+      
+         for(int rbl=boundVal[2]; rbl<boundVal[3];rbl++)
+         {
+            memset((char *)imageData+offsetToBeginOfRubout, ruboutVal, lengthToRubout);
+            offsetToBeginOfRubout += lineLength; 
+         }
+      }   
+   } 
 
    switch (mode[0])
    {
