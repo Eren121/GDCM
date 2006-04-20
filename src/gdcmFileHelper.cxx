@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/04/12 13:57:32 $
-  Version:   $Revision: 1.100 $
+  Date:      $Date: 2006/04/20 16:12:11 $
+  Version:   $Revision: 1.101 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1485,13 +1485,24 @@ void FileHelper::CheckMandatoryElements()
    // It's *not* an image comming straight from a source. We force
    // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
          CopyMandatoryEntry(0x0008,0x0016,"1.2.840.10008.5.1.4.1.1.7", "UI");      
-   }   
-
+   }
+     
+   Archive->Push(0x0028,0x005); // [Image Dimensions (RET)
    // Push out 'LibIDO-special' entries, if any
    Archive->Push(0x0028,0x0015);
    Archive->Push(0x0028,0x0016);
    Archive->Push(0x0028,0x0017);
-   Archive->Push(0x0028,0x00199);
+   Archive->Push(0x0028,0x0198);  // very old versions
+   Archive->Push(0x0028,0x0199);
+ 
+   // Replace deprecated 0028 0012 US Planes   
+   // by new             0028 0008 IS Number of Frames
+   DataEntry *e_0028_0012 = FileInternal->GetDataEntry(0x0028, 0x0012);
+   if ( e_0028_0012 )
+   {
+      CopyMandatoryEntry(0x0028, 0x0008,e_0028_0012->GetString(),"IS");
+      Archive->Push(0x0028,0x0012);      
+   }
 
    // Deal with the pb of (Bits Stored = 12)
    // - we're gonna write the image as Bits Stored = 16
