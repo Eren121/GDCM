@@ -11,6 +11,12 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: GDCM is pretty dumb with binary data
+Date: 2006 May 1
+Attributed:
+Details:
+D 0028|0009 [AT] [Frame Increment Pointer] [gdcm::Binary data loaded;length = 4]
+-----------------------------------------------------------------------------
 Description: gdcm does not handle deflate TS
 Date: 2006 Jan 25
 Attributed: Mathieu
