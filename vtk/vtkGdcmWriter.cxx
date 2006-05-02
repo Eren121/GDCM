@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/02 10:09:43 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2006/05/02 11:11:00 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.29 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.30 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable);
@@ -147,27 +147,27 @@ void SetMedicalImageInformation(gdcm::FileHelper *file, vtkMedicalImagePropertie
    {
       str.str("");
       str << medprop->GetPatientName();
-      file->InsertValEntry(str.str(),0x0010,0x0010); // PN 1 Patient's Name
+      file->InsertEntryString(str.str(),0x0010,0x0010,"PN"); // PN 1 Patient's Name
 
       str.str("");
       str << medprop->GetPatientID();
-      file->InsertValEntry(str.str(),0x0010,0x0020); // LO 1 Patient ID
+      file->InsertEntryString(str.str(),0x0010,0x0020,"LO"); // LO 1 Patient ID
 
       str.str("");
       str << medprop->GetPatientAge();
-      file->InsertValEntry(str.str(),0x0010,0x1010); // AS 1 Patient's Age
+      file->InsertEntryString(str.str(),0x0010,0x1010,"AS"); // AS 1 Patient's Age
  
       str.str("");
       str << medprop->GetPatientSex();
-      file->InsertValEntry(str.str(),0x0010,0x0040); // CS 1 Patient's Sex
+      file->InsertEntryString(str.str(),0x0010,0x0040,"CS"); // CS 1 Patient's Sex
  
       str.str("");
       str << medprop->GetPatientBirthDate();
-      file->InsertValEntry(str.str(),0x0010,0x0030); // DA 1 Patient's Birth Date
+      file->InsertEntryString(str.str(),0x0010,0x0030,"DA"); // DA 1 Patient's Birth Date
  
       str.str("");
       str << medprop->GetStudyID();
-      file->InsertValEntry(str.str(),0x0020,0x0010); // SH 1 Study ID
+      file->InsertEntryString(str.str(),0x0020,0x0010,"SH"); // SH 1 Study ID
       }
    }
 
@@ -192,29 +192,29 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 
    str.str("");
    str << dim[0];
-   file->InsertEntryString(str.str(),0x0028,0x0011); // Columns
+   file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
 
    str.str("");
    str << dim[1];
-   file->InsertEntryString(str.str(),0x0028,0x0010); // Rows
+   file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
 
    if(dim[2]>1)
    {
       str.str("");
       str << dim[2];
       //file->Insert(str.str(),0x0028,0x0012); // Planes
-      file->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
+      file->InsertEntryString(str.str(),0x0028,0x0008,"US"); // Number of Frames
    }
 
    // Pixel type
    str.str("");
    str << image->GetScalarSize()*8;
-   file->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
-   file->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
+   file->InsertEntryString(str.str(),0x0028,0x0100,"US"); // Bits Allocated
+   file->InsertEntryString(str.str(),0x0028,0x0101,"US"); // Bits Stored
 
    str.str("");
    str << image->GetScalarSize()*8-1;
-   file->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
+   file->InsertEntryString(str.str(),0x0028,0x0102,"US"); // High Bit
 
    // Pixel Repr
    // FIXME : what do we do when the ScalarType is 
@@ -231,12 +231,12 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    {
       str << "1"; // Signed
    }
-   file->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
+   file->InsertEntryString(str.str(),0x0028,0x0103,"US"); // Pixel Representation
 
    // Samples per pixel
    str.str("");
    str << image->GetNumberOfScalarComponents();
-   file->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
+   file->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
    /// \todo : Spacing Between Slices is meaningfull ONLY for CT an MR modality
    ///       We should perform some checkings before forcing the Entry creation
@@ -250,10 +250,10 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
    // thus forcing to fixed point value
    str.setf( std::ios::fixed );
    str << sp[1] << "\\" << sp[0];
-   file->InsertEntryString(str.str(),0x0028,0x0030); // Pixel Spacing
+   file->InsertEntryString(str.str(),0x0028,0x0030,"DS"); // Pixel Spacing
    str.str("");
    str << sp[2];
-   file->InsertEntryString(str.str(),0x0018,0x0088); // Spacing Between Slices
+   file->InsertEntryString(str.str(),0x0018,0x0088,"DS"); // Spacing Between Slices
 
    // Origin
    vtkFloatingPointType *org = image->GetOrigin();
@@ -263,7 +263,7 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 
    str.str("");
    str << org[0] << "\\" << org[1] << "\\" << org[2];
-   file->InsertEntryString(str.str(),0x0020,0x0032); // Image Position Patient
+   file->InsertEntryString(str.str(),0x0020,0x0032,"DS"); // Image Position Patient
    str.unsetf( std::ios::fixed ); //done with floating point values
 
    // Window / Level
@@ -271,10 +271,10 @@ void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
 
    str.str("");
    str << rng[1]-rng[0];
-   file->InsertEntryString(str.str(),0x0028,0x1051); // Window Width
+   file->InsertEntryString(str.str(),0x0028,0x1051,"DS"); // Window Width
    str.str("");
    str << (rng[1]+rng[0])/2.0;
-   file->InsertEntryString(str.str(),0x0028,0x1050); // Window Center
+   file->InsertEntryString(str.str(),0x0028,0x1050,"DS"); // Window Center
 
    // Pixels
    unsigned char *data;
