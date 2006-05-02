@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/05/02 11:14:05 $
-  Version:   $Revision: 1.102 $
+  Date:      $Date: 2006/05/02 13:11:57 $
+  Version:   $Revision: 1.103 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1239,11 +1239,12 @@ We have to deal with 4 *very* different cases :
     USER_OWN_IMAGE
 -2) user modified the pixels of an existing image.
    FILTERED_IMAGE
--3) user created a new image, using existing images (eg MIP, MPR, cartography image)
+-3) user created a new image, using a set of existing images (eg MIP, MPR, cartography image)
    CREATED_IMAGE
 -4) user modified/added some tags *without processing* the pixels (anonymization..
    UNMODIFIED_PIXELS_IMAGE
-   
+-Probabely some more to be added  
+ 
 gdcm::FileHelper::CheckMandatoryElements() deals automatically with these cases.
 
 1)2)3)4)

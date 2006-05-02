@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/02 10:09:43 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006/05/02 13:11:58 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,15 +54,29 @@ public:
    virtual void SetLookupTable(vtkLookupTable*);
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
-   void SetWriteTypeToDcmImplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_EXPLICIT_VR);};
-   void SetWriteTypeToDcmExplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_IMPLICIT_VR);};
-   void SetWriteTypeToAcr()      {SetWriteType(VTK_GDCM_WRITE_TYPE_ACR);        };
-   void SetWriteTypeToAcrLibido(){SetWriteType(VTK_GDCM_WRITE_TYPE_ACR_LIBIDO); };
+   void SetWriteTypeToDcmImplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_EXPLICIT_VR);}
+   void SetWriteTypeToDcmExplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_IMPLICIT_VR);}
+   void SetWriteTypeToAcr()      {SetWriteType(VTK_GDCM_WRITE_TYPE_ACR);        }
+   void SetWriteTypeToAcrLibido(){SetWriteType(VTK_GDCM_WRITE_TYPE_ACR_LIBIDO); }
    
-   void SetContentTypeToUserOwnImage()         {SetContentType(VTK_GDCM_WRITE_TYPE_USER_OWN_IMAGE);};   
-   void SetContentTypeToFilteredImage()        {SetContentType(VTK_GDCM_WRITE_TYPE_FILTERED_IMAGE);};   
-   void SetContentTypeToUserCreatedImage()     {SetContentType(VTK_GDCM_WRITE_TYPE_CREATED_IMAGE);};   
-   void SetContentTypeToUnmodifiedPixelsImage(){SetContentType(VTK_GDCM_WRITE_TYPE_UNMODIFIED_PIXELS_IMAGE);};   
+
+   // gdcm cannot guess how user built his image (and therefore cannot be clever about some Dicom fields)
+   // It's up to the user to tell gdcm what he did. 
+   // -1) user created ex nihilo his own image and wants to write it as a Dicom image.
+   // USER_OWN_IMAGE
+   // -2) user modified the pixels of an existing image.
+   // FILTERED_IMAGE
+   // -3) user created a new image, using existing a set of images (eg MIP, MPR, cartography image)
+   //  CREATED_IMAGE
+   // -4) user modified/added some tags *without processing* the pixels (anonymization..
+   //  UNMODIFIED_PIXELS_IMAGE 
+   // -Probabely some more to be added 
+   //(see gdcmFileHelper.h for more explanations)
+   
+   void SetContentTypeToUserOwnImage()         {SetContentType(VTK_GDCM_WRITE_TYPE_USER_OWN_IMAGE);}   
+   void SetContentTypeToFilteredImage()        {SetContentType(VTK_GDCM_WRITE_TYPE_FILTERED_IMAGE);}   
+   void SetContentTypeToUserCreatedImage()     {SetContentType(VTK_GDCM_WRITE_TYPE_CREATED_IMAGE);}   
+   void SetContentTypeToUnmodifiedPixelsImage(){SetContentType(VTK_GDCM_WRITE_TYPE_UNMODIFIED_PIXELS_IMAGE);}   
    
    vtkSetMacro(WriteType, int);
    vtkGetMacro(WriteType, int);
@@ -70,6 +84,11 @@ public:
 
 
 //BTX
+   // Description:
+   // Aware user is allowed to pass his own gdcm::File *, so he may set *any Dicom field* he wants.
+   // (including his own Shadow Eleents, or any gdcm::SeqEntry)
+   // gdcm::FileHelper::CheckMandatoryElements() will check inconsistencies, as far as it knows how.
+   // Sorry, not yet available under Python.
    vtkSetMacro(GdcmFile, gdcm::File *);
    vtkGetMacro(GdcmFile, gdcm::File *);
 //ETX
