@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2006/05/02 11:14:05 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,9 +76,9 @@ public:
                             uint16_t group, uint16_t elem);
 
    DataEntry *InsertEntryString(std::string const &content,
-                                       uint16_t group, uint16_t elem);
+                                uint16_t group, uint16_t elem, const VRKey &vr);
    DataEntry *InsertEntryBinArea(uint8_t *binArea, int lgth,
-                                        uint16_t group, uint16_t elem);
+                                 uint16_t group, uint16_t elem, const VRKey &vr);
    SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
 
    // File helpers

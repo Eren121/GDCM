@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/04/20 16:12:11 $
-  Version:   $Revision: 1.101 $
+  Date:      $Date: 2006/05/02 11:14:05 $
+  Version:   $Revision: 1.102 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -269,9 +269,10 @@ bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
  *          failed).
  */ 
 DataEntry *FileHelper::InsertEntryString(std::string const &content,
-                                                uint16_t group, uint16_t elem)
+                                         uint16_t group, uint16_t elem,
+                                         VRKey const &vr )
 {
-   return FileInternal->InsertEntryString(content, group, elem);
+   return FileInternal->InsertEntryString(content, group, elem, vr);
 }
 
 /**
@@ -286,9 +287,10 @@ DataEntry *FileHelper::InsertEntryString(std::string const &content,
  *          failed).
  */
 DataEntry *FileHelper::InsertEntryBinArea(uint8_t *binArea, int lgth,
-                                          uint16_t group, uint16_t elem)
+                                          uint16_t group, uint16_t elem,
+                                          VRKey const &vr )
 {
-   return FileInternal->InsertEntryBinArea(binArea, lgth, group, elem);
+   return FileInternal->InsertEntryBinArea(binArea, lgth, group, elem, vr);
 }
 
 /**
