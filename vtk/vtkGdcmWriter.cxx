@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/20 14:32:20 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2006/05/02 10:09:43 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,19 +26,26 @@
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
-
+#if (VTK_MAJOR_VERSION >= 5)
+#include <vtkMedicalImageProperties.h>
+#endif
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.28 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.29 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
+vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable);
+#if (VTK_MAJOR_VERSION >= 5)
+vtkCxxSetObjectMacro(vtkGdcmWriter,MedicalImageProperties,vtkMedicalImageProperties);
+#endif
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 vtkGdcmWriter::vtkGdcmWriter()
 {
    this->LookupTable = NULL;
+   this->MedicalImageProperties = NULL;   
    this->FileDimensionality = 3;
    this->WriteType = VTK_GDCM_WRITE_TYPE_EXPLICIT_VR;
    this->GdcmFile = 0;
@@ -47,6 +54,8 @@ vtkGdcmWriter::vtkGdcmWriter()
 
 vtkGdcmWriter::~vtkGdcmWriter()
 {
+   this->SetMedicalImageProperties(NULL);
+   this->SetLookupTable(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +132,50 @@ size_t ReverseData(vtkImageData *image,unsigned char **data)
 
    return size;
 }
+
+ /**
+  * Set the medical informations in the file, based on the user passed
+  * vtkMedicalImageProperties
+  */
+#if (VTK_MAJOR_VERSION >= 5)  
+void SetMedicalImageInformation(gdcm::FileHelper *file, vtkMedicalImageProperties *medprop)
+{
+   // For now only do:
+   // PatientName, PatientID, PatientAge, PatientSex, PatientBirthDate, StudyID
+  std::ostringstream str;
+   if( medprop )
+   {
+      str.str("");
+      str << medprop->GetPatientName();
+      file->InsertValEntry(str.str(),0x0010,0x0010); // PN 1 Patient's Name
+
+      str.str("");
+      str << medprop->GetPatientID();
+      file->InsertValEntry(str.str(),0x0010,0x0020); // LO 1 Patient ID
+
+      str.str("");
+      str << medprop->GetPatientAge();
+      file->InsertValEntry(str.str(),0x0010,0x1010); // AS 1 Patient's Age
+ 
+      str.str("");
+      str << medprop->GetPatientSex();
+      file->InsertValEntry(str.str(),0x0010,0x0040); // CS 1 Patient's Sex
+ 
+      str.str("");
+      str << medprop->GetPatientBirthDate();
+      file->InsertValEntry(str.str(),0x0010,0x0030); // DA 1 Patient's Birth Date
+ 
+      str.str("");
+      str << medprop->GetStudyID();
+      file->InsertValEntry(str.str(),0x0020,0x0010); // SH 1 Study ID
+      }
+   }
+
+#else
+void SetMedicalImageInformation(gdcm::FileHelper *, vtkMedicalImageProperties *)
+{
+}
+#endif
 
 /**
  * Set the data informations in the file
@@ -340,7 +393,11 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
       dcmFile = gdcm::FileHelper::New();
    
    // From here, the write of the file begins
-   
+
+
+   // Set the medical informations:
+   SetMedicalImageInformation(dcmFile, this->MedicalImageProperties);
+       
    // Set the image informations
    SetImageInformation(dcmFile, image);
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:46:18 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/05/02 10:09:43 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,9 @@
 #define VTK_GDCM_WRITE_TYPE_UNMODIFIED_PIXELS_IMAGE 4
 
 //-----------------------------------------------------------------------------
+class vtkLookupTable;
+class vtkMedicalImageProperties;
+
 class VTK_EXPORT vtkGdcmWriter : public vtkImageWriter
 {
 public:
@@ -47,7 +50,8 @@ public:
 
    void PrintSelf(ostream &os, vtkIndent indent);
 
-   vtkSetObjectMacro(LookupTable, vtkLookupTable);
+   //vtkSetObjectMacro(LookupTable, vtkLookupTable);
+   virtual void SetLookupTable(vtkLookupTable*);
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
    void SetWriteTypeToDcmImplVR(){SetWriteType(VTK_GDCM_WRITE_TYPE_EXPLICIT_VR);};
@@ -64,6 +68,7 @@ public:
    vtkGetMacro(WriteType, int);
    const char *GetWriteTypeAsString();
 
+
 //BTX
    vtkSetMacro(GdcmFile, gdcm::File *);
    vtkGetMacro(GdcmFile, gdcm::File *);
@@ -72,7 +77,15 @@ public:
    vtkSetMacro(ContentType, int);
    vtkGetMacro(ContentType, int);
 
-     
+   // Description:
+   // To pass in some extra information from a VTK context a user can pass a
+   // vtkMedicalImageProperties object
+#if (VTK_MAJOR_VERSION >= 5)   
+   void SetMedicalImageProperties(vtkMedicalImageProperties*);
+#else
+   void SetMedicalImageProperties(vtkMedicalImageProperties*) {}
+#endif
+        
 protected:
    vtkGdcmWriter();
    ~vtkGdcmWriter();
@@ -85,6 +98,7 @@ protected:
 private:
 // Variables
    vtkLookupTable *LookupTable;
+   vtkMedicalImageProperties *MedicalImageProperties;   
    int WriteType;
 //BTX
    gdcm::File *GdcmFile;
