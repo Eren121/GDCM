@@ -12,12 +12,6 @@ SET(GDCM_VERSION
     "${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION}.${GDCM_BUILD_VERSION}")
 
 #-----------------------------------------------------------------------------
-# datadir in CMake:
-SET(GDCM_DATA_DIR "/share/gdcm/" CACHE INTERNAL 
-  "Install location for data (relative to prefix).")
-MARK_AS_ADVANCED(GDCM_DATA_DIR)
-
-#-----------------------------------------------------------------------------
 # Provide compatibility options.
 OPTION(GDCM_LEGACY_REMOVE "Remove all legacy code completely." OFF)
 OPTION(GDCM_LEGACY_SILENT "Silence all legacy code messages." OFF)
@@ -159,7 +153,6 @@ FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
 )
 
 # Set the place for the public dictionary, must be set before gdcmConfigure.h
-#SET( GDCM_PUB_DICT_PATH "${CMAKE_INSTALL_PREFIX}${GDCM_DATA_DIR}")
 FIND_PATH(GDCM_PUB_DICT_PATH dicomV3.dic
   ${GDCM_SOURCE_DIR}/Dicts
   $ENV{PUB_DICT_PATH}

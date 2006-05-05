@@ -110,7 +110,7 @@ CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in"
   "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
 
 #-----------------------------------------------------------------------------
-INSTALL_FILES(${GDCM_DATA_DIR} .dic
+INSTALL_FILES(${GDCM_INSTALL_DATA_DIR} .dic
   dicomV3
   dicomVR
   dicomTS

@@ -2,7 +2,7 @@
 # Build the documentation
 
 SET(HTML_DIR
-  ${GDCM_DATA_DIR}/html
+  ${GDCM_INSTALL_DATA_DIR}/html
 )
 
 SET(TARGET_DIR
