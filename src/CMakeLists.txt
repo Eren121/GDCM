@@ -2,6 +2,8 @@
 # Rebuild gdcm whenever a file starting with gdcm* is modified
 INCLUDE_REGULAR_EXPRESSION("^gdcm.*$")
 
+SET(GDCM_LIBRARIES gdcm CACHE INTERNAL "libraries for GDCM")
+
 SET(OPJ_PREFIX gdcm)
 SUBDIRS(
   gdcmjpeg
@@ -19,7 +21,7 @@ INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src/gdcmopenjpeg/libopenjpeg
 )
 
-SET(libgdcm_la_SOURCES
+SET(GDCM_SOURCES
    gdcmArgMgr.cxx
    gdcmBase.cxx
    gdcmCallbackCommand.cxx
@@ -81,7 +83,7 @@ IF(NOT BUILD_SHARED_LIBS)
    COMPILE_FLAGS -DOPJ_STATIC)
 ENDIF(NOT BUILD_SHARED_LIBS)
 
-ADD_LIBRARY(gdcm ${libgdcm_la_SOURCES})
+ADD_LIBRARY(gdcm ${GDCM_SOURCES})
 TARGET_LINK_LIBRARIES(gdcm 
   gdcmjpeg8 
   gdcmjpeg12
@@ -101,5 +103,18 @@ IF(CMAKE_SYSTEM MATCHES "SunOS.*")
   TARGET_LINK_LIBRARIES(gdcm socket nsl)
 ENDIF(CMAKE_SYSTEM MATCHES "SunOS.*")
 
-INSTALL_FILES(/include/gdcm "\\.h$")
-INSTALL_TARGETS(/lib/gdcm/ gdcm)
+IF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
+  # Install header file used to construct the lib
+  #INSTALL_FILES(
+  #  ${GDCM_INSTALL_INCLUDE_DIR} .h ${GDCM_SOURCES})
+  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} "\\.h$")
+ENDIF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
+
+IF(NOT GDCM_INSTALL_NO_LIBRARIES)
+  #Install the target itself
+  INSTALL_TARGETS(
+    ${GDCM_INSTALL_LIB_DIR}
+    RUNTIME_DIRECTORY ${GDCM_INSTALL_BIN_DIR}
+    ${GDCM_LIBRARIES})
+ENDIF(NOT GDCM_INSTALL_NO_LIBRARIES)
+

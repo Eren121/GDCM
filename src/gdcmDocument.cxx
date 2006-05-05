@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.346 $
+  Date:      $Date: 2006/05/05 22:13:55 $
+  Version:   $Revision: 1.347 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1744,18 +1744,18 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
         gdcmErrorMacro( "This looks like to a buggy Siemens DICOM file."
         "The length of this tag seems to be wrong" );
       }
-   } 
- 
+   }
+
    else if ( entry->GetVR() == "SQ" )
    {
-      foundLength = 0;      // ReadLength is unchanged 
-   } 
-    
-   //////// We encountered a 'delimiter' element i.e. a tag of the form 
+      foundLength = 0;      // ReadLength is unchanged
+   }
+
+   //////// We encountered a 'delimiter' element i.e. a tag of the form
    // "fffe|xxxx" which is just a marker. Delimiters length should not be
    // taken into account.
    else if ( gr == 0xfffe )
-   {    
+   {
      // According to the norm, fffe|0000 shouldn't exist. BUT the Philips
      // image gdcmData/gdcm-MR-PHILIPS-16-Multi-Seq.dcm happens to
      // causes extra troubles...
@@ -1767,7 +1767,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      {
         foundLength=12; // to skip the mess that follows this bugged Tag !
      }
-   }                
+   }
    entry->SetLength(foundLength);
 }
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2006/05/05 22:13:55 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 //Generated file:
 #include "gdcmDataImages.h"
- 
+
 int CompareInternal(std::string const &filename, std::string const &output)
 {
    std::cout << "   Testing: " << filename << std::endl;
