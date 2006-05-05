@@ -34,5 +34,5 @@ ENDIF (WIN32)
 ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${OpenJPEG_SRCS})
 
 # Install library
-INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjpeg)
+INSTALL_TARGETS(/lib/gdcm ${OPJ_PREFIX}openjpeg)
 
