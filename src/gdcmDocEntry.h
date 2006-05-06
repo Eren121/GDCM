@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2006/05/06 16:05:16 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,7 @@ public:
 
    /// Sets the 'Value Multiplicity' of the current Dicom entry
    //void SetVM( TagName const &v) { DicomDict->SetVM(v); } 
-   void SetVM( TagName &v) { std::cout << "-----------------FIXME : SetVM "; }
+   void SetVM( TagName &) { std::cout << "-----------------FIXME : SetVM "; }
     
    /// \brief Returns offset (since the beginning of the file, including
    /// the File Preamble, if any) of the value of the current Dicom entry
