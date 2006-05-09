@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/08 18:00:02 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2006/05/09 10:54:57 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.31 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.32 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable);
@@ -149,42 +149,42 @@ void SetMedicalImageInformation(gdcm::FileHelper *file, vtkMedicalImagePropertie
         {
         str.str("");
         str << medprop->GetPatientName();
-        file->InsertValEntry(str.str(),0x0010,0x0010); // PN 1 Patient's Name
+        file->InsertEntryString(str.str(),0x0010,0x0010,"PN"); // PN 1 Patient's Name
         }
 
      if (medprop->GetPatientID())
         {
         str.str("");
         str << medprop->GetPatientID();
-        file->InsertValEntry(str.str(),0x0010,0x0020); // LO 1 Patient ID
+        file->InsertEntryString(str.str(),0x0010,0x0020,"LO"); // LO 1 Patient ID
         }
 
      if (medprop->GetPatientAge())
         {
         str.str("");
         str << medprop->GetPatientAge();
-        file->InsertValEntry(str.str(),0x0010,0x1010); // AS 1 Patient's Age
+        file->InsertEntryString(str.str(),0x0010,0x1010,"AS"); // AS 1 Patient's Age
         }
 
      if (medprop->GetPatientSex())
         {
         str.str("");
         str << medprop->GetPatientSex();
-        file->InsertValEntry(str.str(),0x0010,0x0040); // CS 1 Patient's Sex
+        file->InsertEntryString(str.str(),0x0010,0x0040,"CS"); // CS 1 Patient's Sex
         }
 
      if (medprop->GetPatientBirthDate())
         {
         str.str("");
         str << medprop->GetPatientBirthDate();
-        file->InsertValEntry(str.str(),0x0010,0x0030); // DA 1 Patient's Birth Date
+        file->InsertEntryString(str.str(),0x0010,0x0030,"DA"); // DA 1 Patient's Birth Date
         }
 
      if (medprop->GetStudyID())
         {
         str.str("");
         str << medprop->GetStudyID();
-        file->InsertValEntry(str.str(),0x0020,0x0010); // SH 1 Study ID
+        file->InsertEntryString(str.str(),0x0020,0x0010,"SH"); // SH 1 Study ID
         }
      }
 }
@@ -407,10 +407,11 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
    
    // From here, the write of the file begins
 
-
    // Set the medical informations:
+#if (VTK_MAJOR_VERSION >= 5)  
    SetMedicalImageInformation(dcmFile, this->MedicalImageProperties);
-       
+#endif
+      
    // Set the image informations
    SetImageInformation(dcmFile, image);
 
