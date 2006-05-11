@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/30 16:51:29 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2006/05/11 19:49:38 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,9 +95,9 @@ public:
    const FileList &GetFileList()
                            { return *SingleSerieUIDFileSetHT.begin()->second; }
   
-   GDCM_LEGACY(   FileList *GetFirstCoherentFileList()  );
-   GDCM_LEGACY(   FileList *GetNextCoherentFileList()   );
-   GDCM_LEGACY(   FileList *GetCoherentFileList(std::string serieUID)  );
+   GDCM_LEGACY(   FileList *GetFirstCoherentFileList()  )
+   GDCM_LEGACY(   FileList *GetNextCoherentFileList()   )
+   GDCM_LEGACY(   FileList *GetCoherentFileList(std::string serieUID)  )
 
    FileList *GetFirstSingleSerieUIDFileSet();
    FileList *GetNextSingleSerieUIDFileSet();

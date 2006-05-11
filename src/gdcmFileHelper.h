@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/02 11:14:05 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2006/05/11 19:49:38 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ public:
    uint8_t *GetImageData();
    uint8_t *GetImageDataRaw();
 
-   GDCM_LEGACY(size_t GetImageDataIntoVector(void *destination,size_t maxSize));
+   GDCM_LEGACY(size_t GetImageDataIntoVector(void *destination,size_t maxSize))
 
    void SetImageData(uint8_t *data, size_t expectedSize);
 

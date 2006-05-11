@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:13 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2006/05/11 19:49:38 $
+  Version:   $Revision: 1.75 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ public:
 /// \brief Constructs a DicomDir with a RefCounter
    static DicomDir *New() {return new DicomDir();}
 
-   GDCM_LEGACY( bool Load(std::string const &filename) );
+   GDCM_LEGACY( bool Load(std::string const &filename) )
    bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
    
@@ -115,7 +115,7 @@ public:
    
 protected:
    DicomDir(); 
-   GDCM_LEGACY( DicomDir(std::string const &filename, bool parseDir = false) ); 
+   GDCM_LEGACY( DicomDir(std::string const &filename, bool parseDir = false) )
    ~DicomDir();
 
    void CreateDicomDirChainedList(std::string const &path);
