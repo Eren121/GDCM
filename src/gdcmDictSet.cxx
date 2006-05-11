@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/14 08:22:13 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2006/05/11 15:23:07 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,17 +128,16 @@ Dict *DictSet::GetNextDict()
  *          to "../Dicts/".
  * @return  path to directory containing the dictionaries
  */
-std::string DictSet::BuildDictPath() 
+std::string DictSet::BuildDictPath()
 {
    std::string resultPath;
-   /*const*/ char *envPath;
-   envPath = getenv("GDCM_DICT_PATH");
+   const char *envPath = getenv("GDCM_DICT_PATH");
 
-   if (envPath && (strlen(envPath) != 0)) 
+   if (envPath && (strlen(envPath) != 0))
    {
       resultPath = envPath;
       gdcmStaticWarningMacro( "Dictionary path set from environnement");
-   } 
+   }
    else
    {
       resultPath = PUB_DICT_PATH;
@@ -147,7 +146,6 @@ std::string DictSet::BuildDictPath()
    {
       resultPath += '/';
    }
-   free (envPath);
    return resultPath;
 }
 
