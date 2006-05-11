@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
       
-   bool deuxD = am->ArgMgrDefined("2D");
+   int deuxD = am->ArgMgrDefined("2D");
 
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
