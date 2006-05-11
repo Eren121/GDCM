@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/09 10:54:57 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2006/05/11 15:12:00 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.32 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.33 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable);
@@ -94,7 +94,11 @@ const char *vtkGdcmWriter::GetWriteTypeAsString()
 // The output data must be deleted by the user of the method !!!
 size_t ReverseData(vtkImageData *image,unsigned char **data)
 {
+#if (VTK_MAJOR_VERSION >= 5)
+   vtkIdType inc[3];
+#else
    int inc[3];
+#endif
    int *extent = image->GetUpdateExtent();
    int dim[3] = {extent[1]-extent[0]+1,
                  extent[3]-extent[2]+1,
