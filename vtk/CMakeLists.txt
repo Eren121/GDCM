@@ -101,10 +101,15 @@ TARGET_LINK_LIBRARIES(vtkWriteDicomExtended
 )
 #-----------------------------------------------------------------------------
 # Install vtk header
-INSTALL_FILES(/include/gdcm FILES vtkGdcmReader.h)
-INSTALL_FILES(/include/gdcm FILES vtkGdcmWriter.h)
+IF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
+  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcmReader.h)
+  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcmWriter.h)
+ENDIF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
 
-INSTALL_TARGETS(/lib/gdcm/ vtkgdcm)
-INSTALL_TARGETS(/bin/ vtkgdcmViewer)
-INSTALL_TARGETS(/bin/ vtkgdcmViewer2)
-INSTALL_TARGETS(/bin/ vtkgdcmSerieViewer)
+IF(NOT GDCM_INSTALL_NO_LIBRARIES)
+  INSTALL_TARGETS(${GDCM_INSTALL_LIB_DIR} vtkgdcm)
+  INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer)
+  INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer2)
+  INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmSerieViewer)
+ENDIF(NOT GDCM_INSTALL_NO_LIBRARIES)
+
