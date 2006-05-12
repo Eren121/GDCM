@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/11 19:49:38 $
-  Version:   $Revision: 1.126 $
+  Date:      $Date: 2006/05/12 19:09:55 $
+  Version:   $Revision: 1.127 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,14 +105,14 @@ public:
 
    // Loading
    GDCM_LEGACY(bool Load( std::string const &filename ))
-   bool Load(); 
+   bool Load();
    // Standard values and informations contained in the header
    bool IsReadable();
-   
+
    void SetFourthDimensionLocation(uint16_t group, uint16_t elem) {
                    FourthDimensionLocation = TagKey(group, elem); }
 
-   // Some heuristic based accessors, end user intended 
+   // Some heuristic based accessors, end user intended
    int GetImageNumber();
    ModalityType GetModality();
 
@@ -120,7 +120,7 @@ public:
    int GetYSize();
    int GetZSize();
    int GetTSize(); // unnormalized in DICOM V3
-   
+
    float GetXSpacing();
    float GetYSpacing();
    float GetZSpacing();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/11 15:23:07 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2006/05/12 19:09:55 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -142,7 +142,7 @@ std::string DictSet::BuildDictPath()
    {
       resultPath = PUB_DICT_PATH;
    }
-   if ( resultPath[resultPath.length()-1] != '/' )
+   if ( resultPath.length() && resultPath[resultPath.length()-1] != '/' )
    {
       resultPath += '/';
    }
