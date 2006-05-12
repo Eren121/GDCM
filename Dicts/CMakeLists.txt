@@ -106,16 +106,19 @@ ENDFOREACH(line)
 # ... Set the dictionnary
 SET(DICOM_DIR_DICTIONARY "${DICOM_DIR_DICTIONARY} \n {0,0,0,0,0}")
 
-CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in" 
+CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in"
   "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
 
 #-----------------------------------------------------------------------------
-INSTALL_FILES(${GDCM_INSTALL_DATA_DIR} .dic
-  dicomV3
-  dicomVR
-  dicomTS
-  DicomDir
-  DictGroupName
-  gdcm
-)
+# For now GDCM_INSTALL_NO_DICTIONARY is a hidden variables
+IF(NOT GDCM_INSTALL_NO_DICTIONARY)
+  INSTALL_FILES(${GDCM_INSTALL_DATA_DIR} .dic
+    dicomV3
+    dicomVR
+    dicomTS
+    DicomDir
+    DictGroupName
+    gdcm
+    )
+ENDIF(NOT GDCM_INSTALL_NO_DICTIONARY)
 
