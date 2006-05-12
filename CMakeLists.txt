@@ -241,9 +241,12 @@ ENDIF( ${CMAKE_HAVE_SYS_SOCKET_H} )
 OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation. Do use if you don't know what you are doing." OFF)
 
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
-               ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE)
+               ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE
+               )
 
-INSTALL_FILES(/include/gdcm .h gdcmConfigure.h)
+IF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
+  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES gdcmConfigure.h)
+ENDIF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
 
 #-----------------------------------------------------------------------------
 # Add the testing directories
