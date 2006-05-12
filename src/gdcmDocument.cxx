@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/05 22:13:55 $
-  Version:   $Revision: 1.347 $
+  Date:      $Date: 2006/05/12 09:37:45 $
+  Version:   $Revision: 1.348 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1064,7 +1064,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    if( Debug::GetDebugFlag() )   
       std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) // in Debug mode
                 << std::hex << " 0x(" <<(long)(Fp->tellg()) <<  ")" << std::endl;
-*/   
+ */ 
  
    // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry   
       if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
@@ -1803,6 +1803,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // encounter such an ill-formed image, we simply display a warning
          // message and proceed on parsing (while crossing fingers).
          long filePosition = Fp->tellg(); // Only when elem 0x0000 length is not 4 (?!?)
+         (void)filePosition;
          gdcmWarningMacro( "Erroneous Group Length element length  on : (" 
            << std::hex << group << " , " << elem
            << ") -before- position x(" << filePosition << ")"
