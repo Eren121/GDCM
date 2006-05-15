@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/07 16:05:13 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2006/05/15 15:24:43 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,22 +23,10 @@
 
 #if defined(__BORLANDC__)
    #include <mem.h> // for memset
-#endif 
+#endif
 
 extern "C" {
   #include <openjpeg.h>
-}
-
-namespace gdcm 
-{
-//-----------------------------------------------------------------------------
- /**
- * \brief   routine for JPEG decompression 
- * @param raw raw
- * @param inputdata inputdata
- * @param inputlength inputlength 
- * @return 1 on success, 0 on error
- */
 
 /**
 sample error callback expecting a FILE* client object
@@ -58,6 +46,19 @@ sample debug callback expecting no client object
 void info_callback(const char *msg, void *) {
   std::cerr << "Info in gdcmopenjpeg" << msg << std::endl;
 }
+}
+
+namespace gdcm 
+{
+//-----------------------------------------------------------------------------
+ /**
+ * \brief   routine for JPEG decompression 
+ * @param raw raw
+ * @param inputdata inputdata
+ * @param inputlength inputlength 
+ * @return 1 on success, 0 on error
+ */
+
 
 #define J2K_CFMT 0
 #define JP2_CFMT 1
