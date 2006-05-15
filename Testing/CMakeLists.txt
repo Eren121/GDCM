@@ -217,4 +217,21 @@ IF(UNIX AND NOT BUILD_SHARED_LIBS)
 ENDIF(UNIX AND NOT BUILD_SHARED_LIBS)
 
 
+#-----------------------------------------------------------------------------
+# Do the build against an installed gdcm
+SET(GDCM_TEST_INSTALL_LEFT "${CMAKE_INSTALL_PREFIX}")
+SET(GDCM_TEST_INSTALL_RIGHT "${GDCM_BINARY_DIR}/InstallTest/Root")
+STRING(COMPARE EQUAL "${GDCM_TEST_INSTALL_LEFT}" "${GDCM_TEST_INSTALL_RIGHT}"
+  GDCM_TEST_INSTALL)
+IF(GDCM_TEST_INSTALL)
+  ADD_TEST(Install
+    ${CMAKE_CTEST_COMMAND}
+    #  ${GDCM_INSTALL_TEST_CONFIG_TYPE}
+    --build-and-test ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+    --build-generator ${CMAKE_GENERATOR}
+    --build-project GDCM
+    --build-makeprogram ${CMAKE_MAKE_PROGRAM}
+    --build-noclean
+    --build-target install)
+ENDIF(GDCM_TEST_INSTALL)
 
