@@ -2,6 +2,7 @@
 
 int main()
 {
-  gdcm::File *file = new gdcm::File();
+  gdcm::File *file = gdcm::File::New();
+
   return 0;
 }
