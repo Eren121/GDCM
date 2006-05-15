@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/11 20:01:28 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2006/05/15 21:28:37 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ public:
          if ( event == vtkCommand::CharEvent )
          {
 #if (VTK_MAJOR_VERSION >= 5)
-            int max = ImageViewer->GetWholeMax();
+            int max = ImageViewer->GetSliceMax();
             int slice = (ImageViewer->GetSlice() + 1 ) % ++max;
             ImageViewer->SetSlice( slice );
 #else
