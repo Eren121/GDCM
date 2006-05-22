@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/11 19:49:38 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2006/05/22 14:09:45 $
+  Version:   $Revision: 1.76 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,16 +59,16 @@ public:
    GDCM_LEGACY( bool Load(std::string const &filename) )
    bool Load( );
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
-   
+
    /// Sets the root Directory name to parse, recursively
-   void SetDirectoryName(std::string const &dirName) 
+   void SetDirectoryName(std::string const &dirName)
         { ParseDir = true; if (Filename != dirName)
-                               Filename = dirName, IsDocumentModified = true; }
+                               Filename = dirName, IsDocumentModified = true;}
    /// Accessor to \ref Filename
-   virtual void SetFileName(std::string const &fileName) 
+   virtual void SetFileName(std::string const &fileName)
                    { ParseDir = false; if (Filename != fileName)
                               Filename = fileName, IsDocumentModified = true;}
-   
+
    // Informations contained in the parser
    virtual bool IsReadable();
 
@@ -112,11 +112,11 @@ public:
       GDCM_DICOMDIR_VISIT,
       GDCM_DICOMDIR_IMAGE
    } DicomDirType;
-   
+
 protected:
-   DicomDir(); 
-   GDCM_LEGACY( DicomDir(std::string const &filename, bool parseDir = false) )
+   DicomDir();
    ~DicomDir();
+   GDCM_LEGACY( DicomDir(std::string const &filename, bool parseDir = false) )
 
    void CreateDicomDirChainedList(std::string const &path);
 
@@ -136,7 +136,7 @@ private:
    void MoveSQItem(DocEntrySet *dst, DocEntrySet *src);
 
    static bool HeaderLessThan(Document *header1, Document *header2);
-   
+
 // Variables
 
    /// Pointer on *the* DicomDirObject 'DicomDirMeta Elements'
