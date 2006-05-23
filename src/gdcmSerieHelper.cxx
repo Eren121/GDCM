@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2006/05/23 14:16:08 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1031,6 +1031,14 @@ void SerieHelper::Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *f
 {
  std::sort(fileList->begin(), fileList->end(), pt2Func );
 }
+
+#ifndef GDCM_LEGACY_REMOVE
+bool SerieHelper::AddGdcmFile(File* header)
+{
+  return AddFile(header);
+}
+#endif
+
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

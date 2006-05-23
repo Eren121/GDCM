@@ -61,7 +61,7 @@ typedef unsigned long long uint64_t;
 
 ////////////////////////////////////////////////
 // Convert a DocEntry * to the real derived class
-%typemap(out) gdcm::DocEntry * 
+%typemap(out) gdcm::DocEntry *
 {
    PyObject *newEntry;
 

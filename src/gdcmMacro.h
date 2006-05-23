@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMacro.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/11 19:49:38 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2006/05/23 14:16:08 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,11 +39,11 @@
 //Example usage:
 //
 //   // @deprecated Replaced by MyOtherMethod() as of gdcm 2.0.
-//   GDCM_LEGACY(void MyMethod());
+//   GDCM_LEGACY(void MyMethod())
 #if defined(GDCM_LEGACY_REMOVE)
   // Remove legacy methods completely.
 # define GDCM_LEGACY(method)
-#elif defined(GDCM_LEGACY_SILENT) || defined(SWIG)
+#elif defined(GDCM_LEGACY_SILENT)
   // Provide legacy methods with no warnings.
 # define GDCM_LEGACY(method) method;
 #else
