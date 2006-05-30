@@ -27,9 +27,10 @@ SET(EXAMPLE_SOURCES
   AnonymizeDicomDir # without loading it as a gdcm::DicomDir
   Anonymize         # for full gdcm readable files
   AnonymizeNoLoad   # without loading the Pixel Data 
+  #AnonymizeMultiPatient
   PatchHeader
-  PhilipsToBrucker
   PhilipsToBrucker2 
+  ToInTag
   MagnetomVisionToBrucker   
   ReWrite
   ReWriteExtended
