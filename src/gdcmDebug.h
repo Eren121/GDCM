@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2006/05/30 08:12:51 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,7 +159,10 @@ private:
 
 /**
  * \brief   Debug : To be used to help bug tracking developer
- * @param msg message part
+ * @param type type 
+ * @param obj obj
+ * @param msg message part 
+ * @param adds adds
  */
 #define gdcmMessageBodyMacro(type, obj, msg, adds)             \
 {                                                              \

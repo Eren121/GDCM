@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2006/05/30 08:12:51 $
+  Version:   $Revision: 1.22 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,7 +102,7 @@ namespace gdcm
    char *secu;
    for ( i=0; i<ArgCount; i++)
    {
-      secu = ArgLab[i];
+      //secu = ArgLab[i];
       ArgLab[i] = Majuscule ( ArgLab[i] ) ;
       //free (secu); //we still need it in the caller pgm.
    }
