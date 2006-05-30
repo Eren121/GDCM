@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/04 15:46:52 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/05/30 08:19:25 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,14 +64,7 @@ int my_close(istream *infile)
 
 namespace gdcm 
 {
-/**
- * \brief   routine for MPEG decompression 
- * @param fp pointer to an already open file descriptor 
- *                      8 significant bits per pixel
- * @param image_buffer to receive uncompressed pixels
- * @param length length
- * @return 1 on success, 0 on error
- */
+
 static int Headers();
 static void DeInitialize_Decoder()
 {
@@ -321,6 +314,14 @@ static void Initialize_Decoder()
 
 }
 
+/**
+ * \brief   routine for MPEG decompression 
+ * @param fp pointer to an already open file descriptor 
+ *                      8 significant bits per pixel
+ * @param image_buffer to receive uncompressed pixels
+ * @param length length
+ * @return 1 on success, 0 on error
+ */
 bool ReadMPEGFile (std::ifstream *fp, char *image_buffer, size_t length)
 {
   std::streampos mpeg_start = fp->tellg(); // the MPEG stream in our case does not start at 0
