@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.318 $
+  Date:      $Date: 2006/05/30 08:18:50 $
+  Version:   $Revision: 1.319 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -251,8 +251,8 @@ bool File::DoTheLoadingJob( )
       }
 */
          VRKey PixelVR;
-         // 8 bits allocated is a 'O Bytes' , as well as 24 (old ACR-NEMA RGB)
-         // more than 8 (i.e 12, 16) is a 'O Words'
+         // 8 bits allocated is a 'OB(ytes)' , as well as 24 (old ACR-NEMA RGB)
+         // more than 8 (i.e 12, 16) is a 'OW(ords)'
          if ( GetBitsAllocated() == 8 || GetBitsAllocated() == 24 ) 
             PixelVR = "OB";
          else
@@ -1381,6 +1381,10 @@ void File::AnonymizeNoLoad()
                                it != UserAnonymizeList.end();
                              ++it)
    { 
+   
+   std::cout << "File::AnonymizeNoLoad -------" << std::hex <<(*it).Group <<"|"<< 
+               (*it).Elem 
+               << "[" << (*it).Value << "] "<< std::endl; 
       d = GetDocEntry( (*it).Group, (*it).Elem);
 
       if ( d == NULL)
@@ -1394,10 +1398,13 @@ void File::AnonymizeNoLoad()
 
       offset = d->GetOffset();
       lgth =   d->GetLength();
+      
+      std::cout << "lgth " << lgth << " valLgth " << valLgth << std::endl;
       if (valLgth < lgth)
       {
          spaces = new std::string( lgth-valLgth, ' ');
          (*it).Value = (*it).Value + *spaces;
+         std::cout << "[" << (*it).Value << "] " << lgth << std::endl;
          delete spaces;
       }
       fp->seekp( offset, std::ios::beg );
@@ -1884,7 +1891,7 @@ void File::ReadEncapsulatedBasicOffsetTable()
 
 // These are the deprecated method that one day should be removed (after the next release)
 
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /*
  * \ brief   Loader. (DEPRECATED :  temporaryly kept not to break the API)
  * @ param   fileName file to be open for parsing
@@ -1892,6 +1899,7 @@ void File::ReadEncapsulatedBasicOffsetTable()
  *         or no tag was found.
  * @deprecated Use the Load() [ + SetLoadMode() ] + SetFileName() functions instead
  */
+ /*
 bool File::Load( std::string const &fileName ) 
 {
    GDCM_LEGACY_REPLACED_BODY(File::Load(std::string), "1.2",
@@ -1903,7 +1911,7 @@ bool File::Load( std::string const &fileName )
    return DoTheLoadingJob( );
 }
 #endif
-
+*/
 //-----------------------------------------------------------------------------
 // Print
 
