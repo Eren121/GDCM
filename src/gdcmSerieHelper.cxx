@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/23 14:16:08 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2006/05/30 08:10:19 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,7 +163,7 @@ bool SerieHelper::AddFile(File *header)
  
       if ( SingleSerieUIDFileSetHT.count(id) == 0 )
       {
-         gdcmDebugMacro(" New Serie UID :[" << id << "]");
+         gdcmDebugMacro(" New/gdcmSerieHelper.cxx Serie UID :[" << id << "]");
          // create a std::list in 'id' position
          SingleSerieUIDFileSetHT[id] = new FileList;
       }
@@ -209,7 +209,7 @@ void SerieHelper::AddRestriction(TagKey const &key)
   ExRefine.push_back( r );
 }
 
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief add a rule for restricting a DICOM file to be in the serie we are
  * trying to find. For example you can select only the DICOM files from a
@@ -223,13 +223,15 @@ void SerieHelper::AddRestriction(TagKey const &key)
  * @deprecated use : AddRestriction(TagKey const &key, 
  *                                 std::string const &value, int op);
  */
+
 void SerieHelper::AddRestriction(uint16_t group, uint16_t elem, 
                                  std::string const &value, int op)
 {
   TagKey t(group, elem);
   AddRestriction(t, value, op);
 }
-#endif
+
+//#endif
 
 /**
  * \brief add an extra  'SerieDetail' for building a 'Serie Identifier'
@@ -330,12 +332,13 @@ bool SerieHelper::IsCoherent(FileList *fileSet)
    return true;
 }
 
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief   accessor (DEPRECATED :  use GetFirstSingleSerieUIDFileSet )
  *          Warning : 'coherent' means here they have the same Serie UID
  * @return  The first FileList if found, otherwhise NULL
  */
+ /*
 FileList *SerieHelper::GetFirstCoherentFileList()
 {
    ItFileSetHt = SingleSerieUIDFileSetHT.begin();
@@ -343,13 +346,14 @@ FileList *SerieHelper::GetFirstCoherentFileList()
       return ItFileSetHt->second;
    return NULL;
 }
-
+*/
 /**
  * \brief   accessor (DEPRECATED :  use GetNextSingleSerieUIDFileSet )
  *          Warning : 'coherent' means here they have the same Serie UID
  * \note : meaningfull only if GetFirstCoherentFileList() already called 
  * @return  The next FileList if found, otherwhise NULL
  */
+ /*
 FileList *SerieHelper::GetNextCoherentFileList()
 {
    gdcmAssertMacro (ItFileSetHt != SingleSerieUIDFileSetHT.end());
@@ -359,6 +363,7 @@ FileList *SerieHelper::GetNextCoherentFileList()
       return ItFileSetHt->second;
    return NULL;
 }
+*/
 
 /**
  * \brief   accessor (DEPRECATED :  use GetSingleSerieUIDFileSet )
@@ -366,13 +371,15 @@ FileList *SerieHelper::GetNextCoherentFileList()
  * @param SerieUID SerieUID
  * \return  pointer to the FileList if found, otherwhise NULL
  */
+ /*
 FileList *SerieHelper::GetCoherentFileList(std::string SerieUID)
 {
    if ( SingleSerieUIDFileSetHT.count(SerieUID) == 0 )
       return 0;     
    return SingleSerieUIDFileSetHT[SerieUID];
 }
-#endif
+*/
+//#endif
 
 
 /**
@@ -542,7 +549,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
  *          value of a given Tag
  * @param fileSet File Set to be splitted
  * @param   group  group number of the target Element
- * @param   elem element number of the target Element
+ * @param   element element number of the target Element
  * \return  std::map of 'Xcoherent' File sets
  */
 
@@ -1032,13 +1039,14 @@ void SerieHelper::Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *f
  std::sort(fileList->begin(), fileList->end(), pt2Func );
 }
 
+/*
 #ifndef GDCM_LEGACY_REMOVE
 bool SerieHelper::AddGdcmFile(File* header)
 {
   return AddFile(header);
 }
 #endif
-
+*/
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm

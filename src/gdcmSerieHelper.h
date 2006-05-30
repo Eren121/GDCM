@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/23 14:16:08 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2006/05/30 08:10:19 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ public:
    /// \todo should return bool or throw error ?
    void AddFileName(std::string const &filename);
    bool AddFile(File *header);
-   GDCM_LEGACY(bool AddGdcmFile(File* header))
+ //  GDCM_LEGACY(bool AddGdcmFile(File* header))
 
    void SetDirectory(std::string const &dir, bool recursive=false);
    bool IsCoherent(FileList *fileSet);
@@ -93,9 +93,9 @@ public:
    const FileList &GetFileList()
                            { return *SingleSerieUIDFileSetHT.begin()->second; }
   
-   GDCM_LEGACY(   FileList *GetFirstCoherentFileList()  )
-   GDCM_LEGACY(   FileList *GetNextCoherentFileList()   )
-   GDCM_LEGACY(   FileList *GetCoherentFileList(std::string serieUID)  )
+ //  GDCM_LEGACY(   FileList *GetFirstCoherentFileList()  )
+ //  GDCM_LEGACY(   FileList *GetNextCoherentFileList()   )
+ //  GDCM_LEGACY(   FileList *GetCoherentFileList(std::string serieUID)  )
 
    FileList *GetFirstSingleSerieUIDFileSet();
    FileList *GetNextSingleSerieUIDFileSet();

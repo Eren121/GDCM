@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/12 09:37:45 $
-  Version:   $Revision: 1.348 $
+  Date:      $Date: 2006/05/30 08:10:19 $
+  Version:   $Revision: 1.349 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,19 +95,22 @@ bool Document::Load(  )
    return DoTheLoadingDocumentJob( );
 }
 
-#ifndef GDCM_LEGACY_REMOVE
+
+//#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief   Loader. (DEPRECATED : not to break the API)   
  * @param   fileName 'Document' (File or DicomDir) to be open for parsing
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
+ /*
 bool Document::Load( std::string const &fileName ) 
 {
    Filename = fileName;
    return DoTheLoadingDocumentJob( );
 }
-#endif
+*/
+//#endif
 
 /**
  * \brief   Performs the Loading Job (internal use only)  
@@ -260,7 +263,7 @@ bool Document::DoTheLoadingDocumentJob(  )
       LoadDocEntry(d, true);
    }
 
-   CloseFile(); 
+   CloseFile();
   
    // ----------------------------
    // Specific code to allow gdcm to read ACR-LibIDO formated images
@@ -1046,7 +1049,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    DocEntry *newDocEntry;
    DataEntry *newDataEntry;
    SeqEntry *newSeqEntry;
-   VRKey vr;
+   //VRKey vr;
    bool used; // will be set to false when something wrong happens to an Entry.
               // (Entry will then be deleted)
    bool delim_mode_intern = delim_mode;
@@ -1072,19 +1075,20 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
             break;
          }
-      newDocEntry = ReadNextDocEntry( );
 
-      // Uncoment this cerr line to be able to 'follow' the DocEntries
-      // when something *very* strange happens
-      if( Debug::GetDebugFlag() ) 
-         std::cerr<<newDocEntry->GetKey()<<" "<<newDocEntry->GetVR()<<std::endl;
+      newDocEntry = ReadNextDocEntry( );
 
       if ( !newDocEntry )
       {
          break;
       }
+      
+      // Uncoment this cerr line to be able to 'follow' the DocEntries
+      // when something *very* strange happens
+      if( Debug::GetDebugFlag() ) 
+         std::cerr<<newDocEntry->GetKey()<<" "<<newDocEntry->GetVR()<<std::endl;
 
-       // an Item Starter found elsewhere but the first position
+       // an Item Starter found elsewhere but in the first position
        // of a SeqEntry means previous entry was a Sequence
        // but we didn't get it (private Sequence + Implicit VR)
        // we have to backtrack.
@@ -1105,7 +1109,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       {
          //////////////////////////// DataEntry
  
-         vr = newDocEntry->GetVR();
+         //vr = newDocEntry->GetVR(); // useless ?
 
          if ( !set->AddEntry( newDataEntry ) )
          {
@@ -1377,10 +1381,10 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
  */
 void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
 {
-   uint16_t group  = entry->GetGroup();
-   uint16_t elem  = entry->GetElement();
+   uint16_t group   = entry->GetGroup();
+   uint16_t elem    = entry->GetElement();
    const VRKey  &vr = entry->GetVR();
-   uint32_t length = entry->GetLength();
+   uint32_t length  = entry->GetLength();
 
  //  Fp->seekg((long)entry->GetOffset(), std::ios::beg); // JPRx
 

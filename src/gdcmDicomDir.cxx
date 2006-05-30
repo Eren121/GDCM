@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/13 08:05:52 $
-  Version:   $Revision: 1.188 $
+  Date:      $Date: 2006/05/30 08:10:19 $
+  Version:   $Revision: 1.189 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,7 +129,7 @@ DicomDir::DicomDir()
    NewMeta();
 }
 
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief Constructor Parses recursively the directory and creates the DicomDir
  *        or uses an already built DICOMDIR, depending on 'parseDir' value.
@@ -144,6 +144,7 @@ DicomDir::DicomDir()
  * @deprecated use : new DicomDir() + [ SetLoadMode(lm) + ] SetDirectoryName(name)
  *              or : new DicomDir() + SetFileName(name)
  */
+ /*
 DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    Document( )
 {
@@ -157,7 +158,8 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    SetFileName( fileName );
    Load( );
 }
-#endif
+*/
+//#endif
 
 /**
  * \brief  Canonical destructor 
@@ -189,7 +191,7 @@ bool DicomDir::Load( )
    }
    return DoTheLoadingJob( );   
 }
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /**
  * \brief   Loader. (DEPRECATED : kept not to break the API)
  * @param   fileName file to be open for parsing
@@ -197,6 +199,7 @@ bool DicomDir::Load( )
  *         or no tag was found.
  * @deprecated use SetFileName(n) + Load() instead
  */
+ /*
 bool DicomDir::Load(std::string const &fileName ) 
 {
    // We should clean out anything that already exists.
@@ -210,7 +213,8 @@ bool DicomDir::Load(std::string const &fileName )
    }
    return DoTheLoadingJob( );
 }
-#endif
+*/
+//#endif
 
 /**
  * \brief   Does the Loading Job (internal use only)

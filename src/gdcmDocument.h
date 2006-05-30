@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.140 $
+  Date:      $Date: 2006/05/30 08:10:19 $
+  Version:   $Revision: 1.141 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,9 +48,9 @@ public:
 
 // Loading
    //Deprecated : use SetFileName() + Load()
-#ifndef GDCM_LEGACY_REMOVE 
-   virtual bool Load( std::string const &filename ); 
-#endif
+//#ifndef GDCM_LEGACY_REMOVE 
+//   virtual bool Load( std::string const &filename ); 
+//#endif
    virtual bool Load( ); 
 
 // Dictionaries
