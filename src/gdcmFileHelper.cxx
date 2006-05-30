@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/05/02 13:11:57 $
-  Version:   $Revision: 1.103 $
+  Date:      $Date: 2006/05/30 08:14:50 $
+  Version:   $Revision: 1.104 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -391,7 +391,7 @@ uint8_t *FileHelper::GetImageDataRaw ()
    return GetRaw();
 }
 
-#ifndef GDCM_LEGACY_REMOVE
+//#ifndef GDCM_LEGACY_REMOVE
 /*
  * \brief   Useless function, since PixelReadConverter forces us 
  *          copy the Pixels anyway.  
@@ -418,6 +418,7 @@ uint8_t *FileHelper::GetImageDataRaw ()
  * @return  On success, the number of bytes actually copied. Zero on
  *          failure e.g. MaxSize is lower than necessary.
  */
+ /*
 size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
 {
    if ( ! GetRaw() )
@@ -450,7 +451,8 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
            PixelReadConverter->GetRawSize() );
    return PixelReadConverter->GetRawSize();
 }
-#endif
+*/
+//#endif
 
 /**
  * \brief   Points the internal pointer to the callers inData
@@ -705,7 +707,7 @@ bool FileHelper::Write(std::string const &fileName)
          }
          break;
 
-  SetWriteFileTypeToExplicitVR(); // to see JPRx
+         SetWriteFileTypeToExplicitVR(); // to see JPRx
   break;
       case ACR:
       case ACR_LIBIDO:
@@ -1500,6 +1502,8 @@ void FileHelper::CheckMandatoryElements()
  
    // Replace deprecated 0028 0012 US Planes   
    // by new             0028 0008 IS Number of Frames
+   
+  ///\todo : find if there is a rule!
    DataEntry *e_0028_0012 = FileInternal->GetDataEntry(0x0028, 0x0012);
    if ( e_0028_0012 )
    {
@@ -1566,7 +1570,56 @@ void FileHelper::CheckMandatoryElements()
    //  we write it only when we are *sure* the image comes from
    //         an imager (see also 0008,0x0064)          
       CheckMandatoryEntry(0x0018,0x1164,pixelSpacing,"DS");
+
+
+
+/*
+///Exact meaning of RETired fields
+
+// See page 73 of ACR-NEMA_300-1988.pdf !
+
+// 0020,0020 : Patient Orientation : 
+Patient direction of the first row and
+column of the images. The first entry id the direction of the raws, given by the
+direction of the last pixel in the first row from the first pixel in tha row.
+the second entry is the direction of the columns, given by the direction of the
+last pixel in the first column from the first pixel in that column.
+L : Left, F : Feet, A : Anterior, P : Posterior.
+Up to 3 letters can be used in combination to indicate oblique planes.
+
+//0020,0030 Image Position (RET)
+x,y,z coordinates im mm of the first pixel in the image
+
+// 0020,0035 Image Orientation (RET)
+Direction cosines of the R axis of the image system with respect to the
+equipment coordinate axes x,y,z, followed by direction cosines of the C axis of
+the image system with respect to the same axes
+
+//0020,0050 Location
+An image location reference, standard for the modality (such as CT bed
+position), used to indicate position. Calculation of position for other purposes
+is only from (0020,0030) and (0020,0035)
+*/
+ 
+/*
+// if imagePositionPatient    not found, default it with imagePositionRet,    if any
+// if imageOrientationPatient not found, default it with imageOrientationRet, if any
+
+   std::string imagePositionRet        = FileInternal->GetEntryString(0x0020,0x0030);
+   std::string imageOrientationRet     = FileInternal->GetEntryString(0x0020,0x0035);
+   std::string imagePositionPatient    = FileInternal->GetEntryString(0x0020,0x0032);
+   std::string imageOrientationPatient = FileInternal->GetEntryString(0x0020,0x0037);
    
+   if(  imagePositionPatient == GDCM_UNFOUND && imageOrientationPatient == GDCM_UNFOUND
+     && imagePositionRet     != GDCM_UNFOUND && imageOrientationRet     != GDCM_UNFOUND)
+   {
+      CopyMandatoryEntry(0x0020, 0x0032,imagePositionRet,"DS");
+      Archive->Push(0x0020,0x0030); 
+      CopyMandatoryEntry(0x0020, 0x0037,imageOrientationRet,"DS");
+      Archive->Push(0x0020,0x0035);        
+   }        
+*/
+    
    // Samples Per Pixel (type 1) : default to grayscale 
    CheckMandatoryEntry(0x0028,0x0002,"1","US");
 
