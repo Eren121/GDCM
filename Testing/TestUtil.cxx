@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 11:40:26 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2006/05/31 16:25:09 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -171,5 +171,21 @@ int TestUtil(int , char *[])
     std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
     gdcm::Debug::SetOutputFileName ("DummyFileNameToWriteTo2.txt");    
 
+    std::string s1;
+    s1="azertyuiop";
+    std::cout << s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+              <<std::endl;
+    s1="azertyuiom";    
+    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+              <<std::endl;
+    s1="azertyuipo";
+    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+              <<std::endl;
+    s1="qzertyuiop";
+    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+              <<std::endl; 
+    s1="zaertyuiop";
+    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+              <<std::endl;         
    return 0;
 }
