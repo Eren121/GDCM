@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/12 10:55:49 $
-  Version:   $Revision: 1.110 $
+  Date:      $Date: 2006/05/31 16:02:32 $
+  Version:   $Revision: 1.111 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,6 +34,10 @@
   #endif
 #else
   #define GDCM_EXPORT
+#endif
+
+#ifdef __BORLANDC__
+#include <mem.h>
 #endif
 
 //-----------------------------------------------------------------------------
