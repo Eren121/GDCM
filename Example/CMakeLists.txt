@@ -29,8 +29,7 @@ SET(EXAMPLE_SOURCES
   AnonymizeNoLoad   # without loading the Pixel Data
   AnonymizeMultiPatient # without loading the Pixel Data
   PatchHeader
-  PhilipsToBrucker2 
-  #ToInTag
+  ToInTag
   MagnetomVisionToBrucker   
   ReWrite
   ReWriteExtended
