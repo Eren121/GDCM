@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:12:51 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2006/05/31 16:39:25 $
+  Version:   $Revision: 1.23 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -99,7 +99,7 @@ namespace gdcm
    }
 
    /* Set labels to upper-case (labels are not case sensitive ) *********/
-   char *secu;
+   //char *secu;
    for ( i=0; i<ArgCount; i++)
    {
       //secu = ArgLab[i];
