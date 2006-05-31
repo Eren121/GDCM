@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:18:50 $
-  Version:   $Revision: 1.319 $
+  Date:      $Date: 2006/05/31 16:11:51 $
+  Version:   $Revision: 1.320 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1382,9 +1382,9 @@ void File::AnonymizeNoLoad()
                              ++it)
    { 
    
-   std::cout << "File::AnonymizeNoLoad -------" << std::hex <<(*it).Group <<"|"<< 
-               (*it).Elem 
-               << "[" << (*it).Value << "] "<< std::endl; 
+      //std::cout << "File::AnonymizeNoLoad -------" << std::hex <<(*it).Group <<"|"<< 
+      //         (*it).Elem 
+      //         << "[" << (*it).Value << "] "<< std::dec << std::endl; 
       d = GetDocEntry( (*it).Group, (*it).Elem);
 
       if ( d == NULL)
@@ -1395,16 +1395,20 @@ void File::AnonymizeNoLoad()
          gdcmWarningMacro( "You cannot 'Anonymize' a SeqEntry ");
          continue;
       }
+      
+      valLgth = (*it).Value.size();
+      if (valLgth == 0)
+         continue;
 
       offset = d->GetOffset();
       lgth =   d->GetLength();
       
-      std::cout << "lgth " << lgth << " valLgth " << valLgth << std::endl;
+      //std::cout << "lgth " << lgth << " valLgth " << valLgth << std::endl;
       if (valLgth < lgth)
       {
          spaces = new std::string( lgth-valLgth, ' ');
          (*it).Value = (*it).Value + *spaces;
-         std::cout << "[" << (*it).Value << "] " << lgth << std::endl;
+         //std::cout << "[" << (*it).Value << "] " << lgth << std::endl;
          delete spaces;
       }
       fp->seekp( offset, std::ios::beg );
