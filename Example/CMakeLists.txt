@@ -26,7 +26,8 @@ SET(EXAMPLE_SOURCES
   MakeDicomDir
   AnonymizeDicomDir # without loading it as a gdcm::DicomDir
   Anonymize         # for full gdcm readable files
-  AnonymizeNoLoad   # without loading the Pixel Data 
+  AnonymizeNoLoad   # without loading the Pixel Data
+  AnonymizeMultiPatient # without loading the Pixel Data
   PatchHeader
   PhilipsToBrucker2 
   #ToInTag
@@ -47,8 +48,7 @@ SET(EXAMPLE_SOURCES
   Volume2Dicom
   WriteDicomSimple
   WriteRead
-  exCTPET
-  AnonymizeMultiPatient  
+  exCTPET 
 )
 
 FOREACH(name ${EXAMPLE_SOURCES})
