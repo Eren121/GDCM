@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:30 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2006/05/31 16:51:41 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,8 @@
 
 #include <iostream>
 #include <fstream>
+
+#include <stdlib.h>
 
 // check *all* the dicom elements (gdcm::DocEntry)
 // of this gdcm::DicomDirObject
