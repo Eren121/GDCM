@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:16:04 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/06/01 09:35:01 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
    gdcm::DicomDirPatient *pa;
    gdcm::DicomDirStudy *st;
    gdcm::DicomDirSerie *se;
-   gdcm::DicomDirVisit *vs;
    gdcm::DicomDirImage *im;
 
    std::string codedName; 
