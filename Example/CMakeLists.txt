@@ -30,7 +30,7 @@ SET(EXAMPLE_SOURCES
   AnonymizeMultiPatient # without loading the Pixel Data
   PatchHeader
   ToInTag
-  MagnetomVisionToBrucker   
+  #MagnetomVisionToBrucker   
   ReWrite
   ReWriteExtended
   RawToDicom
