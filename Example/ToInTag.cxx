@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:23:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/06/01 10:33:13 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -133,9 +133,9 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
       
-   bool verbose  = am->ArgMgrDefined("verbose");
-   bool split    = am->ArgMgrDefined("split");
-   bool listonly = am->ArgMgrDefined("listonly");
+   int verbose  = am->ArgMgrDefined("verbose");
+   int split    = am->ArgMgrDefined("split");
+   int listonly = am->ArgMgrDefined("listonly");
          
    int nbSeriesToKeep;
    int *seriesToKeep = am->ArgMgrGetListOfInt("keep", &nbSeriesToKeep);
@@ -172,7 +172,8 @@ int main(int argc, char *argv[])
    if ( ! gdcm::DirList::IsDirectory(dirNamein) )
    {
       std::cout << "KO : [" << dirNamein << "] is not a Directory." << std::endl;
-      exit(0);
+      return 0;
+
    }
    else
    {
@@ -193,7 +194,8 @@ int main(int argc, char *argv[])
       if ( ! gdcm::DirList::IsDirectory(dirNameout) ) // be sure it worked
       {
           std::cout << "KO : not a dir : [" << dirNameout << "] (creation failure ?)" << std::endl;
-          exit(0);
+      return 0;
+
       }
       else
       {
@@ -605,4 +607,5 @@ int main(int argc, char *argv[])
       } 
       fh->Delete();                
    }
+   return 0;
  }
