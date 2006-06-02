@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/01 10:33:13 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/06/02 05:46:44 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,6 @@
   *            according to their Patient/Study/Serie/Image characteristics
   *          - fills a single level Directory with *all* the files,
   *            converted into a Brucker-like Dicom, Intags compliant
-  *          
   */  
 
 typedef std::map<std::string, gdcm::File*> SortedFiles;
@@ -44,7 +43,7 @@ typedef std::map<std::string, gdcm::File*> SortedFiles;
 int main(int argc, char *argv[]) 
 {
    START_USAGE(usage)
-   " \n ToInTag :\n                                                  ",
+   " \n ToInTag :\n                                                           ",
    " - explores recursively the given directory,                              ",
    " - keeps the requested series/ drops the unrequested series               ",
    " - orders the gdcm-readable found Files according to their                ",
@@ -267,7 +266,9 @@ int main(int argc, char *argv[])
    s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)     
    s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
    s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction 
-      
+
+   uint8_t *imageData;
+         
    for (gdcm::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
@@ -557,7 +558,16 @@ int main(int argc, char *argv[])
   
       currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, stringVR);
       currentFile->InsertEntryString(chFrameIndex,    0x0021, 0x1040, stringVR); 
+ 
+ 
+      std::string strImagePositionPatient    = currentFile->GetEntryString(0x0020, 0x0032 );
+      if (strImagePositionPatient == gdcm::GDCM_UNFOUND)
+         currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0030), 0x0020, 0x0032, "DS" );  
       
+      std::string strImageOrientationPatient = f->GetEntryString(0x0020, 0x0037 );
+      if (strImageOrientationPatient == gdcm::GDCM_UNFOUND)
+         currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0035), 0x0020, 0x0037, "DS" );       
+                
       if (taggrid)
          frameIndex++;
       else     
@@ -592,13 +602,21 @@ int main(int argc, char *argv[])
       // Load the pixels in RAM.    
       
       fh = gdcm::FileHelper::New(currentFile);     
-      fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
+      uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       fh->SetWriteTypeToDcmExplVR();
       // We didn't modify pixels -> keep unchanged the following :
       // 'Media Storage SOP Class UID' (0x0002,0x0002)
       // 'SOP Class UID'               (0x0008,0x0016)
       // 'Image Type'                  (0x0008,0x0008)
       // 'Conversion Type'             (0x0008,0x0064)
+      
+      // Put to Black the burnt-in number.
+      nX = currentFile->GetXSize();
+      nY = currentFile->GetYSize();
+      for(int y=nY-15; y<nY; y++)
+         for(int x=nX/3; x<nX/2+50; x++)
+           imageData[ y*nX*2 + x ] = 0;   
+        
       fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
       if (!fh->Write(fullWriteFilename))
       {
