@@ -11,6 +11,21 @@ Comments:
 -------------
 
 -----------------------------------------------------------------------------
+Description: GDCM does not read Spacing properly.
+Date: 2006 June 5
+Attributed:
+Details:
+GDCM is ready completely random values to find out the spacing/origin or an
+image. It *SHOULD* first find the IOD and then deduce which tags to read
+Eg: Cross section this is in Pixel Spacing (0028,0030)
+CR is in Imager Pixel Spacing (0018,1164)
+US is in Pixel Ratio (0028,0034)
+RT is in :
+(3002,0011) Image Plane Pixel Spacing
+(3002,0012) RT Imaga ePosition
+and
+(3004,000c) for deducing Z spacing
+-----------------------------------------------------------------------------
 Description: GDCM is pretty dumb with binary data
 Date: 2006 May 1
 Attributed:
