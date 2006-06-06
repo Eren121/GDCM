@@ -256,7 +256,6 @@
 0012 0051 ST 1 Clinical Trial Time Point Description
 0012 0060 LO 1 Clinical Trial Coordinating Center Name
 0012 0062 CS 1 Patient Identity Removed
-0012 0063 LO 1-n De-identification Method
 0012 0063 SQ 1 De-identification Method Code Sequence
 
 0018 0000 UL 1 Group Length
@@ -361,7 +360,6 @@
 0018 1077 DS 1 Radiopharmaceutical Specific Activity
 0018 1078 DT 1 Radiopharmaceutical Start Datetime
 0018 1079 DT 1 Radiopharmaceutical Stop Datetime
-0018 1078 DT 1 Radiopharmaceutical Specific Activity
 0018 1080 CS 1 Beat Rejection Flag
 0018 1081 IS 1 Low R-R Value
 0018 1082 IS 1 High R-R Value
@@ -1750,8 +1748,8 @@
 3008 0042 DS 1 Specified Meterset
 3008 0044 DS 1 Delivered Meterset
 3008 0045 FL 1 Meterset Rate Set
-3008 0045 FL 1 Meterset Rate Delivered
-3008 0045 FL 1-n Scan Spot Metersets Delivered
+3008 0046 FL 1 Meterset Rate Delivered
+3008 0047 FL 1-n Scan Spot Metersets Delivered
 3008 0048 DS 1 Dose Rate Delivered
 3008 0050 SQ 1 Treatment Summary Calculated Dose Reference Sequence
 3008 0052 DS 1 Cumulative Dose to Dose Reference
