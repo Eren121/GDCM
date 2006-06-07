@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/01 09:35:01 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/06/07 12:22:50 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
    
    std::string dirName = name;
  
-   bool verbose  = am->ArgMgrDefined("verbose");
+   int verbose  = am->ArgMgrDefined("verbose");
    
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
