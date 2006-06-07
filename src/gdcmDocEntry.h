@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/06 16:05:16 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2006/06/07 12:35:47 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,11 +48,11 @@ public:
    DictEntry * GetDictEntry() { return DicomDict; } 
 
    /// Returns the Dicom Group number of the current Dicom entry
-   const uint16_t GetGroup() const   { return Key[0];  }
+   uint16_t GetGroup() const   { return Key[0];  }
    //const uint16_t &GetGroup() const   { return DicomDict->GetGroup();  }
 
    /// Returns the Dicom Element number of the current Dicom entry
-   const uint16_t GetElement() const { return Key[1];}   
+   uint16_t GetElement() const { return Key[1];}   
    //const uint16_t &GetElement() const { return DicomDict->GetElement();}
 
    /// Returns the 'key' of the current Dicom entry
