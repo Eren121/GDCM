@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/02 05:46:44 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/06/07 12:23:25 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
    " debug    : *developer*  wants to run the program in 'debug mode'         ",
    FINISH_USAGE
 
+   std::cout << "inside ToInTag" << std::endl;
+   
    // ----- Initialize Arguments Manager ------
       
    gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
@@ -267,7 +269,8 @@ int main(int argc, char *argv[])
    s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
    s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction 
 
-   uint8_t *imageData;
+   //uint8_t *imageData; // Useless : pixels will not be loaded 
+                         //          (images are overwritten)
          
    for (gdcm::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
