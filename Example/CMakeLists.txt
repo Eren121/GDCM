@@ -48,7 +48,7 @@ SET(EXAMPLE_SOURCES
   WriteDicomSimple
   WriteRead
   exCTPET
-  Slice
+  #Slice
 )
 
 FOREACH(name ${EXAMPLE_SOURCES})
