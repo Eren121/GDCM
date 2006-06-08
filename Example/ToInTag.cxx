@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/07 12:23:25 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2006/06/08 13:41:28 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -368,6 +368,8 @@ int main(int argc, char *argv[])
    std::string previousImagePosition, currentImagePosition;
    std::string previousPhaseEncodingDirection, currentPhaseEncodingDirection;
    std::string previousTriggerTime, currentTriggerTime;
+   
+   std::string currentStudyUID;   
       
    std::string writeDir, currentWriteDir;
    std::string currentPatientWriteDir, currentSerieWriteDir, 
@@ -390,6 +392,9 @@ int main(int argc, char *argv[])
    int flag       = 0;
        
    gdcm::File *currentFile;
+
+   std::string defaultStudyUID =  gdcm::Util::CreateUniqueUID();
+   std::string defaultSerieUID; 
      
    for (it2 = sf.begin() ; it2 != sf.end(); ++it2)
    {  
@@ -414,7 +419,15 @@ int main(int argc, char *argv[])
           currentImagePosition[0] = 'P'; 
       
       if (previousPatientName != currentPatientName)
-      {
+      {      
+         if ( currentFile->GetEntryString(0x0020,0x000d) == gdcm::GDCM_UNFOUND)
+         {
+            if (verbose)   
+               std::cout << "--- new  Study UID created" << std::endl;
+            defaultStudyUID =  gdcm::Util::CreateUniqueUID();
+            currentFile->InsertEntryString(defaultStudyUID, 0x0020, 0x000d, "UI" );
+         }
+  
          previousPatientName = currentPatientName;
          if (verbose)   
             std::cout << "==== new Patient  [" << currentPatientName  << "]" << std::endl;
@@ -440,6 +453,15 @@ int main(int argc, char *argv[])
          if (verbose)   
             std::cout << "==== === new Serie [" << currentSerieInstanceUID << "]"
                       << std::endl;
+      
+         if ( currentFile->GetEntryString(0x0020,0x000e) == gdcm::GDCM_UNFOUND)
+         {
+            if (verbose)   
+               std::cout << "--- --- new  Serie UID created" << std::endl;
+            defaultSerieUID =  gdcm::Util::CreateUniqueUID();
+            currentFile->InsertEntryString(defaultSerieUID, 0x0020, 0x000e, "UI" );
+         }       
+      
          if (split)
          {
              currentSerieWriteDir  = currentPatientWriteDir + gdcm::GDCM_FILESEPARATOR
