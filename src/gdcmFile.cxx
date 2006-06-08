@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:11:51 $
-  Version:   $Revision: 1.320 $
+  Date:      $Date: 2006/06/08 13:37:33 $
+  Version:   $Revision: 1.321 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -508,6 +508,36 @@ float File::GetXSpacing()
 {
    float xspacing = 1.0;
    uint32_t nbValue;
+ 
+/*   
+It *SHOULD* first find the IOD and then deduce which tags to read
+Eg: Cross section this is in Pixel Spacing (0028,0030)
+CR is in Imager Pixel Spacing (0018,1164)
+US is in Pixel Ratio (0028,0034)
+RT is in :
+(3002,0011) Image Plane Pixel Spacing
+(3002,0012) RT Image Position
+and
+(3004,000c) for deducing Z spacing 
+*/
+
+
+//   std::string SOPClassUID = GetEntryString(0x0008,0x0016);
+
+   /// \todo check the various SOP Class
+   ///       to get the Pixel Spacing at the proper location
+   
+       
+   // Ultrasound Image Storage (Retired)
+/* 
+   if (Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.6")
+   {
+       - check if  SOPClassUID contains 2 parts (e.g. "4\3")
+       - guess how to deduce the spacing (FOV ?, ??)       
+   }
+   else
+   // go on with old method ...
+*/  
 
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
 

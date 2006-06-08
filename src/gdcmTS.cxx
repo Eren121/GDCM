@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/12/09 12:23:39 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2006/06/08 13:37:33 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,6 +78,11 @@ static const char *SpecialStrings[] =  {
   "1.2.840.10008.1.2.5",
   // MPEG2 Main Profile @ Main Level
   "1.2.840.10008.1.2.4.100",
+  
+  // The following are *not* t.s. but SOP uid
+  // Ultrasound Image Storage (Retired)
+  "1.2.840.10008.5.1.4.1.1.6",
+     
   // Unknown
   "Unknown Transfer Syntax", // Pretty sure we never use this case...
   NULL // Compilers have no obligation to finish by NULL, do it ourself
@@ -92,6 +97,7 @@ void FillDefaultTSDict(TSHT &ts);
 // Constructor / Destructor
 TS::TS() 
 {
+
    std::string filename = DictSet::BuildDictPath() + DICT_TS;
    std::ifstream from(filename.c_str());
    if ( !from )
@@ -115,6 +121,7 @@ TS::TS()
             TsMap[key] = name;
          }
       }
+
       from.close();
    }
 }
@@ -312,6 +319,24 @@ bool TS::IsMPEG(TSKey const &key)
 }
 
 /**
+ * \brief   Determines if the SOP id corresponds to any form
+ *          of UltrasoundImageStorage_Retired.
+ * @return  True when Ultrasound Image Storage Retired. False otherwise.
+ */
+bool TS::IsUltrasoundImageStorage_Retired(TSKey const &key)
+{
+   bool r = false;
+   // First check this is an actual SOP id
+   if ( IsTransferSyntax(key) )
+   {
+      if ( key == SpecialStrings[UltrasoundImageStorage_Retired] ) 
+      {
+         r = true;
+      }
+   }
+   return r;
+}
+/**
  * \brief   GetSpecialTransferSyntax ??
  * @param  key TSKey const &key ??
  * @return  TS::SpecialType ??.
@@ -333,7 +358,7 @@ TS::SpecialType TS::GetSpecialTransferSyntax(TSKey const &key)
  * @param  t SpecialType t ??
  * @return  char* TS : SpecialStrings[t] ??.
  */
-const char* TS::GetSpecialTransferSyntax(SpecialType t)
+const char *TS::GetSpecialTransferSyntax(SpecialType t)
 {
    return SpecialStrings[t];
 }

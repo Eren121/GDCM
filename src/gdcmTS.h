@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:11:52 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2006/06/08 13:37:33 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,7 +61,11 @@ public:
    JPEG2000Lossless,  
    JPEG2000,
    RLELossless,
-   MPEG2MainProfile,  
+   MPEG2MainProfile,
+   
+// The following are *not* Transfer Syntaxes, but SOP uid   
+   UltrasoundImageStorage_Retired,
+   
    UnknownTS
    };
 
@@ -82,11 +86,14 @@ public:
    bool IsJPEG(TSKey const &key);
    bool IsJPEGLS(TSKey const &key);
    bool IsMPEG(TSKey const &key);
-
+   
    // This should be deprecated very soon
    SpecialType GetSpecialTransferSyntax(TSKey const &key);
    const char* GetSpecialTransferSyntax(SpecialType t);
-
+   
+   // The following are *not* Transfer Syntaxes.      
+   bool IsUltrasoundImageStorage_Retired(TSKey const &key);
+  
 protected:
    TS();
    ~TS();
