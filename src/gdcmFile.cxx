@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/08 13:37:33 $
-  Version:   $Revision: 1.321 $
+  Date:      $Date: 2006/06/15 14:25:26 $
+  Version:   $Revision: 1.322 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -508,12 +508,42 @@ float File::GetXSpacing()
 {
    float xspacing = 1.0;
    uint32_t nbValue;
+   DataEntry *entry;
+   bool ok = false;   
+/*
+From:David Clunie - view profile
+Date:Wed, May 24 2006 1:12 pm
+Email:David Clunie <dclu...@dclunie.com>
+Groups:comp.protocols.dicom
+
+The short answer is that:
+
+- (0018,1164) describes a spacing equivalent to that which
+  would be measured off a film in projection radiography
+
+- (0018,7022) does not describe the image pixels themselves,
+  since detector elements may have been binned to produce
+  pixels
+
+- (0018,7020) may be different from (0018,7022) since there
+  may be non-sensitive material separating individual
+  detectors (i.e. the size is smaller than the spacing
+  between centers)
+
+Only (0018,1164) is relevant when measuring things; the
+detector-specific attributes are there to describe the
+acquisition.
+
+David
+
+PS. For ultrasound you need to use Region Calibration. 
+*/
  
 /*   
 It *SHOULD* first find the IOD and then deduce which tags to read
 Eg: Cross section this is in Pixel Spacing (0028,0030)
 CR is in Imager Pixel Spacing (0018,1164)
-US is in Pixel Ratio (0028,0034)
+US is in Pixel Aspect Ratio (0028,0034)
 RT is in :
 (3002,0011) Image Plane Pixel Spacing
 (3002,0012) RT Image Position
@@ -521,27 +551,50 @@ and
 (3004,000c) for deducing Z spacing 
 */
 
-
-//   std::string SOPClassUID = GetEntryString(0x0008,0x0016);
+   std::string SOPClassUID = GetEntryString(0x0008,0x0016);
 
    /// \todo check the various SOP Class
    ///       to get the Pixel Spacing at the proper location
    
-       
-   // Ultrasound Image Storage (Retired)
-/* 
+   ///\todo find images to check if it *actually* works    
+           
    if (Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.6")
+   // Ultrasound Image Storage (Retired)
+    || Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.6.1")
+   // Ultrasound Image Storage
+    || Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.3")
+   // Ultrasound Multi-Frame Storage (Retired)
+    || Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.3.1") )
+   // Ultrasound Multi-FrameImage Storage
    {
-       - check if  SOPClassUID contains 2 parts (e.g. "4\3")
-       - guess how to deduce the spacing (FOV ?, ??)       
+      // - check if  SOPClassUID contains 2 parts (e.g. "4\3")
+      // - guess how to deduce the spacing (FOV ?, ??)
+      
+      entry = GetDataEntry(0x0028,0x0034); 
+      nbValue = entry->GetValueCount();
+      if( nbValue !=2 ) {
+         gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
+         << "has a wrong number of values :" << nbValue);
+      }
+      xspacing = 1.0; // We get Pixel Aspect Ratio, not Spacing ...
+      ok = true;
    }
-   else
-   // go on with old method ...
-*/  
+  
+   if (ok)
+      return xspacing;
 
+/*      
+   if (Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.1") ) 
+   // Computed Radiography Image Storage   
+
+   // CR is in Imager Pixel Spacing (0018,1164)//    
+
+*/
+   // go on with old method ...
+   // ---------------------
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
-   DataEntry *entry = GetDataEntry(0x0018,0x1164);
+   entry = GetDataEntry(0x0018,0x1164);
    if( entry )
    {
       nbValue = entry->GetValueCount();
@@ -600,10 +653,53 @@ and
   */
 float File::GetYSpacing()
 {
-   float yspacing = 1.0;
+   float yspacing;
+   uint32_t nbValue;
+   DataEntry *entry;
+   bool ok = false;
+     
+   std::string SOPClassUID = GetEntryString(0x0008,0x0016);
+
+   /// \todo check the various SOP Class
+   ///       to get the Pixel Spacing at the proper location
+   
+   ///\todo find images to check if it *actually* works       
+
+   if (Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.6")
+   // Ultrasound Image Storage (Retired)
+    || Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.6.1")
+   // Ultrasound Image Storage
+    || Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.3")
+   // Ultrasound Multi-Frame Storage (Retired)
+    || Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.3.1") )
+   // Ultrasound Multi-FrameImage Storage      
+   {
+      // - check if  SOPClassUID contains 2 parts (e.g. "4\3")
+      // - no way to deduce the spacing/
+      
+      entry = GetDataEntry(0x0028,0x0034); 
+      nbValue = entry->GetValueCount();
+      if( nbValue !=2 ) {
+         gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
+         << "has a wrong number of values :" << nbValue);
+      }
+      yspacing = (float)entry->GetValue(0)/(float)entry->GetValue(1);
+      std::cout << "ys " << yspacing << std::endl;
+      ok = true;                  
+   }
+  
+   if (ok)
+      return yspacing;
+      
+   
+
+   // go on with old method ...
+   // ---------------------
+   // To follow David Clunie's advice, we first check ImagerPixelSpacing
+   yspacing = 1.0;
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
-   DataEntry *entry = GetDataEntry(0x0018,0x1164);
+   entry = GetDataEntry(0x0018,0x1164);
    if( entry )
    {
       yspacing = (float)entry->GetValue(0);
