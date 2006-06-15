@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:10:19 $
-  Version:   $Revision: 1.349 $
+  Date:      $Date: 2006/06/15 14:22:33 $
+  Version:   $Revision: 1.350 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -624,7 +624,6 @@ std::ifstream *Document::OpenFile()
    }
  
    //-- Broken ACR or DICOM with no Preamble; may start with a Shadow Group --
-   
    // FIXME : We cannot be sure the preable is only zeroes..
    //         (see ACUSON-24-YBR_FULL-RLE.dcm )
    if ( 
@@ -2158,8 +2157,8 @@ DocEntry *Document::ReadNextDocEntry()
          // We thought this was explicit VR, but we end up with an
          // implicit VR tag. Let's backtrack.
  
-         //if ( newEntry->GetGroup() != 0xfffe )
-         if (CurrentGroup != 0xfffe )
+         //if ( newEntry->GetGroup() != 0xfffe ) 
+         if (CurrentGroup != 0xfffe)
          { 
             int offset = Fp->tellg();//Only when heuristic for Explicit/Implicit was wrong
 
@@ -2182,7 +2181,6 @@ DocEntry *Document::ReadNextDocEntry()
    }
 
    newEntry->SetOffset(Fp->tellg());  // for each DocEntry
-   
    return newEntry;
 }
 
@@ -2194,6 +2192,23 @@ DocEntry *Document::ReadNextDocEntry()
  */
 void Document::HandleBrokenEndian(uint16_t &group, uint16_t &elem)
 {
+ // for strange PMS Gyroscan Intera images
+ // Item 'starter' has a tag : 0x3f3f,0x3f00, for no apparent reason
+ 
+ // --- Feel free to remove this test *on your own coy of gdcm*
+ //     if you are sure you'll never face this problem.
+ 
+   if ((group == 0x3f3f) && (elem == 0x3f00))
+   {
+     // start endian swap mark for group found
+     gdcmDebugMacro( " delimiter 0x3f3f  found." );
+     // fix the tag
+     group = 0xfffe;
+     elem  = 0xe000;
+     return;
+   }
+   // --- End of removable code
+   
    // Endian reversion. 
    // Some files contain groups of tags with reversed endianess.
    static int reversedEndian = 0;
