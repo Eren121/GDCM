@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/15 14:25:26 $
-  Version:   $Revision: 1.322 $
+  Date:      $Date: 2006/06/20 16:11:17 $
+  Version:   $Revision: 1.323 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -570,19 +570,21 @@ and
       // - check if  SOPClassUID contains 2 parts (e.g. "4\3")
       // - guess how to deduce the spacing (FOV ?, ??)
       
-      entry = GetDataEntry(0x0028,0x0034); 
-      nbValue = entry->GetValueCount();
-      if( nbValue !=2 ) {
-         gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
-         << "has a wrong number of values :" << nbValue);
+      entry = GetDataEntry(0x0028,0x0034);
+      if ( entry )
+      {
+         nbValue = entry->GetValueCount();
+         if( nbValue !=2 ) {
+            gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
+            << "has a wrong number of values :" << nbValue);
+         }
+         xspacing = 1.0; // We get Pixel Aspect Ratio, not Spacing ...
+         ok = true;
       }
-      xspacing = 1.0; // We get Pixel Aspect Ratio, not Spacing ...
-      ok = true;
-   }
   
-   if (ok)
-      return xspacing;
-
+      if (ok)
+         return xspacing;
+   }
 /*      
    if (Util::DicomStringEqual( SOPClassUID,"1.2.840.10008.5.1.4.1.1.1") ) 
    // Computed Radiography Image Storage   
@@ -678,26 +680,27 @@ float File::GetYSpacing()
       // - no way to deduce the spacing/
       
       entry = GetDataEntry(0x0028,0x0034); 
-      nbValue = entry->GetValueCount();
-      if( nbValue !=2 ) {
-         gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
-         << "has a wrong number of values :" << nbValue);
+      if ( entry )
+      {      
+         nbValue = entry->GetValueCount();
+         if( nbValue !=2 ) {
+            gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
+            << "has a wrong number of values :" << nbValue);
+         }
+         yspacing = (float)entry->GetValue(0)/(float)entry->GetValue(1);
+         //std::cout << "ys " << yspacing << std::endl;
+         ok = true;                  
       }
-      yspacing = (float)entry->GetValue(0)/(float)entry->GetValue(1);
-      std::cout << "ys " << yspacing << std::endl;
-      ok = true;                  
-   }
   
-   if (ok)
-      return yspacing;
-      
+      if (ok)
+         return yspacing;
+   }     
    
 
    // go on with old method ...
    // ---------------------
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
    yspacing = 1.0;
-   // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
    entry = GetDataEntry(0x0018,0x1164);
    if( entry )
