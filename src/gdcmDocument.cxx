@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/15 14:22:33 $
-  Version:   $Revision: 1.350 $
+  Date:      $Date: 2006/06/21 14:06:56 $
+  Version:   $Revision: 1.351 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1993,6 +1993,9 @@ bool Document::CheckSwap()
          //  Find a trick to tell it the caller...
       
          s16 = *((uint16_t *)(deb));
+ 
+         gdcmDebugMacro("not a DicomV3 nor a 'clean' ACR/NEMA;"
+                     << " (->despaired wild guesses !)"); 
       
          switch ( s16 )
          {
