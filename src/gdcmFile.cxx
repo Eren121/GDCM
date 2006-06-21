@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/20 16:11:17 $
-  Version:   $Revision: 1.323 $
+  Date:      $Date: 2006/06/21 14:05:00 $
+  Version:   $Revision: 1.324 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -679,28 +679,38 @@ float File::GetYSpacing()
       // - check if  SOPClassUID contains 2 parts (e.g. "4\3")
       // - no way to deduce the spacing/
       
-      entry = GetDataEntry(0x0028,0x0034); 
+      entry = GetDataEntry(0x0028,0x0034);
       if ( entry )
-      {      
+      {       
          nbValue = entry->GetValueCount();
-         if( nbValue !=2 ) {
-            gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
-            << "has a wrong number of values :" << nbValue);
-         }
-         yspacing = (float)entry->GetValue(0)/(float)entry->GetValue(1);
-         //std::cout << "ys " << yspacing << std::endl;
-         ok = true;                  
+         if( nbValue ==2 ) {
+            yspacing = (float)entry->GetValue(0)/(float)entry->GetValue(1);
+            //std::cout << "ys " << yspacing << std::endl;
+            ok = true;
       }
+      else
+      {
+         gdcmWarningMacro("PixelAspectRatio (0x0028,0x0034) "
+               << "has a wrong number of values :" << nbValue);
+         if (nbValue == 0 ) {
+            ok = false;
+         }
+         else if (nbValue == 1 ) {
+            yspacing = 1.0; // We get Pixel Aspect Ratio, not Spacing ...
+            ok = true;
+         } 
+      }                  
+   }
   
       if (ok)
-         return yspacing;
-   }     
-   
+         return yspacing;      
+   }   
 
    // go on with old method ...
    // ---------------------
    // To follow David Clunie's advice, we first check ImagerPixelSpacing
    yspacing = 1.0;
+   // To follow David Clunie's advice, we first check ImagerPixelSpacing
 
    entry = GetDataEntry(0x0018,0x1164);
    if( entry )
@@ -762,8 +772,7 @@ float File::GetZSpacing()
    //   we suppose slices joint together
    DataEntry *entry = GetDataEntry(0x0018,0x0088);
    if( entry )
-   {
-      zspacing = (float)entry->GetValue(0);
+   {      zspacing = (float)entry->GetValue(0);
 
       if ( zspacing == 0.0 )
          zspacing = 1.0;
