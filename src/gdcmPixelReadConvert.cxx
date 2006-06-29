@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 16:09:48 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2006/06/29 13:27:59 $
+  Version:   $Revision: 1.112 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,6 +85,7 @@ bool PixelReadConvert::IsRawRGB()
 /**
  * \brief Gets various usefull informations from the file header
  * @param file gdcm::File pointer
+ * @param fileHelper gdcm::FileHelper pointer 
  */
 void PixelReadConvert::GrabInformationsFromFile( File *file,
                                                  FileHelper *fileHelper )

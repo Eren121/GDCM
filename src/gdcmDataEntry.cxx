@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:12:51 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2006/06/29 13:26:08 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,8 +40,10 @@ uint32_t DataEntry::MaxSizePrintEntry = MAX_SIZE_PRINT_ELEMENT_VALUE;
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /**
- * \brief   Constructor for a given DictEntry
- * @param   e Pointer to existing dictionary entry
+ * \brief   Constructor for a given DataEntry
+ * @param   group group number of the Data Entry to be created
+ * @param   elem element number of the Data Entry to be created
+ * @param   vr Value Representation of the Data Entry to be created 
  */
 DataEntry::DataEntry(uint16_t group,uint16_t elem,
                                      VRKey const &vr) 
@@ -334,7 +336,7 @@ uint32_t DataEntry::GetValueCount( ) const
 
 /**
  * \brief Gets a std::vector <double> holding the value(s) of a DS DataEntry
- * @param valueVector std::vector \<double\> of value(s)
+ * @param valueVector std::vector double of value(s)
  * \return false if VR not "DS" or DataEntry empty
  */
  bool DataEntry::GetDSValue(std::vector <double> &valueVector)
