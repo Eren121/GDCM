@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:43:31 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/06/30 09:54:30 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,6 +82,17 @@ inline void ifrswap(double &a, double &b)
 
 int main(int argc, char *argv[])
 {
+
+uint32_t a1 = 0xfedcba98;
+uint64_t b1 = a1<<8;
+std::cout<<  "sizeof(uint32_t) " << sizeof(uint32_t) 
+         << " sizeof(uint64_t) " << sizeof(uint64_t) << std::endl;
+
+std::cout<< std::hex <<a1 << " " << b1  << std::endl;
+b1 = 0xfedcba98;
+uint64_t b2= 0x76543210;
+b1= b1<<32|b2;
+std::cout<< std::hex <<b1 << " " << b2  << std::endl;
 
    int nbLoop;  
    if (argc > 1)
