@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:28 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/06/30 09:52:53 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -134,6 +134,8 @@ int main(int argc, char *argv[])
 
    // We don't use a gdcm::FileHelper, since it rubs out 
    // the 'non image' bits of the pixels...
+   
+   /// \todo : Previous remark doesn't work if pixels are compressed !
 
    int nx = f->GetXSize();
    int ny = f->GetYSize();
