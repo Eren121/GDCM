@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/08 13:41:28 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2006/06/30 09:58:08 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -215,6 +215,7 @@ int main(int argc, char *argv[])
    {
       std::cout << "------------List of found files ------------" << std::endl;
       dirList.Print();
+      std::cout << std::endl;
    }
    
    gdcm::DirListType fileNames;
@@ -361,6 +362,9 @@ int main(int argc, char *argv[])
       // storing in a map ensures automatic sorting !      
       sf[userFileIdentifier] = f;
    }
+   
+   if (verbose)
+      std::cout << "  " << std::endl;
       
    std::string fullFilename, lastFilename;
    std::string previousPatientName, currentPatientName;
@@ -388,7 +392,12 @@ int main(int argc, char *argv[])
    previousTriggerTime            = "";
    
    int sliceIndex = 0; // Is incremented *at the beginning* of processing
-   int frameIndex = 1;
+   int frameIndex;
+   if (taggrid)
+       frameIndex = 0;
+   else
+       frameIndex = 1;
+              
    int flag       = 0;
        
    gdcm::File *currentFile;
@@ -402,7 +411,8 @@ int main(int argc, char *argv[])
        
       fullFilename =  currentFile->GetFileName();
       lastFilename =  gdcm::Util::GetName( fullFilename ); 
-      std::cout << "Rewrite [" <<lastFilename << "]" << std::endl;
+      std::cout << " --------------------------------------------------"
+                << " Rewrite [" <<lastFilename << "]" << std::endl;
      
       tokens.clear();
       gdcm::Util::Tokenize (it2->first, tokens, token);
@@ -494,7 +504,9 @@ int main(int argc, char *argv[])
             sliceIndex = 1; // only *one* slice in a given directory
          else
             sliceIndex += 1;
-      }      
+      }
+      if (verbose)
+         std::cout << "Slice Index : " << sliceIndex << std::endl;      
 
 // We don't split on Row/Column!
 /*
@@ -561,9 +573,9 @@ int main(int argc, char *argv[])
             chSessionIndex = "1";
          }
       }
-       if (currentFile->IsVRCoherent(0x0020) == 1 )     
+      if (currentFile->IsVRCoherent(0x0020) == 1 )     
          currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "  ");
-       else
+      else
          currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "IS");
  
       // Deal with  0x0021, 0x1020 : 'SLICE INDEX'
@@ -587,11 +599,19 @@ int main(int argc, char *argv[])
  
       std::string strImagePositionPatient    = currentFile->GetEntryString(0x0020, 0x0032 );
       if (strImagePositionPatient == gdcm::GDCM_UNFOUND)
-         currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0030), 0x0020, 0x0032, "DS" );  
+      {
+         if (verbose)
+            std::cout << "Duplicate ImagePosition into ImagePositionPatient" << std::endl;
+         currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0030), 0x0020, 0x0032, "DS" );
+      }  
       
       std::string strImageOrientationPatient = f->GetEntryString(0x0020, 0x0037 );
       if (strImageOrientationPatient == gdcm::GDCM_UNFOUND)
+      {
+         if (verbose)
+            std::cout << "Duplicate ImageOrientation into ImageOrientationPatient" << std::endl;      
          currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0035), 0x0020, 0x0037, "DS" );       
+      }
                 
       if (taggrid)
          frameIndex++;
@@ -607,6 +627,8 @@ int main(int argc, char *argv[])
             flag = 0;
          }
       } 
+      if (verbose)
+         std::cout << "Frame Index : " << frameIndex << std::endl; 
                  
       if (split)
       
