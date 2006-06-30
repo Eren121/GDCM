@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 16:15:01 $
-  Version:   $Revision: 1.80 $
+  Date:      $Date: 2006/06/30 09:55:20 $
+  Version:   $Revision: 1.81 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -327,11 +327,11 @@ errno = 0;
       std::cout << " SwapCode= " << f->GetSwapCode() << std::endl;
       std::cout << " ------" << std::endl;
 
-      //std::cout << "\n\n" << std::endl; 
-      //std::cout << "X spacing " << f->GetXSpacing() << std::endl;
-      //std::cout << "Y spacing " << f->GetYSpacing() << std::endl;
-      //std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
-
+      std::cout << "\n\n" << std::endl; 
+      std::cout << "X spacing " << f->GetXSpacing() << std::endl;
+      std::cout << "Y spacing " << f->GetYSpacing() << std::endl;
+      std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
+    
 //------------------------------
       // Lets's get and print some usefull fields about 'Orientation'
       // ------------------------------------------------------------
