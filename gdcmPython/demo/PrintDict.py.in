@@ -1,7 +1,7 @@
 from gdcmConfigDemo import *
 from gdcmPython.core import *
 
-print "#####################################################################"
+print "############################################################## DictSet "
 # Print the DictSet
 dicts=gdcm.Global.GetDicts()
 if(not isinstance(dicts,gdcm.DictSet)):
@@ -9,7 +9,7 @@ if(not isinstance(dicts,gdcm.DictSet)):
 print "DictSet content :"
 dicts.Print()
 
-print "#####################################################################"
+print "##################################################### Print Public Dict"
 # Print the Dict (public)
 pubDict=dicts.GetDefaultPubDict()
 if(not isinstance(pubDict,gdcm.Dict)):
@@ -17,7 +17,7 @@ if(not isinstance(pubDict,gdcm.Dict)):
 print "Public Dict content :"
 pubDict.Print()
 
-print "#####################################################################"
+print "################################################# DictEntry (0010|0020)"
 # Print the DictEntry (0010|0020)
 ENTRY_GR = 0x10
 ENTRY_EL = 0x20
@@ -28,12 +28,14 @@ if(not isinstance(entry,gdcm.DictEntry)):
 print "Entry (%04x|%04x) content :" % (ENTRY_GR,ENTRY_EL)
 entry.Print()
 
-print "#####################################################################"
+print "########################################### Print Public Dict Entries "
 # Print the public Dict content
 print "dict content :"
 entry=pubDict.GetFirstEntry()
 while(entry):
-   print "%4x|%4x [%s] - M%s : %s (%s)" %\
-         (entry.GetGroup(),entry.GetElement(),entry.GetVR().str(),entry.GetVM(),          entry.GetName(),entry.GetKey().str())
+   print "%4x|%4x [%s] - VM %s : %s (%s)" %\
+        (entry.GetGroup(),entry.GetElement(),entry.GetVR().str(), \
+	entry.GetVM(), entry.GetName(),entry.GetKey().str())
    entry=pubDict.GetNextEntry()
 
+print "########################################################## Game over "
