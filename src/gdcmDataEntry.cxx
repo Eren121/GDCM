@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/29 13:26:08 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2006/07/04 09:36:18 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -366,7 +366,6 @@ uint32_t DataEntry::GetValueCount( ) const
 void DataEntry::SetString(std::string const &value)
 {
    DeleteBinArea();
-
    const VRKey &vr = GetVR();
    if ( vr == "US" || vr == "SS" )
    {
@@ -417,16 +416,16 @@ void DataEntry::SetString(std::string const &value)
       tokens.clear();
    }
    else
-   {
-      //if( value.size() > 0 )  // when user sets a string to 0, *do* the job.
-      {
-         size_t l =  value.size();    
-         SetLength(l + l%2);
-         NewBinArea();
-         memcpy(BinArea, value.c_str(), l);
-         if (l%2)
+   {      
+      size_t l =  value.size();    
+      SetLength(l + l%2);
+      NewBinArea();
+      memcpy(BinArea, value.c_str(), l);
+      if (l%2) // padded with blank except for UI
+         if ( vr == "UI" ) 
             BinArea[l] = '\0';
-      }      
+         else
+            BinArea[l] = ' ';                
    }
    State = STATE_LOADED;
 }
