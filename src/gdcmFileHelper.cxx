@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/07/04 07:58:51 $
-  Version:   $Revision: 1.106 $
+  Date:      $Date: 2006/07/04 09:51:11 $
+  Version:   $Revision: 1.107 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1396,6 +1396,11 @@ void FileHelper::CheckMandatoryElements()
    //0002 0016 AE 1 Source Application Entity Title
    //0002 0100 UI 1 Private Information Creator
    //0002 0102 OB 1 Private Information
+ 
+   // Push out 'ACR-NEMA-special' entries, if any
+      Archive->Push(0x0008,0x0001); // Length to End
+      Archive->Push(0x0008,0x0010); // Recognition Code
+      Archive->Push(0x0028,0x0005); // Image Dimension  
   
    // Create them if not found
    // Always modify the value
