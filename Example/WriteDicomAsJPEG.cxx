@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:03:23 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006/07/04 08:00:43 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -236,6 +236,7 @@ bool InitializeJpeg(std::ostream *fp, int fragment_size, int image_width, int im
    */
   if (sample_pixel == 3)
     {
+    assert( sample_pixel == 1 );
     row_stride = image_width * 3;/* JSAMPLEs per row in image_buffer */
     }
   else
@@ -326,7 +327,15 @@ bool CreateOneFrame (std::ostream *fp, void *input_buffer, int fragment_size,
     static int i = 0;
     JpegPair &jp = v[i];
     jp.second = end-beg;
-    std::cerr << "DIFF: " << i <<" -> " << end-beg << std::endl;
+    
+    if( ((end-beg) % 2) )
+    {
+       fp->put( '\0' );
+       jp.second += 1;
+    }
+    assert( !(jp.second % 2) );
+    std::cerr << "DIFF: " << i <<" -> " << jp.second << std::endl;    
+       
     ++i;
 
   //JpegPair &jp = v[0];
@@ -394,6 +403,7 @@ int main(int argc, char *argv[])
      WriteDICOMItems(of, JpegFragmentSize);
      CreateOneFrame(of, pImageData, fragment_size, xsize, ysize, zsize, 
        samplesPerPixel, quality, JpegFragmentSize);
+     assert( !(fragment_size % 2) );  
      pImageData += fragment_size;
      }
    CloseJpeg(of, JpegFragmentSize);

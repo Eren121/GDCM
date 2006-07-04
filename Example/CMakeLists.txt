@@ -2,17 +2,20 @@
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
   ${GDCM_BINARY_DIR}
+  ${GDCM_BINARY_DIR}/src  
 )
 
 SET(EXAMPLE_SOURCES
 #names starting with 'ex' are examples  
+  Txt2Mat
   exReadPapyrus
   exReadWriteFile
   exColorToRGB
   exGrey2RGB
   exGC
   exImageLighten
-  #exOverlaysACR
+  #exInLine
+  exOverlaysACR
   exOverlaysDCM
   exCurveData
   exExtractTag
@@ -47,6 +50,7 @@ SET(EXAMPLE_SOURCES
   Volume2Dicom
   WriteDicomSimple
   WriteRead
+  WriteDicomAsJPEG
   exCTPET
   #Slice
 )
