@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/06/29 13:27:28 $
-  Version:   $Revision: 1.105 $
+  Date:      $Date: 2006/07/04 07:58:51 $
+  Version:   $Revision: 1.106 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -874,6 +874,11 @@ void FileHelper::SetWriteToRaw()
          vr = "OW";
       if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
+       // For non RAW data. Mainly JPEG
+      if( WriteType == JPEG )
+      {
+         vr = "OW";
+      }
       DataEntry *pixel = 
          CopyDataEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetFlag(DataEntry::FLAG_PIXELDATA);

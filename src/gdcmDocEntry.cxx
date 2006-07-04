@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2006/07/04 07:58:50 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -139,7 +139,12 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
           ||  (vr == "UN") || (vr == "UT") )
          {
             binary_write(*fp, zero);
-            if (vr == "SQ")
+            if (filetype == JPEG && GetGroup() == 0x7fe0 && GetElement() == 0x0010)
+            {
+               gdcmAssertMacro( GetVR() == "OW" );
+               binary_write(*fp, ffff);
+            }  
+            else if (vr == "SQ")
             {
                // we set SQ length to ffffffff
                // and  we shall write a Sequence Delimitor Item 
