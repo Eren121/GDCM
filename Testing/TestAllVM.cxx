@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/30 09:47:35 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2006/07/05 13:08:32 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ int DoTheVMTest(std::string const &filename)
    gdcm::DataEntry *de;
    while(d)
    {
-      if ( de = dynamic_cast<gdcm::DataEntry *>(d) )
+      if ( (de = dynamic_cast<gdcm::DataEntry *>(d)) )
       {
          if ( !(de->GetGroup() % 2) ) // Don't check shadow elements. Righ now,
                                       // Private Dictionnary are not dealt with
