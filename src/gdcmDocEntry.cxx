@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 12:38:06 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2006/07/06 16:57:06 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -232,33 +232,6 @@ uint32_t DocEntry::GetFullLength()
       }
    }
    return l;
-}
-
-/**
- * \brief   tells us if entry is the last one of a 'no length' SequenceItem 
- *          (fffe,e00d) 
- */
-bool DocEntry::IsItemDelimitor()
-{
-   return (GetGroup() == 0xfffe && GetElement() == 0xe00d);
-}
-
-/**
- * \brief   tells us if entry is the first one of an Item 
- *          (fffe,e000) 
- */
-bool DocEntry::IsItemStarter()
-{
-   return (GetGroup() == 0xfffe && GetElement() == 0xe000);
-}
-
-/**
- * \brief   tells us if entry is the last one of a 'no length' Sequence 
- *          (fffe,e0dd) 
- */
-bool DocEntry::IsSequenceDelimitor()
-{
-   return (GetGroup() == 0xfffe && GetElement() == 0xe0dd);
 }
 
 /**

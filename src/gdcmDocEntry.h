@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 15:06:35 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2006/07/06 16:57:06 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,9 +136,18 @@ public:
    /// @return true if the VM is unknown
 //   bool IsVMUnknown() const { return DicomDict->IsVMUnknown(); }
    bool IsVMUnknown() { return GetVM() == GDCM_UNKNOWN; }
-   bool IsItemDelimitor();
-   bool IsItemStarter();
-   bool IsSequenceDelimitor();   
+
+/// \brief   tells us if entry is the last one of a 'no length' SequenceItem 
+///        (fffe,e00d) 
+   bool IsItemDelimitor() 
+                      {return (GetGroup() == 0xfffe && GetElement() == 0xe00d);}
+///\brief   tells us if entry is the last one of a 'no length' Sequence 
+///         (fffe,e0dd)       
+   bool IsItemStarter(){ if (GetGroup() != 0xfffe) return false;
+                         return (GetElement() == 0xe000); }
+ /// \brief   tells us if entry is the last one of a 'no length' Sequence 
+ ///          (fffe,e0dd) 
+   bool IsSequenceDelimitor() { return (GetGroup() == 0xfffe && GetElement() == 0xe0dd);}  
 
    virtual void Copy(DocEntry *doc);
 
