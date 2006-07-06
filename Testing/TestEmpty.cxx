@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestEmpty.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/30 09:48:05 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/07/06 13:23:14 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,7 +17,7 @@
 =========================================================================*/
 
 // Just to know, at test time, if the dll is loadable
-int TestEmpty(int , char ** )
+int TestEmpty(int ,char *[])
 { 
    return 0;
 }
