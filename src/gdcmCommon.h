@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 12:38:05 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2006/07/06 15:08:10 $
+  Version:   $Revision: 1.113 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,7 @@ GDCM_EXPORT extern const std::string GDCM_UNREAD;
 GDCM_EXPORT extern const std::string GDCM_NOTASCII;
 GDCM_EXPORT extern const std::string GDCM_PIXELDATA;
 
-GDCM_EXPORT extern const std::string GDCM_VRUNKNOWN;
+GDCM_EXPORT extern const char GDCM_VRUNKNOWN[2];
 
 GDCM_EXPORT extern const char GDCM_FILESEPARATOR;
 
