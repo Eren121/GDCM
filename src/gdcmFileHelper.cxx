@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/07/04 09:51:11 $
-  Version:   $Revision: 1.107 $
+  Date:      $Date: 2006/07/06 12:38:06 $
+  Version:   $Revision: 1.108 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -729,8 +729,12 @@ bool FileHelper::Write(std::string const &fileName)
       case JPEG:
          SetWriteFileTypeToJPEG();
          break;
+
+       case JPEG2000:
+         SetWriteFileTypeToJPEG2000();
+         break;
    }
- 
+
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
    //
@@ -761,7 +765,7 @@ bool FileHelper::Write(std::string const &fileName)
    }
 
    bool check = CheckWriteIntegrity(); // verifies length
-   if (WriteType == JPEG ) check = true;
+   if (WriteType == JPEG || WriteType == JPEG2000) check = true;
    if (check)
    {
       check = FileInternal->Write(fileName,WriteType);
@@ -875,7 +879,7 @@ void FileHelper::SetWriteToRaw()
       if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
        // For non RAW data. Mainly JPEG
-      if( WriteType == JPEG )
+      if( WriteType == JPEG || WriteType == JPEG2000)
       {
          vr = "OW";
       }
@@ -1048,6 +1052,21 @@ void FileHelper::SetWriteFileTypeToACR()
    Archive->Push(0x0002,0x0016);
    Archive->Push(0x0002,0x0100);
    Archive->Push(0x0002,0x0102);
+}
+
+ /**
+  * \brief Sets in the File the TransferSyntax to 'JPEG2000'
+  */
+void FileHelper::SetWriteFileTypeToJPEG2000()
+{
+   std::string ts = Util::DicomString(
+   Global::GetTS()->GetSpecialTransferSyntax(TS::JPEG2000Lossless) );
+   
+   DataEntry *tss = CopyDataEntry(0x0002,0x0010,"UI");
+   tss->SetString(ts);
+
+   Archive->Push(tss);
+   tss->Delete();   
 }
 
 /**

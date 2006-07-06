@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/04 07:58:50 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2006/07/06 12:38:06 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write( *fp, elem);  //element number
 
    // Dicom V3 group 0x0002 is *always* Explicit VR !
-   if ( filetype == ExplicitVR || filetype == JPEG || group == 0x0002 )
+   if ( filetype == ExplicitVR || filetype == JPEG || filetype == JPEG2000 || group == 0x0002 )
    {
 // ----------- Writes the common part : the VR + the length 
   
@@ -139,7 +139,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
           ||  (vr == "UN") || (vr == "UT") )
          {
             binary_write(*fp, zero);
-            if (filetype == JPEG && GetGroup() == 0x7fe0 && GetElement() == 0x0010)
+           if ( (filetype == JPEG || filetype == JPEG2000) && group == 0x7fe0 && elem == 0x0010)
             {
                gdcmAssertMacro( GetVR() == "OW" );
                binary_write(*fp, ffff);

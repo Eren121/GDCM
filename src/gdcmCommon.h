@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:02:32 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2006/07/06 12:38:05 $
+  Version:   $Revision: 1.112 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,6 +46,12 @@ namespace gdcm
 {
 
 // Centralize information about the gdcm dictionary in only one file:
+//
+// ==>
+// ==> Don't forget gdcm/gdcmPython/gdcm.i
+// ==>
+//
+
 #ifndef PUB_DICT_PATH
 #  define PUB_DICT_PATH   "../Dicts/"
 #endif
@@ -101,7 +107,8 @@ enum FileType {
    ACR_LIBIDO,
    /// \todo FIXME : an encapsulated JPEG file may be 
    ///              either ExplicitVR or ImplicitVR, right?
-   JPEG
+   JPEG,
+   JPEG2000
 };
 
 /// \brief type of the elements composing a DICOMDIR (for internal use only)
