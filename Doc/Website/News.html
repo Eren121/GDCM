@@ -217,19 +217,39 @@ Any contribution is welcome.
    <UL>
       <LI> Stupid difference between <TT>gdcm::ValEntry</TT> 
            and <TT>gdcm::BinEntry</TT> removed. <br>
-           Only <TT>gdcm::DataEntry</TT> exist, now. <br> 
-      <LI>   
-          <TT>void ValEntry::SetValue(std::string const &val)</TT><br>
-          replaced by : <br>
-          <TT>void DataEntry::SetValue(const uint32_t &id, const double
-           &val)</TT><br>
-           and<br>
-           <TT>void DataEntry::SetString(std::string const &value)<TT>
-      <LI>
-           <TT>void ValEntry::CopyValEntry(uint16_t gr, uint16_t el)</TT><br>
-           replaced by : <br>
-           <TT>void DataEntry::CopyDataEntry(uint16_t gr, uint16_t el, vr)</TT>
-   <br>      
+           Only <TT>gdcm::DataEntry</TT> exist, now. <br>  
+   <pre>
+   ValEntry(DictEntry *e);
+   BinEntry(DictEntry *e);
+-->DataEntry *New(uint16_t group,uint16_t elem, VRKey const &vr);
+
+   std::string const &ValEntry::GetValue() const;
+   std::string const &BinEntry::GetValue() const;
+-->std::string const &DataEntry::GetString() const;
+
+   uint8_t *BinEntry::GetBinArea();
+-->uint8_t *DataEntry::GetBinArea();
+
+   void ValEntry::SetValue(std::string const &value);
+   void BinEntry::SetValue(std::string const &value);   
+-->void DataEntry::SetString(std::string const &value);
+
+   void BinEntry::SetBinArea( uint8_t *area, bool self = true );
+-->void DataEntry::SetBinArea( uint8_t *area, bool self = true );
+
+   void ValEntry::CopyValEntry(uint16_t gr, uint16_t el);
+-->void DataEntry::CopyDataEntry(uint16_t gr, uint16_t el, VRKey const &vr);
+
+New features :
+
+For multivaluated numeric DataEntries
+-->void DataEntry::SetValue(const uint32_t &id,const double &val);
+-->double DataEntry::GetValue(const uint32_t &id) const;
+-->uint32_t DataEntry::GetValueCount() const;
+
+For converting 'Decimal String'
+-->bool GetDSValue(std::vector &lt;double&gt; &valueVector);  
+      </pre>
       <LI>
    </UL> 
       
