@@ -146,7 +146,7 @@ Any contribution is welcome.
          <LI>
       3) user created a new image, using existing images (eg MIP, MPR, cartography image)<br>
           c : <TT>CREATED_IMAGE</TT>
-         wq<LI>
+         <LI>
        4) user modified/added some tags *without processing* the pixels (anonymization, etc)<br>
          c : <TT>UNMODIFIED_PIXELS_IMAGE</TT> 
       </UL>
@@ -205,6 +205,10 @@ Any contribution is welcome.
               <TT>New()</TT> and <TT>Delete()</TT>
          <LI> <TT>Register()</TT> and <TT>Unregister()</TT> methods are 
          available.
+         <LI> --> Well ... People from ITK don't seem to agree too much with 
+             that feature.<br>
+          They demand to be allowed to allocate gdcm objects in the stack as
+          well, not only in the heap.
       </UL>
       <LI>
    </UL>
@@ -213,8 +217,19 @@ Any contribution is welcome.
    <UL>
       <LI> Stupid difference between <TT>gdcm::ValEntry</TT> 
            and <TT>gdcm::BinEntry</TT> removed. <br>
-           Only <TT>gdcm::DataEntry</TT> exist, now. <br>  
+           Only <TT>gdcm::DataEntry</TT> exist, now. <br> 
+      <LI>   
+          <TT>void ValEntry::SetValue(std::string const &val)</TT><br>
+          replaced by : <br>
+          <TT>void DataEntry::SetValue(const uint32_t &id, const double
+           &val)</TT><br>
+           and<br>
+           <TT>void DataEntry::SetString(std::string const &value)<TT>
       <LI>
+           <TT>void ValEntry::CopyValEntry(uint16_t gr, uint16_t el)</TT><br>
+           replaced by : <br>
+           <TT>void DataEntry::CopyDataEntry(uint16_t gr, uint16_t el, vr)</TT>
+   <br>      
       <LI>
    </UL> 
       
