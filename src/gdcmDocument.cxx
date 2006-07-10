@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 12:38:06 $
-  Version:   $Revision: 1.352 $
+  Date:      $Date: 2006/07/10 09:41:46 $
+  Version:   $Revision: 1.353 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,11 +62,13 @@ Document::Document()
    Initialize();
    SwapCode = 1234;
    Filetype = ExplicitVR;
+   CurrentOffsetPosition = 0;
    // Load will set it to true if sucessfull
    Group0002Parsed = false;
    IsDocumentAlreadyLoaded = false;
    IsDocumentModified = true;
    LoadMode = LD_ALL; // default : load everything, later
+   
    SetFileName("");
 }
 
@@ -908,6 +910,27 @@ bool Document::operator<(Document &document)
 
 //-----------------------------------------------------------------------------
 // Protected
+
+/**
+ * \brief Reads a given length of bytes
+ *       (in order to avoid to many CPU time consuming fread-s)
+ * @param l length to read 
+ */
+void Document::ReadBegBuffer(size_t l)
+   throw( FormatError )
+{   
+   Fp->read (BegBuffer, (size_t)l);
+   if ( Fp->fail() )
+   {
+      throw FormatError( "Document::ReadBegBuffer()", " file error." );
+   }
+   if ( Fp->eof() )
+   {
+      throw FormatError( "Document::ReadBegBuffer()", "EOF." );
+   }
+   PtrBegBuffer = BegBuffer;
+   CurrentOffsetPosition+=l;
+}
 /**
  * \brief Reads a supposed to be 16 Bits integer
  *       (swaps it depending on processor endianness) 
@@ -931,6 +954,18 @@ uint16_t Document::ReadInt16()
 }
 
 /**
+ * \brief Gets from BegBuffer a supposed to be 16 Bits integer
+ *       (swaps it depending on processor endianness) 
+ * @return read value
+ */
+uint16_t Document::GetInt16()
+{
+   uint16_t g = *((uint16_t*)PtrBegBuffer);
+   g = SwapShort(g);
+   PtrBegBuffer+=2; 
+   return g;
+}
+/**
  * \brief  Reads a supposed to be 32 Bits integer
  *        (swaps it depending on processor endianness)  
  * @return read value
@@ -949,6 +984,19 @@ uint32_t Document::ReadInt32()
       throw FormatError( "Document::ReadInt32()", "EOF." );
    }
    g = SwapLong(g);
+   return g;
+}
+
+/**
+ * \brief Gets from BegBuffer a supposed to be 32 Bits integer
+ *       (swaps it depending on processor endianness) 
+ * @return read value
+ */
+uint32_t Document::GetInt32()
+{
+   uint32_t g = *((uint32_t*)PtrBegBuffer);
+   g = SwapLong(g); 
+   PtrBegBuffer+=4;
    return g;
 }
 
@@ -1459,9 +1507,9 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
 
-         Fp->seekg( 2L, std::ios::cur); // Once per OW,OB,SQ DocEntry
-         uint32_t length32 = ReadInt32();
-
+         //Fp->seekg( 2L, std::ios::cur); // Once per OW,OB,SQ DocEntry
+         uint32_t length32 = ReadInt32(); // Once per OW,OB,SQ DocEntry
+         CurrentOffsetPosition+=4;
          if ( (vr == "OB" || vr == "OW") && length32 == 0xffffffff ) 
          {
             uint32_t lengthOB;
@@ -1498,8 +1546,9 @@ void Document::FindDocEntryLength( DocEntry *entry )
       }
 
       // Length is encoded on 2 bytes.
-      length16 = ReadInt16();
-  
+      //length16 = ReadInt16();
+      length16 = GetInt16();
+
       // 0xffff means that we deal with 'No Length' Sequence 
       //        or 'No Length' SQItem
       if ( length16 == 0xffff) 
@@ -1522,8 +1571,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
      // even if Transfer Syntax is 'Implicit VR ...'
      // --> Except for 'Implicit VR Big Endian Transfer Syntax GE Private' 
      //     where Group 0x0002 is *also* encoded in Implicit VR !
-      
-      FixDocEntryFoundLength( entry, ReadInt32() );
+
+      FixDocEntryFoundLength( entry, GetInt32() /*ReadInt32()*/ );
       return;
    }
 }
@@ -1537,6 +1586,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
    throw( FormatUnexpected )
 {
    // See PS 3.5-2001, section A.4 p. 49 on encapsulation of encoded pixel data.
+   
    long positionOnEntry = Fp->tellg(); // Only for OB,OW DataElements
 
    bool foundSequenceDelimiter = false;
@@ -1546,16 +1596,21 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
    {
       uint16_t group;
       uint16_t elem;
+
       try
       {
-         group = ReadInt16();
-         elem  = ReadInt16();   
+         //group = ReadInt16(); // Once per fragment (if any) of OB,OW DataElements
+         //elem  = ReadInt16(); // Once per fragment (if any) of OB,OW DataElements 
+         ReadBegBuffer(4); // Once per fragment (if any) of OB,OW DataElements
       }
       catch ( FormatError )
       {
          throw FormatError("Unexpected end of file encountered during ",
                            "Document::FindDocEntryLengthOBOrOW()");
       }
+      group = GetInt16();
+      elem  = GetInt16();
+
       // We have to decount the group and element we just read
       totalLength += 4;     
       if ( group != 0xfffe || ( ( elem != 0xe0dd ) && ( elem != 0xe000 ) ) )
@@ -1573,7 +1628,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       {
          foundSequenceDelimiter = true;
       }
-      uint32_t itemLength = ReadInt32();
+      uint32_t itemLength = ReadInt32(); // Once per fragment (if any) of OB,OW DataElements
       // We add 4 bytes since we just read the ItemLength with ReadInt32
       totalLength += itemLength + 4;
       SkipBytes(itemLength);
@@ -1583,7 +1638,7 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
          break;
       }
    }
-   Fp->seekg( positionOnEntry, std::ios::beg); // Only for OB,OW DataElements
+   Fp->seekg( positionOnEntry, std::ios::beg); // Only once for OB,OW DataElements
    return totalLength;
 }
 
@@ -1602,9 +1657,9 @@ VRKey Document::FindDocEntryVR()
    if ( CurrentGroup == 0xfffe )
       return GDCM_VRUNKNOWN;
          
-   long positionOnEntry;     
-   if( Debug::GetWarningFlag() ) 
-     positionOnEntry = Fp->tellg(); // Only in Warning Mode
+   //long positionOnEntry;     
+   //if( Debug::GetWarningFlag() ) 
+   //  positionOnEntry = Fp->tellg(); // Only in Warning Mode
    
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag and/or
@@ -1618,9 +1673,12 @@ VRKey Document::FindDocEntryVR()
    // if it happens not to be the case.
 
    VRKey vr;
-   Fp->read(&(vr[0]),(size_t)2);
-
-   if ( !CheckDocEntryVR(vr) )
+   //Fp->read(&(vr[0]),(size_t)2);
+   vr[0] = *PtrBegBuffer++;
+   vr[1] = *PtrBegBuffer++;
+   
+   //if ( !CheckDocEntryVR(vr) ) // avoid useless function call
+   if ( !Global::GetVR()->IsValidVR(vr) )
    {
 /*   
 //      std::cout << "================================================================Unknown VR" 
@@ -1633,12 +1691,13 @@ VRKey Document::FindDocEntryVR()
       gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
                         << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
                         << ")"  
-                        << " at offset : 0x(" << positionOnEntry<< ") for group " << CurrentGroup
+                        << " at offset : 0x(" << CurrentOffsetPosition-4<< ") for group " << CurrentGroup
                         );
 
       //Fp->seekg(positionOnEntry, std::ios::beg); //JPRx
-      Fp->seekg((long)-2, std::ios::cur);// only for unrecognized VR (?!?) 
+      //Fp->seekg((long)-2, std::ios::cur);// only for unrecognized VR (?!?) 
                                          //see :MR_Philips_Intera_PrivateSequenceExplicitVR.dcm
+      PtrBegBuffer-=2;
       return GDCM_VRUNKNOWN;
    }
    return vr;
@@ -1903,6 +1962,7 @@ bool Document::CheckSwap()
       // (i.e. after the file preamble and the "DICM" string).
 
       Fp->seekg ( 132L, std::ios::beg); // Once per Document
+      CurrentOffsetPosition = 132;
       return true;
    } // ------------------------------- End of DicomV3 ----------------
 
@@ -1913,7 +1973,7 @@ bool Document::CheckSwap()
    gdcmWarningMacro( "Not a Kosher DICOM Version3 file (no preamble)");
 
    Fp->seekg(0, std::ios::beg); // Once per ACR-NEMA Document
-
+   CurrentOffsetPosition = 0;
    // Let's check 'No Preamble Dicom File' :
    // Should start with group 0x0002
    // and be Explicit Value Representation
@@ -2084,8 +2144,9 @@ DocEntry *Document::ReadNextDocEntry()
 {
    try
    {
-      CurrentGroup = ReadInt16();
-      CurrentElem  = ReadInt16();
+      ReadBegBuffer(8); // Avoid to many time consuming freads
+      //CurrentGroup = ReadInt16();
+      //CurrentElem  = ReadInt16();
    }
    catch ( FormatError )
    {
@@ -2093,7 +2154,10 @@ DocEntry *Document::ReadNextDocEntry()
       // header parsing has to be considered as finished.
       return 0;
    }
-
+   
+   CurrentGroup = GetInt16();
+   CurrentElem  = GetInt16();
+   
    // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
    {

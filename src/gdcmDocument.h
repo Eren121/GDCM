@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:10:19 $
-  Version:   $Revision: 1.141 $
+  Date:      $Date: 2006/07/10 09:41:46 $
+  Version:   $Revision: 1.142 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -188,6 +188,7 @@ private:
    bool DoTheLoadingDocumentJob();
      
       // System access (meaning endian related !?)
+   void ReadBegBuffer(size_t l) throw ( FormatError );
    uint16_t SwapShort(uint16_t);
    uint32_t SwapLong(uint32_t);
    double SwapDouble(double);
@@ -219,10 +220,13 @@ private:
 
    // DocEntry related utilities
    DocEntry *ReadNextDocEntry();
-
+   uint16_t GetInt16();
+   uint32_t GetInt32();
+   
    void HandleBrokenEndian  (uint16_t &group, uint16_t &elem);
    void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);
    DocEntry *Backtrack(DocEntry *docEntry);
+
 
 // Variables
 protected:
@@ -251,6 +255,12 @@ protected:
 //  void BuildFlatHashTableRecurse( TagDocEntryHT &builtHT,
 //                                  DocEntrySet *set );
 
+private:
+   /// \brief buffer to avoid some freads
+   char BegBuffer[8];
+   char *PtrBegBuffer;
+   /// \brief to avoid time consuming ftellg
+   size_t CurrentOffsetPosition;
 };
 
 } // end namespace gdcm
