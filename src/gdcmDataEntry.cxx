@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/04 09:36:18 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2006/07/10 08:27:27 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,9 +26,9 @@
 #include <fstream>
 
 #if defined(__BORLANDC__)
- #include <mem.h> // for memcpy
+ #include <mem.h>    // for memcpy
  #include <stdlib.h> // for atof
- #include <ctype.h> // for isdigit
+ #include <ctype.h>  // for isdigit
 #endif
 
 namespace gdcm 
@@ -52,6 +52,7 @@ DataEntry::DataEntry(uint16_t group,uint16_t elem,
    State = STATE_LOADED;
    Flag = FLAG_NONE;
 
+   StrArea = 0;
    BinArea = 0;
    SelfArea = true;
 }
@@ -66,6 +67,7 @@ DataEntry::DataEntry(DocEntry *e)
 {
    Flag = FLAG_NONE;
    BinArea = 0;
+   
    SelfArea = true;
 
    Copy(e);
@@ -77,6 +79,7 @@ DataEntry::DataEntry(DocEntry *e)
 DataEntry::~DataEntry ()
 {
    DeleteBinArea();
+   
 }
 
 //-----------------------------------------------------------------------------
@@ -437,10 +440,14 @@ std::string const &DataEntry::GetString() const
   static std::ostringstream s;
   const VRKey &vr = GetVR();
   s.str("");
-  StrArea="";
+  
+  if (!StrArea)
+     StrArea = new std::string();
+  else 
+     *StrArea="";
 
   if( !BinArea )
-     return StrArea;
+     return *StrArea;
       // When short integer(s) are stored, convert the following (n * 2) characters
   // as a displayable string, the values being separated by a back-slash
   if( vr == "US" )
@@ -452,7 +459,7 @@ std::string const &DataEntry::GetString() const
            s << '\\';
         s << data[i];
      }
-     StrArea=s.str();
+     *StrArea=s.str();
   }
   else if (vr == "SS" )
   {
@@ -463,7 +470,7 @@ std::string const &DataEntry::GetString() const
            s << '\\';
         s << data[i];
      }
-     StrArea=s.str();
+     *StrArea=s.str();
   }      // See above comment on multiple short integers (mutatis mutandis).
   else if( vr == "UL" )
   {
@@ -474,7 +481,7 @@ std::string const &DataEntry::GetString() const
            s << '\\';
         s << data[i];
      }
-     StrArea=s.str();
+     *StrArea=s.str();
   }
   else if( vr == "SL" )
   {
@@ -485,7 +492,7 @@ std::string const &DataEntry::GetString() const
            s << '\\';
         s << data[i];
      }
-     StrArea=s.str();
+     *StrArea=s.str();
   }    else if( vr == "FL" )
   {
      float *data=(float *)BinArea;
@@ -495,7 +502,7 @@ std::string const &DataEntry::GetString() const
            s << '\\';
         s << data[i];
      }
-     StrArea=s.str();
+     *StrArea=s.str();
   }
   else if( vr == "FD" )
   {
@@ -506,22 +513,22 @@ std::string const &DataEntry::GetString() const
            s << '\\';
         s << data[i];
      }
-     StrArea=s.str();
+     *StrArea=s.str();
   }
   else
   {
-     StrArea.append((const char *)BinArea,GetLength());
+     StrArea->append((const char *)BinArea,GetLength());
      // to avoid gdcm to propagate oddities in lengthes
      if ( GetLength()%2)
-        StrArea.append(" ",1);   }
-  return StrArea;
+        StrArea->append(" ",1);   }
+  return *StrArea;
 }
 
 
 /**
  * \brief Copies all the attributes from an other DocEntry 
  * @param doc entry to copy from
- * @remarks The content BinArea is copied too
+ * @remarks The content BinArea is copied too (StrArea is not)
  */
 void DataEntry::Copy(DocEntry *doc)
 {
@@ -532,7 +539,7 @@ void DataEntry::Copy(DocEntry *doc)
    {
       State = entry->State;
       Flag = entry->Flag;
-      CopyBinArea(entry->BinArea,entry->GetLength());
+      CopyBinArea(entry->BinArea,entry->GetLength());      
    }
 }
 
@@ -644,7 +651,8 @@ uint32_t DataEntry::ComputeFullLength()
 
 //-----------------------------------------------------------------------------
 // Protected
-/// \brief Creates a DataEntry owned BinArea (remove previous one if any)
+/// \brief Creates a DataEntry owned BinArea 
+///       (remove previous one if any and relevant StrArea if any)
 void DataEntry::NewBinArea( )
 {
    DeleteBinArea();
@@ -652,13 +660,19 @@ void DataEntry::NewBinArea( )
       BinArea = new uint8_t[GetLength()];
    SelfArea = true;
 }
-/// \brief Removes the BinArea, if owned by the DataEntry
+/// \brief Removes the BinArea, if owned by the DataEntry, 
+///        and the relevant StrArea if any
 void DataEntry::DeleteBinArea(void)
 {
    if (BinArea && SelfArea)
    {
       delete[] BinArea;
       BinArea = NULL;
+   }
+   if (StrArea)
+   {
+      delete StrArea;
+      StrArea = 0;
    }
 }
 

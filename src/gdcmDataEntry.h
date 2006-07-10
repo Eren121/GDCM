@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2006/07/10 08:27:28 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -144,7 +144,8 @@ protected:
    bool SelfArea;
    /// \brief  std::string representable value of the Entry. 
    ///        Parts of a multivaluated data are separated by back-slash
-   mutable std::string StrArea;
+   //mutable std::string StrArea;
+   mutable std::string *StrArea; // to avoid allocating useless std::string
 
 private:
    /// \brief 0 for straight entries, FLAG_PIXELDATA for Pixel Data entries

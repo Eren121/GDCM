@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 16:57:06 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2006/07/10 08:27:27 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,6 +71,7 @@ VR::VR()
       }
       from.close();
    }
+   char *VRvalues = "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQ";
 }
 
 /**
@@ -108,7 +109,6 @@ bool VR::IsVROfBinaryRepresentable(VRKey const &tested)
  */
 bool VR::IsVROfStringRepresentable(VRKey const &tested)
 {
-
    return tested == "AE" ||
           tested == "AS" ||
           tested == "CS" ||
@@ -170,7 +170,18 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 /// \brief checks is a supposed-to-be VR is a 'legal' one.
 bool VR::IsValidVR(VRKey const &key)
 {
-  return vr.find(key) != vr.end();
+//  return vr.find(key) != vr.end();
+
+  int nbVal=26;
+  char *pt = VRvalues;
+  for (int i=0;i<nbVal;i++)
+  {
+     if(tested[0] == *pt++)
+       if(tested[1] == *pt++)
+          return true;       
+  }
+  return false;
+
 }
 #endif
 

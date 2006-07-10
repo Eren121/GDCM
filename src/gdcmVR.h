@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:10:12 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2006/07/10 08:27:28 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,6 +75,7 @@ protected:
 
 private:
    VRHT vr;
+   static char *VRvalues;
 };
 } // end namespace gdcm
 
