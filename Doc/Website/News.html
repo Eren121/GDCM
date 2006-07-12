@@ -239,9 +239,28 @@ Any contribution is welcome.
 
    void ValEntry::CopyValEntry(uint16_t gr, uint16_t el);
 -->void DataEntry::CopyDataEntry(uint16_t gr, uint16_t el, VRKey const &vr);
+</pre>
+<LI> Avoid tons of CPU time consuming accesses to DICOM Dictionnary
+<pre>
+   DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem);
+-->DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem, 
+                                        const VRKey &vr = GDCM_VRUNKNOWN);
 
-New features :
+   void FileHelper::CheckMandatoryEntry(uint16_t group, uint16_t elem, std::string value);
+-->void FileHelper::CheckMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
+                                        const VRKey &vr = GDCM_VRUNKNOWN);
+      
+   void FileHelper::SetMandatoryEntry(uint16_t group, uint16_t elem, std::string value);       
+-->void FileHelper::SetMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
+                                      const VRKey &vr = GDCM_VRUNKNOWN);
 
+   void FileHelper::CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value);      
+-->void FileHelper::CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
+                                       const VRKey &vr = GDCM_VRUNKNOWN);
+</pre>
+CopyMandatoryEntry(0x0002,0x0003,sop)
+<LI> New features :
+<pre>
 For multivaluated numeric DataEntries
 -->void DataEntry::SetValue(const uint32_t &id,const double &val);
 -->double DataEntry::GetValue(const uint32_t &id) const;
