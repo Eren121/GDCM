@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:43 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2006/07/17 13:27:57 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,16 +24,14 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmDebug.h"
+#include "gdcmUtil.h"
 #include "gdcmArgMgr.h"
 
 #include <iostream>
 #include <sstream>
 
-
-
 int main(int argc, char *argv[])
 {
-
    START_USAGE(usage)
    " \n RawToDicom : \n                                                       ",
    " Writes a Dicom file from a Raw File                                      ",
@@ -41,13 +39,13 @@ int main(int argc, char *argv[])
    "                   fileout=outputFileName                                 ",
    "                   rows=nb of Rows                                        ",
    "                   lines=nb of Lines,                                     ",
-   "                   pixeltype={8U|8S|16U|16S}                              ",
+   "                   pixeltype={8U|8S|16U|16S|32U|32S}                      ",
    "                   [frames = nb of Frames] //defaulted to 1               ",
    "                   [samples = {1|3}}       //defaulted to 1(1:Gray,3:RGB) ",
    "                   [patientname = Patient's name]                         ",
    "                   [debug]                                                ",
    "                                                                          ",
-   "      debug      : user wants to run the program in 'debug mode'          ",
+   "      debug      : developper wants to run the program in 'debug mode'    ",
    FINISH_USAGE
    
 
@@ -63,7 +61,6 @@ int main(int argc, char *argv[])
 
    const char *inputFileName  = am->ArgMgrGetString("filein");
    const char *outputFileName = am->ArgMgrGetString("fileout");
-   //const char *dirName        = am->ArgMgrGetString("dirin");
    
    const char *patientName = am->ArgMgrGetString("patientname");
    
@@ -110,22 +107,37 @@ int main(int argc, char *argv[])
       pixelSize = 1;
       pixelSign = 0;
    }
-   else  if (strPixelType == "8U")
+   else if (strPixelType == "8U")
    {
       pixelSize = 1;
       pixelSign = 1;
    }
-   else  if (strPixelType == "16S")
+   else if (strPixelType == "16S")
    {
       pixelSize = 2;
-      pixelSign = 0;
+      pixelSign = 0; 
    }   
-   else  if (strPixelType == "16U")
+   else if (strPixelType == "16U")
    {
       pixelSize = 2;
       pixelSign = 1;
    }      
-
+   else if (strPixelType == "32S")
+   {
+      pixelSize = 4;
+      pixelSign = 0;
+   }   
+   else if (strPixelType == "32U")
+   {
+      pixelSize = 4;
+      pixelSign = 1;
+   }
+   else
+   {
+      std::cout << "Wrong 'pixeltype' (" << strPixelType << ")" << std::endl;
+      return 1;
+   }
+   
    int dataSize =  nX*nY*nZ*pixelSize*samplesPerPixel;
    uint8_t *pixels = new uint8_t[dataSize];
    
@@ -138,45 +150,76 @@ int main(int argc, char *argv[])
  
  // Get the (empty) image header.  
    gdcm::File *fileToBuild = fileH->GetFile();
+     
+   
+   // If you want to use this program as a template to create
+   // a 'Single Study UID - Single Serie UID' file set
+   // keep the following lines out of the loop
+
+   // 'Study Instance UID'
+   // The user is allowed to create his own Study, 
+   //          keeping the same 'Study Instance UID' for various images
+   // The user may add images to a 'Manufacturer Study',
+   //          adding new Series to an already existing Study
+   std::string studyUID =  gdcm::Util::CreateUniqueUID(); 
+   fileToBuild->InsertEntryString(studyUID, 0x0020,0x000d,"UI");
+
+   // 'Serie Instance UID'
+   // The user is allowed to create his own Series, 
+   // keeping the same 'Serie Instance UID' for various images
+   // The user shouldn't add any image to a 'Manufacturer Serie'
+   // but there is no way no to prevent him for doing that
+   std::string serieUID =  gdcm::Util::CreateUniqueUID();    
+   fileToBuild->InsertEntryString(serieUID, 0x0020,0x000e,"UI");   
+ 
+   // end of 'keep out of loop lines  
+   
    std::ostringstream str;
 
    // Set the image size
    str.str("");
    str << nX;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0011); // Columns
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0011, "US"); // Columns
    str.str("");
    str << nY;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0010); // Rows
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0010, "US"); // Rows
    
    str.str("");
    str << nZ;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0008, "IS"); // Number of Frames
 
    // Set the pixel type
    
    str.str("");
    str << pixelSize*8;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0100, "US"); // Bits Allocated
 
    str.str("");
    str << pixelSize*8;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0101, "US"); // Bits Stored
 
    str.str("");
    str << ( pixelSize*8 - 1 );
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0102, "US"); // High Bit
 
    str.str("");
    str << pixelSign;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103, "US"); // Pixel Representation
 
    str.str("");
    str << samplesPerPixel;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
+   
+// If you deal with a Serie of images, it up to you to tell gdcm,
+// for each image, what are the values of :
+// 0020 0032 DS 3 Image Position (Patient)
+// 0020 0037 DS 6 Image Orientation (Patient)
+
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002, "US"); // Samples per Pixel
 
    if (strlen(patientName) != 0)
-      fileToBuild->InsertEntryString(patientName,0x0010,0x0010); // Patient's Name
-
+      fileToBuild->InsertEntryString(patientName,0x0010,0x0010, "PN"); // Patient's Name
+   
+   
 // Set the image Pixel Data
    fileH->SetImageData(pixels,dataSize);
 
