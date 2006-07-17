@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:42 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2006/07/17 13:25:00 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,8 @@
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
 #include "gdcmArgMgr.h"
+
+#include <sys/times.h>
 
 #include <iostream>
 
@@ -97,6 +99,8 @@ int main(int argc, char *argv[])
 
    gdcm::DicomDir *dcmdir;
 
+
+   
    // we ask for Directory parsing
 
    dcmdir = gdcm::DicomDir::New( );
@@ -104,7 +108,14 @@ int main(int argc, char *argv[])
    dcmdir->SetLoadMode(loadMode);
    dcmdir->SetDirectoryName(dirName);
    //dcmdir->SetParseDir(true);
+   
+      struct tms tms1, tms2; // Time measurements
+      times(&tms1);   
    dcmdir->Load();
+      times(&tms2);      
+      std::cout 
+        << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
+        << std::endl;
 
    if ( gdcm::Debug::GetDebugFlag() )
       std::cout << "======================= End Parsing Directory" << std::endl;

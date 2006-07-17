@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/27 19:02:43 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006/07/17 13:25:00 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
-   "       debug      : user wants to run the program in 'debug mode'         ",
+   "       debug      : developper wants to run the program in 'debug mode'   ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------

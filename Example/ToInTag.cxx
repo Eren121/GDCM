@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/30 09:58:08 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/07/17 13:24:59 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
    "           0x0021, 0x1040 : 'FRAME INDEX'                                 ",
    "           0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)         ",
    " usage:                                                                   ",
-   " PhilipsToBrucker dirin=rootDirectoryName                                 ",
+   " ToInTag          dirin=rootDirectoryName                                 ",
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",

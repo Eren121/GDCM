@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 15:45:21 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2006/07/17 13:27:04 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -145,6 +145,7 @@ int main(int argc, char* argv[])
             { // on degouline les STUDY de ce patient
                std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
                std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
+               std::cout << " Stud.Inst.UID:["    << st->GetEntryString(0x0020, 0x000d) << "]"; // Study Instance UID
                std::cout << std::endl; 
                st = pa->GetNextStudy();
             }
@@ -170,6 +171,7 @@ int main(int argc, char* argv[])
             { // on degouline les STUDY de ce patient
                std::cout << "--- Stud.descr:["    << st->GetEntryString(0x0008, 0x1030) << "]"; // Study Description 
                std::cout << " Stud.ID:["          << st->GetEntryString(0x0020, 0x0010) << "]"; // Study ID
+               std::cout << " Stud.Inst.UID:["    << st->GetEntryString(0x0020, 0x000d) << "]"; // Study Instance UID       
                std::cout << std::endl;
 
                se = st->GetFirstSerie();
@@ -178,6 +180,7 @@ int main(int argc, char* argv[])
                   std::cout << "--- --- Ser.Descr:["<< se->GetEntryString(0x0008, 0x103e)<< "]";  // Series Description
                   std::cout << " Ser.nb:["          << se->GetEntryString(0x0020, 0x0011);        // Series number
                   std::cout << "] Mod.:["           << se->GetEntryString(0x0008, 0x0060) << "]"; // Modality
+                  std::cout << " Serie Inst.UID.:[" <<  se->GetEntryString(0x0020, 0x000e) << "]";  // Series Instance UID
                   std::cout << std::endl;    
                   se = st->GetNextSerie();   
                }
