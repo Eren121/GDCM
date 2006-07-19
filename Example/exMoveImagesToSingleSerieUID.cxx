@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exMoveImagesToSingleSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/17 13:21:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/07/19 09:04:46 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    "\n exMoveImagesToSingleSerieUID :\n                                       ",
    " Converts the Dicom files inside a single-level Directory                 ",
-   " into a 'Single Study UID - Single SerieUID                               ",
+   " into a 'Single Study UID - Single SerieUID' file set                     ",
    " usage: exMoveImagesToSingleSerieUID                                      ",
    "              dirin=inputDirectoryName                                    ",
    "              dirout=outputDirectoryName                                  ",
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 
          char charImagePosition[256];
      
-         sprintf(charImagePosition,"%f\\0.0\\0.0",zPositionComponent);
+         sprintf(charImagePosition,"0.0\\0.0\\%f",zPositionComponent);
          zPositionComponent += zSpacing;
  
          if (! f->CheckIfEntryExist(0x0020,0x0032) ) //0020 0032 DS 3 Image Position (Patient)
