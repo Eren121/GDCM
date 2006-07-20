@@ -670,7 +670,7 @@ int main(int argc, char **argv) {
         return 1;
       }
       break;
-    
+
     case PXM_DFMT:
       image = pnmtoimage(parameters.infile, &parameters);
       if (!image) {
