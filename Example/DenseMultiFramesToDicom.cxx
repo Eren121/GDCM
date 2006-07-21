@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/20 17:15:28 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/07/21 17:18:27 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -181,9 +181,7 @@ int main(int argc, char *argv[])
    for (gdcm::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
-   {
-   
-   
+   {  
       std::ifstream from( (*it).c_str() );   
       if ( !from )
       {
@@ -194,7 +192,7 @@ int main(int argc, char *argv[])
       { 
          std::cout << "Success in open file" << *it << std::endl;
          Load(from, *it, patName, strStudyUID, serieNumber);
-         serieNumber++;
+         serieNumber+=2;
          //return 0;
       }   
    }
@@ -292,6 +290,177 @@ All pixels with zero strain values are outside the masks.
          for (;;)
          {
             if (!from.get(c))
+            {
+               std::cout << " !from.get(c) ";
+               break;
+            }
+            if (!isspace(c)) 
+            {
+               //std::cout << " !isspace(c) ";
+               from.putback(c);
+               break;
+            }
+         }  
+         from >> str1;
+         val = (float)atof(str1.c_str());
+        std::cout << "  " << val;
+         *(f+ /*l*nx*ny + */j*nx+i) = val;
+ 
+        if(from.eof()) 
+        {
+            std::cout << "Missing values at [" << j <<"," << i << "]" 
+                      << std::endl; 
+           break;
+         }
+         l++;           
+      }
+      
+      std::cout << std::endl;
+      //std::cout << std::endl << " line nb : " << j 
+      //          << " line length : " << l << std::endl;
+         
+    }
+    
+   // std::cout << "mini : "<< mini  << " maxi : " << maxi << std::endl;
+/*
+// values are expressed as % as a fraction, actually!)
+// It's useless to rescale them as uint16_t : just *100
+    uint16_t *img = new uint16_t[ny*nx];
+    uint16_t *ptr = img;
+    float *tmp = f;
+    float div = maxi-mini;
+    std::cout << "div : " << div << " mini : " << mini << std::endl;
+    for( int k=0; k<ny*nx; k++)
+    {
+       *ptr = (uint16_t)((*tmp * 65535.0) / div);
+       tmp ++;
+       ptr++;
+    }     
+*/
+    int16_t *img = new int16_t[ny*nx];
+    int16_t *ptr = img;
+    float *tmp = f /* + l*ny*nx */ ; // start on image nb l.
+    for( int k=0; k<ny*nx; k++)
+    {
+       if(*tmp > 1.0) // artefacted pixel
+          *ptr = 0;
+       else        /// \todo FIXME : what about max threshold ?
+        *ptr = (int16_t)(*tmp *100); 
+
+      // std::cout << std::dec << "[" << *tmp <<" : " << *ptr << "] ";
+       tmp ++;
+       ptr++;
+    }  
+
+ // gdcm::Debug::DebugOn();
+  
+        std::ostringstream str; 
+        gdcm::File *file;
+        file = gdcm::File::New();       
+              
+  // Set the image size
+        str.str("");
+        str << nx;
+        file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
+        str.str("");
+        str << ny;
+        file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
+
+  // Set the pixel type
+  //      16; //8, 16, 32
+        file->InsertEntryString("16",0x0028,0x0100,"US"); // Bits Allocated
+        str.str("");
+        str << 16; // may be 12 or 16 if componentSize =16
+        file->InsertEntryString("16",0x0028,0x0101,"US"); // Bits Stored
+
+        file->InsertEntryString("15",0x0028,0x0102,"US"); // High Bit
+
+  // Set the pixel representation // 0/1 1 : signed
+        file->InsertEntryString("1",0x0028,0x0103, "US"); // Pixel Representation
+
+  // Set the samples per pixel // 1:Grey level, 3:RGB
+        file->InsertEntryString("1",0x0028,0x0002, "US"); // Samples per Pixel
+
+/*
+  // Set Rescale Intercept
+        str.str("");
+        str << div;  
+        file->InsertEntryString(str.str(),0x0028,0x1052,"DS");
+
+  // Set Rescale Slope
+        str.str("");
+        str << mini;  
+        file->InsertEntryString(str.str(),0x0028,0x1053,"DS");
+*/
+
+// 0020 0037 DS 6 Image Orientation (Patient)
+         file->InsertEntryString("1.0\\0.0\\0.0\\0.0\\1.0\\0.0",0x0020,0x0037, "DS"); //[1\0\0\0\1\0] : Axial
+
+// 0020 0032 DS 3 Image Position (Patient)
+        char charImagePosition[256]; 
+        sprintf(charImagePosition,"0.0\\0.0\\%f",float(l%nf));
+ 
+// 0020 0x1041 DS 1 Slice Location 
+        sprintf(charImagePosition,"%f",float(l%nf));
+        file->InsertEntryString(charImagePosition,0x0020,0x1041, "DS");
+ 
+//0008 103e LO 1 Series Description
+        file->InsertEntryString(imageName,0x0008,0x103e, "LO");
+
+        file->InsertEntryString(strStudyUID,0x0020,0x000d,"UI");      
+        file->InsertEntryString(strSerieUID,0x0020,0x000e,"UI");
+        file->InsertEntryString(patName,0x0010,0x0010, "PN");   // Patient's Name 
+      
+//0020 0011 "IS" Series Number 
+         sprintf(charImagePosition,"%04d",serieNumber);
+         file->InsertEntryString(charImagePosition,0x0020,0x0011, "IS");
+
+   // file->Print();
+    
+    gdcm::FileHelper *fh;
+    fh = gdcm::FileHelper::New(file);
+    // cast is just to avoid warnings (*no* conversion)
+    fh->SetImageData((uint8_t *)img,nx*ny*sizeof(uint16_t));
+    fh->SetWriteModeToRaw(); 
+    fh->SetWriteTypeToDcmExplVR();
+    
+    fh->SetWriteTypeToDcmExplVR();
+
+    char numero[10];
+    sprintf(numero, "%02d", l);   
+    std::string fileName = imageName + "." + numero + ".dcm";
+    std::cout << "fileName " << fileName << std::endl;
+      
+    if( !fh->Write(fileName))
+       std::cout << "Failed for [" << fileName << "]\n"
+                 << "           File is unwrittable" << std::endl;
+
+    delete img; 
+  } // end loop on frames
+
+    int pos = (long)(from.tellg());
+ std::cout << std::hex << "==============================================="
+           << pos<< std::endl;  
+       
+       
+   // Anatomical Images.
+std::cout << "Anatomical images" << std::endl;   
+
+   strSerieUID =  gdcm::Util::CreateUniqueUID();     
+   
+  for (int l=0; l<nf; l++)  // Loop on the frames
+  {
+std::cout << "Frame nb " << l << std::endl;  
+     for( int j=0; j<ny; j++)
+     { 
+      int l =0;   
+      for (int i=0; i<nx; i++)
+      {
+         //eatwhite(from);
+         char c;
+         for (;;)
+         {
+            if (!from.get(c))
                break;
             if (!isspace(c)) 
             {
@@ -311,48 +480,19 @@ All pixels with zero strain values are outside the masks.
            break;
          }
          l++;           
-      }
-      
-       std::cout << std::endl;
-      //std::cout << std::endl << " line nb : " << j 
-      //          << " line length : " << l << std::endl;
-         
-    }
-   
-    
-   // std::cout << "mini : "<< mini  << " maxi : " << maxi << std::endl;
-/*
-// values are expressed as % as a fraction, actually!)
-// It's useless to rescale them as uint16_t : just *100
-    uint16_t *img = new uint16_t[ny*nx];
-    uint16_t *ptr = img;
-    float *tmp = f;
-    float div = maxi-mini;
-    std::cout << "div : " << div << " mini : " << mini << std::endl;
-    for( int k=0; k<ny*nx; k++)
-    {
-       *ptr = (uint16_t)((*tmp * 65535.0) / div);
-       tmp ++;
-       ptr++;
-    }     
-*/
+      } 
+     } 
+     
     uint16_t *img = new uint16_t[ny*nx];
     uint16_t *ptr = img;
     float *tmp = f /* + l*ny*nx */ ; // start on image nb l.
     for( int k=0; k<ny*nx; k++)
     {
-       if(*tmp < 0) // artefacted pixel
-          *ptr = 0;
-       else        /// \todo FIXME : what about max threshold ?
-        *ptr = (int16_t)(*tmp *100); 
-
-       //std::cout << std::dec << "[" << *tmp <<" : " << *ptr << "] ";
+       *ptr = (int16_t)(*tmp *100); 
        tmp ++;
        ptr++;
-    }  
+    }
 
- // gdcm::Debug::DebugOn();
-  
         std::ostringstream str; 
         gdcm::File *file;
         file = gdcm::File::New();       
@@ -411,7 +551,7 @@ All pixels with zero strain values are outside the masks.
         file->InsertEntryString(patName,0x0010,0x0010, "PN");   // Patient's Name 
       
 //0020 0011 "IS" Series Number 
-         sprintf(charImagePosition,"%04d",serieNumber);
+         sprintf(charImagePosition,"%04d",serieNumber+1);
          file->InsertEntryString(charImagePosition,0x0020,0x0011, "IS");
 
    // file->Print();
@@ -425,10 +565,9 @@ All pixels with zero strain values are outside the masks.
     
     fh->SetWriteTypeToDcmExplVR();
 
-
     char numero[10];
     sprintf(numero, "%02d", l);   
-    std::string fileName = imageName + "." + numero + ".dcm";
+    std::string fileName = imageName + ".Anatomical." + numero + ".dcm";
     std::cout << "fileName " << fileName << std::endl;
       
     if( !fh->Write(fileName))
@@ -436,7 +575,10 @@ All pixels with zero strain values are outside the masks.
                  << "           File is unwrittable" << std::endl;
 
     delete img; 
-  } // end loop on frames
-       
+    
+            
+      
+  } // end loop on frames 
+   
    from.close();
 }
