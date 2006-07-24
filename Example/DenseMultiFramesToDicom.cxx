@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/21 17:18:27 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/07/24 16:36:45 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -263,8 +263,8 @@ All pixels with zero strain values are outside the masks.
     std::cout << nx << " " << ny << " " << nf << std::endl;
     
        // Skip 4 lines.
-    for (int k=0; k<4; k++)
-    {   
+    for (int k=0; k<5; k++) // 5
+    {  std::cout << "Comment line number : " << k << std::endl;
        std::getline(from, str1);
        std::cout << str1 << std::endl;
     }        
@@ -280,42 +280,73 @@ All pixels with zero strain values are outside the masks.
    
   for (int l=0; l<nf; l++)  // Loop on the frames
   { 
+       
+      std::cout << "Frame nb " << l << std::endl;
      for( int j=0; j<ny; j++)
      { 
-      int l =0;   
+     std::cout << " "<< std::endl;
+      //int l = 0;   
       for (int i=0; i<nx; i++)
       {
+     // std::cout << "--------------------------" << std::endl;
+         str1="";
          //eatwhite(from);
          char c;
-         for (;;)
+         for (;;) //eatwhite(from);
          {
             if (!from.get(c))
             {
                std::cout << " !from.get(c) ";
                break;
             }
-            if (!isspace(c)) 
+            if (!isspace(c) ) 
             {
                //std::cout << " !isspace(c) ";
                from.putback(c);
                break;
             }
-         }  
-         from >> str1;
+         } //end eatwhite(from);
+    //  std::cout << "------end eatwhite-----" << std::endl;
+  
+        // from >> str1;
+        // trouble : whe space is missing "-0.0990263-8.8778"
+        // is not interpreted as TWO values  :-(
+
+         int first = 1;
+         char previous = 'z'; 
+         for(;;)
+         {
+            from.get(c);
+            //std::cout << "[" << c << "]" << std::endl;
+            if ( c == ' ')
+               break; 
+            if ( first != 1 && c == '-' && previous != 'e')
+            {
+               from.putback(c);
+               std::cout << " One more gauffre in frame:" << std::dec << l 
+                         << ", line : " << j << " element " << i << std::endl;
+               break;
+             }
+   
+             first=0;
+             previous = c;
+             str1=str1+c;
+         }
+ 
          val = (float)atof(str1.c_str());
-        std::cout << "  " << val;
+         std::cout << "  " << val;
          *(f+ /*l*nx*ny + */j*nx+i) = val;
  
         if(from.eof()) 
         {
-            std::cout << "Missing values at [" << j <<"," << i << "]" 
+            std::cout << "Missing values at [" << std::dec << j <<"," << i << "]" 
                       << std::endl; 
            break;
          }
-         l++;           
+         //l++;           
       }
       
-      std::cout << std::endl;
+      //std::cout << std::endl;
       //std::cout << std::endl << " line nb : " << j 
       //          << " line length : " << l << std::endl;
          
@@ -475,7 +506,7 @@ std::cout << "Frame nb " << l << std::endl;
  
         if(from.eof()) 
         {
-            std::cout << "Missing values at [" << j <<"," << i << "]" 
+            std::cout << "Missing values at [" << std::dec << j <<"," << i << "]" 
                       << std::endl; 
            break;
          }
