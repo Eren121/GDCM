@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 15:52:43 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/07/26 17:05:25 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,15 +168,16 @@ int main(int argc, char *argv[])
     
              std::cout << "[" << (*i).first << "]" << std::endl;
     
-           // Nowadays OrderFileList() causes trouble, since some files
-           // (MIP views) don't have 'Position', now considered as mandatory
+           // Within a 'just to see' program, 
+           // OrderFileList() causes trouble, since some files
+           // (eg:MIP views) don't have 'Position', now considered as mandatory
            // Commented out for the moment.
    
            //s->OrderFileList((*i).second);  // sort the XCoherent Fileset
     
-            for (std::vector<gdcm::File* >::iterator it =  ((*i).second)->begin();
-                                                     it != ((*i).second)->end();
-                                                   ++it)
+            for (gdcm::FileList::iterator it =  ((*i).second)->begin();
+                                          it != ((*i).second)->end();
+                                        ++it)
             {
                fileName = (*it)->GetFileName();
                std::cout << "    " << fileName << std::endl;
