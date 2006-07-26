@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 09:49:15 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/07/26 17:48:14 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
    "         - examines the '.txt' files                                      ",
    "         - Converts the files into 16 bits Dicom Files,                   ",
    " usage:                                                                   ",
-   " Txt2Dcm dirin=rootDirectoryName                                          ",
+   " DenseToDicom dirin=rootDirectoryName                                     ",
    "                [listonly] [verbose] [debug]                              ",
    "                                                                          ",
    " verbose  : user wants to run the program in 'verbose mode'               ",
