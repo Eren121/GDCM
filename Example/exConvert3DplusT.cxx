@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exConvert3DplusT.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/19 09:03:24 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/07/26 17:46:02 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
       if (verbose)
          std::cout << "Output Directory [" << dirOut 
                    << "] already exists; Used as is." << std::endl;
-   }  
+   }
 
    gdcm::DirList dirList(dirIn,false); // gets (at single level) the file list
    gdcm::DirListType fileList = dirList.GetFilenames();
