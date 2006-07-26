@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/17 13:27:57 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/07/26 17:39:54 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,39 @@
 #include <iostream>
 #include <sstream>
 
+void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize);
+
+void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize)
+{
+   unsigned int i;    
+   if ( pixelSize == 2 )
+   {
+      uint16_t *im16 = (uint16_t*)Raw;
+            for( i = 0; i < RawSize / 2; i++ )
+            {
+               im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+            }     
+   }
+   else if ( pixelSize == 4 )
+   {
+      uint32_t s32;
+      uint16_t high;
+      uint16_t low;
+      uint32_t *im32 = (uint32_t*)Raw;
+
+            for( i = 0; i < RawSize / 4; i++ )
+            {
+               low     = im32[i] & 0x0000ffff; // 3412
+               high    = im32[i] >> 16;
+               s32     = low;
+               im32[i] = ( s32 << 16 ) | high;
+            }
+      
+   }
+}
+
+
+
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
@@ -40,6 +73,7 @@ int main(int argc, char *argv[])
    "                   rows=nb of Rows                                        ",
    "                   lines=nb of Lines,                                     ",
    "                   pixeltype={8U|8S|16U|16S|32U|32S}                      ",
+   "                   [{b|l}] b:BigEndian,l:LittleEndian default : l         ",
    "                   [frames = nb of Frames] //defaulted to 1               ",
    "                   [samples = {1|3}}       //defaulted to 1(1:Gray,3:RGB) ",
    "                   [patientname = Patient's name]                         ",
@@ -69,7 +103,9 @@ int main(int argc, char *argv[])
    int nZ = am->ArgMgrGetInt("frames", 1);
    int samplesPerPixel = am->ArgMgrGetInt("samples", 1);
    
-   
+   int b = am->ArgMgrDefined("b");
+   int l = am->ArgMgrDefined("l");
+      
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
    
    if (am->ArgMgrDefined("debug"))
@@ -97,6 +133,8 @@ int main(int argc, char *argv[])
       Fp = 0;
       return 0;
    }  
+
+   bool bigEndian = gdcm::Util::IsCurrentProcessorBigEndian();
 
    std::string strPixelType(pixelType);
    int pixelSign;
@@ -143,7 +181,12 @@ int main(int argc, char *argv[])
    
    Fp->read((char*)pixels, (size_t)dataSize);
   
-
+   if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
+   {  
+      ConvertSwapZone(pixelSize, pixels, dataSize);   
+   }
+   
+   
 // Create an empty FileHelper
 
    gdcm::FileHelper *fileH = gdcm::FileHelper::New();
