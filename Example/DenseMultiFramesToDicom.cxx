@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/24 16:36:45 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/07/26 17:02:55 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,13 +93,13 @@ The terms brightness and contrast are not used in radiology imaging
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n DenseMultiframeToDicom :\n                                            ",
+   " \n DenseMultiFramessToDicom :                                          \n",
    " - explores recursively the given (single Patient, single Study) directory",
    "         - examines the '.txt' files                                      ",
    "         - Converts the files into 16 bits Dicom files,                   ",
    " WARNING : directory must contain ONLY .txt files                         ",
    " usage:                                                                   ",
-   " DenseMultiframeToDicom dirin=rootDirectoryName                           ",
+   " DenseMultiFramesToDicom dirin=rootDirectoryName                          ",
    "              [studyUID = ] [patName = ]                                  ",
    "              [listonly] [verbose] [debug]                                ",
    "                                                                          ",
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
       
    int verbose  = am->ArgMgrDefined("verbose");      
    int listonly = am->ArgMgrDefined("listonly");
-   std::string patName = am->ArgMgrGetString("patname", "g^PatientName");
+   std::string patName = am->ArgMgrGetString("patname", dirNamein);
 
    bool userDefinedStudy = am->ArgMgrDefined("studyUID");
    const char *studyUID  = am->ArgMgrGetString("studyUID");
@@ -181,7 +181,18 @@ int main(int argc, char *argv[])
    for (gdcm::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
-   {  
+   { 
+      if ( gdcm::Util::GetName((*it)).c_str()[0] == '.' ) 
+      {
+      // skip hidden files
+         continue;
+      }
+      int sz = (*it).size();
+      if ( (*it).c_str()[sz-1] != 't')
+      {
+         // skip non .txt files
+         continue;
+      }
       std::ifstream from( (*it).c_str() );   
       if ( !from )
       {
@@ -202,9 +213,10 @@ int main(int argc, char *argv[])
 void Load(std::ifstream &from, std::string imageName, std::string patName, 
           std::string strStudyUID, int serieNumber)
 {
+  std::cout << " ========= Deal with file [" << imageName << "]" << std::endl;
    if (!from)
       return;
-
+  std::cout << " ========= Create Parametric images" << std::endl; 
 /* was OK for single frames
 eg :
 ---------------------------
@@ -262,33 +274,54 @@ All pixels with zero strain values are outside the masks.
     sscanf( str1.c_str(),"%dx%dx%d", &nx,&ny,&nf);
     std::cout << nx << " " << ny << " " << nf << std::endl;
     
-       // Skip 4 lines.
-    for (int k=0; k<5; k++) // 5
-    {  std::cout << "Comment line number : " << k << std::endl;
+    std::getline(from, str1);
+
+    from >> str1; // Temporal
+    from >> str1; // Resolution
+    from >> str1; // =
+    
+    from >> str1; 
+    
+    float temporalResolution;
+    sscanf( str1.c_str(),"%f",&temporalResolution);
+    std::cout << "temporal Resolution = " << temporalResolution << std::endl;
+    std::getline(from, str1);
+    
+    from >> str1; // First
+    from >> str1; // frame
+    from >> str1; // starts
+    from >> str1; // at
+    
+    from >> str1; 
+    float timeStart;
+    sscanf( str1.c_str(),"%f",&timeStart);
+    std::cout << "time Start = " << timeStart << std::endl;
+    std::getline(from, str1);           
+    
+       // Skip 3 lines.
+    for (int k=0; k<2; k++) // 
+    {
        std::getline(from, str1);
        std::cout << str1 << std::endl;
     }        
              
-   //float *f = new float(nx*ny);
+  //float *f = new float(nx*ny);
    float *f = (float *) malloc(nx*ny*nf*sizeof(float));
   // float mini = FLT_MAX, maxi = FLT_MIN;
    float val;
- 
-    
+     
    std::string strSerieUID;
-   strSerieUID =  gdcm::Util::CreateUniqueUID();     
-   
+   strSerieUID =  gdcm::Util::CreateUniqueUID();
+   int imageNumber = 0;     
+   float currentTime;
+   currentTime = timeStart;
   for (int l=0; l<nf; l++)  // Loop on the frames
   { 
-       
-      std::cout << "Frame nb " << l << std::endl;
+     //std::cout << "Frame nb " << l << std::endl;
      for( int j=0; j<ny; j++)
-     { 
-     std::cout << " "<< std::endl;
-      //int l = 0;   
+     {   
       for (int i=0; i<nx; i++)
       {
-     // std::cout << "--------------------------" << std::endl;
          str1="";
          //eatwhite(from);
          char c;
@@ -306,25 +339,23 @@ All pixels with zero strain values are outside the masks.
                break;
             }
          } //end eatwhite(from);
-    //  std::cout << "------end eatwhite-----" << std::endl;
-  
-        // from >> str1;
-        // trouble : whe space is missing "-0.0990263-8.8778"
+
+        // trouble : when space is missing "-0.0990263-8.8778"
         // is not interpreted as TWO values  :-(
+        // from >> str1;
 
          int first = 1;
          char previous = 'z'; 
          for(;;)
          {
             from.get(c);
-            //std::cout << "[" << c << "]" << std::endl;
             if ( c == ' ')
                break; 
             if ( first != 1 && c == '-' && previous != 'e')
             {
                from.putback(c);
-               std::cout << " One more gauffre in frame:" << std::dec << l 
-                         << ", line : " << j << " element " << i << std::endl;
+               //std::cout << " One more gauffre in frame:" << std::dec << l 
+               //         << ", line : " << j << " element " << i << std::endl;
                break;
              }
    
@@ -334,7 +365,7 @@ All pixels with zero strain values are outside the masks.
          }
  
          val = (float)atof(str1.c_str());
-         std::cout << "  " << val;
+         //std::cout << "  " << val;
          *(f+ /*l*nx*ny + */j*nx+i) = val;
  
         if(from.eof()) 
@@ -343,13 +374,11 @@ All pixels with zero strain values are outside the masks.
                       << std::endl; 
            break;
          }
-         //l++;           
       }
       
       //std::cout << std::endl;
       //std::cout << std::endl << " line nb : " << j 
       //          << " line length : " << l << std::endl;
-         
     }
     
    // std::cout << "mini : "<< mini  << " maxi : " << maxi << std::endl;
@@ -445,7 +474,15 @@ All pixels with zero strain values are outside the masks.
 //0020 0011 "IS" Series Number 
          sprintf(charImagePosition,"%04d",serieNumber);
          file->InsertEntryString(charImagePosition,0x0020,0x0011, "IS");
-
+ 
+//0020 0011 "IS" Instance Number 
+         sprintf(charImagePosition,"%04d",imageNumber);
+         file->InsertEntryString(charImagePosition,0x0020,0x0013, "IS");
+ 
+//0018 1060 "DS" Time Trigger 
+         sprintf(charImagePosition,"%f",currentTime);
+         file->InsertEntryString(charImagePosition,0x0018,0x1060, "DS");
+ 
    // file->Print();
     
     gdcm::FileHelper *fh;
@@ -466,22 +503,23 @@ All pixels with zero strain values are outside the masks.
        std::cout << "Failed for [" << fileName << "]\n"
                  << "           File is unwrittable" << std::endl;
 
-    delete img; 
-  } // end loop on frames
+    delete img;
+    currentTime += temporalResolution; 
+    imageNumber ++;     
 
-    int pos = (long)(from.tellg());
- std::cout << std::hex << "==============================================="
-           << pos<< std::endl;  
-       
+  } // end loop on frames
+    
        
    // Anatomical Images.
-std::cout << "Anatomical images" << std::endl;   
+  std::cout << " ========= Create Anatomical images" << std::endl;   
 
-   strSerieUID =  gdcm::Util::CreateUniqueUID();     
-   
+  strSerieUID =  gdcm::Util::CreateUniqueUID();     
+  imageNumber = 0;     
+  currentTime = timeStart;
+     
   for (int l=0; l<nf; l++)  // Loop on the frames
   {
-std::cout << "Frame nb " << l << std::endl;  
+   //std::cout << "Frame nb " << l << std::endl;  
      for( int j=0; j<ny; j++)
      { 
       int l =0;   
@@ -519,11 +557,10 @@ std::cout << "Frame nb " << l << std::endl;
     float *tmp = f /* + l*ny*nx */ ; // start on image nb l.
     for( int k=0; k<ny*nx; k++)
     {
-       *ptr = (int16_t)(*tmp *100); 
+       *ptr = (int16_t)(*tmp); 
        tmp ++;
        ptr++;
     }
-
         std::ostringstream str; 
         gdcm::File *file;
         file = gdcm::File::New();       
@@ -579,12 +616,19 @@ std::cout << "Frame nb " << l << std::endl;
 
         file->InsertEntryString(strStudyUID,0x0020,0x000d,"UI");      
         file->InsertEntryString(strSerieUID,0x0020,0x000e,"UI");
-        file->InsertEntryString(patName,0x0010,0x0010, "PN");   // Patient's Name 
-      
+        file->InsertEntryString(patName,0x0010,0x0010, "PN");   // Patient's Name
+        
 //0020 0011 "IS" Series Number 
          sprintf(charImagePosition,"%04d",serieNumber+1);
          file->InsertEntryString(charImagePosition,0x0020,0x0011, "IS");
 
+//0020 0011 "IS" Instance Number 
+         sprintf(charImagePosition,"%04d",imageNumber);
+         file->InsertEntryString(charImagePosition,0x0020,0x0013, "IS"); 
+
+//0018 1060 "DS" Time Trigger 
+         sprintf(charImagePosition,"%f",currentTime);
+         file->InsertEntryString(charImagePosition,0x0018,0x1060, "DS");
    // file->Print();
     
     gdcm::FileHelper *fh;
@@ -606,8 +650,8 @@ std::cout << "Frame nb " << l << std::endl;
                  << "           File is unwrittable" << std::endl;
 
     delete img; 
-    
-            
+    currentTime += temporalResolution; 
+    imageNumber ++;                    
       
   } // end loop on frames 
    
