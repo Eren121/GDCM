@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsMPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/08 16:32:20 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/07/26 17:47:39 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,40 +39,40 @@ int main(int argc, char *argv[])
    // Set the image size
    str.str("");
    str << xsize;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0011); // Columns
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
    str.str("");
    str << ysize;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0010); // Rows
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
 
    if(zsize>1)
    {
       str.str("");
       str << zsize;
-      fileToBuild->InsertEntryString(str.str(),0x0028,0x0008); // Number of Frames
+      fileToBuild->InsertEntryString(str.str(),0x0028,0x0008,"IS"); // Number of Frames
    }
 
    // Set the pixel type
    str.str("");
    str << 8; //img.componentSize;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0100,"US"); // Bits Allocated
 
    str.str("");
    str << 8; //img.componentUse;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0101,"US"); // Bits Stored
 
    str.str("");
    str << 7; //( img.componentSize - 1 );
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0102,"US"); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << 0; //img.sign;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103,"US"); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << samplesPerPixel; //img.components;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
 // Step 2 : Create the output image
 //   std::cout << "2...";
