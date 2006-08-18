@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:47:39 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2006/08/18 16:08:16 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,8 +107,9 @@ void UpdateBasicOffsetTable(std::ostream *fp, JpegVector const &v, size_t pos)
     {
     const JpegPair &jp = *i;
     if(i == v.begin() ){ assert( jp.first - first.first == 0); }
-    gdcm::binary_write(*fp, jp.first - first.first);
-    std::cerr << "Updating Table:" << jp.first - first.first << std::endl;
+    uint32_t offset = jp.first - first.first;
+    gdcm::binary_write(*fp, offset);
+    //std::cerr << "Updating Table:" << jp.first - first.first << std::endl;
     }
 }
 
@@ -119,8 +120,9 @@ void UpdateJpegFragmentSize(std::ostream *fp, JpegVector const &v)
     {
     const JpegPair &jp = *i;
     fp->seekp( jp.first );
-    gdcm::binary_write(*fp, jp.second );
-    std::cerr << "Updating:" << jp.first << "," << jp.second << std::endl;
+    uint32_t length = jp.second;
+    gdcm::binary_write(*fp, length );
+    //std::cerr << "Updating:" << jp.first << "," << jp.second << std::endl;
     }
 }
 
