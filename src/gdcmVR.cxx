@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/08/18 16:03:46 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2006/08/18 16:10:48 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,6 @@ VR::VR()
       }
       from.close();
    }
-   char *VRvalues = "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQ";
 }
 
 /**
@@ -171,6 +170,8 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 bool VR::IsValidVR(VRKey const &tested)
 {
 //  return vr.find(key) != vr.end();
+  static char *VRvalues =
+    "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQ";
 
   int nbVal=26;
   char *pt = VRvalues;
