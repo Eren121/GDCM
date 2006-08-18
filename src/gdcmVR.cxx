@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/10 08:27:27 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2006/08/18 16:03:46 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,7 +168,7 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 // VS6 need a single implementation in the dll
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
 /// \brief checks is a supposed-to-be VR is a 'legal' one.
-bool VR::IsValidVR(VRKey const &key)
+bool VR::IsValidVR(VRKey const &tested)
 {
 //  return vr.find(key) != vr.end();
 
