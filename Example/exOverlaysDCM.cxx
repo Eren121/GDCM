@@ -118,7 +118,8 @@ int main(int argc, char *argv[])
    unsigned int dimY= f->GetYSize();
 
    unsigned int dimXY=dimX*dimY;
-   std::cout <<"DimX : "<<dimX<<"DimY : "<<dimY<<"DimXY : "<<dimXY << std::endl;
+   std::cout <<"DimX : "<< dimX <<" DimY : " << dimY 
+             << " DimXY : " <<dimXY << std::endl;
    unsigned char *outputData = new unsigned char[dimXY];
 
    unsigned char *result=outputData;
@@ -136,16 +137,16 @@ int main(int argc, char *argv[])
    char temp[256];
    
    sprintf(temp,"%d ",dimX);
-   f->InsertEntryString(temp,0x0028,0x0011); // Columns
+   f->InsertEntryString(temp,0x0028,0x0011, "US"); // Columns
    sprintf(temp,"%d ",dimY);
-   f->InsertEntryString(temp,0x0028,0x0010); // Rows
+   f->InsertEntryString(temp,0x0028,0x0010, "US"); // Rows
 
-   f->InsertEntryString("8",0x0028,0x0100); // Bits Allocated
-   f->InsertEntryString("8",0x0028,0x0101); // Bits Stored
-   f->InsertEntryString("7",0x0028,0x0102); // High Bit
-   f->InsertEntryString("0",0x0028,0x0103); // Pixel Representation
-   f->InsertEntryString("1",0x0028,0x0002); // Samples per Pixel
-   f->InsertEntryString("MONOCHROME2 ",0x0028,0x0004);  
+   f->InsertEntryString("8",0x0028,0x0100, "US"); // Bits Allocated
+   f->InsertEntryString("8",0x0028,0x0101, "US"); // Bits Stored
+   f->InsertEntryString("7",0x0028,0x0102, "US"); // High Bit
+   f->InsertEntryString("0",0x0028,0x0103, "US"); // Pixel Representation
+   f->InsertEntryString("1",0x0028,0x0002, "US"); // Samples per Pixel
+   f->InsertEntryString("MONOCHROME2 ",0x0028,0x0004, "LO");  
 
    // We need a gdcm::FileHelper, since we want to load the pixels
    gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
