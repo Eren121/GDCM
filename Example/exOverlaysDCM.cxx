@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
    // ============================================================
    //  Image data generation.
    // ============================================================
+   
 
    unsigned int dimX= f->GetXSize();
    unsigned int dimY= f->GetYSize();
@@ -128,36 +129,39 @@ int main(int argc, char *argv[])
       explodeByte(overlay[i], result);
       result+=8;
    }
-
-
+   
    // ============================================================
    //   Write a new file
    // ============================================================
+   gdcm::File *f2;
 
+   f2 = gdcm::File::New(  );
    char temp[256];
    
    sprintf(temp,"%d ",dimX);
-   f->InsertEntryString(temp,0x0028,0x0011, "US"); // Columns
+   f2->InsertEntryString(temp,0x0028,0x0011, "US"); // Columns
    sprintf(temp,"%d ",dimY);
-   f->InsertEntryString(temp,0x0028,0x0010, "US"); // Rows
+   f2->InsertEntryString(temp,0x0028,0x0010, "US"); // Rows
 
-   f->InsertEntryString("8",0x0028,0x0100, "US"); // Bits Allocated
-   f->InsertEntryString("8",0x0028,0x0101, "US"); // Bits Stored
-   f->InsertEntryString("7",0x0028,0x0102, "US"); // High Bit
-   f->InsertEntryString("0",0x0028,0x0103, "US"); // Pixel Representation
-   f->InsertEntryString("1",0x0028,0x0002, "US"); // Samples per Pixel
-   f->InsertEntryString("MONOCHROME2 ",0x0028,0x0004, "LO");  
+   f2->InsertEntryString("8",0x0028,0x0100, "US"); // Bits Allocated
+   f2->InsertEntryString("8",0x0028,0x0101, "US"); // Bits Stored
+   f2->InsertEntryString("7",0x0028,0x0102, "US"); // High Bit
+   f2->InsertEntryString("0",0x0028,0x0103, "US"); // Pixel Representation
+   f2->InsertEntryString("1",0x0028,0x0002, "US"); // Samples per Pixel
+   f2->InsertEntryString("MONOCHROME2 ",0x0028,0x0004, "LO");  
 
-   // We need a gdcm::FileHelper, since we want to load the pixels
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f2);
        
    fh->SetImageData(outputData,dimXY);
    fh->WriteDcmExplVR(outputFileName);
    std::cout <<"End WriteOverlayImage" << std::endl;
 
    delete outputData;
-   f->Delete();   
+   f->Delete();
+   f2->Delete();  
    fh->Delete();
+   
    return 0;
 }
 
