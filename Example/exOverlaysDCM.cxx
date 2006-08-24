@@ -7,6 +7,8 @@
 #include "gdcmArgMgr.h"
 #include <iostream>
 
+// Each BIT of Overlay Data (0x6000,0x3000) corresponds 
+// to a BYTE of overlay image.
 void explodeByte(unsigned char byte, unsigned char* result) 
 {
    unsigned char mask = 1;
@@ -25,11 +27,11 @@ void explodeByte(unsigned char byte, unsigned char* result)
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n exReadOverlays :\n                                                    ",
-   " Extract an overlay image from a secondary capture image                  ",
+   " \n exOverlaysDCM :\n                                                     ",
+   " Extract an overlay image from a DICOM image                              ",
    "          Warning : probably segfaults if no overlay                      ",
-   " usage: WriteOverlayImage filein=inputFileName fileout=outputFileName[debug]",
-   "        debug    : user wants to run the program in 'debug mode'          ",
+   " usage: exOverlaysDCM filein=inputFileName fileout=outputFileName [debug] ",
+   "        debug    : developper wants to run the program in 'debug mode'    ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
    unsigned int dimY= f->GetYSize();
 
    unsigned int dimXY=dimX*dimY;
-   std::cout <<"DimX : "<< dimX <<" DimY : " << dimY 
+   std::cout << "DimX : "<< dimX <<" DimY : " << dimY 
              << " DimXY : " <<dimXY << std::endl;
    unsigned char *outputData = new unsigned char[dimXY];
 
@@ -134,8 +136,8 @@ int main(int argc, char *argv[])
    //   Write a new file
    // ============================================================
    gdcm::File *f2;
-
    f2 = gdcm::File::New(  );
+   
    char temp[256];
    
    sprintf(temp,"%d ",dimX);
@@ -151,6 +153,8 @@ int main(int argc, char *argv[])
    f2->InsertEntryString("MONOCHROME2 ",0x0028,0x0004, "LO");  
 
 
+   // feel free to add any field (Dicom Data Entry) you like, here.
+   // ...
    gdcm::FileHelper *fh = gdcm::FileHelper::New(f2);
        
    fh->SetImageData(outputData,dimXY);
