@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/30 09:55:20 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2006/08/29 15:53:09 $
+  Version:   $Revision: 1.82 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -347,7 +347,7 @@ errno = 0;
                                       f->GetEntryString(0x0018,0x5101);
       if ( strViewPosition != gdcm::GDCM_UNFOUND 
         && strViewPosition != "" )  
-            std::cout << "strViewPosition (0x0010,0x5101)= [" 
+            std::cout << "View Position (0x0018,0x5101)= [" 
                       << strViewPosition << "]" << std::endl;
       
      std::string strPatientOrientation = 
