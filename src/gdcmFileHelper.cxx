@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/07/06 12:38:06 $
-  Version:   $Revision: 1.108 $
+  Date:      $Date: 2006/08/29 15:50:05 $
+  Version:   $Revision: 1.109 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1553,7 +1553,8 @@ void FileHelper::CheckMandatoryElements()
    std::ostringstream s;
    // check 'Bits Allocated' vs decent values
    int nbBitsAllocated = FileInternal->GetBitsAllocated();
-   if ( nbBitsAllocated == 0 || nbBitsAllocated > 32)
+   if ( nbBitsAllocated == 0 || nbBitsAllocated > 32 
+      || ( nbBitsAllocated > 8 && nbBitsAllocated <16) )
    {
       CopyMandatoryEntry(0x0028,0x0100,"16","US");
       gdcmWarningMacro("(0028,0100) changed from "
