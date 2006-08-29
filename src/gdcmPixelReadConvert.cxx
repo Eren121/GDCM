@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/29 13:27:59 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2006/08/29 15:17:51 $
+  Version:   $Revision: 1.113 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,6 +97,10 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
    {
       BitsAllocated = 16;
    }
+   else if (BitsAllocated > 8 && BitsAllocated < 16)
+   {
+      BitsAllocated = 16;
+   }   
 
    // Number of "Bits Stored", defaulted to number of "Bits Allocated"
    // when absent from the file.
@@ -272,7 +276,8 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
    unsigned int count = 0;
    unsigned int frameSize;
    unsigned int bitsAllocated = BitsAllocated;
-   if(bitsAllocated == 12)
+   //if(bitsAllocated == 12)
+   if(bitsAllocated > 8 && bitsAllocated < 16)
       bitsAllocated = 16;
    frameSize = XSize*YSize*SamplesPerPixel*bitsAllocated/8;
    
