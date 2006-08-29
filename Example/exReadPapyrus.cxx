@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 10:55:00 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006/08/29 14:39:45 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,13 +74,15 @@ int main(int argc, char *argv[])
 {
 
    START_USAGE(usage)
-   " \n exReadPapyrus :\n",
-   " Reads a Papyrus V3 File, Writes a Multiframe Dicoim V3 File ",
-   "     (just to show gdcm can do it ...)               ",
+   " \n exReadPapyrus :\n                                       ",
+   " Reads a Papyrus V3 File, Writes a Multiframe Dicom V3 File ",
+   "     (just to show gdcm can do it ...)                      ", 
+   "     ==> Well ... It does, but not too much! ",
+   "     ==> This code assumes that Pixel Data is uncompressed; no check is performed :-(",
    "",
    " usage: exReadPapyrus filein=inputPapyrusFileName fileout=outputDicomFileName", 
    "                      [debug]  ", 
-   "        debug    : user wants to run the program in 'debug mode'        ",
+   "        debug    : developper wants to run the program in 'debug mode'        ",
    FINISH_USAGE
 
 
@@ -252,7 +254,11 @@ int main(int argc, char *argv[])
          std::cout << "Consistency check failed " << std::endl;
          return 1;
       }
+     
       // get the images pixels
+      
+      // Oops! The following code assumes Pixel Data is uncompressed :-(
+      
       pixels = sqi->GetDataEntry(0x7fe0,0x0010);
       offset = pixels->GetOffset();
       // perform a fseek, on offset length on the 'right' length
