@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/21 14:05:00 $
-  Version:   $Revision: 1.324 $
+  Date:      $Date: 2006/08/29 10:21:20 $
+  Version:   $Revision: 1.325 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,8 @@
 #include <stdio.h>  //sscanf
 #include <stdlib.h> // for atoi
 
-namespace gdcm 
+namespace gdcm
+
 {
 
 //-----------------------------------------------------------------------------
@@ -141,6 +142,7 @@ File::~File()
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
+
 bool File::Load( ) 
 {
    if ( ! this->Document::Load( ) )
@@ -175,6 +177,7 @@ bool File::DoTheLoadingJob( )
    }
    else
    {
+
       GrPixel = (uint16_t) atoi( imgLocation.c_str() );
    }   
 
@@ -1136,21 +1139,29 @@ std::string File::GetPixelType()
       bitsAlloc = "16"; // default and arbitrary value, not to polute the output
    }
 
-   if ( bitsAlloc == "64" )
+   else if ( bitsAlloc == "64" )
    {
       return "FD";
    }
+     // useless since we have to bypass a bug ( >8 && < 16)
    else if ( bitsAlloc == "12" )
    {
       // It will be unpacked
       bitsAlloc = "16";
    }
+   
    else if ( bitsAlloc == "24" )
    {
       // (in order no to be messed up by old RGB images)
       bitsAlloc = "8";
    }
-
+   
+   int i= atoi(bitsAlloc.c_str());  // fix a bug in some headers
+   if ( i > 8 &&  i < 16 )
+   {
+      bitsAlloc = "16";
+   }
+   
    std::string sign;
    if( IsSignedPixelData() )
    {
