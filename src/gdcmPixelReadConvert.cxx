@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/08/29 15:17:51 $
-  Version:   $Revision: 1.113 $
+  Date:      $Date: 2006/08/30 13:31:05 $
+  Version:   $Revision: 1.114 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,11 +97,11 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
    {
       BitsAllocated = 16;
    }
-   else if (BitsAllocated > 8 && BitsAllocated < 16)
+
+   else if (BitsAllocated > 8 && BitsAllocated < 16 && BitsAllocated != 12)
    {
       BitsAllocated = 16;
    }   
-
    // Number of "Bits Stored", defaulted to number of "Bits Allocated"
    // when absent from the file.
    BitsStored = file->GetBitsStored();
@@ -170,7 +170,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
             if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
             if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
             if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
-            // DeflatedExplicitVRLittleEndian is considered as 'Unexpected' (we don't know yet haow to process !)
+            // DeflatedExplicitVRLittleEndian is considered as 'Unexpected' (we don't know yet how to process !)
             gdcmWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
             break;
          } 
