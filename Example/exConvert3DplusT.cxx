@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exConvert3DplusT.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:46:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006/09/01 13:25:27 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -176,6 +176,11 @@ int main(int argc, char *argv[])
 
    gdcm::DirList dirList(dirIn,false); // gets (at single level) the file list
    gdcm::DirListType fileList = dirList.GetFilenames();
+   
+   // hope sorting on the filename is enough!
+   // anyway, *no* filed is available to perform anything more clever.
+      
+   std::sort(fileList.begin(), fileList.end() );
 
    // 'Study Instance UID'
    // The user is allowed to create his own Study, 
@@ -187,7 +192,6 @@ int main(int argc, char *argv[])
       strStudyUID =  gdcm::Util::CreateUniqueUID();
    else
       strStudyUID = studyUID;
-
 
    // 'Serie Instance UID'
    // The user is allowed to create his own Series, 
@@ -228,7 +232,8 @@ int main(int argc, char *argv[])
       f->SetFileName( it->c_str() );
 
       if (verbose)
-         std::cout << "file [" << it->c_str() << "]" << std::endl;
+         std::cout << "file [" << it->c_str() << "], as imageNumber : " << imageNumber << std::endl;
+ 
       if ( !f->Load() )
       {
          if (verbose)
@@ -243,6 +248,7 @@ int main(int argc, char *argv[])
       // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
    
       tabImageData[imageNumber] = (int16_t *)fh->GetImageDataRaw();
+      
       if (!tabImageData[imageNumber]) 
       {
          std::cout << "fail to read [" << it->c_str() << std::endl;
@@ -251,7 +257,7 @@ int main(int argc, char *argv[])
       int16_t mini=32000;
       int16_t maxi=-32000;
        
-      if (imageNumber == nbOfImagesInVolume)
+      if (imageNumber == nbOfImagesInVolume-1)
       {        
          for(imageNumber=0; imageNumber < nbOfImagesInVolume; imageNumber++)
          {
@@ -273,7 +279,6 @@ int main(int argc, char *argv[])
   
                   imageTable[debLigne + j] = *(tabImageData[imageNumber] + i*imageDimY + j);
                   if (imageTable[debLigne + j] < 0) imageTable[debLigne + j]=0;
-                     if (imageTable[debLigne + j] > 100) imageTable[debLigne + j]=100;
                      //std::cout << debLigne + j << " : " << imageTable[debLigne + j] << std::endl;
   
                      if (*(tabImageData[imageNumber] + i*imageDimY + j) < mini)
@@ -358,7 +363,6 @@ int main(int argc, char *argv[])
                fh->InsertEntryString(charImagePosition,0x0020,0x1041, "DS");
             }    
          } 
-
 */
 
 // ==================================================================================================
@@ -383,7 +387,8 @@ int main(int argc, char *argv[])
       {
          imageNumber++;
       }
-      fh->Delete();
-      f->Delete();
+     // FIXME : delete just in time!
+     // fh->Delete();
+     // f->Delete();
    }
 }                         
