@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exConvert3DplusT.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/09/01 13:25:27 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2006/09/01 13:42:02 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -210,13 +210,12 @@ int main(int argc, char *argv[])
    size_t totalNumberOfPixels =  imageDimX*imageDimY * imagetteLineNumber*imagetteRowNumber;     
    int16_t *imageTable = new int16_t[totalNumberOfPixels]; 
    
-   //std::cout << " imageTable length " << totalNumberOfPixels;
    memset(imageTable, 0, totalNumberOfPixels * imagePixelSize);
              
-   int16_t **tabImageData = new int16_t *[nbOfImagesInVolume];
+   int16_t **tabImageData = new int16_t *[nbOfImagesInVolume];   
+   gdcm::File **f         = new gdcm::File *[nbOfImagesInVolume];
+   gdcm::FileHelper **fh  = new gdcm::FileHelper *[nbOfImagesInVolume];
    
-   gdcm::File *f;
-   gdcm::FileHelper *fh;
    std::string fullFilename, lastFilename;
    float zPositionComponent = 0.0;
       
@@ -227,27 +226,27 @@ int main(int argc, char *argv[])
                                  ++it )
    {
       fullFilename = *it;
-      f = gdcm::File::New( );
-      f->SetLoadMode(loadMode);
-      f->SetFileName( it->c_str() );
+      f[imageNumber] = gdcm::File::New( );
+      f[imageNumber]->SetLoadMode(loadMode);
+      f[imageNumber]->SetFileName( it->c_str() );
 
       if (verbose)
          std::cout << "file [" << it->c_str() << "], as imageNumber : " << imageNumber << std::endl;
  
-      if ( !f->Load() )
+      if ( !f[imageNumber]->Load() )
       {
          if (verbose)
             std::cout << "fail to load [" << it->c_str() << "]" << std::endl;      
-         f->Delete();
+         f[imageNumber]->Delete();
          continue;
       }
 
       // Load the pixels in RAM.    
       
-      fh = gdcm::FileHelper::New(f); 
+      fh[imageNumber] = gdcm::FileHelper::New(f[imageNumber]); 
       // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
    
-      tabImageData[imageNumber] = (int16_t *)fh->GetImageDataRaw();
+      tabImageData[imageNumber] = (int16_t *)fh[imageNumber]->GetImageDataRaw();
       
       if (!tabImageData[imageNumber]) 
       {
@@ -319,17 +318,17 @@ int main(int argc, char *argv[])
          // Set the image size
          str.str("");
          str << imageDimX*imagetteRowNumber;
-         fh->InsertEntryString(str.str(),0x0028,0x0011, "US"); // Columns
+         fh[imageNumber]->InsertEntryString(str.str(),0x0028,0x0011, "US"); // Columns
 
          str.str("");
          str << imageDimY*imagetteLineNumber;
-         fh->InsertEntryString(str.str(),0x0028,0x0010, "US"); // Rows 
+         fh[imageNumber]->InsertEntryString(str.str(),0x0028,0x0010, "US"); // Rows 
 
-         fh->InsertEntryString(strStudyUID,0x0020,0x000d,"UI");      
-         fh->InsertEntryString(strSerieUID,0x0020,0x000e,"UI");
-         fh->InsertEntryString(patName,0x0010,0x0010, "PN");   // Patient's Name
+         fh[imageNumber]->InsertEntryString(strStudyUID,0x0020,0x000d,"UI");      
+         fh[imageNumber]->InsertEntryString(strSerieUID,0x0020,0x000e,"UI");
+         fh[imageNumber]->InsertEntryString(patName,0x0010,0x0010, "PN");   // Patient's Name
 
-         fh->SetImageData((uint8_t *)imageTable, totalNumberOfPixels * imagePixelSize);
+         fh[imageNumber]->SetImageData((uint8_t *)imageTable, totalNumberOfPixels * imagePixelSize);
 
 // ==================================================================================================
 
@@ -345,30 +344,30 @@ int main(int argc, char *argv[])
 // Aware use is free to supply his own one !    
 
 /*    
-         if (! f->CheckIfEntryExist(0x0020,0x0037) ) // 0020 0037 DS 6 Image Orientation (Patient)
+         if (! f[imageNumber]->CheckIfEntryExist(0x0020,0x0037) ) // 0020 0037 DS 6 Image Orientation (Patient)
          {
-            fh->InsertEntryString("1.0\\0.0\\0.0\\0.0\\1.0\\0.0",0x0020,0x0037, "DS"); //[1\0\0\0\1\0] : Axial
+            fh[imageNumber]->InsertEntryString("1.0\\0.0\\0.0\\0.0\\1.0\\0.0",0x0020,0x0037, "DS"); //[1\0\0\0\1\0] : Axial
 
             char charImagePosition[256];
      
             sprintf(charImagePosition,"%f\\0.0\\0.0",zPositionComponent);
             zPositionComponent += zSpacing;
       
-            if (! f->CheckIfEntryExist(0x0020,0x0032) ) //0020 0032 DS 3 Image Position (Patient)
-               fh->InsertEntryString(charImagePosition,0x0020,0x0032, "DS"); 
+            if (! f[imageNumber]->CheckIfEntryExist(0x0020,0x0032) ) //0020 0032 DS 3 Image Position (Patient)
+               fh[imageNumber]->InsertEntryString(charImagePosition,0x0020,0x0032, "DS"); 
     
-            if (! f->CheckIfEntryExist(0x0020,0x1041) ) // 0020 0x1041 DS 1 Slice Location
+            if (! f[imageNumber]->CheckIfEntryExist(0x0020,0x1041) ) // 0020 0x1041 DS 1 Slice Location
             {
                sprintf(charImagePosition,"%f",zPositionComponent);
-               fh->InsertEntryString(charImagePosition,0x0020,0x1041, "DS");
+               fh[imageNumber]->InsertEntryString(charImagePosition,0x0020,0x1041, "DS");
             }    
          } 
 */
 
 // ==================================================================================================
 
-         fh->SetWriteTypeToDcmExplVR();               
-         fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+         fh[imageNumber]->SetWriteTypeToDcmExplVR();               
+         fh[imageNumber]->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
 
       
          lastFilename =  gdcm::Util::GetName( fullFilename );
@@ -376,19 +375,25 @@ int main(int argc, char *argv[])
                                        + lastFilename;
          if (verbose)
             std::cout << "Write : [" << fullWriteFilename << "]" << std::endl;
-         if (!fh->Write(fullWriteFilename))
+    
+         if (!fh[imageNumber]->Write(fullWriteFilename))
          {
             std::cout << "Fail to write :[" << fullWriteFilename << "]"
                       << std::endl;
          }
-         //break;   
+ 
+         for(int k=0; k < nbOfImagesInVolume; k++)
+         {
+            fh[k]->Delete();
+            f[k]->Delete();
+         }
+
       }  // end : 'write the imagette'
-      else
+      
+      else // start a new 'volume'
       {
          imageNumber++;
       }
-     // FIXME : delete just in time!
-     // fh->Delete();
-     // f->Delete();
+
    }
 }                         
