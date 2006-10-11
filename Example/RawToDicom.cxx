@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:39:54 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/10/11 15:43:36 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -143,32 +143,32 @@ int main(int argc, char *argv[])
    if (strPixelType == "8S")
    {
       pixelSize = 1;
-      pixelSign = 0;
+      pixelSign = 1;
    }
    else if (strPixelType == "8U")
    {
       pixelSize = 1;
-      pixelSign = 1;
+      pixelSign = 0;
    }
    else if (strPixelType == "16S")
    {
       pixelSize = 2;
-      pixelSign = 0; 
+      pixelSign = 1; 
    }   
    else if (strPixelType == "16U")
    {
       pixelSize = 2;
-      pixelSign = 1;
+      pixelSign = 0;
    }      
    else if (strPixelType == "32S")
    {
       pixelSize = 4;
-      pixelSign = 0;
+      pixelSign = 1;
    }   
    else if (strPixelType == "32U")
    {
       pixelSize = 4;
-      pixelSign = 1;
+      pixelSign = 0;
    }
    else
    {
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
    uint8_t *pixels = new uint8_t[dataSize];
    
    Fp->read((char*)pixels, (size_t)dataSize);
-  
+     
    if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
    {  
       ConvertSwapZone(pixelSize, pixels, dataSize);   
