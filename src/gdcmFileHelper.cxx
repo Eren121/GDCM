@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/08/29 15:50:05 $
-  Version:   $Revision: 1.109 $
+  Date:      $Date: 2006/10/18 13:40:18 $
+  Version:   $Revision: 1.110 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1585,6 +1585,24 @@ void FileHelper::CheckMandatoryElements()
       gdcmWarningMacro("(0028,0102) changed from "
                        << highBitPosition << " to " << nbBitsAllocated-1
                        << " for consistency purpose");
+   }
+
+   // check Pixel Representation (default it as 0 -unsigned-)
+   
+   DataEntry *e_0028_0103 = FileInternal->GetDataEntry(0x0028, 0x0103);
+   if ( !e_0028_0103 )
+   {
+      gdcmWarningMacro("PixelRepresentation (0028,0103) is supposed to be mandatory");
+      CopyMandatoryEntry(0x0028, 0x0103,"0","US"); 
+   }
+   else
+   {
+      int sign = (int)e_0028_0103->GetValue(0);
+      if (sign !=1 && sign !=0)
+      {
+         gdcmWarningMacro("PixelRepresentation (0028,0103) is supposed to be =1 or =0");
+         CopyMandatoryEntry(0x0028, 0x0103,"0","US");
+      }
    }
 
    std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
