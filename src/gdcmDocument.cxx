@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/10 09:41:46 $
-  Version:   $Revision: 1.353 $
+  Date:      $Date: 2006/10/19 10:30:45 $
+  Version:   $Revision: 1.354 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -625,22 +625,6 @@ std::ifstream *Document::OpenFile()
       return 0;
    }
  
-   //-- Broken ACR or DICOM with no Preamble; may start with a Shadow Group --
-   // FIXME : We cannot be sure the preable is only zeroes..
-   //         (see ACUSON-24-YBR_FULL-RLE.dcm )
-   if ( 
-       zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
-       zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
-       zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
-       zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 )
-   {
-      std::string msg = Util::Format(
-        "ACR/DICOM starting by 0x(%04x) at the beginning of the file\n", zero);
-      // FIXME : is it a Warning message, or a Debug message?
-      gdcmWarningMacro( msg.c_str() );
-      return Fp;
-   }
- 
    //-- DICOM --
    Fp->seekg(126L, std::ios::cur);  // Once per Document
    char dicm[4]; // = {' ',' ',' ',' '};
@@ -656,6 +640,25 @@ std::ifstream *Document::OpenFile()
       return Fp;
    }
 
+   //-- Broken ACR or DICOM (?) with no Preamble; may start with a Shadow Group --
+   // FIXME : We cannot be sure the preable is only zeroes..
+   //         (see ACUSON-24-YBR_FULL-RLE.dcm )
+   if ( 
+       zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
+       zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
+       zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
+       zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 ||
+       zero == 0x0028 || 0x2800    // worse : some ACR-NEMA like files 
+                                   // start 00028 group ?!?      
+       )
+   {
+      std::string msg = Util::Format(
+        "ACR/DICOM starting by 0x(%04x) at the beginning of the file\n", zero);
+      // FIXME : is it a Warning message, or a Debug message?
+      gdcmWarningMacro( msg.c_str() );
+      return Fp;
+   }
+   
    // -- Neither ACR/No Preamble Dicom nor DICOMV3 file
    CloseFile();
    // Don't user Warning nor Error, not to pollute the output
@@ -2067,6 +2070,7 @@ bool Document::CheckSwap()
             case 0x0006 :
             case 0x0007 :
             case 0x0008 :
+            case 0x0028 :
                SwapCode = 1234;
                Filetype = ACR;
                return true;
@@ -2078,6 +2082,7 @@ bool Document::CheckSwap()
             case 0x0600 :
             case 0x0700 :
             case 0x0800 :
+            case 0x2800 :
                SwapCode = 4321;
                Filetype = ACR;
                return true;
