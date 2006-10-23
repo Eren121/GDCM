@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:05:03 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2006/10/23 15:49:14 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,15 +164,20 @@ int WriteSimple(Image &img)
       fileName << "U";
    else
       fileName << "S";
-   
+ 
+   fileToBuild->InsertEntryString("0",0x0008,0x0000, "UL"); // Should be removed
+                                                            // except for ACR 
    switch (img.writeMode)
    {
       case 'a' :
-         fileName << ".ACR";  break; 
+         fileName << ".ACR";
+         break; 
       case 'e' :
-         fileName << ".EXPL"; break; 
+         fileName << ".EXPL"; 
+         break; 
       case 'i' :
-         fileName << ".IMPL"; break;
+         fileName << ".IMPL"; 
+         break;
    } 
 
    std::cout << "[" << fileName.str() << "]...";
