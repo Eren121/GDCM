@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2006/10/23 15:45:19 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ ElementSet::~ElementSet()
   * \brief   Writes the Header Entries (Dicom Elements)
   *          from the H Table
   * @param fp ofstream to write to  
-  * @param filetype filetype
+  * @param filetype    ExplicitVR/ImplicitVR/ACR/ACR_LIBIDO/JPEG/JPEG2000/...
   */ 
 void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
 {
@@ -62,12 +62,20 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
        // if they were found in the original document. 
        if ( !MayIWrite( (i->second)->GetGroup() ) ) 
           continue;
+  
       // Skip 'Group Length' element, since it may be wrong.
-      //       except for Group 0002 
-       if ( (i->second)->GetElement() == 0x0000 
-         && (i->second)->GetGroup() != 0x0002 )
-          continue; 
-       i->second->WriteContent(fp, filetype);
+      //       except for Group 0x0002
+      // ( keep it as well for Group 0x0008 of ACR Files, 
+      //  since some ACR readers *need* it )
+      
+       if ( (i->second)->GetElement() != 0x0000 
+           || 
+            (  (i->second)->GetGroup() == 0x0002 
+             ||( filetype == ACR  && (i->second)->GetGroup() == 0x0008 ) )
+        )
+       {
+             i->second->WriteContent(fp, filetype);
+       }             
    } 
 }
 
