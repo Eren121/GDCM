@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToMRIregister.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:15:27 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006/10/23 15:51:33 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
              <<std::endl;
    if ( ! gdcm::DirList::IsDirectory(dirOut) )    // dirout not found
    {
-      systemCommand = "mkdir " + strDirNameout;        // create it!
+      systemCommand = "mkdir " + strDirNameout;   // create it!
       if (verbose)
          std::cout << systemCommand << std::endl;
       system (systemCommand.c_str());
@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 
          xcm = s->SplitOnPosition(l);
     
-         //int sliceNumber = 0;
+         //int sliceNumber = 0; 
 
          for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
                                                   i != xcm.end();
@@ -253,7 +253,9 @@ int main(int argc, char *argv[])
                0020 0012 IS 1 Acquisition Number
                0020 0013 IS 1 Instance Number
            */
-   
+           
+            (*it)->InsertEntryString("0",0x0008,0x0000, "UL"); // Needs to be present (actual length doesn't matter !)    
+
             str.str("");
             str << serieNumber;
             (*it)->InsertEntryString(str.str(),0x0020,0x0011, "IS"); // Series Number
@@ -268,7 +270,7 @@ int main(int argc, char *argv[])
                uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
                if (!imageData)
                   std::cout << "fail to read [" << (*it)->GetFileName() << std::endl;
-               fh->SetWriteTypeToDcmExplVR();   
+               fh->SetWriteTypeToACR();  
                fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
     
                // forge the file name
