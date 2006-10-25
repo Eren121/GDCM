@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/10/19 10:30:45 $
-  Version:   $Revision: 1.354 $
+  Date:      $Date: 2006/10/25 14:08:10 $
+  Version:   $Revision: 1.355 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -581,8 +581,9 @@ double Document::SwapDouble(double a)
 // -----------------File I/O ---------------
 /**
  * \brief  Tries to open the file \ref Document::Filename and
- *         checks the preamble when existing.
- * @return The FILE pointer on success. 
+ *         checks the preamble when existing,
+ *         or if the file starts with an ACR-NEMA look-like element.
+ * @return The FILE pointer on success, 0 on failure. 
  */
 std::ifstream *Document::OpenFile()
 {
@@ -634,6 +635,7 @@ std::ifstream *Document::OpenFile()
       CloseFile();
       return 0;
    }
+   
    if ( memcmp(dicm, "DICM", 4) == 0 )
    {
       HasDCMPreamble = true;
@@ -1927,7 +1929,7 @@ bool Document::CheckSwap()
       // i.e. a total of  136 bytes.
       entCur = deb + 136;
      
-      // group 0x0002 *is always* Explicit VR Sometimes ,
+      // group 0x0002 *is always* Explicit VR Sometimes,
       // even if elem 0002,0010 (Transfer Syntax) tells us the file is
       // *Implicit* VR  (see former 'gdcmData/icone.dcm')
       
@@ -1950,6 +1952,8 @@ bool Document::CheckSwap()
                         << "Looks like a bugged Header!");
       }
       
+      // Here, we assume that the file IS kosher Dicom !
+      // (The meta elements - group 0x0002 - ARE little endian !)
       if ( net2host )
       {
          SwapCode = 4321;
@@ -2356,6 +2360,10 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       // (we find very often 'Implicit VR' tag, 
       // even when Transfer Syntax tells us it's Explicit ...
       
+       // NEVER trust the meta elements!
+       // (see what ezDICOM does ...)
+             
+      /*
       if ( s ==  TS::ExplicitVRBigEndian )
       {
          gdcmDebugMacro("Transfer Syntax Name = [" 
@@ -2364,7 +2372,20 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
          group = SwapShort(group);
          elem  = SwapShort(elem);
       }
-
+      */
+    //-- Broken ACR  may start with a Shadow Group --
+    // worse : some ACR-NEMA like files start 00028 group ?!? 
+    if ( !( (group >= 0x0001 && group <= 0x0008) || group == 0x0028 ) )
+    {
+       // We trust what we see.
+       SwitchByteSwapCode();
+       group = SwapShort(group);
+       elem  = SwapShort(elem); 
+       // not what we where told (by meta elements) !
+       gdcmDebugMacro("Transfer Syntax Name = ["       
+                       << GetTransferSyntaxName() << "]" );         
+    }
+      
       /// \todo  find a trick to warn user and stop processing
             
       if ( s == TS::DeflatedExplicitVRLittleEndian)
