@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/10 09:37:33 $
-  Version:   $Revision: 1.185 $
+  Date:      $Date: 2006/11/08 17:04:32 $
+  Version:   $Revision: 1.186 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -858,10 +858,10 @@ int GetMacAddrSys ( unsigned char *addr )
    // Not implemented platforms (or no Ethernet cable !)
    
    /// \todo FIXME I wish we don't pollute command line applications when no Ethernet cable !
-   //perror("in Get MAC Adress (internal) : There was a configuration problem (or no Ethernet cable !) on your plateform");
+   //perror("Probabely your computer is not connected on a network, therefore its MAC adress cannot be found (or there is a configuration problem on your platform)");
 
    // But the following -> error: invalid use of 'this' in non-member function
-   //gdcmWarningMacro( "in Get MAC Adress (internal) : There was a configuration problem (or no Ethernet cable !) on your plateform");
+   //gdcmWarningMacro( "Probabely your computer is not connected on a network, therefore its MAC adress cannot be found (or there is a configuration problem on your platform)");
 
    memset(addr,0,6);
    return -1;
@@ -1247,7 +1247,7 @@ void Util::hfpswap(double *a, double *b)
   ghost@aladdin.com
  */
 
-/* $Id: gdcmUtil.cxx,v 1.185 2006/07/10 09:37:33 jpr Exp $ */
+/* $Id: gdcmUtil.cxx,v 1.186 2006/11/08 17:04:32 jpr Exp $ */
 
 /*
   Independent implementation of MD5 (RFC 1321).
