@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/10/25 14:08:10 $
-  Version:   $Revision: 1.355 $
+  Date:      $Date: 2006/11/08 17:06:36 $
+  Version:   $Revision: 1.356 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2357,7 +2357,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       //
       // --> Probabely normal, since we considered we never have 
       // to trust manufacturers.
-      // (we find very often 'Implicit VR' tag, 
+      // (we often find 'Implicit VR' tag, 
       // even when Transfer Syntax tells us it's Explicit ...
       
        // NEVER trust the meta elements!

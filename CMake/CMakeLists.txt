@@ -38,12 +38,21 @@ SET(GDCM_BUILD_SETTINGS_FILE_CONFIG
   ${GDCM_BINARY_DIR}/GDCMBuildSettings.cmake)
 
 # The library directories.
+# to be used against non installed library
+SET(GDCM_LIBRARY_DIRS ${LIBRARY_OUTPUT_PATH})
+
 SET(GDCM_LIBRARY_DIRS_CONFIG ${GDCM_LIBRARY_DIRS})
 
 # The runtime directories.
 SET(GDCM_RUNTIME_DIRS_CONFIG ${GDCM_RUNTIME_DIRS})
 
 # The include directories.
+# to be used against non installed library
+SET(GDCM_INCLUDE_PATH 
+   ${GDCM_SOURCE_DIR}/src
+   ${GDCM_SOURCE_DIR}/vtk
+   ${GDCM_BINARY_DIR})
+   
 SET(GDCM_INCLUDE_DIRS_CONFIG ${GDCM_INCLUDE_PATH})
 
 # The library dependencies file.

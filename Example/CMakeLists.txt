@@ -2,11 +2,11 @@
 INCLUDE_DIRECTORIES(
   ${GDCM_SOURCE_DIR}/src
   ${GDCM_BINARY_DIR}
-  ${GDCM_BINARY_DIR}/src  
+  ${GDCM_BINARY_DIR}/src
 )
 
 SET(EXAMPLE_SOURCES
-#names starting with 'ex' are examples  
+#names starting with 'ex' are examples
   #Txt2Mat
   exReadPapyrus
   exReadWriteFile
@@ -22,7 +22,7 @@ SET(EXAMPLE_SOURCES
   exSerieHelper
   exXCoherentFileSet
   exExtractDicomTags
-                
+
 #the following are utilities
   PrintDicomDir
   PrintFile
