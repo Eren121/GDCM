@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/08/29 10:21:20 $
-  Version:   $Revision: 1.325 $
+  Date:      $Date: 2006/11/08 17:03:38 $
+  Version:   $Revision: 1.326 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -992,6 +992,50 @@ bool File::GetImageOrientationPatient( float iop[6] )
       {
          gdcmWarningMacro( "wrong Image Orientation Patient (0020,0035). "
                         << "Less than 6 values were found." );
+         return false;
+      }
+      return true;
+   }
+   return false;
+}
+
+/**
+  * \brief gets the info from 0020,0032 : Image Position Patient
+  *                   or from 0020 0030 : Image Position (RET)
+  *
+  * @param ipp adress of the (3)float array to receive values.
+  *        (defaulted as 0.,0.,0. if nothing -or inconsistent stuff-
+  *        is found.
+  * @return true when one of the tag -with consistent values- is found
+  *         false when nothing or inconsistent stuff - is found
+  */
+bool File::GetImagePositionPatient( float ipp[3] )
+{
+   std::string strImPosiPat;
+   //iop is supposed to be float[3]
+   ipp[0] = ipp[1] = ipp[2] = 0.;
+
+   // 0020 0032 DS REL Image Position (Patient)
+   if ( (strImPosiPat = GetEntryString(0x0020,0x0032)) != GDCM_UNFOUND )
+   {
+      if ( sscanf( strImPosiPat.c_str(), "%f \\ %f \\%f", 
+          &ipp[0], &ipp[1], &ipp[2]) != 3 )
+      {
+         gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)."
+                        << " Less than 3 values were found." );
+         return false;
+      }
+      return true;
+   }
+   //For ACR-NEMA
+   // 0020 0030 DS REL Image Position (RET)
+   else if ( (strImPosiPat = GetEntryString(0x0020,0x0030)) != GDCM_UNFOUND )
+   {
+      if ( sscanf( strImPosiPat.c_str(), "%f \\ %f \\%f ", 
+          &ipp[0], &ipp[1], &ipp[2]) != 3 )
+      {
+         gdcmWarningMacro( "wrong Image Position Patient (0020,0035). "
+                        << "Less than 3 values were found." );
          return false;
       }
       return true;
