@@ -12,6 +12,12 @@ def PrintUse():
    print ""
    print ""
 
+try:
+   print gdcm.DataEntry
+   print gdcm.DataEntryPtr
+except:
+   pass
+
 ### Get filename from command line or default it
 try:
    fileName = sys.argv[1]
@@ -49,7 +55,7 @@ val=None
 print "##############################################################"
 val=file.GetFirstEntry()
 while(val):
-   if(isinstance(val,gdcm.DataEntryPtr)):
+   if(isinstance(val,gdcm.DataEntry)):
       print "Data %s [%s] [%s] : %s" % (val.GetKey().str(),val.GetVR().str(),
                                         val.GetName(),val.GetString())
    val=file.GetNextEntry()
