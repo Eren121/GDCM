@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/08/29 15:53:09 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2006/11/15 15:57:49 $
+  Version:   $Revision: 1.83 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -333,7 +333,8 @@ errno = 0;
       std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
     
 //------------------------------
-      // Lets's get and print some usefull fields about 'Orientation'
+
+      // Let's get and print some usefull fields about 'Orientation'
       // ------------------------------------------------------------
 
       std::string strPatientPosition = 
@@ -370,6 +371,34 @@ errno = 0;
         && strImageOrientationRET != "" )  
          std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
                    << strImageOrientationRET << "]" << std::endl;
+
+      std::string strImagePositionPatient = 
+                                      f->GetEntryString(0x0020,0x0032);  
+      if ( strImagePositionPatient != gdcm::GDCM_UNFOUND
+        && strImagePositionPatient != "" )  
+         std::cout << "ImagePositionPatient (0x0020,0x0032)= [" 
+                   << strImagePositionPatient << "]" << std::endl;
+
+      std::string strImagePositionPatientRET = 
+                                      f->GetEntryString(0x0020,0x0030);
+      if ( strImagePositionPatientRET != gdcm::GDCM_UNFOUND
+        && strImagePositionPatientRET != "" )  
+         std::cout << "ImagePositionPatientRET (0x0020,0x0030)= [" 
+                   << strImagePositionPatientRET << "]" << std::endl;
+  
+     float iop[6];
+     /*bool riop = */f->GetImageOrientationPatient(iop);  
+     float ipp[3];
+     /*bool ripp = */f->GetImagePositionPatient(ipp);
+
+     std::cout << "Image Position (0x0020,0x0032|0x0030) : "
+               << ipp[0] << " , " << ipp[1] << " , "<< ipp[2]
+               << std::endl;
+     std::cout << "Image Orientation (0x0020,0x0037|0x0035) : "
+               << iop[0] << " , " << iop[1] << " , "<< iop[2] << " , "
+               << iop[3] << " , " << iop[4] << " , "<< iop[5]
+               << std::endl; 
+
 
       // Let's compute 'user friendly' results about 'Orientation'
       // ---------------------------------------------------------

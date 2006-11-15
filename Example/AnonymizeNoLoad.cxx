@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/17 13:25:00 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2006/11/15 15:57:49 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    "\n AnonymizeNoLoad :\n                                                    ",
    "Anonymize a gdcm-parsable Dicom image even if pixels aren't gdcm readable ",
-   "         Warning : the image is OVERWRITTEN                     ",
+   "         Warning : the image is OVERWRITTEN                               ",
    "                   to preserve image integrity, use a copy.               ",
    "usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}    ",
    "                       [rubout=listOfElementsToRubOut]                    ",
