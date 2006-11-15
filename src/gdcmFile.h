@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2006/11/08 17:03:38 $
-  Version:   $Revision: 1.129 $
+  Date:      $Date: 2006/11/15 15:54:15 $
+  Version:   $Revision: 1.130 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,7 +128,14 @@ public:
    float GetXOrigin();
    float GetYOrigin();
    float GetZOrigin();
-
+   
+   float GetXCosineOnX();
+   float GetXCosineOnY();  
+   float GetXCosineOnZ();
+   float GetYCosineOnX();
+   float GetYCosineOnY();  
+   float GetYCosineOnZ();   
+     
    bool GetImageOrientationPatient( float iop[6] );
    bool GetImagePositionPatient( float ipp[3] );
    

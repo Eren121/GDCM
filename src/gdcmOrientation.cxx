@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/19 11:46:46 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2006/11/15 15:54:15 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ OrientationType Orientation::GetOrientationType( File *f )
    bool succ = f->GetImageOrientationPatient( iop );
    if ( !succ )
    {
-      gdcmErrorMacro( "No Image Orientation (0020,0037)/(0020,0032) found in the file, cannot proceed." )
+      gdcmWarningMacro( "No Image Orientation (0020,0037)/(0020,0032) found in the file, cannot proceed." )
       return NotApplicable;
    }
    vector3D ori1;

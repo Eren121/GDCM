@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/08 17:03:38 $
-  Version:   $Revision: 1.326 $
+  Date:      $Date: 2006/11/15 15:54:15 $
+  Version:   $Revision: 1.327 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1000,6 +1000,77 @@ bool File::GetImageOrientationPatient( float iop[6] )
 }
 
 /**
+  * \brief gets the cosine of image X axis, against patient X axis
+  *        (Sorry, but Python needs it :-( )
+  * @return cosine of image X axis, against patient X axis 
+  */
+float File::GetXCosineOnX()
+{  
+   float iop[6];
+   GetImageOrientationPatient( iop );
+   return(iop[0]);
+}
+   
+/**
+  * \brief gets the cosine of image X axis, against patient Y axis
+  *        (Sorry, but Python needs it :-( )
+  * @return cosine of image X axis, against patient Y axis 
+  */
+float File::GetXCosineOnY()
+{  
+   float iop[6];
+   GetImageOrientationPatient( iop );
+   return(iop[1]);
+}   
+
+/**
+  * \brief gets the cosine of image X axis, against patient Z axis
+  *        (Sorry, but Python needs it :-( )
+  * @return cosine of image X axis, against patient Z axis 
+  */
+float File::GetXCosineOnZ()
+{  
+   float iop[6];
+   GetImageOrientationPatient( iop );
+   return(iop[2]);
+}   
+
+/**
+  * \brief gets the cosine of image Y axis, against patient X axis
+  *        (Sorry, but Python needs it :-( )
+  * @return cosine of image Y axis, against patient X axis 
+  */
+float File::GetYCosineOnX()
+{  
+   float iop[6];
+   GetImageOrientationPatient( iop );
+   return(iop[3]);
+}
+   
+/**
+  * \brief gets the cosine of image Y axis, against patient Y axis
+  *        (Sorry, but Python needs it :-( )
+  * @return cosine of image Y axis, against patient Y axis 
+  */
+float File::GetYCosineOnY()
+{  
+   float iop[6];
+   GetImageOrientationPatient( iop );
+   return(iop[4]);
+}   
+
+/**
+  * \brief gets the cosine of image Y axis, against patient Z axis
+  *        (Sorry, but Python needs it :-( )
+  * @return cosine of image Y axis, against patient Z axis 
+  */
+float File::GetYCosineOnZ()
+{  
+   float iop[6];
+   GetImageOrientationPatient( iop );
+   return(iop[5]);
+}    
+/**
   * \brief gets the info from 0020,0032 : Image Position Patient
   *                   or from 0020 0030 : Image Position (RET)
   *
@@ -1012,13 +1083,14 @@ bool File::GetImageOrientationPatient( float iop[6] )
 bool File::GetImagePositionPatient( float ipp[3] )
 {
    std::string strImPosiPat;
-   //iop is supposed to be float[3]
+   //ipp is supposed to be float[3]
    ipp[0] = ipp[1] = ipp[2] = 0.;
 
    // 0020 0032 DS REL Image Position (Patient)
-   if ( (strImPosiPat = GetEntryString(0x0020,0x0032)) != GDCM_UNFOUND )
+   strImPosiPat = GetEntryString(0x0020,0x0032);
+   if ( strImPosiPat != GDCM_UNFOUND )
    {
-      if ( sscanf( strImPosiPat.c_str(), "%f \\ %f \\%f", 
+      if ( sscanf( strImPosiPat.c_str(), "%f \\ %f \\%f ", 
           &ipp[0], &ipp[1], &ipp[2]) != 3 )
       {
          gdcmWarningMacro( "Wrong Image Position Patient (0020,0032)."
@@ -1034,7 +1106,7 @@ bool File::GetImagePositionPatient( float ipp[3] )
       if ( sscanf( strImPosiPat.c_str(), "%f \\ %f \\%f ", 
           &ipp[0], &ipp[1], &ipp[2]) != 3 )
       {
-         gdcmWarningMacro( "wrong Image Position Patient (0020,0035). "
+         gdcmWarningMacro( "wrong Image Position Patient (0020,0030). "
                         << "Less than 3 values were found." );
          return false;
       }
