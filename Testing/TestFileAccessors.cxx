@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/07 10:58:51 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006/11/15 16:00:34 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,6 +58,7 @@ int TestFileAccessors(int argc, char *argv[])
    int i = 0;
 
    float iop[6];
+   float ipp[3];
 
   // gdcm::Debug::DebugOn();
    
@@ -138,6 +139,11 @@ int TestFileAccessors(int argc, char *argv[])
       std::cout << "   Orientation:" << std::endl;
       for (int j=0; j<6; j++)
          std::cout << "      iop[" << j << "] = " << iop[j] << std::endl;
+ 
+      f->GetImagePositionPatient( ipp );
+      std::cout << "   Position:" << std::endl;
+      for (int j2=0; j2<3; j2++)
+         std::cout << "      ipp[" << j2 << "] = " << ipp[j2] << std::endl; 
 
       if( f->IsReadable() )
       {
