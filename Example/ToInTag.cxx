@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/17 13:24:59 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006/11/15 15:56:56 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -281,7 +281,6 @@ int main(int argc, char *argv[])
       f->SetLoadMode(loadMode);
       f->SetFileName( *it );
       f->Load();
-      
 
       std::string strSeriesNumber;
       int seriesNumber;
@@ -403,7 +402,7 @@ int main(int argc, char *argv[])
    gdcm::File *currentFile;
 
    std::string defaultStudyUID =  gdcm::Util::CreateUniqueUID();
-   std::string defaultSerieUID; 
+   std::string defaultSerieUID;
      
    for (it2 = sf.begin() ; it2 != sf.end(); ++it2)
    {  
@@ -427,6 +426,20 @@ int main(int argc, char *argv[])
           currentImagePosition[0] = 'M';
       if ( currentImagePosition[0] == '+')
           currentImagePosition[0] = 'P'; 
+
+      // Add a default ImagePositionPatient to avoid confusion at post processing time
+      if ( currentFile->GetEntryString(0x0020,0x0032) == gdcm::GDCM_UNFOUND && 
+           currentFile->GetEntryString(0x0020,0x0030) == gdcm::GDCM_UNFOUND )
+      {
+         currentFile->InsertEntryString("0.\\0.\\0.",0x0020, 0x0032, "DS" );
+      }
+
+      // Add a default ImagePositionPatient to avoid confusion at post processing time
+      if ( currentFile->GetEntryString(0x0020,0x0037) == gdcm::GDCM_UNFOUND && 
+           currentFile->GetEntryString(0x0020,0x0035) == gdcm::GDCM_UNFOUND )
+      {
+         currentFile->InsertEntryString("1.\\0.\\0.\\0.\\1.\\0.",0x0020, 0x0037, "DS" );
+      }
       
       if (previousPatientName != currentPatientName)
       {      
