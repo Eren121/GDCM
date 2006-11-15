@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2006/11/15 15:53:08 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-namespace gdcm 
+namespace gdcm
 {
 
 typedef std::vector<std::string> DirListType;
@@ -42,7 +42,7 @@ typedef std::vector<std::string> DirListType;
 class GDCM_EXPORT DirList : public Base
 {
 public :
-   DirList(std::string const &dirName, bool recursive=false);
+   DirList(std::string const &dirName, bool recursive);
    ~DirList();
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
@@ -52,9 +52,15 @@ public :
 
    /// Return the file names
    DirListType const &GetFilenames() const { return Filenames; }
+   
+    /// Return the number of Files
+   int GetSize() const { return Filenames.size(); }  
 
    static bool IsDirectory(std::string const &dirName);
-
+   
+   std::string GetFirst();
+   std::string GetNext();
+   
 private :
    int Explore(std::string const &dirName, bool recursive=false);
 
@@ -62,6 +68,10 @@ private :
    DirListType Filenames;
    /// name of the root directory to explore
    std::string DirName;
+   
+   /// iterator on the SQItems of the current SeqEntry
+   DirListType::iterator ItDirList;  
+   
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/12 09:36:09 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2006/11/15 15:53:08 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -82,6 +82,33 @@ bool DirList::IsDirectory(std::string const &dirName)
       return false;
    }
 }
+
+/**
+ * \brief   Get the first entry while visiting Filenames
+ * \return  The first  if found, otherwhise ""
+ */ 
+std::string DirList::GetFirst()
+{
+   ItDirList = Filenames.begin();
+   if (ItDirList != Filenames.end())
+      return *ItDirList;
+   return "";
+} 
+
+/**
+ * \brief   Get the next entry while visiting Filenames
+ * \return  The next  if found, otherwhise ""
+ */ 
+std::string DirList::GetNext()
+{
+   gdcmAssertMacro (ItDirList != Filenames.end())
+   {
+      ++ItDirList;
+      if (ItDirList != Filenames.end())
+         return *ItDirList;      
+   }
+   return "";
+} 
 
 //-----------------------------------------------------------------------------
 // Protected
