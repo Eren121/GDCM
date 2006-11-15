@@ -23,6 +23,7 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirSerie.h"
+#include "gdcmDirList.h"
 #include "gdcmDocEntrySet.h"
 #include "gdcmDocument.h"
 #include "gdcmElementSet.h"
