@@ -876,9 +876,9 @@
 0020 1000 IS 1 Series in Study (RET)
 0020 1001 IS 1 Acquisitions in Series (RET)
 0020 1002 IS 1 Images in Acquisition
-0020 1003 IS 1 Images in Series
+0020 1003 IS 1 Images in Series (RET)
 0020 1004 IS 1 Acquisitions in Study (RET)
-0020 1005 IS 1 Images in Study
+0020 1005 IS 1 Images in Study (RET)
 0020 1020 CS 1-n Reference (RET)
 0020 1040 LO 1 Position Reference Indicator
 0020 1041 DS 1 Slice Location
