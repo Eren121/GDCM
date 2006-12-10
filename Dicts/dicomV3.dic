@@ -50,12 +50,12 @@
 0004 1430 CS 1 Directory Record Type
 0004 1432 UI 1 Private Record UID
 0004 1500 CS 1-8 Referenced File ID
-0004 1504 UL 1 MRDR Directory Record Offset
+0004 1504 UL 1 MRDR Directory Record Offset (RET)
 0004 1510 UI 1 Referenced SOP Class UID in File
 0004 1511 UI 1 Referenced SOP Instance UID in File
 0004 1512 UI 1 Referenced Transfer Syntax UID in File
 0004 151a UI 1-n Referenced Related General SOP Class UID in File
-0004 1600 UL 1 Number of References
+0004 1600 UL 1 Number of References (RET)
 
 0008 0000 UL 1 Group Length
 0008 0001 UL 1 Length to End (RET)
@@ -73,15 +73,15 @@
 0008 0021 DA 1 Series Date
 0008 0022 DA 1 Acquisition Date
 0008 0023 DA 1 Content Date
-0008 0024 DA 1 Overlay Date
-0008 0025 DA 1 Curve Date
+0008 0024 DA 1 Overlay Date (RET)
+0008 0025 DA 1 Curve Date (RET)
 0008 002a DT 1 Acquisition Datetime
 0008 0030 TM 1 Study Time
 0008 0031 TM 1 Series Time
 0008 0032 TM 1 Acquisition Time
 0008 0033 TM 1 Content Time
-0008 0034 TM 1 Overlay Time
-0008 0035 TM 1 Curve Time
+0008 0034 TM 1 Overlay Time (RET)
+0008 0035 TM 1 Curve Time (RET)
 0008 0040 US 1 Data Set Type (RET)
 0008 0041 LO 1 Data Set Subtype (RET)
 0008 0042 CS 1 Nuclear Medicine Series Type (RET)
@@ -137,18 +137,18 @@
 0008 1080 LO 1-n Admitting Diagnoses Description
 0008 1084 SQ 1 Admitting Diagnoses Code Sequence
 0008 1090 LO 1 Manufacturer's Model Name
-0008 1100 SQ 1 Referenced Results Sequence
+0008 1100 SQ 1 Referenced Results Sequence (RET)
 0008 1110 SQ 1 Referenced Study Sequence
 0008 1111 SQ 1 Referenced Performed Procedure Step Sequence
 0008 1115 SQ 1 Referenced Series Sequence
 0008 1120 SQ 1 Referenced Patient Sequence
 0008 1125 SQ 1 Referenced Visit Sequence
-0008 1130 SQ 1 Referenced Overlay Sequence
+0008 1130 SQ 1 Referenced Overlay Sequence (RET)
 0008 113a SQ 1 Referenced Waveform Sequence
 0008 1140 SQ 1 Referenced Image Sequence
 0008 1145 SQ 1 Referenced Curve Sequence (RET)
 0008 114a SQ 1 Referenced Instance Sequence
-0008 114b SQ 1 Referenced Real Word Value Mapping Instance Sequence
+0008 114b SQ 1 Referenced Real World Value Mapping Instance Sequence
 0008 1150 UI 1 Referenced SOP Class UID
 0008 1155 UI 1 Referenced SOP Instance UID
 0008 115a UI 1-n SOP Classes Supported
@@ -204,7 +204,7 @@
 0008 9237 SQ 1 Referenced Grayscale Presentation State Sequence
 0008 9410 SQ 1 Referenced Other Plane Sequence
 0008 9458 SQ 1 Frame Display Sequence
-0008 9459 FL 1 Recomended Display Frame Rate in Float
+0008 9459 FL 1 Recommended Display Frame Rate in Float
 0008 9460 CS 1 Skip Frame Range Flag
 
 0010 0000 UL 1 Group Length
@@ -244,7 +244,7 @@
 0010 4000 LT 1 Patient Comments
 0010 9431 FL 1 Examined Body Thickness
 
-0012 0000 UL 1 Group Length
+0012 0000 UL 1 Clinical Trial Group Length
 0012 0010 LO 1 Clinical Trial Sponsor Name
 0012 0020 LO 1 Clinical Trial Protocol ID
 0012 0021 LO 1 Clinical Trial Protocol Name
@@ -255,8 +255,9 @@
 0012 0050 LO 1 Clinical Trial Time Point ID
 0012 0051 ST 1 Clinical Trial Time Point Description
 0012 0060 LO 1 Clinical Trial Coordinating Center Name
-0012 0062 CS 1 Patient Identity Removed
-0012 0063 SQ 1 De-identification Method Code Sequence
+0012 0062 CS 1 Patient Identify Removed
+0012 0063 LO 1-n De-identification Method
+0012 0064 SQ 1 De-identification Method Code Sequence
 
 0018 0000 UL 1 Group Length
 0018 0010 LO 1 Contrast/Bolus Agent
@@ -789,7 +790,54 @@
 0018 9403 FL 1 Distance Object to Table Top
 0018 9404 FL 2 Object Pixel Spacing in Center of Beam
 0018 9405 SQ 1 Positioner Position Sequence
-
+0018 9406 SQ 1 Table Position Sequence
+0018 9407 SQ 1 Collimator Shape Sequence
+0018 9412 SQ 1 XA/XRF Frame Characteristics Sequence
+0018 9417 SQ 1 Frame Acquisition Sequence
+0018 9420 CS 1 X-Ray Receptor Type
+0018 9423 LO 1 Acquisition Protocol Name
+0018 9424 LT 1 Acquisition Protocol Description
+0018 9425 CS 1 Contrast/Bolus Ingredient Opaque
+0018 9426 FL 1 Distance Receptor Plane to Detector Housing
+0018 9427 CS 1 Intensifier Active Shape
+0018 9428 FL 1-2 Intensifier Active Dimension(s)
+0018 9429 FL 2 Physical Detector Size
+0018 9430 US 2 Position of Isocenter Projection
+0018 9432 SQ 1 Field of View Sequence
+0018 9433 LO 1 Field of View Description
+0018 9434 SQ 1 Exposure Control Sensing Regions Sequence
+0018 9435 CS 1 Exposure Control Sensing Region Shape
+0018 9436 SS 1 Exposure Control Sensing Region Left Vertical Edge
+0018 9437 SS 1 Exposure Control Sensing Region Right Vertical Edge
+0018 9438 SS 1 Exposure Control Sensing Region Upper Horizontal Edge
+0018 9439 SS 1 Exposure Control Sensing Region Lower Horizontal Edge
+0018 9440 SS 2 Center of Circular Exposure Control Sensing Region
+0018 9441 US 1 Radius of Circular Exposure Control Sensing Region
+0018 9442 SS 2-n Vertices of the Polygonal Exposure Control Sensing Region
+0018 9445 FL 1 SHALL NOT BE USED (RET)
+0018 9447 FL 1 Column Angulation (Patient)
+0018 9449 FL 1 Beam Angle
+0018 9451 SQ 1 Frame Detector Parameters Sequence
+0018 9452 FL 1 Calculated Anatomy Thickness
+0018 9455 SQ 1 Calibration Sequence
+0018 9456 SQ 1 Object Thickness Sequence
+0018 9457 CS 1 Plane Identification
+0018 9461 FL 1-2 Field of View Dimension(s) in Float
+0018 9462 SQ 1 Isocenter Reference System Sequence
+0018 9463 FL 1 Positioner Isocenter Primary Angle
+0018 9464 FL 1 Positioner Isocenter Secondary Angle
+0018 9465 FL 1 Positioner Isocenter Detector Rotation Angle
+0018 9466 FL 1 Table X Position to Isocenter
+0018 9467 FL 1 Table Y Position to Isocenter
+0018 9468 FL 1 Table Z Position to Isocenter
+0018 9469 FL 1 Table Horizontal Rotation Angle
+0018 9470 FL 1 Table Head Tilt Angle
+0018 9471 FL 1 Table Cradle Tilt Angle
+0018 9472 SQ 1 Frame Display Shutter Sequence
+0018 9473 FL 1 Acquired Image Area Dose Product
+0018 9474 CS 1 C-arm Positioner Tabletop Relationship
+0018 9476 SQ 1 X-Ray Geometry Sequence
+0018 9477 SQ 1 Irradiation Event Identification Sequence
 0018 a001 SQ 1 Contributing Equipment Sequence
 0018 a002 DT 1 Contribution Date Time
 0018 a003 ST 1 Contribution Description
@@ -828,20 +876,18 @@
 0020 1000 IS 1 Series in Study (RET)
 0020 1001 IS 1 Acquisitions in Series (RET)
 0020 1002 IS 1 Images in Acquisition
-0020 1003 IS 1 Images in Series FIXME (RET)
 0020 1004 IS 1 Acquisitions in Study (RET)
-0020 1005 IS 1 Images in Study FIXME (RET)
-0020 1020 LO 1-n Reference (RET)
+0020 1020 CS 1-n Reference (RET)
 0020 1040 LO 1 Position Reference Indicator
 0020 1041 DS 1 Slice Location
-0020 1070 IS 1-n Other Study Numbers
+0020 1070 IS 1-n Other Study Numbers (RET)
 0020 1200 IS 1 Number of Patient Related Studies
 0020 1202 IS 1 Number of Patient Related Series
 0020 1204 IS 1 Number of Patient Related Instances
 0020 1206 IS 1 Number of Study Related Series
 0020 1208 IS 1 Number of Study Related Instances
 0020 1209 IS 1 Number of Series Related Instances
-0020 3100 CS 1-n Source Images (RET)
+0020 3100 CS 1-n Source Image IDs (RET)
 0020 3401 CS 1 Modifying Device ID (RET)
 0020 3402 CS 1 Modified Image ID (RET)
 0020 3403 DA 1 Modified Image Date (RET)
@@ -859,7 +905,7 @@
 0020 9113 SQ 1 Plane Position Sequence
 0020 9116 SQ 1 Plane Orientation Sequence
 0020 9128 UL 1 Temporal Position Index
-0020 9153 FD 1 Trigger Delay Time
+0020 9153 FD 1 Cardiac Trigger Delay Time
 0020 9156 US 1 Frame Acquisition Number
 0020 9157 UL 1-n Dimension Index Values
 0020 9158 LT 1 Frame Comments
@@ -874,7 +920,14 @@
 0020 9222 SQ 1 Dimension Index Sequence
 0020 9228 UL 1 Concatenation Frame Offset Number
 0020 9238 LO 1 Functional Group Private Creator
-0020 9251 FD 1 R-R Interval Time Measured
+0020 9251 FD 1 R ­ R Interval Time Measured
+0020 9253 SQ 1 Respiratory Trigger Sequence
+0020 9254 FD 1 Respiratory Interval Time
+0020 9255 FD 1 Respiratory Trigger Delay Time
+0020 9256 FD 1 Respiratory Trigger Delay Threshold
+0020 9421 LO 1 Dimension Description Label
+0020 9450 SQ 1 Patient Orientation in Frame Sequence
+0020 9453 LO 1 Frame Label
 
 0022 0000 UL 1 Group Length
 0022 0001 US 1 Light Path Filter Pass-Through Wavelength
@@ -956,8 +1009,8 @@
 0028 1053 DS 1 Rescale Slope
 0028 1054 LO 1 Rescale Type
 0028 1055 LO 1-n Window Center & Width Explanation
-0020 1056 CS 1 VOI LUT Function
-0028 1080 LT 1 Gray Scale (RET)
+0028 1056 CS 1 VOI LUT Function
+0028 1080 CS 1 Gray Scale (RET)
 0028 1090 CS 1 Recommended Viewing Mode
 0028 1100 US 3 Gray Lookup Table Descriptor (RET)
 0028 1101 US 3 Red Palette Color Lookup Table Descriptor
@@ -1003,6 +1056,7 @@
 0028 6114 FL 2 Mask Sub-pixel Shift
 0028 6120 SS 1 TID Offset
 0028 6190 ST 1 Mask Operation Explanation
+0028 7fe0 UT 1 Pixel Data Provider URL
 0028 9001 UL 1 Data Point Rows
 0028 9002 UL 1 Data Point Columns
 0028 9003 CS 1 Signal Domain Columns
@@ -1012,10 +1066,20 @@
 0028 9132 SQ 1 Frame VOI LUT Sequence
 0028 9145 SQ 1 Pixel Value Transformation Sequence
 0028 9235 CS 1 Signal Domain Rows
+0028 9411 FL 1 Display Filter Percentage
+0028 9415 SQ 1 Frame Pixel Shift Sequence
+0028 9416 US 1 Subtraction Item ID
+0028 9422 SQ 1 Pixel Intensity Relationship LUT Sequence
+0028 9443 SQ 1 Frame Pixel Data Properties Sequence
+0028 9444 CS 1 Geometrical Properties
+0028 9445 FL 1 Geometric Maximum Distortion
+0028 9446 CS 1-n Image Processing Applied
+0028 9454 CS 1 Mask Selection Mode
+0028 9474 CS 1 LUT Function
 
-0032 0000 UL 1 Group Length
-0032 000a CS 1 Study Status ID
-0032 000c CS 1 Study Priority ID
+0032 0000 UL 1 Study Group Length
+0032 000a CS 1 Study Status ID (RET)
+0032 000c CS 1 Study Priority ID (RET)
 0032 0012 LO 1 Study ID Issuer (RET)
 0032 0032 DA 1 Study Verified Date (RET)
 0032 0033 TM 1 Study Verified Time (RET)
@@ -1246,7 +1310,14 @@
 0040 a050 CS 1 Continuity Of Content
 0040 a073 SQ 1 Verifying Observer Sequence
 0040 a075 PN 1 Verifying Observer Name
+0040 a078 SQ 1 Author Observer Sequence
+0040 a07a SQ 1 Participant Sequence
+0040 a07c SQ 1 Custodial Organization Sequence
+0040 a080 CS 1 Participation Type
+0040 a082 DT 1 Participation Datetime
+0040 a084 CS 1 Observer Type
 0040 a088 SQ 1 Verifying Observer Identification Code Sequence
+0040 a090 SQ 1 Equivalent CDA Document Sequence
 0040 a0b0 US 2-2n Referenced Waveform Channels
 0040 a120 DT 1 DateTime
 0040 a121 DA 1 Date
@@ -1286,10 +1357,10 @@
 0040 db0c UI 1 Template Extension Organization UID (RET)
 0040 db0d UI 1 Template Extension Creator UID (RET)
 0040 db73 UL 1-n Referenced Content Item Identifier
-0040 e001 ST 1 HL7 Instance Number
+0040 e001 ST 1 HL7 Instance Identifier
 0040 e004 DT 1 HL7 Document Effective Time
 0040 e006 SQ 1 HL7 Document Type Code Sequence
-0040 e010 UT 1 Retrieve UR
+0040 e010 UT 1 Retrieve URI
 
 0042 0010 ST 1 Document Title
 0042 0011 OB 1 Encapsulated Document
@@ -1303,7 +1374,7 @@
 0050 0016 DS 1 Device Diameter
 0050 0017 CS 1 Device Diameter Units
 0050 0018 DS 1 Device Volume
-0050 0019 DS 1 Inter-Marker Distance
+0050 0019 DS 1 Intermarker Distance
 0050 0020 LO 1 Device Description
 
 0054 0000 UL 1 Group Length
@@ -1450,6 +1521,109 @@
 0070 031a UI 1 Fiducial UID
 0070 031c SQ 1 Fiducial Set Sequence
 0070 031e SQ 1 Fiducial Sequence
+0070 0401 US 3 Graphic Layer Recommended Display CIELab Value
+0070 0402 SQ 1 Blending Sequence
+0070 0403 FL 1 Relative Opacity
+0070 0404 SQ 1 Referenced Spatial Registration Sequence
+0070 0405 CS 1 Blending Position
+0072 0002 SH 1 Hanging Protocol Name
+0072 0004 LO 1 Hanging Protocol Description
+0072 0006 CS 1 Hanging Protocol Level
+0072 0008 LO 1 Hanging Protocol Creator
+0072 000a DT 1 Hanging Protocol Creation Datetime
+0072 000c SQ 1 Hanging Protocol Definition Sequence
+0072 000e SQ 1 Hanging Protocol User Identification Code Sequence
+0072 0010 LO 1 Hanging Protocol User Group Name
+0072 0012 SQ 1 Source Hanging Protocol Sequence
+0072 0014 US 1 Number of Priors Referenced
+0072 0020 SQ 1 Image Sets Sequence
+0072 0022 SQ 1 Image Set Selector Sequence
+0072 0024 CS 1 Image Set Selector Usage Flag
+0072 0026 AT 1 Selector Attribute
+0072 0028 US 1 Selector Value Number
+0072 0030 SQ 1 Time Based Image Sets Sequence
+0072 0032 US 1 Image Set Number
+0072 0034 CS 1 Image Set Selector Category
+0072 0038 US 2 Relative Time
+0072 003a CS 1 Relative Time Units
+0072 003c SS 2 Abstract Prior Value
+0072 003e SQ 1 Abstract Prior Code Sequence
+0072 0040 LO 1 Image Set Label
+0072 0050 CS 1 Selector Attribute VR
+0072 0052 AT 1 Selector Sequence Pointer
+0072 0054 LO 1 Selector Sequence Pointer Private Creator
+0072 0056 LO 1 Selector Attribute Private Creator
+0072 0060 AT 1-n Selector AT Value
+0072 0062 CS 1-n Selector CS Value
+0072 0064 IS 1-n Selector IS Value
+0072 0066 LO 1-n Selector LO Value
+0072 0068 LT 1-n Selector LT Value
+0072 006a PN 1-n Selector PN Value
+0072 006c SH 1-n Selector SH Value
+0072 006e ST 1-n Selector ST Value
+0072 0070 UT 1-n Selector UT Value
+0072 0072 DS 1-n Selector DS Value
+0072 0074 FD 1-n Selector FD Value
+0072 0076 FL 1-n Selector FL Value
+0072 0078 UL 1-n Selector UL Value
+0072 007a US 1-n Selector US Value
+0072 007c SL 1-n Selector SL Value
+0072 007e SS 1-n Selector SS Value
+0072 0080 SQ 1 Selector Code Sequence Value
+0072 0100 US 1 Number of Screens
+0072 0102 SQ 1 Nominal Screen Definition Sequence
+0072 0104 US 1 Number of Vertical Pixels
+0072 0106 US 1 Number of Horizontal Pixels
+0072 0108 FD 4 Display Environment Spatial Position
+0072 010a US 1 Screen Minimum Grayscale Bit Depth
+0072 010c US 1 Screen Minimum Color Bit Depth
+0072 010e US 1 Application Maximum Repaint Time
+0072 0200 SQ 1 Display Sets Sequence
+0072 0202 US 1 Display Set Number
+0072 0203 LO 1 Display Set Label
+0072 0204 US 1 Display Set Presentation Group
+0072 0206 LO 1 Display Set Presentation Group Description
+0072 0208 CS 1 Partial Data Display Handling
+0072 0210 SQ 1 Synchronized Scrolling Sequence
+0072 0212 US 2-n Display Set Scrolling Group
+0072 0214 SQ 1 Navigation Indicator Sequence
+0072 0216 US 1 Navigation Display Set
+0072 0218 US 1-n Reference Display Sets
+0072 0300 SQ 1 Image Boxes Sequence
+0072 0302 US 1 Image Box Number
+0072 0304 CS 1 Image Box Layout Type
+0072 0306 US 1 Image Box Tile Horizontal Dimension
+0072 0308 US 1 Image Box Tile Vertical Dimension
+0072 0310 CS 1 Image Box Scroll Direction
+0072 0312 CS 1 Image Box Small Scroll Type
+0072 0314 US 1 Image Box Small Scroll Amount
+0072 0316 CS 1 Image Box Large Scroll Type
+0072 0318 US 1 Image Box Large Scroll Amount
+0072 0320 US 1 Image Box Overlap Priority
+0072 0330 FD 1 Cine Relative to Real-Time
+0072 0400 SQ 1 Filter Operations Sequence
+0072 0402 CS 1 Filter-by Category
+0072 0404 CS 1 Filter-by Attribute Presence
+0072 0406 CS 1 Filter-by Operator
+0072 0500 CS 1 Blending Operation Type
+0072 0510 CS 1 Reformatting Operation Type
+0072 0512 FD 1 Reformatting Thickness
+0072 0514 FD 1 Reformatting Interval
+0072 0516 CS 1 Reformatting Operation Initial View Direction
+0072 0520 CS 1-n 3D Rendering Type
+0072 0600 SQ 1 Sorting Operations Sequence
+0072 0602 CS 1 Sort-by Category
+0072 0604 CS 1 Sorting Direction
+0072 0700 CS 2 Display Set Patient Orientation
+0072 0702 CS 1 VOI Type
+0072 0704 CS 1 Pseudo-color Type
+0072 0706 CS 1 Show Grayscale Inverted
+0072 0710 CS 1 Show Image True Size Flag
+0072 0712 CS 1 Show Graphic Annotation Flag
+0072 0714 CS 1 Show Patient Demographics Flag
+0072 0716 CS 1 Show Acquisition Techniques Flag
+0072 0717 CS 1 Display Set Horizontal Justification
+0072 0718 CS 1 Display Set Vertical Justification
 
 0088 0000 UL 1 Group Length
 0088 0130 SH 1 Storage Media File-set ID
@@ -1501,7 +1675,7 @@
 2000 0065 CS 1 Annotation Flag (RET)
 2000 0067 CS 1 Image Overlay Flag (RET)
 2000 0069 CS 1 Presentation LUT Flag (RET)
-2000 006a CS 1 Image Box Presentation LUT Flag
+2000 006a CS 1 Image Box Presentation LUT Flag (RET)
 2000 00a0 US 1 Memory Bit Depth
 2000 00a1 US 1 Printing Bit Depth
 2000 00a2 SQ 1 Media Installed Sequence
@@ -1555,7 +1729,7 @@
 2030 0010 US 1 Annotation Position
 2030 0020 LO 1 Text String
 
-2040 0000 UL 1 Group Length (RET)
+2040 0000 UL 1 Group Length
 2040 0010 SQ 1 Referenced Overlay Plane Sequence (RET)
 2040 0011 US 1-99 Referenced Overlay Plane Groups (RET)
 2040 0020 SQ 1 Overlay Pixel Data Sequence (RET)
@@ -1592,12 +1766,11 @@
 2110 0030 LO 1 Printer Name
 2110 0099 SH 1 Print Queue ID (RET)
 
-2120 0000 UL 1 Group Length (RET)
 2120 0010 CS 1 Queue Status (RET)
 2120 0050 SQ 1 Print Job Description Sequence (RET)
 2120 0070 SQ 1 Referenced Print Job Sequence (RET)
 
-2130 0000 UL 1 Group Length (RET)
+2130 0000 UL 1 Group Length
 2130 0010 SQ 1 Print Management Capabilities Sequence (RET)
 2130 0015 SQ 1 Printer Characteristics Sequence (RET)
 2130 0030 SQ 1 Film Box Content Sequence (RET)
@@ -1761,7 +1934,10 @@
 3008 0062 AT 1 Override Parameter Pointer
 3008 0063 IS 1 Parameter Item Index
 3008 0064 IS 1 Measured Dose Reference Number
+3008 0065 AT 1 Parameter Pointer
 3008 0066 ST 1 Override Reason
+3008 0068 SQ 1 Corrected Parameter Sequence
+3008 006a FL 1 Correction Value
 3008 0070 SQ 1 Calculated Dose Reference Sequence
 3008 0072 IS 1 Calculated Dose Reference Number
 3008 0074 ST 1 Calculated Dose Reference Description
@@ -1777,6 +1953,10 @@
 3008 00c0 SQ 1 Recorded Compensator Sequence
 3008 00d0 SQ 1 Recorded Block Sequence
 3008 00e0 SQ 1 Treatment Summary Measured Dose Reference Sequence
+3008 00f0 SQ 1 Recorded Snout Sequence
+3008 00f2 SQ 1 Recorded Range Shifter Sequence
+3008 00f4 SQ 1 Recorded Lateral Spreading Device Sequence
+3008 00f6 SQ 1 Recorded Range Modulator Sequence
 3008 0100 SQ 1 Recorded Source Sequence
 3008 0105 LO 1 Source Serial Number
 3008 0110 SQ 1 Treatment Session Application Setup Sequence
@@ -1816,7 +1996,7 @@
 300a 0006 DA 1 RT Plan Date
 300a 0007 TM 1 RT Plan Time
 300a 0009 LO 1-n Treatment Protocols
-300a 000a CS 1 Treatment Intent
+300a 000a CS 1 Plan Intent
 300a 000b LO 1-n Treatment Sites
 300a 000c CS 1 RT Plan Geometry
 300a 000e ST 1 Prescription Description
@@ -1877,6 +2057,7 @@
 300a 00b6 SQ 1 Beam Limiting Device Sequence
 300a 00b8 CS 1 RT Beam Limiting Device Type
 300a 00ba DS 1 Source to Beam Limiting Device Distance
+300a 00bb FL 1 Isocenter to Beam Limiting Device Distance
 300a 00bc IS 1 Number of Leaf/Jaw Pairs
 300a 00be DS 3-n Leaf Position Boundaries
 300a 00c0 IS 1 Beam Number
@@ -1896,8 +2077,13 @@
 300a 00d4 SH 1 Wedge ID
 300a 00d5 IS 1 Wedge Angle
 300a 00d6 DS 1 Wedge Factor
+300a 00d7 FL 1 Total Wedge Tray Water-Equivalent Thickness
 300a 00d8 DS 1 Wedge Orientation
+300a 00d9 FL 1 Isocenter to Wedge Tray Distance
 300a 00da DS 1 Source to Wedge Tray Distance
+300a 00db FL 1 Wedge Thin Edge Position
+300a 00dc SH 1 Bolus ID
+300a 00dd ST 1 Bolus Description
 300a 00e0 IS 1 Number of Compensators
 300a 00e1 SH 1 Material ID
 300a 00e2 DS 1 Total Compensator Tray Factor
@@ -1961,14 +2147,24 @@
 300a 012e DS 3 Surface Entry Point
 300a 0130 DS 1 Source to Surface Distance
 300a 0134 DS 1 Cumulative Meterset Weight
+300a 0140 FL 1 Table Top Pitch Angle
+300a 0142 CS 1 Table Top Pitch Rotation Direction
+300a 0144 FL 1 Table Top Roll Angle
+300a 0146 CS 1 Table Top Roll Rotation Direction
+300a 0148 FL 1 Head Fixation Angle
+300a 014a FL 1 Gantry Pitch Angle
+300a 014c CS 1 Gantry Pitch Rotation Direction
 300a 0180 SQ 1 Patient Setup Sequence
 300a 0182 IS 1 Patient Setup Number
+300a 0183 LO 1 Patient Setup Label
 300a 0184 LO 1 Patient Additional Position
 300a 0190 SQ 1 Fixation Device Sequence
 300a 0192 CS 1 Fixation Device Type
 300a 0194 SH 1 Fixation Device Label
 300a 0196 ST 1 Fixation Device Description
 300a 0198 SH 1 Fixation Device Position
+300a 0199 FL 1 Fixation Device Pitch Angle
+300a 019a FL 1 Fixation Device Roll Angle
 300a 01a0 SQ 1 Shielding Device Sequence
 300a 01a2 CS 1 Shielding Device Type
 300a 01a4 SH 1 Shielding Device Label
@@ -2051,6 +2247,75 @@
 300a 02e0 CS 1 Compensator Divergence
 300a 02e1 CS 1 Compensator Mounting Position
 300a 02e2 DS 1-n Source to Compensator Distance
+300a 02e3 FL 1 Total Compensator Tray Water-Equivalent Thickness
+300a 02e4 FL 1 Isocenter to Compensator Tray Distance
+300a 02e5 FL 1 Compensator Column Offset
+300a 02e6 FL 1-n Isocenter to Compensator Distances
+300a 02e7 FL 1 Compensator Relative Stopping Power Ratio
+300a 02e8 FL 1 Compensator Milling Tool Diameter
+300a 02ea SQ 1 Ion Range Compensator Sequence
+300a 0302 IS 1 Radiation Mass Number
+300a 0304 IS 1 Radiation Atomic Number
+300a 0306 SS 1 Radiation Charge State
+300a 0308 CS 1 Scan Mode
+300a 030a FL 2 Virtual Source-Axis Distances
+300a 030c SQ 1 Snout Sequence
+300a 030d FL 1 Snout Position
+300a 030f SH 1 Snout ID
+300a 0312 IS 1 Number of Range Shifters
+300a 0314 SQ 1 Range Shifter Sequence
+300a 0316 IS 1 Range Shifter Number
+300a 0318 SH 1 Range Shifter ID
+300a 0320 CS 1 Range Shifter Type
+300a 0322 LO 1 Range Shifter Description
+300a 0330 IS 1 Number of Lateral Spreading Devices
+300a 0332 SQ 1 Lateral Spreading Device Sequence
+300a 0334 IS 1 Lateral Spreading Device Number
+300a 0336 SH 1 Lateral Spreading Device ID
+300a 0338 CS 1 Lateral Spreading Device Type
+300a 033a LO 1 Lateral Spreading Device Description
+300a 033c FL 1 Lateral Spreading Device Water Equivalent Thickness
+300a 0340 IS 1 Number of Range Modulators
+300a 0342 SQ 1 Range Modulator Sequence
+300a 0344 IS 1 Range Modulator Number
+300a 0346 SH 1 Range Modulator ID
+300a 0348 CS 1 Range Modulator Type
+300a 034a LO 1 Range Modulator Description
+300a 034c SH 1 Beam Current Modulation ID
+300a 0350 CS 1 Patient Support Type
+300a 0352 SH 1 Patient Support ID
+300a 0354 LO 1 Patient Support Accessory Code
+300a 0356 FL 1 Fixation Light Azimuthal Angle
+300a 0358 FL 1 Fixation Light Polar Angle
+300a 035a FL 1 Meterset Rate
+300a 0360 SQ 1 Range Shifter Settings Sequence
+300a 0362 LO 1 Range Shifter Setting
+300a 0364 FL 1 Isocenter to Range Shifter Distance
+300a 0366 FL 1 Range Shifter Water Equivalent Thickness
+300a 0370 SQ 1 Lateral Spreading Device Settings Sequence
+300a 0372 LO 1 Lateral Spreading Device Setting
+300a 0374 FL 1 Isocenter to Lateral Spreading Device Distance
+300a 0380 SQ 1 Range Modulator Settings Sequence
+300a 0382 FL 1 Range Modulator Gating Start Value
+300a 0384 FL 1 Range Modulator Gating Stop Value
+300a 0386 FL 1 Range Modulator Gating Start Water Equivalent Thickness
+300a 0388 FL 1 Range Modulator Gating Stop Water Equivalent Thickness
+300a 038a FL 1 Isocenter to Range Modulator Distance
+300a 0390 SH 1 Scan Spot Tune ID
+300a 0392 IS 1 Number of Scan Spot Positions
+300a 0394 FL 1-n Scan Spot Position Map
+300a 0396 FL 1-n Scan Spot Meterset Weights
+300a 0398 FL 2 Scanning Spot Size
+300a 039a IS 1 Number of Paintings
+300a 03a0 SQ 1 Ion Tolerance Table Sequence
+300a 03a2 SQ 1 Ion Beam Sequence
+300a 03a4 SQ 1 Ion Beam Limiting Device Sequence
+300a 03a6 SQ 1 Ion Block Sequence
+300a 03a8 SQ 1 Ion Control Point Sequence
+300a 03aa SQ 1 Ion Wedge Sequence
+300a 03ac SQ 1 Ion Wedge Position Sequence
+300a 0401 SQ 1 Referenced Image Setup Sequence
+300a 0402 ST 1 Setup Image Comment
 
 300c 0000 UL 1 Group Length
 300c 0002 SQ 1 Referenced RT Plan Sequence
@@ -2078,6 +2343,12 @@
 300c 00d0 IS 1 Referenced Compensator Number
 300c 00e0 IS 1 Referenced Block Number
 300c 00f0 IS 1 Referenced Control Point Index
+300c 00f2 SQ 1 Referenced Control Point Sequence
+300c 00f4 IS 1 Referenced Start Control Point Index
+300c 00f6 IS 1 Referenced Stop Control Point Index
+300c 0100 IS 1 Referenced Range Shifter Number
+300c 0102 IS 1 Referenced Lateral Spreading Device Number
+300c 0104 IS 1 Referenced Range Modulator Number
 
 300e 0000 UL 1 Group Length
 300e 0002 CS 1 Approval Status
@@ -2085,258 +2356,266 @@
 300e 0005 TM 1 Review Time
 300e 0008 PN 1 Reviewer Name
 
-4000 0000 UL 1 Group Length
-4000 0010 LT 1 Arbitrary (RET)
+4000 0000 UL 1 Text Group Length
+4000 0010 LT 1 Text Arbitrary (RET)
 4000 4000 LT 1 Text Comments (RET)
 
 4008 0000 UL 1 Group Length
-4008 0040 SH 1 Results ID
-4008 0042 LO 1 Results ID Issuer
-4008 0050 SQ 1 Referenced Interpretation Sequence
-4008 0100 DA 1 Interpretation Recorded Date
-4008 0101 TM 1 Interpretation Recorded Time
-4008 0102 PN 1 Interpretation Recorder
-4008 0103 LO 1 Reference to Recorded Sound
-4008 0108 DA 1 Interpretation Transcription Date
-4008 0109 TM 1 Interpretation Transcription Time
-4008 010a PN 1 Interpretation Transcriber
-4008 010b ST 1 Interpretation Text
-4008 010c PN 1 Interpretation Author
-4008 0111 SQ 1 Interpretation Approver Sequence
-4008 0112 DA 1 Interpretation Approval Date
-4008 0113 TM 1 Interpretation Approval Time
-4008 0114 PN 1 Physician Approving Interpretation
-4008 0115 LT 1 Interpretation Diagnosis Description
-4008 0117 SQ 1 Interpretation Diagnosis Code Sequence
-4008 0118 SQ 1 Results Distribution List Sequence
-4008 0119 PN 1 Distribution Name
-4008 011a LO 1 Distribution Address
-4008 0200 SH 1 Interpretation ID
-4008 0202 LO 1 Interpretation ID Issuer
-4008 0210 CS 1 Interpretation Type ID
-4008 0212 CS 1 Interpretation Status ID
-4008 0300 ST 1 Impressions
-4008 4000 ST 1 Results Comments
+4008 0040 SH 1 Results ID (RET)
+4008 0042 LO 1 Results ID Issuer (RET)
+4008 0050 SQ 1 Referenced Interpretation Sequence (RET)
+4008 0100 DA 1 Interpretation Recorded Date (RET)
+4008 0101 TM 1 Interpretation Recorded Time (RET)
+4008 0102 PN 1 Interpretation Recorder (RET)
+4008 0103 LO 1 Reference to Recorded Sound (RET)
+4008 0108 DA 1 Interpretation Transcription Date (RET)
+4008 0109 TM 1 Interpretation Transcription Time (RET)
+4008 010a PN 1 Interpretation Transcriber (RET)
+4008 010b ST 1 Interpretation Text (RET)
+4008 010c PN 1 Interpretation Author (RET)
+4008 0111 SQ 1 Interpretation Approver Sequence (RET)
+4008 0112 DA 1 Interpretation Approval Date (RET)
+4008 0113 TM 1 Interpretation Approval Time (RET)
+4008 0114 PN 1 Physician Approving Interpretation (RET)
+4008 0115 LT 1 Interpretation Diagnosis Description (RET)
+4008 0117 SQ 1 Interpretation Diagnosis Code Sequence (RET)
+4008 0118 SQ 1 Results Distribution List Sequence (RET)
+4008 0119 PN 1 Distribution Name (RET)
+4008 011a LO 1 Distribution Address (RET)
+4008 0200 SH 1 Interpretation ID (RET)
+4008 0202 LO 1 Interpretation ID Issuer (RET)
+4008 0210 CS 1 Interpretation Type ID (RET)
+4008 0212 CS 1 Interpretation Status ID (RET)
+4008 0300 ST 1 Impressions (RET)
+4008 4000 ST 1 Results Comments (RET)
 
 4ffe 0000 UL 1 Group Length
 4ffe 0001 SQ 1 MAC Parameters Sequence
 
 5000 0000 UL 1 Group Length
-5000 0005 US 1 Curve Dimensions
-5000 0010 US 1 Number of Points
-5000 0020 CS 1 Type of Data
-5000 0022 LO 1 Curve Description
-5000 0030 SH 1-n Axis Units
-5000 0040 SH 1-n Axis Labels
-5000 0103 US 1 Data Value Representation
-5000 0104 US 1-n Minimum Coordinate Value
-5000 0105 US 1-n Maximum Coordinate Value
-5000 0106 SH 1-n Curve Range
-5000 0110 US 1-n Curve Data Descriptor
-5000 0112 US 1-n Coordinate Start Value
-5000 0114 US 1-n Coordinate Step Value
-5000 1001 CS 1 Curve Activation Layer
-5000 2000 US 1 Audio Type
-5000 2002 US 1 Audio Sample Format
-5000 2004 US 1 Number of Channels
-5000 2006 UL 1 Number of Samples
-5000 2008 UL 1 Sample Rate
-5000 200a UL 1 Total Time
-5000 200c OW 1 Audio Sample Data
-5000 200e LT 1 Audio Comments
-5000 2500 LO 1 Curve Label
-5000 2600 SQ 1 Referenced Overlay Sequence
-5000 2610 US 1 Referenced Overlay Group
-5000 3000 OW 1 Curve Data
+5000 0005 US 1 Curve Dimensions (RET)
+5000 0010 US 1 Number of Points (RET)
+5000 0020 CS 1 Type of Data (RET)
+5000 0022 LO 1 Curve Description (RET)
+5000 0030 SH 1-n Axis Units (RET)
+5000 0040 SH 1-n Axis Labels (RET)
+5000 0103 US 1 Data Value Representation (RET)
+5000 0104 US 1-n Minimum Coordinate Value (RET)
+5000 0105 US 1-n Maximum Coordinate Value (RET)
+5000 0106 SH 1-n Curve Range (RET)
+5000 0110 US 1-n Curve Data Descriptor (RET)
+5000 0112 US 1-n Coordinate Start Value (RET)
+5000 0114 US 1-n Coordinate Step Value (RET)
+5000 1001 CS 1 Curve Activation Layer (RET)
+5000 2000 US 1 Audio Type (RET)
+5000 2002 US 1 Audio Sample Format (RET)
+5000 2004 US 1 Number of Channels (RET)
+5000 2006 UL 1 Number of Samples (RET)
+5000 2008 UL 1 Sample Rate (RET)
+5000 200a UL 1 Total Time (RET)
+5000 200c OW 1 Audio Sample Data (RET)
+5000 200e LT 1 Audio Comments (RET)
+5000 2500 LO 1 Curve Label (RET)
+5000 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+5000 2610 US 1 Referenced Overlay Group (RET)
+5000 3000 OW 1 Curve Data (RET)
 
 5002 0000 UL 1 Group Length
-5002 0005 US 1 Curve Dimensions
-5002 0010 US 1 Number of Points
-5002 0020 CS 1 Type of Data
-5002 0022 LO 1 Curve Description
-5002 0030 SH 1-n Axis Units
-5002 0040 SH 1-n Axis Labels
-5002 0103 US 1 Data Value Representation
-5002 0104 US 1-n Minimum Coordinate Value
-5002 0105 US 1-n Maximum Coordinate Value
-5002 0106 SH 1-n Curve Range
-5002 0110 US 1-n Curve Data Descriptor
-5002 0112 US 1-n Coordinate Start Value
-5002 0114 US 1-n Coordinate Step Value
-5002 2000 US 1 Audio Type
-5002 2002 US 1 Audio Sample Format
-5002 2004 US 1 Number of Channels
-5002 2006 UL 1 Number of Samples
-5002 2008 UL 1 Sample Rate
-5002 200a UL 1 Total Time
-5002 200c OW 1 Audio Sample Data
-5002 200e LT 1 Audio Comments
-5002 2500 LO 1 Curve Label
-5002 2600 SQ 1 Referenced Overlay Sequence
-5002 2610 US 1 Referenced Overlay Group
-5002 3000 OW 1 Curve Data
+5002 0005 US 1 Curve Dimensions (RET)
+5002 0010 US 1 Number of Points (RET)
+5002 0020 CS 1 Type of Data (RET)
+5002 0022 LO 1 Curve Description (RET)
+5002 0030 SH 1-n Axis Units (RET)
+5002 0040 SH 1-n Axis Labels (RET)
+5002 0103 US 1 Data Value Representation (RET)
+5002 0104 US 1-n Minimum Coordinate Value (RET)
+5002 0105 US 1-n Maximum Coordinate Value (RET)
+5002 0106 SH 1-n Curve Range (RET)
+5002 0110 US 1-n Curve Data Descriptor (RET)
+5002 0112 US 1-n Coordinate Start Value (RET)
+5002 0114 US 1-n Coordinate Step Value (RET)
+5002 1001 CS 1 Curve Activation Layer (RET)
+5002 2000 US 1 Audio Type (RET)
+5002 2002 US 1 Audio Sample Format (RET)
+5002 2004 US 1 Number of Channels (RET)
+5002 2006 UL 1 Number of Samples (RET)
+5002 2008 UL 1 Sample Rate (RET)
+5002 200a UL 1 Total Time (RET)
+5002 200c OW 1 Audio Sample Data (RET)
+5002 200e LT 1 Audio Comments (RET)
+5002 2500 LO 1 Curve Label (RET)
+5002 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+5002 2610 US 1 Referenced Overlay Group (RET)
+5002 3000 OW 1 Curve Data (RET)
 
-5004 0000 UL 1 Group Length
-5004 0005 US 1 Curve Dimensions
-5004 0010 US 1 Number of Points
-5004 0020 CS 1 Type of Data
-5004 0022 LO 1 Curve Description
-5004 0030 SH 1-n Axis Units
-5004 0040 SH 1-n Axis Labels
-5004 0103 US 1 Data Value Representation
-5004 0104 US 1-n Minimum Coordinate Value
-5004 0105 US 1-n Maximum Coordinate Value
-5004 0106 SH 1-n Curve Range
-5004 0110 US 1-n Curve Data Descriptor
-5004 0112 US 1-n Coordinate Start Value
-5004 0114 US 1-n Coordinate Step Value
-5004 2000 US 1 Audio Type
-5004 2002 US 1 Audio Sample Format
-5004 2004 US 1 Number of Channels
-5004 2006 UL 1 Number of Samples
-5004 2008 UL 1 Sample Rate
-5004 200a UL 1 Total Time
-5004 200c OW 1 Audio Sample Data
-5004 200e LT 1 Audio Comments
-5004 2500 LO 1 Curve Label
-5004 2600 SQ 1 Referenced Overlay Sequence
-5004 2610 US 1 Referenced Overlay Group
-5004 3000 OW 1 Curve Data
+5004 0000 UL 1 Group Length (RET)
+5004 0005 US 1 Curve Dimensions (RET)
+5004 0010 US 1 Number of Points (RET)
+5004 0020 CS 1 Type of Data (RET)
+5004 0022 LO 1 Curve Description (RET)
+5004 0030 SH 1-n Axis Units (RET)
+5004 0040 SH 1-n Axis Labels (RET)
+5004 0103 US 1 Data Value Representation (RET)
+5004 0104 US 1-n Minimum Coordinate Value (RET)
+5004 0105 US 1-n Maximum Coordinate Value (RET)
+5004 0106 SH 1-n Curve Range (RET)
+5004 0110 US 1-n Curve Data Descriptor (RET)
+5004 0112 US 1-n Coordinate Start Value (RET)
+5004 0114 US 1-n Coordinate Step Value (RET)
+5004 1001 CS 1 Curve Activation Layer (RET)
+5004 2000 US 1 Audio Type (RET)
+5004 2002 US 1 Audio Sample Format (RET)
+5004 2004 US 1 Number of Channels (RET)
+5004 2006 UL 1 Number of Samples (RET)
+5004 2008 UL 1 Sample Rate (RET)
+5004 200a UL 1 Total Time (RET)
+5004 200c OW 1 Audio Sample Data (RET)
+5004 200e LT 1 Audio Comments (RET)
+5004 2500 LO 1 Curve Label (RET)
+5004 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+5004 2610 US 1 Referenced Overlay Group (RET)
+5004 3000 OW 1 Curve Data (RET)
 
-5006 0000 UL 1 Group Length
-5006 0005 US 1 Curve Dimensions
-5006 0010 US 1 Number of Points
-5006 0020 CS 1 Type of Data
-5006 0022 LO 1 Curve Description
-5006 0030 SH 1-n Axis Units
-5006 0040 SH 1-n Axis Labels
-5006 0103 US 1 Data Value Representation
-5006 0104 US 1-n Minimum Coordinate Value
-5006 0105 US 1-n Maximum Coordinate Value
-5006 0106 SH 1-n Curve Range
-5006 0110 US 1-n Curve Data Descriptor
-5006 0112 US 1-n Coordinate Start Value
-5006 0114 US 1-n Coordinate Step Value
-5006 2000 US 1 Audio Type
-5006 2002 US 1 Audio Sample Format
-5006 2004 US 1 Number of Channels
-5006 2006 UL 1 Number of Samples
-5006 2008 UL 1 Sample Rate
-5006 200a UL 1 Total Time
-5006 200c OW 1 Audio Sample Data
-5006 200e LT 1 Audio Comments
-5006 2500 LO 1 Curve Label
-5006 2600 SQ 1 Referenced Overlay Sequence
-5006 2610 US 1 Referenced Overlay Group
-5006 3000 OW 1 Curve Data
+5006 0000 UL 1 Group Length (RET)
+5006 0005 US 1 Curve Dimensions (RET)
+5006 0010 US 1 Number of Points (RET)
+5006 0020 CS 1 Type of Data (RET)
+5006 0022 LO 1 Curve Description (RET)
+5006 0030 SH 1-n Axis Units (RET)
+5006 0040 SH 1-n Axis Labels (RET)
+5006 0103 US 1 Data Value Representation (RET)
+5006 0104 US 1-n Minimum Coordinate Value (RET)
+5006 0105 US 1-n Maximum Coordinate Value (RET)
+5006 0106 SH 1-n Curve Range (RET)
+5006 0110 US 1-n Curve Data Descriptor (RET)
+5006 0112 US 1-n Coordinate Start Value (RET)
+5006 0114 US 1-n Coordinate Step Value (RET)
+5006 1001 CS 1 Curve Activation Layer (RET)
+5006 2000 US 1 Audio Type (RET)
+5006 2002 US 1 Audio Sample Format (RET)
+5006 2004 US 1 Number of Channels (RET)
+5006 2006 UL 1 Number of Samples (RET)
+5006 2008 UL 1 Sample Rate (RET)
+5006 200a UL 1 Total Time (RET)
+5006 200c OW 1 Audio Sample Data (RET)
+5006 200e LT 1 Audio Comments (RET)
+5006 2500 LO 1 Curve Label (RET)
+5006 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+5006 2610 US 1 Referenced Overlay Group (RET)
+5006 3000 OW 1 Curve Data (RET)
 
-5008 0000 UL 1 Group Length
-5008 0005 US 1 Curve Dimensions
-5008 0010 US 1 Number of Points
-5008 0020 CS 1 Type of Data
-5008 0022 LO 1 Curve Description
-5008 0030 SH 1-n Axis Units
-5008 0040 SH 1-n Axis Labels
-5008 0103 US 1 Data Value Representation
-5008 0104 US 1-n Minimum Coordinate Value
-5008 0105 US 1-n Maximum Coordinate Value
-5008 0106 SH 1-n Curve Range
-5008 0110 US 1-n Curve Data Descriptor
-5008 0112 US 1-n Coordinate Start Value
-5008 0114 US 1-n Coordinate Step Value
-5008 2000 US 1 Audio Type
-5008 2002 US 1 Audio Sample Format
-5008 2004 US 1 Number of Channels
-5008 2006 UL 1 Number of Samples
-5008 2008 UL 1 Sample Rate
-5008 200a UL 1 Total Time
-5008 200c OW 1 Audio Sample Data
-5008 200e LT 1 Audio Comments
-5008 2500 LO 1 Curve Label
-5008 2600 SQ 1 Referenced Overlay Sequence
-5008 2610 US 1 Referenced Overlay Group
-5008 3000 OW 1 Curve Data
+5008 0000 UL 1 Group Length (RET)
+5008 0005 US 1 Curve Dimensions (RET)
+5008 0010 US 1 Number of Points (RET)
+5008 0020 CS 1 Type of Data (RET)
+5008 0022 LO 1 Curve Description (RET)
+5008 0030 SH 1-n Axis Units (RET)
+5008 0040 SH 1-n Axis Labels (RET)
+5008 0103 US 1 Data Value Representation (RET)
+5008 0104 US 1-n Minimum Coordinate Value (RET)
+5008 0105 US 1-n Maximum Coordinate Value (RET)
+5008 0106 SH 1-n Curve Range (RET)
+5008 0110 US 1-n Curve Data Descriptor (RET)
+5008 0112 US 1-n Coordinate Start Value (RET)
+5008 0114 US 1-n Coordinate Step Value (RET)
+5008 1001 CS 1 Curve Activation Layer (RET)
+5008 2000 US 1 Audio Type (RET)
+5008 2002 US 1 Audio Sample Format (RET)
+5008 2004 US 1 Number of Channels (RET)
+5008 2006 UL 1 Number of Samples (RET)
+5008 2008 UL 1 Sample Rate (RET)
+5008 200a UL 1 Total Time (RET)
+5008 200c OW 1 Audio Sample Data (RET)
+5008 200e LT 1 Audio Comments (RET)
+5008 2500 LO 1 Curve Label (RET)
+5008 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+5008 2610 US 1 Referenced Overlay Group (RET)
+5008 3000 OW 1 Curve Data (RET)
 
-500a 0000 UL 1 Group Length
-500a 0005 US 1 Curve Dimensions
-500a 0010 US 1 Number of Points
-500a 0020 CS 1 Type of Data
-500a 0022 LO 1 Curve Description
-500a 0030 SH 1-n Axis Units
-500a 0040 SH 1-n Axis Labels
-500a 0103 US 1 Data Value Representation
-500a 0104 US 1-n Minimum Coordinate Value
-500a 0105 US 1-n Maximum Coordinate Value
-500a 0106 SH 1-n Curve Range
-500a 0110 US 1-n Curve Data Descriptor
-500a 0112 US 1-n Coordinate Start Value
-500a 0114 US 1-n Coordinate Step Value
-500a 2000 US 1 Audio Type
-500a 2002 US 1 Audio Sample Format
-500a 2004 US 1 Number of Channels
-500a 2006 UL 1 Number of Samples
-500a 2008 UL 1 Sample Rate
-500a 200a UL 1 Total Time
-500a 200c OW 1 Audio Sample Data
-500a 200e LT 1 Audio Comments
-500a 2500 LO 1 Curve Label
-500a 2600 SQ 1 Referenced Overlay Sequence
-500a 2610 US 1 Referenced Overlay Group
-500a 3000 OW 1 Curve Data
+500a 0000 UL 1 Group Length (RET)
+500a 0005 US 1 Curve Dimensions (RET)
+500a 0010 US 1 Number of Points (RET)
+500a 0020 CS 1 Type of Data (RET)
+500a 0022 LO 1 Curve Description (RET)
+500a 0030 SH 1-n Axis Units (RET)
+500a 0040 SH 1-n Axis Labels (RET)
+500a 0103 US 1 Data Value Representation (RET)
+500a 0104 US 1-n Minimum Coordinate Value (RET)
+500a 0105 US 1-n Maximum Coordinate Value (RET)
+500a 0106 SH 1-n Curve Range (RET)
+500a 0110 US 1-n Curve Data Descriptor (RET)
+500a 0112 US 1-n Coordinate Start Value (RET)
+500a 0114 US 1-n Coordinate Step Value (RET)
+500a 1001 CS 1 Curve Activation Layer (RET)
+500a 2000 US 1 Audio Type (RET)
+500a 2002 US 1 Audio Sample Format (RET)
+500a 2004 US 1 Number of Channels (RET)
+500a 2006 UL 1 Number of Samples (RET)
+500a 2008 UL 1 Sample Rate (RET)
+500a 200a UL 1 Total Time (RET)
+500a 200c OW 1 Audio Sample Data (RET)
+500a 200e LT 1 Audio Comments (RET)
+500a 2500 LO 1 Curve Label (RET)
+500a 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+500a 2610 US 1 Referenced Overlay Group (RET)
+500a 3000 OW 1 Curve Data (RET)
 
-500c 0000 UL 1 Group Length
-500c 0005 US 1 Curve Dimensions
-500c 0010 US 1 Number of Points
-500c 0020 CS 1 Type of Data
-500c 0022 LO 1 Curve Description
-500c 0030 SH 1-n Axis Units
-500c 0040 SH 1-n Axis Labels
-500c 0103 US 1 Data Value Representation
-500c 0104 US 1-n Minimum Coordinate Value
-500c 0105 US 1-n Maximum Coordinate Value
-500c 0106 SH 1-n Curve Range
-500c 0110 US 1-n Curve Data Descriptor
-500c 0112 US 1-n Coordinate Start Value
-500c 0114 US 1-n Coordinate Step Value
-500c 2000 US 1 Audio Type
-500c 2002 US 1 Audio Sample Format
-500c 2004 US 1 Number of Channels
-500c 2006 UL 1 Number of Samples
-500c 2008 UL 1 Sample Rate
-500c 200a UL 1 Total Time
-500c 200c OW 1 Audio Sample Data
-500c 200e LT 1 Audio Comments
-500c 2500 LO 1 Curve Label
-500c 2600 SQ 1 Referenced Overlay Sequence
-500c 2610 US 1 Referenced Overlay Group
-500c 3000 OW 1 Curve Data
+500c 0000 UL 1 Group Length (RET)
+500c 0005 US 1 Curve Dimensions (RET)
+500c 0010 US 1 Number of Points (RET)
+500c 0020 CS 1 Type of Data (RET)
+500c 0022 LO 1 Curve Description (RET)
+500c 0030 SH 1-n Axis Units (RET)
+500c 0040 SH 1-n Axis Labels (RET)
+500c 0103 US 1 Data Value Representation (RET)
+500c 0104 US 1-n Minimum Coordinate Value (RET)
+500c 0105 US 1-n Maximum Coordinate Value (RET)
+500c 0106 SH 1-n Curve Range (RET)
+500c 0110 US 1-n Curve Data Descriptor (RET)
+500c 0112 US 1-n Coordinate Start Value (RET)
+500c 0114 US 1-n Coordinate Step Value (RET)
+500c 1001 CS 1 Curve Activation Layer (RET)
+500c 2000 US 1 Audio Type (RET)
+500c 2002 US 1 Audio Sample Format (RET)
+500c 2004 US 1 Number of Channels (RET)
+500c 2006 UL 1 Number of Samples (RET)
+500c 2008 UL 1 Sample Rate (RET)
+500c 200a UL 1 Total Time (RET)
+500c 200c OW 1 Audio Sample Data (RET)
+500c 200e LT 1 Audio Comments (RET)
+500c 2500 LO 1 Curve Label (RET)
+500c 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+500c 2610 US 1 Referenced Overlay Group (RET)
+500c 3000 OW 1 Curve Data (RET)
 
-500e 0000 UL 1 Group Length
-500e 0005 US 1 Curve Dimensions
-500e 0010 US 1 Number of Points
-500e 0020 CS 1 Type of Data
-500e 0022 LO 1 Curve Description
-500e 0030 SH 1-n Axis Units
-500e 0040 SH 1-n Axis Labels
-500e 0103 US 1 Data Value Representation
-500e 0104 US 1-n Minimum Coordinate Value
-500e 0105 US 1-n Maximum Coordinate Value
-500e 0106 SH 1-n Curve Range
-500e 0110 US 1-n Curve Data Descriptor
-500e 0112 US 1-n Coordinate Start Value
-500e 0114 US 1-n Coordinate Step Value
-500e 2000 US 1 Audio Type
-500e 2002 US 1 Audio Sample Format
-500e 2004 US 1 Number of Channels
-500e 2006 UL 1 Number of Samples
-500e 2008 UL 1 Sample Rate
-500e 200a UL 1 Total Time
-500e 200c OW 1 Audio Sample Data
-500e 200e LT 1 Audio Comments
-500e 2500 LO 1 Curve Label
-500e 2600 SQ 1 Referenced Overlay Sequence
-500e 2610 US 1 Referenced Overlay Group
-500e 3000 OW 1 Curve Data
+500e 0000 UL 1 Group Length (RET)
+500e 0005 US 1 Curve Dimensions (RET)
+500e 0010 US 1 Number of Points (RET)
+500e 0020 CS 1 Type of Data (RET)
+500e 0022 LO 1 Curve Description (RET)
+500e 0030 SH 1-n Axis Units (RET)
+500e 0040 SH 1-n Axis Labels (RET)
+500e 0103 US 1 Data Value Representation (RET)
+500e 0104 US 1-n Minimum Coordinate Value (RET)
+500e 0105 US 1-n Maximum Coordinate Value (RET)
+500e 0106 SH 1-n Curve Range (RET)
+500e 0110 US 1-n Curve Data Descriptor (RET)
+500e 0112 US 1-n Coordinate Start Value (RET)
+500e 0114 US 1-n Coordinate Step Value (RET)
+500e 1001 CS 1 Curve Activation Layer (RET)
+500e 2000 US 1 Audio Type (RET)
+500e 2002 US 1 Audio Sample Format (RET)
+500e 2004 US 1 Number of Channels (RET)
+500e 2006 UL 1 Number of Samples (RET)
+500e 2008 UL 1 Sample Rate (RET)
+500e 200a UL 1 Total Time (RET)
+500e 200c OW 1 Audio Sample Data (RET)
+500e 200e LT 1 Audio Comments (RET)
+500e 2500 LO 1 Curve Label (RET)
+500e 2600 SQ 1 Curve Referenced Overlay Sequence (RET)
+500e 2610 US 1 Referenced Overlay Group (RET)
+500e 3000 OW 1 Curve Data (RET)
+
 
 5200 0000 UL 1 Group Length
 5200 9229 SQ 1 Shared Functional Groups Sequence
@@ -2366,10 +2645,10 @@
 6000 0050 SS 2 Overlay Origin
 6000 0051 US 1 Image Frame Origin
 6000 0052 US 1 Overlay Plane Origin
-6000 0060 LT 1 Overlay Compression Code (RET)
+6000 0060 CS 1 Overlay Compression Code (RET)
 6000 0100 US 1 Overlay Bits Allocated
 6000 0102 US 1 Overlay Bit Position
-6000 0110 LT 1 Overlay Format (RET)
+6000 0110 CS 1 Overlay Format (RET)
 6000 0200 US 1 Overlay Location (RET)
 6000 1001 CS 1 Overlay Activation Layer
 6000 1100 US 1 Overlay Descriptor - Gray (RET)
@@ -2385,12 +2664,12 @@
 6000 1303 DS 1 ROI Standard Deviation
 6000 1500 LO 1 Overlay Label
 6000 3000 OW 1 Overlay Data
-6000 4000 LT 1-n Overlay Comments (RET)
+6000 4000 LT 1 Overlay Comments (RET)
 
 6002 0000 UL 1 Group Length
-6002 0010 US 1 Rows
-6002 0011 US 1 Columns
-6002 0012 US 1 Planes
+6002 0010 US 1 Overlay Rows
+6002 0011 US 1 Overlay Columns
+6002 0012 US 1 Overlay Planes
 6002 0015 IS 1 Number of Frames in Overlay
 6002 0022 LO 1 Overlay Description
 6002 0040 CS 1 Overlay Type
@@ -2398,31 +2677,31 @@
 6002 0050 SS 2 Overlay Origin
 6002 0051 US 1 Image Frame Origin
 6002 0052 US 1 Overlay Plane Origin
-6002 0060 LT 1 Overlay Compression Code (RET)
+6002 0060 CS 1 Overlay Compression Code (RET)
 6002 0100 US 1 Overlay Bits Allocated
 6002 0102 US 1 Overlay Bit Position
-6002 0110 LT 1 Overlay Format (RET)
+6002 0110 CS 1 Overlay Format (RET)
 6002 0200 US 1 Overlay Location (RET)
-6002 1001 US 1 Overlay Activation Layer
+6002 1001 CS 1 Overlay Activation Layer
 6002 1100 US 1 Overlay Descriptor - Gray (RET)
 6002 1101 US 1 Overlay Descriptor - Red (RET)
 6002 1102 US 1 Overlay Descriptor - Green (RET)
 6002 1103 US 1 Overlay Descriptor - Blue (RET)
-6002 1200 US 1-n Overlays - Gray
-6002 1201 US 1-n Overlays - Red
-6002 1202 US 1-n Overlays - Green
-6002 1203 US 1-n Overlays - Blue
+6002 1200 US 1-n Overlays - Gray (RET)
+6002 1201 US 1-n Overlays - Red (RET)
+6002 1202 US 1-n Overlays - Green (RET)
+6002 1203 US 1-n Overlays - Blue (RET)
 6002 1301 IS 1 ROI Area
 6002 1302 DS 1 ROI Mean
 6002 1303 DS 1 ROI Standard Deviation
 6002 1500 LO 1 Overlay Label
 6002 3000 OW 1 Overlay Data
-6002 4000 LT 1-n Overlay Comments (RET)
+6002 4000 LT 1 Overlay Comments (RET)
 
 6004 0000 UL 1 Group Length
-6004 0010 US 1 Rows
-6004 0011 US 1 Columns
-6004 0012 US 1 Planes
+6004 0010 US 1 Overlay Rows
+6004 0011 US 1 Overlay Columns
+6004 0012 US 1 Overlay Planes
 6004 0015 IS 1 Number of Frames in Overlay
 6004 0022 LO 1 Overlay Description
 6004 0040 CS 1 Overlay Type
@@ -2430,31 +2709,31 @@
 6004 0050 SS 2 Overlay Origin
 6004 0051 US 1 Image Frame Origin
 6004 0052 US 1 Overlay Plane Origin
-6004 0060 LT 1 Overlay Compression Code (RET)
+6004 0060 CS 1 Overlay Compression Code (RET)
 6004 0100 US 1 Overlay Bits Allocated
 6004 0102 US 1 Overlay Bit Position
-6004 0110 LT 1 Overlay Format (RET)
+6004 0110 CS 1 Overlay Format (RET)
 6004 0200 US 1 Overlay Location (RET)
-6004 1001 US 1 Overlay Activation Layer
+6004 1001 CS 1 Overlay Activation Layer
 6004 1100 US 1 Overlay Descriptor - Gray (RET)
 6004 1101 US 1 Overlay Descriptor - Red (RET)
 6004 1102 US 1 Overlay Descriptor - Green (RET)
 6004 1103 US 1 Overlay Descriptor - Blue (RET)
-6004 1200 US 1-n Overlays - Gray
-6004 1201 US 1-n Overlays - Red
-6004 1202 US 1-n Overlays - Green
-6004 1203 US 1-n Overlays - Blue
+6004 1200 US 1-n Overlays - Gray (RET)
+6004 1201 US 1-n Overlays - Red (RET)
+6004 1202 US 1-n Overlays - Green (RET)
+6004 1203 US 1-n Overlays - Blue (RET)
 6004 1301 IS 1 ROI Area
 6004 1302 DS 1 ROI Mean
 6004 1303 DS 1 ROI Standard Deviation
 6004 1500 LO 1 Overlay Label
 6004 3000 OW 1 Overlay Data
-6004 4000 LT 1-n Overlay Comments (RET)
+6004 4000 LT 1 Overlay Comments (RET)
 
 6006 0000 UL 1 Group Length
-6006 0010 US 1 Rows
-6006 0011 US 1 Columns
-6006 0012 US 1 Planes
+6006 0010 US 1 Overlay Rows
+6006 0011 US 1 Overlay Columns
+6006 0012 US 1 Overlay Planes
 6006 0015 IS 1 Number of Frames in Overlay
 6006 0022 LO 1 Overlay Description
 6006 0040 CS 1 Overlay Type
@@ -2462,31 +2741,31 @@
 6006 0050 SS 2 Overlay Origin
 6006 0051 US 1 Image Frame Origin
 6006 0052 US 1 Overlay Plane Origin
-6006 0060 LT 1 Overlay Compression Code (RET)
+6006 0060 CS 1 Overlay Compression Code (RET)
 6006 0100 US 1 Overlay Bits Allocated
 6006 0102 US 1 Overlay Bit Position
-6006 0110 LT 1 Overlay Format (RET)
+6006 0110 CS 1 Overlay Format (RET)
 6006 0200 US 1 Overlay Location (RET)
-6006 1001 US 1 Overlay Activation Layer
+6006 1001 CS 1 Overlay Activation Layer
 6006 1100 US 1 Overlay Descriptor - Gray (RET)
 6006 1101 US 1 Overlay Descriptor - Red (RET)
 6006 1102 US 1 Overlay Descriptor - Green (RET)
 6006 1103 US 1 Overlay Descriptor - Blue (RET)
-6006 1200 US 1-n Overlays - Gray
-6006 1201 US 1-n Overlays - Red
-6006 1202 US 1-n Overlays - Green
-6006 1203 US 1-n Overlays - Blue
+6006 1200 US 1-n Overlays - Gray (RET)
+6006 1201 US 1-n Overlays - Red (RET)
+6006 1202 US 1-n Overlays - Green (RET)
+6006 1203 US 1-n Overlays - Blue (RET)
 6006 1301 IS 1 ROI Area
 6006 1302 DS 1 ROI Mean
 6006 1303 DS 1 ROI Standard Deviation
 6006 1500 LO 1 Overlay Label
 6006 3000 OW 1 Overlay Data
-6006 4000 LT 1-n Overlay Comments (RET)
+6006 4000 LT 1 Overlay Comments (RET)
 
 6008 0000 UL 1 Group Length
-6008 0010 US 1 Rows
-6008 0011 US 1 Columns
-6008 0012 US 1 Planes
+6008 0010 US 1 Overlay Rows
+6008 0011 US 1 Overlay Columns
+6008 0012 US 1 Overlay Planes
 6008 0015 IS 1 Number of Frames in Overlay
 6008 0022 LO 1 Overlay Description
 6008 0040 CS 1 Overlay Type
@@ -2494,31 +2773,31 @@
 6008 0050 SS 2 Overlay Origin
 6008 0051 US 1 Image Frame Origin
 6008 0052 US 1 Overlay Plane Origin
-6008 0060 LT 1 Overlay Compression Code (RET)
+6008 0060 CS 1 Overlay Compression Code (RET)
 6008 0100 US 1 Overlay Bits Allocated
 6008 0102 US 1 Overlay Bit Position
-6008 0110 LT 1 Overlay Format (RET)
+6008 0110 CS 1 Overlay Format (RET)
 6008 0200 US 1 Overlay Location (RET)
-6008 1001 US 1 Overlay Activation Layer
+6008 1001 CS 1 Overlay Activation Layer
 6008 1100 US 1 Overlay Descriptor - Gray (RET)
 6008 1101 US 1 Overlay Descriptor - Red (RET)
 6008 1102 US 1 Overlay Descriptor - Green (RET)
 6008 1103 US 1 Overlay Descriptor - Blue (RET)
-6008 1200 US 1-n Overlays - Gray
-6008 1201 US 1-n Overlays - Red
-6008 1202 US 1-n Overlays - Green
-6008 1203 US 1-n Overlays - Blue
+6008 1200 US 1-n Overlays - Gray (RET)
+6008 1201 US 1-n Overlays - Red (RET)
+6008 1202 US 1-n Overlays - Green (RET)
+6008 1203 US 1-n Overlays - Blue (RET)
 6008 1301 IS 1 ROI Area
 6008 1302 DS 1 ROI Mean
 6008 1303 DS 1 ROI Standard Deviation
 6008 1500 LO 1 Overlay Label
 6008 3000 OW 1 Overlay Data
-6008 4000 LT 1-n Overlay Comments (RET)
+6008 4000 LT 1 Overlay Comments (RET)
 
 600a 0000 UL 1 Group Length
-600a 0010 US 1 Rows
-600a 0011 US 1 Columns
-600a 0012 US 1 Planes
+600a 0010 US 1 Overlay Rows
+600a 0011 US 1 Overlay Columns
+600a 0012 US 1 Overlay Planes
 600a 0015 IS 1 Number of Frames in Overlay
 600a 0022 LO 1 Overlay Description
 600a 0040 CS 1 Overlay Type
@@ -2526,31 +2805,31 @@
 600a 0050 SS 2 Overlay Origin
 600a 0051 US 1 Image Frame Origin
 600a 0052 US 1 Overlay Plane Origin
-600a 0060 LT 1 Overlay Compression Code (RET)
+600a 0060 CS 1 Overlay Compression Code (RET)
 600a 0100 US 1 Overlay Bits Allocated
 600a 0102 US 1 Overlay Bit Position
-600a 0110 LT 1 Overlay Format (RET)
+600a 0110 CS 1 Overlay Format (RET)
 600a 0200 US 1 Overlay Location (RET)
-600a 1001 US 1 Overlay Activation Layer
+600a 1001 CS 1 Overlay Activation Layer
 600a 1100 US 1 Overlay Descriptor - Gray (RET)
 600a 1101 US 1 Overlay Descriptor - Red (RET)
 600a 1102 US 1 Overlay Descriptor - Green (RET)
 600a 1103 US 1 Overlay Descriptor - Blue (RET)
-600a 1200 US 1-n Overlays - Gray
-600a 1201 US 1-n Overlays - Red
-600a 1202 US 1-n Overlays - Green
-600a 1203 US 1-n Overlays - Blue
+600a 1200 US 1-n Overlays - Gray (RET)
+600a 1201 US 1-n Overlays - Red (RET)
+600a 1202 US 1-n Overlays - Green (RET)
+600a 1203 US 1-n Overlays - Blue (RET)
 600a 1301 IS 1 ROI Area
 600a 1302 DS 1 ROI Mean
 600a 1303 DS 1 ROI Standard Deviation
 600a 1500 LO 1 Overlay Label
 600a 3000 OW 1 Overlay Data
-600a 4000 LT 1-n Overlay Comments (RET)
+600a 4000 LT 1 Overlay Comments (RET)
 
 600c 0000 UL 1 Group Length
-600c 0010 US 1 Rows
-600c 0011 US 1 Columns
-600c 0012 US 1 Planes
+600c 0010 US 1 Overlay Rows
+600c 0011 US 1 Overlay Columns
+600c 0012 US 1 Overlay Planes
 600c 0015 IS 1 Number of Frames in Overlay
 600c 0022 LO 1 Overlay Description
 600c 0040 CS 1 Overlay Type
@@ -2558,31 +2837,31 @@
 600c 0050 SS 2 Overlay Origin
 600c 0051 US 1 Image Frame Origin
 600c 0052 US 1 Overlay Plane Origin
-600c 0060 LT 1 Overlay Compression Code (RET)
+600c 0060 CS 1 Overlay Compression Code (RET)
 600c 0100 US 1 Overlay Bits Allocated
 600c 0102 US 1 Overlay Bit Position
-600c 0110 LT 1 Overlay Format (RET)
+600c 0110 CS 1 Overlay Format (RET)
 600c 0200 US 1 Overlay Location (RET)
-600c 1001 US 1 Overlay Activation Layer
+600c 1001 CS 1 Overlay Activation Layer
 600c 1100 US 1 Overlay Descriptor - Gray (RET)
 600c 1101 US 1 Overlay Descriptor - Red (RET)
 600c 1102 US 1 Overlay Descriptor - Green (RET)
 600c 1103 US 1 Overlay Descriptor - Blue (RET)
-600c 1200 US 1-n Overlays - Gray
-600c 1201 US 1-n Overlays - Red
-600c 1202 US 1-n Overlays - Green
-600c 1203 US 1-n Overlays - Blue
+600c 1200 US 1-n Overlays - Gray (RET)
+600c 1201 US 1-n Overlays - Red (RET)
+600c 1202 US 1-n Overlays - Green (RET)
+600c 1203 US 1-n Overlays - Blue (RET)
 600c 1301 IS 1 ROI Area
 600c 1302 DS 1 ROI Mean
 600c 1303 DS 1 ROI Standard Deviation
 600c 1500 LO 1 Overlay Label
 600c 3000 OW 1 Overlay Data
-600c 4000 LT 1-n Overlay Comments (RET)
+600c 4000 LT 1 Overlay Comments (RET)
 
 600e 0000 UL 1 Group Length
-600e 0010 US 1 Rows
-600e 0011 US 1 Columns
-600e 0012 US 1 Planes
+600e 0010 US 1 Overlay Rows
+600e 0011 US 1 Overlay Columns
+600e 0012 US 1 Overlay Planes
 600e 0015 IS 1 Number of Frames in Overlay
 600e 0022 LO 1 Overlay Description
 600e 0040 CS 1 Overlay Type
@@ -2590,26 +2869,27 @@
 600e 0050 SS 2 Overlay Origin
 600e 0051 US 1 Image Frame Origin
 600e 0052 US 1 Overlay Plane Origin
-600e 0060 LT 1 Overlay Compression Code (RET)
+600e 0060 CS 1 Overlay Compression Code (RET)
 600e 0100 US 1 Overlay Bits Allocated
 600e 0102 US 1 Overlay Bit Position
-600e 0110 LT 1 Overlay Format (RET)
+600e 0110 CS 1 Overlay Format (RET)
 600e 0200 US 1 Overlay Location (RET)
-600e 1001 US 1 Overlay Activation Layer
+600e 1001 CS 1 Overlay Activation Layer
 600e 1100 US 1 Overlay Descriptor - Gray (RET)
 600e 1101 US 1 Overlay Descriptor - Red (RET)
 600e 1102 US 1 Overlay Descriptor - Green (RET)
 600e 1103 US 1 Overlay Descriptor - Blue (RET)
-600e 1200 US 1-n Overlays - Gray
-600e 1201 US 1-n Overlays - Red
-600e 1202 US 1-n Overlays - Green
-600e 1203 US 1-n Overlays - Blue
+600e 1200 US 1-n Overlays - Gray (RET)
+600e 1201 US 1-n Overlays - Red (RET)
+600e 1202 US 1-n Overlays - Green (RET)
+600e 1203 US 1-n Overlays - Blue (RET)
 600e 1301 IS 1 ROI Area
 600e 1302 DS 1 ROI Mean
 600e 1303 DS 1 ROI Standard Deviation
 600e 1500 LO 1 Overlay Label
 600e 3000 OW 1 Overlay Data
-600e 4000 LT 1-n Overlay Comments (RET)
+600e 4000 LT 1 Overlay Comments (RET)
+
 
 7fe0 0000 UL 1 Group Length
 7fe0 0010 OB 1 Pixel Data
