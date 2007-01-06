@@ -211,6 +211,7 @@
 0010 0010 PN 1 Patient's Name
 0010 0020 LO 1 Patient ID
 0010 0021 LO 1 Issuer of Patient ID
+0010 0022 CS 1 Type of Patient ID
 0010 0030 DA 1 Patient's Birth Date
 0010 0032 TM 1 Patient's Birth Time
 0010 0040 CS 1 Patient's Sex
@@ -219,6 +220,7 @@
 0010 0102 SQ 1 Patient's Primary Language Code Modifier Sequence
 0010 1000 LO 1-n Other Patient IDs
 0010 1001 PN 1-n Other Patient Names
+0010 1002 SQ 1 Other Patient IDs Sequence
 0010 1005 PN 1 Patient's Birth Name
 0010 1010 AS 1 Patient's Age
 0010 1020 DS 1 Patient's Size
@@ -241,6 +243,17 @@
 0010 21c0 US 1 Pregnancy Status
 0010 21d0 DA 1 Last Menstrual Date
 0010 21f0 LO 1 Patient's Religious Preference
+0010 2201 LO 1 Patient Species Description
+0010 2202 SQ 1 Patient Species Code Sequence
+0010 2203 CS 1 Patient's Sex Neutered
+0010 2292 LO 1 Patient Breed Description
+0010 2293 SQ 1 Patient Breed Code Sequence
+0010 2294 SQ 1 Breed Registration Sequence
+0010 2295 LO 1 Breed Registration Number
+0010 2296 SQ 1 Breed Registry Code Sequence
+0010 2297 PN 1 Responsible Person
+0010 2298 CS 1 Responsible Person Role
+0010 2299 LO 1 Responsible Organization
 0010 4000 LT 1 Patient Comments
 0010 9431 FL 1 Examined Body Thickness
 
@@ -288,7 +301,7 @@
 0018 003a ST 1 Intervention Description
 0018 0040 IS 1 Cine Rate
 0018 0050 DS 1 Slice Thickness
-0018 0060 DS 1 kVp
+0018 0060 DS 1 KVP
 0018 0070 IS 1 Counts Accumulated
 0018 0071 CS 1 Acquisition Termination Condition
 0018 0072 DS 1 Effective Duration
@@ -312,7 +325,12 @@
 0018 0095 DS 1 Pixel Bandwidth
 0018 1000 LO 1 Device Serial Number
 0018 1002 UI 1 Device UID
+0018 1003 LO 1 Device ID
 0018 1004 LO 1 Plate ID
+0018 1005 LO 1 Generator ID
+0018 1006 LO 1 Grid ID
+0018 1007 LO 1 Cassette ID
+0018 1008 LO 1 Gantry ID
 0018 1010 LO 1 Secondary Capture Device ID
 0018 1011 LO 1 Hardcopy Creation Device ID
 0018 1012 DA 1 Date of Secondary Capture
@@ -721,6 +739,8 @@
 0018 9182 FD 1 Gradient Output
 0018 9183 CS 1 Flow Compensation Direction
 0018 9184 FD 1 Tagging Delay
+0018 9185 ST 1 Respiratory Motion Compensation Technique Description
+0018 9186 SH 1 Respiratory Signal Source ID
 0018 9195 FD 1 Chemical Shifts Minimum Integration Limit in Hz (RET)
 0018 9196 FD 1 Chemical Shifts Maximum Integration Limit in Hz (RET)
 0018 9197 SQ 1 MR Velocity Encoding Sequence
@@ -1319,7 +1339,7 @@
 0040 a082 DT 1 Participation Datetime
 0040 a084 CS 1 Observer Type
 0040 a088 SQ 1 Verifying Observer Identification Code Sequence
-0040 a090 SQ 1 Equivalent CDA Document Sequence
+0040 a090 SQ 1 Equivalent CDA Document Sequence (RET)
 0040 a0b0 US 2-2n Referenced Waveform Channels
 0040 a120 DT 1 DateTime
 0040 a121 DA 1 Date
@@ -1468,6 +1488,29 @@
 0060 3008 US 1 Histogram Bin Width
 0060 3010 LO 1 Histogram Explanation
 0060 3020 UL 1-n Histogram Data
+0062 0001 CS 1 Segmentation Type
+0062 0002 SQ 1 Segment Sequence
+0062 0003 SQ 1 Segmented Property Category Code Sequence
+0062 0004 US 1 Segment Number
+0062 0005 LO 1 Segment Label
+0062 0006 ST 1 Segment Description
+0062 0008 CS 1 Segment Algorithm Type
+0062 0009 LO 1 Segment Algorithm Name
+0062 000a SQ 1 Segment Identification Sequence
+0062 000b US 1-n Referenced Segment Number
+0062 000c US 1 Recommended Display Grayscale Value
+0062 000d US 3 Recommended Display CIELab Value
+0062 000e US 1 Maximum Fractional Value
+0062 000f SQ 1 Segmented Property Type Code Sequence
+0062 0010 CS 1 Segmentation Fractional Type
+0064 0002 SQ 1 Deformable Registration Sequence
+0064 0003 UI 1 Source Frame of Reference UID
+0064 0005 SQ 1 Deformable Registration Grid Sequence
+0064 0007 UL 3 Grid Dimensions
+0064 0008 FD 3 Grid Resolution
+0064 0009 OF 1 Vector Grid Data
+0064 000f SQ 1 Pre Deformation Matrix Registration Sequence
+0064 0010 SQ 1 Post Deformation Matrix Registration Sequence
 
 0070 0000 UL 1 Group Length
 0070 0001 SQ 1 Graphic Annotation Sequence
@@ -1662,6 +1705,11 @@
 0400 0510 UI 1 Encrypted Content Transfer Syntax UID
 0400 0520 OB 1 Encrypted Content
 0400 0550 SQ 1 Modified Attributes Sequence
+0400 0561 SQ 1 Original Attributes Sequence
+0400 0562 DT 1 Attribute Modification Datetime
+0400 0563 LO 1 Modifying System
+0400 0564 LO 1 Source of Previous Values
+0400 0565 CS 1 Reason for the Attribute Modification
 
 2000 0000 UL 1 Film Session Group Length
 2000 0010 IS 1 Number of Copies
@@ -1715,7 +1763,7 @@
 2010 0520 SQ 1 Referenced Basic Annotation Box Sequence
 
 2020 0000 UL 1 Image Box Group Length
-2020 0010 US 1 Image Box Position
+2020 0010 US 1 Image Position
 2020 0020 CS 1 Polarity
 2020 0030 DS 1 Requested Image Size
 2020 0040 CS 1 Requested Decimate/Crop Behavior
@@ -2049,6 +2097,9 @@
 300a 0082 DS 3 Beam Dose Specification Point
 300a 0084 DS 1 Beam Dose
 300a 0086 DS 1 Beam Meterset
+300a 0088 FL 1 Beam Dose Point Depth
+300a 0089 FL 1 Beam Dose Point Equivalent Depth
+300a 008a FL 1 Beam Dose Point SSD
 300a 00a0 IS 1 Number of Brachy Application Setups
 300a 00a2 DS 3 Brachy Application Setup Dose Specification Point
 300a 00a4 DS 1 Brachy Application Setup Dose
@@ -2156,6 +2207,7 @@
 300a 0148 FL 1 Head Fixation Angle
 300a 014a FL 1 Gantry Pitch Angle
 300a 014c CS 1 Gantry Pitch Rotation Direction
+300a 014e FL 1 Gantry Pitch Angle Tolerance
 300a 0180 SQ 1 Patient Setup Sequence
 300a 0182 IS 1 Patient Setup Number
 300a 0183 LO 1 Patient Setup Label
@@ -2316,8 +2368,9 @@
 300a 03a8 SQ 1 Ion Control Point Sequence
 300a 03aa SQ 1 Ion Wedge Sequence
 300a 03ac SQ 1 Ion Wedge Position Sequence
-300a 0401 SQ 1 Referenced Image Setup Sequence
+300a 0401 SQ 1 Referenced Setup Image Sequence
 300a 0402 ST 1 Setup Image Comment
+300a 0410 SQ 1 Motion Synchronization Sequence
 
 300c 0000 UL 1 Group Length
 300c 0002 SQ 1 Referenced RT Plan Sequence
@@ -2359,7 +2412,7 @@
 300e 0008 PN 1 Reviewer Name
 
 4000 0000 UL 1 Text Group Length
-4000 0010 LT 1 Text Arbitrary (RET)
+4000 0010 LT 1 Arbitrary (RET)
 4000 4000 LT 1 Text Comments (RET)
 
 4008 0000 UL 1 Results Group Length
