@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 16:57:06 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2007/02/23 15:29:56 $
+  Version:   $Revision: 1.87 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -313,8 +313,14 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    if ( GetElement() == 0x0000 )
       name = "Group Length";
    else
+   {
       name = GetName();
-
+      // prevent Print from any CR at end of name (hope it's enought!)
+      if (name[name.length()-1] == 0x0d || name[name.length()-1] == 0x0a)
+      {  
+         name.replace(name.length()-1, 1, 1, ' ');
+      }
+   }
    if (PrintLevel >= 1)
    {
       s.setf(std::ios::left);
