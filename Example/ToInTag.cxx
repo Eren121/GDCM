@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/15 15:56:56 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/02/23 18:26:17 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -236,6 +236,17 @@ int main(int argc, char *argv[])
    gdcm::FileHelper *fh;
    std::vector<std::string> tokens;
    std::vector<std::string> tokensForFileName;
+   
+   // For Siemens pb, we need Station Name
+   
+   gdcm::DirListType::iterator it1 = fileNames.begin();
+   f = gdcm::File::New();
+   f->SetLoadMode(gdcm::LD_ALL);
+   f->SetFileName( *it1 );
+   f->Load();
+   std::string stationName = f->GetEntryString(0x0020,0x000d);
+   f->Delete();   
+   
 /*   
    std::cout << "---------------Print Unique Series identifiers---------"  
              << std::endl;     
@@ -269,6 +280,7 @@ int main(int argc, char *argv[])
    s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)     
    s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
    s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction 
+   s->AddSeriesDetail(0x0018, 0x103e, false); // Series Description (special Siemens ...)  
 
    //uint8_t *imageData; // Useless : pixels will not be loaded 
                          //          (images are overwritten)
@@ -353,7 +365,7 @@ int main(int argc, char *argv[])
  
  
          userFileIdentifier = tokens[0] + token + tokens[1] + token + tokens[2] + token 
-                    + tokens[3] + token + tokens[4] + token;
+                    + tokens[3] + token + tokens[4] + token + tokens[5] + token;
       }   
       if (verbose) 
          std::cout << "[" << userFileIdentifier  << "]" << std::endl;
@@ -372,7 +384,8 @@ int main(int argc, char *argv[])
    std::string previousPhaseEncodingDirection, currentPhaseEncodingDirection;
    std::string previousTriggerTime, currentTriggerTime;
    
-   std::string currentStudyUID;   
+   std::string currentStudyUID;
+   std::string seriesDescription;  
       
    std::string writeDir, currentWriteDir;
    std::string currentPatientWriteDir, currentSerieWriteDir, 
@@ -420,7 +433,8 @@ int main(int argc, char *argv[])
       currentSerieInstanceUID       = tokens[1];
       currentImagePosition          = tokens[2];
       currentTriggerTime            = tokens[3];
-      currentPhaseEncodingDirection = tokens[4]; 
+      currentPhaseEncodingDirection = tokens[4];
+      seriesDescription             = tokens[5];  // For Siemens pb
 
       if ( currentImagePosition[0] == '-')
           currentImagePosition[0] = 'M';
@@ -570,22 +584,45 @@ int main(int argc, char *argv[])
       // Deal with 0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)
       std::string chSessionIndex;
       // CLEANME
+
+      /* for SIEMENS MRI :
+        D 0008|1010 [SH]  [Station Name ] [MRC35150]
+        we have to deal with :
+     
+        D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 90deg]
+        D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 0deg ]
+      */
       if (taggrid) 
          chSessionIndex = "1";
       else
-      {
-         if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
-            chSessionIndex = "1";
-         else if (currentPhaseEncodingDirection == "ROW" || currentPhaseEncodingDirection == "ROW "|| currentPhaseEncodingDirection == " ROW")
-            chSessionIndex = "2"; 
-         else
+         if ( stationName == "MRC35150" )
          {
-            std::cout << "====================== PhaseEncodingDirection "
-                      << " neither COL nor ROW (?!?) : [ "
-                      << currentPhaseEncodingDirection << "]" << std::endl;
-            chSessionIndex = "1";
+            if ( gdcm::Util::DicomStringEqual(seriesDescription, "fl2d9_line PA 15 90deg") )
+              chSessionIndex = "1";
+            else if ( gdcm::Util::DicomStringEqual(seriesDescription, "fl2d9_line PA 15 0deg") )
+              chSessionIndex = "2"; 
+            else
+            {
+               std::cout << "====================== seriesDescription "
+                         << " neither fl2d9_line PA 15 90deg nor fl2d9_line PA 15 0deg (?!?) : [ "
+                         << seriesDescription << "]" << std::endl;
+               chSessionIndex = "1";
+            }    
+         } 
+ else  // for all other 'normal' cases
+         {
+            if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
+               chSessionIndex = "1";
+            else if (currentPhaseEncodingDirection == "ROW" || currentPhaseEncodingDirection == "ROW "|| currentPhaseEncodingDirection == " ROW")
+               chSessionIndex = "2"; 
+            else
+            {
+               std::cout << "====================== PhaseEncodingDirection "
+                         << " neither COL nor ROW (?!?) : [ "
+                         << currentPhaseEncodingDirection << "]" << std::endl;
+               chSessionIndex = "1";
+            }
          }
-      }
       if (currentFile->IsVRCoherent(0x0020) == 1 )     
          currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "  ");
       else
