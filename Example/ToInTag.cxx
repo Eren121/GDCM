@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/02/23 18:26:17 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/02/26 08:47:29 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
    f->SetLoadMode(gdcm::LD_ALL);
    f->SetFileName( *it1 );
    f->Load();
-   std::string stationName = f->GetEntryString(0x0020,0x000d);
+   std::string stationName = f->GetEntryString(0x0008,0x1010);
    f->Delete();   
    
 /*   
@@ -276,11 +276,14 @@ int main(int argc, char *argv[])
    SortedFiles sf;
 
    s->AddSeriesDetail(0x0010, 0x0010, false); // Patient's Name
-   s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
+   if ( stationName != "MRC35150" ) // for Siemens MRC35150, don't deal with 'Series Instance UID'
+      s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
+   else
+      s->AddSeriesDetail(0x9999, 0x9999, false); // dirty trick to ignore 'Series Instance UID'
    s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)     
    s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
    s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction 
-   s->AddSeriesDetail(0x0018, 0x103e, false); // Series Description (special Siemens ...)  
+   s->AddSeriesDetail(0x0008, 0x103e, false); // Series Description (special Siemens ...)  
 
    //uint8_t *imageData; // Useless : pixels will not be loaded 
                          //          (images are overwritten)
@@ -368,7 +371,7 @@ int main(int argc, char *argv[])
                     + tokens[3] + token + tokens[4] + token + tokens[5] + token;
       }   
       if (verbose) 
-         std::cout << "[" << userFileIdentifier  << "]" << std::endl;
+         std::cout << "[" << userFileIdentifier  << "] : " << *it << std::endl;
                
       // storing in a map ensures automatic sorting !      
       sf[userFileIdentifier] = f;
@@ -485,6 +488,8 @@ int main(int argc, char *argv[])
          }
       }
 
+      if ( stationName != "MRC35150" ) // for Siemens MRC35150, don't deal with 'Series Instance UID'
+
       if (previousSerieInstanceUID != currentSerieInstanceUID)
       {        
          if (verbose)   
@@ -510,7 +515,8 @@ int main(int argc, char *argv[])
          previousImagePosition          = ""; //currentImagePosition;
          previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
       }
-
+      // end of stationName != "MRC35150"
+      
       if (previousImagePosition != currentImagePosition)
       {
          frameIndex = 1;
@@ -585,31 +591,36 @@ int main(int argc, char *argv[])
       std::string chSessionIndex;
       // CLEANME
 
+
+      if (taggrid)
+      { 
+         chSessionIndex = "1";
+      }
+      else
+      {
       /* for SIEMENS MRI :
         D 0008|1010 [SH]  [Station Name ] [MRC35150]
         we have to deal with :
      
         D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 90deg]
         D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 0deg ]
-      */
-      if (taggrid) 
-         chSessionIndex = "1";
-      else
+        (everything is flagged as 'ROW')
+      */      
          if ( stationName == "MRC35150" )
          {
-            if ( gdcm::Util::DicomStringEqual(seriesDescription, "fl2d9_line PA 15 90deg") )
+            if ( memcmp(seriesDescription.c_str(), "fl2d9linePA1590deg", 18) )
               chSessionIndex = "1";
-            else if ( gdcm::Util::DicomStringEqual(seriesDescription, "fl2d9_line PA 15 0deg") )
+            else if ( memcmp(seriesDescription.c_str(), "fl2d9linePA150deg", 18) )
               chSessionIndex = "2"; 
             else
             {
                std::cout << "====================== seriesDescription "
-                         << " neither fl2d9_line PA 15 90deg nor fl2d9_line PA 15 0deg (?!?) : [ "
+                         << " neither fl2d9_line PA 15 90deg nor fl2d9_line PA 15 0deg (?!?) : ["
                          << seriesDescription << "]" << std::endl;
                chSessionIndex = "1";
             }    
          } 
- else  // for all other 'normal' cases
+         else  // for all other 'normal' cases
          {
             if (currentPhaseEncodingDirection == "COL" || currentPhaseEncodingDirection == "COL " || currentPhaseEncodingDirection == " COL")
                chSessionIndex = "1";
@@ -623,6 +634,7 @@ int main(int argc, char *argv[])
                chSessionIndex = "1";
             }
          }
+      }
       if (currentFile->IsVRCoherent(0x0020) == 1 )     
          currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "  ");
       else
