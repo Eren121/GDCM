@@ -13,9 +13,10 @@
 0000 0901 AT 1 Offending Element
 0000 0902 LO 1 Error Comment
 0000 0903 US 1 Error ID
-0000 1001 UI 1 SOP Requested Instance UID
 0000 1000 UI 1 SOP Affected Instance UID
+0000 1001 UI 1 SOP Requested Instance UID
 0000 1002 US 1 Event Type ID
+0000 1005 AT 1 Attribute Identifier List
 0000 1008 US 1 Action Type ID
 0000 1020 US 1 Remaining Suboperations
 0000 1021 US 1 Completed Suboperations
@@ -23,7 +24,6 @@
 0000 1023 US 1 Warning Suboperations
 0000 1030 AE 1 AE Title
 0000 1031 US 1 Message ID (second)
-0000 1005 AT 1 Attribute Identifier List
 
 0002 0000 UL 1 File Meta Information Group Length
 0002 0001 OB 1 File Meta Information Version
@@ -301,7 +301,7 @@
 0018 003a ST 1 Intervention Description
 0018 0040 IS 1 Cine Rate
 0018 0050 DS 1 Slice Thickness
-0018 0060 DS 1 KVP
+0018 0060 DS 1 kVp
 0018 0070 IS 1 Counts Accumulated
 0018 0071 CS 1 Acquisition Termination Condition
 0018 0072 DS 1 Effective Duration
@@ -415,7 +415,7 @@
 0018 1150 IS 1 Exposure Time
 0018 1151 IS 1 X-ray Tube Current
 0018 1152 IS 1 Exposure
-0018 1153 IS 1 Exposure in uAs
+0018 1153 IS 1 Exposure in µAs
 0018 1154 DS 1 Average Pulse Width
 0018 1155 CS 1 Radiation Setting
 0018 1156 CS 1 Rectification Type
@@ -833,8 +833,8 @@
 0018 9439 SS 1 Exposure Control Sensing Region Lower Horizontal Edge
 0018 9440 SS 2 Center of Circular Exposure Control Sensing Region
 0018 9441 US 1 Radius of Circular Exposure Control Sensing Region
-0018 9442 SS 2-n Vertices of the Polygonal Exposure Control Sensing Region
-0018 9445 FL 1 SHALL NOT BE USED (RET)
+0018 9442 SS 2-2n Vertices of the Polygonal Exposure Control Sensing Region
+0018 9445 UN 1 SHALL NOT BE USED (RET)
 0018 9447 FL 1 Column Angulation (Patient)
 0018 9449 FL 1 Beam Angle
 0018 9451 SQ 1 Frame Detector Parameters Sequence
@@ -1528,7 +1528,7 @@
 0070 0015 CS 1 Anchor Point Visibility
 0070 0020 US 1 Graphic Dimensions
 0070 0021 US 1 Number of Graphic Points
-0070 0022 FL 2-n Graphic Data
+0070 0022 FL 2-2n Graphic Data
 0070 0023 CS 1 Graphic Type
 0070 0024 CS 1 Graphic Filled
 0070 0041 CS 1 Image Horizontal Flip
@@ -1630,7 +1630,7 @@
 0072 0206 LO 1 Display Set Presentation Group Description
 0072 0208 CS 1 Partial Data Display Handling
 0072 0210 SQ 1 Synchronized Scrolling Sequence
-0072 0212 US 2-n Display Set Scrolling Group
+0072 0212 US 2-2n Display Set Scrolling Group
 0072 0214 SQ 1 Navigation Indicator Sequence
 0072 0216 US 1 Navigation Display Set
 0072 0218 US 1-n Reference Display Sets
@@ -1816,6 +1816,7 @@
 2110 0030 LO 1 Printer Name
 2110 0099 SH 1 Print Queue ID (RET)
 
+2120 0000 UL 1 Group Length
 2120 0010 CS 1 Queue Status (RET)
 2120 0050 SQ 1 Print Job Description Sequence (RET)
 2120 0070 SQ 1 Referenced Print Job Sequence (RET)
@@ -1880,7 +1881,7 @@
 3004 0006 LO 1 Dose Comment
 3004 0008 DS 3 Normalization Point
 3004 000a CS 1 Dose Summation Type
-3004 000c DS 2-n Grid Frame Offset Vector
+3004 000c DS 2-2n Grid Frame Offset Vector
 3004 000e DS 1 Dose Grid Scaling
 3004 0010 SQ 1 RT Dose ROI Sequence
 3004 0012 DS 1 Dose Value
@@ -2112,7 +2113,7 @@
 300a 00ba DS 1 Source to Beam Limiting Device Distance
 300a 00bb FL 1 Isocenter to Beam Limiting Device Distance
 300a 00bc IS 1 Number of Leaf/Jaw Pairs
-300a 00be DS 3-n Leaf Position Boundaries
+300a 00be DS 3-3n Leaf Position Boundaries
 300a 00c0 IS 1 Beam Number
 300a 00c2 LO 1 Beam Name
 300a 00c3 ST 1 Beam Description
