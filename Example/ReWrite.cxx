@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/19 10:23:56 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/03/06 10:19:00 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 
 #include "gdcmArgMgr.h"
 
+#include <string.h> // for memcpy
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -32,14 +33,18 @@ int main(int argc, char *argv[])
    "                                                                        ",
    " usage: ReWrite filein=inputFileName fileout=outputFileName             ", 
    "       [mode=write mode] [noshadow] [noseq][debug]                      ",
+   "  --> The following line to 'rubout' a burnt-in Patient name            ",
    "       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]         ",
+   "  --> The 2 following lines, to extract a sub image withon some frames  ",
+   "       [ROI=xBegin,xEnd,yBegin,yEnd]                                    ",
+   "       [firstframe=beg] [lastframe=end]                                 ", 
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
    "        noshadowseq: user doesn't want to load Private Sequences        ",
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences                  ",
    "        rgb      : user wants to tranform LUT (if any) to RGB pixels    ",
-   "        debug    : user wants to run the program in 'debug mode'        ",
+   "        debug    : developper wants to run the program in 'debug mode'  ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
@@ -105,6 +110,25 @@ int main(int argc, char *argv[])
       rubout = true;   
    }
 
+   int *roiBoundVal;
+   bool roi = false; 
+   if (am->ArgMgrDefined("roi"))
+   {
+      int nbRoiBound;
+      roiBoundVal = am->ArgMgrGetListOfInt("roi", &nbRoiBound);
+
+      if (nbRoiBound !=4)
+      {
+        std::cout << "Illegal number of 'ROI' boundary values (expected : 4, found:" 
+                  << nbRoiBound << "); 'ROI' ignored" << std::endl;
+        fail = true;
+      }
+      else
+        roi = true;   
+   }
+  
+   int beg = am->ArgMgrGetInt("firstFrame",-1);
+   int end = am->ArgMgrGetInt("lastFrame",-1);
  
    // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -127,41 +151,25 @@ int main(int argc, char *argv[])
       f->Delete();
       return 0;
    }
-  
+
    if (!f->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        f->Delete();
        return 0;
    }
+ 
    
    gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
    void *imageData; 
    int dataSize;
-  
-   if (rgb)
-   {
-      dataSize  = fh->GetImageDataSize();
-      imageData = fh->GetImageData(); // somewhat important... can't remember
-      fh->SetWriteModeToRGB();
-   }
-   else
-   {
-      dataSize  = fh->GetImageDataRawSize();
-      imageData = fh->GetImageDataRaw();// somewhat important... can't remember
-      fh->SetWriteModeToRaw();
-   }
-
-   if ( imageData == 0 ) // to avoid warning
-   {
-      std::cout << "Was unable to read pixels " << std::endl;
-   }
-   std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
-   int nX,nY,nZ,sPP,planarConfig;
+ 
+    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
    nX=f->GetXSize();
    nY=f->GetYSize();
    nZ=f->GetZSize();
+   
    std::cout << " DIMX=" << nX << " DIMY=" << nY << " DIMZ=" << nZ << std::endl;
 
    pixelType    = f->GetPixelType();
@@ -181,6 +189,26 @@ int main(int argc, char *argv[])
    transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
              << std::endl;
+ 
+   
+   if (rgb)
+   {
+      dataSize  = fh->GetImageDataSize();
+      imageData = fh->GetImageData(); // somewhat important : Loads the Pixels in memory !
+      fh->SetWriteModeToRGB();
+   }
+   else
+   {
+      dataSize  = fh->GetImageDataRawSize();
+      imageData = fh->GetImageDataRaw();// somewhat important : Loads the Pixels in memory !
+      fh->SetWriteModeToRaw();
+   }
+
+   if ( imageData == 0 ) // to avoid warning
+   {
+      std::cout << "Was unable to read pixels " << std::endl;
+   }
+   printf(" dataSize %d imageData %p\n",dataSize, imageData);
 
    // Since we just ReWrite the image, we know no modification 
    // was performed on the pixels.
@@ -188,6 +216,7 @@ int main(int argc, char *argv[])
    fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
    
 
+   /// \todo : think about rubbing out a part of a *multiframe* image!
    if (rubout)
    {     
       if (boundVal[0]<0 || boundVal[0]>nX)
@@ -234,6 +263,116 @@ int main(int argc, char *argv[])
          }
       }   
    } 
+
+//
+// user wants to keep only a part of the image (ROI, and/or some frames)
+// ---------------------------------------------------------------------
+// (==> this is no longer really 'ReWrite' !)
+
+    int subImDimX = nX;
+    int subImDimY = nY;    
+
+    if (roi)
+    {  
+      if (roiBoundVal[0]<0 || roiBoundVal[0]>=nX)
+      { 
+         std::cout << "xBegin out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (roiBoundVal[1]<0 || roiBoundVal[1]>=nX)
+      { 
+         std::cout << "xEnd out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (roiBoundVal[0] > roiBoundVal[1])
+      { 
+         std::cout << "xBegin greater than xEnd; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+
+      if (roiBoundVal[2]<0 || roiBoundVal[2]>=nY)
+      { 
+         std::cout << "yBegin out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (roiBoundVal[3]<0 || roiBoundVal[3]>=nY)
+      { 
+         std::cout << "yEnd out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (roiBoundVal[2] > roiBoundVal[3])
+      { 
+         std::cout << "yBegin greater than yEnd; 'roi' ignored" << std::endl;
+         fail = true;      
+      }  
+   } 
+   else
+   {  
+     roiBoundVal = new int(4);
+     roiBoundVal[0] = 0;
+     roiBoundVal[1] = nX-1;
+     roiBoundVal[2] = 0;
+     roiBoundVal[3] = nY-1;  
+  }
+
+   subImDimX = roiBoundVal[1]-roiBoundVal[0]+1;     
+   subImDimY = roiBoundVal[3]-roiBoundVal[2]+1;  
+ 
+  if (roi || beg != -1 || end != -1)
+  {  
+     if (beg == -1)
+      beg = 0;  
+     if (end == -1)
+      end = nZ;
+     
+     std::ostringstream str;
+     
+    // Set the data that will be *actually* written.
+
+     int pixelSize = fh->GetFile()->GetPixelSize();
+     size_t lgrSubLine  = subImDimX* pixelSize * numberOfScalarComponents;
+     size_t lgrSubFrame = subImDimY*lgrSubLine;
+                      ;
+     int lgrSubImage = (end-beg+1) * lgrSubFrame;
+       
+     uint8_t * subImage = new uint8_t[lgrSubImage];
+       
+     uint8_t * srcCopy = (uint8_t *) imageData;
+     uint8_t * destCopy = subImage;
+     int lineSize = nX*pixelSize*numberOfScalarComponents;
+     int frameSize = nY*lineSize; 
+ 
+     int lineOffset = roiBoundVal[0]*pixelSize * numberOfScalarComponents;
+     
+     for (unsigned int frameNb=beg, frameCount=0; frameNb<=end; frameNb++, frameCount++)
+     { 
+         for (unsigned int lineNb=roiBoundVal[2], lineCount=0; lineNb<=roiBoundVal[3]; lineNb++, lineCount++)
+         {  
+            /// \todo increment data pointer, don't multiply so much!
+            memcpy( (void *)(destCopy + frameCount*lgrSubFrame + lineCount*lgrSubLine), 
+                    (void *)(srcCopy  + frameNb*frameSize + lineNb*lineSize + lineOffset ), 
+                    lgrSubLine);
+         }        
+     }
+ 
+    // Set the image size
+     str.str("");
+     str << subImDimX ;
+     fh->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
+
+     str.str("");
+     str << subImDimY;
+     fh->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
+     str.str("");
+     str << end-beg+1; 
+     fh->InsertEntryString(str.str(),0x0028,0x0008, "IS"); // Number of Frames 
+      
+     fh->SetImageData(subImage,lgrSubImage);
+            
+  }     
+
+
+//----------------------------------- Write, now! ---------------------------------
 
    switch (mode[0])
    {
