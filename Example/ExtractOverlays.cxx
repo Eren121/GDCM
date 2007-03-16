@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ExtractOverlays.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/16 15:14:37 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/03/16 16:03:04 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 
 /// \todo : deal with *each* overlay Data Element (not only the first one!)
 
-   unit16_t ovlyGroup = 0x6000;
+   uint16_t ovlyGroup = 0x6000;
 
    gdcm::DataEntry *e = f->GetDataEntry(ovlyGroup, 0x3000);  
    if (e == 0)
