@@ -22,14 +22,16 @@ SET(EXAMPLE_SOURCES
   exSerieHelper
   exXCoherentFileSet
   exExtractDicomTags
+  exMoveImagesToSingleSerieUID
 
 #the following are utilities
+
   PrintDicomDir
   PrintFile
   MakeDicomDir
-  AnonymizeDicomDir # without loading it as a gdcm::DicomDir
-  Anonymize         # for full gdcm readable files
-  AnonymizeNoLoad   # without loading the Pixel Data
+  AnonymizeDicomDir     # without loading it as a gdcm::DicomDir
+  Anonymize             # for full gdcm readable files
+  AnonymizeNoLoad       # without loading the Pixel Data
   AnonymizeMultiPatient # without loading the Pixel Data
   PatchHeader
   ToInTag
@@ -38,8 +40,10 @@ SET(EXAMPLE_SOURCES
   ReWriteExtended
   RawToDicom
   TestValidate
+  ToMRIregister
   #BatchUncompress
-  
+  ExtractOverlays
+   
 #the following will be transformed into 'examples', or 'utilities'
 #              or will be removed
 #
