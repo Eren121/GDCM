@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:51:41 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2007/03/23 15:03:01 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,6 +69,9 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
            ((gdcm::DataEntry *)e2)->GetString() )
       {
  
+ /// \todo : check the value *written on disc*, not the value converted as a std::string
+ ///         (this comparison doesn't make the difference between Ox(ff) and "255" ...)
+ 
          // serious trouble : values differ in source and destination file
          std::cout << "for gdcm DicomDir element (" << std::hex 
                    << e2->GetGroup() << "," <<e2->GetElement() 
@@ -111,7 +114,7 @@ int TestDicomDir(int argc, char *argv[])
       dicomdir->SetPrintLevel(level);
    }
 
-   // Test if the DicomDir is readable
+   // Test if the DICOMDIR file is readable
    if( !dicomdir->IsReadable() )
    {
       std::cout<<"          DicomDir '"<<file
@@ -127,7 +130,7 @@ int TestDicomDir(int argc, char *argv[])
                <<"' is readable"<<std::endl;
    }
 
-   // Test if the DicomDir contains any patient
+   // Test if the gdcm::DicomDir contains any patient
    if( !dicomdir->GetFirstPatient() )
    {
       std::cout<<"          DicomDir '"<<file
@@ -145,7 +148,7 @@ int TestDicomDir(int argc, char *argv[])
 
    pa1 = dicomdir->GetFirstPatient(); 
    while ( pa1 ) 
-   {  // we process all the PATIENT of this DICOMDIR 
+   {  // we process all the PATIENT of this gdcm::DicomDir 
       std::cout << pa1->GetEntryString(0x0010, 0x0010) << std::endl; // Patient's Name
 
       st1 = pa1->GetFirstStudy();
