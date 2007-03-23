@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exMoveImagesToSingleSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/19 09:04:46 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/03/23 14:59:58 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,9 +33,9 @@ Converts the a Dicom file inside a single-level Directory
 exMoveImagesToSingleSerieUID
       dirin=inputDirectoryName                                   
       dirout=outputDirectoryName                                  
-       [studyUID = ] [patName = ] [Zspacing = ]
-       [ { [noshadowseq] | [noshadow][noseq] } ]  [debug]
-       [verbose]",
+      [studyUID = ] [patName = ] [Zspacing = ]
+      [ { [noshadowseq] | [noshadow][noseq] } ]  [debug]
+      [verbose]",
 
 
   dirin : single-level Directory containing the images 

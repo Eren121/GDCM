@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/18 10:12:56 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2007/03/23 14:59:58 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
    "        noshadowseq: user doesn't want to load Private Sequences          ",
    "        noshadow : user doesn't want to load Private groups (odd number)  ",
    "        noseq    : user doesn't want to load Sequences                    ",
-   "        debug    : user wants to run the program in 'debug mode'          ",
+   "        debug    : developper wants to run the program in 'debug mode'    ",
    "        check    : the dicomdir is checked as 'gdcm readable'             ",
    FINISH_USAGE
 
@@ -98,8 +98,6 @@ int main(int argc, char *argv[])
    // ----- Begin Processing -----
 
    gdcm::DicomDir *dcmdir;
-
-
    
    // we ask for Directory parsing
 
@@ -110,8 +108,10 @@ int main(int argc, char *argv[])
    //dcmdir->SetParseDir(true);
    
      // struct tms tms1, tms2; // Time measurements
-     // times(&tms1);   
-   dcmdir->Load();
+     // times(&tms1);
+       
+   dcmdir->Load(); // Reads all the files and creates the gdcm::DicomDir
+   
       //times(&tms2);      
       //std::cout 
       //  << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
       return 1;
    }
     
-   // ----- Create the corresponding DicomDir
+   // ----- Writes the corresponding DICOMDIR file (from the gdcm::DicomDir)
 
    dcmdir->Write(name);
    dcmdir->Delete();

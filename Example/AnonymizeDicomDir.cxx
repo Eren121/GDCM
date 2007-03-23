@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:26 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/03/23 14:59:58 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -75,12 +75,12 @@ int main(int argc, char *argv[])
 { 
 
    START_USAGE(usage)
-   " \n AnonymizeDicomDir :\n",
-   " Anonymize a gdcm-readable DICOMDIR ",
-   "           even when some 'Objects' are not yet taken into account",
-   "           Warning : the DICOMDIR is overwritten",
-   " usage: AnonymizeDicomDir filein=dicomDirName [debug] ",
-   "        debug    : user wants to run the program in 'debug mode' ",
+   " \n AnonymizeDicomDir :\n                                              ",
+   " Anonymize a gdcm-readable DICOMDIR                                    ",
+   "           even when some 'Objects' are not yet taken into account     ",
+   "           Warning : the DICOMDIR is overwritten                       ",
+   " usage: AnonymizeDicomDir filein=dicomDirName [debug]                  ",
+   "        debug    : developper wants to run the program in 'debug mode' ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   

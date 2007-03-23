@@ -43,12 +43,31 @@ int main(int argc, char *argv[])
       delete am;
       return 0;
    }
+   
+/*
    char *fileName = am->ArgMgrWantString("filein",usage);
    if ( fileName == NULL )
    {
       delete am;
       return 0;
    }
+*/
+
+
+   const char *fileName = am->ArgMgrGetString("filein");
+   const char *dirName  = am->ArgMgrGetString("dirin");
+
+   if ( (fileName == 0 && dirName == 0) ||
+        (fileName != 0 && dirName != 0) )
+   {
+      std::cerr << std::endl
+        << "Either 'filein=' or 'dirin=' must be present;" 
+        << std::endl << "Not both" << std::endl;
+      am->ArgMgrUsage(usage); // Display 'usage'  
+      delete am;
+      return 1;
+   }
+
 
    char *outputFileName = am->ArgMgrWantString("fileout",usage);
    if ( outputFileName == NULL )
@@ -58,7 +77,10 @@ int main(int argc, char *argv[])
    }
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
-
+      
+   if (am->ArgMgrDefined("warning"))
+      gdcm::Debug::WarningOn();
+      
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    {

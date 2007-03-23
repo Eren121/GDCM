@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/06 10:19:00 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2007/03/23 14:59:58 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
      if (beg == -1)
       beg = 0;  
      if (end == -1)
-      end = nZ;
+      end = nZ-1;
      
      std::ostringstream str;
      
