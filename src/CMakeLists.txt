@@ -32,6 +32,7 @@ SET(GDCM_SOURCES
    gdcmDicomDir.cxx
    gdcmDicomDirElement.cxx
    gdcmDicomDirImage.cxx
+   gdcmDicomDirPrivate.cxx   
    gdcmDicomDirMeta.cxx
    gdcmDicomDirObject.cxx
    gdcmDicomDirPatient.cxx

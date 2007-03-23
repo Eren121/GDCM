@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:46 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,7 @@
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirElement.h"
 #include "gdcmDicomDirImage.h"
+#include "gdcmDicomDirPrivate.h"
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
 
@@ -47,6 +48,7 @@ DicomDirSerie::DicomDirSerie(bool empty):
 DicomDirSerie::~DicomDirSerie() 
 {
    ClearImage();
+   ClearPrivate();  // For SIEMENS 'CSA non image'
 }
 
 //-----------------------------------------------------------------------------
@@ -65,7 +67,13 @@ void DicomDirSerie::WriteContent(std::ofstream *fp, FileType t)
                                  ++cc )
    {
       (*cc)->WriteContent( fp, t );
-   }
+   } 
+   for(ListDicomDirPrivate::iterator cc2 = Privates.begin();
+                                     cc2!= Privates.end();
+                                   ++cc2 )
+   {
+      (*cc2)->WriteContent( fp, t );
+   }   
 }
 
 /**
@@ -80,19 +88,33 @@ DicomDirImage *DicomDirSerie::NewImage()
 }
 
 /**
- * \brief  Remove all images in the serie 
+ * \brief  Remove all 'Images' in the serie 
+ */
+void DicomDirSerie::ClearPrivate()
+{
+   for(ListDicomDirPrivate::iterator cc = Privates.begin();
+                                     cc!= Privates.end();
+                                   ++cc)
+   {
+      (*cc)->Delete();
+   }
+   Privates.clear();
+}
+
+
+/**
+ * \brief  Remove all 'Privates' in the serie 
  */
 void DicomDirSerie::ClearImage()
 {
    for(ListDicomDirImage::iterator cc = Images.begin();
-                                   cc != Images.end();
-                                   ++cc)
+                                   cc!= Images.end();
+                                 ++cc)
    {
       (*cc)->Delete();
    }
    Images.clear();
 }
-
 /**
  * \brief   Get the first entry while visiting the DicomDirImage
  * \return  The first DicomDirImage if DicomDirserie not empty, otherwhise NULL
@@ -107,7 +129,7 @@ DicomDirImage *DicomDirSerie::GetFirstImage()
 
 /**
  * \brief   Get the next entry while visiting the DicomDirImages
- * \note : meaningfull only if GetFirstEntry already called
+ * \note : meaningfull only if GetFirstImage already called
  * \return  The next DicomDirImages if found, otherwhise NULL
  */
 DicomDirImage *DicomDirSerie::GetNextImage()
@@ -121,6 +143,33 @@ DicomDirImage *DicomDirSerie::GetNextImage()
 }
 
 /**
+ * \brief   Get the first entry while visiting the DicomDirPrivate
+ * \return  The first DicomDirPrivate if DicomDirserie not empty, otherwhise NULL
+ */
+DicomDirPrivate *DicomDirSerie::GetFirstPrivate()
+{
+   ItPrivate = Privates.begin();
+   if (ItPrivate != Privates.end())
+      return *ItPrivate;
+   return NULL;
+}
+
+/**
+ * \brief   Get the next entry while visiting the DicomDirPrivates
+ * \note : meaningfull only if GetFirstPrivate already called
+ * \return  The next DicomDirPrivates if found, otherwhise NULL
+ */
+DicomDirPrivate *DicomDirSerie::GetNextPrivate()
+{
+   gdcmAssertMacro (ItPrivate != Privates.end());
+
+   ++ItPrivate;
+   if (ItPrivate != Privates.end())      
+      return *ItPrivate;
+   return NULL;
+}
+
+/**
  * \brief Copies all the attributes from an other DocEntrySet 
  * @param set entry to copy from
  * @remarks The contained DocEntries a not copied, only referenced
@@ -129,7 +178,8 @@ void DicomDirSerie::Copy(DocEntrySet *set)
 {
    // Remove all previous childs
    ClearImage();
-
+   ClearPrivate();
+   
    DicomDirObject::Copy(set);
 
    DicomDirSerie *ddEntry = dynamic_cast<DicomDirSerie *>(set);
@@ -138,7 +188,11 @@ void DicomDirSerie::Copy(DocEntrySet *set)
       Images = ddEntry->Images;
       for(ItImage = Images.begin();ItImage != Images.end();++ItImage)
          (*ItImage)->Register();
-   }
+
+      Privates = ddEntry->Privates;
+      for(ItPrivate = Privates.begin();ItPrivate != Privates.end();++ItPrivate)
+         (*ItPrivate)->Register();
+   }   
 }
 
 //-----------------------------------------------------------------------------
@@ -166,6 +220,15 @@ void DicomDirSerie::Print(std::ostream &os, std::string const &)
       (*cc)->SetPrintLevel(PrintLevel);
       (*cc)->Print(os);
    }
+
+   for(ListDicomDirPrivate::iterator cc2 = Privates.begin();
+                                     cc2 != Privates.end();
+                                   ++cc2)
+   {
+      (*cc2)->SetPrintLevel(PrintLevel);
+      (*cc2)->Print(os);
+   }   
+   
 }
 
 //-----------------------------------------------------------------------------

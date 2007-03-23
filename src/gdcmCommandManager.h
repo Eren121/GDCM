@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandManager.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/18 15:25:07 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ namespace gdcm
 {
 //-----------------------------------------------------------------------------
 class Command;
-typedef std::pair<const Base *,unsigned int> CommandKey;
+typedef std::pair<const Base *, unsigned int> CommandKey;
 typedef std::map<CommandKey,Command *> CommandHT;
 
 //-----------------------------------------------------------------------------
@@ -44,11 +44,11 @@ class GDCM_EXPORT CommandManager : public Base
 public:
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
 
-   static void SetCommand(const Base *object,unsigned int type,Command *command);
-   static Command *GetCommand(const Base *object,unsigned int type);
+   static void SetCommand(const Base *object, unsigned int type, Command *command);
+   static Command *GetCommand(const Base *object, unsigned int type);
 
-   static bool ExecuteCommand(Base *object,unsigned int type,std::string text = "");
-   static bool ExecuteCommandConst(const Base *object,unsigned int type,std::string text = "");
+   static bool ExecuteCommand(Base *object, unsigned int type, std::string text = "");
+   static bool ExecuteCommandConst(const Base *object, unsigned int type, std::string text = "");
 
    static const CommandManager *GetInstance();
 
@@ -58,11 +58,11 @@ protected:
    CommandManager();
 
    void InClearCommand(void);
-   void InSetCommand(const Base *object,unsigned int type,Command *command);
-   Command *InGetCommand(const Base *object,unsigned int type);
+   void InSetCommand(const Base *object, unsigned int type, Command *command);
+   Command *InGetCommand(const Base *object, unsigned int type);
 
-   bool InExecuteCommand(Base *object,unsigned int type,std::string text = "");
-   bool InExecuteCommandConst(const Base *object,unsigned int type,std::string text = "");
+   bool InExecuteCommand(Base *object, unsigned int type, std::string text = "");
+   bool InExecuteCommandConst(const Base *object, unsigned int type, std::string text = "");
 
 private:
    static CommandManager Instance;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -87,7 +87,7 @@ DicomDirElement::DicomDirElement()
             from.getline(buff2, 1024, '"');
             elem.VR[0] = buff2[0];
             elem.VR[1] = buff2[1];
-    
+ // std::cout << "VR : [" <<  elem.VR[0] << elem.VR[1] << "]" << std::endl;  // JPR
             from >> std::ws;
             from.getline(buff, 1024, '"');
             from >> std::ws;

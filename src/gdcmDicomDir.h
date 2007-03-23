@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:10:19 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.78 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,7 @@ class DicomDirStudy;
 class DicomDirSerie;
 class DicomDirVisit;
 class DicomDirImage;
+class DicomDirPrivate;
 class SQItem;
 
 typedef std::list<DicomDirPatient *> ListDicomDirPatient;
@@ -124,12 +125,13 @@ private:
    void Initialize();
    void CreateDicomDir();
    bool DoTheLoadingJob();
-   bool AddPatientToEnd(DicomDirPatient *dd);
+   bool AddPatientToEnd(DicomDirPatient *dd);   
    bool AddStudyToEnd  (DicomDirStudy *dd);
    bool AddSerieToEnd  (DicomDirSerie *dd);
    bool AddVisitToEnd  (DicomDirVisit *dd);
    bool AddImageToEnd  (DicomDirImage *dd);
-
+   bool AddPrivateToEnd(DicomDirPrivate *dd);
+   
    void SetElements(std::string const &path, VectDocument const &list);
    void SetElement (std::string const &path, DicomDirType type,
                     Document *header);

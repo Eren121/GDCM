@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:10:19 $
-  Version:   $Revision: 1.189 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.190 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirVisit.h"
 #include "gdcmDicomDirImage.h"
+#include "gdcmDicomDirPrivate.h"
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirMeta.h"
 #include "gdcmDicomDirElement.h"
@@ -701,11 +702,27 @@ void DicomDir::CreateDicomDir()
             gdcmErrorMacro( "Add PatientToEnd failed");
          }
       }
+      /// \to do : deal with PRIVATE (not so easy, since PRIVATE appears 
+      ///                           at defferent levels ?!? )
+      
+      else if ( v == "PRIVATE " ) // for SIEMENS 'CSA Non Image'      
+      {
+      
+         gdcmWarningMacro( " -------------------------------------------"
+              << "a PRIVATE SQItem was found : " << v);
+         si = DicomDirPrivate::New(true);
+         if ( !AddPrivateToEnd( static_cast<DicomDirPrivate *>(si)) )
+         {
+            si->Delete();
+            si = NULL;
+            gdcmErrorMacro( "Add PrivateToEnd failed");
+         }
+      }      
       else
       {
          // It was neither a 'PATIENT', nor a 'STUDY', nor a 'SERIE',
          // nor an 'IMAGE' SQItem. Skip to next item.
-         gdcmDebugMacro( " -------------------------------------------"
+         gdcmWarningMacro( " -------------------------------------------"
          << "a non PATIENT/STUDY/SERIE/IMAGE SQItem was found : "
          << v);
 
@@ -806,6 +823,32 @@ bool DicomDir::AddImageToEnd(DicomDirImage *dd)
          if ( serie )
          {
             serie->AddImage(dd);
+            return true;
+         }
+      }
+   }
+   return false;
+}
+
+/**
+ * \brief   AddPrivateToEnd
+ * @param   dd SQ Item to enqueue to the DicomDirPrivate chained List
+ *          (checked for SIEMENS 'CSA non image')
+ */
+bool DicomDir::AddPrivateToEnd(DicomDirPrivate *dd)
+{
+   if ( Patients.size() > 0 )
+   {
+      ListDicomDirPatient::iterator itp = Patients.end();
+      itp--;
+
+      DicomDirStudy *study = (*itp)->GetLastStudy();
+      if ( study )
+      {
+         DicomDirSerie *serie = study->GetLastSerie();
+         if ( serie )
+         {
+            serie->AddPrivate(dd);
             return true;
          }
       }

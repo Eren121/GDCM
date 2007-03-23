@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:46 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,9 +24,11 @@
 namespace gdcm 
 {
 class DicomDirImage;
+class DicomDirPrivate;
+
 //-----------------------------------------------------------------------------
 typedef std::list<DicomDirImage *> ListDicomDirImage;
-
+typedef std::list<DicomDirPrivate *> ListDicomDirPrivate;
 //-----------------------------------------------------------------------------
 /**
  * \brief   describes a SERIE  within a within a STUDY
@@ -43,7 +45,7 @@ public:
    void Print( std::ostream &os = std::cout, std::string const &indent = "" );
    void WriteContent( std::ofstream *fp, FileType t );
 
-   // Image methods
+   // 'Image' methods
    DicomDirImage *NewImage();
    /// Add a new gdcm::DicomDirImage to the Serie
    void AddImage(DicomDirImage *obj) { Images.push_back(obj); }
@@ -52,6 +54,16 @@ public:
    DicomDirImage *GetFirstImage();
    DicomDirImage *GetNextImage();
 
+   // 'Private' methods (For SIEMENS 'CSA non image')
+   DicomDirPrivate *NewPrivate();
+   /// Add a new gdcm::DicomDirPrivate to the Serie
+   void AddPrivate(DicomDirPrivate *obj) { Privates.push_back(obj); }
+   void ClearPrivate();
+
+   DicomDirPrivate *GetFirstPrivate();
+   DicomDirPrivate *GetNextPrivate();   
+   
+   
    virtual void Copy(DocEntrySet *set);
 
 protected:
@@ -64,18 +76,17 @@ private:
    /// iterator on the DicomDirImages of the current DicomDirSerie
    ListDicomDirImage::iterator ItImage;
 
+   ///chained list of DicomDirPrivates (to be exploited recursively)
+   ListDicomDirPrivate Privates;
+   /// iterator on the DicomDirPrivates of the current DicomDirSerie
+   ListDicomDirPrivate::iterator ItPrivate;
 /*
-// for future use :
+// for future use  (Full DICOMDIR):
 
    /// chained list of DicomDirOverlays(single level)
    ListDicomDirOverlay Overlays;
    /// iterator on the DicomDirOverlays of the current DicomDirSerie
    ListDicomDirOverlay::iterator ItOverlay;
-
-   /// chained list of DicomDirModalityLuts(single level)
-   ListDicomDirModalityLut ModalityLuts;
-   /// iterator on the DicomDirModalityLuts of the current DicomDirSerie
-   ListDicomDirModalityLut::iterator ItModalityLut;
 
    /// chained list of DicomDirModalityLuts(single level)
    ListDicomDirModalityLut ModalityLuts;

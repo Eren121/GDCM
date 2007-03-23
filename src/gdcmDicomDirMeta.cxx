@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:13 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmUtil.h"
 #include "gdcmDataEntry.h"
+
 namespace gdcm 
 {
 //-----------------------------------------------------------------------------
@@ -52,7 +53,7 @@ DicomDirMeta::~DicomDirMeta()
 /**
  * \brief   Writes the Meta Elements
  * @param fp ofstream to write to
- * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
+ * @param filetype type of the file (ImplicitVR, ExplicitVR, ...)
  * @return
  */ 
 void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype)
@@ -80,9 +81,9 @@ void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype)
    e0000->SetString(sLen.str());
    
    for (ListDocEntry::iterator i = DocEntries.begin();  
-                              i != DocEntries.end();
-                              ++i)
-   {
+                               i!= DocEntries.end();
+                             ++i)
+   {   
       (*i)->WriteContent(fp, filetype);
    }
 }

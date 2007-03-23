@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2007/03/23 15:30:15 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,6 +36,7 @@ typedef std::list<DicomElement> ListDicomDirStudyElem;
 typedef std::list<DicomElement> ListDicomDirVisitElem;
 typedef std::list<DicomElement> ListDicomDirSerieElem;
 typedef std::list<DicomElement> ListDicomDirImageElem;
+typedef std::list<DicomElement> ListDicomDirPrivateElem; // For "CSA Non Image"
 
 // For future use (Full DICOMDIR)
 
@@ -121,6 +122,14 @@ public:
    ListDicomDirImageElem const &GetDicomDirImageElements() const
       { return DicomDirImageList; }
 
+   /**
+    * \brief   returns a reference to the chained List 
+    *          related to the PRIVATE Elements of a DICOMDIR.
+    */      
+   ListDicomDirPrivateElem const &GetDicomDirPrivateElements() const
+      { return DicomDirPrivateList; }
+ 
+      
    // Public method to add an element
    bool AddEntry(DicomDirType type, DicomElement const &elem);
 
@@ -145,6 +154,8 @@ private:
    ListDicomDirSerieElem   DicomDirSerieList;
    /// Elements chained list, related to the ImageElements of DICOMDIR
    ListDicomDirImageElem   DicomDirImageList;
+   /// Elements chained list, related to the PrivateElements of DICOMDIR
+   ListDicomDirPrivateElem   DicomDirPrivateList;
 };
 } // end namespace gdcm
 //-----------------------------------------------------------------------------
