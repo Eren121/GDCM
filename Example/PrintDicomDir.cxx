@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/17 13:27:04 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2007/03/23 14:57:19 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmDicomDirVisit.h"
 #include "gdcmDicomDirSerie.h"
 #include "gdcmDicomDirImage.h"
+#include "gdcmDicomDirPrivate.h"
 #include "gdcmTS.h"
 #include "gdcmDebug.h"
 
@@ -33,13 +34,14 @@
 int main(int argc, char* argv[])
 {
    START_USAGE(usage)
-   " \n PrintDicomDir :\n",
-   " Display the tree-like structure of a DICOMDIR File",
-   " usage: PrintDicomDir filein=fileName [level=n][detail=m][debug]   ",
-   "        detail = 1 : Patients, 2 : Studies, 3 : Series, 4 : Images ",
-   "                 5 : Full Content ",
-   "        level = 0,1,2 : depending on user (what he wants to see)",
-   "        debug    : user wants to run the program in 'debug mode' ",
+   " \n PrintDicomDir :\n                                                  ",
+   " Display the tree-like structure of a DICOMDIR File                    ",
+   " usage: PrintDicomDir filein=fileName [level=n][detail=m][debug]       ",
+   "        detail = 1 : Patients, 2 : Studies, 3 : Series, 4 : Images     ",
+   "                 5 : Full Content                                      ",
+   "        level = 0,1,2 : depending on user (what he wants to see)       ",
+   "        warning  : user wants to run the program in 'warning mode'     ",   
+   "        debug    : developper wants to run the program in 'debug mode' ",
    FINISH_USAGE
 
    // Initialize Arguments Manager   
@@ -60,7 +62,7 @@ int main(int argc, char* argv[])
    gdcm::DicomDirSerie *se;
    gdcm::DicomDirVisit *vs;
    gdcm::DicomDirImage *im;
-  
+   gdcm::DicomDirPrivate *pr;  
    char *fileName;
    fileName  = am->ArgMgrWantString("filein",usage); 
 
@@ -71,6 +73,9 @@ int main(int argc, char* argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
 
+   if (am->ArgMgrDefined("warning"))
+      gdcm::Debug::WarningOn();
+      
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -252,6 +257,15 @@ int main(int argc, char* argv[])
                                << "]" << std::endl; // File name (Referenced File ID)
                      im = se->GetNextImage();   
                   }
+ 
+                  pr = se->GetFirstPrivate();
+                  while ( pr ) 
+                  { // on degouline les 'Privates' de cette serie
+                     std::cout << "--- --- --- "<< " PRIVATE Ref. File ID :[" << im->GetEntryString(0x0004, 0x1500) 
+                               << "]" << std::endl; // File name (Referenced File ID)
+                     im = se->GetNextPrivate();   
+                  }
+ 
                   se = st->GetNextSerie();   
                }
                st = pa->GetNextStudy();
