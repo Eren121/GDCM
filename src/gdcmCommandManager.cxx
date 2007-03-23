@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandManager.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/13 09:27:35 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/03/23 15:05:11 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,22 +46,22 @@ CommandManager::~CommandManager ()
 
 //-----------------------------------------------------------------------------
 // Public
-void CommandManager::SetCommand(const Base *object,unsigned int type,Command *command)
+void CommandManager::SetCommand(const Base *object, unsigned int type, Command *command)
 {
-   Instance.InSetCommand(object,type,command);
+   Instance.InSetCommand(object, type, command);
 }
 
-Command *CommandManager::GetCommand(const Base *object,unsigned int type)
+Command *CommandManager::GetCommand(const Base *object, unsigned int type)
 {
-   return(Instance.InGetCommand(object,type));
+   return(Instance.InGetCommand(object, type));
 }
 
-bool CommandManager::ExecuteCommand(Base *object,unsigned int type,std::string text)
+bool CommandManager::ExecuteCommand(Base *object, unsigned int type, std::string text)
 {
-   return(Instance.InExecuteCommand(object,type,text));
+   return(Instance.InExecuteCommand(object, type, text));
 }
 
-bool CommandManager::ExecuteCommandConst(const Base *object,unsigned int type,std::string text)
+bool CommandManager::ExecuteCommandConst(const Base *object, unsigned int type, std::string text)
 {
    return(Instance.InExecuteCommandConst(object,type,text));
 }
@@ -76,16 +76,16 @@ const CommandManager *CommandManager::GetInstance()
 void CommandManager::InClearCommand(void)
 {
    CommandHT::iterator it;
-   for(it=CommandList.begin();it!=CommandList.end();++it)
+   for(it=CommandList.begin(); it != CommandList.end(); ++it)
    {
       if( it->second )
          it->second->Delete();
    }
 }
 
-void CommandManager::InSetCommand(const Base *object,unsigned int type,Command *command)
+void CommandManager::InSetCommand(const Base *object, unsigned int type, Command *command)
 {
-   CommandKey key = CommandKey(object,type);
+   CommandKey key = CommandKey(object, type);
    Command *cmd = CommandList[key];
    if( cmd != command )
    {
@@ -93,7 +93,7 @@ void CommandManager::InSetCommand(const Base *object,unsigned int type,Command *
          cmd->Unregister();
       if( command )
       {
-         CommandList[key]=command;
+         CommandList[key] = command;
          command->Register();
       }
       else

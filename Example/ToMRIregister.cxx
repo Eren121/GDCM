@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToMRIregister.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/10/23 15:51:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/03/23 15:01:48 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmDebug.h"
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
+#include "gdcmDataEntry.h"
 #include "gdcmArgMgr.h"
 #include <iostream>
 #include <sstream>
@@ -210,6 +211,8 @@ int main(int argc, char *argv[])
          
    // For all the Single SerieUID Files Sets of the gdcm::Serie
    gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+   
+   char numero[5];
    while (l)
    {   
       nbFiles = l->size() ;
@@ -230,7 +233,10 @@ int main(int argc, char *argv[])
          xcm = s->SplitOnPosition(l);
     
          //int sliceNumber = 0; 
-
+         
+         float position =0.0;
+         char charPosition[10];
+         
          for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
                                                   i != xcm.end();
                                                 ++i)
@@ -239,7 +245,10 @@ int main(int argc, char *argv[])
              std::cout << "[" << (*i).first << "]" << std::endl;
    
             s->OrderFileList((*i).second);  // sort the current XCoherent Fileset
-
+    
+            position = position + 1.0;
+            sprintf(charPosition, "%f", position);
+            
             //int imageNumber = 0;    
             for ( gdcm::FileList::iterator it =  ((*i).second)->begin();
                                            it != ((*i).second)->end();
@@ -253,6 +262,14 @@ int main(int argc, char *argv[])
                0020 0012 IS 1 Acquisition Number
                0020 0013 IS 1 Instance Number
            */
+
+           /*
+            Sure it needs ACR-NEMA elements : Study ID                20, 10 ?
+                                              Image Number            20, 12 ?
+                                              Location ('atof-able') -> 20, 50 ?    
+           */     
+            (*it)->InsertEntryString(charPosition,0x0020,0x0050, "DS");
+   
            
             (*it)->InsertEntryString("0",0x0008,0x0000, "UL"); // Needs to be present (actual length doesn't matter !)    
 
@@ -260,17 +277,24 @@ int main(int argc, char *argv[])
             str << serieNumber;
             (*it)->InsertEntryString(str.str(),0x0020,0x0011, "IS"); // Series Number
 
+           /*
             str.str("");
             str << imageNumber;
+            (*it)->InsertEntryString(str.str(),0x0020,0x0012, "IS"); // Acquisition Number
             (*it)->InsertEntryString(str.str(),0x0020,0x0013, "IS"); // Instance Number
+           */
    
+   sprintf(numero, "%04d", imageNumber);
+   (*it)->InsertEntryString(numero,0x0020,0x0012, "IS"); // Acquisition Number   
+   (*it)->InsertEntryString(numero,0x0020,0x0013, "IS"); // Instance Number
+ 
             // Load the pixels in RAM.    
       
                fh = gdcm::FileHelper::New(*it);     
                uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
                if (!imageData)
                   std::cout << "fail to read [" << (*it)->GetFileName() << std::endl;
-               fh->SetWriteTypeToACR();  
+               fh->SetWriteTypeToAcr();  
                fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
     
                // forge the file name
@@ -282,10 +306,24 @@ int main(int argc, char *argv[])
                sprintf(fullWriteFilename, "%s%c%04d-%04d-%04d.dcm", 
                                       dirOut, gdcm::GDCM_FILESEPARATOR,
                                       serieNumber, sliceNumber, imageNumber);
-               if (verbose)
-                  std::cout << fullFilename << " -> " << fullWriteFilename << std::endl;
 
+               if (verbose)
+               {
+                 // show [sliceLocation 0x0020,1041 (if any)] old name, -> newname
+                 std::string strSliceLocation;
+                 /*  
+                 gdcm::DataEntry e = (*it)->GetDataEntry(0x0020,0x1041);
+                 if (e)
+                    strSliceLocation = e->GetString();
+                 else
+                    strSliceLocation = "";
+                 */ 
+                  strSliceLocation = (*it)->GetDataEntry(0x0020,0x1041)->GetString();   
+                  std::cout <<strSliceLocation << ": " << fullFilename << " -> " << fullWriteFilename << std::endl;
+               }
                // Write it, now
+       
+               fh->SetWriteTypeToAcrLibido();
        
                if (!fh->Write(fullWriteFilename))
                {

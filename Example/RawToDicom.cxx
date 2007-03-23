@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/10/11 15:43:36 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/03/23 15:01:47 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -13,7 +13,7 @@
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-                                                                                
+                                      
 =========================================================================*/
 
 /**
@@ -38,10 +38,10 @@ void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize)
    if ( pixelSize == 2 )
    {
       uint16_t *im16 = (uint16_t*)Raw;
-            for( i = 0; i < RawSize / 2; i++ )
-            {
-               im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
-            }     
+      for( i = 0; i < RawSize / 2; i++ )
+      {
+         im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
+      }     
    }
    else if ( pixelSize == 4 )
    {
@@ -50,13 +50,13 @@ void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize)
       uint16_t low;
       uint32_t *im32 = (uint32_t*)Raw;
 
-            for( i = 0; i < RawSize / 4; i++ )
-            {
-               low     = im32[i] & 0x0000ffff; // 3412
-               high    = im32[i] >> 16;
-               s32     = low;
-               im32[i] = ( s32 << 16 ) | high;
-            }
+      for( i = 0; i < RawSize / 4; i++ )
+      {
+         low     = im32[i] & 0x0000ffff; // 3412
+         high    = im32[i] >> 16;
+         s32     = low;
+         im32[i] = ( s32 << 16 ) | high;
+      }
       
    }
 }

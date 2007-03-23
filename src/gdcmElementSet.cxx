@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/10/23 15:45:19 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2007/03/23 15:05:11 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
        if ( (i->second)->GetElement() != 0x0000 
            || 
             (  (i->second)->GetGroup() == 0x0002 
-             ||( filetype == ACR  && (i->second)->GetGroup() == 0x0008 ) )
+             ||( (filetype == ACR || filetype == ACR_LIBIDO ) && (i->second)->GetGroup() == 0x0008 ) )
         )
        {
              i->second->WriteContent(fp, filetype);

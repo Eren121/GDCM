@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:19:25 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/03/23 15:05:10 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ class Dict;
 class GDCM_EXPORT Global
 {
 friend class DictSet; // to allow setting DefaultPubDict without 
-                      // providing any body an accesor !
+                      // providing anybody an accesor !
 public:
    Global();
    ~Global();

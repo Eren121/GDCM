@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWriteExtended.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:56:29 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/03/23 15:01:47 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences                  ",
    "        rgb      : user wants to transform LUT (if any) to RGB pixels   ",
-   "        debug    : user wants to run the program in 'debug mode'        ",
+   "        debug    : developper wants to run the program in 'debug mode'  ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
@@ -90,6 +90,34 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
  
+ 
+ 
+ 
+ // ======================================================================= 
+   bool fail = false;
+      
+   int *boundRoiVal;
+   bool roi = false; 
+   if (am->ArgMgrDefined("roi"))
+   {
+      int nbRoiBound;
+      boundRoiVal = am->ArgMgrGetListOfInt("roi", &nbRoiBound);
+
+      if (nbRoiBound !=4)
+      {
+        std::cout << "Illegal number of 'ROI' boundary values (expected : 4, found:" 
+                  << nbRoiBound << "); 'ROI' ignored" << std::endl;
+        fail = true;
+      }
+      else
+        roi = true;   
+   }
+  
+   int beg = am->ArgMgrGetInt("firstFrame",0);
+   int end = am->ArgMgrGetInt("lastFrame",0);
+ // =======================================================================
+ 
+ 
    // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -118,29 +146,9 @@ int main(int argc, char *argv[])
        f->Delete();
        return 0;
    }
-   
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
-   void *imageData; 
-   int dataSize;
-  
-   if (rgb)
-   {
-      dataSize  = fh->GetImageDataSize();
-      imageData = fh->GetImageData(); // somewhat important... can't remember
-      fh->SetWriteModeToRGB();
-   }
-   else
-   {
-      dataSize  = fh->GetImageDataRawSize();
-      imageData = fh->GetImageDataRaw();// somewhat important... can't remember
-      fh->SetWriteModeToRaw();
-   }
 
-   if ( imageData == 0 ) // to avoid warning
-   {
-      std::cout << "Was unable to read pixels " << std::endl;
-   }
-   std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
+
+   //std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
    nX=f->GetXSize();
@@ -165,6 +173,87 @@ int main(int argc, char *argv[])
    transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
              << std::endl;
+
+
+   
+   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+   void *imageData; 
+   int dataSize;
+ 
+ 
+  // ======================================================================= 
+    int subImDimX = nX;
+    int subImDimY = nY;
+    
+
+    if (roi)
+    {  
+    std::cout << " " << boundRoiVal[0] << " " <<  boundRoiVal[1] << " " << boundRoiVal[2] << " " <<
+     boundRoiVal[3] <<std::endl;
+      if (boundRoiVal[0]<0 || boundRoiVal[0]>=nX)
+      { 
+         std::cout << "xBegin out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundRoiVal[1]<0 || boundRoiVal[1]>=nX)
+      { 
+         std::cout << "xEnd out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundRoiVal[0] > boundRoiVal[1])
+      { 
+         std::cout << "xBegin greater than xEnd; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+
+      if (boundRoiVal[2]<0 || boundRoiVal[2]>=nY)
+      { 
+         std::cout << "yBegin out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundRoiVal[3]<0 || boundRoiVal[3]>=nY)
+      { 
+         std::cout << "yEnd out of bounds; 'roi' ignored" << std::endl;
+         fail = true;      
+      }
+      if (boundRoiVal[2] > boundRoiVal[3])
+      { 
+         std::cout << "yBegin greater than yEnd; 'roi' ignored" << std::endl;
+         fail = true;      
+      }  
+
+   } 
+   else
+   {
+  
+     boundRoiVal = new int(4);
+     boundRoiVal[0] = 0;
+     boundRoiVal[1] = nX-1;
+     boundRoiVal[2] = 0;
+     boundRoiVal[3] = nY-1;  
+  }
+
+   subImDimX = boundRoiVal[1]-boundRoiVal[0]+1;     
+   subImDimY = boundRoiVal[3]-boundRoiVal[2]+1;  
+    
+   // =======================================================================  
+   if (rgb)
+   {
+      dataSize  = fh->GetImageDataSize();
+      imageData = fh->GetImageData(); // somewhat important... can't remember
+      fh->SetWriteModeToRGB();
+   }
+   else
+   {
+      dataSize  = fh->GetImageDataRawSize();
+      imageData = fh->GetImageDataRaw();// somewhat important... can't remember
+      fh->SetWriteModeToRaw();
+   }
+
+   if ( imageData == 0 ) // to avoid warning
+   {
+      std::cout << "Was unable to read pixels " << std::endl;
+   }
 
 
    // We trust user. (just an example; *never* trust an user !)  
