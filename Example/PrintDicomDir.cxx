@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 14:57:19 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2007/03/23 16:03:31 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -261,9 +261,9 @@ int main(int argc, char* argv[])
                   pr = se->GetFirstPrivate();
                   while ( pr ) 
                   { // on degouline les 'Privates' de cette serie
-                     std::cout << "--- --- --- "<< " PRIVATE Ref. File ID :[" << im->GetEntryString(0x0004, 0x1500) 
+                     std::cout << "--- --- --- "<< " PRIVATE Ref. File ID :[" << pr->GetEntryString(0x0004, 0x1500) 
                                << "]" << std::endl; // File name (Referenced File ID)
-                     im = se->GetNextPrivate();   
+                     pr = se->GetNextPrivate();   
                   }
  
                   se = st->GetNextSerie();   
