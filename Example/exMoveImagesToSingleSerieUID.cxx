@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exMoveImagesToSingleSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 14:59:58 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/03/27 11:38:02 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -123,11 +123,11 @@ int main(int argc, char *argv[])
    const char *dirIn  = am->ArgMgrGetString("dirin");
    const char *dirOut  = am->ArgMgrGetString("dirout");
    
-   bool userDefinedStudy = am->ArgMgrDefined("studyUID");
+   int userDefinedStudy = am->ArgMgrDefined("studyUID");
    const char *studyUID  = am->ArgMgrGetString("studyUID");
 
 // not described *on purpose* in the Usage ! 
-   bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
+   int userDefinedSerie = am->ArgMgrDefined("serieUID");   
    const char *serieUID  = am->ArgMgrGetString("serieUID");      
  
    int loadMode = gdcm::LD_ALL;
@@ -309,4 +309,5 @@ int main(int argc, char *argv[])
       fh->Delete();
       f->Delete();
    }
+   return 1;
 }                         
