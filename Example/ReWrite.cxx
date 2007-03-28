@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 14:59:58 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2007/03/28 07:56:12 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences                  ",
    "        rgb      : user wants to tranform LUT (if any) to RGB pixels    ",
+   "        warning  : developper wants to run the program in 'warning mode'",   
    "        debug    : developper wants to run the program in 'debug mode'  ",
    FINISH_USAGE
 
@@ -89,7 +90,10 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       gdcm::Debug::DebugOn();
-      
+
+   if (am->ArgMgrDefined("warning"))
+      gdcm::Debug::WarningOn();
+            
    bool fail = false;
    int *boundVal;
    int ruboutVal;
@@ -321,9 +325,9 @@ int main(int argc, char *argv[])
   if (roi || beg != -1 || end != -1)
   {  
      if (beg == -1)
-      beg = 0;  
+        beg = 0;  
      if (end == -1)
-      end = nZ-1;
+        end = nZ-1;
      
      std::ostringstream str;
      
@@ -344,15 +348,15 @@ int main(int argc, char *argv[])
  
      int lineOffset = roiBoundVal[0]*pixelSize * numberOfScalarComponents;
      
-     for (unsigned int frameNb=beg, frameCount=0; frameNb<=end; frameNb++, frameCount++)
+     for (int frameNb=beg, frameCount=0; frameNb<=end; frameNb++, frameCount++)
      { 
-         for (unsigned int lineNb=roiBoundVal[2], lineCount=0; lineNb<=roiBoundVal[3]; lineNb++, lineCount++)
-         {  
+        for (int lineNb=roiBoundVal[2], lineCount=0; lineNb<=roiBoundVal[3]; lineNb++, lineCount++)
+        {  
             /// \todo increment data pointer, don't multiply so much!
             memcpy( (void *)(destCopy + frameCount*lgrSubFrame + lineCount*lgrSubLine), 
                     (void *)(srcCopy  + frameNb*frameSize + lineNb*lineSize + lineOffset ), 
                     lgrSubLine);
-         }        
+        }        
      }
  
     // Set the image size
@@ -441,3 +445,4 @@ int main(int argc, char *argv[])
    return 0;
 }
 
+ 
