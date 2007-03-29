@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/15 21:28:37 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/03/29 13:52:16 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -124,14 +124,14 @@ int main(int argc, char *argv[])
    "      reverse    : user wants to sort the images reverse order            ",
    "      mirror     : user wants to 'mirror' the images    | just some simple",
    "      upsidedown : user wants to 'upsidedown' the images| examples of user",
-   "                                                        | definedfunctions",
+   "                                                        | suppliedfunction",
    "      check      : user wants to force more coherence checking            ",
    "      order=     : group1-elem1,group2-elem2,... (in hexa, no space)      ",
    "                   if we want to use them as a sort criterium             ",
    "                   Right now : ValEntries only -just an example-          ",
    "        or                                                                ",
    "      order=     : order=name if we want to sort on file name (why not ?) ",
-   "      debug      : user wants to run the program in 'debug mode'          ",
+   "      debug      : developper wants to run the program in 'debug mode'    ",
    FINISH_USAGE
 
 
