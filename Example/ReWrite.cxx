@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/28 07:56:12 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/03/29 10:50:14 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
    } 
    else
    {  
-     roiBoundVal = new int(4);
+     roiBoundVal = new int[4];
      roiBoundVal[0] = 0;
      roiBoundVal[1] = nX-1;
      roiBoundVal[2] = 0;
