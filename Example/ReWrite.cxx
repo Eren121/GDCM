@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/29 10:50:14 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2007/03/29 13:49:32 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
    "       [mode=write mode] [noshadow] [noseq][debug]                      ",
    "  --> The following line to 'rubout' a burnt-in Patient name            ",
    "       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]         ",
-   "  --> The 2 following lines, to extract a sub image withon some frames  ",
+   "  --> The 2 following lines, to extract a sub image within some frames  ",
    "       [ROI=xBegin,xEnd,yBegin,yEnd]                                    ",
    "       [firstframe=beg] [lastframe=end]                                 ", 
    "                                                                        ",
