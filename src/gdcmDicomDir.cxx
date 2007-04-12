@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:30:15 $
-  Version:   $Revision: 1.190 $
+  Date:      $Date: 2007/04/12 10:43:42 $
+  Version:   $Revision: 1.191 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,7 +127,7 @@ DicomDir::DicomDir()
 {
    Initialize();  // sets all private fields to NULL
    ParseDir = false;
-   NewMeta();
+   // NewMeta();
 }
 
 //#ifndef GDCM_LEGACY_REMOVE
@@ -152,7 +152,7 @@ DicomDir::DicomDir(std::string const &fileName, bool parseDir ):
    // At this step, Document constructor is already executed,
    // whatever user passed (either a root directory or a DICOMDIR)
    // and whatever the value of parseDir was.
-   // (nothing is cheked in Document constructor, to avoid overhead)
+   // (nothing is checked in Document constructor, to avoid overhead)
 
    ParseDir = parseDir;
    SetLoadMode (LD_ALL); // concerns only dicom files
@@ -251,7 +251,10 @@ bool DicomDir::DoTheLoadingJob( )
          return false;
       }
       else
+      {
+         NewMeta();
          CreateDicomDir();
+      }
    }
    else
    {
@@ -315,8 +318,9 @@ bool DicomDir::IsReadable()
 DicomDirMeta *DicomDir::NewMeta()
 {
    if ( MetaElems )
+   {
       MetaElems->Delete();
-
+   }
    DocEntry *entry = GetFirstEntry();
    if ( entry )
    { 
@@ -654,7 +658,7 @@ void DicomDir::CreateDicomDir()
 
       if ( v == "IMAGE " ) 
       {
-         si = DicomDirImage::New(true);
+         si = DicomDirImage::New(true); // true = empty
          if ( !AddImageToEnd( static_cast<DicomDirImage *>(si)) )
          {
             si->Delete();
@@ -664,7 +668,7 @@ void DicomDir::CreateDicomDir()
       }
       else if ( v == "SERIES" )
       {
-         si = DicomDirSerie::New(true);
+         si = DicomDirSerie::New(true);  // true = empty
          if ( !AddSerieToEnd( static_cast<DicomDirSerie *>(si)) )
          {
             si->Delete();
@@ -674,7 +678,7 @@ void DicomDir::CreateDicomDir()
       }
       else if ( v == "VISIT " )
       {
-         si = DicomDirVisit::New(true);
+         si = DicomDirVisit::New(true);  // true = empty
          if ( !AddVisitToEnd( static_cast<DicomDirVisit *>(si)) )
          {
             si->Delete();
@@ -684,7 +688,7 @@ void DicomDir::CreateDicomDir()
       }
       else if ( v == "STUDY " )
       {
-         si = DicomDirStudy::New(true);
+         si = DicomDirStudy::New(true);  // true = empty
          if ( !AddStudyToEnd( static_cast<DicomDirStudy *>(si)) )
          {
             si->Delete();
@@ -694,7 +698,7 @@ void DicomDir::CreateDicomDir()
       }
       else if ( v == "PATIENT " )
       {
-         si = DicomDirPatient::New(true);
+         si = DicomDirPatient::New(true);  // true = empty
          if ( !AddPatientToEnd( static_cast<DicomDirPatient *>(si)) )
          {
             si->Delete();
@@ -703,14 +707,14 @@ void DicomDir::CreateDicomDir()
          }
       }
       /// \to do : deal with PRIVATE (not so easy, since PRIVATE appears 
-      ///                           at defferent levels ?!? )
+      ///                           at different levels ?!? )
       
       else if ( v == "PRIVATE " ) // for SIEMENS 'CSA Non Image'      
       {
       
          gdcmWarningMacro( " -------------------------------------------"
               << "a PRIVATE SQItem was found : " << v);
-         si = DicomDirPrivate::New(true);
+         si = DicomDirPrivate::New(true);  // true = empty
          if ( !AddPrivateToEnd( static_cast<DicomDirPrivate *>(si)) )
          {
             si->Delete();
@@ -940,7 +944,6 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    DataEntry *entry;
    std::string val;
    SQItem *si;
-
    switch( type )
    {
       case GDCM_DICOMDIR_IMAGE:
@@ -979,7 +982,7 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
             gdcmErrorMacro( "Add PatientToEnd failed");
          }
          break;
-      case GDCM_DICOMDIR_META:
+      case GDCM_DICOMDIR_META:  // never used ?!? --> Done within DoTheLoadingJob
          if ( MetaElems )
          {
             MetaElems->Delete();
@@ -1009,10 +1012,8 @@ void DicomDir::SetElement(std::string const &path, DicomDirType type,
    {
       tmpGr     = it->Group;
       tmpEl     = it->Elem;
-      //dictEntry = GetPubDict()->GetEntry(tmpGr, tmpEl);
-      //entry     = DataEntry::New( dictEntry );
        
-      entry     = DataEntry::New(tmpGr, tmpEl, GDCM_VRUNKNOWN); /// \todo : modify dicomelements file, to store VR
+      entry     = DataEntry::New(tmpGr, tmpEl, it->VR); // dicomelements file was modified, to store VR
       entry->SetOffset(0); // just to avoid further missprinting
 
       if ( header )
