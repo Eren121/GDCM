@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:05:11 $
-  Version:   $Revision: 1.328 $
+  Date:      $Date: 2007/04/12 13:22:49 $
+  Version:   $Revision: 1.329 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2033,7 +2033,7 @@ void File::ComputeJPEGFragmentInfo()
  *          is modified to point after the tag.
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElem) the internal file pointer
- *          \ref Document::Fp is restored to it's original position.
+ *          \ref Document::Fp is restored to its original position.
  * @param   testGroup The expected group   of the tag.
  * @param   testElem  The expected Element of the tag.
  * @return  True on success, false otherwise.
@@ -2085,10 +2085,10 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
  *          is placed at the beginning of a tag (TestGroup, TestElement),
  *          read the length associated to the Tag.
  * \warning On success the internal file pointer \ref Document::Fp
- *          is modified to point after the tag and it's length.
+ *          is modified to point after the tag and its length.
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElement) the internal file pointer
- *          \ref Document::Fp is restored to it's original position.
+ *          \ref Document::Fp is restored to its original position.
  * @param   testGroup The expected Group   of the tag.
  * @param   testElem  The expected Element of the tag.
  * @return  On success returns the length associated to the tag. On failure
@@ -2129,7 +2129,7 @@ void File::ReadEncapsulatedBasicOffsetTable()
    // When present, read the basic offset table itself.
    // Notes: - since the presence of this basic offset table is optional
    //          we can't rely on it for the implementation, and we will simply
-   //          trash it's content (when present).
+   //          trash its content (when present).
    //        - still, when present, we could add some further checks on the
    //          lengths, but we won't bother with such fuses for the time being.
    if ( itemLength != 0 )

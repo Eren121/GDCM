@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2006/10/18 13:40:18 $
-  Version:   $Revision: 1.110 $
+  Date:      $Date: 2007/04/12 13:22:49 $
+  Version:   $Revision: 1.111 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -230,8 +230,8 @@ bool FileHelper::Load()
 }
 
 /**
- * \brief   Accesses an existing DataEntry through it's (group, element) 
- *          and modifies it's content with the given value.
+ * \brief   Accesses an existing DataEntry through its (group, element) 
+ *          and modifies its content with the given value.
  * @param   content new value (string) to substitute with
  * @param   group  group number of the Dicom Element to modify
  * @param   elem element number of the Dicom Element to modify
@@ -245,8 +245,8 @@ bool FileHelper::SetEntryString(std::string const &content,
 
 
 /**
- * \brief   Accesses an existing DataEntry through it's (group, element) 
- *          and modifies it's content with the given value.
+ * \brief   Accesses an existing DataEntry through its (group, element) 
+ *          and modifies its content with the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param   lgth new value length
  * @param   group  group number of the Dicom Element to modify

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:03:26 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2007/04/12 13:22:49 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,7 +127,7 @@ SeqEntry *DocEntrySet::GetSeqEntry(uint16_t group, uint16_t elem)
 
 /**
  * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          through it's (group, element) and modifies it's content with
+ *          through its (group, element) and modifies its content with
  *          the given value.
  * @param   content new value (string) to substitute with
  * @param   group  group number of the Dicom Element to modify
@@ -148,7 +148,7 @@ bool DocEntrySet::SetEntryString(std::string const &content,
 
 /**
  * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          through it's (group, element) and modifies it's content with
+ *          through its (group, element) and modifies its content with
  *          the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param   lgth new value length
@@ -171,7 +171,7 @@ bool DocEntrySet::SetEntryBinArea(uint8_t *content, int lgth,
 
 /**
  * \brief   Accesses an existing DocEntry (i.e. a Dicom Element)
- *          and modifies it's content with the given value.
+ *          and modifies its content with the given value.
  * @param  content new value (string) to substitute with
  * @param  entry Entry to be modified
  */
@@ -187,7 +187,7 @@ bool DocEntrySet::SetEntryString(std::string const &content, DataEntry *entry)
 
 /**
  * \brief   Accesses an existing DataEntry (i.e. a Dicom Element)
- *          and modifies it's content with the given value.
+ *          and modifies its content with the given value.
  * @param   content new value (void*  -> uint8_t*) to substitute with
  * @param  entry Entry to be modified 
  * @param  lgth new value length

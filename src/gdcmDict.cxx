@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/12 10:55:49 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2007/04/12 13:22:49 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -245,7 +245,7 @@ DictEntry *Dict::GetEntry(TagKey const &key)
    return it->second;
 }
 /**
- * \brief   Get the dictionary entry identified by it's "group" and "element")
+ * \brief   Get the dictionary entry identified by its "group" and "element")
  * @param   group  Group number of the searched entry.
  * @param   elem Element number of the searched entry.
  * @return  the corresponding dictionary entry when existing, NULL otherwise

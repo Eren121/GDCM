@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/08 17:06:36 $
-  Version:   $Revision: 1.356 $
+  Date:      $Date: 2007/04/12 13:22:49 $
+  Version:   $Revision: 1.357 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1853,7 +1853,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
 
    // When we have some semantics on the element we just read, and if we
    // a priori know we are dealing with an integer, then we shall be
-   // able to swap it's element value properly.
+   // able to swap its element value properly.
    if ( elem == 0 )  // This is the group length of the group
    {  
       if ( length == 4 )
