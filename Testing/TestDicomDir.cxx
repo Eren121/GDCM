@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:03:01 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/04/12 13:06:02 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -105,6 +105,9 @@ int TestDicomDir(int argc, char *argv[])
       file += "/DICOMDIR";
    }
 
+   std::cout << "DicomDir we're going to deal with : ["<< file << "]" 
+             << std::endl;
+
    dicomdir = gdcm::DicomDir::New();
    dicomdir->SetFileName(file);
    dicomdir->Load();
@@ -178,12 +181,22 @@ int TestDicomDir(int argc, char *argv[])
       pa1 = dicomdir->GetNextPatient();
    }  
 
+/*
+// this one is *really* too much verbose!
+
    std::cout << std::endl << std::endl  
              << " = DICOMDIR full content ====================================" 
              << std::endl<< std::endl;
-  // dicomdir->Print();
-
+   dicomdir->Print();
+   std::cout << std::endl << std::endl  
+             << " = end of DICOMDIR full content ====================================" 
+             << std::endl<< std::endl;
+*/
    // ------------------------- second stage ---------------------------
+ 
+ 
+ gdcm::Debug::DebugOn();
+ 
     
    // Write on disc what we read
    dicomdir->Write("NewDICOMDIR");

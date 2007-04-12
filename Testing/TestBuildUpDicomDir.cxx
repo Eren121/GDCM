@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:05:03 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/04/12 13:06:02 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
       std::cerr << "Usage: " << argv[0] << " dummy " << std::endl;
    }
    
- //gdcm::Debug::DebugOn();
+ // gdcm::Debug::DebugOn();
  
    bool errorFound = false; 
    gdcm::DicomDir *dcmdir;
@@ -49,6 +49,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    dcmdir = gdcm::DicomDir::New();
 
    gdcm::DicomDirPatient *p1;
+   
    // --- Forget these 4 lines :
    // just to improve test coverage.
    p1=dcmdir->GetFirstPatient();
@@ -116,7 +117,6 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    // Let's create and add a Image for this Serie
    s1111 = s111->NewImage();
    s1111->SetEntryString("imageFileName1111",0x0004,0x1500);
-
    gdcm::DicomDirImage *s1112 = s111->NewImage();
    s1112->SetEntryString("imageFileName1112",0x0004,0x1500);
 
@@ -161,11 +161,23 @@ int TestBuildUpDicomDir(int argc, char *argv[])
    // Print
    std::cout << "Test/BuildUpDicomDir: Test Print of patients\n";
    p1->Print();
-   std::cout << "Test/BuildUpDicomDir: -------------------\n";
+   std::cout << "Test/BuildUpDicomDir: end of P1-------------------\n";
    p2->Print();
-   std::cout << "Test/BuildUpDicomDir: -------------------\n";
+   std::cout << "Test/BuildUpDicomDir: end of P2-------------------\n";
    p3->Print();
+   std::cout << "Test/BuildUpDicomDir: end of P3-------------------\n";   
    std::cout << "Test/BuildUpDicomDir: Test Print of patients ended\n";
+   
+ 
+ // Let's loop on Patients.  
+   gdcm::DicomDirPatient *p;
+   p=dcmdir->GetFirstPatient();
+   while (p) {
+      std::cout << "one more patient\n";
+      p->Print();
+      p=dcmdir->GetNextPatient();
+   }
+
   
    if( !dcmdir->IsReadable() )
    {
