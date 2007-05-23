@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007/05/23 15:30:29 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -936,7 +936,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
         {
         const ExRule &r = *it2;
         std::string s = inFile->GetEntryString( r.group, r.elem );
-        if( s == GDCM_NAME_SPACE::GDCM_UNFOUND )
+        if( s == GDCM_UNFOUND )
           {
           s = "";
           }
@@ -965,7 +965,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
   else // Could not open inFile
     {
     gdcmWarningMacro("Could not parse series info.");
-    std::string id = GDCM_NAME_SPACE::GDCM_UNFOUND;
+    std::string id = GDCM_UNFOUND;
     return id;
     }
 }
