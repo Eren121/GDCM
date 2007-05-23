@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:30:15 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2007/05/23 14:01:44 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,19 @@ DicomDirImage *DicomDirSerie::NewImage()
 }
 
 /**
- * \brief  Remove all 'Images' in the serie 
+ * \brief   adds a new Private (with the basic elements) to a partially created 
+ *          DICOMDIR
+ */
+ 
+DicomDirPrivate *DicomDirSerie::NewPrivate()
+{
+   DicomDirPrivate *dd = DicomDirPrivate::New();
+   Privates.push_back(dd);
+   return dd;   
+}
+
+/**
+ * \brief  Remove all 'Privates'  in the serie 
  */
 void DicomDirSerie::ClearPrivate()
 {
@@ -103,7 +115,7 @@ void DicomDirSerie::ClearPrivate()
 
 
 /**
- * \brief  Remove all 'Privates' in the serie 
+ * \brief  Remove all 'Images' in the serie 
  */
 void DicomDirSerie::ClearImage()
 {
