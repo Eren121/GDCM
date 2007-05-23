@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 08:48:15 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 #include <iostream>
 #include <typeinfo>
 
-class CommandTest : public gdcm::Command
+class CommandTest : public GDCM_NAME_SPACE::Command
 {
    gdcmTypeMacro(CommandTest);
    gdcmNewMacro(CommandTest);
@@ -46,7 +46,7 @@ private:
 };
 
 static bool fctExecuted = false;
-void CallbackTest(gdcm::CallbackCommand *cmd)
+void CallbackTest(GDCM_NAME_SPACE::CallbackCommand *cmd)
 {
    std::cout << "Test class command... for "
              << typeid(cmd->GetObject()).name()
@@ -60,31 +60,31 @@ int TestCommand(int , char *[])
 {
    int error=0;
 
-   gdcm::CallbackCommand *cbk = gdcm::CallbackCommand::New();
+   GDCM_NAME_SPACE::CallbackCommand *cbk = GDCM_NAME_SPACE::CallbackCommand::New();
    cbk->SetCallback(CallbackTest);
-   gdcm::CommandManager::SetCommand(NULL,1,cbk);
+   GDCM_NAME_SPACE::CommandManager::SetCommand(NULL,1,cbk);
    cbk->Delete();
 
    CommandTest *cmd = CommandTest::New();
-   gdcm::CommandManager::SetCommand(NULL,2,cmd);
+   GDCM_NAME_SPACE::CommandManager::SetCommand(NULL,2,cmd);
    cmd->Delete();
 
    std::cout << "Test on callback function execution\n";
-   gdcm::CommandManager::ExecuteCommand(NULL,1,"Test on callback function");
+   GDCM_NAME_SPACE::CommandManager::ExecuteCommand(NULL,1,"Test on callback function");
    if(!fctExecuted)
       std::cout<<"... Failed\n";
    error+=!fctExecuted;
    std::cout << std::endl;
 
    std::cout << "Test on command class execution\n";
-   gdcm::CommandManager::ExecuteCommand(NULL,2,"Test on command class");
+   GDCM_NAME_SPACE::CommandManager::ExecuteCommand(NULL,2,"Test on command class");
    if(!cmd->IsExecuted())
       std::cout<<"... Failed\n";
    error+=!cmd->IsExecuted();
    std::cout << std::endl;
 
    std::cout << "Test on unset command execution\n";
-   gdcm::CommandManager::ExecuteCommand(NULL,3,"Test on callback function");
+   GDCM_NAME_SPACE::CommandManager::ExecuteCommand(NULL,3,"Test on callback function");
    std::cout << std::endl;
 
    return error;

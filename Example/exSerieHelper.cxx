@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 15:55:17 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 int main(int argc, char *argv[])
 {  
-   gdcm::SerieHelper *s;
+   GDCM_NAME_SPACE::SerieHelper *s;
   
    std::string dirName; 
    if (argc > 1) 
@@ -33,15 +33,15 @@ int main(int argc, char *argv[])
    }
 
    if (argc > 2)
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
   
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
 
-   s = gdcm::SerieHelper::New();
-   s->SetLoadMode(gdcm::LD_ALL);     // Load everything for each File
-   //gdcm::TagKey t(0x0020,0x0013);
-   //s->AddRestriction(t, "340", gdcm::GDCM_LESS); // Keep only files where
+   s = GDCM_NAME_SPACE::SerieHelper::New();
+   s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);     // Load everything for each File
+   //GDCM_NAME_SPACE::TagKey t(0x0020,0x0013);
+   //s->AddRestriction(t, "340", GDCM_NAME_SPACE::GDCM_LESS); // Keep only files where
                                               // restriction is true
    s->SetDirectory(dirName, true); // true : recursive exploration
 
@@ -53,8 +53,8 @@ int main(int argc, char *argv[])
              << std::endl;
 
    int nbFiles;
-   // For all the Single SerieUID Files Sets of the gdcm::Serie
-   gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+   // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
+   GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
    while (l)
    { 
       nbFiles = l->size() ;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
    std::string fileName; 
    l = s->GetFirstSingleSerieUIDFileSet();
-   for (std::vector<gdcm::File* >::iterator it =  l->begin();
+   for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
                                             it != l->end();
                                           ++it)
    {

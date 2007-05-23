@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:24:21 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 /**
  * \brief *very* internal class . Shouldn't appear here !

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandPy.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 08:32:40 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/05/23 14:18:07 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmCommand.h"
 #include "Python.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 /**

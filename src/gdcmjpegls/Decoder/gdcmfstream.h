@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmfstream.h,v $
   Language:  C++
-  Date:      $Date: 2005/06/13 00:22:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/05/23 14:18:14 $
+  Version:   $Revision: 1.2 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 #include <fstream>
 #include <list>
 
-namespace gdcm {
+namespace GDCM_NAME_SPACE {
 
 class ifstream : public std::ifstream
 {

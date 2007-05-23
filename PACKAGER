@@ -35,7 +35,7 @@ Here is the checklist when freezing a version of gdcm:
        - Binary distribution:
          cd $GDCMHOME
          make clean
-            [ or you migth get some complains about the function 
+            [ or you might get some complains about the function 
               PyVTKClass_vtkGdcmReaderNew being multiply defined: this is
               because of the loose definition of vtkSources in setup.py
               in which the usage of the glob function will produce a link

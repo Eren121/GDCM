@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/07 12:22:50 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
 
    // ----- Initialize Arguments Manager ------   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -79,18 +79,18 @@ int main(int argc, char *argv[])
    int verbose  = am->ArgMgrDefined("verbose");
    
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
  
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
 
@@ -113,11 +113,11 @@ int main(int argc, char *argv[])
 
    // ----- Begin Processing -----
 
-   gdcm::DicomDir *dcmdir;
+   GDCM_NAME_SPACE::DicomDir *dcmdir;
 
    // we ask for Directory parsing
 
-   dcmdir = gdcm::DicomDir::New( );
+   dcmdir = GDCM_NAME_SPACE::DicomDir::New( );
    dcmdir->SetLoadMode(loadMode);
    dcmdir->SetDirectoryName(dirName);
    dcmdir->Load();
@@ -135,22 +135,22 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   gdcm::DicomDirPatient *pa;
-   gdcm::DicomDirStudy *st;
-   gdcm::DicomDirSerie *se;
-   gdcm::DicomDirImage *im;
+   GDCM_NAME_SPACE::DicomDirPatient *pa;
+   GDCM_NAME_SPACE::DicomDirStudy *st;
+   GDCM_NAME_SPACE::DicomDirSerie *se;
+   GDCM_NAME_SPACE::DicomDirImage *im;
 
    std::string codedName; 
    std::string fullFileName;
    std::string patName;
       
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
   
    pa = dcmdir->GetFirstPatient(); 
    while ( pa )
    {  // on degouline les PATIENT du DICOMDIR
       patName = pa->GetEntryString(0x0010, 0x0010);
-      codedName = "g^" + gdcm::Util::ConvertToMD5(patName);
+      codedName = "g^" + GDCM_NAME_SPACE::Util::ConvertToMD5(patName);
       if (verbose)
          std::cout << patName << " --> " << codedName << std::endl;         
       st = pa->GetFirstStudy();
@@ -163,12 +163,12 @@ int main(int argc, char *argv[])
             while ( im ) 
             { // on degouline les Images de cette serie       
                fullFileName = dirName;
-               fullFileName +=  gdcm::GDCM_FILESEPARATOR;
+               fullFileName +=  GDCM_NAME_SPACE::GDCM_FILESEPARATOR;
                fullFileName += im->GetEntryString(0x0004, 0x1500);
                if (verbose)
                   std::cout << "FileName " << fullFileName << std::endl;
 
-               f = gdcm::File::New( );
+               f = GDCM_NAME_SPACE::File::New( );
                f->SetLoadMode(loadMode);
                f->SetFileName( fullFileName );
                if ( !f->Load() )
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
               // 
               //      Overwrite the file
               // 
-              // The gdcm::File remains untouched in memory    
+              // The GDCM_NAME_SPACE::File remains untouched in memory    
    
               f->AnonymizeNoLoad();     
 

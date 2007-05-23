@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -76,12 +76,12 @@ inline size_t PrintCurveData(DataValueRepresentation* data, unsigned short numPt
  * V 5004|0020 [CS]                  [Type of Data] [PHYSIO]
  * V 5004|0022 [LO]             [Curve Description] []
  * V 5004|0103 [US]     [Data Value Representation] [0] x(0)
- * B 5004|3000 [OW]                    [Curve Data] [gdcm::Binary data loaded;length = 1938]
+ * B 5004|3000 [OW]                    [Curve Data] [GDCM_NAME_SPACE::Binary data loaded;length = 1938]
  */
  
 int main(int argc, char *argv[])
 {  
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
  
    std::cout << "------------------------------------------------" << std::endl;
    std::cout << "Gets the 'Curve Data' from a full gdcm-readable DICOM " << std::endl;
@@ -101,13 +101,13 @@ int main(int argc, char *argv[])
 //   Read the input image.
 // ============================================================
 
-   f = gdcm::File::New( );
+   f = GDCM_NAME_SPACE::File::New( );
 
-   f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
+   f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
    bool res = f->Load();  
 
-   if( gdcm::Debug::GetDebugFlag() )
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
    {
       std::cout << "---------------------------------------------" << std::endl;
       f->Print();
@@ -126,9 +126,9 @@ int main(int argc, char *argv[])
 //   Check whether image contains Overlays ACR-NEMA style.
 // ============================================================
 
-   //* B 5004|3000 [OW]                    [Curve Data] [gdcm::Binary data loaded;length = 1938]
+   //* B 5004|3000 [OW]                    [Curve Data] [GDCM_NAME_SPACE::Binary data loaded;length = 1938]
    std::string curve_data_str = f->GetEntryString(0x5004, 0x3000);
-   if (curve_data_str == gdcm::GDCM_UNFOUND)
+   if (curve_data_str == GDCM_NAME_SPACE::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Curve Data" << std::endl;
       f->Delete();
@@ -169,8 +169,8 @@ int main(int argc, char *argv[])
    convert >> data_rep;
 
 
-   gdcm::DocEntry *pCurveDataDoc = f->GetDocEntry(0x5004, 0x3000);
-   gdcm::DataEntry *pCurveData = dynamic_cast<gdcm::DataEntry *>(pCurveDataDoc);
+   GDCM_NAME_SPACE::DocEntry *pCurveDataDoc = f->GetDocEntry(0x5004, 0x3000);
+   GDCM_NAME_SPACE::DataEntry *pCurveData = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(pCurveDataDoc);
    uint8_t *curve_data = pCurveData->GetBinArea();
    
    // From Part3, C.10.2.1.2 Data value representation (p668)

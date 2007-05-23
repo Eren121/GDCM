@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/22 13:19:25 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@
 #include <map>
 #include <list>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 typedef std::map<DictKey, Dict*> DictSetHT;

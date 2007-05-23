@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/03 14:28:53 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 // Warning message level to be displayed

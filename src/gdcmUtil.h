@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:09:29 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 /**
  * \brief    Here are some utility functions, belonging to the gdcm::Util class,
@@ -149,7 +149,7 @@ private:
   ghost@aladdin.com
 */
 
-/* $Id: gdcmUtil.h,v 1.67 2006/05/31 16:09:29 jpr Exp $ */
+/* $Id: gdcmUtil.h,v 1.68 2007/05/23 14:18:11 jpr Exp $ */
 /*
   Independent implementation of MD5 (RFC 1321).
   This code implements the MD5 Algorithm defined in RFC 1321, whose

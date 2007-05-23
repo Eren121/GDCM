@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:10:19 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@
 #include <map>
 #include <stdio.h>  //for sscanf
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 
 //-----------------------------------------------------------------------------
@@ -63,8 +63,8 @@ void SerieHelper::ClearAll()
    FileList *l = GetFirstSingleSerieUIDFileSet();
    while (l)
    { 
-      // For all the gdcm::File of a File set
-      for (gdcm::FileList::iterator it  = l->begin();
+      // For all the GDCM_NAME_SPACE::File of a File set
+      for (GDCM_NAME_SPACE::FileList::iterator it  = l->begin();
                                     it != l->end(); 
                                   ++it)
       {
@@ -84,7 +84,7 @@ void SerieHelper::ClearAll()
 
 // Public
 /**
- * \brief add a gdcm::File to the Fileset corresponding to its Serie UID
+ * \brief add a GDCM_NAME_SPACE::File to the Fileset corresponding to its Serie UID
  * @param   filename Name of the file to deal with
  */
 void SerieHelper::AddFileName(std::string const &filename)
@@ -111,10 +111,10 @@ void SerieHelper::AddFileName(std::string const &filename)
 }
 
 /**
- * \brief add a gdcm::File to the first (and supposed to be unique) file set
- *        of the gdcm::SerieHelper.
+ * \brief add a GDCM_NAME_SPACE::File to the first (and supposed to be unique) file set
+ *        of the GDCM_NAME_SPACE::SerieHelper.
  * \warning : this method should be used by aware users only!
- *           Passing a gdcm::File* has the same effect than passing a file name!
+ *           Passing a GDCM_NAME_SPACE::File* has the same effect than passing a file name!
  * \todo : decide which one is wrong (the method, or the commentary)!
  *           the following comment doesn't match the method :-(
  *            User is supposed to know the files he want to deal with
@@ -126,7 +126,7 @@ void SerieHelper::AddFileName(std::string const &filename)
  *           vtkGdcmReader parsing twice the same files. 
  *           *no* coherence check is performed, but those specified
  *           by SerieHelper::AddRestriction()
- * @param   header gdcm::File* of the file to deal with
+ * @param   header GDCM_NAME_SPACE::File* of the file to deal with
  * @return  true if file was added, false if file was rejected
  */
 bool SerieHelper::AddFile(File *header)
@@ -857,7 +857,7 @@ bool SerieHelper::UserOrdering(FileList *fileList)
  */
 void SerieHelper::Print(std::ostream &os, std::string const &indent)
 {
-   // For all the Coherent File lists of the gdcm::Serie
+   // For all the Coherent File lists of the GDCM_NAME_SPACE::Serie
    SingleSerieUIDFileSetmap::iterator itl = SingleSerieUIDFileSetHT.begin();
    if ( itl == SingleSerieUIDFileSetHT.end() )
    {
@@ -918,7 +918,7 @@ void SerieHelper::CreateDefaultUniqueSeriesIdentifier()
  *        (he knows more than we do about his images!)
  *        ex : in tagging series, the only pertnent tag is
  *        0018|1312 [In-plane Phase Encoding Direction] value : ROW/COLUMN
- * @param inFile gdcm::File we want to build a Serie Identifier for.
+ * @param inFile GDCM_NAME_SPACE::File we want to build a Serie Identifier for.
  * @return the SeriesIdentifier
  */
 std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
@@ -936,7 +936,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
         {
         const ExRule &r = *it2;
         std::string s = inFile->GetEntryString( r.group, r.elem );
-        if( s == gdcm::GDCM_UNFOUND )
+        if( s == GDCM_NAME_SPACE::GDCM_UNFOUND )
           {
           s = "";
           }
@@ -965,7 +965,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
   else // Could not open inFile
     {
     gdcmWarningMacro("Could not parse series info.");
-    std::string id = gdcm::GDCM_UNFOUND;
+    std::string id = GDCM_NAME_SPACE::GDCM_UNFOUND;
     return id;
     }
 }

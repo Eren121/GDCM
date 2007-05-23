@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ExtractOverlays.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/16 16:03:04 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
    
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
 
    if (argc == 1 || am->ArgMgrDefined("usage"))
    {
@@ -68,10 +68,10 @@ int main(int argc, char *argv[])
    const char *dirIn  = am->ArgMgrWantString("dirin", usage);
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    if (am->ArgMgrDefined("warning"))
-      gdcm::Debug::WarningOn();
+      GDCM_NAME_SPACE::Debug::WarningOn();
       
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
    // ======================== more checking on the params ==============
 
-   if ( ! gdcm::DirList::IsDirectory(dirIn) )
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirIn) )
    {
       std::cout << "KO : [" << dirIn << "] is not a Directory." << std::endl;
       return 0;
@@ -98,11 +98,11 @@ int main(int argc, char *argv[])
  
    char outputFileName[1024]; // Hope it's enough for a file name!
    
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
         
-   gdcm::DirList dirList(dirIn,true); // gets (recursively) the file list
-   gdcm::DirListType fileList = dirList.GetFilenames();
-   for( gdcm::DirListType::iterator it  = fileList.begin();
+   GDCM_NAME_SPACE::DirList dirList(dirIn,true); // gets (recursively) the file list
+   GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
+   for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
    {
@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
    
    //   Read the input file.
 
-   f = gdcm::File::New(  );
-   f->SetLoadMode( gdcm::LD_ALL );
+   f = GDCM_NAME_SPACE::File::New(  );
+   f->SetLoadMode( GDCM_NAME_SPACE::LD_ALL );
    f->SetFileName( it->c_str() );
    
    f->AddForceLoadElement(0x6000,0x3000);  // Overlay Data
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
    uint16_t ovlyGroup = 0x6000;
 
-   gdcm::DataEntry *e = f->GetDataEntry(ovlyGroup, 0x3000);  
+   GDCM_NAME_SPACE::DataEntry *e = f->GetDataEntry(ovlyGroup, 0x3000);  
    if (e == 0)
    {
       std::cout << " Image doesn't contain any Overlay " << std::endl;
@@ -183,8 +183,8 @@ int main(int argc, char *argv[])
    // ============================================================
    //   Write a new file
    // ============================================================
-   gdcm::File *f2;
-   f2 = gdcm::File::New(  );
+   GDCM_NAME_SPACE::File *f2;
+   f2 = GDCM_NAME_SPACE::File::New(  );
    
    char temp[256];
    
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
 
    // feel free to add any field (Dicom Data Entry) you like, here.
    // ...
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f2);
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f2);
        
    fh->SetImageData(outputData,dimXY);
    fh->WriteDcmExplVR(outputFileName);

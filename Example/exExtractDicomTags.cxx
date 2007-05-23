@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractDicomTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/09 08:34:29 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
    
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage")) 
    {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
  
    // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
 
    int loadMode = 0x0; // load everything
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 12:48:46 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include "gdcmDicomDirObject.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 class DicomDirSerie;
 class DicomDirVisit;

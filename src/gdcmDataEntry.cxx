@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/10 08:27:27 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.42 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
  #include <ctype.h>  // for isdigit
 #endif
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 #define MAX_SIZE_PRINT_ELEMENT_VALUE 0x7fffffff
@@ -726,7 +726,7 @@ void DataEntry::Print(std::ostream &os, std::string const & )
             }
             else
             {
-               s << " [gdcm::too long for print (" << cleanString.length() << ") ]";
+               s << " [GDCM_NAME_SPACE::too long for print (" << cleanString.length() << ") ]";
             }
          }
          else

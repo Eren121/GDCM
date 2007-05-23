@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2006/11/15 15:53:08 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 
 typedef std::vector<std::string> DirListType;

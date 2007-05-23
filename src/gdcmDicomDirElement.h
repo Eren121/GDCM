@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirElement.h,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:30:15 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 
 #include <list>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 
 //-----------------------------------------------------------------------------

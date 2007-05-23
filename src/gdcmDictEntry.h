@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictEntry.h,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:34 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmTagKey.h"
 #include "gdcmVRKey.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 class VRKey;

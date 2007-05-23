@@ -80,7 +80,7 @@ imageElem   0020 0052 "UI" "0"                    // Frame of Reference UID
 imageElem   0020 1041 "DS" "0.0"                  // Slice Location
 imageElem   0020 4000 "LT" ""                     // Image Comments
 imageElem   0028 0002 "US" "1"                    // Samples per Pixel
-imageElem   0028 0004 "CS" ""                    // Photometric Interpretation
+imageElem   0028 0004 "CS" ""                     // Photometric Interpretation
 imageElem   0028 0006 "US" "0"                    // Planar Configuration
 imageElem   0028 0008 "IS" "1"                    // Number of Frames
 imageElem   0028 0010 "US" "0"                    // Rows

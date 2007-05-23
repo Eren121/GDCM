@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.h,v $
   Language:  C++
-  Date:      $Date: 2006/06/08 13:37:33 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <string>
 #include <iostream>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 typedef std::string TSKey;

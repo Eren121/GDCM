@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/04/12 13:22:49 $
-  Version:   $Revision: 1.73 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.74 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
    #include <mem.h> // for memset
 #endif 
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

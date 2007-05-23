@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/04/12 13:06:03 $
-  Version:   $Revision: 1.192 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.193 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,6 +102,64 @@
 // PRIVATE
 // ENCAP DOC
 // 
+
+/*
+
+// see also : ftp://medical.nema.org/medical/dicom/final/cp343_ft.doc
+
+RELATIONSHIP BETWEEN DIRECTORY RECORDS
+
+Directory Record Type      Directory Record Types which may be included 
+                           in the next lower-level directory Entity
+
+(Root Directory Entity)    PATIENT, TOPIC, PRIVATE
+
+PATIENT                    STUDY, PRIVATE
+
+STUDY                      SERIES, VISIT, RESULTS, STUDY COMPONENT, PRIVATE
+
+SERIES                     IMAGE, OVERLAY, MODALITY LUT, VOI LUT, CURVE, 
+                           STORED PRINT, RT DOSE, RT STRUCTURE SET, RT PLAN, 
+                           RT TREAT RECORD, PRESENTATION, WAVEFORM, SR DOCUMENT,
+                            KEY OBJECT DOC, SPECTROSCOPY, RAW DATA, PRIVATE
+
+IMAGE                      PRIVATE
+OVERLAY                    PRIVATE
+MODALITY LUT               PRIVATE
+VOI LUT                    PRIVATE
+CURVE                      PRIVATE
+STORED PRINT               PRIVATE
+RT DOSE                    PRIVATE
+RT STRUCTURE SET           PRIVATE
+RT PLAN                    PRIVATE
+RT TREAT RECORD            PRIVATE
+PRESENTATION               PRIVATE
+WAVEFORM                   PRIVATE
+SR DOCUMENT                PRIVATE
+KEY OBJECT DOC             PRIVATE
+SPECTROSCOPY               PRIVATE
+RAW DATA                   PRIVATE
+
+TOPIC                      STUDY, SERIES, IMAGE, OVERLAY, MODALITY LUT, VOI LUT,
+                           CURVE, STORED PRINT, RT DOSE, RT STRUCTURE SET, 
+                           RT PLAN, RT TREAT RECORD, PRESENTATION, WAVEFORM, 
+                           SR DOCUMENT, KEY OBJECT DOC, SPECTROSCOPY, RAW DATA, 
+                           PRIVATE
+
+VISIT                      PRIVATE
+
+RESULTS                    INTERPRETATION, PRIVATE
+
+INTERPRETATION             PRIVATE
+STUDY COMPONENT            PRIVATE
+PRIVATE                    PRIVATE, (any of the above as privately defined)
+MRDR                      (Not applicable)
+
+Note :   Directory Record Types PRINT QUEUE, FILM SESSION, FILM BOX, and 
+         IMAGE BOX  were previously defined in DICOM.  They have been retired.  
+         See PS 3.3-1998.
+*/
+
 // ----------------------
 // The current gdcm version only deals with :
 //
@@ -116,7 +174,7 @@
 // Treelike structure management will have to be upgraded
 // ----------------------------------------------------------------------------
     
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -609,6 +667,7 @@ void DicomDir::CreateDicomDir()
 {
    // The SeqEntries of "Directory Record Sequence" are parsed. 
    //  When a DicomDir tag ("PATIENT", "STUDY", "SERIE", "IMAGE") is found :
+   //                    N.B. :  VISIT, PRIVATE not fully dealt with
    //  1 - we save the beginning iterator
    //  2 - we continue to parse
    //  3 - we find an other tag
@@ -726,7 +785,7 @@ void DicomDir::CreateDicomDir()
          // It was neither a 'PATIENT', nor a 'STUDY', nor a 'SERIE',
          // nor an 'IMAGE' SQItem. Skip to next item.
          gdcmWarningMacro( " -------------------------------------------"
-         << "a non PATIENT/STUDY/SERIE/IMAGE SQItem was found : "
+         << "a non PATIENT/STUDY/SERIE/IMAGE /VISIT/PRIVATE SQItem was found : "
          << v);
 
         // FIXME : deal with other item types !

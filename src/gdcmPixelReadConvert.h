@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 16:09:48 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 
 #include <fstream>
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 class File;
 class RLEFramesInfo;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 12:38:06 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 #include "gdcmVRKey.h"
 #include "gdcmFile.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE
 {
 //class File;
 class DataEntry;

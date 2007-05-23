@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/12 19:09:55 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include <stdlib.h>  // For getenv
 #include <stdio.h>   // For sprintf
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 
 //-----------------------------------------------------------------------------

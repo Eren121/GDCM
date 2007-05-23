@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/04/12 13:22:49 $
-  Version:   $Revision: 1.357 $
+  Date:      $Date: 2007/05/23 14:18:09 $
+  Version:   $Revision: 1.358 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@
    #include <mem.h> // for memset
 #endif 
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 
@@ -244,7 +244,7 @@ bool Document::DoTheLoadingDocumentJob(  )
 
    // Force Loading some more elements if user asked to.
 
-   gdcm::DocEntry *d;
+   GDCM_NAME_SPACE::DocEntry *d;
    for (ListElements::iterator it = UserForceLoadList.begin();  
                                it != UserForceLoadList.end();
                              ++it)

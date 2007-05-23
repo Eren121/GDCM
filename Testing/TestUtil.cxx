@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:25:09 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ int TestUtil(int , char *[])
    float flt;
    double dbl=1.0;
 
-   std::cout << "This is gdcm version: " << gdcm::Util::GetVersion() << std::endl;
+   std::cout << "This is gdcm version: " << GDCM_NAME_SPACE::Util::GetVersion() << std::endl;
 
    std::cout << "---------- uint16 : " << std::dec << u16 << " = 0x" 
              << std::hex << u16 << std::endl;
@@ -100,7 +100,7 @@ int TestUtil(int , char *[])
 
    // CreateCleanString
    std::string x = "a#@-bc\tdef";
-   std::string y = gdcm::Util::CreateCleanString(x);
+   std::string y = GDCM_NAME_SPACE::Util::CreateCleanString(x);
    std::cout << "Clean : [" << x <<"] --> [" << y <<"]" << std::endl;
 
 
@@ -108,12 +108,12 @@ int TestUtil(int , char *[])
    x = "abcd#@-wyz*@-lmn#@-uvw-#@ijk";
    std::cout << "in [" << x << "] " << std::endl; 
    std::cout << " - count '#@-' : " 
-             << gdcm::Util::CountSubstring(x, "#@-") << std::endl;
+             << GDCM_NAME_SPACE::Util::CountSubstring(x, "#@-") << std::endl;
 
    // Tokenize : tokens are '#', '@', '-'
    std::vector<std::string> tokens;
    std::cout << " - use tokens '#@-' :" << std::endl;
-   gdcm::Util::Tokenize (x, tokens, "#@-");
+   GDCM_NAME_SPACE::Util::Tokenize (x, tokens, "#@-");
    for (unsigned int ui=0; ui<tokens.size();ui++)
    {
       std::cout << "[" << tokens[ui] << "]" << std::endl;
@@ -121,21 +121,21 @@ int TestUtil(int , char *[])
    tokens.clear();
 
    // Time 
-   std::cout << "Time:" << gdcm::Util::GetCurrentDateTime() << std::endl;
+   std::cout << "Time:" << GDCM_NAME_SPACE::Util::GetCurrentDateTime() << std::endl;
 
    // Processor ID
    unsigned int processorID;;
-   processorID = gdcm::Util::GetCurrentProcessID();
+   processorID = GDCM_NAME_SPACE::Util::GetCurrentProcessID();
    std::cout << "Current Processor ID " <<  processorID << std::endl;
 
    // MAC Adress
-   std::cout << "Mac Address:" << gdcm::Util::GetMACAddress() << std::endl;
+   std::cout << "Mac Address:" << GDCM_NAME_SPACE::Util::GetMACAddress() << std::endl;
 
    // Unique UID test
    std::string gdcmUid;
    for (i=0; i<10; i++)
    {
-      gdcmUid = gdcm::Util::CreateUniqueUID();
+      gdcmUid = GDCM_NAME_SPACE::Util::CreateUniqueUID();
       std::cout << "Current UID for gdcm " <<  gdcmUid << std::endl;
    }
    
@@ -144,48 +144,48 @@ int TestUtil(int , char *[])
    std::string a = "MONOCHROME1";
    a += '\0';
    std::string b = "MONOCHROME1 ";
-   std::string c = gdcm::Util::DicomString("MONOCHROME1");
+   std::string c = GDCM_NAME_SPACE::Util::DicomString("MONOCHROME1");
    std::string d = "MONOCHROME1";
 
-   if( !gdcm::Util::DicomStringEqual(a,ref) ) 
+   if( !GDCM_NAME_SPACE::Util::DicomStringEqual(a,ref) ) 
       return 1;
-   if( !gdcm::Util::DicomStringEqual(b,ref) ) 
+   if( !GDCM_NAME_SPACE::Util::DicomStringEqual(b,ref) ) 
       return 1;
-   if( !gdcm::Util::DicomStringEqual(c,ref) ) 
+   if( !GDCM_NAME_SPACE::Util::DicomStringEqual(c,ref) ) 
       return 1;
-   if(  gdcm::Util::DicomStringEqual(d,ref) ) 
+   if(  GDCM_NAME_SPACE::Util::DicomStringEqual(d,ref) ) 
       return 1;
 
 // ----------------------------------------------------------
-// Let's test gdcm::Debug, now.
-    std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag() <<std::endl;
-    gdcm::Debug::SetOutputFileName ("DummyFileNameToWriteTo.txt");
+// Let's test GDCM_NAME_SPACE::Debug, now.
+    std::cout << "GetDebugFlag : " << GDCM_NAME_SPACE::Debug::GetDebugFlag() <<std::endl;
+    GDCM_NAME_SPACE::Debug::SetOutputFileName ("DummyFileNameToWriteTo.txt");
     std::cout << "We set a Debug file"   <<std::endl;
-    if ( !gdcm::Debug::GetDebugFlag() )
+    if ( !GDCM_NAME_SPACE::Debug::GetDebugFlag() )
     {
        std::cout << "Debug Flag should be TRUE... " << std::endl;
        return 1;
     }
-    std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
-    gdcm::Debug::SetDebugFlag ( false );
-    std::cout << "GetDebugFlag : " << gdcm::Debug::GetDebugFlag()<<std::endl;
-    gdcm::Debug::SetOutputFileName ("DummyFileNameToWriteTo2.txt");    
+    std::cout << "GetDebugFlag : " << GDCM_NAME_SPACE::Debug::GetDebugFlag()<<std::endl;
+    GDCM_NAME_SPACE::Debug::SetDebugFlag ( false );
+    std::cout << "GetDebugFlag : " << GDCM_NAME_SPACE::Debug::GetDebugFlag()<<std::endl;
+    GDCM_NAME_SPACE::Debug::SetOutputFileName ("DummyFileNameToWriteTo2.txt");    
 
     std::string s1;
     s1="azertyuiop";
-    std::cout << s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+    std::cout << s1 << " --> MD5 : " << GDCM_NAME_SPACE::Util::ConvertToMD5(s1)
               <<std::endl;
     s1="azertyuiom";    
-    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+    std::cout <<  s1 << " --> MD5 : " << GDCM_NAME_SPACE::Util::ConvertToMD5(s1)
               <<std::endl;
     s1="azertyuipo";
-    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+    std::cout <<  s1 << " --> MD5 : " << GDCM_NAME_SPACE::Util::ConvertToMD5(s1)
               <<std::endl;
     s1="qzertyuiop";
-    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+    std::cout <<  s1 << " --> MD5 : " << GDCM_NAME_SPACE::Util::ConvertToMD5(s1)
               <<std::endl; 
     s1="zaertyuiop";
-    std::cout <<  s1 << " --> MD5 : " << gdcm::Util::ConvertToMD5(s1)
+    std::cout <<  s1 << " --> MD5 : " << GDCM_NAME_SPACE::Util::ConvertToMD5(s1)
               <<std::endl;         
    return 0;
 }

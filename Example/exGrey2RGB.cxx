@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exGrey2RGB.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:28 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   //gdcm::Debug::DebugOn();
+   //GDCM_NAME_SPACE::Debug::DebugOn();
 
    std::string filename = argv[1];
    std::string output   = argv[2];
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
       }
    }
  
-   gdcm::FileHelper *fh = gdcm::FileHelper::New( );
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New( );
    fh->SetFileName( filename );
    fh->Load();
       

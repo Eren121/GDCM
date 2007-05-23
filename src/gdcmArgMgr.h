@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 16:01:04 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/05/23 14:18:07 $
+  Version:   $Revision: 1.13 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include <stdio.h>  // for FILE
 #include <stdlib.h> // For atof
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 
 #define ID_RFILE_TEXT        "rt"

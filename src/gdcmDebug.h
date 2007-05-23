@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:12:51 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <errno.h>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE
 {
 //-----------------------------------------------------------------------------
 class CommandManager;
@@ -48,7 +48,7 @@ class CommandManager;
  * 
  * A debugging message is only shown if the flag is on (DebugFlag)
  * This is static var and can be set at beginning of code:
- *         gdcm::Debug::SetDebugOn();
+ *         GDCM_NAME_SPACE::Debug::SetDebugOn();
  *
  * Warning  : Warns the user when some oddity occured, and we used an heuristics
  *            to bypass the trouble.
@@ -78,7 +78,7 @@ public:
    ///        (used to warn user when file contains some oddity)
    static void SetDebugFlag (bool flag);
    /// \brief   Gets the debug flag value
-   static bool GetDebugFlag () {return DebugFlag;}
+   static bool GetDebugFlag () {return DebugFlag; }
    /// \brief Sets the Debug Flag to true
    static void DebugOn  () { SetDebugFlag(true);  }
    /// \brief Sets the Debug Flag to false
@@ -88,7 +88,7 @@ public:
    ///        log messages are displayed.
    static void SetLogFlag (bool flag);
    /// \brief   Gets the Log flag value
-   static bool GetLogFlag () {return LogFlag;}
+   static bool GetLogFlag () {return LogFlag; }
    /// \brief Sets the Log Flag to true
    static void LogOn  () { SetLogFlag(true);  }
    /// \brief Sets the Log Flag to false
@@ -98,7 +98,7 @@ public:
    ///        warning messages are displayed.
    static void SetWarningFlag (bool flag);
    /// \brief   Gets the warning flag value
-   static bool GetWarningFlag () {return WarningFlag;}
+   static bool GetWarningFlag () {return WarningFlag; }
    /// \brief Sets the Warning Flag to true
    static void WarningOn  () { SetWarningFlag(true);  }
    /// \brief Sets the Warning Flag to false
@@ -170,7 +170,7 @@ private:
    osmacro << "In " __FILE__ ", line " << __LINE__             \
            << ", function " << GDCM_FUNCTION << "\n"           \
            << adds << msg << "\n\n";                           \
-   gdcm::Debug::SendToOutput(type,osmacro.str(),obj);          \
+   GDCM_NAME_SPACE::Debug::SendToOutput(type,osmacro.str(),obj);\
 }
 
 // ------------------------------------------------------------------------
@@ -195,7 +195,7 @@ private:
          adds += strerror(errno);                              \
          adds += "\n";                                         \
       }                                                        \
-      gdcmMessageBodyMacro(gdcm::CMD_DEBUG,obj,msg,adds);      \
+      gdcmMessageBodyMacro(GDCM_NAME_SPACE::CMD_DEBUG,obj,msg,adds);\
    }                                                           \
 }
 #define gdcmDebugMacro(msg)                                    \
@@ -215,7 +215,7 @@ private:
 #define gdcmLogBodyMacro(obj, msg)                         \
 {                                                          \
    if( Debug::GetLogFlag() )                               \
-      gdcmMessageBodyMacro(gdcm::CMD_LOG,obj,msg,"");      \
+      gdcmMessageBodyMacro(GDCM_NAME_SPACE::CMD_LOG,obj,msg,"");\
 }
 #define gdcmLogMacro(msg)                                  \
    gdcmLogBodyMacro(this,msg)
@@ -233,7 +233,7 @@ private:
 #define gdcmWarningBodyMacro(obj, msg)                         \
 {                                                              \
    if( Debug::GetWarningFlag() )                               \
-      gdcmMessageBodyMacro(gdcm::CMD_WARNING,obj,msg,"");      \
+      gdcmMessageBodyMacro(GDCM_NAME_SPACE::CMD_WARNING,obj,msg,"");\
 }
 #define gdcmWarningMacro(msg)                                  \
    gdcmWarningBodyMacro(this,msg)
@@ -251,7 +251,7 @@ private:
 // -> Rien compris! JPRx
 #define gdcmErrorBodyMacro(obj, msg)                           \
 {                                                              \
-   gdcmMessageBodyMacro(gdcm::CMD_ERROR,obj,msg,"");           \
+   gdcmMessageBodyMacro(GDCM_NAME_SPACE::CMD_ERROR,obj,msg,"");\
 }
 #define gdcmErrorMacro(msg)                                    \
    gdcmErrorBodyMacro(this,msg)
@@ -274,7 +274,7 @@ private:
 {                                                              \
    if( !(arg) )                                                \
    {                                                           \
-      gdcmMessageBodyMacro(gdcm::CMD_ASSERT,obj,"","");        \
+      gdcmMessageBodyMacro(GDCM_NAME_SPACE::CMD_ASSERT,obj,"","");\
       assert ( arg );                                          \
    }                                                           \
 }

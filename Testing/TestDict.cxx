@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDict.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:08:54 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ int TestDict(int , char *[])
 
    std::cout << "----- Test Default Dicom Dictionary : ----------" << std::endl;
    // Just to improve test coverage:
-   gdcm::Dict *tempDict = gdcm::Dict::New("dummyFileNameThatDoesntExist");
+   GDCM_NAME_SPACE::Dict *tempDict = GDCM_NAME_SPACE::Dict::New("dummyFileNameThatDoesntExist");
    // Default dict is supposed to be used.
    tempDict->Print();
    std::cout << "---- end Test Default Dicom Dictionary : -------" << std::endl;
@@ -39,7 +39,7 @@ int TestDict(int , char *[])
  
    // Print the DictSet
    std::cout<<"#######################################################\n";
-   gdcm::DictSet *dicts=gdcm::Global::GetDicts();
+   GDCM_NAME_SPACE::DictSet *dicts=GDCM_NAME_SPACE::Global::GetDicts();
    if(!dicts)
    {
       std::cout<<"DictSet hasn't be found... Failed\n";
@@ -48,7 +48,7 @@ int TestDict(int , char *[])
 
    std::cout<<"DictSet content :\n";
 
-   gdcm::Dict *d = dicts->GetFirstDict();
+   GDCM_NAME_SPACE::Dict *d = dicts->GetFirstDict();
    if (!d)
    {
       std::cout << "Dictset is empty" << std::endl;
@@ -68,7 +68,7 @@ int TestDict(int , char *[])
 
    // Print the Dict (public)
    std::cout<<"#######################################################\n";
-   gdcm::Dict *pubDict=dicts->GetDefaultPubDict();
+   GDCM_NAME_SPACE::Dict *pubDict=dicts->GetDefaultPubDict();
    if(!pubDict)
    {
       std::cout<<"The public Dict hasn't be found... Failed\n";
@@ -81,8 +81,8 @@ int TestDict(int , char *[])
    std::cout<<"#######################################################\n";
    const int ENTRY_GR = 0x10;
    const int ENTRY_EL = 0x20;
-   gdcm::TagKey key = gdcm::DictEntry::TranslateToKey(ENTRY_GR,ENTRY_EL);
-   gdcm::DictEntry *entry=pubDict->GetEntry(ENTRY_GR,ENTRY_EL);
+   GDCM_NAME_SPACE::TagKey key = GDCM_NAME_SPACE::DictEntry::TranslateToKey(ENTRY_GR,ENTRY_EL);
+   GDCM_NAME_SPACE::DictEntry *entry=pubDict->GetEntry(ENTRY_GR,ENTRY_EL);
    if(!entry)
    {
       std::cout<<"The DictEntry hasn't be found... Failed\n";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 14:59:58 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,15 +35,15 @@
  * \brief AnonymizeDicomDir
  */
 
-void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp, 
+void AnoNoLoad(GDCM_NAME_SPACE::SQItem *s, std::fstream *fp, 
                uint16_t group, uint16_t elem, 
                std::string val);
 
-void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp, 
+void AnoNoLoad(GDCM_NAME_SPACE::SQItem *s, std::fstream *fp, 
                uint16_t group, uint16_t elem, 
                std::string val)
 {
-   gdcm::DocEntry *d;
+   GDCM_NAME_SPACE::DocEntry *d;
    uint32_t offset;
    uint32_t lgth;
    uint32_t valLgth = 0;
@@ -55,7 +55,7 @@ void AnoNoLoad(gdcm::SQItem *s, std::fstream *fp,
    if ( d == NULL)
       return;
 
-   if ( ! dynamic_cast<gdcm::DataEntry *>(d) )
+   if ( ! dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d) )
       return;
 
    offset = d->GetOffset();
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
 
 
    //   Read the input DICOMDIR
-   gdcm::File *f;
-   f = gdcm::File::New( );
+   GDCM_NAME_SPACE::File *f;
+   f = GDCM_NAME_SPACE::File::New( );
    f->SetLoadMode(0);
    f->SetFileName( fileName );
    bool res = f->Load();  
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
    std::cout << " ... is readable " << std::endl;
 
    // Look for Directory record sequence
-   gdcm::DocEntry *e = f->GetDocEntry(0x0004, 0x1220);
+   GDCM_NAME_SPACE::DocEntry *e = f->GetDocEntry(0x0004, 0x1220);
    if ( !e )
    {
       std::cout << "No Directory Record Sequence (0004,1220) found" <<std::endl;;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
       return 0;
    }
    
-   gdcm::SeqEntry *s = dynamic_cast<gdcm::SeqEntry *>(e);
+   GDCM_NAME_SPACE::SeqEntry *s = dynamic_cast<GDCM_NAME_SPACE::SeqEntry *>(e);
    if ( !s )
    {
       std::cout << "Element (0004,1220) is not a Sequence ?!?" <<std::endl;
@@ -138,17 +138,18 @@ int main(int argc, char *argv[])
    // Open the file LTTG (aka ALAP)
    std::fstream *fp = new std::fstream(fileName, 
                               std::ios::in | std::ios::out | std::ios::binary);
-   gdcm::DocEntry *d;
+   GDCM_NAME_SPACE::DocEntry *d;
    std::string v;
 
    int patientNumber = 0;
    std::ostringstream oss;
 
-   gdcm::SQItem *tmpSI=s->GetFirstSQItem();  // For all the SQItems
+   GDCM_NAME_SPACE::SQItem *tmpSI=s->GetFirstSQItem();  // For all the SQItems
    while(tmpSI)
    {
       d = tmpSI->GetDocEntry(0x0004, 0x1430); // Directory Record Type
-      if ( gdcm::DataEntry *dataEntry = dynamic_cast<gdcm::DataEntry *>(d) )
+      if ( GDCM_NAME_SPACE::DataEntry *dataEntry =
+      dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d) )
       {
          v = dataEntry->GetString();
       }

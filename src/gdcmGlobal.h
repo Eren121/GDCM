@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.h,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:05:10 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include "gdcmCommon.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 class DictSet;
 class VR;

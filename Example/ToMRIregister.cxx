@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToMRIregister.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:01:48 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,9 +27,9 @@
 #include <iostream>
 #include <sstream>
 
-bool AquisitionTime_0008_0032_Compare(gdcm::File *file1, gdcm::File *file2);
+bool AquisitionTime_0008_0032_Compare(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 
-bool AquisitionTime_0008_0032_Compare(gdcm::File *file1, gdcm::File *file2)
+bool AquisitionTime_0008_0032_Compare(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
 {
    return file1->GetEntryString(0x0008,0x0032) < file2->GetEntryString(0x0008,0x0032);
 }
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
    "\n ToMriregister :\n                                                      ",
    " - Converts the Siemens Sonata MRI '*tfl2d1'                              ",
    " to be processable by MriRegister software                                ",
-   " - May be used as a template for gdcm::SerieHelper use.                   ",
+   " - May be used as a template for GDCM_NAME_SPACE::SerieHelper use.                   ",
    "                                                                          ",
    "usage: ToMriRegister dirin=inputDirectoryName                             ",
    "                     dirout=outputDirectoryName                           ",
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
    
    // ----- Initialize Arguments Manager ------
   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage") || argc == 1) 
    {
@@ -68,19 +68,19 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    int verbose  = am->ArgMgrDefined("verbose");
          
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    const char *dirIn  = am->ArgMgrGetString("dirin");
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
    
    // ======================== more checking on the params ==============
 
-   if ( ! gdcm::DirList::IsDirectory(dirIn) )
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirIn) )
    {
       std::cout << "KO : [" << dirIn << "] is not a Directory." << std::endl;
       return 0;
@@ -134,13 +134,13 @@ int main(int argc, char *argv[])
    if (verbose)
       std::cout << "Check for output directory :[" << dirOut << "]."
              <<std::endl;
-   if ( ! gdcm::DirList::IsDirectory(dirOut) )    // dirout not found
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirOut) )    // dirout not found
    {
       systemCommand = "mkdir " + strDirNameout;   // create it!
       if (verbose)
          std::cout << systemCommand << std::endl;
       system (systemCommand.c_str());
-      if ( ! gdcm::DirList::IsDirectory(dirOut) ) // be sure it worked
+      if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirOut) ) // be sure it worked
       {
           std::cout << "KO : not a dir : [" << dirOut 
                     << "] (creation failure ?)" << std::endl;
@@ -164,24 +164,24 @@ int main(int argc, char *argv[])
                  
    // Just to see *all* the file names:
    
-   gdcm::DirList dirList(dirIn,true); // gets (recursively) the file list
-   gdcm::DirListType fileList = dirList.GetFilenames();
-   for( gdcm::DirListType::iterator it  = fileList.begin();
+   GDCM_NAME_SPACE::DirList dirList(dirIn,true); // gets (recursively) the file list
+   GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
+   for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
    {
       std::cout << "file [" << it->c_str() << "]" << std::endl;  
    }
    
-   gdcm::SerieHelper *s;
+   GDCM_NAME_SPACE::SerieHelper *s;
   
-   s = gdcm::SerieHelper::New();
-   s->SetLoadMode(gdcm::LD_NOSEQ);     // Don't load Sequences
+   s = GDCM_NAME_SPACE::SerieHelper::New();
+   s->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ);     // Don't load Sequences
  
    // we could choose to ignore some Files  
-   //gdcm::TagKey t(0x0010,0x0024);  // [Sequence Name]
+   //GDCM_NAME_SPACE::TagKey t(0x0010,0x0024);  // [Sequence Name]
    // Keep only files where restriction is true
-   //s->AddRestriction(t, "*tfl2d1 ", gdcm::GDCM_EQUAL); 
+   //s->AddRestriction(t, "*tfl2d1 ", GDCM_NAME_SPACE::GDCM_EQUAL); 
                                                     
    s->SetDirectory(dirIn, true); // true : recursive exploration
 
@@ -200,8 +200,8 @@ int main(int argc, char *argv[])
 
    std::ostringstream str;
   
-   gdcm::XCoherentFileSetmap xcm;
-   gdcm::FileHelper *fh;
+   GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
+   GDCM_NAME_SPACE::FileHelper *fh;
    
    // will be used for ordering.
    s->SetUserLessThanFunction(AquisitionTime_0008_0032_Compare);
@@ -209,8 +209,8 @@ int main(int argc, char *argv[])
    int sliceNumber = 0;
    int imageNumber = 0;
          
-   // For all the Single SerieUID Files Sets of the gdcm::Serie
-   gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+   // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
+   GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
    
    char numero[5];
    while (l)
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
          float position =0.0;
          char charPosition[10];
          
-         for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
+         for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin();
                                                   i != xcm.end();
                                                 ++i)
          {
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
             sprintf(charPosition, "%f", position);
             
             //int imageNumber = 0;    
-            for ( gdcm::FileList::iterator it =  ((*i).second)->begin();
+            for ( GDCM_NAME_SPACE::FileList::iterator it =  ((*i).second)->begin();
                                            it != ((*i).second)->end();
                                          ++it)
             {
@@ -290,21 +290,21 @@ int main(int argc, char *argv[])
  
             // Load the pixels in RAM.    
       
-               fh = gdcm::FileHelper::New(*it);     
+               fh = GDCM_NAME_SPACE::FileHelper::New(*it);     
                uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
                if (!imageData)
                   std::cout << "fail to read [" << (*it)->GetFileName() << std::endl;
                fh->SetWriteTypeToAcr();  
-               fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+               fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
     
                // forge the file name
       
                fullFilename = (*it)->GetFileName();
-               lastFilename =  gdcm::Util::GetName( fullFilename );
-               //fullWriteFilename = strDirNameout + gdcm::GDCM_FILESEPARATOR 
+               lastFilename =  GDCM_NAME_SPACE::Util::GetName( fullFilename );
+               //fullWriteFilename = strDirNameout + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                //                                  + lastFilename;
                sprintf(fullWriteFilename, "%s%c%04d-%04d-%04d.dcm", 
-                                      dirOut, gdcm::GDCM_FILESEPARATOR,
+                                      dirOut, GDCM_NAME_SPACE::GDCM_FILESEPARATOR,
                                       serieNumber, sliceNumber, imageNumber);
 
                if (verbose)
@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
                  // show [sliceLocation 0x0020,1041 (if any)] old name, -> newname
                  std::string strSliceLocation;
                  /*  
-                 gdcm::DataEntry e = (*it)->GetDataEntry(0x0020,0x1041);
+                 GDCM_NAME_SPACE::DataEntry e = (*it)->GetDataEntry(0x0020,0x1041);
                  if (e)
                     strSliceLocation = e->GetString();
                  else

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmConfigure.h.in,v $
   Language:  C++
-  Date:      $Date: 2005/10/27 20:43:53 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2007/05/23 14:18:03 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,5 +95,10 @@
 #cmakedefine GDCM_LEGACY_REMOVE
 #cmakedefine GDCM_LEGACY_SILENT
 
+/*--------------------------------------------------------------------------*/
+/* Will be usefull to use 2 different versions of gdcm.                     */
+/* e.g. : ITK uses gdcm1.2; vtkgdcmImageReader uses gdcm1.3                 */
+    
+#define GDCM_NAME_SPACE @GDCM_NAME_SPACE@
 
 #endif

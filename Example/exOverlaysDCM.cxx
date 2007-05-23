@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
 
    if (argc == 1 || am->ArgMgrDefined("usage"))
    {
@@ -76,10 +76,10 @@ int main(int argc, char *argv[])
       return 0;
    }
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    if (am->ArgMgrDefined("warning"))
-      gdcm::Debug::WarningOn();
+      GDCM_NAME_SPACE::Debug::WarningOn();
       
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
    //   Read the input file.
    // ============================================================
 
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
 
-   f = gdcm::File::New(  );
-   f->SetLoadMode( gdcm::LD_ALL );
+   f = GDCM_NAME_SPACE::File::New(  );
+   f->SetLoadMode( GDCM_NAME_SPACE::LD_ALL );
    f->SetFileName( fileName );
    f->AddForceLoadElement(0x6000,0x3000);  // Overlay Data
    int res = f->Load();
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
    //   Load the Overlays in memory (the first one)
    // ============================================================
 
-   gdcm::DataEntry *e = f->GetDataEntry(0x6000, 0x3000);  
+   GDCM_NAME_SPACE::DataEntry *e = f->GetDataEntry(0x6000, 0x3000);  
    if (e == 0)
    {
       std::cout << " Image doesn't contain any Overlay " << std::endl;
@@ -157,8 +157,8 @@ int main(int argc, char *argv[])
    // ============================================================
    //   Write a new file
    // ============================================================
-   gdcm::File *f2;
-   f2 = gdcm::File::New(  );
+   GDCM_NAME_SPACE::File *f2;
+   f2 = GDCM_NAME_SPACE::File::New(  );
    
    char temp[256];
    
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 
    // feel free to add any field (Dicom Data Entry) you like, here.
    // ...
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f2);
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f2);
        
    fh->SetImageData(outputData,dimXY);
    fh->WriteDcmExplVR(outputFileName);

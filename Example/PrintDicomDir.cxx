@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 16:03:31 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
    FINISH_USAGE
 
    // Initialize Arguments Manager   
-   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
    {
@@ -54,15 +54,15 @@ int main(int argc, char* argv[])
       return 0;
    }
   
-   gdcm::DicomDir *f;
-   gdcm::TSKey v;
+   GDCM_NAME_SPACE::DicomDir *f;
+   GDCM_NAME_SPACE::TSKey v;
 
-   gdcm::DicomDirPatient *pa;
-   gdcm::DicomDirStudy *st;
-   gdcm::DicomDirSerie *se;
-   gdcm::DicomDirVisit *vs;
-   gdcm::DicomDirImage *im;
-   gdcm::DicomDirPrivate *pr;  
+   GDCM_NAME_SPACE::DicomDirPatient *pa;
+   GDCM_NAME_SPACE::DicomDirStudy *st;
+   GDCM_NAME_SPACE::DicomDirSerie *se;
+   GDCM_NAME_SPACE::DicomDirVisit *vs;
+   GDCM_NAME_SPACE::DicomDirImage *im;
+   GDCM_NAME_SPACE::DicomDirPrivate *pr;  
    char *fileName;
    fileName  = am->ArgMgrWantString("filein",usage); 
 
@@ -71,10 +71,10 @@ int main(int argc, char* argv[])
    int detailLevel = am->ArgMgrGetInt("detail", 2);
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    if (am->ArgMgrDefined("warning"))
-      gdcm::Debug::WarningOn();
+      GDCM_NAME_SPACE::Debug::WarningOn();
       
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
    // new gdcm2 style 
 
-   f = gdcm::DicomDir::New();
+   f = GDCM_NAME_SPACE::DicomDir::New();
    f->SetFileName ( fileName );
    f->Load( );
 
@@ -288,10 +288,10 @@ int main(int argc, char* argv[])
    // Previous code.
    // Kept as an example. Please don't remove
  
-   gdcm::ListDicomDirPatient::const_iterator  itPatient;
-   gdcm::ListDicomDirStudy::const_iterator    itStudy;
-   gdcm::ListDicomDirSerie::const_iterator    itSerie;
-   gdcm::ListDicomDirImage::const_iterator    itImage;
+   GDCM_NAME_SPACE::ListDicomDirPatient::const_iterator  itPatient;
+   GDCM_NAME_SPACE::ListDicomDirStudy::const_iterator    itStudy;
+   GDCM_NAME_SPACE::ListDicomDirSerie::const_iterator    itSerie;
+   GDCM_NAME_SPACE::ListDicomDirImage::const_iterator    itImage;
    cout << std::endl << std::endl
         << " = Liste des PATIENT/STUDY/SERIE/IMAGE ===================================" 
         << std::endl<< std::endl;

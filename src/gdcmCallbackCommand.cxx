@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCallbackCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/29 17:21:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/05/23 14:18:07 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------
 #include "gdcmCallbackCommand.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

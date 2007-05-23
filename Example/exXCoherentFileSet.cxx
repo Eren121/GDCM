@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:05:25 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
    
    // ----- Initialize Arguments Manager ------
   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage") || argc == 1) 
    {
@@ -58,17 +58,17 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    const char *dirName  = am->ArgMgrGetString("dirin");
@@ -113,15 +113,20 @@ int main(int argc, char *argv[])
    delete am;  // ------ we don't need Arguments Manager any longer ------
    
                  
-   gdcm::SerieHelper *s;
+   GDCM_NAME_SPACE::SerieHelper *s;
   
-   s = gdcm::SerieHelper::New();
-   s->SetLoadMode(gdcm::LD_ALL);     // Load everything for each File
-   //gdcm::TagKey t(0x0020,0x0013);
-   //s->AddRestriction(t, "340", gdcm::GDCM_LESS); // Keep only files where
+   s = GDCM_NAME_SPACE::SerieHelper::New();
+   s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);     // Load everything for each File
+   //GDCM_NAME_SPACE::TagKey t(0x0020,0x0013);
+   //s->AddRestriction(t, "340", GDCM_NAME_SPACE::GDCM_LESS); // Keep only files where
                                               // restriction is true
    s->SetDirectory(dirName, true); // true : recursive exploration
 
+   // The Dicom file set is splitted into several 'Single SerieUID Files Sets'
+   // (a 'Single SerieUID Files Set' per SerieUID)
+   // In some cases, it's not enough, since, in some cases
+   // we can find scout view with the same SerieUID
+   
 /*
    std::cout << " ---------------------------------------- "
              << "'Single UID' Filesets found in :["
@@ -133,11 +138,11 @@ int main(int argc, char *argv[])
 */
    int nbFiles;
    std::string fileName;
-   // For all the Single SerieUID Files Sets of the gdcm::Serie
-   gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+   // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
+   GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
    
-   gdcm::XCoherentFileSetmap xcm;
-   while (l)
+   GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
+   while (l) // for each 'Single SerieUID FileSet'
    { 
       nbFiles = l->size() ;
       if ( l->size() > 3 ) // Why not ? Just an example, for testing
@@ -154,7 +159,7 @@ int main(int argc, char *argv[])
          if (groupelem != 0)
             xcm = s->SplitOnTagValue(l, groupelem[0],groupelem[1] );
     
-         for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
+         for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin();
                                                   i != xcm.end();
                                                 ++i)
          {
@@ -175,7 +180,7 @@ int main(int argc, char *argv[])
    
            //s->OrderFileList((*i).second);  // sort the XCoherent Fileset
     
-            for (gdcm::FileList::iterator it =  ((*i).second)->begin();
+            for (GDCM_NAME_SPACE::FileList::iterator it =  ((*i).second)->begin();
                                           it != ((*i).second)->end();
                                         ++it)
             {

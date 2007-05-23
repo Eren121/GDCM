@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:36:37 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
       return 0;
    }
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
  
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
    //   Read the input file.
    // ============================================================
 
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
 
-   f = gdcm::File::New(  );
-   f->SetLoadMode( gdcm::LD_ALL );
+   f = GDCM_NAME_SPACE::File::New(  );
+   f->SetLoadMode( GDCM_NAME_SPACE::LD_ALL );
    f->SetFileName( fileName );
    int res = f->Load();
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
    // ============================================================
 
    // We need a gdcm::FileHelper, since we want to load the pixels        
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
 
    // unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
    // Feel free to cast if you know it's not. 
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
    // The written image will not appear as a 'Secondary Captured image'
    // nor as a DERIVED one  
 
-   fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+   fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
    
    fh->WriteDcmExplVR(outputFileName);
    std::cout <<"End Anonymize" << std::cout;

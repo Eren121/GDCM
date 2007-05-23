@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRefCounter.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/20 15:24:10 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -18,7 +18,7 @@
 
 #include "gdcmRefCounter.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-------------------------------------------------------------------------
 // Constructor / Destructor

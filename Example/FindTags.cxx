@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: FindTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:26 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
 {
    std::string fileName;
 
-   gdcm::FileHelper *h;
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::FileHelper *h;
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    
    
    if(argc > 1 ) 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
    f->Load();
    // Should test if it worked !
    
-   h = gdcm::FileHelper::New(f);
+   h = GDCM_NAME_SPACE::FileHelper::New(f);
    
    std::string ManufacturerName="SIEMENS ";
    std::string RecCode="ACR-NEMA 2.0";
@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
 // existerait-il qq chose qui marche à tout coup?
 
 // Location
-   std::string zizi = gdcm::Util::Format("%f",l);
-   Location = gdcm::Util::DicomString(zizi.c_str());
+   std::string zizi = GDCM_NAME_SPACE::Util::Format("%f",l);
+   Location = GDCM_NAME_SPACE::Util::DicomString(zizi.c_str());
    h->SetEntryString(Location, 0x0020,0x0050);
 
 // sinon, la longueur du champ est erronée (?!?) 
@@ -91,8 +91,8 @@ int main(int argc, char *argv[])
 
 // Image Location 
 
-   zizi = gdcm::Util::Format("%d",0x7FE0);
-   ImageLocation = gdcm::Util::DicomString(zizi.c_str());
+   zizi = GDCM_NAME_SPACE::Util::Format("%d",0x7FE0);
+   ImageLocation = GDCM_NAME_SPACE::Util::DicomString(zizi.c_str());
 //h->SetEntryString(Location, 0x0028,0x0200);
 //h->GetFile()->SetEntryLength(strlen(ImageLocation.c_str())-1, 0x0020,0x0050); // prudence !
 

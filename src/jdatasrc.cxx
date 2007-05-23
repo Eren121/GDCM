@@ -31,7 +31,7 @@ typedef struct {
   JOCTET * buffer;        /* start of buffer */
   boolean start_of_file;  /* have we gotten any data yet? */
 
-  gdcm::JPEGFragment *frag;
+  GDCM_NAME_SPACE::JPEGFragment *frag;
   size_t bytes_read;
 } my_source_mgr;
 
@@ -198,7 +198,7 @@ term_source (j_decompress_ptr cinfo)
  */
 
 GLOBAL(void)
-jpeg_stdio_src (j_decompress_ptr cinfo, std::istream * infile, gdcm::JPEGFragment *frag, int flag)
+jpeg_stdio_src (j_decompress_ptr cinfo, std::istream * infile, GDCM_NAME_SPACE::JPEGFragment *frag, int flag)
 {
   my_src_ptr src;
 

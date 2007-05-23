@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:30:15 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.79 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <list>
 #include <vector>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 class DicomDirPatient;
@@ -44,10 +44,14 @@ typedef std::vector<Document *> VectDocument;
 //-----------------------------------------------------------------------------
 /**
  * \brief   DicomDir defines an object representing a DICOMDIR in memory
- *  as a tree-like structure DicomDirPatient 
- *                            -> DicomDirStudy 
- *                                -> DicomDirSerie
- *                                    -> DicomDirImage
+ *  as a tree-like structure :
+ *
+ *        ->DicomDirPatient 
+ *           -> DicomDirStudy 
+ *           -> DicomDirVisit 
+ *              -> DicomDirSerie
+ *                 -> DicomDirImage
+ *                 -> DicomDirPrivate (for Siemens CSA non image)
  */
 class GDCM_EXPORT DicomDir: public Document
 {
@@ -111,7 +115,8 @@ public:
       GDCM_DICOMDIR_STUDY,
       GDCM_DICOMDIR_SERIE,
       GDCM_DICOMDIR_VISIT,
-      GDCM_DICOMDIR_IMAGE
+      GDCM_DICOMDIR_IMAGE,
+      GDCM_DICOMDIR_PRIVATE
    } DicomDirType;
 
 protected:
@@ -126,10 +131,10 @@ private:
    void CreateDicomDir();
    bool DoTheLoadingJob();
    bool AddPatientToEnd(DicomDirPatient *dd);   
-   bool AddStudyToEnd  (DicomDirStudy *dd);
-   bool AddSerieToEnd  (DicomDirSerie *dd);
-   bool AddVisitToEnd  (DicomDirVisit *dd);
-   bool AddImageToEnd  (DicomDirImage *dd);
+   bool AddStudyToEnd  (DicomDirStudy   *dd);
+   bool AddSerieToEnd  (DicomDirSerie   *dd);
+   bool AddVisitToEnd  (DicomDirVisit   *dd);
+   bool AddImageToEnd  (DicomDirImage   *dd);
    bool AddPrivateToEnd(DicomDirPrivate *dd);
    
    void SetElements(std::string const &path, VectDocument const &list);

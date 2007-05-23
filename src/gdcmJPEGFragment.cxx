@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 17:24:21 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #include "gdcmJPEGFragment.h"
 #include "gdcmDebug.h"
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 //-------------------------------------------------------------------------
 // For JPEG 2000, body in file gdcmJpeg2000.cxx

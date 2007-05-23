@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/08 13:37:33 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 // PrintFile debug filein=...
 // and fix the bugs
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 /// \brief Transfer Syntaxes gdcm deals with (internal use only)

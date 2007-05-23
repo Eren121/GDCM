@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/04/12 13:22:49 $
-  Version:   $Revision: 1.329 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.330 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -101,7 +101,7 @@
 #include <stdio.h>  //sscanf
 #include <stdlib.h> // for atoi
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 
 //-----------------------------------------------------------------------------
@@ -1636,7 +1636,7 @@ void File::AnonymizeNoLoad()
 {
    std::fstream *fp = new std::fstream(Filename.c_str(), 
                               std::ios::in | std::ios::out | std::ios::binary); 
-   gdcm::DocEntry *d;
+   GDCM_NAME_SPACE::DocEntry *d;
    uint32_t offset;
    uint32_t lgth;
    uint32_t valLgth = 0;
@@ -1715,7 +1715,7 @@ bool File::AnonymizeFile()
    }
    else
    {
-      gdcm::DocEntry *d;
+      GDCM_NAME_SPACE::DocEntry *d;
       for (ListElements::iterator it = UserAnonymizeList.begin();  
                                   it != UserAnonymizeList.end();
                                 ++it)

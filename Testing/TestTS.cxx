@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 
 int TestTS(int , char *[])
 {
-   gdcm::TS *ts = gdcm::TS::New();
+   GDCM_NAME_SPACE::TS *ts = GDCM_NAME_SPACE::TS::New();
    // There should be ~150 entries
    ts->Print( std::cout );
 
@@ -70,10 +70,10 @@ int TestTS(int , char *[])
    std::cout << ts->IsJPEG( "1.2.840.10008.1.2.5") << std::endl;
    std::cout << ts->GetSpecialTransferSyntax( 
                 ts->GetSpecialTransferSyntax( "1.2.840.10008.1.2.5")) << std::endl;
-   std::cout << gdcm::Global::GetTS()->IsRLELossless( "1.2.840.10008.1.2.5" )  
+   std::cout << GDCM_NAME_SPACE::Global::GetTS()->IsRLELossless( "1.2.840.10008.1.2.5" )  
              << std::endl;
 
-   bool ret = ts->GetValue( "" ) != gdcm::GDCM_UNFOUND;
+   bool ret = ts->GetValue( "" ) != GDCM_NAME_SPACE::GDCM_UNFOUND;
 
    ts->Delete();
 

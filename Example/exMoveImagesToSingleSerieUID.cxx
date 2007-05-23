@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exMoveImagesToSingleSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/27 11:38:02 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
    
      // ----- Initialize Arguments Manager ------
   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage") || argc == 1) 
    {
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn(); 
+      GDCM_NAME_SPACE::Debug::DebugOn(); 
    int verbose  = am->ArgMgrDefined("verbose");
    
    std::string patName = am->ArgMgrGetString("patname", "g^PatientName");
@@ -130,15 +130,15 @@ int main(int argc, char *argv[])
    int userDefinedSerie = am->ArgMgrDefined("serieUID");   
    const char *serieUID  = am->ArgMgrGetString("serieUID");      
  
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
         
    /* if unused Param we give up */
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
  
  
    //std::cout << "dirIn [" << dirIn << "]" << std::endl;
-   if ( ! gdcm::DirList::IsDirectory(dirIn) )
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirIn) )
    {
       std::cout << "KO : [" << dirIn << "] is not a Directory." << std::endl;
       return 0;
@@ -171,13 +171,13 @@ int main(int argc, char *argv[])
    std::string strDirNameout(dirOut);          // to please gcc 4   
    std::cout << "Check for output directory :[" << dirOut << "]."
              <<std::endl;
-   if ( ! gdcm::DirList::IsDirectory(dirOut) )    // dirout not found
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirOut) )    // dirout not found
    {
       systemCommand = "mkdir " +strDirNameout;        // create it!
       if (verbose)
          std::cout << systemCommand << std::endl;
       system (systemCommand.c_str());
-      if ( ! gdcm::DirList::IsDirectory(dirOut) ) // be sure it worked
+      if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirOut) ) // be sure it worked
       {
           std::cout << "KO : not a dir : [" << dirOut << "] (creation failure ?)" << std::endl;
       return 0;
@@ -194,8 +194,8 @@ int main(int argc, char *argv[])
       std::cout << "Output Directory [" << dirOut << "] already exists; Used as is." << std::endl;
    }  
 
-   gdcm::DirList dirList(dirIn,false); // gets (at single level) the file list
-   gdcm::DirListType fileList = dirList.GetFilenames();
+   GDCM_NAME_SPACE::DirList dirList(dirIn,false); // gets (at single level) the file list
+   GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
 
    // 'Study Instance UID'
    // The user is allowed to create his own Study, 
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
    //          adding new Series to an already existing Study
    std::string strStudyUID;
    if ( !userDefinedStudy)
-      strStudyUID =  gdcm::Util::CreateUniqueUID();
+      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    else
       strStudyUID = studyUID;
 
@@ -217,21 +217,21 @@ int main(int argc, char *argv[])
    
    std::string strSerieUID; 
    if ( !userDefinedSerie)   
-      strSerieUID =  gdcm::Util::CreateUniqueUID();
+      strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    else      
       strSerieUID = serieUID;
         
-   gdcm::File *f;
-   gdcm::FileHelper *fh;
+   GDCM_NAME_SPACE::File *f;
+   GDCM_NAME_SPACE::FileHelper *fh;
    std::string fullFilename, lastFilename;
    float zPositionComponent = 0.0;
    
-   for( gdcm::DirListType::iterator it  = fileList.begin();
+   for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
    {
       fullFilename = *it;
-      f = gdcm::File::New( );
+      f = GDCM_NAME_SPACE::File::New( );
       f->SetLoadMode(loadMode);
       f->SetFileName( it->c_str() );
 
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
 
       // Load the pixels in RAM.    
       
-      fh = gdcm::FileHelper::New(f);     
+      fh = GDCM_NAME_SPACE::FileHelper::New(f);     
       uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       if (!imageData)
          std::cout << "fail to read [" << it->c_str() << std::endl;
@@ -292,10 +292,10 @@ int main(int argc, char *argv[])
 // ==================================================================================================
 
               
-      fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+      fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
       
-      lastFilename =  gdcm::Util::GetName( fullFilename );
-      std::string fullWriteFilename = strDirNameout + gdcm::GDCM_FILESEPARATOR 
+      lastFilename =  GDCM_NAME_SPACE::Util::GetName( fullFilename );
+      std::string fullWriteFilename = strDirNameout + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                         + lastFilename;
       if (verbose)
          std::cout << "Write : [" << fullWriteFilename << "]" << std::endl;

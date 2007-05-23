@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBug.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:03:00 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,8 +24,8 @@
 int TestBug(int argc, char *argv[])
 {  
 std::cout << "==========test" <<std::endl;
-  gdcm::File *f;
-  f = gdcm::File::New();
+  GDCM_NAME_SPACE::File *f;
+  f = GDCM_NAME_SPACE::File::New();
   
    if (argc > 1)
       f->SetFileName( argv[1] );

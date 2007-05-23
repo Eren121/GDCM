@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2006/01/31 11:39:47 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 typedef std::map<TagKey, DocEntry *> TagDocEntryHT;
 

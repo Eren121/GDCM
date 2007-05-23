@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/27 10:03:23 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.12 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,12 +103,12 @@ int main( int argc, char *argv[] )
    ////////////////////////////////////////////////////////////
    // Create a new dicom header and fill in some info        //
    ////////////////////////////////////////////////////////////
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
 
    ////////////////////////////////////////////////////////////
    // Create a new dicom file object from the header         //
    ////////////////////////////////////////////////////////////
-   gdcm::FileHelper  *fh = gdcm::FileHelper::New(f);
+   GDCM_NAME_SPACE::FileHelper  *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    uint8_t *myData = fh->GetImageData(); // Get an Image pointer
    fh->SetImageData( myData, sliceSize); // This callback ensures that the internal
                                         // Pixel_Data of fh is set correctly
@@ -127,7 +127,7 @@ int main( int argc, char *argv[] )
       memcpy(myData,imageData+z*sizex*sizey,sliceSize);
 
       // write the image
-      std::string filename = directory + gdcm::Util::Format("%Image_%05d.dcm", z);
+      std::string filename = directory + GDCM_NAME_SPACE::Util::Format("%Image_%05d.dcm", z);
       std::cout << "Writing file " << filename;
       fh->WriteDcmExplVR(filename);
       std::cout << " OK" << std::endl;

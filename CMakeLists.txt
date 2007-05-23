@@ -30,6 +30,9 @@ OPTION(GDCM_DEBUG "Turn verbosity of some statement ON." OFF)
 MARK_AS_ADVANCED(GDCM_DEBUG)
 
 # --------------------------------------------------------------------------
+SET (GDCM_NAME_SPACE gdcm    CACHE STRING "name space")
+
+# --------------------------------------------------------------------------
 # Install directories
 STRING(TOLOWER ${PROJECT_NAME} project_name)
 
@@ -82,7 +85,7 @@ ENDIF(GDCM_BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
 SET (EXECUTABLE_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
-SET (LIBRARY_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
+SET (LIBRARY_OUTPUT_PATH ${GDCM_BINARY_DIR}/bin    CACHE PATH "Single output directory for building all libraries.")
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 
@@ -238,7 +241,7 @@ ENDIF( ${CMAKE_HAVE_SYS_SOCKET_H} )
 
 #-----------------------------------------------------------------------------
 # Force Big Endian emulation on little endian:
-OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation. Do use if you don't know what you are doing." OFF)
+OPTION(GDCM_FORCE_BIGENDIAN_EMULATION "Force Big Endian Emulation. Don't use if you don't know what you are doing." OFF)
 
 CONFIGURE_FILE(${GDCM_SOURCE_DIR}/gdcmConfigure.h.in
                ${GDCM_BINARY_DIR}/gdcmConfigure.h @ONLY IMMEDIATE

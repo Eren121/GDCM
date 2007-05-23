@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/06 15:08:10 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include "gdcmDictSet.h"
 #include "gdcmDicomDirElement.h"
 
-namespace gdcm 
+namespace  GDCM_NAME_SPACE
 {
 //-----------------------------------------------------------------------------
 /// \brief Those global string that are returned by reference everywhere in 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/15 15:57:49 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage") || argc == 1) 
    {
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    const char *fileName = am->ArgMgrGetString("filein");
    const char *dirName  = am->ArgMgrGetString("dirin");
@@ -75,15 +75,15 @@ int main(int argc, char *argv[])
        return 0;
  }
  
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    int rubOutNb;
@@ -99,20 +99,20 @@ int main(int argc, char *argv[])
  
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
    if ( fileName != 0 ) // ====== Deal with a single file ======
    {
 
    // 
    //   Parse the input file.
    // 
-      f = gdcm::File::New( );
+      f = GDCM_NAME_SPACE::File::New( );
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
 
-      // gdcm::File::IsReadable() is no usable here, because we deal with
-      // any kind of gdcm::Readable *document*
-      // not only gdcm::File (as opposed to gdcm::DicomDir)
+      // GDCM_NAME_SPACE::File::IsReadable() is no usable here, because we deal with
+      // any kind of GDCM_NAME_SPACE::Readable *document*
+      // not only GDCM_NAME_SPACE::File (as opposed to GDCM_NAME_SPACE::DicomDir)
       if ( !f->Load() ) 
       {
           std::cout <<std::endl
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 
       std::cout <<"Let's AnonymizeNoLoad " << std::endl;
 
-      // The gdcm::File remains untouched in memory
+      // The GDCM_NAME_SPACE::File remains untouched in memory
 
       f->AnonymizeNoLoad();
 
@@ -186,13 +186,13 @@ int main(int argc, char *argv[])
    else  // ====== Deal with a (single Patient) Directory ======
    {
       std::cout << "dirName [" << dirName << "]" << std::endl;
-      gdcm::DirList dirList(dirName,1); // gets recursively the file list
-      gdcm::DirListType fileList = dirList.GetFilenames();
-      for( gdcm::DirListType::iterator it  = fileList.begin();
+      GDCM_NAME_SPACE::DirList dirList(dirName,1); // gets recursively the file list
+      GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
+      for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
       {
-         f = gdcm::File::New( );
+         f = GDCM_NAME_SPACE::File::New( );
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
 
@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
          }        
          std::cout <<"Let's AnonymizeNoLoad " << it->c_str() << std::endl;
 
-         // The gdcm::File remains untouched in memory
+         // The GDCM_NAME_SPACE::File remains untouched in memory
          // The Dicom file is overwritten on disc
 
          f->AnonymizeNoLoad();

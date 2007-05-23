@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:28 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,10 +56,10 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    std::string filename = argv[1];
    std::string output   = argv[2];
 
-   // First, let's create a gdcm::File
+   // First, let's create a GDCM_NAME_SPACE::File
    // that will contain all the Dicom fields but the Pixels Element
 
-   gdcm::File *f1= gdcm::File::New( );
+   GDCM_NAME_SPACE::File *f1= GDCM_NAME_SPACE::File::New( );
    f1->SetFileName( filename );
    f1->Load();
 
@@ -79,18 +79,18 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
              << "--- Display only human readable values -----------------------"
              << std::endl;
 
-   gdcm::DataEntry *dataEntry;
+   GDCM_NAME_SPACE::DataEntry *dataEntry;
    std::string value;
-   gdcm::VRKey vr;   // value representation
+   GDCM_NAME_SPACE::VRKey vr;   // value representation
    std::string vm;   // value multiplicity
    std::string name; // held in the Dicom Dictionary
 
 
-   gdcm::DocEntry *d = f1->GetFirstEntry();
+   GDCM_NAME_SPACE::DocEntry *d = f1->GetFirstEntry();
    while( d )
    {
       // We skip SeqEntries, since user cannot do much with them
-      if ( !(dynamic_cast<gdcm::SeqEntry*>(d))
+      if ( !(dynamic_cast<GDCM_NAME_SPACE::SeqEntry*>(d))
       // We skip Shadow Groups, since nobody knows what they mean
            && !( d->GetGroup()%2 ) )
      {      
@@ -100,7 +100,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
 
          // If user wants to get info about the entry
          // (he is sure, here that DocEntry is a DataEntry)
-         dataEntry = dynamic_cast<gdcm::DataEntry *>(d);
+         dataEntry = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d);
          // Let's be carefull -maybe he commented out some previous line-
          if (!dataEntry)
             continue;
@@ -217,8 +217,8 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    
    // Hope now he knows enought about the image ;-)
 
-   // First, create a gdcm::FileHelper
-   gdcm::FileHelper *fh1 = gdcm::FileHelper::New(f1);
+   // First, create a GDCM_NAME_SPACE::FileHelper
+   GDCM_NAME_SPACE::FileHelper *fh1 = GDCM_NAME_SPACE::FileHelper::New(f1);
 
    // Load the pixels, transforms LUT (if any) into RGB Pixels 
    uint8_t *imageData = fh1->GetImageData();
@@ -253,7 +253,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
  
    // ------ User wants write a new image without shadow groups -------------
 
-   gdcm::FileHelper *copy = gdcm::FileHelper::New( );
+   GDCM_NAME_SPACE::FileHelper *copy = GDCM_NAME_SPACE::FileHelper::New( );
    copy->SetFileName( output );
    copy->Load();
  
@@ -261,12 +261,12 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    while(d)
    {
       // We skip SeqEntries, since user cannot do much with them
-      if ( !(dynamic_cast<gdcm::SeqEntry*>(d))
+      if ( !(dynamic_cast<GDCM_NAME_SPACE::SeqEntry*>(d))
       // We skip Shadow Groups, since nobody knows what they mean
            && !( d->GetGroup()%2 ) )
       { 
 
-         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
+         if ( GDCM_NAME_SPACE::DataEntry *de = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d) )
          {              
             copy->GetFile()->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
                                                  de->GetGroup(),de->GetElement(),
@@ -274,7 +274,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
          }
          else
          {
-          // We skip gdcm::SeqEntries
+          // We skip GDCM_NAME_SPACE::SeqEntries
          }
       }
       d = f1->GetNextEntry();

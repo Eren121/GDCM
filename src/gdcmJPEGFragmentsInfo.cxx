@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:50:32 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include <fstream>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-------------------------------------------------------------------------
 // Constructor / Destructor

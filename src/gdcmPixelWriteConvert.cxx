@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/23 15:09:19 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,7 +19,7 @@
 #include "gdcmDebug.h"
 #include "gdcmPixelWriteConvert.h"
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

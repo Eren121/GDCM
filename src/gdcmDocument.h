@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2006/07/10 09:41:46 $
-  Version:   $Revision: 1.142 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.143 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@
 #include <list>
 #include <fstream>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 class SeqEntry;
 class Dict;

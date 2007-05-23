@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/29 13:49:32 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -75,24 +75,24 @@ int main(int argc, char *argv[])
 
    const char *mode = am->ArgMgrGetString("mode","X");
 
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    bool rgb = ( 0 != am->ArgMgrDefined("RGB") );
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    if (am->ArgMgrDefined("warning"))
-      gdcm::Debug::WarningOn();
+      GDCM_NAME_SPACE::Debug::WarningOn();
             
    bool fail = false;
    int *boundVal;
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
    }
  
    
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    void *imageData; 
    int dataSize;
  
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
    // Since we just ReWrite the image, we know no modification 
    // was performed on the pixels.
    // We don't want this image appears as a 'Secondary Captured image'
-   fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+   fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
    
 
    /// \todo : think about rubbing out a part of a *multiframe* image!

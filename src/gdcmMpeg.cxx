@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/30 08:19:25 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,7 @@ int my_close(istream *infile)
   return 0;
 }
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 
 static int Headers();

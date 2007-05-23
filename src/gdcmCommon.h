@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommon.h,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:30:15 $
-  Version:   $Revision: 1.114 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.115 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,7 +42,7 @@
 
 //-----------------------------------------------------------------------------
 /// \brief namespace for Grass root DiCoM
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
 
 // Centralize information about the gdcm dictionary in only one file:

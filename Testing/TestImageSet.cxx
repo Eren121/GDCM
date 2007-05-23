@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestImageSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:05:03 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,17 +32,17 @@
 #include <sstream>
 #include <list>
 
-typedef std::list<gdcm::File *> FileList;
+typedef std::list<GDCM_NAME_SPACE::File *> FileList;
 
 // If there is sameSerie, sameStudy is set to true
 int CompareImages(FileList &list, bool sameSerie, bool sameStudy)
 {
-   gdcm::Debug::DebugOn();
+   GDCM_NAME_SPACE::Debug::DebugOn();
 
    if( sameSerie )
       sameStudy = true;
 
-   gdcm::DataEntry *entry;
+   GDCM_NAME_SPACE::DataEntry *entry;
    std::map<std::string, int> instUID;
    std::map<std::string, int> mediaUID;
    std::map<std::string, int> serieUID;
@@ -146,7 +146,7 @@ void ClearList(FileList &list)
    list.clear();
 }
 
-gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
+GDCM_NAME_SPACE::File *WriteImage(GDCM_NAME_SPACE::File *file, const std::string &fileName)
 {
    // Create a 256x256x1 image 8 bits, unsigned 
    std::ostringstream str;
@@ -182,7 +182,7 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
    memset(imageData,0,size);
 
 // Write the image
-   gdcm::FileHelper *hlp = gdcm::FileHelper::New(file);
+   GDCM_NAME_SPACE::FileHelper *hlp = GDCM_NAME_SPACE::FileHelper::New(file);
    hlp->SetImageData(imageData,size);
    hlp->SetWriteTypeToDcmExplVR();
    if( !hlp->Write(fileName) )
@@ -198,7 +198,7 @@ gdcm::File *WriteImage(gdcm::File *file, const std::string &fileName)
    hlp->Delete();
 
 // Read the written image
-   gdcm::File *reread = gdcm::File::New(  );
+   GDCM_NAME_SPACE::File *reread = GDCM_NAME_SPACE::File::New(  );
    reread->SetFileName( fileName );
    reread->Load();
    if( !reread->IsReadable() )
@@ -233,8 +233,8 @@ int TestImageSet(int argc, char *argv[])
              << "           to different Series within the same Study" << std::endl;
    std::cout << std::endl << std::endl;
 
-   gdcm::File *file;
-   gdcm::File *newFile;
+   GDCM_NAME_SPACE::File *file;
+   GDCM_NAME_SPACE::File *newFile;
    FileList fileList;
    int i;
 
@@ -248,13 +248,13 @@ int TestImageSet(int argc, char *argv[])
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
-      file = gdcm::File::New();
+      file = GDCM_NAME_SPACE::File::New();
       // It's up to the user to initialize Serie UID and Study UID
       // Study Instance UID
-      studyUID = gdcm::Util::CreateUniqueUID();
+      studyUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
       file->InsertEntryString(studyUID, 0x0020, 0x000d, "UI");
       // Series Instance UID
-      serieUID = gdcm::Util::CreateUniqueUID();
+      serieUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
       file->InsertEntryString(serieUID, 0x0020, 0x000e, "UI");
 
       newFile = WriteImage(file, fileName.str());
@@ -280,13 +280,13 @@ int TestImageSet(int argc, char *argv[])
 
    // Step 2 : Same Serie & Study
    fileList.clear();
-   studyUID = gdcm::Util::CreateUniqueUID();
-   serieUID = gdcm::Util::CreateUniqueUID();
+   studyUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   serieUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
    for(i = 0;i < 4;i++)
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
-      file = gdcm::File::New();
+      file = GDCM_NAME_SPACE::File::New();
       file->InsertEntryString(studyUID, 0x0020, 0x000d, "UI");
       file->InsertEntryString(serieUID, 0x0020, 0x000e, "UI");
 
@@ -313,14 +313,14 @@ int TestImageSet(int argc, char *argv[])
 
    // Step 3 : Same Study
    fileList.clear();
-   serieUID = gdcm::Util::CreateUniqueUID();
+   serieUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
    for(i = 0;i < 4;i++)
    {
       std::ostringstream fileName;
       fileName << "FileSeq" << i << ".dcm";
-      file = gdcm::File::New();
+      file = GDCM_NAME_SPACE::File::New();
       file->InsertEntryString(studyUID, 0x0020, 0x000d, "UI");
-      serieUID = gdcm::Util::CreateUniqueUID();
+      serieUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
       file->InsertEntryString(serieUID, 0x0020, 0x000e, "UI");
       newFile = WriteImage(file, fileName.str());
       if( !newFile )

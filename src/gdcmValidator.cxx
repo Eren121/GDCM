@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:15 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/05/23 14:18:12 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 #include <map>
 
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 typedef std::map<uint16_t, int> GroupHT;    //  Hash Table
@@ -96,7 +96,7 @@ DocEntry *d;
   { 
     if ( DataEntry *v = dynamic_cast<DataEntry *>(d) )
     { 
-      if ( v->GetVM() != gdcm::GDCM_UNKNOWN )
+      if ( v->GetVM() != GDCM_NAME_SPACE::GDCM_UNKNOWN )
          if ( !CheckVM(v) )
          {
             if (v->GetVM() == "FIXME" )

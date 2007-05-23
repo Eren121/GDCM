@@ -23,6 +23,8 @@
 #include "gdcmDicomDirPatient.h"
 #include "gdcmDicomDirStudy.h"
 #include "gdcmDicomDirSerie.h"
+#include "gdcmDicomDirVisit.h"
+#include "gdcmDicomDirPrivate.h"
 #include "gdcmDirList.h"
 #include "gdcmDocEntrySet.h"
 #include "gdcmDocument.h"
@@ -43,7 +45,7 @@
 #include "gdcmDictGroupName.h"
 
 /// This is required in order to avoid %including all the gdcm include files.
-using namespace gdcm;
+using namespace GDCM_NAME_SPACE;
 %}
 
 
@@ -62,16 +64,16 @@ typedef unsigned long long uint64_t;
 
 ////////////////////////////////////////////////
 // Convert a DocEntry * to the real derived class
-%typemap(out) gdcm::DocEntry *
+%typemap(out) GDCM_NAME_SPACE::DocEntry *
 {
    PyObject *newEntry;
 
    if($1)
    {
       if(dynamic_cast<SeqEntry *>($1)) // SeqEntry *
-         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__SeqEntry,0);
+         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_GDCM_NAME_SPACE__SeqEntry,0);
       else if(dynamic_cast<DataEntry *>($1)) // DataEntry *
-         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_gdcm__DataEntry,0);
+         newEntry = SWIG_NewPointerObj($1,SWIGTYPE_p_GDCM_NAME_SPACE__DataEntry,0);
       else
          newEntry = NULL;
    }
@@ -106,27 +108,27 @@ typedef unsigned long long uint64_t;
 }
 
 // Same convertion as above but references (since swig converts C++
-// refererences to pointers)
+// references to pointers)
 %typemap(python, in) std::string const &
 {
    $1 = new std::string( PyString_AsString( $input ) );
 }
 
 ////////////////////  gdcm.TagName versus Python str  //////////////////////
-%typemap(out) gdcm::TagName, const gdcm::TagName &
+%typemap(out) GDCM_NAME_SPACE::TagName, const GDCM_NAME_SPACE::TagName &
 {
     $result = PyString_FromString(($1)->c_str());
 }
 
 // Convertion of incoming Python str to STL string
-%typemap(python, in) const gdcm::TagName, gdcm::TagName
+%typemap(python, in) const GDCM_NAME_SPACE::TagName, GDCM_NAME_SPACE::TagName
 {
   $1 = PyString_AsString($input);
 }
 
 // Same convertion as above but references (since swig converts C++
 // refererences to pointers)
-%typemap(python, in) gdcm::TagName const &
+%typemap(python, in) GDCM_NAME_SPACE::TagName const &
 {
    $1 = new std::string( PyString_AsString( $input ) );
 }
@@ -134,21 +136,21 @@ typedef unsigned long long uint64_t;
 ////////////////////////////////////////////////////////////////////////////
 // Because overloading and %rename don't work together (see below Note 1)
 // we need to ignore some methods (e.g. the overloaded default constructor).
-// The gdcm::File class doesn't have any SetFilename method anyhow, and
+// The GDCM_NAME_SPACE::File class doesn't have any SetFilename method anyhow, and
 // this constructor is only used internaly (not from the API) so this is
 // not a big loss.
-%ignore gdcm::binary_write(std::ostream &,uint32_t const &);
-%ignore gdcm::binary_write(std::ostream &,uint16_t const &);
+%ignore GDCM_NAME_SPACE::binary_write(std::ostream &,uint32_t const &);
+%ignore GDCM_NAME_SPACE::binary_write(std::ostream &,uint16_t const &);
 
-%ignore gdcm::VRKey::operator=(const VRKey &_val);
-%ignore gdcm::VRKey::operator=(const std::string &_val);
-%ignore gdcm::VRKey::operator=(const char *_val);
-%ignore gdcm::VRKey::operator[](const unsigned int &_id) const;
-%ignore gdcm::VRKey::operator[](const unsigned int &_id);
+%ignore GDCM_NAME_SPACE::VRKey::operator=(const VRKey &_val);
+%ignore GDCM_NAME_SPACE::VRKey::operator=(const std::string &_val);
+%ignore GDCM_NAME_SPACE::VRKey::operator=(const char *_val);
+%ignore GDCM_NAME_SPACE::VRKey::operator[](const unsigned int &_id) const;
+%ignore GDCM_NAME_SPACE::VRKey::operator[](const unsigned int &_id);
 
-%ignore gdcm::TagKey::operator=(const TagKey &_val);
-%ignore gdcm::TagKey::operator[](const unsigned int &_id) const;
-%ignore gdcm::TagKey::operator[](const unsigned int &_id);
+%ignore GDCM_NAME_SPACE::TagKey::operator=(const TagKey &_val);
+%ignore GDCM_NAME_SPACE::TagKey::operator[](const unsigned int &_id) const;
+%ignore GDCM_NAME_SPACE::TagKey::operator[](const unsigned int &_id);
 
 // Ignore all placed in gdcmCommon.h
 %ignore GDCM_UNKNOWN;
@@ -191,7 +193,9 @@ typedef unsigned long long uint64_t;
 %include "gdcmDicomDirElement.h"
 %include "gdcmDicomDirObject.h"
 %include "gdcmDicomDirImage.h"
+%include "gdcmDicomDirPrivate.h"
 %include "gdcmDicomDirSerie.h"
+%include "gdcmDicomDirVisit.h"
 %include "gdcmDicomDirStudy.h"
 %include "gdcmDicomDirPatient.h"
 %include "gdcmDicomDirMeta.h"

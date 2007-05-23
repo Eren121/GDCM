@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/30 09:52:53 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,9 +59,9 @@ V 6006|0102[US] [Overlay Bit Position] [15] x(f)
  
 int main(int argc, char *argv[])
 {  
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
  
-   //gdcm::Debug::DebugOn();
+   //GDCM_NAME_SPACE::Debug::DebugOn();
 
    std::cout << "------------------------------------------------" << std::endl;
    std::cout << "Gets the 'Overlays' from a full gdcm-readable ACR-NEMA "
@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
 
    //std::cout << argv[1] << std::endl;
 
-   f = gdcm::File::New( );
+   f = GDCM_NAME_SPACE::File::New( );
 
-   f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
+   f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
    bool res = f->Load();  
 
-   if( gdcm::Debug::GetDebugFlag() )
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
    {
       std::cout << "---------------------------------------------" << std::endl;
       f->Print();
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
       return 0;
    }
    std::string s1 = f->GetEntryString(0x6000, 0x0102);
-   if (s1 == gdcm::GDCM_UNFOUND)
+   if (s1 == GDCM_NAME_SPACE::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Overlay " << std::endl;
       f->Delete();
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 //   Load the pixels in memory.
 // ============================================================
 
-   // We don't use a gdcm::FileHelper, since it rubs out 
+   // We don't use a GDCM_NAME_SPACE::FileHelper, since it rubs out 
    // the 'non image' bits of the pixels...
    
    /// \todo : Previous remark doesn't work if pixels are compressed !
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
  
    std::cout << "Dimensions " << ny << "  " <<ny << std::endl;
 
-   gdcm::DocEntry *p = f->GetDocEntry(f->GetGrPixel(), f->GetNumPixel());
+   GDCM_NAME_SPACE::DocEntry *p = f->GetDocEntry(f->GetGrPixel(), f->GetNumPixel());
    if (p == 0)
       std::cout << "Pixels element  not found" << std::endl;
    else
@@ -197,16 +197,16 @@ int main(int argc, char *argv[])
    uint16_t overlayLocation;
    std::ostringstream str;
    std::string strOverlayLocation;
-   gdcm::File *fileToBuild = 0;
-   gdcm::FileHelper *fh = 0;
+   GDCM_NAME_SPACE::File *fileToBuild = 0;
+   GDCM_NAME_SPACE::FileHelper *fh = 0;
 
       
    while ( (strOvlBitPosition = f->GetEntryString(currentOvlGroup, 0x0102)) 
-            != gdcm::GDCM_UNFOUND )
+            != GDCM_NAME_SPACE::GDCM_UNFOUND )
    {
 
       strOverlayLocation = f->GetEntryString(currentOvlGroup, 0x0200);
-      if ( strOverlayLocation != gdcm::GDCM_UNFOUND )
+      if ( strOverlayLocation != GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
          overlayLocation = atoi(strOverlayLocation.c_str());
          if ( overlayLocation != f->GetGrPixel() )
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
       std::cout << "Mask :[" <<std::hex << mask << "]" << std::endl;          
       for (int j=0; j<nx*ny ; j++)
       {
-         if( gdcm::Debug::GetDebugFlag() )
+         if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
             if (pixels[j] >= 0x1000)// if it contains at least one overlay bit
                printf("%d : %04x\n",j, pixels[j]);
 
@@ -233,12 +233,12 @@ int main(int argc, char *argv[])
          else
             tabPixels[j] = 128;
       }
-      if( gdcm::Debug::GetDebugFlag() )
+      if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "About to built empty file"  << std::endl;
 
-      fileToBuild = gdcm::File::New();
+      fileToBuild = GDCM_NAME_SPACE::File::New();
 
-      if( gdcm::Debug::GetDebugFlag() )
+      if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "Finish to built empty file"  << std::endl;
 
       str.str("");
@@ -258,12 +258,12 @@ int main(int argc, char *argv[])
       // Other mandatory fields will be set automatically,
       // just before Write(), by FileHelper::CheckMandatoryElements()
 
-      if( gdcm::Debug::GetDebugFlag() )
+      if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "-------------About to built FileHelper"  << std::endl;
 
-      fh = gdcm::FileHelper::New(fileToBuild);
+      fh = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
 
-      if( gdcm::Debug::GetDebugFlag() )
+      if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "-------------Finish to built FileHelper"  << std::endl;
 
       fh->SetImageData(tabPixels,nx*ny);

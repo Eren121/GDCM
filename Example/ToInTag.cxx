@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/02/26 08:47:29 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,7 +38,7 @@
   *            converted into a Brucker-like Dicom, Intags compliant
   */  
 
-typedef std::map<std::string, gdcm::File*> SortedFiles;
+typedef std::map<std::string, GDCM_NAME_SPACE::File*> SortedFiles;
 
 int main(int argc, char *argv[]) 
 {
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
    
    // ----- Initialize Arguments Manager ------
       
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -120,19 +120,19 @@ int main(int argc, char *argv[])
    const char *dirNameout;   
    dirNameout  = am->ArgMgrGetString("dirout",".");  
    
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    int verbose  = am->ArgMgrDefined("verbose");
    int split    = am->ArgMgrDefined("split");
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
 
    // ----- Begin Processing -----
    
-   if ( ! gdcm::DirList::IsDirectory(dirNamein) )
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNamein) )
    {
       std::cout << "KO : [" << dirNamein << "] is not a Directory." << std::endl;
       return 0;
@@ -185,14 +185,14 @@ int main(int argc, char *argv[])
    
    std::cout << "Check for output directory :[" << dirNameout << "]."
              <<std::endl;
-   if ( ! gdcm::DirList::IsDirectory(dirNameout) )    // dirout not found
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNameout) )    // dirout not found
    {
       std::string strDirNameout(dirNameout);          // to please gcc 4
       systemCommand = "mkdir " +strDirNameout;        // create it!
       if (verbose)
          std::cout << systemCommand << std::endl;
       system (systemCommand.c_str());
-      if ( ! gdcm::DirList::IsDirectory(dirNameout) ) // be sure it worked
+      if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNameout) ) // be sure it worked
       {
           std::cout << "KO : not a dir : [" << dirNameout << "] (creation failure ?)" << std::endl;
       return 0;
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
    }
     
    std::string strDirNamein(dirNamein);
-   gdcm::DirList dirList(strDirNamein, true); // get recursively the list of files
+   GDCM_NAME_SPACE::DirList dirList(strDirNamein, true); // get recursively the list of files
    
    if (listonly)
    {
@@ -218,10 +218,10 @@ int main(int argc, char *argv[])
       std::cout << std::endl;
    }
    
-   gdcm::DirListType fileNames;
+   GDCM_NAME_SPACE::DirListType fileNames;
    fileNames = dirList.GetFilenames();
-   gdcm::SerieHelper *s;              // Needed only to may use SerieHelper::AddSeriesDetail()
-   s = gdcm::SerieHelper::New();
+   GDCM_NAME_SPACE::SerieHelper *s;              // Needed only to may use SerieHelper::AddSeriesDetail()
+   s = GDCM_NAME_SPACE::SerieHelper::New();
 
    std::string token = "%%%"; // Hope it's enough!
 /*       
@@ -232,16 +232,16 @@ int main(int argc, char *argv[])
    s->Print();
 */
   
-   gdcm::File *f;
-   gdcm::FileHelper *fh;
+   GDCM_NAME_SPACE::File *f;
+   GDCM_NAME_SPACE::FileHelper *fh;
    std::vector<std::string> tokens;
    std::vector<std::string> tokensForFileName;
    
    // For Siemens pb, we need Station Name
    
-   gdcm::DirListType::iterator it1 = fileNames.begin();
-   f = gdcm::File::New();
-   f->SetLoadMode(gdcm::LD_ALL);
+   GDCM_NAME_SPACE::DirListType::iterator it1 = fileNames.begin();
+   f = GDCM_NAME_SPACE::File::New();
+   f->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);
    f->SetFileName( *it1 );
    f->Load();
    std::string stationName = f->GetEntryString(0x0008,0x1010);
@@ -252,13 +252,13 @@ int main(int argc, char *argv[])
              << std::endl;     
    std::string uniqueSeriesIdentifier;
  
-   for (gdcm::DirListType::iterator it) = fileNames.begin();  
+   for (GDCM_NAME_SPACE::DirListType::iterator it) = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
    {
       std::cout << "File Name : " << *it << std::endl;
-      f = gdcm::File::New();
-      f->SetLoadMode(gdcm::LD_ALL);
+      f = GDCM_NAME_SPACE::File::New();
+      f->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);
       f->SetFileName( *it );
       f->Load();
         
@@ -288,11 +288,11 @@ int main(int argc, char *argv[])
    //uint8_t *imageData; // Useless : pixels will not be loaded 
                          //          (images are overwritten)
          
-   for (gdcm::DirListType::iterator it = fileNames.begin();  
+   for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
    {
-      f = gdcm::File::New();
+      f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( *it );
       f->Load();
@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
       tokens.clear();
-      gdcm::Util::Tokenize (userFileIdentifier, tokens, token); 
+      GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token); 
    
       int imageNum; // Within FileName
       char newName[1024];
@@ -353,10 +353,10 @@ int main(int argc, char *argv[])
       {
          ///this is a trick to build up a lexicographical compliant name :
          ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
-         std::string name = gdcm::Util::GetName( *it );
+         std::string name = GDCM_NAME_SPACE::Util::GetName( *it );
          if (hasSkel)
          {
-            gdcm::Util::Tokenize (name, tokensForFileName, skel);
+            GDCM_NAME_SPACE::Util::Tokenize (name, tokensForFileName, skel);
             imageNum = atoi ( tokensForFileName[0].c_str() );
             // probabely we could write something much more complicated using C++ !
             sprintf (newName, "%s%06d%s", skel, imageNum, extent);
@@ -397,7 +397,7 @@ int main(int argc, char *argv[])
    std::string fullWriteFilename;
    std::string strExtent(extent); 
            
-   writeDir = gdcm::Util::NormalizePath(dirNameout);     
+   writeDir = GDCM_NAME_SPACE::Util::NormalizePath(dirNameout);     
    SortedFiles::iterator it2;
  
    previousPatientName            = "";
@@ -415,9 +415,9 @@ int main(int argc, char *argv[])
               
    int flag       = 0;
        
-   gdcm::File *currentFile;
+   GDCM_NAME_SPACE::File *currentFile;
 
-   std::string defaultStudyUID =  gdcm::Util::CreateUniqueUID();
+   std::string defaultStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    std::string defaultSerieUID;
      
    for (it2 = sf.begin() ; it2 != sf.end(); ++it2)
@@ -425,12 +425,12 @@ int main(int argc, char *argv[])
       currentFile = it2->second;
        
       fullFilename =  currentFile->GetFileName();
-      lastFilename =  gdcm::Util::GetName( fullFilename ); 
+      lastFilename =  GDCM_NAME_SPACE::Util::GetName( fullFilename ); 
       std::cout << " --------------------------------------------------"
                 << " Rewrite [" <<lastFilename << "]" << std::endl;
      
       tokens.clear();
-      gdcm::Util::Tokenize (it2->first, tokens, token);
+      GDCM_NAME_SPACE::Util::Tokenize (it2->first, tokens, token);
       
       currentPatientName            = tokens[0];
       currentSerieInstanceUID       = tokens[1];
@@ -445,26 +445,26 @@ int main(int argc, char *argv[])
           currentImagePosition[0] = 'P'; 
 
       // Add a default ImagePositionPatient to avoid confusion at post processing time
-      if ( currentFile->GetEntryString(0x0020,0x0032) == gdcm::GDCM_UNFOUND && 
-           currentFile->GetEntryString(0x0020,0x0030) == gdcm::GDCM_UNFOUND )
+      if ( currentFile->GetEntryString(0x0020,0x0032) == GDCM_NAME_SPACE::GDCM_UNFOUND && 
+           currentFile->GetEntryString(0x0020,0x0030) == GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
          currentFile->InsertEntryString("0.\\0.\\0.",0x0020, 0x0032, "DS" );
       }
 
       // Add a default ImagePositionPatient to avoid confusion at post processing time
-      if ( currentFile->GetEntryString(0x0020,0x0037) == gdcm::GDCM_UNFOUND && 
-           currentFile->GetEntryString(0x0020,0x0035) == gdcm::GDCM_UNFOUND )
+      if ( currentFile->GetEntryString(0x0020,0x0037) == GDCM_NAME_SPACE::GDCM_UNFOUND && 
+           currentFile->GetEntryString(0x0020,0x0035) == GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
          currentFile->InsertEntryString("1.\\0.\\0.\\0.\\1.\\0.",0x0020, 0x0037, "DS" );
       }
       
       if (previousPatientName != currentPatientName)
       {      
-         if ( currentFile->GetEntryString(0x0020,0x000d) == gdcm::GDCM_UNFOUND)
+         if ( currentFile->GetEntryString(0x0020,0x000d) == GDCM_NAME_SPACE::GDCM_UNFOUND)
          {
             if (verbose)   
                std::cout << "--- new  Study UID created" << std::endl;
-            defaultStudyUID =  gdcm::Util::CreateUniqueUID();
+            defaultStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
             currentFile->InsertEntryString(defaultStudyUID, 0x0020, 0x000d, "UI" );
          }
   
@@ -479,7 +479,7 @@ int main(int argc, char *argv[])
          previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
   
          currentPatientWriteDir = writeDir + currentPatientName;
-         //if ( ! gdcm::DirList::IsDirectory(currentPatientWriteDir) )
+         //if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(currentPatientWriteDir) )
            {
               systemCommand   = "mkdir " + currentPatientWriteDir;
               if (verbose)
@@ -496,17 +496,17 @@ int main(int argc, char *argv[])
             std::cout << "==== === new Serie [" << currentSerieInstanceUID << "]"
                       << std::endl;
       
-         if ( currentFile->GetEntryString(0x0020,0x000e) == gdcm::GDCM_UNFOUND)
+         if ( currentFile->GetEntryString(0x0020,0x000e) == GDCM_NAME_SPACE::GDCM_UNFOUND)
          {
             if (verbose)   
                std::cout << "--- --- new  Serie UID created" << std::endl;
-            defaultSerieUID =  gdcm::Util::CreateUniqueUID();
+            defaultSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
             currentFile->InsertEntryString(defaultSerieUID, 0x0020, 0x000e, "UI" );
          }       
       
          if (split)
          {
-             currentSerieWriteDir  = currentPatientWriteDir + gdcm::GDCM_FILESEPARATOR
+             currentSerieWriteDir  = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentSerieInstanceUID;
              systemCommand   = "mkdir " + currentSerieWriteDir;  
              system (systemCommand.c_str());
@@ -526,7 +526,7 @@ int main(int argc, char *argv[])
                       << std::endl;
          if (split)
          {
-             currentPositionWriteDir  = currentSerieWriteDir + gdcm::GDCM_FILESEPARATOR
+             currentPositionWriteDir  = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentImagePosition;
              systemCommand   = "mkdir " + currentPositionWriteDir;     
              system (systemCommand.c_str()); 
@@ -552,7 +552,7 @@ int main(int argc, char *argv[])
          if (split)
          {
              currentPhaseEncodingDirectionWriteDir  = currentPositionWriteDir 
-                             + gdcm::GDCM_FILESEPARATOR
+                             + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentPhaseEncodingDirection;
              systemCommand   = "mkdir " + currentPhaseEncodingDirectionWriteDir;     
              system (systemCommand.c_str());     
@@ -566,10 +566,10 @@ int main(int argc, char *argv[])
          std::cout << "--- --- --- --- --- " << (it2->second)->GetFileName() 
                    << std::endl;
    
-      if ( gdcm::Debug::GetDebugFlag())
+      if ( GDCM_NAME_SPACE::Debug::GetDebugFlag())
          std::cout << "--- --- --- --- --- " << it2->first << "  " 
                    << (it2->second)->GetFileName() << " " 
-                   << gdcm::Util::GetName( fullFilename ) << std::endl;           
+                   << GDCM_NAME_SPACE::Util::GetName( fullFilename ) << std::endl;           
       
       // Transform the image to be 'Brucker-Like'
       // ----------------------------------------   
@@ -660,7 +660,7 @@ int main(int argc, char *argv[])
  
  
       std::string strImagePositionPatient    = currentFile->GetEntryString(0x0020, 0x0032 );
-      if (strImagePositionPatient == gdcm::GDCM_UNFOUND)
+      if (strImagePositionPatient == GDCM_NAME_SPACE::GDCM_UNFOUND)
       {
          if (verbose)
             std::cout << "Duplicate ImagePosition into ImagePositionPatient" << std::endl;
@@ -668,7 +668,7 @@ int main(int argc, char *argv[])
       }  
       
       std::string strImageOrientationPatient = f->GetEntryString(0x0020, 0x0037 );
-      if (strImageOrientationPatient == gdcm::GDCM_UNFOUND)
+      if (strImageOrientationPatient == GDCM_NAME_SPACE::GDCM_UNFOUND)
       {
          if (verbose)
             std::cout << "Duplicate ImageOrientation into ImageOrientationPatient" << std::endl;      
@@ -694,12 +694,12 @@ int main(int argc, char *argv[])
                  
       if (split)
       
-         //fullWriteFilename = currentPhaseEncodingDirectionWriteDir + gdcm::GDCM_FILESEPARATOR 
+         //fullWriteFilename = currentPhaseEncodingDirectionWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
          //                                + lastFilename + strExtent;      
-         fullWriteFilename = currentPositionWriteDir + gdcm::GDCM_FILESEPARATOR 
+         fullWriteFilename = currentPositionWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename + strExtent; 
       else
-         fullWriteFilename = currentPatientWriteDir + gdcm::GDCM_FILESEPARATOR 
+         fullWriteFilename = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename + strExtent; 
       
       /*           
@@ -710,7 +710,7 @@ int main(int argc, char *argv[])
             
       // Load the pixels in RAM.    
       
-      fh = gdcm::FileHelper::New(currentFile);     
+      fh = GDCM_NAME_SPACE::FileHelper::New(currentFile);     
       uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       fh->SetWriteTypeToDcmExplVR();
       // We didn't modify pixels -> keep unchanged the following :
@@ -726,7 +726,7 @@ int main(int argc, char *argv[])
          for(int x=nX/3; x<nX/2+50; x++)
            imageData[ y*nX*2 + x ] = 0;   
         
-      fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);
+      fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
       if (!fh->Write(fullWriteFilename))
       {
          std::cout << "Fail to write :[" << fullWriteFilename << "]"

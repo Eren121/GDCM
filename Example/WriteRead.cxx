@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,10 +24,10 @@ int main(int argc, char *argv[])
 {  
    std::string fileNameToWrite;
 
-   gdcm::File *e1;
-   gdcm::File *e2;
-   gdcm::FileHelper *f1;
-   gdcm::FileHelper *f2;
+   GDCM_NAME_SPACE::File *e1;
+   GDCM_NAME_SPACE::File *e2;
+   GDCM_NAME_SPACE::FileHelper *f1;
+   GDCM_NAME_SPACE::FileHelper *f2;
    uint8_t* imageData, *imageData2;
    int dataSize, dataSize2;
      
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 // --------------------- we read the input image
 
    std::cout << argv[1] << std::endl;
-   e1 = gdcm::File::New( );
+   e1 = GDCM_NAME_SPACE::File::New( );
    e1->SetFileName( fileName );
    e1->Load();
    if (!e1->IsReadable()) 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
       return 1;
    }
    
-   f1 = gdcm::FileHelper::New(e1);
+   f1 = GDCM_NAME_SPACE::FileHelper::New(e1);
    imageData= f1->GetImageData();
    dataSize = f1->GetImageDataSize();
 
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
    f1->WriteDcmExplVR(fileNameToWrite);
 
 // --------------------- we read the written image
-   e2 = gdcm::File::New( );
+   e2 = GDCM_NAME_SPACE::File::New( );
    e2->SetFileName( fileNameToWrite );
    e2->Load();
    if (!e2->IsReadable()) 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
       f1->Delete();
       return 1;
    }
-   f2 = gdcm::FileHelper::New(e2);
+   f2 = GDCM_NAME_SPACE::FileHelper::New(e2);
    imageData2= f2->GetImageData();
    dataSize2 = f2->GetImageDataSize();
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PatchHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:51:56 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 
 // global variables will be seen inside any function.
 
-gdcm::File *f;
+GDCM_NAME_SPACE::File *f;
 std::fstream *fp;
 
 uint16_t samplesperpixel;
@@ -64,7 +64,7 @@ int bpixelrepresentation;
 void update()
 {
    uint32_t offset;
-   gdcm::DocEntry *d;
+   GDCM_NAME_SPACE::DocEntry *d;
       // 
       //  Fields to replace.
       // 
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage") || argc == 1) 
    {
@@ -262,17 +262,17 @@ int main(int argc, char *argv[])
       pixelrepresentation = am->ArgMgrWantInt("pixelrepresentation",usage);
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
  
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    /* if unused Param we give up */
@@ -291,14 +291,14 @@ int main(int argc, char *argv[])
       // 
       //   Parse the input file.
       // 
-      f = gdcm::File::New( );
+      f = GDCM_NAME_SPACE::File::New( );
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
       bool res = f->Load();
 
-      // gdcm::File::IsReadable() is no usable here, because we deal with
-      // any kind of gdcm::Readable *document*
-      // not only gdcm::File (as opposed to gdcm::DicomDir)
+      // GDCM_NAME_SPACE::File::IsReadable() is no usable here, because we deal with
+      // any kind of GDCM_NAME_SPACE::Readable *document*
+      // not only GDCM_NAME_SPACE::File (as opposed to GDCM_NAME_SPACE::DicomDir)
       if ( !res ) 
       {
          std::cout <<std::endl
@@ -330,13 +330,13 @@ int main(int argc, char *argv[])
    else  // ====== Deal with a (single Patient) Directory ======
    {
       std::cout << "dirName [" << dirName << "]" << std::endl;
-      gdcm::DirList dirList(dirName,1); // gets recursively the file list
-      gdcm::DirListType fileList = dirList.GetFilenames();
-      for( gdcm::DirListType::iterator it  = fileList.begin();
+      GDCM_NAME_SPACE::DirList dirList(dirName,1); // gets recursively the file list
+      GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
+      for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
       {
-         f = gdcm::File::New( );
+         f = GDCM_NAME_SPACE::File::New( );
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
          bool res = f->Load();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 15:01:47 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
    
 
    // Initialize Arguments Manager   
-   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
    {
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
    
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
       return 0;
    }  
 
-   bool bigEndian = gdcm::Util::IsCurrentProcessorBigEndian();
+   bool bigEndian = GDCM_NAME_SPACE::Util::IsCurrentProcessorBigEndian();
 
    std::string strPixelType(pixelType);
    int pixelSign;
@@ -189,10 +189,10 @@ int main(int argc, char *argv[])
    
 // Create an empty FileHelper
 
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New();
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New();
  
  // Get the (empty) image header.  
-   gdcm::File *fileToBuild = fileH->GetFile();
+   GDCM_NAME_SPACE::File *fileToBuild = fileH->GetFile();
      
    
    // If you want to use this program as a template to create
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
    //          keeping the same 'Study Instance UID' for various images
    // The user may add images to a 'Manufacturer Study',
    //          adding new Series to an already existing Study
-   std::string studyUID =  gdcm::Util::CreateUniqueUID(); 
+   std::string studyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID(); 
    fileToBuild->InsertEntryString(studyUID, 0x0020,0x000d,"UI");
 
    // 'Serie Instance UID'
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
    // keeping the same 'Serie Instance UID' for various images
    // The user shouldn't add any image to a 'Manufacturer Serie'
    // but there is no way no to prevent him for doing that
-   std::string serieUID =  gdcm::Util::CreateUniqueUID();    
+   std::string serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();    
    fileToBuild->InsertEntryString(serieUID, 0x0020,0x000e,"UI");   
  
    // end of 'keep out of loop lines  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPrivate.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/26 13:32:54 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmDataEntry.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor

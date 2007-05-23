@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/08 17:04:32 $
-  Version:   $Revision: 1.186 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.187 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
    #include <thread.h>
 #endif
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE
 {
 //-------------------------------------------------------------------------
 const std::string Util::GDCM_UID = "1.2.826.0.1.3680043.2.1143";
@@ -1247,7 +1247,7 @@ void Util::hfpswap(double *a, double *b)
   ghost@aladdin.com
  */
 
-/* $Id: gdcmUtil.cxx,v 1.186 2006/11/08 17:04:32 jpr Exp $ */
+/* $Id: gdcmUtil.cxx,v 1.187 2007/05/23 14:18:11 jpr Exp $ */
 
 /*
   Independent implementation of MD5 (RFC 1321).

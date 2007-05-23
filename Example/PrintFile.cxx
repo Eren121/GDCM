@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/15 15:57:49 $
-  Version:   $Revision: 1.83 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.84 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,18 +32,18 @@
 
 // TODO : code factorization, for 'single file' an 'whole directory' processing
 
-void ShowLutData(gdcm::File *f);
+void ShowLutData(GDCM_NAME_SPACE::File *f);
 
      // Nothing is written yet to get LUT Data user friendly
      // The following is to be moved into a PixelReadConvert method
      // Let here, waiting for a clever idea on the way to do it.
 
-void ShowLutData(gdcm::File *f)
+void ShowLutData(GDCM_NAME_SPACE::File *f)
 {  
-   gdcm::SeqEntry *modLutSeq = f->GetSeqEntry(0x0028,0x3000);
+   GDCM_NAME_SPACE::SeqEntry *modLutSeq = f->GetSeqEntry(0x0028,0x3000);
    if ( modLutSeq !=0 )
    {
-      gdcm::SQItem *sqi= modLutSeq->GetFirstSQItem();
+      GDCM_NAME_SPACE::SQItem *sqi= modLutSeq->GetFirstSQItem();
       if ( sqi != 0 )
       {
          std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
@@ -70,7 +70,7 @@ void ShowLutData(gdcm::File *f)
             std::cout << "Wrong LUT descriptor" << std::endl;
          }
          //LUT Data (CTX dependent)    
-         gdcm::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006); 
+         GDCM_NAME_SPACE::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006); 
          if ( b != 0 )
          { 
             int BitsAllocated = f->GetBitsAllocated();
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // Initialize Arguments Manager   
-   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
    {
@@ -167,20 +167,20 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    if (am->ArgMgrDefined("warning"))
-      gdcm::Debug::WarningOn();
+      GDCM_NAME_SPACE::Debug::WarningOn();
        
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    int level = am->ArgMgrGetInt("level", 1);
@@ -228,12 +228,12 @@ int main(int argc, char *argv[])
  
    if (ddict)
    {
-      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddDict(dict);   
+      GDCM_NAME_SPACE::Global::GetDicts()->GetDefaultPubDict()->AddDict(dict);   
    }
 
    if ( fileName != 0 ) // ====== Deal with a single file ======
    { 
-      gdcm::File *f = gdcm::File::New();
+      GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
 
@@ -250,9 +250,9 @@ errno = 0;
 
 
       bool res = f->Load();
-      // gdcm::File::IsReadable() is no usable here, because we deal with
+      // GDCM_NAME_SPACE::File::IsReadable() is no usable here, because we deal with
       // any kind of gdcm-Parsable *document* 
-      // not only gdcm::File (as opposed to gdcm::DicomDir)
+      // not only GDCM_NAME_SPACE::File (as opposed to GDCM_NAME_SPACE::DicomDir)
       if ( !res )
       {
          std::cout << "Cannot process file [" << fileName << "]" << std::endl;
@@ -268,7 +268,7 @@ errno = 0;
       if (nbP == 1)
          f->SetFourthDimensionLocation(FourthDimLoc[0],FourthDimLoc[1]);
 
-      gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+      GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
       fh->SetPrintLevel( level );
 
       fh->Print();
@@ -339,49 +339,49 @@ errno = 0;
 
       std::string strPatientPosition = 
                                       f->GetEntryString(0x0018,0x5100);
-      if ( strPatientPosition != gdcm::GDCM_UNFOUND 
+      if ( strPatientPosition != GDCM_NAME_SPACE::GDCM_UNFOUND 
         && strPatientPosition != "" )  
             std::cout << "PatientPosition (0x0010,0x5100)= [" 
                       << strPatientPosition << "]" << std::endl;
  
       std::string strViewPosition = 
                                       f->GetEntryString(0x0018,0x5101);
-      if ( strViewPosition != gdcm::GDCM_UNFOUND 
+      if ( strViewPosition != GDCM_NAME_SPACE::GDCM_UNFOUND 
         && strViewPosition != "" )  
             std::cout << "View Position (0x0018,0x5101)= [" 
                       << strViewPosition << "]" << std::endl;
       
      std::string strPatientOrientation = 
                                       f->GetEntryString(0x0020,0x0020);
-      if ( strPatientOrientation != gdcm::GDCM_UNFOUND
+      if ( strPatientOrientation != GDCM_NAME_SPACE::GDCM_UNFOUND
         && strPatientOrientation != "")  
          std::cout << "PatientOrientation (0x0020,0x0020)= [" 
                    << strPatientOrientation << "]" << std::endl;
 
       std::string strImageOrientationPatient = 
                                       f->GetEntryString(0x0020,0x0037);  
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND
+      if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND
         && strImageOrientationPatient != "" )  
          std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
                    << strImageOrientationPatient << "]" << std::endl;
 
       std::string strImageOrientationRET = 
                                       f->GetEntryString(0x0020,0x0035);
-      if ( strImageOrientationRET != gdcm::GDCM_UNFOUND
+      if ( strImageOrientationRET != GDCM_NAME_SPACE::GDCM_UNFOUND
         && strImageOrientationRET != "" )  
          std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
                    << strImageOrientationRET << "]" << std::endl;
 
       std::string strImagePositionPatient = 
                                       f->GetEntryString(0x0020,0x0032);  
-      if ( strImagePositionPatient != gdcm::GDCM_UNFOUND
+      if ( strImagePositionPatient != GDCM_NAME_SPACE::GDCM_UNFOUND
         && strImagePositionPatient != "" )  
          std::cout << "ImagePositionPatient (0x0020,0x0032)= [" 
                    << strImagePositionPatient << "]" << std::endl;
 
       std::string strImagePositionPatientRET = 
                                       f->GetEntryString(0x0020,0x0030);
-      if ( strImagePositionPatientRET != gdcm::GDCM_UNFOUND
+      if ( strImagePositionPatientRET != GDCM_NAME_SPACE::GDCM_UNFOUND
         && strImagePositionPatientRET != "" )  
          std::cout << "ImagePositionPatientRET (0x0020,0x0030)= [" 
                    << strImagePositionPatientRET << "]" << std::endl;
@@ -403,13 +403,13 @@ errno = 0;
       // Let's compute 'user friendly' results about 'Orientation'
       // ---------------------------------------------------------
  
-      gdcm::Orientation *o = gdcm::Orientation::New();
+      GDCM_NAME_SPACE::Orientation *o = GDCM_NAME_SPACE::Orientation::New();
 
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
-           strImageOrientationRET     != gdcm::GDCM_UNFOUND )
+      if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND ||
+           strImageOrientationRET     != GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
   
-         gdcm::OrientationType orient = o->GetOrientationType( f );
+         GDCM_NAME_SPACE::OrientationType orient = o->GetOrientationType( f );
  
          std::cout << "TypeOrientation = " << orient << " (-> " 
                    << o->GetOrientationTypeString(orient) << " )" << std::endl;
@@ -434,10 +434,10 @@ errno = 0;
            // Nothing is written yet to get LUT Data user friendly
            // The following is to be moved into a PixelRedaConvert method
   
-            gdcm::SeqEntry *modLutSeq = f->GetSeqEntry(0x0028,0x3000);
+            GDCM_NAME_SPACE::SeqEntry *modLutSeq = f->GetSeqEntry(0x0028,0x3000);
             if ( modLutSeq !=0 )
             {
-               gdcm::SQItem *sqi= modLutSeq->GetFirstSQItem();
+               GDCM_NAME_SPACE::SQItem *sqi= modLutSeq->GetFirstSQItem();
                if ( !sqi )
                {
                   std::string lutDescriptor = sqi->GetEntryString(0x0028,0x3002);
@@ -453,7 +453,7 @@ errno = 0;
                   {
                       std::cout << "Wrong LUT descriptor" << std::endl;
                   }                                                  
-                  gdcm::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006);
+                  GDCM_NAME_SPACE::DataEntry *b = sqi->GetDataEntry(0x0028,0x3006);
                   if ( b != 0 )
                   {
                      if ( b->GetLength() != 0 )
@@ -496,7 +496,7 @@ errno = 0;
          ShowLutData(f);
       }
 
-      // Parsability of the gdcm::Document already checked, after Load() !
+      // Parsability of the GDCM_NAME_SPACE::Document already checked, after Load() !
       
       if ( f->IsReadable() )
       {
@@ -525,18 +525,18 @@ errno = 0;
    else  // ====== Deal with a Directory ======
    {
       std::cout << "dirName [" << dirName << "]" << std::endl;
-      gdcm::DirList dirList(dirName,1); // gets recursively the file list
-      gdcm::DirListType fileList = dirList.GetFilenames();
-      gdcm::File *f;
+      GDCM_NAME_SPACE::DirList dirList(dirName,1); // gets recursively the file list
+      GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
+      GDCM_NAME_SPACE::File *f;
       bool res;
 
-      for( gdcm::DirListType::iterator it  = fileList.begin();
+      for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )
       {
          std::cout << std::endl<<" Start processing :[" << it->c_str() << "]"
                    << std::endl;
-         f = gdcm::File::New();
+         f = GDCM_NAME_SPACE::File::New();
          f->SetLoadMode(loadMode);
          f->SetFileName( it->c_str() );
 
@@ -564,7 +564,7 @@ errno = 0;
             continue;
          }
 
-         gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+         GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
          fh->SetPrintLevel( level );
          fh->Print();
 
@@ -575,35 +575,35 @@ errno = 0;
 
          std::string strPatientPosition = 
                                        f->GetEntryString(0x0018,0x5100);
-         if ( strPatientPosition != gdcm::GDCM_UNFOUND 
+         if ( strPatientPosition != GDCM_NAME_SPACE::GDCM_UNFOUND 
          && strPatientPosition != "" )  
                std::cout << "PatientPosition (0x0010,0x5100)= [" 
                         << strPatientPosition << "]" << std::endl;
     
          std::string strViewPosition = 
                                        f->GetEntryString(0x0018,0x5101);
-         if ( strViewPosition != gdcm::GDCM_UNFOUND 
+         if ( strViewPosition != GDCM_NAME_SPACE::GDCM_UNFOUND 
          && strViewPosition != "" )  
                std::cout << "strViewPosition (0x0010,0x5101)= [" 
                         << strViewPosition << "]" << std::endl;
          
          std::string strPatientOrientation = 
                                        f->GetEntryString(0x0020,0x0020);
-         if ( strPatientOrientation != gdcm::GDCM_UNFOUND
+         if ( strPatientOrientation != GDCM_NAME_SPACE::GDCM_UNFOUND
          && strPatientOrientation != "")  
             std::cout << "PatientOrientation (0x0020,0x0020)= [" 
                       << strPatientOrientation << "]" << std::endl;
 
          std::string strImageOrientationPatient = 
                                        f->GetEntryString(0x0020,0x0037);  
-         if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND
+         if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND
          && strImageOrientationPatient != "" )  
             std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
                      << strImageOrientationPatient << "]" << std::endl;
 
          std::string strImageOrientationRET = 
                                        f->GetEntryString(0x0020,0x0035);
-         if ( strImageOrientationRET != gdcm::GDCM_UNFOUND
+         if ( strImageOrientationRET != GDCM_NAME_SPACE::GDCM_UNFOUND
          && strImageOrientationRET != "" )
          {
             std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
@@ -613,14 +613,14 @@ errno = 0;
          // Let's compute 'user friendly' results about 'Orientation'
          // ---------------------------------------------------------
     
-         gdcm::Orientation *o = gdcm::Orientation::New(); 
+         GDCM_NAME_SPACE::Orientation *o = GDCM_NAME_SPACE::Orientation::New(); 
 
 
-         if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND ||
-            strImageOrientationRET     != gdcm::GDCM_UNFOUND )
+         if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND ||
+            strImageOrientationRET     != GDCM_NAME_SPACE::GDCM_UNFOUND )
          {
      
-            gdcm::OrientationType orient = o->GetOrientationType( f );
+            GDCM_NAME_SPACE::OrientationType orient = o->GetOrientationType( f );
     
             std::cout << "TypeOrientation = " << orient << " (-> " 
                      << o->GetOrientationTypeString(orient) << " )" << std::endl;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/23 14:59:58 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -69,19 +69,19 @@ int main(int argc, char *argv[])
    const char *name;
    name  = am->ArgMgrGetString("name","DICOMDIR");
    
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ; 
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ; 
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    int check = am->ArgMgrDefined("check"); 
    
@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
 
    // ----- Begin Processing -----
 
-   gdcm::DicomDir *dcmdir;
+   GDCM_NAME_SPACE::DicomDir *dcmdir;
    
    // we ask for Directory parsing
 
-   dcmdir = gdcm::DicomDir::New( );
+   dcmdir = GDCM_NAME_SPACE::DicomDir::New( );
 
    dcmdir->SetLoadMode(loadMode);
    dcmdir->SetDirectoryName(dirName);
@@ -110,14 +110,14 @@ int main(int argc, char *argv[])
      // struct tms tms1, tms2; // Time measurements
      // times(&tms1);
        
-   dcmdir->Load(); // Reads all the files and creates the gdcm::DicomDir
+   dcmdir->Load(); // Reads all the files and creates the GDCM_NAME_SPACE::DicomDir
    
       //times(&tms2);      
       //std::cout 
       //  << (long) ((tms2.tms_utime)  - (tms1.tms_utime)) 
       // << std::endl;
 
-   if ( gdcm::Debug::GetDebugFlag() )
+   if ( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
       std::cout << "======================= End Parsing Directory" << std::endl;
       
     // ----- Check the result
@@ -130,23 +130,23 @@ int main(int argc, char *argv[])
       return 1;
    }
     
-   // ----- Writes the corresponding DICOMDIR file (from the gdcm::DicomDir)
+   // ----- Writes the corresponding DICOMDIR file (from the GDCM_NAME_SPACE::DicomDir)
 
    dcmdir->Write(name);
    dcmdir->Delete();
    
    if (check) 
    {
-      if ( gdcm::Debug::GetDebugFlag() )
+      if ( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "======================= End Writting DICOMDIR" 
                    << std::endl;
 
      // Read from disc the just written DicomDir
     
-      gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
+      GDCM_NAME_SPACE::DicomDir *newDicomDir = GDCM_NAME_SPACE::DicomDir::New();
       newDicomDir->SetFileName( name );
       newDicomDir->Load();
-      if ( gdcm::Debug::GetDebugFlag() )
+      if ( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "======================= End Parsing DICOMDIR" 
                    << std::endl;   
       if( !newDicomDir->IsReadable() )

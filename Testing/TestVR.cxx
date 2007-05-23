@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/21 12:15:54 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,9 +21,9 @@
 int TestVR(int , char *[])
 {
    int error = 0;
-   gdcm::VR *vr = gdcm::VR::New();
+   GDCM_NAME_SPACE::VR *vr = GDCM_NAME_SPACE::VR::New();
  
-   gdcm::Debug::DebugOn();
+   GDCM_NAME_SPACE::Debug::DebugOn();
 
    // We should test the 27 entries ...
    vr->Print( std::cout );
@@ -54,7 +54,7 @@ int TestVR(int , char *[])
       std::cerr << "' /' is recognized as a valid VR" << std::endl;
       error++;
    }
-   if( vr->IsValidVR( gdcm::GDCM_VRUNKNOWN ) )
+   if( vr->IsValidVR( GDCM_NAME_SPACE::GDCM_VRUNKNOWN ) )
    {
       std::cerr << "'  ' is recognized as a valid VR" << std::endl;
       error++;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/31 16:39:25 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/05/23 14:18:07 $
+  Version:   $Revision: 1.24 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
 
 #include "gdcmArgMgr.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-------------------------------------------------------------------------
 // Constructor / Destructor

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/04/12 13:22:49 $
-  Version:   $Revision: 1.111 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.112 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -117,7 +117,7 @@ fh1->Write(newFileName);
 
 
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 typedef std::map<uint16_t, int> GroupHT;    //  Hash Table
 //-------------------------------------------------------------------------
@@ -1764,7 +1764,7 @@ is only from (0020,0030) and (0020,0035)
    
    // Patient Orientation
    // Can be computed from (0020|0037) :  Image Orientation (Patient)
-   gdcm::Orientation *o = gdcm::Orientation::New();
+   GDCM_NAME_SPACE::Orientation *o = GDCM_NAME_SPACE::Orientation::New();
    std::string ori = o->GetOrientation ( FileInternal );
    o->Delete();
    if (ori != "\\" && ori != GDCM_UNFOUND)

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 20:06:14 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007/05/23 14:18:11 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 #include "gdcmRefCounter.h"
 #include <map>
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 typedef struct
 {

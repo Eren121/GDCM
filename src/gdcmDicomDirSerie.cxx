@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:01:44 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2007/05/23 14:18:08 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmGlobal.h"
 #include "gdcmDebug.h"
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -113,7 +113,6 @@ void DicomDirSerie::ClearPrivate()
    Privates.clear();
 }
 
-
 /**
  * \brief  Remove all 'Images' in the serie 
  */
@@ -127,6 +126,7 @@ void DicomDirSerie::ClearImage()
    }
    Images.clear();
 }
+
 /**
  * \brief   Get the first entry while visiting the DicomDirImage
  * \return  The first DicomDirImage if DicomDirserie not empty, otherwhise NULL

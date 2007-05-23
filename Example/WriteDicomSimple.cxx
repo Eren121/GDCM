@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 10:33:47 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // Initialize Arguments Manager   
-   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
    {
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    std::string fileOut = am->ArgMgrGetString("fileout",(char *)"WriteDicomSimple.dcm");   
    SIZE_X = am->ArgMgrGetInt("NX", 128);
@@ -83,13 +83,13 @@ int main(int argc, char *argv[])
    // ----------- End Arguments Manager ---------
    
    
-// Step 1 : Create an empty gdcm::FileHelper for the image
+// Step 1 : Create an empty GDCM_NAME_SPACE::FileHelper for the image
 //          (it deals with the acces to the pixels)
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New();
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New();
    
-//         Get the empty gdcm::File of the image 
+//         Get the empty GDCM_NAME_SPACE::File of the image 
 //         (it deals with the 'entries' od the image header)  
-   gdcm::File *header = fileH->GetFile();
+   GDCM_NAME_SPACE::File *header = fileH->GetFile();
     
    std::ostringstream str;
 

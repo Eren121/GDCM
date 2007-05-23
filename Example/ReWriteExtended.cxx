@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWriteExtended.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/29 12:02:22 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------   
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -72,23 +72,23 @@ int main(int argc, char *argv[])
 
    const char *mode = am->ArgMgrGetString("mode","X");
    
-   int filecontent =  am->ArgMgrGetInt("filecontent", gdcm::UNMODIFIED_PIXELS_IMAGE);
+   int filecontent =  am->ArgMgrGetInt("filecontent", GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
    
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
    if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    bool rgb = ( 0 != am->ArgMgrDefined("RGB") );
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
  
  
  
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 
 
    
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    void *imageData; 
    int dataSize;
  
@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
 
 
    // We trust user. (just an example; *never* trust an user !)  
-   fh->SetContentType((gdcm::ImageContentType)filecontent);
+   fh->SetContentType((GDCM_NAME_SPACE::ImageContentType)filecontent);
    
    /// \todo Here, give the detail of operations a 'decent' user should perform,
    ///       according to what *he* wants to do.
@@ -265,26 +265,26 @@ int main(int argc, char *argv[])
 
    // an user shouldn't add images to a 'native' serie.
    // He is allowed to create his own Serie, within a 'native' Study :
-   // if he wants to do so, he has to call gdcm::Util::GetUniqueUID 
+   // if he wants to do so, he has to call GDCM_NAME_SPACE::Util::GetUniqueUID 
    // only once for a given image set, belonging to a single 'user Serie'
    
    std::string SerieInstanceUID;   
    switch(filecontent)
    {
-      case gdcm::USER_OWN_IMAGE :
-         SerieInstanceUID = gdcm::Util::CreateUniqueUID();
+      case GDCM_NAME_SPACE::USER_OWN_IMAGE :
+         SerieInstanceUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
          f->SetEntryString(SerieInstanceUID,0x0020,0x000e);
       break;
       
-      case gdcm::FILTERED_IMAGE :
+      case GDCM_NAME_SPACE::FILTERED_IMAGE :
       /// \todo : to be finished!
       break;      
 
-      case gdcm::CREATED_IMAGE :
+      case GDCM_NAME_SPACE::CREATED_IMAGE :
       /// \todo : to be finished!
       break;
 
-      case gdcm::UNMODIFIED_PIXELS_IMAGE :
+      case GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE :
       /// \todo : to be finished!
       break;      
    }

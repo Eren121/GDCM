@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/10/23 15:49:14 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2007/05/23 14:18:06 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -118,10 +118,10 @@ int WriteSimple(Image &img)
 // Step 1 : Create an empty FileHelper
 
    std::cout << "        1...";
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New();
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New();
  
  //  Get the (empty) image header.  
-   gdcm::File *fileToBuild = fileH->GetFile();
+   GDCM_NAME_SPACE::File *fileToBuild = fileH->GetFile();
    std::ostringstream str;
 
    // Set the image size
@@ -157,7 +157,7 @@ int WriteSimple(Image &img)
    // Set the pixel representation
    str.str("");
    str << img.sign;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103, "US"); // Pixel Representation
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0103,"US"); // Pixel Representation
 
    fileName << "-" << img.componentSize;
    if(img.sign == 0)
@@ -165,7 +165,7 @@ int WriteSimple(Image &img)
    else
       fileName << "S";
  
-   fileToBuild->InsertEntryString("0",0x0008,0x0000, "UL"); // Should be removed
+   fileToBuild->InsertEntryString("0",0x0008,0x0000,"UL"); // Should be removed
                                                             // except for ACR 
    switch (img.writeMode)
    {
@@ -184,7 +184,7 @@ int WriteSimple(Image &img)
    // Set the samples per pixel
    str.str("");
    str << img.components;
-   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002, "US"); // Samples per Pixel
+   fileToBuild->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
 // Step 2 : Create the output image
    std::cout << "2...";
@@ -265,24 +265,24 @@ int WriteSimple(Image &img)
 // Step 5 : Read the written image
    std::cout << "5..." << std::endl;
    // old form.
-   //gdcm::FileHelper *reread = new gdcm::FileHelper( fileName.str() );
+   //GDCM_NAME_SPACE::FileHelper *reread = new GDCM_NAME_SPACE::FileHelper( fileName.str() );
    // Better use :
-   gdcm::File *f = gdcm::File::New( );
-   f->SetLoadMode(gdcm::LD_ALL);
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New( );
+   f->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);
    f->SetFileName( fileName.str() );
    
    //reread->SetFileName( fileName.str() );
-   //reread->SetLoadMode(gdcm::LD_ALL); // Load everything
+   //reread->SetLoadMode(GDCM_NAME_SPACE::LD_ALL); // Load everything
                            // Possible values are 
-                           //              gdcm::LD_ALL, 
-                           //              gdcm::LD_NOSEQ, 
-                           //              gdcm::LD_NOSHADOW,
-                           //              gdcm::LD_NOSEQ|gdcm::LD_NOSHADOW, 
-                           //              gdcm::LD_NOSHADOWSEQ
+                           //              GDCM_NAME_SPACE::LD_ALL, 
+                           //              GDCM_NAME_SPACE::LD_NOSEQ, 
+                           //              GDCM_NAME_SPACE::LD_NOSHADOW,
+                           //              GDCM_NAME_SPACE::LD_NOSEQ|GDCM_NAME_SPACE::LD_NOSHADOW, 
+                           //              GDCM_NAME_SPACE::LD_NOSHADOWSEQ
    
    f->Load();
   // reread->Load();
-   gdcm::FileHelper *reread = gdcm::FileHelper::New( f );  
+   GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( f );  
 
    reread->Print();
 
@@ -398,7 +398,7 @@ int TestWriteSimple(int argc, char *argv[])
       return 1;
    }
 
-  // gdcm::Debug::DebugOn();
+  // GDCM_NAME_SPACE::Debug::DebugOn();
 
    int ret=0;
    int i=0;

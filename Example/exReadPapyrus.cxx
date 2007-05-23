@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadPapyrus.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/08/29 14:39:45 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,7 @@ bool RemoveFile(const char *source)
 }
 
 // ----------------------------------------------------------------------
-// Here we load a supposed to be Papyrus File (gdcm::File compliant)
+// Here we load a supposed to be Papyrus File (GDCM_NAME_SPACE::File compliant)
 // and then try to get the pixels, using low-level SeqEntry accessors.
 // Since it's not a general purpose Papyrus related program
 // (just a light example) we suppose *everything* is clean
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
    
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage")) 
    {
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
  
    // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
    }
 
    int loadMode = 0x0; // load everything
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode( loadMode );
    f->SetFileName( fileName );
    bool res = f->Load();  
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
    }
 
    // Look for private Papyrus Sequence
-   gdcm::SeqEntry *seqPapyrus= f->GetSeqEntry(0x0041, 0x1050);
+   GDCM_NAME_SPACE::SeqEntry *seqPapyrus= f->GetSeqEntry(0x0041, 0x1050);
    if (!seqPapyrus)
    {
       std::cout << "NOT a Papyrus File : " << fileName <<std::endl;
@@ -155,11 +155,11 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-//   gdcm::FileHelper *original = new gdcm::FileHelper( fileName );
-//   gdcm::File *h = original->GetFile();
+//   GDCM_NAME_SPACE::FileHelper *original = new GDCM_NAME_SPACE::FileHelper( fileName );
+//   GDCM_NAME_SPACE::File *h = original->GetFile();
 
-   //gdcm::FileHelper *f1 = new gdcm::FileHelper(f);
-   gdcm::SQItem *sqi = seqPapyrus->GetFirstSQItem();
+   //GDCM_NAME_SPACE::FileHelper *f1 = new GDCM_NAME_SPACE::FileHelper(f);
+   GDCM_NAME_SPACE::SQItem *sqi = seqPapyrus->GetFirstSQItem();
    if (sqi == 0)
    {
       std::cout << "NO SQItem found within private Papyrus Sequence"
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
    //  allocate enough room to get the pixels of all images.
    uint8_t *PixelArea = new uint8_t[lgrImage*nbImages];
    uint8_t *currentPosition = PixelArea;
-   gdcm::DataEntry *pixels;
+   GDCM_NAME_SPACE::DataEntry *pixels;
 
    // declare and open the file
    std::ifstream *Fp;
@@ -274,9 +274,9 @@ int main(int argc, char *argv[])
 
    // build up a new File, with file info + images info + global pixel area.
 
-   std::string NumberOfFrames = gdcm::Util::Format("%d", nbImages); 
+   std::string NumberOfFrames = GDCM_NAME_SPACE::Util::Format("%d", nbImages); 
 
-   gdcm::File *n = gdcm::File::New();
+   GDCM_NAME_SPACE::File *n = GDCM_NAME_SPACE::File::New();
 
    n->InsertEntryString(MediaStSOPinstUID,  0x0002,0x0002);
   // Whe keep default gdcm Transfer Syntax (Explicit VR Little Endian)
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
    n->InsertEntryString(PixelRepresentation,0x0028,0x0103);
 
    // create the file
-   gdcm::FileHelper *file = gdcm::FileHelper::New(n);
+   GDCM_NAME_SPACE::FileHelper *file = GDCM_NAME_SPACE::FileHelper::New(n);
 
    file->SetImageData(PixelArea,lgrImage*nbImages);
    file->SetWriteTypeToDcmExplVR();

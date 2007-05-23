@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/15 15:54:15 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 #include "gdcmDebug.h"
 #include <math.h> // for sqrt
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //--------------------------------------------------------------------
 //  THERALYS Algorithm to determine the most similar basic orientation

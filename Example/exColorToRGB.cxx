@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exColorToRGB.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:27 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/05/23 14:18:05 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,12 +47,12 @@ int main(int argc, char *argv[])
 // ============================================================
 //   Read the input image.
 // ============================================================
-   // a gdcm::File contains all the Dicom Field but the Pixels Element
+   // a GDCM_NAME_SPACE::File contains all the Dicom Field but the Pixels Element
 
    std::cout << argv[1] << std::endl;
 
-   gdcm::File *f = gdcm::File::New();
-   f->SetLoadMode( gdcm::LD_ALL);
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
+   f->SetLoadMode( GDCM_NAME_SPACE::LD_ALL);
    f->SetFileName( fileName );
    bool res = f->Load();        
 
@@ -81,8 +81,8 @@ int main(int argc, char *argv[])
 //   Load the pixels in memory.
 // ============================================================
 
-   // We need a gdcm::FileHelper, since we want to load the pixels        
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+   // We need a GDCM_NAME_SPACE::FileHelper, since we want to load the pixels        
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
 
    // uint8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
    // It's just for prototyping.
@@ -103,20 +103,20 @@ int main(int argc, char *argv[])
    // ------                              without Sequences     -------------
 
  
-   gdcm::FileHelper *copy = gdcm::FileHelper::New( );
+   GDCM_NAME_SPACE::FileHelper *copy = GDCM_NAME_SPACE::FileHelper::New( );
    copy->SetFileName( output );
    copy->Load();
  
-   gdcm::DocEntry *d = f->GetFirstEntry();
+   GDCM_NAME_SPACE::DocEntry *d = f->GetFirstEntry();
    while(d)
    {
       // We skip SeqEntries, since user cannot do much with them
-      if ( !(dynamic_cast<gdcm::SeqEntry*>(d))
+      if ( !(dynamic_cast<GDCM_NAME_SPACE::SeqEntry*>(d))
       // We skip Shadow Groups, since nobody knows what they mean
            && !( d->GetGroup()%2 ) )
       { 
 
-         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
+         if ( GDCM_NAME_SPACE::DataEntry *de = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d) )
          {              
             copy->GetFile()->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
                                                  de->GetGroup(),de->GetElement(),
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
          }
          else
          {
-          // We skip gdcm::SeqEntries
+          // We skip GDCM_NAME_SPACE::SeqEntries
          }
       }
       d = f->GetNextEntry();

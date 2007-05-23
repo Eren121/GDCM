@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/08/18 16:08:16 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/05/23 14:18:04 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,15 +50,15 @@ void WriteDICOMItems(std::ostream *fp, JpegVector &v)
   // Item tag:
   uint16_t group = 0xfffe;
   uint16_t elem  = 0xe000;
-  gdcm::binary_write(*fp, group);
-  gdcm::binary_write(*fp, elem);
+  GDCM_NAME_SPACE::binary_write(*fp, group);
+  GDCM_NAME_SPACE::binary_write(*fp, elem);
   // Item Length
   uint32_t dummy = 0x12345678;
   size_t offset = fp->tellp();
   JpegPair jp;
   jp.first = offset;
   v.push_back(jp);
-  gdcm::binary_write(*fp, dummy);
+  GDCM_NAME_SPACE::binary_write(*fp, dummy);
 }
 
 // PS 3.5, page 66
@@ -69,11 +69,11 @@ void EncodeWithoutBasicOffsetTable(std::ostream *fp, int numFrag)// JpegVector& 
   // Item tag:
   uint16_t group = 0xfffe;
   uint16_t elem  = 0xe000;
-  gdcm::binary_write(*fp, group);
-  gdcm::binary_write(*fp, elem);
+  GDCM_NAME_SPACE::binary_write(*fp, group);
+  GDCM_NAME_SPACE::binary_write(*fp, elem);
   // Item Length
   uint32_t item_length = 0x0000;
-  gdcm::binary_write(*fp, item_length);
+  GDCM_NAME_SPACE::binary_write(*fp, item_length);
 
 }
 
@@ -83,18 +83,18 @@ void EncodeWithBasicOffsetTable(std::ostream *fp, int numFrag, size_t &start)
   // Item tag:
   uint16_t group = 0xfffe;
   uint16_t elem  = 0xe000;
-  gdcm::binary_write(*fp, group);
-  gdcm::binary_write(*fp, elem);
+  GDCM_NAME_SPACE::binary_write(*fp, group);
+  GDCM_NAME_SPACE::binary_write(*fp, elem);
   // Item Length
   uint32_t item_length = numFrag*4; // sizeof(uint32_t)
-  gdcm::binary_write(*fp, item_length);
+  GDCM_NAME_SPACE::binary_write(*fp, item_length);
 
   // Just prepare the space
   start = fp->tellp(); //to be able to rewind
   for(int i=0; i<numFrag;++i)
     {
     uint32_t dummy = 0x0000;
-    gdcm::binary_write(*fp, dummy);
+    GDCM_NAME_SPACE::binary_write(*fp, dummy);
     }
 }
 
@@ -108,7 +108,7 @@ void UpdateBasicOffsetTable(std::ostream *fp, JpegVector const &v, size_t pos)
     const JpegPair &jp = *i;
     if(i == v.begin() ){ assert( jp.first - first.first == 0); }
     uint32_t offset = jp.first - first.first;
-    gdcm::binary_write(*fp, offset);
+    GDCM_NAME_SPACE::binary_write(*fp, offset);
     //std::cerr << "Updating Table:" << jp.first - first.first << std::endl;
     }
 }
@@ -121,7 +121,7 @@ void UpdateJpegFragmentSize(std::ostream *fp, JpegVector const &v)
     const JpegPair &jp = *i;
     fp->seekp( jp.first );
     uint32_t length = jp.second;
-    gdcm::binary_write(*fp, length );
+    GDCM_NAME_SPACE::binary_write(*fp, length );
     //std::cerr << "Updating:" << jp.first << "," << jp.second << std::endl;
     }
 }
@@ -131,11 +131,11 @@ void CloseJpeg(std::ostream *fp, JpegVector &v)
   // sequence terminator
   uint16_t group = 0xfffe;
   uint16_t elem  = 0xe000;
-  gdcm::binary_write(*fp, group);
-  gdcm::binary_write(*fp, elem);
+  GDCM_NAME_SPACE::binary_write(*fp, group);
+  GDCM_NAME_SPACE::binary_write(*fp, elem);
 
   uint32_t length = 0x0;
-  gdcm::binary_write(*fp, length);
+  GDCM_NAME_SPACE::binary_write(*fp, length);
 
   // Jpeg is done, now update the frag length
   UpdateJpegFragmentSize(fp, v);
@@ -369,12 +369,12 @@ int main(int argc, char *argv[])
    std::cerr << "Using quality: " << quality << std::endl;
 
 // Step 1 : Create the header of the image
-   gdcm::File *f = gdcm::File::New();
-   f->SetLoadMode ( gdcm::LD_ALL ); // Load everything
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
+   f->SetLoadMode ( GDCM_NAME_SPACE::LD_ALL ); // Load everything
    f->SetFileName( filename );
    f->Load();
 
-   gdcm::FileHelper *tested = gdcm::FileHelper::New( f );
+   GDCM_NAME_SPACE::FileHelper *tested = GDCM_NAME_SPACE::FileHelper::New( f );
    std::string PixelType = tested->GetFile()->GetPixelType();
    int xsize = f->GetXSize();
    int ysize = f->GetYSize();
@@ -439,7 +439,7 @@ int main(int argc, char *argv[])
 
 // Step 1 : Create the header of the image
 
-   gdcm::File *fileToBuild = gdcm::File::New();
+   GDCM_NAME_SPACE::File *fileToBuild = GDCM_NAME_SPACE::File::New();
    std::ostringstream str;
 
    // Set the image size
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
                * samplesPerPixel /* * img.componentSize / 8*/;
 
    uint8_t *imageData = new uint8_t[size];
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New(fileToBuild);
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
    //fileH->SetImageData(imageData,size);
    assert( size == testedDataSize );
    size = of->str().size();

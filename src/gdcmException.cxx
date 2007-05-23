@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmException.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/02 18:09:36 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2007/05/23 14:18:10 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 #include <typeinfo>
 #include <stdlib.h> // for exit
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
 // Exception
