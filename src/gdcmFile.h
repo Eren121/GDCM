@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.131 $
+  Date:      $Date: 2007/05/23 16:48:59 $
+  Version:   $Revision: 1.132 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,8 @@ public:
    int GetYSize();
    int GetZSize();
    int GetTSize(); // unnormalized in DICOM V3
-
+   
+   bool GetSpacing(float &xspacing, float &yspacing, float &zspacing);
    float GetXSpacing();
    float GetYSpacing();
    float GetZSpacing();
@@ -156,8 +157,9 @@ public:
    int GetLUTNbits();
 
    // For rescaling graylevel:
-   float GetRescaleIntercept();
-   float GetRescaleSlope();
+   bool GetRescaleSlopeIntercept(double &slope, double &intercept);   
+   double GetRescaleIntercept();
+   double GetRescaleSlope();
 
    int GetNumberOfScalarComponents();
    int GetNumberOfScalarComponentsRaw();

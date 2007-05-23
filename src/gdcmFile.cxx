@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.330 $
+  Date:      $Date: 2007/05/23 16:48:59 $
+  Version:   $Revision: 1.331 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,6 +96,7 @@
 #include "gdcmRLEFramesInfo.h"
 #include "gdcmJPEGFragmentsInfo.h"
 #include "gdcmDataEntry.h"
+#include "gdcmSQItem.h"
 
 #include <vector>
 #include <stdio.h>  //sscanf
@@ -472,6 +473,77 @@ int File::GetZSize()
    return 1;
 }
 
+// Special case:
+//  ts["1.2.840.10008.5.1.4.1.1.4.1"] = "Enhanced MR Image Storage";
+bool File::GetSpacing(float &xspacing, float &yspacing, float &zspacing)
+{
+      xspacing = yspacing = zspacing = 2.0;
+      TS *ts = Global::GetTS();
+      std::string sopclassuid_used;
+      // D 0002|0002 [UI] [Media Storage SOP Class UID]
+      
+      //const std::string &mediastoragesopclassuid_str = GetEntryValue(0x0002,0x0002);  
+      const std::string &mediastoragesopclassuid_str = GetEntryString(0x0002,0x0002);
+      const std::string &mediastoragesopclassuid = ts->GetValue(mediastoragesopclassuid_str);
+      //D 0008|0016 [UI] [SOP Class UID]
+      const std::string &sopclassuid_str = GetEntryString(0x0008,0x0016);
+      const std::string &sopclassuid = ts->GetValue(sopclassuid_str);
+      if ( mediastoragesopclassuid == GDCM_UNFOUND && sopclassuid == GDCM_UNFOUND )
+        {
+        return false;
+        }
+      else
+        {
+        if( mediastoragesopclassuid == sopclassuid )
+          {
+          sopclassuid_used = mediastoragesopclassuid;
+          }
+        else
+          {
+          gdcmWarningMacro( "Inconsistant SOP Class UID: "
+            << mediastoragesopclassuid << " and " << sopclassuid );
+          return false;
+          }
+        }
+      // ok we have now the correc SOP Class UID
+      if( sopclassuid_used == "Enhanced MR Image Storage" )
+        {
+        SeqEntry *PerframeFunctionalGroupsSequence = GetSeqEntry(0x5200,0x9230);
+        unsigned int n = PerframeFunctionalGroupsSequence->GetNumberOfSQItems();
+        if( !n ) return false;
+        SQItem *item1 = PerframeFunctionalGroupsSequence->GetFirstSQItem();
+        DocEntry *p = item1->GetDocEntry(0x0028,0x9110);
+        if( !p ) return false;
+        SeqEntry *seq = dynamic_cast<SeqEntry*>(p);
+        unsigned int n1 = seq->GetNumberOfSQItems();
+        if( !n1 ) return false;
+        SQItem *item2 = seq->GetFirstSQItem();
+        // D 0028|0030 [DS] [Pixel Spacing] [0.83333331346511\0.83333331346511 ]
+        DocEntry *p2 = item2->GetDocEntry(0x0028,0x0030);
+        if( !p2 ) return false;
+        DataEntry *entry = dynamic_cast<DataEntry *>(p2);
+        std::string spacing = entry->GetString();
+        if ( sscanf( spacing.c_str(), "%f\\%f", &yspacing, &xspacing) != 2 )
+          {
+          xspacing = yspacing = 1.;
+          return false;
+          }
+        // D 0018|0050 [DS] [Slice Thickness] [1 ]
+        DocEntry *p3 = item2->GetDocEntry(0x0018,0x0050);
+        if( !p3 ) return false;
+        DataEntry *entry2 = dynamic_cast<DataEntry *>(p3);
+        std::string thickness = entry2->GetString();
+        if ( sscanf( thickness.c_str(), "%f", &zspacing) != 1 )
+          {
+          zspacing = 1.;
+          return false;
+          }
+        return true;
+        }
+   
+     return false;
+   }
+   
 /**
  * \brief   Retrieve the -unnormalized- number of 'times' of '4D image'.
  *          User has to tell gdcm the location of this '4th Dimension component'
@@ -500,6 +572,8 @@ int File::GetTSize()
    }      
 }  
 
+
+
 /**
   * \brief gets the info from 0018,1164 : ImagerPixelSpacing
   *                      then 0028,0030 : Pixel Spacing
@@ -509,9 +583,19 @@ int File::GetTSize()
 float File::GetXSpacing()
 {
    float xspacing = 1.0;
+   float yspacing = 1.0; 
+   float zspacing = 1.0;
+       
    uint32_t nbValue;
    DataEntry *entry;
-   bool ok = false;   
+   bool ok = false; 
+    
+  if ( GetSpacing(xspacing,yspacing,zspacing) )
+  {
+    return xspacing;
+  }
+ // else fallback  
+    
 /*
 From:David Clunie - view profile
 Date:Wed, May 24 2006 1:12 pm
@@ -657,10 +741,17 @@ and
   */
 float File::GetYSpacing()
 {
-   float yspacing;
+   float xspacing = 1., yspacing = 1.0, zspacing = 1.;
    uint32_t nbValue;
    DataEntry *entry;
    bool ok = false;
+   
+  if ( GetSpacing(xspacing,yspacing,zspacing) )
+  {
+    return yspacing;
+  }
+ // else fallback 
+ 
      
    std::string SOPClassUID = GetEntryString(0x0008,0x0016);
 
@@ -761,7 +852,13 @@ float File::GetYSpacing()
 float File::GetZSpacing()
 {
 
-   float zspacing = 1.0f;
+   float xspacing = 1.0;
+   float yspacing = 1.0;
+   float zspacing = 1.0;
+   if ( GetSpacing(xspacing,yspacing,zspacing) )
+   {
+      return zspacing;
+   }
 
    // Spacing Between Slices : distance between the middle of 2 slices
    // Slices may be :
@@ -1467,11 +1564,81 @@ int File::GetLUTNbits()
    return lutNbits;
 }
 
+// Special case:
+//  ts["1.2.840.10008.5.1.4.1.1.4.1"] = "Enhanced MR Image Storage";
+   bool File::GetRescaleSlopeIntercept(double &slope, double &intercept)
+   {
+      slope = 1.0;
+      intercept = 0.0;
+      TS *ts = Global::GetTS();
+      std::string sopclassuid_used;
+      // D 0002|0002 [UI] [Media Storage SOP Class UID]
+      const std::string &mediastoragesopclassuid_str = GetEntryString(0x0002,0x0002);
+      const std::string &mediastoragesopclassuid = ts->GetValue(mediastoragesopclassuid_str);
+      //D 0008|0016 [UI] [SOP Class UID]
+      const std::string &sopclassuid_str = GetEntryString(0x0008,0x0016);
+      const std::string &sopclassuid = ts->GetValue(sopclassuid_str);
+      if ( mediastoragesopclassuid == GDCM_UNFOUND && sopclassuid == GDCM_UNFOUND )
+        {
+        return false;
+        }
+      else
+        {
+        if( mediastoragesopclassuid == sopclassuid )
+          {
+          sopclassuid_used = mediastoragesopclassuid;
+          }
+        else
+          {
+          gdcmWarningMacro( "Inconsistant SOP Class UID: "
+            << mediastoragesopclassuid << " and " << sopclassuid );
+          return false;
+          }
+        }
+      // ok we have now the correc SOP Class UID
+      if( sopclassuid_used == "Enhanced MR Image Storage" )
+        {
+        SeqEntry *PerframeFunctionalGroupsSequence = GetSeqEntry(0x5200,0x9230);
+        unsigned int n = PerframeFunctionalGroupsSequence->GetNumberOfSQItems();
+        if( !n ) return false;
+        SQItem *item1 = PerframeFunctionalGroupsSequence->GetFirstSQItem();
+        DocEntry *p = item1->GetDocEntry(0x0028,0x9145);
+        if( !p ) return false;
+        SeqEntry *seq = dynamic_cast<SeqEntry*>(p);
+        unsigned int n1 = seq->GetNumberOfSQItems();
+        if( !n1 ) return false;
+        SQItem *item2 = seq->GetFirstSQItem();
+        // D 0028|1052 [DS] [Rescale Intercept] [0 ]
+        DocEntry *p2 = item2->GetDocEntry(0x0028,0x1052);
+        if( !p2 ) return false;
+        DataEntry *entry = dynamic_cast<DataEntry *>(p2);
+        std::string intercept_str = entry->GetString();
+        if ( sscanf( intercept_str.c_str(), "%lf", &intercept) != 1 )
+          {
+          intercept = 0.;
+          return false;
+          }
+        // D 0028|1053 [DS] [Rescale Slope] [5.65470085470085]
+        DocEntry *p3 = item2->GetDocEntry(0x0028,0x1053);
+        if( !p3 ) return false;
+        DataEntry *entry2 = dynamic_cast<DataEntry *>(p3);
+        std::string slope_str = entry2->GetString();
+        if ( sscanf( slope_str.c_str(), "%lf", &slope) != 1 )
+          {
+          slope = 1.;
+          return false;
+          }
+        return true;
+        }
+   
+     return false;
+   }
+
 /**
  *\brief gets the info from 0028,1052 : Rescale Intercept
  * @return Rescale Intercept. defaulted to 0.0 is not found or empty
  */
-float File::GetRescaleIntercept()
+double File::GetRescaleIntercept()
 {
    // 0028 1052 DS IMG Rescale Intercept
    DataEntry *entry = GetDataEntry(0x0028, 0x1052);
@@ -1488,16 +1655,26 @@ float File::GetRescaleIntercept()
  *\brief   gets the info from 0028,1053 : Rescale Slope
  * @return Rescale Slope. defaulted to 1.0 is not found or empty
  */
-float File::GetRescaleSlope()
+double File::GetRescaleSlope()
 {
-   // 0028 1053 DS IMG Rescale Slope
-   DataEntry *entry = GetDataEntry(0x0028, 0x1053);
-   if( !entry )
+   double resInter = 0.;
+   double resSlope = 1.;
+   if ( GetRescaleSlopeIntercept(resSlope, resInter) )
+     {
+     return resSlope;
+     }
+   //0028 1053 DS IMG Rescale Slope
+   std::string strRescSlope = GetEntryString(0x0028,0x1053);
+   if ( strRescSlope != GDCM_UNFOUND )
    {
-      gdcmDebugMacro( "Missing Rescale Slope (0028,1053)");
-      return 1.0f;
+      if ( sscanf( strRescSlope.c_str(), "%lf ", &resSlope) != 1 )
+      {
+         // bug in the element 0x0028,0x1053
+         gdcmWarningMacro( "Rescale Slope (0028,1053) is empty.");
+      }
    }
-   return (float)entry->GetValue(0);
+
+   return resSlope;
 }
 
 /**
