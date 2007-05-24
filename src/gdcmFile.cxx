@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 16:48:59 $
-  Version:   $Revision: 1.331 $
+  Date:      $Date: 2007/05/24 10:41:25 $
+  Version:   $Revision: 1.332 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -477,7 +477,7 @@ int File::GetZSize()
 //  ts["1.2.840.10008.5.1.4.1.1.4.1"] = "Enhanced MR Image Storage";
 bool File::GetSpacing(float &xspacing, float &yspacing, float &zspacing)
 {
-      xspacing = yspacing = zspacing = 2.0;
+      xspacing = yspacing = zspacing = 1.0;
       TS *ts = Global::GetTS();
       std::string sopclassuid_used;
       // D 0002|0002 [UI] [Media Storage SOP Class UID]
