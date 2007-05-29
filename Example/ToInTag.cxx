@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/05/29 10:36:10 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,19 +55,29 @@ int main(int argc, char *argv[])
    " - fills a single level (*) Directory with *all* the files,               ",
    "           converted into a Brucker-like Dicom, InTags compliant          ",
    "   (*) actually : creates as many directories as Patients                 ",
-   "                  -that shouldn't appear, but being carefull is better ! -",
+   "                  -that shouldn't appear, but being carefull is better!-  ",
    " or                                                                       ",
    " - fills a tree-like structure of directories as :                        ",
    "        - Patient                                                         ",
    "        -- Serie                                                          ",
    "        --- Position                                                      ",
-   "            Images are (sorted by Trigger Time /                          ",
-   "                     Encoding Direction (Row, Column)                     ",
-   "      use :                                                               ",
+   "        ---- Images (sorted by Trigger Time /                             ",
+   "                               Encoding Direction (Row, Column)           ",
+   "                                                                          ",
+   "      Note : when (0008|1090) [Model Name ] equals 'TrioTim ' :           ",
+   "         - (0008|103e)[Series Description ] is checked for                ",
+   "            '90' (-> COL) or '0' (-> ROW)                                 ",
+   "         - (0x0020, 0x000e) [Series Instance UID] is NOT dealt with,      ",
+   "           since row an col tagging are in 2 different Series             ",
+   "           DO NOT supply a directory holding different exams              ",
+   "           for the same Slice level!                                      ",
+   "      uses :                                                              ",
    "           0x0021, 0x1020 : 'SLICE INDEX'                                 ",
    "           0x0021, 0x1040 : 'FRAME INDEX'                                 ",
    "           0x0020, 0x0012 : 'SESSION INDEX'  (Acquisition Number)         ",
+   "                                                                          ",
    " usage:                                                                   ",
+   " -----                                                                    ",
    " ToInTag          dirin=rootDirectoryName                                 ",
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
@@ -85,15 +95,15 @@ int main(int argc, char *argv[])
    "            he gives the list of 'SeriesNumber' (tag 0020|0011)           ",   
    "        SeriesNumber are short enough to be human readable                ",
    "        e.g : 1030,1035,1043                                              ", 
-   " taggrid : user knows all the images are 'grid' -ie : not 'col', not 'raw'",
+   " taggrid : user knows all the images are 'grid' -ie: not 'col', not 'raw'-",
    " extent : DO NOT forget the leading '.' !                                 ",
    " skel: name skeleton eg : patName_1.nema -> skel=patName_                 ",
    " split: creates a tree-like structure of directories as :                 ",
    "        - Patient                                                         ",
    "        -- Serie                                                          ",
    "        --- Position                                                      ",
-   "            Images are (sorted by Trigger Time /                          ",
-   "                     Encoding Direction (Row, Column)                     ",
+   "        ---- Images (sorted by Trigger Time /                             ",
+   "                               Encoding Direction (Row, Column)           ",
    " noshadowseq: user doesn't want to load Private Sequences                 ",
    " noshadow : user doesn't want to load Private groups (odd number)         ",
    " noseq    : user doesn't want to load Sequences                           ",
@@ -220,7 +230,7 @@ int main(int argc, char *argv[])
    
    GDCM_NAME_SPACE::DirListType fileNames;
    fileNames = dirList.GetFilenames();
-   GDCM_NAME_SPACE::SerieHelper *s;              // Needed only to may use SerieHelper::AddSeriesDetail()
+   GDCM_NAME_SPACE::SerieHelper *s;              // Needed to use SerieHelper::AddSeriesDetail()
    s = GDCM_NAME_SPACE::SerieHelper::New();
 
    std::string token = "%%%"; // Hope it's enough!
@@ -237,14 +247,14 @@ int main(int argc, char *argv[])
    std::vector<std::string> tokens;
    std::vector<std::string> tokensForFileName;
    
-   // For Siemens pb, we need Station Name
+   // For Siemens pb, we need Manufacturer's Model Name
    
    GDCM_NAME_SPACE::DirListType::iterator it1 = fileNames.begin();
    f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);
    f->SetFileName( *it1 );
    f->Load();
-   std::string stationName = f->GetEntryString(0x0008,0x1010);
+   std::string modelName = f->GetEntryString(0x0008,0x1090);
    f->Delete();   
    
 /*   
@@ -276,7 +286,8 @@ int main(int argc, char *argv[])
    SortedFiles sf;
 
    s->AddSeriesDetail(0x0010, 0x0010, false); // Patient's Name
-   if ( stationName != "MRC35150" ) // for Siemens MRC35150, don't deal with 'Series Instance UID'
+   // for Siemens TrioTim, don't deal with 'Series Instance UID'
+   if ( !GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") ) 
       s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
    else
       s->AddSeriesDetail(0x9999, 0x9999, false); // dirty trick to ignore 'Series Instance UID'
@@ -412,7 +423,7 @@ int main(int argc, char *argv[])
        frameIndex = 0;
    else
        frameIndex = 1;
-              
+      
    int flag       = 0;
        
    GDCM_NAME_SPACE::File *currentFile;
@@ -426,8 +437,9 @@ int main(int argc, char *argv[])
        
       fullFilename =  currentFile->GetFileName();
       lastFilename =  GDCM_NAME_SPACE::Util::GetName( fullFilename ); 
-      std::cout << " --------------------------------------------------"
-                << " Rewrite [" <<lastFilename << "]" << std::endl;
+      std::cout <<" ------------------------------------------------------------------------------" 
+                << std::endl << " Deal with [" << it2->first << "] : ["<<fullFilename << "]" 
+                << std::endl;
      
       tokens.clear();
       GDCM_NAME_SPACE::Util::Tokenize (it2->first, tokens, token);
@@ -488,7 +500,7 @@ int main(int argc, char *argv[])
          }
       }
 
-      if ( stationName != "MRC35150" ) // for Siemens MRC35150, don't deal with 'Series Instance UID'
+      if ( GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") ) // for Siemens TrioTim , don't deal with 'Series Instance UID'
 
       if (previousSerieInstanceUID != currentSerieInstanceUID)
       {        
@@ -515,8 +527,8 @@ int main(int argc, char *argv[])
          previousImagePosition          = ""; //currentImagePosition;
          previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
       }
-      // end of stationName != "MRC35150"
-      
+      // end of modelName != "TrioTim "
+   
       if (previousImagePosition != currentImagePosition)
       {
          frameIndex = 1;
@@ -538,8 +550,6 @@ int main(int argc, char *argv[])
          else
             sliceIndex += 1;
       }
-      if (verbose)
-         std::cout << "Slice Index : " << sliceIndex << std::endl;      
 
 // We don't split on Row/Column!
 /*
@@ -561,10 +571,6 @@ int main(int argc, char *argv[])
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
       } 
 */    
-      
-      if (verbose)
-         std::cout << "--- --- --- --- --- " << (it2->second)->GetFileName() 
-                   << std::endl;
    
       if ( GDCM_NAME_SPACE::Debug::GetDebugFlag())
          std::cout << "--- --- --- --- --- " << it2->first << "  " 
@@ -591,7 +597,6 @@ int main(int argc, char *argv[])
       std::string chSessionIndex;
       // CLEANME
 
-
       if (taggrid)
       { 
          chSessionIndex = "1";
@@ -599,23 +604,24 @@ int main(int argc, char *argv[])
       else
       {
       /* for SIEMENS MRI :
-        D 0008|1010 [SH]  [Station Name ] [MRC35150]
+        D 0008|1090 [LO] [Manufacturer's Model Name ] [Triotim ]
         we have to deal with :
      
-        D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 90deg]
+        D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 90deg] or anything that contains '90' !
         D 0008|103e [LO]  [Series Description ] [fl2d9_line PA 15 0deg ]
         (everything is flagged as 'ROW')
-      */      
-         if ( stationName == "MRC35150" )
+      */  
+
+         if ( GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") )  
          {
-            if ( memcmp(seriesDescription.c_str(), "fl2d9linePA1590deg", 18) )
-              chSessionIndex = "1";
-            else if ( memcmp(seriesDescription.c_str(), "fl2d9linePA150deg", 18) )
-              chSessionIndex = "2"; 
+            if (seriesDescription.find("90", 0) != -1)
+               chSessionIndex = "1";  // 90 deg -> COL
+            else if (seriesDescription.find("0", 0)!= -1)
+               chSessionIndex = "2";  // 0 deg -> ROW
             else
             {
-               std::cout << "====================== seriesDescription "
-                         << " neither fl2d9_line PA 15 90deg nor fl2d9_line PA 15 0deg (?!?) : ["
+               std::cout << "====================== seriesDescription doesn't contain"
+                         << " neither '90' nor '0' (?!?) : ["
                          << seriesDescription << "]" << std::endl;
                chSessionIndex = "1";
             }    
@@ -635,6 +641,7 @@ int main(int argc, char *argv[])
             }
          }
       }
+      
       if (currentFile->IsVRCoherent(0x0020) == 1 )     
          currentFile->InsertEntryString(chSessionIndex, 0x0020, 0x0012, "  ");
       else
@@ -656,9 +663,14 @@ int main(int argc, char *argv[])
         stringVR = "IS";
   
       currentFile->InsertEntryString(strChSliceIndex, 0x0021, 0x1020, stringVR);
-      currentFile->InsertEntryString(chFrameIndex,    0x0021, 0x1040, stringVR); 
- 
- 
+      currentFile->InsertEntryString(chFrameIndex,    0x0021, 0x1040, stringVR);
+      
+      if (verbose) {     
+         std::cout << "0x0021, 0x1020 : strChSliceIndex " << strChSliceIndex << std::endl;
+         std::cout << "0x0021, 0x1040 : chFrameIndex  "   << chFrameIndex    << std::endl; 
+         std::cout << "0x0020, 0x0012 : chSessionIndex "  << chSessionIndex  << std::endl; 
+      }
+        
       std::string strImagePositionPatient    = currentFile->GetEntryString(0x0020, 0x0032 );
       if (strImagePositionPatient == GDCM_NAME_SPACE::GDCM_UNFOUND)
       {
@@ -671,7 +683,7 @@ int main(int argc, char *argv[])
       if (strImageOrientationPatient == GDCM_NAME_SPACE::GDCM_UNFOUND)
       {
          if (verbose)
-            std::cout << "Duplicate ImageOrientation into ImageOrientationPatient" << std::endl;      
+            std::cout << "Duplicate ImageOrientation into ImageOrientationPatient" << std::endl;          
          currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0035), 0x0020, 0x0037, "DS" );       
       }
                 
@@ -689,8 +701,6 @@ int main(int argc, char *argv[])
             flag = 0;
          }
       } 
-      if (verbose)
-         std::cout << "Frame Index : " << frameIndex << std::endl; 
                  
       if (split)
       
@@ -701,32 +711,27 @@ int main(int argc, char *argv[])
       else
          fullWriteFilename = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename + strExtent; 
-      
-      /*           
-      systemCommand  = "cp " + fullFilename + " " + fullWriteFilename;
-      std::cout << systemCommand << std::endl;
-      system (  systemCommand.c_str() );
-      */
             
       // Load the pixels in RAM.    
       
       fh = GDCM_NAME_SPACE::FileHelper::New(currentFile);     
       uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
-      fh->SetWriteTypeToDcmExplVR();
-      // We didn't modify pixels -> keep unchanged the following :
-      // 'Media Storage SOP Class UID' (0x0002,0x0002)
-      // 'SOP Class UID'               (0x0008,0x0016)
-      // 'Image Type'                  (0x0008,0x0008)
-      // 'Conversion Type'             (0x0008,0x0064)
+      fh->SetWriteTypeToDcmExplVR();     
       
       // Put to Black the burnt-in number.
       nX = currentFile->GetXSize();
       nY = currentFile->GetYSize();
       for(int y=nY-15; y<nY; y++)
          for(int x=nX/3; x<nX/2+50; x++)
-           imageData[ y*nX*2 + x ] = 0;   
-        
+           imageData[ y*nX*2 + x ] = 0;
+
+      // We didn't make any computation on the pixels -> keep unchanged the following :
+      // 'Media Storage SOP Class UID' (0x0002,0x0002)
+      // 'SOP Class UID'               (0x0008,0x0016)
+      // 'Image Type'                  (0x0008,0x0008)
+      // 'Conversion Type'             (0x0008,0x0064)        
       fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
+      
       if (!fh->Write(fullWriteFilename))
       {
          std::cout << "Fail to write :[" << fullWriteFilename << "]"
@@ -736,3 +741,4 @@ int main(int argc, char *argv[])
    }
    return 0;
  }
+
