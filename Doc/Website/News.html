@@ -240,6 +240,24 @@ Any contribution is welcome.
    void ValEntry::CopyValEntry(uint16_t gr, uint16_t el);
 -->void DataEntry::CopyDataEntry(uint16_t gr, uint16_t el, VRKey const &vr);
 </pre>
+
+<pre>
+Example :
+
+old way :
+        DocEntry *p3 = item2->GetDocEntry(0x0018,0x0050);
+        if( !p3 ) return false;
+        ContentEntry *entry2 = dynamic_cast<ContentEntry *>(p3);
+        std::string thickness = entry2->GetValue();
+
+new way :
+        DocEntry *p3 = item2->GetDocEntry(0x0018,0x0050);
+        if( !p3 ) return false;
+        DataEntry *entry2 = dynamic_cast<DataEntry *>(p3);
+        std::string thickness = entry2->GetString();
+
+</pre>
+
 <LI> Avoid tons of CPU time consuming accesses to DICOM Dictionnary
 <pre>
    DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem);
