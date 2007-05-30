@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/05/30 15:13:25 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,9 @@ int main(int argc, char *argv[])
    s->Print(); // Prints all the Single SerieUID File Sets (sorted or not)
    std::cout << " -------------------------------------------- Finish printing"
              << std::endl;
-
+  
+  // Just to show : GetZSpacing from a gdcm::SerieHelper is right  
+    std::cout << "GetZSpacing() from gdcm::SerieHelper: "    << s->GetZSpacing()    << std::endl;
 
    // Only for the first Coherent File List 
    // ( Why not ? Just an example, for testing )
@@ -84,6 +86,8 @@ int main(int argc, char *argv[])
    {
       fileName = (*it)->GetFileName();
       std::cout << fileName << std::endl;
+ // Just to show : GetZSpacing from a gdcm::File is wrong!        
+      std::cout << "       GetZSpacing() from gdcm::File : " << (*it)->GetZSpacing() << std::endl;      
    } 
      
 
