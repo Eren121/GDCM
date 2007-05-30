@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 11:23:43 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2007/05/30 15:11:16 $
+  Version:   $Revision: 1.87 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,6 +59,7 @@
 
 #include "gdcmFileHelper.h"
 #include "gdcmFile.h"
+#include "gdcmSerieHelper.h" // for ImagePositionPatientOrdering()
 
 #include "vtkGdcmReader.h"
 #include "gdcmDebug.h"
@@ -69,7 +70,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.86 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.87 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -80,9 +81,9 @@ vtkGdcmReader::vtkGdcmReader()
    this->AllowLookupTable = false;
    this->AllowLightChecking = false;
    this->LoadMode = gdcm::LD_ALL; // Load everything (possible values : 
-                                 //  - LD_NOSEQ, 
-                                 //  - LD_NOSHADOW,
-                                 //  - LD_NOSHADOWSEQ)
+                                  //  - LD_NOSEQ, 
+                                  //  - LD_NOSHADOW,
+                                  //  - LD_NOSHADOWSEQ)
    this->CoherentFileList = 0;
    this->UserFunction     = 0;
 
@@ -564,7 +565,22 @@ void vtkGdcmReader::GetFileInformation(gdcm::File *file)
 
    this->DataSpacing[0] = file->GetXSpacing();
    this->DataSpacing[1] = file->GetYSpacing();
-   this->DataSpacing[2] = file->GetZSpacing();
+   
+   //  Most of the file headers have NO z spacing
+   //  It must be calculated from the whole gdcm::Serie (if any)
+   //  using Jolinda Smith's algoritm.
+   //  see gdcm::SerieHelper::ImagePositionPatientOrdering()
+   if (CoherentFileList == 0)   
+      this->DataSpacing[2] = file->GetZSpacing();
+   else
+   {
+       // Just because OrderFileList() is a member of gdcm::SerieHelper
+       // we need to instanciate sh.
+      gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
+      sh->OrderFileList(CoherentFileList); // calls ImagePositionPatientOrdering()
+      DataSpacing[2] = sh->GetZSpacing();
+      sh->Delete();         
+   } 
 
    // Get the image data caracteristics
    if( file->HasLUT() && this->AllowLookupTable )
