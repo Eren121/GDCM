@@ -24,17 +24,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/times.h>
-#endif /* WIN32 */
+#endif /* _WIN32 */
 #include "opj_includes.h"
 
 double opj_clock() {
-#ifdef WIN32
+#ifdef _WIN32
   /* WIN32: use QueryPerformance (very accurate) */
     LARGE_INTEGER freq , t ;
     /* freq is the clock speed of the CPU */

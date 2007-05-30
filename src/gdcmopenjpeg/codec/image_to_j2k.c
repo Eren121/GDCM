@@ -35,7 +35,7 @@
 #include "compat/getopt.h"
 #include "convert.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
 #endif

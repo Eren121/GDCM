@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Volume2Dicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/05/30 11:05:47 $
+  Version:   $Revision: 1.13 $
                                                                                  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef WIN32
+#ifdef _WIN32
    #define stat _stat
 #endif
 
