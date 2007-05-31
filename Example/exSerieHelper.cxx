@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/30 15:13:25 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/05/31 12:22:46 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,6 +17,7 @@
 =========================================================================*/
 #include "gdcmSerieHelper.h"
 #include "gdcmFile.h"
+#include "gdcmDirList.h" // for FileList
 #include "gdcmDebug.h"
 #include <iostream>
 
@@ -52,45 +53,56 @@ int main(int argc, char *argv[])
    std::cout << " ---------------------------------------- Finish printing (1)"
              << std::endl;
 
+
+   GDCM_NAME_SPACE::FileList::const_iterator it;
+   GDCM_NAME_SPACE::FileList *l;
+   std::cout << " ---------------------------------------- Recap"
+             << std::endl;  
+   l = s->GetFirstSingleSerieUIDFileSet();
+   while (l)
+   { 
+      it = l->begin();
+      std::cout << "SerieUID [" <<  (*it)->GetEntryString(0x0020,0x000e) <<"]   Serie Description ["
+                << (*it)->GetEntryString(0x0008,0x103e) << "] "  
+                << " : " << l->size() << " files" << std::endl;
+      l = s->GetNextSingleSerieUIDFileSet();
+   } 
+    std::cout << " ----------------------------------------End Recap"
+             << std::endl;
+
    int nbFiles;
    // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
-   GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+   l = s->GetFirstSingleSerieUIDFileSet();
    while (l)
    { 
       nbFiles = l->size() ;
-      if ( l->size() > 3 ) // Why not ? Just an example, for testing
+      if ( l->size() > 5 ) // Why not ? Just an example, for testing
       {
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
          s->OrderFileList(l);  // sort the list
+         // Just to show : GetZSpacing from a gdcm::SerieHelper is right  
+         std::cout << "GetZSpacing() of sorted SingleSerieUIDFileSet "
+                   << "from gdcm::SerieHelper: " << s->GetZSpacing() << std::endl;
+         std::cout << " ('-1' means all the files have the same position)" << std::endl;
+         for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
+                                            it != l->end();
+                                          ++it)
+         {
+          // Just to show : GetZSpacing from a gdcm::File may be different        
+             std::cout << (*it)->GetFileName() << " -->  GetZSpacing() from gdcm::File : " 
+                       << (*it)->GetZSpacing() << std::endl;      
+         }  
+
+         break; // we only deal with the first one ... Why not ?
       }
       l = s->GetNextSingleSerieUIDFileSet();
    } 
-   std::cout << " -------------------------------------------- Finish sorting"
+   std::cout << " ------------------Prints all the Single SerieUID File Sets (sorted or not) -----"
              << std::endl;
    s->Print(); // Prints all the Single SerieUID File Sets (sorted or not)
    std::cout << " -------------------------------------------- Finish printing"
              << std::endl;
-  
-  // Just to show : GetZSpacing from a gdcm::SerieHelper is right  
-    std::cout << "GetZSpacing() from gdcm::SerieHelper: "    << s->GetZSpacing()    << std::endl;
-
-   // Only for the first Coherent File List 
-   // ( Why not ? Just an example, for testing )
-   // Display all the file names
-
-   std::string fileName; 
-   l = s->GetFirstSingleSerieUIDFileSet();
-   for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
-                                            it != l->end();
-                                          ++it)
-   {
-      fileName = (*it)->GetFileName();
-      std::cout << fileName << std::endl;
- // Just to show : GetZSpacing from a gdcm::File is wrong!        
-      std::cout << "       GetZSpacing() from gdcm::File : " << (*it)->GetZSpacing() << std::endl;      
-   } 
      
-
    s->Delete();
 
    return 0;
