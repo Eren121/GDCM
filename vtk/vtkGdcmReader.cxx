@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/30 15:11:16 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2007/05/31 12:23:26 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.87 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.88 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -578,7 +578,7 @@ void vtkGdcmReader::GetFileInformation(gdcm::File *file)
        // we need to instanciate sh.
       gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
       sh->OrderFileList(CoherentFileList); // calls ImagePositionPatientOrdering()
-      DataSpacing[2] = sh->GetZSpacing();
+      this->DataSpacing[2] = sh->GetZSpacing();
       sh->Delete();         
    } 
 
