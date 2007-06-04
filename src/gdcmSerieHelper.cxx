@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 15:30:29 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2007/06/04 08:51:24 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -694,8 +694,9 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    // Find out if min/max are coherent
    if ( min == max )
    {
-     gdcmWarningMacro("Looks like all images have the exact same image position"
-                      << ". No PositionPatientOrdering sort performed" );
+     gdcmWarningMacro("Looks like all images have the exact same image position. "
+                      << "No PositionPatientOrdering sort performed. " 
+                      << "No 'ZSpacing' calculated! ");
      return false;
    }
 
@@ -707,11 +708,13 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    {
       if (distmultimap.count((*it2).first) != 1)
       {
-         gdcmErrorMacro("File: "
+         gdcmErrorMacro("File: ["
               << ((*it2).second->GetFileName())
-              << " Distance: "
+              << "] : more than ONE file at distance: '"
               << (*it2).first
-              << " position is not unique");
+              << " (position is not unique!) " 
+              << "No PositionPatientOrdering sort performed. " 
+              << "No 'ZSpacing' calculated! ");      
 
          ok = false;
       }
@@ -889,19 +892,23 @@ void SerieHelper::CreateDefaultUniqueSeriesIdentifier()
    // A scout scan prior to a CT volume scan can share the same
    //   SeriesUID, but they will sometimes have a different Series Number
    AddRestriction( TagKey(0x0020, 0x0011) );
+   
    // 0018 0024 Sequence Name
    // For T1-map and phase-contrast MRA, the different flip angles and
    //   directions are only distinguished by the Sequence Name
    AddRestriction( TagKey(0x0018, 0x0024) );
+   
    // 0018 0050 Slice Thickness
    // On some CT systems, scout scans and subsequence volume scans will
    //   have the same SeriesUID and Series Number - YET the slice 
    //   thickness will differ from the scout slice and the volume slices.
    AddRestriction( TagKey(0x0018, 0x0050));
+   
    // 0028 0010 Rows
    // If the 2D images in a sequence don't have the same number of rows,
    // then it is difficult to reconstruct them into a 3D volume.
    AddRestriction( TagKey(0x0028, 0x0010));
+   
    // 0028 0011 Columns
    // If the 2D images in a sequence don't have the same number of columns,
    // then it is difficult to reconstruct them into a 3D volume.
@@ -995,7 +1002,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       const ExDetail &r = *it2;
       s = inFile->GetEntryString( r.group, r.elem );
 
-      // User is allowed to ask 'convertion', to allow further ordering
+      // User is allowed to ask for 'convertion', to allow further ordering
       // e.g : 100 would be *before* 20; 000020.00 vs 00100.00 : OK
       if (it2->convert)
       {
@@ -1013,10 +1020,10 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       for(unsigned int i=0; i<s.size(); i++)
       {
          while(i<s.size()
-            && !( s[i] == '.' || s[i] == '%'
-                    || (s[i] >= 'a' && s[i] <= 'z')
-                    || (s[i] >= '0' && s[i] <= '9')
-                    || (s[i] >= 'A' && s[i] <= 'Z')))
+               && !( s[i] == '.' || s[i] == '%'
+                 || (s[i] >= 'a' && s[i] <= 'z')
+                 || (s[i] >= '0' && s[i] <= '9')
+                 || (s[i] >= 'A' && s[i] <= 'Z')))
          {
             s.erase(i, 1);
          }

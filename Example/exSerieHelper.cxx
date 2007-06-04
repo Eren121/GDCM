@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/31 12:22:46 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/06/04 08:51:23 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,6 +38,10 @@ int main(int argc, char *argv[])
 
   
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
+   //   
+   // Something, using only SerieHelper is not enought !
+   // See also exXcoherentFileSet
+   //
 
    s = GDCM_NAME_SPACE::SerieHelper::New();
    s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);     // Load everything for each File
@@ -71,6 +75,7 @@ int main(int argc, char *argv[])
              << std::endl;
 
    int nbFiles;
+   double zspacing = 0.;
    // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
    l = s->GetFirstSingleSerieUIDFileSet();
    while (l)
@@ -78,11 +83,16 @@ int main(int argc, char *argv[])
       nbFiles = l->size() ;
       if ( l->size() > 5 ) // Why not ? Just an example, for testing
       {
-         std::cout << "Sort list : " << nbFiles << " long" << std::endl;
-         s->OrderFileList(l);  // sort the list
+         std::cout << "Sort list : " << nbFiles << " long" << std::endl; 
+ 
+         //---------------------------------------------------------
+         s->OrderFileList(l);  // sort the list (and compute ZSpacing !)
+         //---------------------------------------------------------
+ 
+          zspacing = s->GetZSpacing();
          // Just to show : GetZSpacing from a gdcm::SerieHelper is right  
          std::cout << "GetZSpacing() of sorted SingleSerieUIDFileSet "
-                   << "from gdcm::SerieHelper: " << s->GetZSpacing() << std::endl;
+                   << "from gdcm::SerieHelper: " << zspacing << std::endl;
          std::cout << " ('-1' means all the files have the same position)" << std::endl;
          for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
                                             it != l->end();

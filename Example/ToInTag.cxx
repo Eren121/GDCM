@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/29 10:36:10 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/06/04 08:51:23 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -436,7 +436,8 @@ int main(int argc, char *argv[])
       currentFile = it2->second;
        
       fullFilename =  currentFile->GetFileName();
-      lastFilename =  GDCM_NAME_SPACE::Util::GetName( fullFilename ); 
+      lastFilename =  GDCM_NAME_SPACE::Util::GetName( fullFilename );
+      if (verbose) 
       std::cout <<" ------------------------------------------------------------------------------" 
                 << std::endl << " Deal with [" << it2->first << "] : ["<<fullFilename << "]" 
                 << std::endl;

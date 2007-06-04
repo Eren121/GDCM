@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:29:13 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2007/06/04 08:51:24 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -170,7 +170,7 @@ int TestFile::ComputeSwapCode(uint32_t tag)
 {
 // FIXME : 100 % useless method !
 // "gdcm" was written on disc byte per byte.
-// when you fread if, you'll get *allways* "gdcm"
+// when you fread it, you'll get *always* "gdcm"
 // whatever the processor indianess is !
 
    int swap = 0;
@@ -197,6 +197,7 @@ int TestFile::ComputeSwapCode(uint32_t tag)
       }
       tag >>= 8;
    }
+   //std::cout << std::hex << "0x(" << tag << ")" << std::dec << tag << std::endl;
    return swap;
 }
 
@@ -260,6 +261,7 @@ bool TestFile::ReadFileHeader(std::ifstream *fp)
    SwapCode = ComputeSwapCode(tag);
    if( SwapCode == 0 )
    {
+      // We shall *never* come here!
       std::cout << "TestFile: Bad tag - Must be 'gdcm'" << std::endl;
       return(false);
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/03/29 13:52:16 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/06/04 08:51:25 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -221,7 +221,11 @@ int main(int argc, char *argv[])
       if ( l->size() > 1 )
       {
          std::cout << "Sort list : " << nbFiles << " long" << std::endl;
-         sh->OrderFileList(l);  // sort the list
+ 
+         //---------------------------------------------------------
+         sh->OrderFileList(l);  // sort the list (and compute ZSpacing !)
+         //---------------------------------------------------------
+ 
          double zsp = sh->GetZSpacing();
          std::cout << "List sorted, ZSpacing = " << zsp << std::endl;
          break;  // The first one is OK. user will have to check
