@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2007/06/04 13:40:01 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,6 +177,7 @@ private:
 
 /**
  * \brief Debug : To be used to help bug tracking developer
+ * @param obj current instance or NULL
  * @param msg message part
  */
 #ifdef NDEBUG
@@ -208,6 +209,7 @@ private:
 
 /**
  * \brief Log : we display messages when anything is not Dicom Kosher
+ * @param obj current instance or NULL
  * @param msg message part
  */
 // No NDEBUG test to always have a return of warnings !!!
@@ -226,6 +228,7 @@ private:
 
 /**
  * \brief Warning : To be used to warn the user when some oddity occurs
+ * @param obj current instance or NULL
  * @param msg message part
  */
 // No NDEBUG test to always have a return of warnings !!!
@@ -245,6 +248,7 @@ private:
 /**
  * \brief   Error : To be used when unecoverabale error occurs
  *          at a 'deep' level. (don't use it if file is not ACR/DICOM!)
+ * @param obj current instance or NULL 
  * @param msg second message part 
  */
 // No NDEBUG test to always have a return of errors !!!
@@ -264,6 +268,7 @@ private:
  * \brief Assert : To be used when an *absolutely* impossible error occurs
  *        No function should be allowed to stop the process instead of
  *        warning the caller!
+ * @param obj current instance or NULL
  * @param arg argument to test
  *        An easy solution to pass also a message is to do:
  *        gdcmAssertMacro( "my message" && 2 < 3 )

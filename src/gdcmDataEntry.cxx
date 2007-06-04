@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2007/06/04 13:40:01 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -338,7 +338,7 @@ uint32_t DataEntry::GetValueCount( ) const
 }
 
 /**
- * \brief Gets a std::vector <double> holding the value(s) of a DS DataEntry
+ * \brief Gets a std::vector of 'double' holding the value(s) of a DS DataEntry
  * @param valueVector std::vector double of value(s)
  * \return false if VR not "DS" or DataEntry empty
  */
