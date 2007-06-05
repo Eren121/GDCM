@@ -204,7 +204,7 @@ A class gdcm::SerieHelper is designed to help solving this problem.
 Use it as follows.
 
     gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
-    while (int i=0; i<nbOfFiles; i++) {
+    while (int i=0; i < nbOfFiles; i++) {
        sh->AddFileName(currentFileName[i]);
     }
     
@@ -242,7 +242,7 @@ If you want to 'order' the files within each 'Single Serie UID File Set'
   he may add the gdcm::File (instead of the file name) to the SerieHelper.
 
     gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
-    while (int i=0; i<nbOfFiles; i++) {
+    while (int i=0; i < nbOfFiles; i++) {
        sh->AddFile(currentFile[i]);
     }                           
  * \warning : this method should be used by aware users only!
@@ -262,7 +262,7 @@ If you want to 'order' the files within each 'Single Serie UID File Set'
                                  std::string const &value, int op);
 op belongs to :
 
-/// \brief comparaison operators
+/// \brief comparison operators
    GDCM_EQUAL ,
    GDCM_DIFFERENT,
    GDCM_GREATER,
@@ -273,9 +273,17 @@ e.g.
     gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
     sh->AddRestriction(0x0010,0x0040,"F",GDCM_EQUAL);      // Patient's Sex
     sh->AddRestriction(0x0008,0x0060,"MR",GDCM_DIFFERENT); // Modality 
-    while (int i=0; i<nbOfFiles; i++) { 
+    while (int i=0; i < nbOfFiles; i++) { 
     ...
 User wants to deal only with Female patient, any Modality but MR (why not?)
+
+
+   
+Maybe user knows there are several images with the same position
+and *no dicom field* may discriminates them.
+He wants to drop the 'duplicate images'
+   
+     sh->SetDropDuplicatePositions(true);
 
 Sometimes the previous stuff is *not enough* !
 
@@ -318,10 +326,13 @@ for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
 {
 
    // ask for 'ordering' according to the 'Image Position Patient'
+   // Sorting the Fileset (*) is mandatory!
+   // ( computing an accurate Series ZSpacing -whenever possible- is a side effect ...)
+     
    s->OrderFileList((*i).second);  // sort the XCoherent Fileset
 }  
 
-(have a look at gdcm/Examples/exXCoherentFileSet.cxx for an exmaple)
+(have a look at gdcm/Examples/exXCoherentFileSet.cxx for an example)
 
 1-2) using VTK
 --------------
@@ -399,8 +410,16 @@ the right way to proceed is as follow :
    //      if user is doesn't trust too much the files with same Serie UID
         if ( !sh->IsCoherent(l) )
            return; // not same sizes, or not same 'pixel type' -> stop
+   
+   // Maybe user knows there are several images with the same position
+   // and *no dicom field* may discriminates them.
+   // He wants to drop the 'duplicate images'
+   
+        sh->SetDropDuplicatePositions(true); 
 
-        sh->OrderFileList(l);        // sort the list (*)
+   // Sorting the Fileset (*) is mandatory!
+   // ( computing an accurate Series ZSpacing is a side effect ...)  
+        sh->OrderFileList(l);
 
         vtkGdcmReader *reader = vtkGdcmReader::New();
    //      if user wants to modify pixel order (Mirror, TopDown, ...)
@@ -422,6 +441,7 @@ methods : (see 1-1-2 for more details)
            xcm = sh->SplitOnPosition(l);   
            xcm = sh->SplitOnTagValue(l, groupelem[0],groupelem[1]);
 //----------------
+
 
 You can see a full example in vtk/vtkgdcmSerieViewer.cxx
 e.g.
