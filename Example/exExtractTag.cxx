@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/06/06 13:03:09 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,6 +35,15 @@ int main(int argc, char *argv[])
       return 1;
    }
    std::string fileName = argv[1];
+   
+      // Find the dicom tag, and extract the string
+   uint16_t group, elem;
+   std::istringstream convert;
+   convert.str( argv[2] );
+   convert >> std::hex >> group;
+   convert.clear(); //important
+   convert.str( argv[3] );
+   convert >> std::hex >> elem;
 
    std::cout << fileName << std::endl;
 // ============================================================
@@ -45,6 +54,9 @@ int main(int argc, char *argv[])
 
    //f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
+   // Make sure the Data Element will be loaded
+   f->AddForceLoadElement ( group, elem);
+      
    bool res = f->Load();  
 
    if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
@@ -62,14 +74,8 @@ int main(int argc, char *argv[])
    }
    std::cout << " ... is readable " << std::endl;
 
-   // Find the dicom tag, and extract the string
-   uint16_t group, elem;
-   std::istringstream convert;
-   convert.str( argv[2] );
-   convert >> std::hex >> group;
-   convert.clear(); //important
-   convert.str( argv[3] );
-   convert >> std::hex >> elem;
+     // (Find the dicom tag, and) extract the string
+     
    std::cout << "Extracting tag: (0x" << std::hex << std::setw(4) << std::setfill('0')
      << group << ",0x" << std::setw(4) << std::setfill('0') << elem << ")" << std::endl;
    std::string dicom_tag_value = f->GetEntryString(group, elem);
