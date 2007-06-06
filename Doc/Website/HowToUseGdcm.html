@@ -4,39 +4,76 @@ This is a vi-able/notepad-able document to (try to) explain in a few words
 how to use efficently gdcm.
 -->Feel free to send/add your comments/suggestions/modifications.
 -->Don't try to 'beautify' this page.
-(I plane to rewrite it, and add it to the gdcm site as soon as 
-there is enough 'content' within it)
+(I plane to rewrite it in html, as soon as there is enough 'content' within it)
 
 HTH
 Jean-Pierre Roux
 
 ------------------------------------------------------------------------
+
 0) Intro
+========
 1) How to Read a DICOM file
+===========================
 1-1) using raw C++
 1-1-1) A single file
+1-1-1-1) Deal with the file header
+1-1-1-2) Load the 'pixels' in memory
+1-1-1-3) Get the value of a single Dicom DataElement 
+1-1-1-4) Get the value of a Dicom Sequence  
 1-1-2) A File Set
+
 1-2) using VTK
 1-2-1) A single file
 1-2-2) A File Set
+
 1-3) using ITK
 1-3-1) A single file
 1-3-2) A File Set
+
 1-4) Retrictions for Python users
 
 2) How to write DICOM file
+==========================
 2-1) using raw C++
 2-1-1) A single file
+2-1-1-1) Deal with optional DataElements
+2-1-1-1-1) Add a single Dicom DataElement // TODO
+2-1-1-1-2) Add a Dicom Sequence           // TODO
 2-1-2) A File Set
+
 2-2) using VTK
+
 2-3) using ITK
+
+2-4) Retrictions for Python users
+
+3) Some 'Command line' utilities
+================================
+3-) PrintFile
+3-) exSerieHelper
+3-) exXCoherentFileSet
+
+3-) AnonymizeNoLoad
+3-) AnonymizeMultiPatient
+3-) AnonymizeDicomDir
+
+3-) ReWrite
+3-) RawToDicom
+3-) exMoveImagesToSingleSerieUID
+
+3-) vtkgdcmViewer2
+3-) vtkgdcmSerieViewer2
+
+3-) PrintDicomDir
+3-) MakeDicomDir
 
 ----------------------------------------------------------------------------
 
 0) Intro
---------
+========
 
-If you are not familiar with DICOM files , use :
+If you are not familiar with DICOM files, use :
 
 PrintFile filein=yourDicomFile.dcm
 
@@ -49,6 +86,8 @@ D 0018|602c [FD]   [Physical Delta X][0]
 D 0020|0013 [IS]   [Instance Number] [5 ]
 D 0028|0010 [US]   [Rows]            [480]
 D 0011|0010 [  ]   [gdcm::Unknown]   [DLX_PATNT_01]
+D 0028|1222 [OW]   [Segmented Green Palette Color Lookup Table Data]
+                                 ===> [gdcm::Binary data loaded;length = 113784]
 
 0008|0021 : 'Group Number'|'Element Number' -> The Element identifier
 Have a look at gdcm/Dicts/dicomV3.dic for the whole list of Elements
@@ -118,6 +157,8 @@ Probabely, you'll never have to deal with Sequences (hope so!).
 1-1-1) A single file
 --------------------
 
+1-1-1-1) Deal with the file header
+
 The first step is to load the file header :
 
            gdcm::File *f = new gdcm::File();
@@ -127,9 +168,17 @@ The first step is to load the file header :
                   f->SetLoadMode(NO_SHADOWSEQ);      | target file
             f->SetFileName(fileName);
             f->Load( );
-    
-Except if someone told you -he knows the file headers are bugged-, 
-do *not* use SetLoadMode().
+
+Note :
+The 'long' Data Element (>4096 char) are not loaded by default
+You may modify this default length :
+           f->SetMaxSizeLoadEntry(int yourOwnMaxSize);
+Or ask to force the loading of given Data Elements, whatever their size is:  
+            f->AddForceLoadElement (uint16_t group, uint16_t elem);
+before calling gdcm::File::Load();
+
+Note :
+Except if you are really aware about it, do *not* use SetLoadMode().
 
 Check if the file is gdcm-readable.
 
@@ -147,6 +196,8 @@ Check some fields, e.g
            std::string Modality            = f->GetEntryString(0x0008,0x0060);
 
 (or whatever you feel like ...)
+
+1-1-1-2) Load the 'pixels' in memory
 
 Next step is to load the pixels in memory.
 Uncompression (JPEG lossless, JPEG lossy, JPEG 2000, RLE, ...) 
@@ -170,24 +221,70 @@ Possible values are :
 - "16S"   signed 16 bit,
 - "32U" unsigned 32 bit,
 - "32S"   signed 32 bit,
-
+- (NEITHER 'float' NOR 'double' pixels in DICOM!)
    
-           int dimX = f->GetXcurrentFileName[i]Size();
+           int dimX = f->GetXSize();
            int dimY = f->GetYSize();
-           int dimZ = f->GetZSize();
-           int dimT = f->GetTSize();
+           int dimZ = f->GetZSize(); // meaningfull only for 'Volumes' or 'multiframe files'
+           int dimT = f->GetTSize(); // meaningfull only for 4D objects (?)
 
 Now, you can enjoy your image !
 
 Sometimes, you deal with 'colour' images :-(
-They may be stored, on disc, as RGB pixels, RGB planes, YBR pixels, YBR planes
-Grey level images + LUT.
+They may be stored, on disc, as :
+     RGB pixels, 
+     RGB planes, 
+     YBR pixels, 
+     YBR planes
+     Grey level images + LUT.
 
 You'll get an 'RGB Pixels' image in memory if you use: 
 
            gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
            void *imageData = fh->GetImageData();
            uint32_t dataSize = fh->GetImageDataSize();
+
+
+1-1-1-3) Get the value of a single Dicom DataElement 
+
+1-1-1-3-1) as a std::string
+
+- some DataEntries are 'human readable' (those whose VR is AE, DA, DS, PN, SH, TM)
+  Get their value using group number-element number :
+  std::string patientName = f->GetEntryString(0x0010,0x0010);
+  
+- Some DataEntries are stored with their own binary representation, but maybe you feel like 
+  to get them in a 'human readable' form (those whose VR is FL, FD, SL, SS, UL, US)
+  Get their value using group number-element number : 
+  std::string rowNumber =f->GetEntryString(0x0028, 0x0010);// nb of Rows
+  
+  (of course, the very often used DataEntries have their own accessors :
+  e.g. GetXsize, GetYSize, GetSpacing, GetImageOrientationPatient, GetImagePositionPatient,
+       GetRescaleSlope, GetRescaleIntercept, GetNumberOfScalarComponents, etc -see gdcmFile.h-)
+  
+
+1-1-1-3-3) as a void* pointer
+- Some DataEntries are stored with their own binary representation, and you want to get them 'as they are'.
+  You will have to cast them, according to the knowledge you have about them.
+  LutRedData = (uint8_t*)f->GetEntryBinArea( 0x0028, 0x1201 ); 
+   
+1-1-1-4) Get the value(s) of a Dicom Sequence           
+
+Actually, a 'Dicom Sequence' is composed of a list a 'Sequence Items',
+each Sequence Item is a set of DataElement (that can be a Sequence Element, recursively).
+You have to get the Sequence element, to get its number of Sequence items, to iterate on each one.
+e.g.:
+
+SeqEntry *seqEntry = f->GetSeqEntry(0x3006,0x0020); //Structure Set ROI sequence
+unsigned int n = seqEntry->GetNumberOfSQItems();    // useless : just to see !
+currentItem = seqEntry->GetFirstSQItem(); // Get the first ROI
+while (currentItem != NULL) {
+   std::string roiName = currentItem->GetEntryString(0x3006,0x0026);  //ROI name
+   std::string roiDescr = currentItem->GetEntryString(0x3006,0x0028); //ROI description
+   ...
+   // do what you want with the current ROI
+   currentItem = seqEntry->GetNextSQItem(); // Get the next ROI
+}
 
 
 1-1-2) A File Set
@@ -214,7 +311,36 @@ You can also pass a 'root directory', and ask or not for recursive parsing.
 
 Files are 'splitted' into as many 'Single Serie UID File Set' 
   as Series Instance UID ( 0020|000e );
-  
+
+// -------- skip this one, for a first reading ! -----------
+
+Sometimes, the Serie UID is not enough to disseminate properly the images.
+We may want to disseminate into multiple sub serie when needed.
+
+Use :
+void SerieHelper::SetUseSeriesDetails(bool s);
+   /// This function will add the following DICOM tag as being part of a
+   /// 'fake' uid. :
+   /// 0020 0011 Series Number
+   /// 0018 0024 Sequence Name
+   /// 0018 0050 Slice Thickness
+   /// 0028 0010 Rows
+   /// 0028 0011 Columns 
+
+If it's not enough for you, use :    
+void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem, bool convert);
+
+std::string SerieHelper::CreateUniqueSeriesIdentifier(gdcm::File *inFile);
+void SerieHelper::CreateDefaultUniqueSeriesIdentifier();
+
+You may also create a "tokenizable' File Identifier of your own, using :
+void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem, bool convert);
+and
+std::string SerieHelper::CreateUserDefinedFileIdentifier(gdcm::File *inFile);
+and use it as you feel like.
+
+// ------------ Resume reading, here !--------------------
+ 
 If you want to 'order' the files within each 'Single Serie UID File Set'
 (to build a volume, for instance), use :
   
@@ -238,7 +364,7 @@ If you want to 'order' the files within each 'Single Serie UID File Set'
   or back to Direct Order 
   sh->SetSortOrderToDirect();
   
-  If, for any reason of is own, user already get the file headers,
+  If, for any reason of his own, user already get the file headers,
   he may add the gdcm::File (instead of the file name) to the SerieHelper.
 
     gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
@@ -276,8 +402,6 @@ e.g.
     while (int i=0; i < nbOfFiles; i++) { 
     ...
 User wants to deal only with Female patient, any Modality but MR (why not?)
-
-
    
 Maybe user knows there are several images with the same position
 and *no dicom field* may discriminates them.
@@ -306,16 +430,16 @@ gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet(); // or what you want
  The following methods must be called by user, depending on 
  what *he* wants to do, at application time.
   - *he* only  knows what his Series contain ! - 
- They return a std::map of Filesets (actually : std::vector of gdcm::File*).
+ They return a std::map of Filesets (actually : a std::map of std::vector<gdcm::File* >).
  
 He may ask for 'splitting' on the Orientation:
-           xcm = s->SplitOnOrientation(l);
+           gdcm::XCoherentFileSetmap xcm = s->SplitOnOrientation(l);
    
 He may ask for 'splitting' on the Position:
-           xcm = s->SplitOnPosition(l);
+           gdcm::XCoherentFileSetmap xcm = s->SplitOnPosition(l);
    
 He may ask for 'splitting' on the any DataElement you feel like :   
-           xcm = s->SplitOnTagValue(l, groupelem[0],groupelem[1]);
+           gdcm::XCoherentFileSetmap xcm = s->SplitOnTagValue(l, group,elem);
 
  
 He can now work on each 'X Coherent File Set' within the std::map
@@ -337,8 +461,6 @@ for (gdcm::XCoherentFileSetmap::iterator i = xcm.begin();
 1-2) using VTK
 --------------
 a vtkGdcmReader() method ( derived from vtkReader() ) is available.
-
-
 
 1-2-1) A single file
 --------------------
@@ -371,7 +493,7 @@ feel like:
  and replaced by a black image ! 
  
       User is allowed to pass a Pointer to a function of his own
-      to allow modification of pixel order (i.e. : Mirror, TopDown, )
+      to allow modification of pixel order (i.e. : Mirror, UpsideDown, )
       to gdcm::FileHeleper, using SetUserFunction(userSuppliedFunction)
 
       described as : void userSuppliedFunction(uint8_t *im, gdcm::File *f);
@@ -443,7 +565,7 @@ methods : (see 1-1-2 for more details)
 //----------------
 
 
-You can see a full example in vtk/vtkgdcmSerieViewer.cxx
+You can see a full example in vtk/vtkgdcmSerieViewer2.cxx
 e.g.
 vtkgdcmSerieViewer dirname=Dentist mirror
 vtkgdcmSerieViewer dirname=Dentist reverse
@@ -460,6 +582,165 @@ is wrapable by swig.
 
 2) How to write DICOM file
 ==========================
+
+2-1) using raw C++
+------------------
+
+2-1-1) A single file
+--------------------
+In C++, if you have already the pixels in main memory, 
+you just have to process as follow :
+
+--> Create an empty gdcm::File
+        gdcm::File *file = gdcm::File::New();
+
+        std::ostringstream str;
+
+// --> Set the mandatory fields
+  // Set the image size
+        str.str("");
+        str << sizeY;
+        file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
+        str.str("");
+        str << sizeX;
+        file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
+        str.str("");
+        str << sizeZ;
+        file->InsertEntryString(str.str(),0x0028,0x0008, "IS"); // Nbr of Frames
+  // Set the pixel type
+        str.str("");
+        str << componentSize; //8, 16, 32
+        file->InsertEntryString(str.str(),0x0028,0x0100,"US"); // Bits Allocated
+        str.str("");
+        str << componentUse; // may be 12 or 16 if componentSize =16
+        file->InsertEntryString(str.str(),0x0028,0x0101,"US"); // Bits Stored
+        str.str("");
+        str << componentSize - 1 ;
+        file->InsertEntryString(str.str(),0x0028,0x0102,"US"); // High Bit
+  // Set the pixel representation // 0/1
+        str.str("");
+        str << img.sign;
+        file->InsertEntryString(str.str(),0x0028,0x0103, "US"); // Pixel Representation
+  // Set the samples per pixel // 1:Grey level, 3:RGB
+        str.str("");
+        str << components;
+        file->InsertEntryString(str.str(),0x0028,0x0002, "US"); // Samples per Pixel
+
+//--> Set Optional fields
+      se further how to deal with optional fields
+
+//--> Create a gdcm::FileHelper
+       gdcm::FileHelper *fileH = gdcm::FileHelper::New(file);
+
+//--> Tell the FileHelper what you did for creating the image:
+
+      // gdcm cannot guess how user built his image 
+      //  (and therefore cannot be clever about some Dicom fields)
+      // It's up to the user to tell gdcm what he did.
+      // -1) user created ex nihilo his own image and wants to write it 
+      //     as a Dicom image.
+      // USER_OWN_IMAGE
+      // -2) user modified the pixels of an existing image.
+      // FILTERED_IMAGE
+      // -3) user created a new image, using existing a set of images 
+      //    (eg MIP, MPR, cartography image)
+      //  CREATED_IMAGE
+      // -4) user modified/added some tags *without processing* the pixels 
+      //     (anonymization, ...)
+      //  UNMODIFIED_PIXELS_IMAGE
+      // -Probabely some more to be added
+      //(see gdcmFileHelper.h for more explanations)
+
+      // Use :
+      
+      fileH->SetContentType(GDCM_NAME_SPACE::USER_OWN_IMAGE);
+      fileH->SetContentType(GDCM_NAME_SPACE::FILTERED_IMAGE);
+      fileH->SetContentType(GDCM_NAME_SPACE::CREATED_IMAGE);
+      fileH->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
+      
+      // depending on what you did before!
+                  
+//--> Set the Image Data
+       fileH->SetImageData((unsigned char *)imageData,size);
+      // ( Casting as 'unsigned char *' is just to avoid warnings.
+      // It doesn't change the values. )
+
+//--> Set the compression type : 
+      fileH->SetWriteTypeToJPEG();         
+      fileH->SetWriteTypeToJPEG2000();
+      fileH->SetWriteTypeToDcmExplVR(); // Explicit Value Represtation (no compression)
+      fileH->SetWriteTypeToDcmImplVR(); // Implicit Value Represtation (no compression)
+      
+      fileH->SetWriteModeToRaw();       // Probabely you don't want to convert any LUT into RGB pixels ...
+
+//-> Write !      
+      fileH->Write(fileName.str());
+
+//This works for a single image (singleframe or multiframe)
+
+2-1-1-1) Deal with optional DataElements          // TODO : finish it
+    Any Data Element may be added (it's up to the user to understand what he is doing!)
+    The supplied methods 'InsertXxx' will create the DataElement or replace it if it already exists.  
+    Have a look at gdcm/Dict/dicomV3.dic to see what are the various DICOM fields, with their VR.
+    
+2-1-1-1-1) Add a single Dicom DataElement          // TODO : finish it
+
+   use :
+   DataEntry * File::InsertEntryString(std::string const &value,
+                                   uint16_t group, uint16_t elem,
+                                   VRKey const &vr = GDCM_VRUNKNOWN);
+  
+   // (e.g. : patient name, patient ID, ... , or what you want,
+   //  using their Dicom identifier, and 'VR'
+      file->InsertEntryString("MyOwnPatient" ,0x0010,0x0010,"PN"); // 0010 0010 : Patient's Name
+   
+    DataEntry * File:InsertEntryBinArea(uint8_t *binArea, int lgth,
+                                    uint16_t group, uint16_t elem,
+                                    VRKey const &vr = GDCM_VRUNKNOWN);  
+   
+2-1-1-1-2) Add a Dicom Sequence           // TODO : finish it
+   SeqEntry * File::InsertSeqEntry(uint16_t group, uint16_t elem);
+   
+2-1-2) A File Set
+-----------------
+/// \todo : write it!
+
+
+// If you deal with a Serie of images, it up to you to tell gdcm, for each image,
+// what are the values of
+// 0020 0032 DS 3 Image Position (Patient)
+// 0020 0037 DS 6 Image Orientation (Patient)
+
+// You will probabely want that all the images of your file set belong to the same 'Serie'
+
+
+2-2) using VTK
+--------------
+
+/// \todo : write it!
+
+2-2-1) A single file
+--------------------
+
+/// \todo : finish it!
+
+// User of the CVS version of VTK 5 may set some 'Medical Image Properties'
+// Only the predefined DataElements are available :
+// PatientName, PatientID, PatientAge, PatientSex, PatientBirthDate, StudyID
+// It's reasonably enough for any 'decent use'
+//
+// todo : explain how to use it.
+//vtkMedicalImageProperties
+
+   // Aware user is allowed to pass his own gdcm::File *, 
+   //  so he may set *any Dicom field* he wants.
+   // (including his own Shadow Elements, or any gdcm::SeqEntry)
+   // gdcm::FileHelper::CheckMandatoryElements() will check inconsistencies,
+   // as far as it knows how.
+   // Sorry, not yet available under Python.
+   //vtkSetMacro(GdcmFile, gdcm::File *);
+   
+void vtkGdcmWriter::SetGdcmFile(gdcm::File *);
 
    // gdcm cannot guess how user built his image 
    //  (and therefore cannot be clever about some Dicom fields)
@@ -480,108 +761,14 @@ is wrapable by swig.
    
    // User is allowed to use the following methods:
    
-   void SetContentTypeToUserOwnImage()         
-                    {SetContentType(VTK_GDCM_WRITE_TYPE_USER_OWN_IMAGE);}
-   void SetContentTypeToFilteredImage()        
-                    {SetContentType(VTK_GDCM_WRITE_TYPE_FILTERED_IMAGE);}
-   void SetContentTypeToUserCreatedImage()     
-                    {SetContentType(VTK_GDCM_WRITE_TYPE_CREATED_IMAGE);}
-   void SetContentTypeToUnmodifiedPixelsImage()
-                    {SetContentType(VTK_GDCM_WRITE_TYPE_UNMODIFIED_PIXELS_IMAGE);}
-
-2-1) using raw C++
-------------------
-In C++, if you have already the pixels in main memory, 
-you just have to process as follow :
-
---> Create an empty gdcm::File
-        gdcm::File *file = gdcm::File::New();
-
-        std::ostringstream str;
-
-// --> Set the mandatory fields
-// Set the image size
-        str.str("");
-        str << sizeY;
-        file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
-        str.str("");
-        str << sizeX;
-        file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
-        str.str("");
-        str << sizeZ;
-        file->InsertEntryString(str.str(),0x0028,0x0008, "IS"); // Nbr of Frames
-          // Set the pixel type
-        str.str("");
-        str << componentSize; //8, 16, 32
-        file->InsertEntryString(str.str(),0x0028,0x0100,"US"); // Bits Allocated
-        str.str("");
-        str << componentUse; // may be 12 or 16 if componentSize =16
-        file->InsertEntryString(str.str(),0x0028,0x0101,"US"); // Bits Stored
-        str.str("");
-        str << componentSize - 1 ;
-        file->InsertEntryString(str.str(),0x0028,0x0102,"US"); // High Bit
-  // Set the pixel representation // 0/1
-        str.str("");
-        str << img.sign;
-        file->InsertEntryString(str.str(),0x0028,0x0103, "US"); // Pixel Representation
-  // Set the samples per pixel // 1:Grey level, 3:RGB
-        str.str("");
-        str << components;
-        file->InsertEntryString(str.str(),0x0028,0x0002, "US"); // Samples per Pixel
-
-//--> Set Optional fields
-//(patient name, patient ID, modality, or what you want
-//Have look at gdcm/Dict/dicomV3.dic to see what are the various DICOM fields)
-
-//--> Create a gdcm::FileHelper
-
-       gdcm::FileHelper *fileH = gdcm::FileHelper::New(file);
-       fileH->SetImageData((unsigned char *)imageData,size);
-       
-//casting as 'unsigned char *' is just to avoid warnings.
-// It doesn't change the values.
-
-      fileH->SetWriteModeToRaw();
-      fileH->SetWriteTypeToDcmExplVR();
-      fileH->Write(fileName.str());
-
-//This works for a single image (singleframe or multiframe)
-
-// If you deal with a Serie of images, it up to you to tell gdcm, for each image,
-// what are the values of
-// 0020 0032 DS 3 Image Position (Patient)
-// 0020 0037 DS 6 Image Orientation (Patient) 
-
-2-1-1) A single file
---------------------
-/// \todo : write it!
-
-2-1-2) A File Set
------------------
-/// \todo : write it!
-
-
-
-2-2) using VTK
---------------
-
-2-2-1) A single file
---------------------
-
-// User of the CVS version of VTK 5 may set some 'Medical Image Properties'
-// Only the predefined DataElements are available :
-// PatientName, PatientID, PatientAge, PatientSex, PatientBirthDate, StudyID
-// It's reasonablt enough for any 'decent use'
-vtkMedicalImageProperties
-
-   // Aware user is allowed to pass his own gdcm::File *, 
-   //  so he may set *any Dicom field* he wants.
-   // (including his own Shadow Eleents, or any gdcm::SeqEntry)
-   // gdcm::FileHelper::CheckMandatoryElements() will check inconsistencies,
-   // as far as it knows how.
-   // Sorry, not yet available under Python.
-vtkSetMacro(GdcmFile, gdcm::File *);
-
+void vtkGdcmWriter::SetContentTypeToUserOwnImage()                           
+void vtkGdcmWriter::SetContentTypeToFilteredImage()                            
+void vtkGdcmWriter::SetContentTypeToUserCreatedImage()                        
+vtkGdcmWriter::void SetContentTypeToUnmodifiedPixelsImage()
+   
+  // depending on what he did before!
+  
+                      
 
 2-2-2) A File Set
 -----------------
@@ -592,5 +779,29 @@ vtkSetMacro(GdcmFile, gdcm::File *);
 --------------
 /// \todo : write it!
 
+2-4) Retrictions for Python users
+---------------------------------
+/// \todo : write it!
+
+3) Some 'Command line' utilities  /// \todo: finish it!
+================================
+
+3-) PrintFile
+3-) exSerieHelper
+3-) exXCoherentFileSet
+
+3-) AnonymizeNoLoad
+3-) AnonymizeMultiPatient
+3-) AnonymizeDicomDir
+
+3-) ReWrite
+3-) RawToDicom
+3-) exMoveImagesToSingleSerieUID
+
+3-) vtkgdcmViewer2
+3-) vtkgdcmSerieViewer2
+
+3-) PrintDicomDir
+3-) MakeDicomDir
 }}}
 </pre>
