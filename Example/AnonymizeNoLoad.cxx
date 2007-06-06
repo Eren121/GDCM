@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeNoLoad.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/06/06 13:03:57 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,23 +129,22 @@ int main(int argc, char *argv[])
       //      File will be overwritten
       // 
 
-
       // 
       //  Choose the fields to anonymize.
       // 
 
       // Institution name 
-      f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
+      f->AddAnonymizeElement( 0x0008, 0x0080, "gdcm-Xanadoo Hospital" ); 
       // Patient's name 
-      f->AddAnonymizeElement( 0x0010, 0x0010, "g^Fantomas" );      
+      f->AddAnonymizeElement( 0x0010, 0x0010, "gdcm^Fantomas" );      
       // Patient's ID
       f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
       // Patient's Birthdate
       f->AddAnonymizeElement( 0x0010, 0x0030,"11111111" );
       // Patient's Adress
-      f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
+      f->AddAnonymizeElement( 0x0010, 0x1040,"gdcm at Sing-sing.org" );
       // Patient's Mother's Birth Name
-      f->AddAnonymizeElement( 0x0010, 0x1060,"g^Vampirella" );      
+      f->AddAnonymizeElement( 0x0010, 0x1060,"gdcm^Vampirella" );      
       // Study Instance UID
       f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
       // Telephone
@@ -206,17 +205,17 @@ int main(int argc, char *argv[])
          // 
  
          // Institution name 
-         f->AddAnonymizeElement( 0x0008, 0x0080, "Xanadoo" ); 
+         f->AddAnonymizeElement( 0x0008, 0x0080, "gdcm-Xanadoo Hospital" ); 
          // Patient's name 
-         f->AddAnonymizeElement( 0x0010, 0x0010, "g^Fantomas" );   
+         f->AddAnonymizeElement( 0x0010, 0x0010, "gdcm^Fantomas" );   
          // Patient's ID
          f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
          // Patient's Birthdate
          f->AddAnonymizeElement( 0x0010, 0x0030,"11111111" );
          // Patient's Adress
-         f->AddAnonymizeElement( 0x0010, 0x1040,"Sing-sing" );
+         f->AddAnonymizeElement( 0x0010, 0x1040,"gdcm at Sing-sing.org" );
          // Patient's Mother's Birth Name
-         f->AddAnonymizeElement( 0x0010, 0x1060,"g^Vampirella" );   
+         f->AddAnonymizeElement( 0x0010, 0x1060,"gdcm^Vampirella" );   
          // Study Instance UID
          // we may not brutaly overwrite it
          //f->AddAnonymizeElement( 0x0020, 0x000d, "9.99.999.9999" );
