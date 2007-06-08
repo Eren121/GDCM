@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2006/03/29 11:23:43 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2007/06/08 12:43:19 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,11 +49,14 @@ public:
                                                       CoherentFileList = cfl; }    
    //ETX
 
-   vtkSetMacro(AllowLightChecking, bool);
-   vtkGetMacro(AllowLightChecking, bool);
-   vtkBooleanMacro(AllowLightChecking, bool);
+   //vtkSetMacro(AllowLightChecking, bool);
+   //vtkGetMacro(AllowLightChecking, bool);
+   //vtkBooleanMacro(AllowLightChecking, bool);
 
    //BTX
+   
+   /// \TODO fix possible problems around VTK pipelining
+   
    void SetUserFunction (VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
                         { UserFunction = userFunc; } 
    //ETX
@@ -81,6 +84,15 @@ public:
    vtkSetMacro(LoadMode, int);
    vtkGetMacro(LoadMode, int);
    vtkBooleanMacro(LoadMode, int);
+ 
+/*
+ * \ brief drop images with duplicate position  
+ *         and therefore calculate ZSpacing for the whole file set
+ * @param   mode user wants to drop images with duplicate position    
+ */   
+   vtkSetMacro(DropDuplicatePositions, bool);
+   vtkGetMacro(DropDuplicatePositions, bool);
+   vtkBooleanMacro(DropDuplicatePositions, bool);      
 
 protected:
    vtkGdcmReader();
@@ -165,7 +177,9 @@ private:
    ///        Bit 2 : Skip Sequences inside a Shadow Group, if possible
    ///        Probabely (?), some more to add
    int LoadMode;
-
+    
+   bool DropDuplicatePositions;
+   
    /// Pointer to a user suplied function to allow modification of pixel order
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
 
