@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/04 08:51:25 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/06/08 12:41:07 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,7 @@
 //     SerieHelper::SetOrderToReverse, 
 //     SerieHelper::SetUserLessThanFunction
 //     SerieHelper::SetLoadMode
+//     SerieHelper::SetDropDuplicatePositions
 //     vtkGdcmReader::SetUserFunction
 //     vtkGdcmReader::SetCoherentFileList
 // Usage:
@@ -114,7 +115,7 @@ int main(int argc, char *argv[])
    " usage: vtkgdcmSerieViewer dirname=sourcedirectory                        ",
    "                           [noshadowseq][noshadow][noseq]                 ",
    "                           [reverse] [{[mirror]|[topdown]|[rotate]}]      ",
-   "                           [order=] [check][debug]                        ",
+   "                           [order=] [nodup][check][debug]                 ",
    "      sourcedirectory : name of the directory holding the images          ",
    "                        if it holds more than one serie,                  ",
    "                        only the first one is displayed.                  ",
@@ -131,6 +132,7 @@ int main(int argc, char *argv[])
    "                   Right now : ValEntries only -just an example-          ",
    "        or                                                                ",
    "      order=     : order=name if we want to sort on file name (why not ?) ",
+   "      nodup       : user wants to drop duplicate positions                ",
    "      debug      : developper wants to run the program in 'debug mode'    ",
    FINISH_USAGE
 
@@ -159,7 +161,7 @@ int main(int argc, char *argv[])
    }
 
    int reverse = am->ArgMgrDefined("reverse");
-
+   int nodup   = am->ArgMgrDefined("nodup");
    int mirror     = am->ArgMgrDefined("mirror");
    int upsidedown = am->ArgMgrDefined("upsidedown");
 
@@ -215,6 +217,9 @@ int main(int argc, char *argv[])
    else if (orderNb != 0)
       sh->SetUserLessThanFunction(userSuppliedLessThanFunction);
 
+   if (nodup)
+      sh->SetDropDuplicatePositions(true);
+      
    while (l)
    { 
       nbFiles = l->size() ;
