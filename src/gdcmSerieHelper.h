@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2007/06/08 12:49:37 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,8 @@
 #include "gdcmRefCounter.h"
 #include "gdcmTagKey.h" 
 #include "gdcmDebug.h"  // for LEGACY
+
+#include "gdcmDicomDirSerie.h"
  
 #include <vector>
 #include <iostream>
@@ -82,6 +84,8 @@ public:
  //  GDCM_LEGACY(bool AddGdcmFile(File* header))
 
    void SetDirectory(std::string const &dir, bool recursive=false);
+   void SetDicomDirSerie(DicomDirSerie *se);
+      
    bool IsCoherent(FileList *fileSet);
    void OrderFileList(FileList *fileSet);
    void Clear() { ClearAll(); }
@@ -139,7 +143,7 @@ public:
    /// 0018 0024 Sequence Name
    /// 0018 0050 Slice Thickness
    /// 0028 0010 Rows
-   /// 0028 0011 Columns
+   /// 0028 0011 Columns   
    void CreateDefaultUniqueSeriesIdentifier();
 
    void AddSeriesDetail(uint16_t group, uint16_t elem, bool convert);
@@ -161,6 +165,12 @@ public:
  * @param   mode Load mode to be used    
  */
    void SetLoadMode (int mode) { LoadMode = mode; }
+   
+/**
+ * \brief Sets the DropDuplicatePositions as a boolean.
+ * @param   drop  DropDuplicatePositions mode to be used   
+ */   
+   void SetDropDuplicatePositions (bool drop) { DropDuplicatePositions = drop; }   
 
 /// Brief User wants the files to be sorted Direct Order (default value)
    void SetSortOrderToDirect()  { DirectOrder = true;  }
@@ -235,6 +245,8 @@ private:
    /// \brief If user knows more about his images than gdcm does,
    ///        he may supply his own comparison function.
    BOOL_FUNCTION_PFILE_PFILE_POINTER UserLessThanFunction;
+
+   bool DropDuplicatePositions;
 
    void Sort(FileList *fileList, bool (*pt2Func)( File *file1, File *file2) );
 

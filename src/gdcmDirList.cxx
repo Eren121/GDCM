@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2007/06/08 12:49:37 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,8 @@
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
+
+#include "gdcmDicomDirImage.h"
 
 #include <iterator>
 #include <assert.h>
@@ -48,6 +50,15 @@ DirList::DirList(std::string const &dirName, bool recursive)
    Explore(dirName, recursive);
 }
 
+/**
+ * \brief Constructor  
+ * @param  dirName root directory name
+ * @param  recursive whether we want to explore recursively or not 
+ */
+DirList::DirList(DicomDirSerie *se)
+{
+   Explore(se);
+}
 /**
  * \brief  Destructor
  */
@@ -115,6 +126,26 @@ std::string DirList::GetNext()
 
 //-----------------------------------------------------------------------------
 // Private
+
+/**
+ * \brief   Explores a DicomDirSerie
+ *          return number of files found
+ * @param  se DicomDirSerie to explore
+ */
+int DirList::Explore(DicomDirSerie *se)
+{
+   int numberOfFiles = 0;
+
+   DicomDirImage *im = se->GetFirstImage();
+   while ( im ) 
+   { 
+      Filenames.push_back( im->GetEntryString(0x0004, 0x1500) );// File name (Referenced File ID)
+      numberOfFiles++;           
+      im = se->GetNextImage();   
+   }
+   return numberOfFiles;
+}   
+   
 /**
  * \brief   Explore a directory with possibility of recursion
  *          return number of files read

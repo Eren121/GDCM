@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2007/06/08 12:49:37 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,6 +20,7 @@
 #define GDCMDIRLIST_H
 
 #include "gdcmBase.h"
+#include "gdcmDicomDirSerie.h"
 
 #include <string>
 #include <vector>
@@ -43,6 +44,7 @@ class GDCM_EXPORT DirList : public Base
 {
 public :
    DirList(std::string const &dirName, bool recursive);
+   DirList(DicomDirSerie *s);   
    ~DirList();
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
@@ -63,7 +65,8 @@ public :
    
 private :
    int Explore(std::string const &dirName, bool recursive=false);
-
+   int Explore(DicomDirSerie *s);
+   
    /// List of file names
    DirListType Filenames;
    /// name of the root directory to explore

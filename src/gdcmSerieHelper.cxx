@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/04 08:51:24 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2007/06/08 12:49:37 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,6 +43,7 @@ SerieHelper::SerieHelper()
    ClearAll();
    UserLessThanFunction = 0;
    DirectOrder = true;
+   
 }
 
 /**
@@ -242,8 +243,7 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
  *         e.g : 100 would be *before* 20; 000020.00 vs 00100.00 : OK 
  */
 void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem, bool convert)
-{
-   
+{   
    ExDetail d;
    d.group   = group;
    d.elem    = elem;
@@ -258,6 +258,22 @@ void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem, bool convert)
 void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
 {
    DirList dirList(dir, recursive); // OS specific
+  
+   DirListType filenames_list = dirList.GetFilenames();
+   for( DirListType::const_iterator it = filenames_list.begin(); 
+        it != filenames_list.end(); ++it)
+   {
+      AddFileName( *it );
+   }
+}
+
+/**
+ * \brief Sets the DicomDirSerie
+ * @param   se DicomDirSerie to deal with
+ */
+void SerieHelper::SetDicomDirSerie(DicomDirSerie *se)
+{
+   DirList dirList(se);
   
    DirListType filenames_list = dirList.GetFilenames();
    for( DirListType::const_iterator it = filenames_list.begin(); 
@@ -721,7 +737,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    }
    if (!ok)
    {
-      return false;
+      if (! DropDuplicatePositions)
+         return false;
    }
 
 // Now, we could calculate Z Spacing as the difference
@@ -748,6 +765,12 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
            ++it3)
       {
          fileList->push_back( (*it3).second );
+         if (DropDuplicatePositions)
+         {
+            it3 =  distmultimap.upper_bound((*it3).first); // skip all duplicates
+            if (it3 == distmultimap.end() )  // if last image, stop iterate
+               break;
+         }
       }
    }
    else // user asked for reverse order
@@ -758,6 +781,12 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       {
          it4--;
          fileList->push_back( (*it4).second );
+         if (DropDuplicatePositions)  // skip all duplicates
+         {
+           it4 =  distmultimap.upper_bound((*it4).first);
+           if (it4 == distmultimap.begin() ) // if first image, stop iterate
+               break;
+         } 
       } while (it4 != distmultimap.begin() );
    }
 
