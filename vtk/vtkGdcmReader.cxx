@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/31 12:23:26 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2007/06/08 12:39:07 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,7 @@
 //      gdcm::SerieHelper *sh= new gdcm::SerieHelper();
 //      // if user wants *not* to load some parts of the file headers
 //      sh->SetLoadMode(loadMode);
+//
 //      // if user wants *not* to load some files 
 //      sh->AddRestriction(group, element, value, operator);
 //      sh->AddRestriction( ...
@@ -35,18 +36,39 @@
 //
 //      // if user wants to sort reverse order
 //      sh->SetSortOrderToReverse(); 
-//      // here, we suppose only the first Coherent File List is of interest
-//      gdcm::FileList *l = sh->GetFirstCoherentFileList();
+//
+//      // here, we suppose only the first 'Serie' is of interest
+//      // it's up to the user to decide !
+//      gdcm::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
+//
 //      // if user is doesn't trust too much the files with same Serie UID 
 //      if ( !sh->IsCoherent(l) )
 //         return; // not same sizes, same 'pixel' type -> stop
+//
+//      // WARNING : all  that follows works only with 'bona fide' Series
+//      // (In some Series; there are more than one 'orientation'
+//      // Don't expected to build a 'volume' with that!
+//      //
+//      // -> use sh->SplitOnOrientation(l)
+//      //  - or sh->SplitOnPosition(l), or SplitOnTagValue(l, gr, el) -
+//      // depending on what you want to do
+//      // and iterate on the various 'X Coherent File Sets'
+//
+//      // if user *knows* he has to drop the 'duplicates' images
+//      // (same Position)
+//      sh->SetDropDuplicatePositions(true);
+//
+//      // Sorting the list is mandatory
+//      // a side effect is to compute ZSpacing for the fle set
 //      sh->OrderFileList(l);        // sort the list
 //
 //      vtkGdcmReader *reader = vtkGdcmReader::New();
+//
 //      // if user wants to modify pixel order (Mirror, TopDown, 90°Rotate, ...)
 //      // he has to supply the function that does the job 
 //      // (a *very* simple example is given in vtkgdcmSerieViewer.cxx)
 //      reader->SetUserFunction (userSuppliedFunction);
+//
 //      // to pass a 'Coherent File List' as produced by gdcm::SerieHelper
 //      reader->SetCoherentFileList(l); 
 //      reader->Update();
@@ -70,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.88 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.89 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -79,7 +101,7 @@ vtkGdcmReader::vtkGdcmReader()
 {
    this->LookupTable = NULL;
    this->AllowLookupTable = false;
-   this->AllowLightChecking = false;
+   //this->AllowLightChecking = false;
    this->LoadMode = gdcm::LD_ALL; // Load everything (possible values : 
                                   //  - LD_NOSEQ, 
                                   //  - LD_NOSHADOW,
