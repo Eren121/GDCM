@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/02 13:11:58 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/06/08 12:39:49 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ public:
 //BTX
    // Description:
    // Aware user is allowed to pass his own gdcm::File *, so he may set *any Dicom field* he wants.
-   // (including his own Shadow Eleents, or any gdcm::SeqEntry)
+   // (including his own Shadow Elements, or any gdcm::SeqEntry)
    // gdcm::FileHelper::CheckMandatoryElements() will check inconsistencies, as far as it knows how.
    // Sorry, not yet available under Python.
    vtkSetMacro(GdcmFile, gdcm::File *);
