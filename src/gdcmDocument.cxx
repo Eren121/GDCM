@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.358 $
+  Date:      $Date: 2007/06/11 18:18:37 $
+  Version:   $Revision: 1.359 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2062,8 +2062,7 @@ bool Document::CheckSwap()
          s16 = *((uint16_t *)(deb));
  
          gdcmDebugMacro("not a DicomV3 nor a 'clean' ACR/NEMA;"
-                     << " (->despaired wild guesses !)"); 
-      
+                     << " (->despaired wild guesses !)");       
          switch ( s16 )
          {
             case 0x0001 :
@@ -2091,9 +2090,53 @@ bool Document::CheckSwap()
                Filetype = ACR;
                return true;
             default :
-               gdcmWarningMacro("ACR/NEMA unfound swap info (Hopeless !)");
-               Filetype = Unknown;
-               return false;
+    
+               s16 = *((uint16_t *)(deb));
+               if (s16 != 0x0000)
+                   return false;
+               s16 = *((uint16_t *)(deb+2));
+
+               //s32 = *((uint32_t *)(deb));
+               Fp->seekg ( 0L, std::ios::beg); // Once per Document
+               CurrentOffsetPosition = 0;
+               switch(s16)  // try an other trick!
+                            // -> to be able to decode 0029|1010 DataElement
+                            // -> and be not less cleaver than dcmdump ;-)
+               {
+                  case 0x00040000 :
+                     SwapCode = 4321;
+                     break;
+                  case 0x04000000 :
+                     SwapCode = 3412;
+                     break;
+                  case 0x00000400 :
+                     SwapCode = 2143;
+                     break;
+                  case 0x00000004 :
+                     SwapCode = 1234;
+                      break;
+     
+                  default:
+                     gdcmWarningMacro("ACR/NEMA unfound swap info (Hopeless !)");
+                     Filetype = Unknown;
+                     return false;
+               }
+               // Check if next 2 bytes are a VR
+               // Probabely something more time-consuming exists with std::string
+               const char VRvalues[] = "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQ";
+               int nbVal = 26;
+               const char *pt = VRvalues;
+               for (int i=0;i<nbVal;i++)
+               {
+                  if(*(deb+4) == *pt++)
+                  if(*(deb+5) == *pt++) {
+                     Filetype = ExplicitVR;
+                     return true;       
+                  }
+
+              }
+              Filetype = ImplicitVR;
+              return true;       
          }
    }
 }
