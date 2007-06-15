@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Anonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/06/15 13:18:50 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
    //   Write a new file
    // ============================================================
    
-   // Since we just Anonymized the file, we know no modification 
+   // Since we just Anonymized the file, we know that no modification 
    // was performed on the pixels.
    // The written image will not appear as a 'Secondary Captured image'
    // nor as a DERIVED one  

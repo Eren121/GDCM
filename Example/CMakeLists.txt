@@ -8,6 +8,8 @@ INCLUDE_DIRECTORIES(
 SET(EXAMPLE_SOURCES
 #names starting with 'ex' are examples
   #Txt2Mat
+  exDicomRTStructSetFile
+  exExtractCSA
   exReadPapyrus
   exReadWriteFile
   exColorToRGB

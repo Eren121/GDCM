@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/06/15 13:18:51 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
    "\n exXCoherentFileSet :\n                                                 ",
    "Shows the various 'XCoherent' Filesets within a directory                 ",
    "usage: exXCoherentFileSet {dirin=inputDirectoryName}                      ",
-   "                       { tag= group-elem | pos | ori }                    ",
+   "                       { tag= group-elem | pos | ori }  sort              ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "                                                                          ",
    "       inputDirectoryName : user wants to analyze *all* the files         ",
@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
    "                         'Image Orientation '                             ",
    "       tag : group-elem    (in hexa, no space)                            ",
    "                       the user wants to split on                         ",
+   "       sort :  user wants FileHelper to sort the images                   ",
+   "               Warning : will probabely crah if sort has no meaning       ",
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
@@ -84,9 +86,10 @@ int main(int argc, char *argv[])
 
    // FIXME : check only one of them is set !
 
-   int pos = am->ArgMgrDefined("pos");
-   int ori = am->ArgMgrDefined("ori");
-   
+   int pos  = am->ArgMgrDefined("pos");
+   int ori  = am->ArgMgrDefined("ori");
+   int sort = am->ArgMgrDefined("sort");
+      
    int nb;
    uint16_t *groupelem;
    groupelem = am->ArgMgrGetXInt16Enum("tag", &nb);
@@ -177,9 +180,13 @@ int main(int argc, char *argv[])
            // OrderFileList() causes trouble, since some files
            // (eg:MIP views) don't have 'Position', now considered as mandatory
            // Commented out for the moment.
-   
-           //s->OrderFileList((*i).second);  // sort the XCoherent Fileset
-    
+           
+           if (sort) {   
+              s->OrderFileList((*i).second);  // sort the XCoherent Fileset
+              std::cout << "ZSpacing for the file set " << s->GetZSpacing()
+                        << std::endl;
+            } 
+
             for (GDCM_NAME_SPACE::FileList::iterator it =  ((*i).second)->begin();
                                           it != ((*i).second)->end();
                                         ++it)

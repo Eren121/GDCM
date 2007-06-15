@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/07 16:13:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/06/15 13:18:51 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -395,7 +395,8 @@ if (verbose)
     uint32_t item_xx[4];
     is.read((char*)&item_xx, 4*sizeof(uint32_t));
 if (verbose)
-       std::cout << "item_xx=" << item_xx[0] << " " << item_xx[1] << " " 
+       std::cout << std::dec 
+                 << "item_xx=" << item_xx[0] << " " << item_xx[1] << " " 
                  << item_xx[2] << " " << item_xx[3] << std::endl;
     //std::cout << "0x" << std::hex << is.tellg() << std::dec << std::endl;
     assert( item_xx[2] == 77 || item_xx[2] == 205 );
