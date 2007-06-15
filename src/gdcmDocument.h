@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.143 $
+  Date:      $Date: 2007/06/15 13:16:56 $
+  Version:   $Revision: 1.144 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -261,6 +261,9 @@ private:
    char *PtrBegBuffer;
    /// \brief to avoid time consuming ftellg
    size_t CurrentOffsetPosition;
+   /// \brief to indicate if last supposed to be UN DataElement is not
+   ///        (according to a private Dicom dictionary) 
+   bool changeFromUN;
 };
 
 } // end namespace gdcm

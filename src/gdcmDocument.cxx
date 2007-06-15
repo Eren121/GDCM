@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/11 18:18:37 $
-  Version:   $Revision: 1.359 $
+  Date:      $Date: 2007/06/15 13:16:55 $
+  Version:   $Revision: 1.360 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,6 +70,7 @@ Document::Document()
    LoadMode = LD_ALL; // default : load everything, later
    
    SetFileName("");
+   changeFromUN=false;
 }
 
 /**
@@ -1502,12 +1503,12 @@ void Document::FindDocEntryLength( DocEntry *entry )
 {
    const VRKey &vr  = entry->GetVR();
    uint16_t length16;       
-   
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
    {
       if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" 
-                                                           || vr == "UN" )
+                                                           || vr == "UN" || changeFromUN == true)
       {
+         changeFromUN = false;
          // The following reserved two bytes (see PS 3.5-2003, section
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
@@ -1549,11 +1550,9 @@ void Document::FindDocEntryLength( DocEntry *entry )
          FixDocEntryFoundLength(entry, length32); 
          return;
       }
-
       // Length is encoded on 2 bytes.
       //length16 = ReadInt16();
       length16 = GetInt16();
-
       // 0xffff means that we deal with 'No Length' Sequence 
       //        or 'No Length' SQItem
       if ( length16 == 0xffff) 
@@ -2207,6 +2206,7 @@ DocEntry *Document::ReadNextDocEntry()
       return 0;
    }
    
+   changeFromUN = false;
    CurrentGroup = GetInt16();
    CurrentElem  = GetInt16();
    
@@ -2255,6 +2255,25 @@ DocEntry *Document::ReadNextDocEntry()
             dictEntry->Unregister(); // GetDictEntry registered it 
          }
       }
+   }
+   
+   // if UN found, let's check the dictionary, and trust it!
+   // (maybe a private dictionary exists?)    
+   else if (vr == "UN")
+   {
+      DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);
+      if ( dictEntry )
+      {
+         realVR = dictEntry->GetVR(); 
+         dictEntry->Unregister(); // GetDictEntry registered it
+
+         // for VR = "UN", length is always stored on 4 bytes.
+         changeFromUN=true;
+         /// \todo : fixme If inside a supposed to be UN DataElement (but SQ according to a private dictionnary)
+         ///         there is some more supposed to UN DataElements, it will probabely fail.
+         ///         --> find a -non time consuming- trick to store changeFromUN info at DataElement level,
+         ///         not at the Document level.
+      }   
    }
 
    DocEntry *newEntry;
