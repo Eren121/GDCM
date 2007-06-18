@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/08 12:49:37 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2007/06/18 12:13:44 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -455,7 +455,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
    std::ostringstream ossOrient;
 
    FileList::const_iterator it = fileSet->begin();
-   it ++;
+   //it ++;
    for ( ;
          it != fileSet->end();
        ++it)
@@ -505,7 +505,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
    std::ostringstream ossPosition;
    std::string strPosition; // re computed
    FileList::const_iterator it = fileSet->begin();
-   it ++;
+   //it ++;
    for ( ;
          it != fileSet->end();
        ++it)
@@ -581,7 +581,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
    std::string strTagValue;  // read on disc
 
    FileList::const_iterator it = fileSet->begin();
-   it ++;
+   //it ++;
    for ( ;
          it != fileSet->end();
        ++it)
