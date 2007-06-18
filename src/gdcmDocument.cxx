@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/18 11:10:17 $
-  Version:   $Revision: 1.361 $
+  Date:      $Date: 2007/06/18 15:44:52 $
+  Version:   $Revision: 1.362 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2103,26 +2103,18 @@ bool Document::CheckSwap()
                    return false;
                s16 = *((uint16_t *)(deb+2));
 
-               //s32 = *((uint32_t *)(deb));
                Fp->seekg ( 0L, std::ios::beg); // Once per Document
                CurrentOffsetPosition = 0;
                switch(s16)  // try an other trick!
                             // -> to be able to decode 0029|1010 DataElement
                             // -> and be not less cleaver than dcmdump ;-)
                {
-                  case 0x00040000 :
-                     SwapCode = 4321;
+                  case 0x0004 :
+                     SwapCode = 1234; 
                      break;
-                  case 0x04000000 :
+                  case 0x0400 :
                      SwapCode = 3412;
-                     break;
-                  case 0x00000400 :
-                     SwapCode = 2143;
-                     break;
-                  case 0x00000004 :
-                     SwapCode = 1234;
-                      break;
-     
+                     break;      
                   default:
                      gdcmWarningMacro("ACR/NEMA unfound swap info (Hopeless !)");
                      Filetype = Unknown;
