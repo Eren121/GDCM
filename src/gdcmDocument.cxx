@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/15 13:16:55 $
-  Version:   $Revision: 1.360 $
+  Date:      $Date: 2007/06/18 11:10:17 $
+  Version:   $Revision: 1.361 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,6 +71,7 @@ Document::Document()
    
    SetFileName("");
    changeFromUN=false;
+   UnexpectedEOF=false;
 }
 
 /**
@@ -919,7 +920,7 @@ bool Document::operator<(Document &document)
 
 /**
  * \brief Reads a given length of bytes
- *       (in order to avoid to many CPU time consuming fread-s)
+ *       (in order to avoid to many CPU time-consuming fread-s)
  * @param l length to read 
  */
 void Document::ReadBegBuffer(size_t l)
@@ -1283,11 +1284,11 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                << " at offset 0x(" << std::hex
                                << newDocEntry->GetOffset() << ")");
 
-            ParseSQ( newSeqEntry, 
-                     newDocEntry->GetOffset(),
-                     l, delim_mode_intern);
+            bool res = ParseSQ( newSeqEntry, 
+                         newDocEntry->GetOffset(),
+                         l, delim_mode_intern);
 
-            gdcmDebugMacro( "Exit from ParseSQ, delim " << delim_mode_intern);
+            gdcmDebugMacro( "Exit from ParseSQ, delim " << delim_mode_intern << " -->return : " << res);
          }
          if ( !set->AddEntry( newSeqEntry ) )
          {
@@ -1319,15 +1320,18 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          newDocEntry->Delete();
       }
       first = false;
+      
+      if (UnexpectedEOF) // some terminator was missing
+         break;
    }                               // end While
    gdcmDebugMacro( "Exit from ParseDES, delim-mode " << delim_mode );
 }
 
 /**
  * \brief   Parses a Sequence ( SeqEntry after SeqEntry)
- * @return  parsed length for this level
+ * @return  false if expected fff0,e000 not found
  */ 
-void Document::ParseSQ( SeqEntry *seqEntry,
+bool Document::ParseSQ( SeqEntry *seqEntry,
                         long offset, long l_max, bool delim_mode)
 {
    int SQItemNumber = 0;
@@ -1340,9 +1344,12 @@ void Document::ParseSQ( SeqEntry *seqEntry,
       DocEntry *newDocEntry = ReadNextDocEntry();
 
       if ( !newDocEntry )
-      {
+      { 
+         // The most frequent is when a SQ terminator is missing (?!?)
          gdcmWarningMacro("in ParseSQ : should never get here!");
-         break;
+         UnexpectedEOF = true;
+         return false;
+         //break;
       }
       if ( delim_mode )
       {
@@ -1390,6 +1397,7 @@ void Document::ParseSQ( SeqEntry *seqEntry,
          break;
       }
    }
+   return true;
 }
 
 /**
@@ -2256,7 +2264,7 @@ DocEntry *Document::ReadNextDocEntry()
          }
       }
    }
-   
+
    // if UN found, let's check the dictionary, and trust it!
    // (maybe a private dictionary exists?)    
    else if (vr == "UN")
@@ -2275,6 +2283,7 @@ DocEntry *Document::ReadNextDocEntry()
          ///         not at the Document level.
       }   
    }
+
 
    DocEntry *newEntry;
    //if ( Global::GetVR()->IsVROfSequence(realVR) )

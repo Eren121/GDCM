@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2007/06/15 13:16:56 $
-  Version:   $Revision: 1.144 $
+  Date:      $Date: 2007/06/18 11:10:17 $
+  Version:   $Revision: 1.145 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -201,7 +201,7 @@ private:
    
    // Read
    void ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
-   void ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);
+   bool ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);
 
    void LoadDocEntry         (DocEntry *e, bool forceLoad = false);
    void FindDocEntryLength   (DocEntry *e) throw ( FormatError );
@@ -264,6 +264,8 @@ private:
    /// \brief to indicate if last supposed to be UN DataElement is not
    ///        (according to a private Dicom dictionary) 
    bool changeFromUN;
+   /// \brief whether an unexpected EOF was encountered
+   bool UnexpectedEOF;
 };
 
 } // end namespace gdcm
