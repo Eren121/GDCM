@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
    
    
     // Initialize Arguments Manager   
-   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
    {
@@ -52,15 +52,15 @@ int main(int argc, char *argv[])
       return 0;
    }
    
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
    
    int filecontent =  am->ArgMgrGetInt("filecontent", 1);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
    char *fileout = (char *)(am->ArgMgrGetString("fileout","fileout"));
    
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    int deuxD = am->ArgMgrDefined("2D");
 
@@ -82,9 +82,9 @@ int main(int argc, char *argv[])
    }
    
 // ------------------------------------------------------------  
-   std::vector<gdcm::File* > cfl;
+   std::vector<GDCM_NAME_SPACE::File* > cfl;
          
-   gdcm::File *f = gdcm::File::New();
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetFileName(filein);
    f->Load();
    cfl.push_back(f);

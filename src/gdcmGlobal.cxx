@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmGlobal.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2007/06/19 13:09:45 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,13 +35,13 @@ namespace  GDCM_NAME_SPACE
 /// Therefore the actual initialization is done in a cxx file (avoid
 /// duplicated symbol), and an extern is used in gdcmCommon.h
 
-const std::string GDCM_UNKNOWN   = "gdcm::Unknown";
-const std::string GDCM_UNFOUND   = "gdcm::Unfound";
-const std::string GDCM_BINLOADED = "gdcm::Binary data loaded";
-const std::string GDCM_NOTLOADED = "gdcm::NotLoaded";
-const std::string GDCM_UNREAD    = "gdcm::UnRead";
-const std::string GDCM_NOTASCII  = "gdcm::NotAscii";
-const std::string GDCM_PIXELDATA = "gdcm::Pixel Data to be loaded";
+const std::string GDCM_UNKNOWN   = "GDCM_NAME_SPACE::Unknown";
+const std::string GDCM_UNFOUND   = "GDCM_NAME_SPACE::Unfound";
+const std::string GDCM_BINLOADED = "GDCM_NAME_SPACE::Binary data loaded";
+const std::string GDCM_NOTLOADED = "GDCM_NAME_SPACE::NotLoaded";
+const std::string GDCM_UNREAD    = "GDCM_NAME_SPACE::UnRead";
+const std::string GDCM_NOTASCII  = "GDCM_NAME_SPACE::NotAscii";
+const std::string GDCM_PIXELDATA = "GDCM_NAME_SPACE::Pixel Data to be loaded";
 
 const char GDCM_VRUNKNOWN[2] = {' ',' '}; // avoid useless std::string stuff
 

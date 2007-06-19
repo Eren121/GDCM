@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2007/06/08 12:39:49 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/06/19 13:09:45 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -89,8 +89,8 @@ public:
    // (including his own Shadow Elements, or any gdcm::SeqEntry)
    // gdcm::FileHelper::CheckMandatoryElements() will check inconsistencies, as far as it knows how.
    // Sorry, not yet available under Python.
-   vtkSetMacro(GdcmFile, gdcm::File *);
-   vtkGetMacro(GdcmFile, gdcm::File *);
+   vtkSetMacro(GdcmFile, GDCM_NAME_SPACE::File *);
+   vtkGetMacro(GdcmFile, GDCM_NAME_SPACE::File *);
 //ETX
 
    vtkSetMacro(ContentType, int);
@@ -120,7 +120,7 @@ private:
    vtkMedicalImageProperties *MedicalImageProperties;   
    int WriteType;
 //BTX
-   gdcm::File *GdcmFile;
+   GDCM_NAME_SPACE::File *GdcmFile;
 //ETX
    int ContentType;
    

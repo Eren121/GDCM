@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/08 12:39:07 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2007/06/19 13:09:45 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.89 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.90 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ vtkGdcmReader::vtkGdcmReader()
    this->LookupTable = NULL;
    this->AllowLookupTable = false;
    //this->AllowLightChecking = false;
-   this->LoadMode = gdcm::LD_ALL; // Load everything (possible values : 
+   this->LoadMode = GDCM_NAME_SPACE::LD_ALL; // Load everything (possible values : 
                                   //  - LD_NOSEQ, 
                                   //  - LD_NOSHADOW,
                                   //  - LD_NOSHADOWSEQ)
@@ -370,7 +370,7 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
       size_t size = this->NumColumns * this->NumLines * this->NumPlanes
                   * data->GetScalarSize() * this->NumComponents;
       unsigned char *Dest = (unsigned char *)data->GetScalarPointer();
-      for (std::vector<gdcm::File* >::iterator it =  InternalFileList.begin();
+      for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  InternalFileList.begin();
                                                it != InternalFileList.end();
                                              ++it)
       {
@@ -464,7 +464,7 @@ void vtkGdcmReader::BuildFileListFromPattern()
  */
 void vtkGdcmReader::LoadFileInformation()
 {
-   gdcm::File *file;
+   GDCM_NAME_SPACE::File *file;
    bool foundReference=false;
    std::string type;
 
@@ -488,7 +488,7 @@ void vtkGdcmReader::LoadFileInformation()
       fclose(fp);
 
       // Read the file
-      file=gdcm::File::New();
+      file=GDCM_NAME_SPACE::File::New();
       file->SetLoadMode( LoadMode );
       file->SetFileName(filename->c_str() );
       file->Load();
@@ -570,7 +570,7 @@ void vtkGdcmReader::UpdateFileInformation()
  * These informations are required to specify the output image
  * caracteristics
  */
-void vtkGdcmReader::GetFileInformation(gdcm::File *file)
+void vtkGdcmReader::GetFileInformation(GDCM_NAME_SPACE::File *file)
 {
    // Get the image caracteristics
    this->NumColumns = file->GetXSize();
@@ -598,7 +598,7 @@ void vtkGdcmReader::GetFileInformation(gdcm::File *file)
    {
        // Just because OrderFileList() is a member of gdcm::SerieHelper
        // we need to instanciate sh.
-      gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
+      GDCM_NAME_SPACE::SerieHelper *sh = GDCM_NAME_SPACE::SerieHelper::New();
       sh->OrderFileList(CoherentFileList); // calls ImagePositionPatientOrdering()
       this->DataSpacing[2] = sh->GetZSpacing();
       sh->Delete();         
@@ -643,7 +643,7 @@ void vtkGdcmReader::GetFileInformation(gdcm::File *file)
  *
  * \return True if the file match, False otherwise
  */
-bool vtkGdcmReader::TestFileInformation(gdcm::File *file)
+bool vtkGdcmReader::TestFileInformation(GDCM_NAME_SPACE::File *file)
 {
    int numColumns = file->GetXSize();
    int numLines   = file->GetYSize();
@@ -785,7 +785,7 @@ void vtkGdcmReader::IncrementProgress(const unsigned long updateProgressTarget,
  * with the previous ones
  */
 void vtkGdcmReader::LoadImageInMemory(
-             gdcm::File *f, 
+             GDCM_NAME_SPACE::File *f, 
              unsigned char *dest,
              const unsigned long updateProgressTarget,
              unsigned long &updateProgressCount)
@@ -793,7 +793,7 @@ void vtkGdcmReader::LoadImageInMemory(
    if(!f)
       return;
 
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New( f );
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New( f );
    fileH->SetUserFunction( UserFunction );
 
    int numColumns = f->GetXSize();

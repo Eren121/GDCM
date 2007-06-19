@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/01/26 16:01:06 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/06/19 13:09:45 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,10 +51,10 @@
 #define vtkFloatingPointType float
 #endif
 
-void userSuppliedMirrorFunction (uint8_t *im, gdcm::File *f);
-void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f);
-bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2);
-bool userSuppliedLessThanFunction2(gdcm::File *f1, gdcm::File *f2);
+void userSuppliedMirrorFunction (uint8_t *im, GDCM_NAME_SPACE::File *f);
+void userSuppliedTopDownFunction(uint8_t *im, GDCM_NAME_SPACE::File *f);
+bool userSuppliedLessThanFunction(GDCM_NAME_SPACE::File *f1, GDCM_NAME_SPACE::File *f2);
+bool userSuppliedLessThanFunction2(GDCM_NAME_SPACE::File *f1, GDCM_NAME_SPACE::File *f2);
 
 int orderNb;
 uint16_t *elemsToOrderOn;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
 
    // Initialize Arguments Manager   
-   gdcm::ArgMgr *am= new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
    {
@@ -138,15 +138,15 @@ int main(int argc, char *argv[])
 
    char *dirName = am->ArgMgrWantString("dirname",usage);
 
-   int loadMode = gdcm::LD_ALL;
+   int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
-      loadMode |= gdcm::LD_NOSHADOWSEQ;
+      loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
    else 
    {
       if ( am->ArgMgrDefined("noshadow") )
-         loadMode |= gdcm::LD_NOSHADOW;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
       if ( am->ArgMgrDefined("noseq") )
-         loadMode |= gdcm::LD_NOSEQ;
+         loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
    int reverse = am->ArgMgrDefined("reverse");
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
       elemsToOrderOn = am->ArgMgrGetXInt16Enum("order", &orderNb);
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 
    // ----------------------- End Arguments Manager ----------------------
   
-   gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
+   GDCM_NAME_SPACE::SerieHelper *sh = GDCM_NAME_SPACE::SerieHelper::New();
    sh->SetLoadMode(loadMode);
    if (reverse)
       sh->SetSortOrderToReverse();
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 
    int nbFiles;
    // For all the 'Single Serie UID' FileSets of the gdcm::Serie
-   gdcm::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
+   GDCM_NAME_SPACE::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
    if (l == 0 )
    {
       std::cout << "Oops! No 'Single Serie UID' FileSet found ?!?" << std::endl;
@@ -348,7 +348,7 @@ int main(int argc, char *argv[])
       }                                 \
    }
 
-void userSuppliedMirrorFunction(uint8_t *im, gdcm::File *f)
+void userSuppliedMirrorFunction(uint8_t *im, GDCM_NAME_SPACE::File *f)
 {
    if (f->GetZSize() != 1)
    {
@@ -403,7 +403,7 @@ void userSuppliedMirrorFunction(uint8_t *im, gdcm::File *f)
       }                                 \
    }
 
-void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f)
+void userSuppliedTopDownFunction(uint8_t *im, GDCM_NAME_SPACE::File *f)
 {
    if (f->GetZSize() != 1)
    {
@@ -449,12 +449,12 @@ void userSuppliedTopDownFunction(uint8_t *im, gdcm::File *f)
 // --------------------------------------------------------
 
 
-bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2)
+bool userSuppliedLessThanFunction(GDCM_NAME_SPACE::File *f1, GDCM_NAME_SPACE::File *f2)
 {
    // for *this* user supplied function, I supposed only ValEntries are checked.
 // 
    std::string s1, s2;
-   gdcm::DataEntry *e1,*e2;
+   GDCM_NAME_SPACE::DataEntry *e1,*e2;
    for (int ri=0; ri<orderNb; ri++)
    {
       std::cout << std::hex << elemsToOrderOn[2*ri] << "|" 
@@ -494,7 +494,7 @@ bool userSuppliedLessThanFunction(gdcm::File *f1, gdcm::File *f2)
 // Warning : it's up to 'vtkgdcmSerieViewer' user to find a suitable data set !
 // --------------------------------------------------------
 
-bool userSuppliedLessThanFunction2(gdcm::File *f1, gdcm::File *f2)
+bool userSuppliedLessThanFunction2(GDCM_NAME_SPACE::File *f1, GDCM_NAME_SPACE::File *f2)
 {
    std::cout << "[" << f1->GetFileName() << "] vs [" 
                     << f2->GetFileName() << "]" << std::endl;

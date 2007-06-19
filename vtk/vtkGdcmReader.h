@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2007/06/08 12:43:19 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/06/19 13:09:45 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 
-typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, gdcm::File *);
+typedef void (*VOID_FUNCTION_PUINT8_PFILE_POINTER)(uint8_t *, GDCM_NAME_SPACE::File *);
 
 //-----------------------------------------------------------------------------
 class vtkLookupTable;
@@ -45,7 +45,7 @@ public:
    virtual void SetFileName(const char *name);
 
    //BTX
-   void SetCoherentFileList( std::vector<gdcm::File* > *cfl) {
+   void SetCoherentFileList( std::vector<GDCM_NAME_SPACE::File* > *cfl) {
                                                       CoherentFileList = cfl; }    
    //ETX
 
@@ -106,8 +106,8 @@ protected:
    virtual void LoadFileInformation();
    virtual void UpdateFileInformation();
    //BTX
-   virtual void GetFileInformation(gdcm::File *file);
-   virtual bool TestFileInformation(gdcm::File *file);
+   virtual void GetFileInformation(GDCM_NAME_SPACE::File *file);
+   virtual bool TestFileInformation(GDCM_NAME_SPACE::File *file);
    //ETX
 
 private:
@@ -122,14 +122,14 @@ private:
                           const unsigned long updateProgressTarget,
                           unsigned long &updateProgressCount);*/
 
-   void LoadImageInMemory(gdcm::File *f, unsigned char *dest,
+   void LoadImageInMemory(GDCM_NAME_SPACE::File *f, unsigned char *dest,
                           const unsigned long updateProgressTarget,
                           unsigned long &updateProgressCount);
    //ETX
 
 // Variables
    //BTX
-   typedef std::vector<gdcm::File *> gdcmFileList;
+   typedef std::vector<GDCM_NAME_SPACE::File *> gdcmFileList;
    //ETX
 
    vtkLookupTable *LookupTable;

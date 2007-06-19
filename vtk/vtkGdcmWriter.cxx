@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/11 15:12:00 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2007/06/19 13:09:45 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.33 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.34 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable);
@@ -142,7 +142,7 @@ size_t ReverseData(vtkImageData *image,unsigned char **data)
  * vtkMedicalImageProperties
  */
 #if (VTK_MAJOR_VERSION >= 5)
-void SetMedicalImageInformation(gdcm::FileHelper *file, vtkMedicalImageProperties *medprop)
+void SetMedicalImageInformation(GDCM_NAME_SPACE::FileHelper *file, vtkMedicalImageProperties *medprop)
 {
    // For now only do:
    // PatientName, PatientID, PatientAge, PatientSex, PatientBirthDate, StudyID
@@ -197,7 +197,7 @@ void SetMedicalImageInformation(gdcm::FileHelper *file, vtkMedicalImagePropertie
 /**
  * Set the data informations in the file
  */
-void SetImageInformation(gdcm::FileHelper *file, vtkImageData *image)
+void SetImageInformation(GDCM_NAME_SPACE::FileHelper *file, vtkImageData *image)
 {
    std::ostringstream str;
 
@@ -403,11 +403,11 @@ void vtkGdcmWriter::RecursiveWrite(int axis, vtkImageData *cache,
 
 void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
 {
-   gdcm::FileHelper *dcmFile;
+   GDCM_NAME_SPACE::FileHelper *dcmFile;
    if ( GdcmFile != 0)
-      dcmFile = gdcm::FileHelper::New(GdcmFile);
+      dcmFile = GDCM_NAME_SPACE::FileHelper::New(GdcmFile);
    else
-      dcmFile = gdcm::FileHelper::New();
+      dcmFile = GDCM_NAME_SPACE::FileHelper::New();
    
    // From here, the write of the file begins
 
@@ -438,7 +438,7 @@ void vtkGdcmWriter::WriteDcmFile(char *fileName, vtkImageData *image)
          dcmFile->SetWriteTypeToDcmExplVR();
    }
   
-   dcmFile->SetContentType((gdcm::ImageContentType)ContentType);
+   dcmFile->SetContentType((GDCM_NAME_SPACE::ImageContentType)ContentType);
  
    if(!dcmFile->Write(fileName))
    {
