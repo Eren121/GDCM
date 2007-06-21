@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 16:18:02 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/06/21 16:31:02 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ int TestPrintAllDocument(int argc, char *argv[])
       //std::cout << s.str() << gdcmDataImages[i];
 
       std::cout << gdcmDataImages[i];
-/*
+
       unsigned int nbSpaces;
       if (strlen(gdcmDataImages[i]) <= 60)
          nbSpaces = 60-strlen(gdcmDataImages[i]);
@@ -94,11 +94,13 @@ int TestPrintAllDocument(int argc, char *argv[])
          std::cout << " ";
       std::cout << " Smpl.P.Pix.="          << f->GetSamplesPerPixel()
                 << " Plan.Config.="         << f->GetPlanarConfiguration();
- 
+
       photomInterp =  f->GetEntryString(0x0028,0x0004);               
-      std::cout << " Photom.Interp.="       << photomInterp;
-      for (j=0; j<l-photomInterp.length(); j++)
-         std::cout << " ";
+      std::cout << " Photom.Interp.="       << photomInterp << " l : " << l <<"length : " << photomInterp.length()<< std::endl;
+      
+      if (l > photomInterp.length())
+        for (j=0; j<l-photomInterp.length(); j++)
+           std::cout << " ";
  
       std::cout << " TransferSyntaxName= [" << f->GetTransferSyntaxName() << "]" ;
 
@@ -121,7 +123,7 @@ int TestPrintAllDocument(int argc, char *argv[])
                    << std::endl;
          o->Delete(); 
       }
-*/
+
       if( f->IsReadable() )
       {
          std::cout <<filename << " is Readable" 
