@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/06/21 16:18:02 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ int TestPrintAllDocument(int argc, char *argv[])
       //std::cout << s.str() << gdcmDataImages[i];
 
       std::cout << gdcmDataImages[i];
-
+/*
       unsigned int nbSpaces;
       if (strlen(gdcmDataImages[i]) <= 60)
          nbSpaces = 60-strlen(gdcmDataImages[i]);
@@ -121,7 +121,7 @@ int TestPrintAllDocument(int argc, char *argv[])
                    << std::endl;
          o->Delete(); 
       }
-
+*/
       if( f->IsReadable() )
       {
          std::cout <<filename << " is Readable" 
