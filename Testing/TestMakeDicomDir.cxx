@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/28 16:31:19 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmDebug.h"
 
 // ---
-class CommandStart : public gdcm::Command
+class CommandStart : public GDCM_NAME_SPACE::Command
 {
    gdcmTypeMacro(CommandStart);
    gdcmNewMacro(CommandStart);
@@ -38,7 +38,7 @@ protected :
    CommandStart() {}
 };
 
-class CommandEnd : public gdcm::Command
+class CommandEnd : public GDCM_NAME_SPACE::Command
 {
    gdcmTypeMacro(CommandEnd);
    gdcmNewMacro(CommandEnd);
@@ -53,7 +53,7 @@ protected :
    CommandEnd() {}
 };
 
-class CommandProgress : public gdcm::Command
+class CommandProgress : public GDCM_NAME_SPACE::Command
 {
    gdcmTypeMacro(CommandProgress);
    gdcmNewMacro(CommandProgress);
@@ -61,7 +61,7 @@ class CommandProgress : public gdcm::Command
 public :
    virtual void Execute()
    {
-      gdcm::DicomDir *dd=dynamic_cast<gdcm::DicomDir *>(GetObject());
+      GDCM_NAME_SPACE::DicomDir *dd=dynamic_cast<GDCM_NAME_SPACE::DicomDir *>(GetObject());
 
       if(dd)
          std::cerr << "Progress parsing (" << dd->GetProgress() << ")" << std::endl;
@@ -104,25 +104,25 @@ int TestMakeDicomDir(int argc, char *argv[])
       dirName = GDCM_DATA_ROOT;
    }
  
-   gdcm::DicomDir *dcmdir;
+   GDCM_NAME_SPACE::DicomDir *dcmdir;
 
    // new style (user is allowed no to load Sequences an/or Shadow Groups)
-   dcmdir = gdcm::DicomDir::New( );
+   dcmdir = GDCM_NAME_SPACE::DicomDir::New( );
  
-   gdcm::Command *cmd;
+   GDCM_NAME_SPACE::Command *cmd;
    cmd = CommandStart::New();
-   gdcm::CommandManager::SetCommand(dcmdir,gdcm::CMD_STARTPROGRESS,cmd);
+   GDCM_NAME_SPACE::CommandManager::SetCommand(dcmdir,GDCM_NAME_SPACE::CMD_STARTPROGRESS,cmd);
    cmd->Delete();
    cmd = CommandProgress::New();
-   gdcm::CommandManager::SetCommand(dcmdir,gdcm::CMD_PROGRESS,cmd);
+   GDCM_NAME_SPACE::CommandManager::SetCommand(dcmdir,GDCM_NAME_SPACE::CMD_PROGRESS,cmd);
    cmd->Delete();
    cmd = CommandEnd::New();
-   gdcm::CommandManager::SetCommand(dcmdir,gdcm::CMD_ENDPROGRESS,cmd);
+   GDCM_NAME_SPACE::CommandManager::SetCommand(dcmdir,GDCM_NAME_SPACE::CMD_ENDPROGRESS,cmd);
    cmd->Delete();
 
    // dcmdir->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
    // some images have a wrong length for element 0x0000 of private groups
-   dcmdir->SetLoadMode(gdcm::LD_NOSEQ);
+   dcmdir->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ);
    dcmdir->SetDirectoryName(dirName);
    dcmdir->Load();
 
@@ -140,7 +140,7 @@ int TestMakeDicomDir(int argc, char *argv[])
    dcmdir->Delete();
 
    // Read from disc the just written DicomDir
-   gdcm::DicomDir *newDicomDir = gdcm::DicomDir::New();
+   GDCM_NAME_SPACE::DicomDir *newDicomDir = GDCM_NAME_SPACE::DicomDir::New();
    newDicomDir->SetFileName("NewDICOMDIR");
    newDicomDir->Load();
 

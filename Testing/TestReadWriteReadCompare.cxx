@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/05/05 22:13:55 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
 
    //////////////// Step 1 (see above description):
 
-   gdcm::File *file = gdcm::File::New( );
+   GDCM_NAME_SPACE::File *file = GDCM_NAME_SPACE::File::New( );
    file->SetFileName( filename );
    file->Load ();
    if( !file->IsReadable() )
@@ -42,7 +42,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
    std::cout << "           step 1...";
 
    //////////////// Step 2:
-   gdcm::FileHelper *filehelper = gdcm::FileHelper::New( file );
+   GDCM_NAME_SPACE::FileHelper *filehelper = GDCM_NAME_SPACE::FileHelper::New( file );
    int dataSize    = filehelper->GetImageDataSize();
    uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
@@ -56,7 +56,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
    std::cout << "2...";
  
    //////////////// Step 3:
-   gdcm::File *fileout = gdcm::File::New();
+   GDCM_NAME_SPACE::File *fileout = GDCM_NAME_SPACE::File::New();
    fileout->SetFileName( output );
    fileout->Load();
   // gdcm::FileHelper *reread = new gdcm::FileHelper( output ); // deprecated
@@ -72,7 +72,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
       return 1;
    }
 
-   gdcm::FileHelper *reread = gdcm::FileHelper::New( fileout );
+   GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( fileout );
 
    std::cout << "3...";
    // For the next step:
@@ -140,7 +140,7 @@ int TestReadWriteReadCompare(int argc, char *argv[])
    int result = 0;
 
    if (argc == 4)
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    if (argc >= 3)
    {

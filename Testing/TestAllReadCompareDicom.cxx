@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/04 08:51:24 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2007/06/21 14:59:05 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -291,11 +291,11 @@ bool TestFile::ReadFileData(std::ifstream *fp)
    // Track BigEndian troubles
    std::cout << " ScalarSize : " << GetScalarSize() 
           << " IsCurrentProcessorBigEndian:" 
-          << gdcm::Util::IsCurrentProcessorBigEndian()
+          << GDCM_NAME_SPACE::Util::IsCurrentProcessorBigEndian()
           << std::endl;
         
    //if (GetScalarSize() == 1 || GetSwapCode() == 1234)  
-   if (GetScalarSize() == 1 || !gdcm::Util::IsCurrentProcessorBigEndian() )    
+   if (GetScalarSize() == 1 || !GDCM_NAME_SPACE::Util::IsCurrentProcessorBigEndian() )    
    {
       return true;
    }
@@ -446,8 +446,8 @@ int InternalTest(std::string const &filename,
       std::cout << "1...";
 
        // new style 
-      gdcm::File *f = gdcm::File::New();
-      f->SetLoadMode ( gdcm::LD_ALL ); // Load everything
+      GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
+      f->SetLoadMode ( GDCM_NAME_SPACE::LD_ALL ); // Load everything
       f->SetFileName( filename );
       f->Load();
  
@@ -459,7 +459,7 @@ int InternalTest(std::string const &filename,
         f->Delete();
         return 1;
       }
-      gdcm::FileHelper *tested = gdcm::FileHelper::New( f );
+      GDCM_NAME_SPACE::FileHelper *tested = GDCM_NAME_SPACE::FileHelper::New( f );
      
       ////// Step 2:
       ////// Check for existence of reference baseline dicom file:
@@ -573,7 +573,7 @@ int InternalTest(std::string const &filename,
                    << ") differ (as expanded in memory)."
                    << std::endl
                    << "        compression : " 
-                   << gdcm::Global::GetTS()->GetValue(ts) << std::endl;
+                   << GDCM_NAME_SPACE::Global::GetTS()->GetValue(ts) << std::endl;
 
          std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
                    << " pixels differing (pos : test - ref) :" 
@@ -612,10 +612,10 @@ int InternalTest(std::string const &filename,
 int TestAllReadCompareDicom(int argc, char *argv[]) 
 {
 // Temporarily added, to track BigEndian troubles
-gdcm::Debug::WarningOn();
+GDCM_NAME_SPACE::Debug::WarningOn();
 
    if (argc == 4)
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
 
    if ( argc >= 3 )
    {
@@ -668,7 +668,7 @@ gdcm::Debug::WarningOn();
       std::string baseLineDir = GDCM_DATA_ROOT;
       baseLineDir += "/BaselineDicom";
 
-      if( !gdcm::DirList::IsDirectory(baseLineDir) )
+      if( !GDCM_NAME_SPACE::DirList::IsDirectory(baseLineDir) )
       {
          std::cerr << "   The reference baseline directory " << std::endl
                    << "      "
@@ -681,7 +681,7 @@ gdcm::Debug::WarningOn();
 //if (gdcmDataImages[i] == "D_CLUNIE_CT2_RLE.dcm")
 //   gdcm::Debug::DebugOn(); // track pb on BigEndian Proc
 //else 
-   gdcm::Debug::DebugOff();
+   GDCM_NAME_SPACE::Debug::DebugOff();
    
       ////// Step 1 (see above description):
       std::string filename = GDCM_DATA_ROOT;

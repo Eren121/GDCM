@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/14 15:56:55 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,7 +22,7 @@
 
 int TestSerieHelper(int argc, char *argv[])
 {  
-   gdcm::SerieHelper *s;
+   GDCM_NAME_SPACE::SerieHelper *s;
   
    std::string dirName; 
    if (argc > 1) 
@@ -38,8 +38,8 @@ int TestSerieHelper(int argc, char *argv[])
   
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
 
-   s = gdcm::SerieHelper::New();
-   s->SetLoadMode(gdcm::LD_ALL);     // Load everything for each File
+   s = GDCM_NAME_SPACE::SerieHelper::New();
+   s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);     // Load everything for each File
    //s->AddRestriction(tagKey, valueToCheck); // Keep only files where
                                               // restriction is true
    s->SetDirectory(dirName, true); // true : recursive exploration
@@ -52,7 +52,7 @@ int TestSerieHelper(int argc, char *argv[])
 
    int nbFiles;
    // For all the SingleSerieUID filesets of the gdcm::Serie
-   gdcm::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+   GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
    while (l)
    { 
       nbFiles = l->size() ;
@@ -76,7 +76,7 @@ int TestSerieHelper(int argc, char *argv[])
 
    std::string fileName; 
    l = s->GetFirstSingleSerieUIDFileSet();
-   for (std::vector<gdcm::File* >::iterator it =  l->begin();
+   for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
                                             it != l->end();
                                           ++it)
    {

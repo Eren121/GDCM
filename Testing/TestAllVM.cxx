@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllVM.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/05 13:08:32 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,22 +24,22 @@
 
 int DoTheVMTest(std::string const &filename)
 {
-   gdcm::File *file = gdcm::File::New();
+   GDCM_NAME_SPACE::File *file = GDCM_NAME_SPACE::File::New();
    // - Do not test unknow VM in shadow groups (if element 0x0000 is present)
    // - Skip Sequences (if they are 'True Length'); loading will be quicker
    //                  (anyway, Sequences are skipped at processing time ...)
-   file->SetLoadMode( gdcm::LD_NOSHADOW | gdcm::LD_NOSEQ );
+   file->SetLoadMode( GDCM_NAME_SPACE::LD_NOSHADOW | GDCM_NAME_SPACE::LD_NOSEQ );
 
    file->SetFileName( filename );
    if( !file->Load() ) //would be really bad...
       return 1;
 
-   gdcm::DocEntry *d = file->GetFirstEntry();
+   GDCM_NAME_SPACE::DocEntry *d = file->GetFirstEntry();
    std::cerr << "Testing file : " << filename << std::endl;
-   gdcm::DataEntry *de;
+   GDCM_NAME_SPACE::DataEntry *de;
    while(d)
    {
-      if ( (de = dynamic_cast<gdcm::DataEntry *>(d)) )
+      if ( (de = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d)) )
       {
          if ( !(de->GetGroup() % 2) ) // Don't check shadow elements. Righ now,
                                       // Private Dictionnary are not dealt with
@@ -87,9 +87,9 @@ int TestAllVM(int argc, char *argv[])
       filename += gdcmDataImages[i];
       
       if (!strcmp(gdcmDataImages[i],"00191113.dcm")) // Track bug on Darwin
-          gdcm::Debug::DebugOn();
+          GDCM_NAME_SPACE::Debug::DebugOn();
       else
-         gdcm::Debug::DebugOff();
+         GDCM_NAME_SPACE::Debug::DebugOff();
 
       if( DoTheVMTest( filename ) )
         return 1;

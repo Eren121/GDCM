@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:05:03 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ int TestMakeIcon (int argc, char *argv[])
 
    std::string output = "testIcon.dcm";
 
-   gdcm::Debug::DebugOn();
+   GDCM_NAME_SPACE::Debug::DebugOn();
 
    if ( argc == 3 )
    {
@@ -48,7 +48,7 @@ int TestMakeIcon (int argc, char *argv[])
                 << " input filename.dcm output Filename.dcm" << std::endl;
    }
 
-   gdcm::File *f = gdcm::File::New( );
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New( );
    f->SetFileName( input );
    f->Load( );
 
@@ -58,12 +58,12 @@ int TestMakeIcon (int argc, char *argv[])
       f->Delete();
       return 1;
    }  
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f); 
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f); 
    uint8_t *pixels = fh->GetImageData();
    uint32_t lgth   = fh->GetImageDataSize();
 
-   gdcm::SeqEntry *icon = f->InsertSeqEntry(0x0088, 0x0200);
-   gdcm::SQItem *sqi = gdcm::SQItem::New(1);
+   GDCM_NAME_SPACE::SeqEntry *icon = f->InsertSeqEntry(0x0088, 0x0200);
+   GDCM_NAME_SPACE::SQItem *sqi = GDCM_NAME_SPACE::SQItem::New(1);
    icon->AddSQItem(sqi, 1);
    sqi->Delete();
 
@@ -89,7 +89,7 @@ int TestMakeIcon (int argc, char *argv[])
    f->Delete();
    fh->Delete();
 
-   f = gdcm::File::New();
+   f = GDCM_NAME_SPACE::File::New();
    f->SetFileName(output);
    f->Load();
    f->Print();

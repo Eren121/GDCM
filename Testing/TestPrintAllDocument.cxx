@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/07 10:58:51 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,7 @@ int TestPrintAllDocument(int argc, char *argv[])
       std::cout << " ----------------------------------------------"
                 << "Begin with " << filename << std::endl;
 
-      gdcm::File *f= gdcm::File::New( );
+      GDCM_NAME_SPACE::File *f= GDCM_NAME_SPACE::File::New( );
       f->SetFileName( filename );
       f->Load();
 
@@ -112,11 +112,11 @@ int TestPrintAllDocument(int argc, char *argv[])
 
       std::string strImageOrientationPatient = 
                                           f->GetEntryString(0x0020,0x0037);
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
+      if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
-         gdcm::Orientation *o = gdcm::Orientation::New();
+         GDCM_NAME_SPACE::Orientation *o = GDCM_NAME_SPACE::Orientation::New();
  
-         gdcm::OrientationType orient = o->GetOrientationType( f );
+         GDCM_NAME_SPACE::OrientationType orient = o->GetOrientationType( f );
          std::cout << " ---------------------- Orientation " << orient
                    << std::endl;
          o->Delete(); 

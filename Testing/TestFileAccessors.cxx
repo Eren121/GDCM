@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/11/15 16:00:34 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,7 @@ int TestFileAccessors(int argc, char *argv[])
       std::cout << " ----------------------------------------------"
                 << "Begin with " << filename << std::endl;
 
-      gdcm::File *f= gdcm::File::New( );
+      GDCM_NAME_SPACE::File *f= GDCM_NAME_SPACE::File::New( );
       f->SetFileName( filename );
       f->Load( );
 
@@ -149,7 +149,7 @@ int TestFileAccessors(int argc, char *argv[])
       {
          std::cout << "   " << filename << " is Readable" << std::endl;
 
-         gdcm::FileHelper *fh= gdcm::FileHelper::New( f );   
+         GDCM_NAME_SPACE::FileHelper *fh= GDCM_NAME_SPACE::FileHelper::New( f );   
 
          TestMethodMacro(std::dec,fh,GetImageDataSize)
          TestMethodMacro(std::dec,fh,GetImageDataRawSize)

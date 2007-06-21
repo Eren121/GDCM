@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/04/12 13:06:02 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,10 +31,10 @@
 
 // check *all* the dicom elements (gdcm::DocEntry)
 // of this gdcm::DicomDirObject
-int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
+int CompareSQItem(GDCM_NAME_SPACE::SQItem *pa1, GDCM_NAME_SPACE::SQItem *pa2 )
 {
-   gdcm::DocEntry *e1;
-   gdcm::DocEntry *e2;
+   GDCM_NAME_SPACE::DocEntry *e1;
+   GDCM_NAME_SPACE::DocEntry *e2;
 
    e2 = pa2->GetFirstEntry();
    while (!e2)
@@ -50,23 +50,23 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
        return 1; 
       }
       // skip SeqEntries (I don't want to deal with 'recursion pbs' here)
-      if ( !dynamic_cast<gdcm::DataEntry *>(e1) ||
-           !dynamic_cast<gdcm::DataEntry *>(e2) )
+      if ( !dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(e1) ||
+           !dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(e2) )
          continue;
 
       // a value is read as GDCM_UNFOUND 
-      if ( ((gdcm::DataEntry *)e1)->GetString() == gdcm::GDCM_UNFOUND )
+      if ( ((GDCM_NAME_SPACE::DataEntry *)e1)->GetString() == GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
          std::cout << "for gdcm source DicomDir : element (" << std::hex 
                    << e1->GetGroup() << "," <<e1->GetElement() 
-                   << ") has values [" << gdcm::GDCM_UNFOUND << "]"
+                   << ") has values [" << GDCM_NAME_SPACE::GDCM_UNFOUND << "]"
                    << std::endl;
          return 1;
       }
 
       // values differ in source file and destination file
-      if ( ((gdcm::DataEntry *)e1)->GetString() != 
-           ((gdcm::DataEntry *)e2)->GetString() )
+      if ( ((GDCM_NAME_SPACE::DataEntry *)e1)->GetString() != 
+           ((GDCM_NAME_SPACE::DataEntry *)e2)->GetString() )
       {
  
  /// \todo : check the value *written on disc*, not the value converted as a std::string
@@ -76,8 +76,8 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
          std::cout << "for gdcm DicomDir element (" << std::hex 
                    << e2->GetGroup() << "," <<e2->GetElement() 
                    << ") values differ [" 
-                   << ((gdcm::DataEntry *)e1)->GetString() << "] != [" 
-                   << ((gdcm::DataEntry *)e2)->GetString() << "]"
+                   << ((GDCM_NAME_SPACE::DataEntry *)e1)->GetString() << "] != [" 
+                   << ((GDCM_NAME_SPACE::DataEntry *)e2)->GetString() << "]"
                    << std::endl;
           return 1;
       }
@@ -87,14 +87,14 @@ int CompareSQItem(gdcm::SQItem *pa1, gdcm::SQItem *pa2 )
  
 int TestDicomDir(int argc, char *argv[])
 {  
-   gdcm::DicomDir *dicomdir;
+   GDCM_NAME_SPACE::DicomDir *dicomdir;
    
-   gdcm::DicomDirPatient *pa1;
-   gdcm::DicomDirStudy   *st1;
-   gdcm::DicomDirSerie   *se1;
-   gdcm::DicomDirImage   *im1;
+   GDCM_NAME_SPACE::DicomDirPatient *pa1;
+   GDCM_NAME_SPACE::DicomDirStudy   *st1;
+   GDCM_NAME_SPACE::DicomDirSerie   *se1;
+   GDCM_NAME_SPACE::DicomDirImage   *im1;
 
-   gdcm::TSKey v;
+   GDCM_NAME_SPACE::TSKey v;
     
    std::string file; 
    if (argc > 1) 
@@ -108,7 +108,7 @@ int TestDicomDir(int argc, char *argv[])
    std::cout << "DicomDir we're going to deal with : ["<< file << "]" 
              << std::endl;
 
-   dicomdir = gdcm::DicomDir::New();
+   dicomdir = GDCM_NAME_SPACE::DicomDir::New();
    dicomdir->SetFileName(file);
    dicomdir->Load();
    if (argc > 2) 
@@ -195,7 +195,7 @@ int TestDicomDir(int argc, char *argv[])
    // ------------------------- second stage ---------------------------
  
  
- gdcm::Debug::DebugOn();
+ GDCM_NAME_SPACE::Debug::DebugOn();
  
     
    // Write on disc what we read
@@ -205,7 +205,7 @@ int TestDicomDir(int argc, char *argv[])
              << "NewDICOMDIR written on disc =================================" 
              << std::endl<< std::endl;
   // Read what we wrote  
-   gdcm::DicomDir *d2 = gdcm::DicomDir::New();
+   GDCM_NAME_SPACE::DicomDir *d2 = GDCM_NAME_SPACE::DicomDir::New();
    d2->SetFileName("NewDICOMDIR");
    d2->Load();
    if (!d2->IsReadable())
@@ -219,10 +219,10 @@ int TestDicomDir(int argc, char *argv[])
              << "NewDICOMDIR successfully read from disc =================================" 
              << std::endl<< std::endl;
   
-   gdcm::DicomDirPatient *pa2;
-   gdcm::DicomDirStudy   *st2;
-   gdcm::DicomDirSerie   *se2;
-   gdcm::DicomDirImage   *im2;
+   GDCM_NAME_SPACE::DicomDirPatient *pa2;
+   GDCM_NAME_SPACE::DicomDirStudy   *st2;
+   GDCM_NAME_SPACE::DicomDirSerie   *se2;
+   GDCM_NAME_SPACE::DicomDirImage   *im2;
 
    pa1 = dicomdir->GetFirstPatient(); 
    pa2 = d2->GetFirstPatient(); 

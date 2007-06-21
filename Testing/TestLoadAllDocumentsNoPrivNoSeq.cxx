@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestLoadAllDocumentsNoPrivNoSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/25 14:52:31 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/06/21 14:59:06 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,10 +54,10 @@ int TestLoadAllDocumentsNoPrivNoSeq(int, char *[])
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
 
-      gdcm::File *f= gdcm::File::New( );
+      GDCM_NAME_SPACE::File *f= GDCM_NAME_SPACE::File::New( );
       f->SetFileName( filename );
       // just to improve coverage
-      f->SetLoadMode (gdcm::LD_NOSEQ|gdcm::LD_NOSHADOW);
+      f->SetLoadMode (GDCM_NAME_SPACE::LD_NOSEQ|GDCM_NAME_SPACE::LD_NOSHADOW);
       f->Load();
 
 /*
