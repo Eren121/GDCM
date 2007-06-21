@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/04 08:51:23 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,16 +90,16 @@ int main(int argc, char *argv[])
          //---------------------------------------------------------
  
           zspacing = s->GetZSpacing();
-         // Just to show : GetZSpacing from a gdcm::SerieHelper is right  
+         // Just to show : GetZSpacing from a GDCM_NAME_SPACE::SerieHelper is right  
          std::cout << "GetZSpacing() of sorted SingleSerieUIDFileSet "
-                   << "from gdcm::SerieHelper: " << zspacing << std::endl;
+                   << "from GDCM_NAME_SPACE::SerieHelper: " << zspacing << std::endl;
          std::cout << " ('-1' means all the files have the same position)" << std::endl;
          for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
                                             it != l->end();
                                           ++it)
          {
-          // Just to show : GetZSpacing from a gdcm::File may be different        
-             std::cout << (*it)->GetFileName() << " -->  GetZSpacing() from gdcm::File : " 
+          // Just to show : GetZSpacing from a GDCM_NAME_SPACE::File may be different        
+             std::cout << (*it)->GetFileName() << " -->  GetZSpacing() from GDCM_NAME_SPACE::File : " 
                        << (*it)->GetZSpacing() << std::endl;      
          }  
 

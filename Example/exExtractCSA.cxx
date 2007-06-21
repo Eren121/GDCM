@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/15 13:18:51 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
    "       inputFileName : Name of the (single) file user wants to anonymize  ",
    "       listOfElementsExtract : group-elem,g2-e2,... (in hexa, no space)   ",
    "                                of Elements to extract                    ",
-   "                              default : 0029-1210,0029-1220               ",
+   "                              default : 0029-1010,0029-1020               ",
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
@@ -216,20 +216,26 @@ int main(int argc, char *argv[])
       if ( am->ArgMgrDefined("noseq") )
          loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
-
+   
    const char *tempWorkFile = am->ArgMgrGetString("tmp");
 
    int extractNb;
    uint16_t *elemsToExtract;
-   if (am->ArgMgrDefined("extract"))
+   if (am->ArgMgrDefined("extract")) 
+   {
       am->ArgMgrGetXInt16Enum("extract", &extractNb);
+      std::cout << "extractNb=" << extractNb << std::endl;
+      if (extractNb =! 0)
+         for (int k=0;k<extractNb; k++)
+            std::cout << std::hex << elemsToExtract[2*k] << "|" << elemsToExtract[2*k+1] <<std::endl;
+   }
    else 
    {
      elemsToExtract = new  uint16_t[4];
      elemsToExtract[0] = 0x0029;
-     elemsToExtract[1] = 0x1210;
+     elemsToExtract[1] = 0x1010;
      elemsToExtract[2] = 0x0029;  
-     elemsToExtract[3] = 0x1220;
+     elemsToExtract[3] = 0x1020;
      extractNb=2;
    }     
 
@@ -282,12 +288,19 @@ for (int tag_no=0; tag_no<extractNb; tag_no++) {
    uint16_t group = elemsToExtract[2*tag_no];
    uint16_t elem = elemsToExtract[2*tag_no+1];
    
+   if (verbose)
+      std::cout << "Let's try tag : " << std::hex << group << "|" << elem << std::endl;
+      
    std::string dicom_tag_value = f->GetEntryString(group, elem);
    if (dicom_tag_value == gdcm::GDCM_UNFOUND)
    {
      gdcm::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
-     std::cerr << "Image doesn't contain any tag: " << dictEntry->GetName() 
-               << std::endl;
+     if (dictEntry != NULL)
+        std::cerr << "Image doesn't contain any tag: " << dictEntry->GetName() 
+                  << std::endl;
+     else
+        std::cerr << "Dicom Dictionary doesn't contain any tag: " 
+          << std::hex << group << "|" << elem << std::endl; 
      f->Delete();
      return 1;
    }

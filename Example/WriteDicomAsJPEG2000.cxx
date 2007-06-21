@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/20 17:47:34 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,16 +39,16 @@ int main(int argc, char *argv[])
    std::cerr << "Using quality: " << quality << std::endl;
 
 // Step 1 : Create the header of the image
-   //gdcm::File *f = new gdcm::File();
+   //GDCM_NAME_SPACE::File *f = new GDCM_NAME_SPACE::File();
    // gdcm1.3 syntax. Sorry
-   gdcm::File *f = gdcm::File::New();
-   f->SetLoadMode ( gdcm::LD_ALL ); // Load everything
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
+   f->SetLoadMode ( GDCM_NAME_SPACE::LD_ALL ); // Load everything
    f->SetFileName( filename );
    f->Load();
 
-   //gdcm::FileHelper *tested = new gdcm::FileHelper( f );
+   //GDCM_NAME_SPACE::FileHelper *tested = new GDCM_NAME_SPACE::FileHelper( f );
    // gdcm1.3 syntax. Sorry   
-   gdcm::FileHelper *tested = gdcm::FileHelper::New( f );
+   GDCM_NAME_SPACE::FileHelper *tested = GDCM_NAME_SPACE::FileHelper::New( f );
    std::string PixelType = tested->GetFile()->GetPixelType();
    int xsize = f->GetXSize();
    int ysize = f->GetYSize();
@@ -61,9 +61,9 @@ int main(int argc, char *argv[])
 
 // Step 1 : Create the header of the image
 
-//   gdcm::File *fileToBuild = new gdcm::File();
+//   GDCM_NAME_SPACE::File *fileToBuild = new GDCM_NAME_SPACE::File();
    // gdcm1.3 syntax. Sorry !
-   gdcm::File *fileToBuild = gdcm::File::New();
+   GDCM_NAME_SPACE::File *fileToBuild = GDCM_NAME_SPACE::File::New();
    
    std::ostringstream str;
 
@@ -127,9 +127,9 @@ int main(int argc, char *argv[])
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0002, "US"); // Samples per Pixel
 
 // Step 2 : Create the output image
-   //gdcm::FileHelper *fileH = new gdcm::FileHelper(fileToBuild);
+   //GDCM_NAME_SPACE::FileHelper *fileH = new GDCM_NAME_SPACE::FileHelper(fileToBuild);
    // gdcm1.3 syntax. Sorry !
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New(fileToBuild);
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
    fileH->SetWriteTypeToJPEG2000(  );
    fileH->SetImageData(testedImageData, testedDataSize);
    if( !fileH->Write(outfilename) )

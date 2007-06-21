@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPrintWritePrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:44 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,14 +20,14 @@
 
 int main(int argc, char *argv[])
 {  
-   gdcm::File *f;
-   gdcm::FileHelper *fh;
+   GDCM_NAME_SPACE::File *f;
+   GDCM_NAME_SPACE::FileHelper *fh;
    std::string fileNameToWrite;
    void *imageData;
    int dataSize;
 
    std::cout << " This program allows to see at a glance" << std::endl;
-   std::cout << " if the gdcm::File remains unimpaired"   << std::endl;
+   std::cout << " if the GDCM_NAME_SPACE::File remains unimpaired"   << std::endl;
    std::cout << " after a Write"                          << std::endl;
    std::cout << " In a future step, we could move it to"  << std::endl;
    std::cout << " gdcm Testing, for a systematic checking"<< std::endl;
@@ -55,8 +55,8 @@ int main(int argc, char *argv[])
    std::string fileName = argv[1]; 
    std::string mode = argv[2];
 
-   f = new gdcm::File( );
-   f->SetLoadMode( gdcm::LD_NOSEQ );
+   f = new GDCM_NAME_SPACE::File( );
+   f->SetLoadMode( GDCM_NAME_SPACE::LD_NOSEQ );
    f->SetFileName( fileName );
    f->Load( );
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
        return 0;
    }
    
-   fh = new gdcm::FileHelper(f);
+   fh = new GDCM_NAME_SPACE::FileHelper(f);
   // ---     
 
    f->Print();

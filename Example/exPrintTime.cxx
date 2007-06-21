@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPrintTime.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:43:32 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ int main(int, char *[])
 {
    clock_t r1, r2, r3, r4;
    struct tms tms1, tms2, tms3, tms4;
-   gdcm::File *e1;
+   GDCM_NAME_SPACE::File *e1;
 
    //std::ostream os = std::cout;
    //std::ostringstream s;
@@ -51,7 +51,7 @@ int main(int, char *[])
       filename += "/";  //doh!
       filename += gdcmDataImages[i];
 
-      e1= new gdcm::File( );
+      e1= new GDCM_NAME_SPACE::File( );
       r1 = times(&tms1);
       e1->SetFileName( filename );
       e1->Load( );
@@ -59,8 +59,8 @@ int main(int, char *[])
       if (!e1->IsReadable())
       std::cout << "-----------Not Readable " << std::endl;
       delete e1;
-      e1= new gdcm::File( );
-      e1->SetLoadMode( gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW );
+      e1= new GDCM_NAME_SPACE::File( );
+      e1->SetLoadMode( GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW );
       r3 = times(&tms3);
       e1->SetFileName( filename );
       e1->Load( );
@@ -95,7 +95,7 @@ int main(int, char *[])
          filename += "/";  //doh!
          filename += gdcmDataImages[i];
 
-         e1= new gdcm::File( );
+         e1= new GDCM_NAME_SPACE::File( );
          e1->SetFileName( filename );
          e1->Load( ); 
          if (!e1->IsReadable())
@@ -120,8 +120,8 @@ int main(int, char *[])
         filename += "/";  //doh!
         filename += gdcmDataImages[i];
 
-        e1= new gdcm::File( );
-        e1->SetLoadMode( gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW );
+        e1= new GDCM_NAME_SPACE::File( );
+        e1->SetLoadMode( GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW );
         e1->SetFileName( filename );
         e1->Load( );
         if (!e1->IsReadable())

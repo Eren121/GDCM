@@ -25,7 +25,7 @@ int main (int argc , char *argv[])
 {
    // ============== Initialize Arguments Manager =============================
       
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -63,8 +63,8 @@ int main (int argc , char *argv[])
       std::cout << "Failed to open [" << fileout << "] for writting" << std::endl;
       return 0;
    }      
-   gdcm::File *f = gdcm::File::New();
-   f->SetLoadMode( gdcm::LD_ALL);
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
+   f->SetLoadMode( GDCM_NAME_SPACE::LD_ALL);
    f->SetFileName( filein );
    bool res = f->Load(); 
          

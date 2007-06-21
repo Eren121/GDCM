@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/06/30 09:54:30 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -197,7 +197,7 @@ std::cout<< std::hex <<b1 << " " << b2  << std::endl;
    r1 = times(&tms1);     
    for(i = 0 ; i< nbLoop ; i++)
    {
-      gdcm::Util::hifpswap (&a, &b);  
+      GDCM_NAME_SPACE::Util::hifpswap (&a, &b);  
    }
    r2 = times(&tms2);
    std::cout 
@@ -212,7 +212,7 @@ std::cout<< std::hex <<b1 << " " << b2  << std::endl;
    r1 = times(&tms1);     
    for(i = 0 ; i< nbLoop ; i++)
    {
-      gdcm::Util::hNoifpswap (&a, &b);  
+      GDCM_NAME_SPACE::Util::hNoifpswap (&a, &b);  
    }
    r2 = times(&tms2);
    std::cout 

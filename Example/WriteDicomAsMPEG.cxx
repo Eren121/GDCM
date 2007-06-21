@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsMPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:47:39 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/06/21 15:01:00 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
    // Step 1 : Create the header of the image
 
-   gdcm::File *fileToBuild = gdcm::File::New();
+   GDCM_NAME_SPACE::File *fileToBuild = GDCM_NAME_SPACE::File::New();
    std::ostringstream str;
 
    // Set the image size
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
                * samplesPerPixel /* * img.componentSize / 8*/;
 
    uint8_t *imageData = new uint8_t[size];
-   gdcm::FileHelper *fileH = gdcm::FileHelper::New(fileToBuild);
+   GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
    //fileH->SetImageData(imageData,size);
    std::ifstream mpeg("/tmp/ts.mpg");
    mpeg.seekg(0, std::ios::end);
