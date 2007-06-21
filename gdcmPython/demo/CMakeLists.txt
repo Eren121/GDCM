@@ -3,8 +3,9 @@
 #-----------------------------------------------------------------------------
 # DOH! python is not found by default
 FIND_PROGRAM(PYTHON_EXECUTABLE
-    NAMES python python2.4 python2.3 python2.2 python2.1 python2.0 python1.6 python1.5
+    NAMES python python2.5 python2.4 python2.3 python2.2 python2.1 python2.0 python1.6 python1.5
     PATHS
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.5\\InstallPath]    
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.2\\InstallPath]
