@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:02:55 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/06/21 15:06:12 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
       
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
    dirNamein  = am->ArgMgrGetString("dirin","."); 
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    int verbose  = am->ArgMgrDefined("verbose");      
    int listonly = am->ArgMgrDefined("listonly");
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 
    // ----- Begin Processing -----
    
-   if ( ! gdcm::DirList::IsDirectory(dirNamein) )
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNamein) )
    {
       std::cout << "KO : [" << dirNamein << "] is not a Directory." 
                 << std::endl;
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
    }
 
    std::string strDirNamein(dirNamein);
-   gdcm::DirList dirList(strDirNamein, true); // (recursively) the list of files
+   GDCM_NAME_SPACE::DirList dirList(strDirNamein, true); // (recursively) the list of files
 
    if (listonly)
    {
@@ -174,15 +174,15 @@ int main(int argc, char *argv[])
    std::string filenameout;
 
    std::string strStudyUID;
-   strStudyUID =  gdcm::Util::CreateUniqueUID();
+   strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    int serieNumber =0;     
-   gdcm::DirListType fileNames;
+   GDCM_NAME_SPACE::DirListType fileNames;
    fileNames = dirList.GetFilenames();
-   for (gdcm::DirListType::iterator it = fileNames.begin();  
+   for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
    { 
-      if ( gdcm::Util::GetName((*it)).c_str()[0] == '.' ) 
+      if ( GDCM_NAME_SPACE::Util::GetName((*it)).c_str()[0] == '.' ) 
       {
       // skip hidden files
          continue;
@@ -311,7 +311,7 @@ All pixels with zero strain values are outside the masks.
    float val;
      
    std::string strSerieUID;
-   strSerieUID =  gdcm::Util::CreateUniqueUID();
+   strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    int imageNumber = 0;     
    float currentTime;
    currentTime = timeStart;
@@ -412,11 +412,11 @@ All pixels with zero strain values are outside the masks.
        ptr++;
     }  
 
- // gdcm::Debug::DebugOn();
+ // GDCM_NAME_SPACE::Debug::DebugOn();
   
         std::ostringstream str; 
-        gdcm::File *file;
-        file = gdcm::File::New();       
+        GDCM_NAME_SPACE::File *file;
+        file = GDCM_NAME_SPACE::File::New();       
               
   // Set the image size
         str.str("");
@@ -485,8 +485,8 @@ All pixels with zero strain values are outside the masks.
  
    // file->Print();
     
-    gdcm::FileHelper *fh;
-    fh = gdcm::FileHelper::New(file);
+    GDCM_NAME_SPACE::FileHelper *fh;
+    fh = GDCM_NAME_SPACE::FileHelper::New(file);
     // cast is just to avoid warnings (*no* conversion)
     fh->SetImageData((uint8_t *)img,nx*ny*sizeof(uint16_t));
     fh->SetWriteModeToRaw(); 
@@ -513,7 +513,7 @@ All pixels with zero strain values are outside the masks.
    // Anatomical Images.
   std::cout << " ========= Create Anatomical images" << std::endl;   
 
-  strSerieUID =  gdcm::Util::CreateUniqueUID();     
+  strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();     
   imageNumber = 0;     
   currentTime = timeStart;
      
@@ -562,8 +562,8 @@ All pixels with zero strain values are outside the masks.
        ptr++;
     }
         std::ostringstream str; 
-        gdcm::File *file;
-        file = gdcm::File::New();       
+        GDCM_NAME_SPACE::File *file;
+        file = GDCM_NAME_SPACE::File::New();       
               
   // Set the image size
         str.str("");
@@ -631,8 +631,8 @@ All pixels with zero strain values are outside the masks.
          file->InsertEntryString(charImagePosition,0x0018,0x1060, "DS");
    // file->Print();
     
-    gdcm::FileHelper *fh;
-    fh = gdcm::FileHelper::New(file);
+    GDCM_NAME_SPACE::FileHelper *fh;
+    fh = GDCM_NAME_SPACE::FileHelper::New(file);
     // cast is just to avoid warnings (*no* conversion)
     fh->SetImageData((uint8_t *)img,nx*ny*sizeof(uint16_t));
     fh->SetWriteModeToRaw(); 

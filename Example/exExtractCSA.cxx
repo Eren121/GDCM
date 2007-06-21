@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 15:01:00 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/06/21 15:06:13 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -252,14 +252,14 @@ int main(int argc, char *argv[])
 //   Read the input image.
 // ============================================================ 
   
-   gdcm::File *f = gdcm::File::New( );
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New( );
 
-   //f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
+   //f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
    f->SetMaxSizeLoadEntry(0xffff);
    bool res = f->Load();  
 
-   if( gdcm::Debug::GetDebugFlag())
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag())
    {
       std::cout << "---------------------------------------------" << std::endl;
       f->Print();
@@ -292,9 +292,9 @@ for (int tag_no=0; tag_no<extractNb; tag_no++) {
       std::cout << "Let's try tag : " << std::hex << group << "|" << elem << std::endl;
       
    std::string dicom_tag_value = f->GetEntryString(group, elem);
-   if (dicom_tag_value == gdcm::GDCM_UNFOUND)
+   if (dicom_tag_value == GDCM_NAME_SPACE::GDCM_UNFOUND)
    {
-     gdcm::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
+     GDCM_NAME_SPACE::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
      if (dictEntry != NULL)
         std::cerr << "Image doesn't contain any tag: " << dictEntry->GetName() 
                   << std::endl;
@@ -305,8 +305,8 @@ for (int tag_no=0; tag_no<extractNb; tag_no++) {
      return 1;
    }
 
-   gdcm::DocEntry *dicom_tag_doc = f->GetDocEntry(group, elem);
-   gdcm::DataEntry *dicom_tag = dynamic_cast<gdcm::DataEntry *>(dicom_tag_doc);
+   GDCM_NAME_SPACE::DocEntry *dicom_tag_doc = f->GetDocEntry(group, elem);
+   GDCM_NAME_SPACE::DataEntry *dicom_tag = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(dicom_tag_doc);
    if( !dicom_tag )
    {
       std::cerr << "Sorry DataEntry only please" << std::endl;

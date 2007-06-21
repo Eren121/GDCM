@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/07/26 17:48:14 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/06/21 15:06:13 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
    // ----- Initialize Arguments Manager ------
       
-   gdcm::ArgMgr *am = new gdcm::ArgMgr(argc, argv);
+   GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
    {
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
    dirNamein  = am->ArgMgrGetString("dirin","."); 
 
    if (am->ArgMgrDefined("debug"))
-      gdcm::Debug::DebugOn();
+      GDCM_NAME_SPACE::Debug::DebugOn();
       
    int verbose  = am->ArgMgrDefined("verbose");      
    int listonly = am->ArgMgrDefined("listonly");
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 
    // ----- Begin Processing -----
    
-   if ( ! gdcm::DirList::IsDirectory(dirNamein) )
+   if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNamein) )
    {
       std::cout << "KO : [" << dirNamein << "] is not a Directory." << std::endl;
       return 0;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
    }
 
    std::string strDirNamein(dirNamein);
-   gdcm::DirList dirList(strDirNamein, true); // get recursively the list of files
+   GDCM_NAME_SPACE::DirList dirList(strDirNamein, true); // get recursively the list of files
 
    if (listonly)
    {
@@ -155,9 +155,9 @@ int main(int argc, char *argv[])
    
    std::string filenameout;
    
-   gdcm::DirListType fileNames;
+   GDCM_NAME_SPACE::DirListType fileNames;
    fileNames = dirList.GetFilenames();
-   for (gdcm::DirListType::iterator it = fileNames.begin();  
+   for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();  
                                     it != fileNames.end();
                                   ++it)
    {
@@ -312,11 +312,11 @@ mini,maxi=data.GetScalarRange()
            imageSC.SetInput(data)
            imageSC.Update()  
  */ 
- // gdcm::Debug::DebugOn();
+ // GDCM_NAME_SPACE::Debug::DebugOn();
   
        std::ostringstream str; 
-       gdcm::File *file;
-       file = gdcm::File::New();       
+       GDCM_NAME_SPACE::File *file;
+       file = GDCM_NAME_SPACE::File::New();       
               
   // Set the image size
         str.str("");
@@ -353,8 +353,8 @@ mini,maxi=data.GetScalarRange()
     
     file->Print();
     
-    gdcm::FileHelper *fileH;
-    fileH = gdcm::FileHelper::New(file);
+    GDCM_NAME_SPACE::FileHelper *fileH;
+    fileH = GDCM_NAME_SPACE::FileHelper::New(file);
     // cast is just to avoid warnings (*no* conversion)
     fileH->SetImageData((uint8_t *)img,nx*ny*sizeof(uint16_t));
     fileH->SetWriteModeToRaw(); 

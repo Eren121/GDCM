@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: BatchUncompress.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/01 09:51:56 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/06/21 15:06:12 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,13 +41,13 @@ int main(int argc, char *argv[])
   const char *inputfilename = argv[1];
   const char *outputfilename = argv[2];
 
-  gdcm::File *input = new gdcm::File( );
+  GDCM_NAME_SPACE::File *input = new GDCM_NAME_SPACE::File( );
   input->SetFileName( inputfilename );
 //  input->SetLoadMode(loadMode);
   input->Load();
   if ( input->IsReadable() )
     {
-    gdcm::FileHelper *output = new gdcm::FileHelper( input );
+    GDCM_NAME_SPACE::FileHelper *output = new GDCM_NAME_SPACE::FileHelper( input );
 
     output->GetImageData(); //EXTREMELY IMPORTANT
     //Otherwise ReadPixel == -1 -> the dicom writing fails completely
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     output->SetImageData( imageData, dataSize);
     // lossy compression would be a pixel modification.
     // uncompress is *not* 
-    fh->SetContentType(gdcm::UNMODIFIED_PIXELS_IMAGE);    
+    fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);    
     output->WriteDcmExplVR( outputfilename );
 
     delete output;

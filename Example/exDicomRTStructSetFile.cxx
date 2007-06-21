@@ -4,8 +4,8 @@
   Program:   gdcm
   Module:    $RCSfile: exDicomRTStructSetFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/18 12:02:54 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/06/21 15:06:13 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,21 +49,21 @@
 
 #include "gdcmArgMgr.h" 
  
-bool TestDicomRTStructSetFile(gdcm::File* file); 
-bool TestDicomCTSerie(const gdcm::FileList serie);
+bool TestDicomRTStructSetFile(GDCM_NAME_SPACE::File* file); 
+bool TestDicomCTSerie(const GDCM_NAME_SPACE::FileList serie);
 
   //====================================================================
   
   //====================================================================
   //In a dicom seq try to find an item with a gived tag/(int)value pair, else creates it
-  gdcm::SQItem* GetAnItemWithTagValue(gdcm::SeqEntry* seqEntry, const uint16_t group, 
+  GDCM_NAME_SPACE::SQItem* GetAnItemWithTagValue(GDCM_NAME_SPACE::SeqEntry* seqEntry, const uint16_t group, 
       const uint16_t elem, const int value, const bool writeItem) {
     int foundValue;
     std::stringstream valueStream;
     valueStream<<value;
     std::string strValue = valueStream.str();
-    gdcm::SQItem* curItem = seqEntry->GetFirstSQItem();
-    gdcm::ValEntry* valEntry;
+    GDCM_NAME_SPACE::SQItem* curItem = seqEntry->GetFirstSQItem();
+    GDCM_NAME_SPACE::ValEntry* valEntry;
     while (curItem != NULL) {
       valEntry = curItem->GetValEntry(group,elem);
       std::istringstream(valEntry->GetValue())>>foundValue;
@@ -75,8 +75,8 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
     if (writeItem == true) {
       unsigned int newItemNumber = seqEntry->GetNumberOfSQItems ();
 // ----------       
-      //gdcm::SQItem* newItem = new gdcm::SQItem(seqEntry->GetDepthLevel()+1);
-       gdcm::SQItem* newItem = gdcm::SQItem::New(seqEntry->GetDepthLevel()+1);
+      //GDCM_NAME_SPACE::SQItem* newItem = new GDCM_NAME_SPACE::SQItem(seqEntry->GetDepthLevel()+1);
+       GDCM_NAME_SPACE::SQItem* newItem = GDCM_NAME_SPACE::SQItem::New(seqEntry->GetDepthLevel()+1);
 // ---------- 
       seqEntry->AddSQItem(newItem,(int)newItemNumber);
       newItem->InsertValEntry(strValue, group, elem);  /// \TODO : si VR absent, le chercher dans le dict!
@@ -95,7 +95,7 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
    =================================================*/
   // Test if a file list is  a valid CT serie
        
-  bool TestDicomCTSerie(const gdcm::FileList serie) {
+  bool TestDicomCTSerie(const GDCM_NAME_SPACE::FileList serie) {
   
     if (serie.size() < 2) {
       itkGenericExceptionMacro(<<"Serie must contain at least 2 files !");
@@ -104,8 +104,8 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
     float firstSliceImagePosition[3];
     float currentSliceImagePosition[3];    
     
-    gdcm::FileList::const_iterator first = serie.begin();
-    gdcm::FileList::const_iterator it = first ++;
+    GDCM_NAME_SPACE::FileList::const_iterator first = serie.begin();
+    GDCM_NAME_SPACE::FileList::const_iterator it = first ++;
     
     bool res = (*first)->GetImageOrientationPatient(firstSliceImagePosition);
     if (!res) {
@@ -113,17 +113,17 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
     }
     
     while (it != serie.end()) {
-      if (!gdcm::Util::DicomStringEqual((*it)->GetEntryValue(0x0008,0x0016),"1.2.840.10008.5.1.4.1.1.2")) {
+      if (!GDCM_NAME_SPACE::Util::DicomStringEqual((*it)->GetEntryValue(0x0008,0x0016),"1.2.840.10008.5.1.4.1.1.2")) {
            itkGenericExceptionMacro();
            //CT Dicom slices must have a SOP Class UID [0008|0016] = [1.2.840.10008.5.1.4.1.1.2] ==> [CT Image Storage]
       }
       
-      if (!gdcm::Util::DicomStringEqual((*it)->GetEntryValue(0x0008,0x0060),"CT")) {
+      if (!GDCM_NAME_SPACE::Util::DicomStringEqual((*it)->GetEntryValue(0x0008,0x0060),"CT")) {
         itkGenericExceptionMacro();
        //CT Dicom slices must have a Modality [0008|0060] = [CT]
       }
       
-      if (!gdcm::Util::DicomStringEqual((*it)->GetEntryValue(0x0020,0x0037),"1.0000\\0.0000\\0.0000\\0.0000\\1.0000\\0.0000")) {
+      if (!GDCM_NAME_SPACE::Util::DicomStringEqual((*it)->GetEntryValue(0x0020,0x0037),"1.0000\\0.0000\\0.0000\\0.0000\\1.0000\\0.0000")) {
          itkGenericExceptionMacro("CT Dicom slices must an Image Orientation [0020|0037]"
          <<" = [1.0000\0.0000\0.0000\0.0000\1.0000\0.0000]");  
       }
@@ -173,10 +173,10 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
    =================================================*/
     
  // Test if a file is a valid Dicom-RT Structure-Set file (readable by us) 
-  bool TestDicomRTStructSetFile(gdcm::File* file) {
+  bool TestDicomRTStructSetFile(GDCM_NAME_SPACE::File* file) {
 // ----------  
-    //gdcm::ValEntry* valEntry;
-    gdcm::DataEntry* valEntry;
+    //GDCM_NAME_SPACE::ValEntry* valEntry;
+    GDCM_NAME_SPACE::DataEntry* valEntry;
 // ---------- 
 
     std::string exception0 = "Not a [RT Structure Set Storage]";
@@ -185,20 +185,20 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
     std::string exception3 = "Modality not= RTSTRUCT"; 
             
     //Verify if the file is a RT-Structure-Set dicom file
-    if (!gdcm::Util::DicomStringEqual(file->GetEntryValue(0x0008,0x0016),"1.2.840.10008.5.1.4.1.1.481.3")) {  //SOP clas UID
+    if (!GDCM_NAME_SPACE::Util::DicomStringEqual(file->GetEntryValue(0x0008,0x0016),"1.2.840.10008.5.1.4.1.1.481.3")) {  //SOP clas UID
       itkGenericExceptionMacro(<<exception0);
       // (the file must have a SOP Class UID [0008|0016] = 1.2.840.10008.5.1.4.1.1.481.3 ==> [RT Structure Set Storage] !
     }
         
-    if (!gdcm::Util::DicomStringEqual(file->GetEntryValue(0x0008,0x0060),"RTSTRUCT")) {  //SOP clas UID
+    if (!GDCM_NAME_SPACE::Util::DicomStringEqual(file->GetEntryValue(0x0008,0x0060),"RTSTRUCT")) {  //SOP clas UID
       itkGenericExceptionMacro(<<exception3);
       // (the file must have a Modality tag = RTSTRUCT !
     }    
 
     //Verify only one Referenced Frame UID and one or more Series UID
 
-    gdcm::SeqEntry* seqEntry;
-    gdcm::SQItem* currentItem;
+    GDCM_NAME_SPACE::SeqEntry* seqEntry;
+    GDCM_NAME_SPACE::SQItem* currentItem;
     std::string currentFrameRefUID;
     
     seqEntry  = file->GetSeqEntry(0x3006,0x0020); //Structure Set ROI sequence
@@ -233,7 +233,7 @@ bool TestDicomCTSerie(const gdcm::FileList serie);
       itkGenericExceptionMacro(<<exception1);
     }
     
-    gdcm::SeqEntry* seqEntry2 = currentItem->GetSeqEntry(0x3006,0x0012); //Referenced Study sequence
+    GDCM_NAME_SPACE::SeqEntry* seqEntry2 = currentItem->GetSeqEntry(0x3006,0x0012); //Referenced Study sequence
     if (seqEntry2->GetNumberOfSQItems() < 1) {
       itkGenericExceptionMacro(<<exception2);    
     }
@@ -326,14 +326,14 @@ int main(int argc, char *argv[])
 //   Read the input image.
 // ============================================================ 
 
-   gdcm::File *f = gdcm::File::New( );
+   GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New( );
 
-   //f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
+   //f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
    f->SetMaxSizeLoadEntry(0xffff);
    bool res = f->Load();  
 
-   if( gdcm::Debug::GetDebugFlag())
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag())
    {
       std::cout << "---------------------------------------------" << std::endl;
       f->Print();
