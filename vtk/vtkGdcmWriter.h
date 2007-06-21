@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.h,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/06/21 14:47:16 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,7 +20,7 @@
 #define __vtkGdcmWriter_h
 
 #include "gdcmCommon.h" // To avoid warnings concerning the std
-#include "gdcmFile.h"   // for gdcm::File
+#include "gdcmFile.h"   // for GDCM_NAME_SPACE::File
 
 #include <vtkImageWriter.h>
 #include <vtkLookupTable.h>
@@ -85,9 +85,9 @@ public:
 
 //BTX
    // Description:
-   // Aware user is allowed to pass his own gdcm::File *, so he may set *any Dicom field* he wants.
-   // (including his own Shadow Elements, or any gdcm::SeqEntry)
-   // gdcm::FileHelper::CheckMandatoryElements() will check inconsistencies, as far as it knows how.
+   // Aware user is allowed to pass his own GDCM_NAME_SPACE::File *, so he may set *any Dicom field* he wants.
+   // (including his own Shadow Elements, or any GDCM_NAME_SPACE::SeqEntry)
+   // GDCM_NAME_SPACE::FileHelper::CheckMandatoryElements() will check inconsistencies, as far as it knows how.
    // Sorry, not yet available under Python.
    vtkSetMacro(GdcmFile, GDCM_NAME_SPACE::File *);
    vtkGetMacro(GdcmFile, GDCM_NAME_SPACE::File *);

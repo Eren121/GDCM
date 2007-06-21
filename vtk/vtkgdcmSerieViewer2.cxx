@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmSerieViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/06/21 14:47:16 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,7 @@
                                                                                 
 =========================================================================*/
 // This example illustrates how the vtkGdcmReader vtk class can 
-// use the result of gdcm::SerieHelper constructor and check
+// use the result of GDCM_NAME_SPACE::SerieHelper constructor and check
 // the various Setters :
 //     SerieHelper::SetOrderToReverse, 
 //     SerieHelper::SetUserLessThanFunction
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
    // Just to see
 
    int nbFiles;
-   // For all the 'Single Serie UID' FileSets of the gdcm::Serie
+   // For all the 'Single Serie UID' FileSets of the GDCM_NAME_SPACE::Serie
    GDCM_NAME_SPACE::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
    if (l == 0 )
    {

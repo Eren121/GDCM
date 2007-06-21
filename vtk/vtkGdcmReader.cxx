@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2007/06/21 14:47:16 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -20,12 +20,12 @@
 // //////////////////////////////////////////////////////////////
 //
 //===>  Many users expect from vtkGdcmReader it 'orders' the images
-//     (that's the job of gdcm::SerieHelper ...)
+//     (that's the job of GDCM_NAME_SPACE::SerieHelper ...)
 //     When user *knows* the files with same Serie UID 
 //        have same sizes, same 'pixel' type, same color convention, ...
 //     the right way to proceed is as follow :
 //
-//      gdcm::SerieHelper *sh= new gdcm::SerieHelper();
+//      GDCM_NAME_SPACE::SerieHelper *sh= new GDCM_NAME_SPACE::SerieHelper();
 //      // if user wants *not* to load some parts of the file headers
 //      sh->SetLoadMode(loadMode);
 //
@@ -39,7 +39,7 @@
 //
 //      // here, we suppose only the first 'Serie' is of interest
 //      // it's up to the user to decide !
-//      gdcm::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
+//      GDCM_NAME_SPACE::FileList *l = sh->GetFirstSingleSerieUIDFileSet();
 //
 //      // if user is doesn't trust too much the files with same Serie UID 
 //      if ( !sh->IsCoherent(l) )
@@ -69,7 +69,7 @@
 //      // (a *very* simple example is given in vtkgdcmSerieViewer.cxx)
 //      reader->SetUserFunction (userSuppliedFunction);
 //
-//      // to pass a 'Coherent File List' as produced by gdcm::SerieHelper
+//      // to pass a 'Coherent File List' as produced by GDCM_NAME_SPACE::SerieHelper
 //      reader->SetCoherentFileList(l); 
 //      reader->Update();
 //
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.90 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.91 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -589,14 +589,14 @@ void vtkGdcmReader::GetFileInformation(GDCM_NAME_SPACE::File *file)
    this->DataSpacing[1] = file->GetYSpacing();
    
    //  Most of the file headers have NO z spacing
-   //  It must be calculated from the whole gdcm::Serie (if any)
+   //  It must be calculated from the whole GDCM_NAME_SPACE::Serie (if any)
    //  using Jolinda Smith's algoritm.
-   //  see gdcm::SerieHelper::ImagePositionPatientOrdering()
+   //  see GDCM_NAME_SPACE::SerieHelper::ImagePositionPatientOrdering()
    if (CoherentFileList == 0)   
       this->DataSpacing[2] = file->GetZSpacing();
    else
    {
-       // Just because OrderFileList() is a member of gdcm::SerieHelper
+       // Just because OrderFileList() is a member of GDCM_NAME_SPACE::SerieHelper
        // we need to instanciate sh.
       GDCM_NAME_SPACE::SerieHelper *sh = GDCM_NAME_SPACE::SerieHelper::New();
       sh->OrderFileList(CoherentFileList); // calls ImagePositionPatientOrdering()
@@ -765,8 +765,8 @@ void vtkGdcmReader::IncrementProgress(const unsigned long updateProgressTarget,
 {
    vtkDebugMacro(<< "Copying to memory image [" << fileName.c_str() << "]");
 
-   gdcm::File *f;
-   f = new gdcm::File();
+   GDCM_NAME_SPACE::File *f;
+   f = new GDCM_NAME_SPACE::File();
    f->SetLoadMode( LoadMode );
    f->SetFileName( fileName.c_str() );
    f->Load( );
@@ -778,7 +778,7 @@ void vtkGdcmReader::IncrementProgress(const unsigned long updateProgressTarget,
 }*/
 
 /*
- * Loads the contents of the image/volume contained by gdcm::File* f at
+ * Loads the contents of the image/volume contained by GDCM_NAME_SPACE::File* f at
  * the Dest memory address. Returns the size of the data loaded.
  * \ param f File to consider. NULL if the file must be skiped
  * \remarks Assume that if (f != NULL) then its caracteristics match
