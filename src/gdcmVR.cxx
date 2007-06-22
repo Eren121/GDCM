@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2007/06/22 10:02:48 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,9 +177,13 @@ bool VR::IsValidVR(VRKey const &tested)
   const char *pt = VRvalues;
   for (int i=0;i<nbVal;i++)
   {
-     if(tested[0] == *pt++)
+     if(tested[0] == *pt++) {
        if(tested[1] == *pt++)
-          return true;       
+          return true;
+     }  
+     else {
+        pt++;
+     }        
   }
   return false;
 
