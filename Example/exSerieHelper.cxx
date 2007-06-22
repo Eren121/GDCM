@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 15:01:00 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/06/22 11:01:57 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,13 +94,13 @@ int main(int argc, char *argv[])
          std::cout << "GetZSpacing() of sorted SingleSerieUIDFileSet "
                    << "from GDCM_NAME_SPACE::SerieHelper: " << zspacing << std::endl;
          std::cout << " ('-1' means all the files have the same position)" << std::endl;
-         for (std::vector<GDCM_NAME_SPACE::File* >::iterator it =  l->begin();
-                                            it != l->end();
-                                          ++it)
+         for (std::vector<GDCM_NAME_SPACE::File* >::iterator it2 =  l->begin();
+                                            it2 != l->end();
+                                          ++it2)
          {
           // Just to show : GetZSpacing from a GDCM_NAME_SPACE::File may be different        
-             std::cout << (*it)->GetFileName() << " -->  GetZSpacing() from GDCM_NAME_SPACE::File : " 
-                       << (*it)->GetZSpacing() << std::endl;      
+             std::cout << (*it2)->GetFileName() << " -->  GetZSpacing() from GDCM_NAME_SPACE::File : " 
+                       << (*it2)->GetZSpacing() << std::endl;      
          }  
 
          break; // we only deal with the first one ... Why not ?

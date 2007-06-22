@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestPrintAllDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 16:31:02 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/06/22 11:01:58 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ int TestPrintAllDocument(int argc, char *argv[])
    int swapC;
    unsigned int j;
    std::string pixelType, photomInterp;
-   int l;
+   unsigned int l;
    l = strlen("PALETTE COLOR ");
    
    //gdcm::Debug::DebugOn();

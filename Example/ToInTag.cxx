@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/04 08:51:23 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/06/22 11:01:57 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -615,9 +615,9 @@ int main(int argc, char *argv[])
 
          if ( GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") )  
          {
-            if (seriesDescription.find("90", 0) != -1)
+            if (seriesDescription.find("90", 0) != std::string::npos)
                chSessionIndex = "1";  // 90 deg -> COL
-            else if (seriesDescription.find("0", 0)!= -1)
+            else if (seriesDescription.find("0", 0)!= std::string::npos)
                chSessionIndex = "2";  // 0 deg -> ROW
             else
             {
