@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 15:06:12 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/06/26 15:42:14 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,7 +93,7 @@ The terms brightness and contrast are not used in radiology imaging
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n DenseMultiFramessToDicom :                                          \n",
+   " \n DenseMultiFramesToDicom :                                           \n",
    " - explores recursively the given (single Patient, single Study) directory",
    "         - examines the '.txt' files                                      ",
    "         - Converts the files into 16 bits Dicom files,                   ",
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
    "              [studyUID = ] [patName = ]                                  ",
    "              [listonly] [verbose] [debug]                                ",
    "                                                                          ",
-   "studyUID   : *aware* user wants to add the serie                          ",
+   " studyUID   : *aware* user wants to add the serie                         ",
    "                                             to an already existing study ",
    " verbose  : user wants to run the program in 'verbose mode'               ",
    " debug    : *developer*  wants to run the program in 'debug mode'         ",
@@ -306,6 +306,7 @@ All pixels with zero strain values are outside the masks.
     }        
              
   //float *f = new float(nx*ny);
+  // -->float *f = new float[nx*ny]; // Would be better !
    float *f = (float *) malloc(nx*ny*nf*sizeof(float));
   // float mini = FLT_MAX, maxi = FLT_MIN;
    float val;

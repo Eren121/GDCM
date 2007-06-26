@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2007/06/26 15:42:14 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,31 +96,31 @@ int main(int argc, char *argv[])
    // Set the image size
    str.str("");
    str << SIZE_X;
-   header->InsertEntryString(str.str(),0x0028,0x0011); // Columns
+   header->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
 
    str.str("");
    str << SIZE_Y;
-   header->InsertEntryString(str.str(),0x0028,0x0010); // Rows
+   header->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
 
    // Set the pixel type
    str.str("");
    str << COMPONENT_SIZE * 8;
-   header->InsertEntryString(str.str(),0x0028,0x0100); // Bits Allocated
-   header->InsertEntryString(str.str(),0x0028,0x0101); // Bits Stored
+   header->InsertEntryString(str.str(),0x0028,0x0100,"US"); // Bits Allocated
+   header->InsertEntryString(str.str(),0x0028,0x0101,"US"); // Bits Stored
 
    str.str("");
    str << ( COMPONENT_SIZE * 8 ) - 1;
-   header->InsertEntryString(str.str(),0x0028,0x0102); // High Bit
+   header->InsertEntryString(str.str(),0x0028,0x0102,"US"); // High Bit
 
    // Set the pixel representation
    str.str("");
    str << "0"; // Unsigned
-   header->InsertEntryString(str.str(),0x0028,0x0103); // Pixel Representation
+   header->InsertEntryString(str.str(),0x0028,0x0103,"US"); // Pixel Representation
 
    // Set the samples per pixel
    str.str("");
    str << COMPONENT;
-   header->InsertEntryString(str.str(),0x0028,0x0002); // Samples per Pixel
+   header->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
 
 // Step 2 : Create the output image
