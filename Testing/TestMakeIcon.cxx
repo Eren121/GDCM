@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/06/26 15:42:45 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,8 +79,8 @@ int TestMakeIcon (int argc, char *argv[])
    sqi->InsertEntryString( "8",   0x0028,0x0101, "US");
    sqi->InsertEntryString( "7",   0x0028,0x0102, "US");
    sqi->InsertEntryString( "0",   0x0028,0x0103, "US");
-   sqi->InsertEntryBinArea(  (uint8_t *)binVal, 3*2, 0x0005,0x0010,"OW");
-   sqi->InsertEntryBinArea(  pixels, lgth, 0x7fe0,0x0010);
+   sqi->InsertEntryBinArea(  (uint8_t *)binVal, 3*2, 0x0005,0x0010,"OB");
+   sqi->InsertEntryBinArea(  pixels, lgth, 0x7fe0,0x0010,"OB");
    // just to see if it's stored a the right place
    sqi->InsertEntryString( "128", 0x0028,0x0011, "US");
     
