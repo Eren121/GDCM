@@ -40,6 +40,17 @@ TARGET_LINK_LIBRARIES(vtkgdcmdemo
 )
 
 #-----------------------------------------------------------------------------
+SET(Bmp2Dcm_SOURCES
+  Bmp2Dcm.cxx
+)
+ADD_EXECUTABLE(Bmp2Dcm ${Bmp2Dcm_SOURCES})
+TARGET_LINK_LIBRARIES(Bmp2Dcm
+  vtkgdcm
+  vtkImaging
+
+)
+
+#-----------------------------------------------------------------------------
 SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
