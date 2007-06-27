@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/26 15:42:14 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/06/27 08:38:44 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,9 +36,8 @@
   *           WARNING : directory must contain ONLY .txt files 
   */  
 
-
 void Load(std::ifstream &from, std::string imageName, std::string patName, 
-          std::string strStudyUID, int serieNumber);
+          std::string strStudyUID, std::string strSerieUID, int serieNumber, int verbose);
 
 //std::ifstream& eatwhite(std::ifstream& is);
 
@@ -131,13 +130,17 @@ int main(int argc, char *argv[])
    std::string patName = am->ArgMgrGetString("patname", dirNamein);
 
    bool userDefinedStudy = am->ArgMgrDefined("studyUID");
-   const char *studyUID  = am->ArgMgrGetString("studyUID");
+   const char *studyUID;
+   if (userDefinedStudy)
+      studyUID  = am->ArgMgrGetString("studyUID");  
 
-// not described *on purpose* in the Usage ! 
+   // not described *on purpose* in the Usage !
+    
    bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
-   const char *serieUID  = am->ArgMgrGetString("serieUID");
-      
-      
+   const char *serieUID;
+   if(userDefinedSerie)
+      serieUID = am->ArgMgrGetString("serieUID");
+
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -157,7 +160,8 @@ int main(int argc, char *argv[])
    }
    else
    {
-      std::cout << "OK : [" << dirNamein << "] is a Directory." << std::endl;
+      if (verbose)
+         std::cout << "OK : [" << dirNamein << "] is a Directory." << std::endl;
    }
 
    std::string strDirNamein(dirNamein);
@@ -173,8 +177,23 @@ int main(int argc, char *argv[])
    
    std::string filenameout;
 
+
+
+
    std::string strStudyUID;
-   strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   std::string strSerieUID;
+
+   if (userDefinedStudy)
+      strSerieUID =  studyUID;
+   else
+      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   
+   if (userDefinedStudy)
+     strSerieUID =  serieUID;
+   else
+      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();  
+
+   
    int serieNumber =0;     
    GDCM_NAME_SPACE::DirListType fileNames;
    fileNames = dirList.GetFilenames();
@@ -201,8 +220,9 @@ int main(int argc, char *argv[])
       }
       else
       { 
-         std::cout << "Success in open file" << *it << std::endl;
-         Load(from, *it, patName, strStudyUID, serieNumber);
+         if (verbose)
+           std::cout << "Success in open file" << *it << std::endl;
+         Load(from, *it, patName, strStudyUID, strSerieUID, serieNumber, verbose);
          serieNumber+=2;
          //return 0;
       }   
@@ -211,12 +231,14 @@ int main(int argc, char *argv[])
 
 
 void Load(std::ifstream &from, std::string imageName, std::string patName, 
-          std::string strStudyUID, int serieNumber)
+          std::string strStudyUID, std::string strSerieUID, int serieNumber, int verbose)
 {
-  std::cout << " ========= Deal with file [" << imageName << "]" << std::endl;
+   if (verbose)  
+      std::cout << " ========= Deal with file [" << imageName << "]" << std::endl;
    if (!from)
       return;
-  std::cout << " ========= Create Parametric images" << std::endl; 
+   if (verbose)      
+     std::cout << " ========= Create Parametric images" << std::endl; 
 /* was OK for single frames
 eg :
 ---------------------------
@@ -269,7 +291,8 @@ All pixels with zero strain values are outside the masks.
     from >> str1;
     from >> str1; // 52x59x14
    
-    std::cout << "[" << str1 << "]" << std::endl;
+    if(verbose)
+       std::cout << "[" << str1 << "]" << std::endl;
     
     sscanf( str1.c_str(),"%dx%dx%d", &nx,&ny,&nf);
     std::cout << nx << " " << ny << " " << nf << std::endl;
@@ -284,7 +307,8 @@ All pixels with zero strain values are outside the masks.
     
     float temporalResolution;
     sscanf( str1.c_str(),"%f",&temporalResolution);
-    std::cout << "temporal Resolution = " << temporalResolution << std::endl;
+    if(verbose)
+      std::cout << "temporal Resolution = " << temporalResolution << std::endl;
     std::getline(from, str1);
     
     from >> str1; // First
@@ -310,15 +334,14 @@ All pixels with zero strain values are outside the masks.
    float *f = (float *) malloc(nx*ny*nf*sizeof(float));
   // float mini = FLT_MAX, maxi = FLT_MIN;
    float val;
-     
-   std::string strSerieUID;
-   strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+
    int imageNumber = 0;     
    float currentTime;
    currentTime = timeStart;
-  for (int l=0; l<nf; l++)  // Loop on the frames
-  { 
-     //std::cout << "Frame nb " << l << std::endl;
+   int l1;
+   for (l1=0; l1<nf; l1++)  // Loop on the frames
+   { 
+     //std::cout << "Frame nb " << l1 << std::endl;
      for( int j=0; j<ny; j++)
      {   
       for (int i=0; i<nx; i++)
@@ -459,10 +482,10 @@ All pixels with zero strain values are outside the masks.
 
 // 0020 0032 DS 3 Image Position (Patient)
         char charImagePosition[256]; 
-        sprintf(charImagePosition,"0.0\\0.0\\%f",float(l%nf));
+        sprintf(charImagePosition,"0.0\\0.0\\%f",float(l1%nf));
  
 // 0020 0x1041 DS 1 Slice Location 
-        sprintf(charImagePosition,"%f",float(l%nf));
+        sprintf(charImagePosition,"%f",float(l1%nf));
         file->InsertEntryString(charImagePosition,0x0020,0x1041, "DS");
  
 //0008 103e LO 1 Series Description
@@ -496,9 +519,10 @@ All pixels with zero strain values are outside the masks.
     fh->SetWriteTypeToDcmExplVR();
 
     char numero[10];
-    sprintf(numero, "%02d", l);   
+    sprintf(numero, "%02d", l1);   
     std::string fileName = imageName + "." + numero + ".dcm";
-    std::cout << "fileName " << fileName << std::endl;
+    if(verbose)
+      std::cout << "fileName " << fileName << std::endl;
       
     if( !fh->Write(fileName))
        std::cout << "Failed for [" << fileName << "]\n"
@@ -518,7 +542,7 @@ All pixels with zero strain values are outside the masks.
   imageNumber = 0;     
   currentTime = timeStart;
      
-  for (int l=0; l<nf; l++)  // Loop on the frames
+  for (int fr=0; fr<nf; fr++)  // Loop on the frames
   {
    //std::cout << "Frame nb " << l << std::endl;  
      for( int j=0; j<ny; j++)
@@ -606,10 +630,10 @@ All pixels with zero strain values are outside the masks.
 
 // 0020 0032 DS 3 Image Position (Patient)
         char charImagePosition[256]; 
-        sprintf(charImagePosition,"0.0\\0.0\\%f",float(l%nf));
+        sprintf(charImagePosition,"0.0\\0.0\\%f",float(l1%nf));
  
 // 0020 0x1041 DS 1 Slice Location 
-        sprintf(charImagePosition,"%f",float(l%nf));
+        sprintf(charImagePosition,"%f",float(l1%nf));
         file->InsertEntryString(charImagePosition,0x0020,0x1041, "DS");
  
 //0008 103e LO 1 Series Description
@@ -642,7 +666,7 @@ All pixels with zero strain values are outside the masks.
     fh->SetWriteTypeToDcmExplVR();
 
     char numero[10];
-    sprintf(numero, "%02d", l);   
+    sprintf(numero, "%02d", l1);   
     std::string fileName = imageName + ".Anatomical." + numero + ".dcm";
     std::cout << "fileName " << fileName << std::endl;
       
@@ -657,4 +681,4 @@ All pixels with zero strain values are outside the masks.
   } // end loop on frames 
    
    from.close();
-}
+} // end void Load(
