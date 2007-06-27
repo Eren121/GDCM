@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Bmp2Dcm.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/26 15:40:38 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/06/27 08:43:25 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,11 +88,15 @@ int main( int argc, char *argv[] )
    std::string patName  = am->ArgMgrGetString("patname", dirName);
     
    bool userDefinedStudy = am->ArgMgrDefined("studyUID");
-   const char *studyUID  = am->ArgMgrGetString("studyUID");  
+   const char *studyUID;
+   if (userDefinedStudy)
+      studyUID  = am->ArgMgrGetString("studyUID");  
 
-// not described *on purpose* in the Usage ! 
+   // not described *on purpose* in the Usage !    
    bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
-   const char *serieUID  = am->ArgMgrGetString("serieUID");
+   const char *serieUID;
+   if(userDefinedSerie)
+      serieUID = am->ArgMgrGetString("serieUID");
        
     /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -104,6 +108,9 @@ int main( int argc, char *argv[] )
  
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
+
+   // ----- Begin Processing -----
+   
    int *dim;
    std::string nomFich;
    
@@ -142,7 +149,18 @@ int main( int argc, char *argv[] )
    
      }
      else  // ====== Deal with a (single Patient) Directory ======
-     {    
+     { 
+     
+        if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirName) )
+        {
+          std::cout << "KO : [" << dirName << "] is not a Directory." << std::endl;
+          return 0;
+        }
+        else
+        {
+          if (verbose)
+            std::cout << "OK : [" << dirName << "] is a Directory." << std::endl;
+        } 
         std::string strStudyUID;
         std::string strSerieUID;
 
