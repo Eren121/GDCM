@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/24 10:41:25 $
-  Version:   $Revision: 1.332 $
+  Date:      $Date: 2007/07/03 08:17:24 $
+  Version:   $Revision: 1.333 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1423,6 +1423,9 @@ bool File::IsMonochrome()
    {
       gdcmWarningMacro( "Photometric Interpretation (0028,0004) supposed to be "
                          << "mandatory");
+      // to deal with old ACR-NEMA images
+      if (GetNumberOfScalarComponents() == 1)
+         return true;
    }
    return false;
 }
