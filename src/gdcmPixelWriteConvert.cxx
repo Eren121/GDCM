@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/07/04 10:40:56 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,7 +58,7 @@ void PixelWriteConvert::SetReadData(uint8_t *data, size_t size)
 
 /**
  * \brief   Sets the internal pointer to the caller's inData
- *          image representation, BUT WITHOUT COPYING THE DATA.
+ *          image representation, WITHOUT COPYING THE DATA.
  *          - 'image' Pixels are presented as C-like 2D arrays : line per line.
  *          - 'volume'Pixels are presented as C-like 3D arrays : plane per plane 
  * \warning Since the pixels are not copied, it is the caller's responsability
@@ -76,8 +76,8 @@ void PixelWriteConvert::SetUserData(uint8_t *data, size_t size)
 
 /**
  * \brief   Get Data (UserData or ReadData)
- * @return  data (uint8_t is for prototyping. if your data is 
- *                    *not* uint8_t, just cast the returned pointer)
+ * @return  data (uint8_t is for prototyping. if your data is *not* uint8_t
+ *                just cast the returned pointer)
  */
 uint8_t *PixelWriteConvert::GetData()
 {

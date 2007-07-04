@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.112 $
+  Date:      $Date: 2007/07/04 10:40:56 $
+  Version:   $Revision: 1.113 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,12 +57,13 @@ f->SetFileName(fileName);
    f->SetLoadMode(LD_NOSHADOWSEQ);
 f->Load();
 
+// To decide whether it's an 'image of interest for him, or not,
 // user can now check some values
 std::string v = f->GetEntryValue(groupNb,ElementNb);
 
 // to get the pixels, user needs a gdcm::FileHelper
 gdcm::FileHelper *fh = new gdcm::FileHelper(f);
-// user may ask not to convert Palette to RGB
+// user may ask not to convert Palette (if any) to RGB
 uint8_t *pixels = fh->GetImageDataRaw();
 int imageLength = fh->GetImageDataRawSize();
 // He can now use the pixels, create a new image, ...
@@ -72,7 +73,7 @@ To re-write the image, user re-uses the gdcm::FileHelper
 
 fh->SetImageData( userPixels, userPixelsLength);
 fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
-                     // (WriteMode is set)
+                    // (WriteMode is set)
  
 fh->SetWriteTypeToDcmExpl();  // he wants Explicit Value Representation
                               // Little Endian is the default
@@ -265,6 +266,7 @@ bool FileHelper::SetEntryBinArea(uint8_t *content, int lgth,
  * @param   content (string) value to be set
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
+ * @param   vr  Value Representation of the DataElement to be inserted
  * \return  pointer to the modified/created DataEntry (NULL when creation
  *          failed).
  */ 
@@ -279,11 +281,11 @@ DataEntry *FileHelper::InsertEntryString(std::string const &content,
  * \brief   Modifies the value of a given DataEntry when it exists.
  *          Creates it with the given value when unexistant.
  *          A copy of the binArea is made to be kept in the Document.
- * @param   binArea (binary)value to be set
+ * @param   binArea (binary) value to be set
  * @param   lgth new value length
  * @param   group   Group number of the Entry 
  * @param   elem  Element number of the Entry
- * @param   vr  Value Represenation of the DataElement to be inserted 
+ * @param   vr  Value Representation of the DataElement to be inserted 
  * \return  pointer to the modified/created DataEntry (NULL when creation
  *          failed).
  */
@@ -470,7 +472,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
  */
 void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 {
-   SetUserData(inData, expectedSize);
+   PixelWriteConverter->SetUserData(inData, expectedSize);
 }
 
 /**
@@ -850,9 +852,13 @@ bool FileHelper::CheckWriteIntegrity()
  * \brief Updates the File to write RAW data (as opposed to RGB data)
  *       (modifies, when necessary, photochromatic interpretation, 
  *       bits allocated, Pixels element VR)
+ *       WARNING : if SetPhotometricInterpretationToMonochrome1() was called before
+ *                 Pixel Elements if modified :-( 
  */ 
 void FileHelper::SetWriteToRaw()
 {
+std::cout << "entry in FileHelper::SetWriteToRaw " << std::endl;
+
    if ( FileInternal->GetNumberOfScalarComponents() == 3 
     && !FileInternal->HasLUT() )
    {
@@ -866,10 +872,13 @@ void FileHelper::SetWriteToRaw()
          photInt->SetString("PALETTE COLOR ");
       }
       else
-      {
-         photInt->SetString("MONOCHROME2 ");
+      {     
+         if (GetPhotometricInterpretation() == 2)
+            photInt->SetString("MONOCHROME2 ");  // 0 = Black
+         else
+            photInt->SetString("MONOCHROME1 ");  // 0 = White !
       }
-
+    
       PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
                                        PixelReadConverter->GetRawSize());
 
@@ -883,11 +892,22 @@ void FileHelper::SetWriteToRaw()
       {
          vr = "OW";
       }
+      
       DataEntry *pixel = 
          CopyDataEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetFlag(DataEntry::FLAG_PIXELDATA);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
+      
+      
+      /// \TODO : fixme : I'm not too much happy with this feature :
+      ///         It modifies the Pixel Data
+      ///         If user calls twice the writer, images will not be equal !!!   
+      if (!FileInternal->HasLUT() && GetPhotometricInterpretation() == 1)
+      {
+         ConvertFixGreyLevels(PixelWriteConverter->GetData(), 
+                              PixelWriteConverter->GetDataSize());   
+      }      
 
       Archive->Push(photInt);
       Archive->Push(pixel);
@@ -1620,8 +1640,6 @@ void FileHelper::CheckMandatoryElements()
    //         an imager (see also 0008,0x0064)          
       CheckMandatoryEntry(0x0018,0x1164,pixelSpacing,"DS");
 
-
-
 /*
 ///Exact meaning of RETired fields
 
@@ -1818,6 +1836,10 @@ is only from (0020,0030) and (0020,0035)
   // Third stage : update all 'zero level' groups length
 */ 
 
+
+   if (PhotometricInterpretation == 1)
+   {
+   }
 } 
 
 void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string value,const VRKey &vr )
@@ -1928,7 +1950,9 @@ void FileHelper::Initialize()
    
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
-
+   
+   PhotometricInterpretation = 2; // Black = 0
+   
    PixelReadConverter  = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
    Archive = new DocEntryArchive( FileInternal );
@@ -1961,6 +1985,93 @@ uint8_t *FileHelper::GetRaw()
       }
    }
    return raw;
+}
+
+
+/**
+ * \brief Deal with Grey levels i.e. re-arange them
+ *        to have low values = dark, high values = bright
+ */
+void FileHelper::ConvertFixGreyLevels(uint8_t *raw, size_t rawSize)
+{
+   uint32_t i; // to please M$VC6
+   int16_t j;
+
+   // Number of Bits Allocated for storing a Pixel is defaulted to 16
+   // when absent from the file.
+   int bitsAllocated = FileInternal->GetBitsAllocated();
+   if ( bitsAllocated == 0 )
+   {
+      bitsAllocated = 16;
+   }
+
+   else if (bitsAllocated > 8 && bitsAllocated < 16 && bitsAllocated != 12)
+   {
+      bitsAllocated = 16;
+   }   
+   // Number of "Bits Stored", defaulted to number of "Bits Allocated"
+   // when absent from the file.
+   int bitsStored = FileInternal->GetBitsStored();
+   if ( bitsStored == 0 )
+   {
+      bitsStored = bitsAllocated;
+   }
+
+   if (!FileInternal->IsSignedPixelData())
+   {
+      if ( bitsAllocated == 8 )
+      {
+         uint8_t *deb = (uint8_t *)raw;
+         for (i=0; i<rawSize; i++)      
+         {
+            *deb = 255 - *deb;
+            deb++;
+         }
+         return;
+      }
+
+      if ( bitsAllocated == 16 )
+      {
+         uint16_t mask =1;
+         for (j=0; j<bitsStored-1; j++)
+         {
+            mask = (mask << 1) +1; // will be fff when BitsStored=12
+         }
+
+         uint16_t *deb = (uint16_t *)raw;
+         for (i=0; i<rawSize/2; i++)      
+         {
+            *deb = mask - *deb;
+            deb++;
+         }
+         return;
+       }
+   }
+   else
+   {
+      if ( bitsAllocated == 8 )
+      {
+         uint8_t smask8 = 255;
+         uint8_t *deb = (uint8_t *)raw;
+         for (i=0; i<rawSize; i++)      
+         {
+            *deb = smask8 - *deb;
+            deb++;
+         }
+         return;
+      }
+      if ( bitsAllocated == 16 )
+      {
+         uint16_t smask16 = 65535;
+         uint16_t *deb = (uint16_t *)raw;
+         for (i=0; i<rawSize/2; i++)      
+         {
+            *deb = smask16 - *deb;
+            deb++;
+         }
+         return;
+      }
+   }
 }
 
 //-----------------------------------------------------------------------------

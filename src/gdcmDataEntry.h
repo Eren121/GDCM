@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/07/04 10:40:56 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,7 @@ public:
    /// \brief Sets the state (Loaded, NotLoaded, UnFound, ...) of the DataEntry
    void SetState(const TValueState &state) { State = state; }
    /// \brief Returns the state (Loaded, NotLoaded, ...) of the DataEntry
-      const TValueState &GetState() const { return State; }
+   const TValueState &GetState() const { return State; }
    /// \brief true when value Entry not loaded  
    bool IsNotLoaded() { return State == STATE_NOTLOADED; }
    /// \brief true if Entry not found  

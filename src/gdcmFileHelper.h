@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2007/07/04 10:40:56 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,6 +103,8 @@ public:
    uint8_t *GetRawData();
    size_t GetRawDataSize();
 
+   void ConvertFixGreyLevels(uint8_t *data, size_t size);
+
    // LUT
    uint8_t* GetLutRGBA();
    int GetLutItemNumber();
@@ -145,7 +147,16 @@ public:
    /// \brief Gets the format we talled the write we wanted to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType GetWriteType()            { return WriteType;         }
+   /// \brief 1 : white=0, black=high value    
+   void SetPhotometricInterpretationToMonochrome1() {
+                                            PhotometricInterpretation = 1;}
+   /// \brief 2 : black=0, white=high value  (default)     
+   void SetPhotometricInterpretationToMonochrome2() {
+                                            PhotometricInterpretation = 2;}
 
+   int GetPhotometricInterpretation() {
+                                            return PhotometricInterpretation; }    
+    
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianness"
    // The user must call his reader correctly
@@ -255,6 +266,10 @@ private:
    /// - he created a new image, using existing images (eg MIP, MPR,cartography)
    /// - he anonymized and image (*no* modif on the pixels)
    ImageContentType ContentType;
+ 
+   /// \brief  1 : white=0, black=high value    
+   ///         2 : black=0, white=high value (default)   
+   int PhotometricInterpretation;
 
 };
 } // end namespace gdcm
