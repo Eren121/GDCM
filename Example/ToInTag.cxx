@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/04 15:40:51 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/07/04 17:39:28 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",
    "                  [taggrid] [skel]                                        ",
-   "                  [input = {ACR|DCM}]                                     ", 
+   "                  [input = {ACR|DCM|IDO}]                                 ", 
    "                  [extent=image suffix (.IMA, .NEMA, .DCM, ...)]          ",
    "                  [listonly] [split] [rubout]                             ",
    "                  [noshadowseq][noshadow][noseq] [verbose] [debug]        ",
@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
    "        e.g : 1030,1035,1043                                              ", 
    " taggrid : user knows all the images are 'grid' -ie: not 'col', not 'raw'-",
    " extent : DO NOT forget the leading '.' !                                 ",
+   " input : IDO when *realy* old libIDO images                               ",
    " skel: name skeleton eg : patName_1.nema -> skel=patName_                 ",
    " split: creates a tree-like structure of directories as :                 ",
    "        - Patient                                                         ",
@@ -171,6 +172,7 @@ int main(int argc, char *argv[])
       skel = am->ArgMgrGetString("skel");   
       
    const char *extent  = am->ArgMgrGetString("extent",".DCM");
+   const char *input  = am->ArgMgrGetString("input","DCM");
    
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -380,10 +382,18 @@ int main(int argc, char *argv[])
          else
             tokens[3] = name;
  
+         // Patient's Name
+         // Series Instance UID
+         // Image Position (Patient)
+         // Trigger Time
+         // In-plane Phase Encoding Direction
+         // Series Description
+         // FileName
  
          userFileIdentifier = tokens[0] + token + tokens[1] + token + tokens[2] + token 
-                    + tokens[3] + token + tokens[4] + token + tokens[5] + token;
-      }   
+                    + tokens[3] + token + tokens[4] + token + tokens[5] + token +  tokens[6] + token;
+      }
+         
       if (verbose) 
          std::cout << "[" << userFileIdentifier  << "] : " << *it << std::endl;
                
@@ -476,12 +486,11 @@ int main(int argc, char *argv[])
       
       if (previousPatientName != currentPatientName)
       {      
-         if ( currentFile->GetEntryString(0x0020,0x000d) == GDCM_NAME_SPACE::GDCM_UNFOUND)
+         if ( currentFile->GetEntryString(0x0020,0x000d) == GDCM_NAME_SPACE::GDCM_UNFOUND) // Study UID
          {
             if (verbose)   
                std::cout << "--- new  Study UID created" << std::endl;
             defaultStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-            currentFile->InsertEntryString(defaultStudyUID, 0x0020, 0x000d, "UI" );
          }
   
          previousPatientName = currentPatientName;
@@ -503,6 +512,8 @@ int main(int argc, char *argv[])
               system ( systemCommand.c_str() );
          }
       }
+      currentFile->InsertEntryString(defaultStudyUID, 0x0020, 0x000d, "UI" );
+      
 
       if ( GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") ) // for Siemens TrioTim , don't deal with 'Series Instance UID'
 
@@ -517,7 +528,7 @@ int main(int argc, char *argv[])
             if (verbose)   
                std::cout << "--- --- new  Serie UID created" << std::endl;
             defaultSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-            currentFile->InsertEntryString(defaultSerieUID, 0x0020, 0x000e, "UI" );
+           // currentFile->InsertEntryString(defaultSerieUID, 0x0020, 0x000e, "UI" );
          }       
       
          if (split)
@@ -531,6 +542,8 @@ int main(int argc, char *argv[])
          previousImagePosition          = ""; //currentImagePosition;
          previousPhaseEncodingDirection = ""; //currentPhaseEncodingDirection;
       }
+      currentFile->InsertEntryString(defaultSerieUID, 0x0020, 0x000e, "UI" );
+            
       // end of modelName != "TrioTim "
    
       if (previousImagePosition != currentImagePosition)
@@ -690,8 +703,8 @@ int main(int argc, char *argv[])
             std::cout << "Duplicate ImageOrientation into ImageOrientationPatient" << std::endl;          
          currentFile->InsertEntryString(currentFile->GetEntryString(0x0020, 0x0035), 0x0020, 0x0037, "DS" );       
       }
-                
-      if (taggrid)
+       
+      if (taggrid  || strcmp(input, "IDO")==0 || strcmp(input, "ido")==0 )
          frameIndex++;
       else     
       {     
