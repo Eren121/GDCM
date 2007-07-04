@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2007/07/04 10:43:19 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
    "     (usefull when the file header is not very straight).               ",
    "                                                                        ",
    " usage: ReWrite filein=inputFileName fileout=outputFileName             ", 
-   "       [mode=write mode] [noshadow] [noseq][debug]                      ",
+   "       [mode=write mode] [monochrome1] [noshadow] [noseq][debug]        ",
    "  --> The following line to 'rubout' a burnt-in Patient name            ",
    "       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]         ",
    "  --> The 2 following lines, to extract a sub image within some frames  ",
@@ -40,11 +40,12 @@ int main(int argc, char *argv[])
    "       [firstframe=beg] [lastframe=end]                                 ", 
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
+   "        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)  ",
    "        noshadowseq: user doesn't want to load Private Sequences        ",
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences                  ",
-   "        rgb      : user wants to tranform LUT (if any) to RGB pixels    ",
-   "        warning  : developper wants to run the program in 'warning mode'",   
+   "        rgb      : user wants to transform LUT (if any) to RGB pixels   ",
+   "        warning  : developper wants to run the program in 'warning mode'",
    "        debug    : developper wants to run the program in 'debug mode'  ",
    FINISH_USAGE
 
@@ -88,6 +89,8 @@ int main(int argc, char *argv[])
 
    bool rgb = ( 0 != am->ArgMgrDefined("RGB") );
 
+   bool monochrome1 = ( 0 != am->ArgMgrDefined("monochrome1") );
+   
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
 
@@ -148,9 +151,10 @@ int main(int argc, char *argv[])
 
    GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode( loadMode );
+
    f->SetFileName( fileName );
    bool res = f->Load();  
-   if ( !res )
+      if ( !res )
    {
       f->Delete();
       return 0;
@@ -162,7 +166,6 @@ int main(int argc, char *argv[])
        f->Delete();
        return 0;
    }
- 
    
    GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    void *imageData; 
@@ -193,7 +196,9 @@ int main(int argc, char *argv[])
    transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
              << std::endl;
- 
+  
+   if(monochrome1)
+      fh->SetPhotometricInterpretationToMonochrome1();
    
    if (rgb)
    {
