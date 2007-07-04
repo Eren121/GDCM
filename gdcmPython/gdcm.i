@@ -164,13 +164,13 @@ typedef unsigned long long uint64_t;
 %ignore GDCM_VRUNKNOWN;
 %ignore GDCM_FILESEPARATOR;
 
-%constant const char *UNKNOWN        = "GDCM_NAME_SPACE::Unknown";
-%constant const char *UNFOUND        = "GDCM_NAME_SPACE::Unfound";
-%constant const char *BINLOADED      = "GDCM_NAME_SPACE::Binary data loaded";
-%constant const char *NOTLOADED      = "GDCM_NAME_SPACE::NotLoaded";
-%constant const char *UNREAD         = "GDCM_NAME_SPACE::UnRead";
-%constant const char *GDCM_NOTASCII  = "GDCM_NAME_SPACE::NotAscii";
-%constant const char *GDCM_PIXELDATA = "GDCM_NAME_SPACE::Pixel Data to be loaded";
+%constant const char *UNKNOWN        = "GDCM::Unknown";
+%constant const char *UNFOUND        = "GDCM::Unfound";
+%constant const char *BINLOADED      = "GDCM::Binary data loaded";
+%constant const char *NOTLOADED      = "GDCM::NotLoaded";
+%constant const char *UNREAD         = "GDCM::UnRead";
+%constant const char *GDCM_NOTASCII  = "GDCM::NotAscii";
+%constant const char *GDCM_PIXELDATA = "GDCM::Pixel Data to be loaded";
 %constant const char *VRUNKNOWN      = "  ";
 %constant const char GDCM_FILESEPARATOR = '\\';
 ////////////////////////////////////////////////////////////////////////////
