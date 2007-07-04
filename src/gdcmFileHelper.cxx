@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/04 10:40:56 $
-  Version:   $Revision: 1.113 $
+  Date:      $Date: 2007/07/04 14:42:33 $
+  Version:   $Revision: 1.114 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -857,8 +857,6 @@ bool FileHelper::CheckWriteIntegrity()
  */ 
 void FileHelper::SetWriteToRaw()
 {
-std::cout << "entry in FileHelper::SetWriteToRaw " << std::endl;
-
    if ( FileInternal->GetNumberOfScalarComponents() == 3 
     && !FileInternal->HasLUT() )
    {
