@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/04 10:31:55 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/07/04 15:40:51 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
            f->Delete();
            continue;
         }
-      }      
+      } 
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
       tokens.clear();
@@ -363,7 +363,7 @@ int main(int argc, char *argv[])
       int imageNum; // Within FileName
       char newName[1024];
       
-      if ( tokens[3] == "gdcmUnfound")  // sometimes Trigger Time is not found. CreateUserDefinedFileIdentifier is not aware of the pb.
+      if ( tokens[3] == GDCM_NAME_SPACE::GDCM_UNFOUND)  // sometimes Trigger Time is not found. CreateUserDefinedFileIdentifier is not aware of the pb.
       {
          ///this is a trick to build up a lexicographical compliant name :
          ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
