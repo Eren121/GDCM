@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/22 11:01:57 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/07/04 10:31:55 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
    "                  [taggrid] [skel]                                        ",
    "                  [input = {ACR|DCM}]                                     ", 
    "                  [extent=image suffix (.IMA, .NEMA, .DCM, ...)]          ",
-   "                  [listonly] [split]                                      ",
+   "                  [listonly] [split] [rubout]                             ",
    "                  [noshadowseq][noshadow][noseq] [verbose] [debug]        ",
    "                                                                          ",
    " dirout : will be created if doesn't exist                                ",
@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
    "        --- Position                                                      ",
    "        ---- Images (sorted by Trigger Time /                             ",
    "                               Encoding Direction (Row, Column)           ",
+   " rubout : user asks to rubout burnt-in image number                       ",
    " noshadowseq: user doesn't want to load Private Sequences                 ",
    " noshadow : user doesn't want to load Private groups (odd number)         ",
    " noseq    : user doesn't want to load Sequences                           ",
@@ -147,7 +148,9 @@ int main(int argc, char *argv[])
    int verbose  = am->ArgMgrDefined("verbose");
    int split    = am->ArgMgrDefined("split");
    int listonly = am->ArgMgrDefined("listonly");
-         
+   
+   bool rubout = ( 0 != am->ArgMgrDefined("rubout") ); 
+           
    int nbSeriesToKeep;
    int *seriesToKeep = am->ArgMgrGetListOfInt("keep", &nbSeriesToKeep);
    int nbSeriesToDrop;
@@ -719,13 +722,15 @@ int main(int argc, char *argv[])
       uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       fh->SetWriteTypeToDcmExplVR();     
       
-      // Put to Black the burnt-in number.
-      nX = currentFile->GetXSize();
-      nY = currentFile->GetYSize();
-      for(int y=nY-15; y<nY; y++)
-         for(int x=nX/3; x<nX/2+50; x++)
-           imageData[ y*nX*2 + x ] = 0;
-
+      if (rubout) {
+         // Put to Black the burnt-in number.
+         nX = currentFile->GetXSize();
+         nY = currentFile->GetYSize();
+         for(int y=nY-15; y<nY; y++)
+            for(int x=nX/3; x<nX/2+50; x++)
+              imageData[ y*nX*2 + x ] = 0;
+      }
+      
       // We didn't make any computation on the pixels -> keep unchanged the following :
       // 'Media Storage SOP Class UID' (0x0002,0x0002)
       // 'SOP Class UID'               (0x0008,0x0016)
