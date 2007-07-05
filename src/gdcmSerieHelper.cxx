@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/18 12:13:44 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2007/07/05 09:34:12 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1049,7 +1049,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       for(unsigned int i=0; i<s.size(); i++)
       {
          while(i<s.size()
-               && !( s[i] == '.' || s[i] == '%'
+               && !( s[i] == '.' || s[i] == '%' || s[i] == '_'
                  || (s[i] >= 'a' && s[i] <= 'z')
                  || (s[i] >= '0' && s[i] <= '9')
                  || (s[i] >= 'A' && s[i] <= 'Z')))
@@ -1061,7 +1061,8 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       id += s.c_str();
       id += "%%%"; // make the FileIdentifier Tokenizable
    }
-   
+   id += inFile->GetFileName();
+   id += "%%%"; 
    return id;             
 }
 
