@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/05 10:37:53 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2007/07/05 10:53:48 $
+  Version:   $Revision: 1.116 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,8 +51,8 @@ gdcm::File *f = new gdcm::File(fileName);
 // user may also decide he doesn't want to load some parts of the header
 gdcm::File *f = new gdcm::File();
 f->SetFileName(fileName);
-   f->SetLoadMode(LD_NOSEQ);             // or      
-   f->SetLoadMode(LD_NOSHADOW);          // or
+   f->SetLoadMode(LD_NOSEQ);               // or      
+   f->SetLoadMode(LD_NOSHADOW);            // or
    f->SetLoadMode(LD_NOSEQ | LD_NOSHADOW); // or
    f->SetLoadMode(LD_NOSHADOWSEQ);
 f->Load();
@@ -818,11 +818,7 @@ bool FileHelper::Write(std::string const &fileName)
 //-----------------------------------------------------------------------------
 // Protected
 /**
- * \brief Checks the write integrity
- *
- * The tests made are :
- *  - verify the size of the image to write with the possible write
- *    when the user set an image data
+ * \brief  * \brief Verifies the size of the user given PixelData
  * @return true if check is successfull
  */
 bool FileHelper::CheckWriteIntegrity()
@@ -878,8 +874,8 @@ bool FileHelper::CheckWriteIntegrity()
  * \brief Updates the File to write RAW data (as opposed to RGB data)
  *       (modifies, when necessary, photochromatic interpretation, 
  *       bits allocated, Pixels element VR)
- *       WARNING : if SetPhotometricInterpretationToMonochrome1() was called before
- *                 Pixel Elements if modified :-( 
+ *       WARNING : if SetPhotometricInterpretationToMonochrome1() was called
+ *                 before Pixel Elements if modified :-( 
  */ 
 void FileHelper::SetWriteToRaw()
 {
@@ -890,6 +886,7 @@ void FileHelper::SetWriteToRaw()
    } 
    else
    {
+      // 0x0028,0x0004 : Photometric Interpretation
       DataEntry *photInt = CopyDataEntry(0x0028,0x0004,"CS");
       if (FileInternal->HasLUT() )
       {
@@ -922,15 +919,10 @@ void FileHelper::SetWriteToRaw()
       pixel->SetFlag(DataEntry::FLAG_PIXELDATA);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
       pixel->SetLength(PixelWriteConverter->GetDataSize());
-      
-      
-      /// \TODO : fixme : I'm not too much happy with this feature :
-      ///         It modifies the Pixel Data
-      ///         If user calls twice the writer, images will not be equal !!!   
+     
       if (!FileInternal->HasLUT() && GetPhotometricInterpretation() == 1)
       {
-         ConvertFixGreyLevels(PixelWriteConverter->GetData(), 
-                              PixelWriteConverter->GetDataSize());   
+         ConvertFixGreyLevels( pixel->GetBinArea(), pixel->GetLength() );  
       }      
 
       Archive->Push(photInt);
@@ -1154,14 +1146,6 @@ void FileHelper::SetWriteFileTypeToImplicitVR()
    tss->SetString(ts);
    Archive->Push(tss);
    tss->Delete();
-}
-
-
-/**
- * \brief Restore in the File the initial group 0002
- */ 
-void FileHelper::RestoreWriteFileType()
-{
 }
 
 /**

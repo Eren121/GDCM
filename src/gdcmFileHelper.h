@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/04 10:40:56 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2007/07/05 10:53:48 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ public:
    DataEntry *InsertEntryString(std::string const &content,
                                 uint16_t group, uint16_t elem, const VRKey &vr);
    DataEntry *InsertEntryBinArea(uint8_t *binArea, int lgth,
-                                 uint16_t group, uint16_t elem, const VRKey &vr);
+                                uint16_t group, uint16_t elem, const VRKey &vr);
    SeqEntry *InsertSeqEntry(uint16_t group, uint16_t elem);
 
    // File helpers
@@ -88,7 +88,7 @@ public:
    uint8_t *GetImageData();
    uint8_t *GetImageDataRaw();
 
-//   GDCM_LEGACY(size_t GetImageDataIntoVector(void *destination,size_t maxSize))
+// GDCM_LEGACY(size_t GetImageDataIntoVector(void *destination,size_t maxSize))
 
    void SetImageData(uint8_t *data, size_t expectedSize);
 
@@ -119,11 +119,7 @@ public:
    ///        (as opposed to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  }
    /// \brief Sets the Write Mode ( )
-   void SetWriteMode(FileMode mode)   { 
-      WriteMode = mode;
-      // Deal with Samples per Pixel    
-      //if (mode == WMODE_RGB) FileInternal->InsertEntryString("3",0x0028,0x0002);
-   }
+   void SetWriteMode(FileMode mode)   {  WriteMode = mode;        }
    /// \brief Gets the Write Mode ( )
    FileMode GetWriteMode()            { return WriteMode;         }
 
@@ -149,13 +145,13 @@ public:
    FileType GetWriteType()            { return WriteType;         }
    /// \brief 1 : white=0, black=high value    
    void SetPhotometricInterpretationToMonochrome1() {
-                                            PhotometricInterpretation = 1;}
+                                    PhotometricInterpretation = 1;}
    /// \brief 2 : black=0, white=high value  (default)     
    void SetPhotometricInterpretationToMonochrome2() {
-                                            PhotometricInterpretation = 2;}
-
+                                    PhotometricInterpretation = 2;}
+   /// \brief 1 : white=0, black=high value  
    int GetPhotometricInterpretation() {
-                                            return PhotometricInterpretation; }    
+                                return PhotometricInterpretation; }    
     
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianness"
