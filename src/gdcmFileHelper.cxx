@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/04 14:42:33 $
-  Version:   $Revision: 1.114 $
+  Date:      $Date: 2007/07/05 10:37:53 $
+  Version:   $Revision: 1.115 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,31 +88,57 @@ fh->WriteDcmExplVR(newFileName);
 
 // ----------------------------- WARNING -------------------------
 
+
 These lines will be moved to the document-to-be 'Developer's Guide'
 
 WriteMode : WMODE_RAW / WMODE_RGB
 WriteType : ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO
+PhotometricInterpretation : MONOCHROME2 (0=black), MONOCHROME2 (0=white)
 
-fh1->Write(newFileName);
-   SetWriteFileTypeToImplicitVR() / SetWriteFileTypeToExplicitVR();
-   (modifies TransferSyntax)
+
+fh->SetWriteMode(WMODE_RAW / WMODE_RGB)
+
+fh->SetWriteType( ImplicitVR/ExplicitVR/ACR/ACR_LIBIDO/JPEG/JPEG2000)
+      
+fh->Write(newFileName);
+   CheckMandatoryElements(); // Checks existing ones / Add missing ones
+   Fix VR if unknown elements
+   SetWriteFileTypeToImplicitVR() / SetWriteFileTypeToExplicitVR(); /
+   SetWriteFileTypeToACR() / SetWriteFileTypeToJPEG() / SetWriteFileTypeToJ2K()
+      (Modifies TransferSyntax if any; Pushes to the Archives old one)
    SetWriteToRaw(); / SetWriteToRGB();
-      (modifies, when necessary : photochromatic interpretation, 
-         samples per pixel, Planar configuration, 
-         bits allocated, bits stored, high bit -ACR 24 bits-
-         Pixels element VR, pushes out the LUT )
+      (Modifies and pushes to the Archive, when necessary : photochr. interp., 
+       samples per pixel, Planar configuration, 
+       bits allocated, bits stored, high bit -ACR 24 bits-
+       Pixels element VR, pushes out the LUT )
+          SetWriteToRaw()
+             Sets Photometric Interpretation
+             DataEntry *pixel =CopyDataEntry(7fe0,0010,VR)
+             Sets VR, BinArea, Length for PixelData
+             if MONOCHROME1
+                ConvertFixGreyLevels
+             Archive->Push(photInt);
+             Archive->Push(pixel);
+             photInt->Delete();
+             pixel->Delete();
+        SetWriteToRGB()
+           if NumberOfScalarComponents==1
+              SetWriteToRaw(); return;
+           PixelReadConverter->BuildRGBImage()
+           DataEntry *pixel =CopyDataEntry(7fe0,0010,VR)
+           Archives spp, planConfig,photInt, pixel
+           Pushes out any LUT               
    CheckWriteIntegrity();
       (checks user given pixels length)
    FileInternal->Write(fileName,WriteType)
-   fp = opens file(fileName);
-   ComputeGroup0002Length( );
-   BitsAllocated 12->16
-      RemoveEntry(palettes, etc)
+      fp = opens file(fileName); // out|binary
+      ComputeGroup0002Length( );
       Document::WriteContent(fp, writetype);
+         writes Dicom File Preamble not ACR-NEMA
+         ElementSet::WriteContent(fp, writetype);
+            writes recursively all DataElements    
    RestoreWrite();
-      (moves back to the File all the archived elements)
-   RestoreWriteFileType();
-      (pushes back group 0002, with TransferSyntax)
+         (moves back to the gdcm::File all the archived elements)
 */
 
 
