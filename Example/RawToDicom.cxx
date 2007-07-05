@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/07/05 13:17:26 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,8 +61,6 @@ void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize)
    }
 }
 
-
-
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
@@ -72,18 +70,22 @@ int main(int argc, char *argv[])
    "                   fileout=outputFileName                                 ",
    "                   rows=nb of Rows                                        ",
    "                   lines=nb of Lines,                                     ",
+   "                   [frames = nb of Frames] //defaulted to 1               ",
    "                   pixeltype={8U|8S|16U|16S|32U|32S}                      ",
    "                   [{b|l}] b:BigEndian,l:LittleEndian default : l         ",
-   "                   [frames = nb of Frames] //defaulted to 1               ",
-   "                   [samples = {1|3}}       //defaulted to 1(1:Gray,3:RGB) ",
-   "                   [patientname = Patient's name]                         ",
+   "                   [samples = {1|3}}       //(1:Gray,3:RGB) defaulted to 1",
+   "                   [monochrome1]                                          ",
+   "                   [studyid = ] [patientname = Patient's name]            ",
    "                   [debug]                                                ",
    "                                                                          ",
-   "      debug      : developper wants to run the program in 'debug mode'    ",
+   "  monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)          ", 
+   "  studyUID   : *aware* user wants to add the serie                        ",
+   "                                             to an already existing study ",
+   "  debug      : developper wants to run the program in 'debug mode'        ",
    FINISH_USAGE
    
 
-   // Initialize Arguments Manager   
+   // ------------ Initialize Arguments Manager ----------------  
    GDCM_NAME_SPACE::ArgMgr *am= new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage") )
@@ -107,9 +109,22 @@ int main(int argc, char *argv[])
    int l = am->ArgMgrDefined("l");
       
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
-   
+
+   bool monochrome1 = ( 0 != am->ArgMgrDefined("monochrome1") );
+      
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
+
+   bool userDefinedStudy = am->ArgMgrDefined("studyUID");
+   const char *studyUID;
+   if (userDefinedStudy)
+      studyUID  = am->ArgMgrGetString("studyUID");  
+
+   // not described *on purpose* in the Usage !    
+   bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
+   const char *serieUID;
+   if(userDefinedSerie)
+      serieUID = am->ArgMgrGetString("serieUID");
 
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -123,6 +138,7 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
    
+ /// \TODO Deal with all the images of a directory
   
  // Read the Raw file  
    std::ifstream *Fp = new std::ifstream(inputFileName, std::ios::in | std::ios::binary);
@@ -175,7 +191,21 @@ int main(int argc, char *argv[])
       std::cout << "Wrong 'pixeltype' (" << strPixelType << ")" << std::endl;
       return 1;
    }
+ 
+    std::string strStudyUID;
+   std::string strSerieUID;
+
+   if (userDefinedStudy)
+      strSerieUID =  studyUID;
+   else
+      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    
+   if (userDefinedStudy)
+     strSerieUID =  serieUID;
+   else
+      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();  
+      
+        
    int dataSize =  nX*nY*nZ*pixelSize*samplesPerPixel;
    uint8_t *pixels = new uint8_t[dataSize];
    
@@ -184,8 +214,7 @@ int main(int argc, char *argv[])
    if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
    {  
       ConvertSwapZone(pixelSize, pixels, dataSize);   
-   }
-   
+   }   
    
 // Create an empty FileHelper
 
@@ -195,27 +224,22 @@ int main(int argc, char *argv[])
    GDCM_NAME_SPACE::File *fileToBuild = fileH->GetFile();
      
    
-   // If you want to use this program as a template to create
-   // a 'Single Study UID - Single Serie UID' file set
-   // keep the following lines out of the loop
 
    // 'Study Instance UID'
    // The user is allowed to create his own Study, 
    //          keeping the same 'Study Instance UID' for various images
    // The user may add images to a 'Manufacturer Study',
    //          adding new Series to an already existing Study
-   std::string studyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID(); 
-   fileToBuild->InsertEntryString(studyUID, 0x0020,0x000d,"UI");
+
+   fileToBuild->InsertEntryString(strStudyUID,0x0020,0x000d,"UI");  //  Study UID   
 
    // 'Serie Instance UID'
    // The user is allowed to create his own Series, 
    // keeping the same 'Serie Instance UID' for various images
    // The user shouldn't add any image to a 'Manufacturer Serie'
    // but there is no way no to prevent him for doing that
-   std::string serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();    
-   fileToBuild->InsertEntryString(serieUID, 0x0020,0x000e,"UI");   
- 
-   // end of 'keep out of loop lines  
+   
+   fileToBuild->InsertEntryString(strSerieUID,0x0020,0x000e,"UI");  //  Serie UID
    
    std::ostringstream str;
 
@@ -252,8 +276,9 @@ int main(int argc, char *argv[])
    str.str("");
    str << samplesPerPixel;
    
-// If you deal with a Serie of images, it up to you to tell gdcm,
-// for each image, what are the values of :
+// If you deal with a Serie of images, as slices of a volume,
+// it up to you to tell gdcm, for each image, what are the values of :
+// 
 // 0020 0032 DS 3 Image Position (Patient)
 // 0020 0037 DS 6 Image Orientation (Patient)
 
@@ -261,8 +286,11 @@ int main(int argc, char *argv[])
 
    if (strlen(patientName) != 0)
       fileToBuild->InsertEntryString(patientName,0x0010,0x0010, "PN"); // Patient's Name
-   
-   
+    
+   //  0=white  
+   if(monochrome1)
+      fileH->SetPhotometricInterpretationToMonochrome1();
+     
 // Set the image Pixel Data
    fileH->SetImageData(pixels,dataSize);
 
