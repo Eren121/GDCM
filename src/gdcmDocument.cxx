@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/18 15:44:52 $
-  Version:   $Revision: 1.362 $
+  Date:      $Date: 2007/07/11 12:21:01 $
+  Version:   $Revision: 1.363 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1513,8 +1513,18 @@ void Document::FindDocEntryLength( DocEntry *entry )
    uint16_t length16;       
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
    {
+   
+   // WARNING :
+   //
+   // For some images, length of UN elements is coded on 2 bytes (instead of 4)
+   // There are *not* readable !
+   // You can make a quick and dirty patch, commenting out 
+   //| vr == "UN"
+   // in the following line.
+   // (the 'straight' images will no longer be readable ...)
+   
       if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" 
-                                                           || vr == "UN" || changeFromUN == true)
+                                                          || vr == "UN" || changeFromUN == true)
       {
          changeFromUN = false;
          // The following reserved two bytes (see PS 3.5-2003, section
