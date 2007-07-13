@@ -56,7 +56,7 @@ SET(EXAMPLE_SOURCES
   WriteDicomSimple  
   WriteRead  
   WriteDicomAsJPEG2000
-  WriteDicomAsJPEG 
+  #WriteDicomAsJPEG 
   exCTPET  
   #Slice
 )
