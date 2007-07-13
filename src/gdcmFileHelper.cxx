@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/05 10:53:48 $
-  Version:   $Revision: 1.116 $
+  Date:      $Date: 2007/07/13 08:17:21 $
+  Version:   $Revision: 1.117 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,10 @@ To re-write the image, user re-uses the gdcm::FileHelper
 fh->SetImageData( userPixels, userPixelsLength);
 fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
                     // (WriteMode is set)
- 
+
+// If user wants to write the file as MONOCHROME1 (0=white)
+fh->SetPhotometricInterpretationToMonochrome1();
+
 fh->SetWriteTypeToDcmExpl();  // he wants Explicit Value Representation
                               // Little Endian is the default
                               // no other value is allowed
@@ -87,7 +90,6 @@ fh->WriteDcmExplVR(newFileName);
 
 
 // ----------------------------- WARNING -------------------------
-
 
 These lines will be moved to the document-to-be 'Developer's Guide'
 
@@ -511,7 +513,18 @@ void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
  */
 void FileHelper::SetUserData(uint8_t *inData, size_t expectedSize)
 {
-   PixelWriteConverter->SetUserData(inData, expectedSize);
+   if( WriteType == JPEG2000 )
+   {
+      PixelWriteConverter->SetCompressJPEG2000UserData(inData, expectedSize, FileInternal);
+   }
+   else if( WriteType == JPEG )
+   {
+      PixelWriteConverter->SetCompressJPEGUserData(inData, expectedSize, FileInternal);
+   }
+   else
+   {
+      PixelWriteConverter->SetUserData(inData, expectedSize);
+   }
 }
 
 /**
@@ -694,7 +707,6 @@ bool FileHelper::WriteAcr (std::string const &fileName)
  */
 bool FileHelper::Write(std::string const &fileName)
 {
-
    CheckMandatoryElements(); //called once, here !
    
    bool flag = false;
@@ -716,6 +728,7 @@ bool FileHelper::Write(std::string const &fileName)
    // Let's just *dream* about it; *never* trust a user !
    // We turn to Implicit VR if at least the VR of one element is unknown.
    
+   /// \TODO : better we put vr=UN for undocumented Shadow Groups !
  
          e = FileInternal->GetFirstEntry();
          while (e != 0)
@@ -758,7 +771,7 @@ bool FileHelper::Write(std::string const &fileName)
          SetWriteFileTypeToJPEG();
          break;
 
-       case JPEG2000:
+      case JPEG2000:
          SetWriteFileTypeToJPEG2000();
          break;
    }
@@ -793,16 +806,17 @@ bool FileHelper::Write(std::string const &fileName)
    }
 
    bool check = CheckWriteIntegrity(); // verifies length
-   if (WriteType == JPEG || WriteType == JPEG2000) check = true;
+   if (WriteType == JPEG || WriteType == JPEG2000) 
+      check = true;
+
    if (check)
    {
       check = FileInternal->Write(fileName,WriteType);
    }
 
-   RestoreWrite(); 
+   RestoreWrite();
   // RestoreWriteFileType();
   // RestoreWriteMandatory();
-   
 
    // --------------------------------------------------------------
    // Special Patch to allow gdcm to re-write ACR-LibIDO formated images
@@ -818,7 +832,7 @@ bool FileHelper::Write(std::string const &fileName)
 //-----------------------------------------------------------------------------
 // Protected
 /**
- * \brief  * \brief Verifies the size of the user given PixelData
+ * \brief Verifies the size of the user given PixelData
  * @return true if check is successfull
  */
 bool FileHelper::CheckWriteIntegrity()
@@ -866,7 +880,6 @@ bool FileHelper::CheckWriteIntegrity()
             break;
       }
    }
-
    return true;
 }
 
@@ -922,7 +935,7 @@ void FileHelper::SetWriteToRaw()
      
       if (!FileInternal->HasLUT() && GetPhotometricInterpretation() == 1)
       {
-         ConvertFixGreyLevels( pixel->GetBinArea(), pixel->GetLength() );  
+          ConvertFixGreyLevels( pixel->GetBinArea(), pixel->GetLength() );
       }      
 
       Archive->Push(photInt);
@@ -1032,7 +1045,6 @@ void FileHelper::SetWriteToRGB()
  */ 
 void FileHelper::RestoreWrite()
 {
-
    Archive->Restore(0x0028,0x0002);
    Archive->Restore(0x0028,0x0004);
    
@@ -1090,14 +1102,14 @@ void FileHelper::SetWriteFileTypeToACR()
    Archive->Push(0x0002,0x0102);
 }
 
- /**
-  * \brief Sets in the File the TransferSyntax to 'JPEG2000'
-  */
+/**
+ * \brief Sets in the File the TransferSyntax to 'JPEG2000'
+ */
 void FileHelper::SetWriteFileTypeToJPEG2000()
 {
    std::string ts = Util::DicomString(
    Global::GetTS()->GetSpecialTransferSyntax(TS::JPEG2000Lossless) );
-   
+
    DataEntry *tss = CopyDataEntry(0x0002,0x0010,"UI");
    tss->SetString(ts);
 
@@ -1107,11 +1119,11 @@ void FileHelper::SetWriteFileTypeToJPEG2000()
 
 /**
  * \brief Sets in the File the TransferSyntax to 'JPEG'
- */ 
+ */
 void FileHelper::SetWriteFileTypeToJPEG()
 {
-   std::string ts = Util::DicomString( 
-      Global::GetTS()->GetSpecialTransferSyntax(TS::JPEGBaselineProcess1) );
+   std::string ts = Util::DicomString(
+      Global::GetTS()->GetSpecialTransferSyntax(TS::JPEGLosslessProcess14_1) );
 
    DataEntry *tss = CopyDataEntry(0x0002,0x0010,"UI");
    tss->SetString(ts);
@@ -1159,9 +1171,6 @@ void FileHelper::SetWriteToLibido()
    if ( oldRow && oldCol )
    {
       std::string rows, columns; 
-
-      //DataEntry *newRow=DataEntry::New(oldRow->GetDictEntry());
-      //DataEntry *newCol=DataEntry::New(oldCol->GetDictEntry());
       
       DataEntry *newRow=DataEntry::New(0x0028, 0x0010, "US");
       DataEntry *newCol=DataEntry::New(0x0028, 0x0011, "US");
@@ -1238,7 +1247,6 @@ DataEntry *FileHelper::CopyDataEntry(uint16_t group, uint16_t elem,
 
    if ( oldE )
    {
-      //newE = DataEntry::New(oldE->GetDictEntry());
       newE = DataEntry::New(group, elem, vr);
       newE->Copy(oldE);
    }
@@ -1296,9 +1304,9 @@ We have to deal with 4 *very* different cases :
    FILTERED_IMAGE
 -3) user created a new image, using a set of existing images (eg MIP, MPR, cartography image)
    CREATED_IMAGE
--4) user modified/added some tags *without processing* the pixels (anonymization..
+-4) user modified/added some tags *without processing* the pixels (anonymization...)
    UNMODIFIED_PIXELS_IMAGE
--Probabely some more to be added  
+-Probabely some more to be added.  
  
 gdcm::FileHelper::CheckMandatoryElements() deals automatically with these cases.
 
@@ -1435,20 +1443,20 @@ void FileHelper::CheckMandatoryElements()
   
    //0002 0000 UL 1 Meta Group Length
    //0002 0001 OB 1 File Meta Information Version
-   //0002 0002 UI 1 Media Stored SOP Class UID
-   //0002 0003 UI 1 Media Stored SOP Instance UID
+   //0002 0002 UI 1 Media Storage SOP Class UID
+   //0002 0003 UI 1 Media Storage SOP Instance UID
    //0002 0010 UI 1 Transfer Syntax UID
    //0002 0012 UI 1 Implementation Class UID
    //0002 0013 SH 1 Implementation Version Name
    //0002 0016 AE 1 Source Application Entity Title
    //0002 0100 UI 1 Private Information Creator
    //0002 0102 OB 1 Private Information
- 
+
    // Push out 'ACR-NEMA-special' entries, if any
       Archive->Push(0x0008,0x0001); // Length to End
       Archive->Push(0x0008,0x0010); // Recognition Code
-      Archive->Push(0x0028,0x0005); // Image Dimension  
-  
+      Archive->Push(0x0028,0x0005); // Image Dimension
+
    // Create them if not found
    // Always modify the value
    // Push the entries to the archive.
@@ -1691,17 +1699,17 @@ is only from (0020,0030) and (0020,0035)
       CopyMandatoryEntry(0x0020, 0x0032,imagePositionRet,"DS");
       Archive->Push(0x0020,0x0030); 
       CopyMandatoryEntry(0x0020, 0x0037,imageOrientationRet,"DS");
-      Archive->Push(0x0020,0x0035);        
-   }        
+      Archive->Push(0x0020,0x0035);
+   }
 */
-    
+
    // Samples Per Pixel (type 1) : default to grayscale 
    CheckMandatoryEntry(0x0028,0x0002,"1","US");
 
    // --- Check UID-related Entries ---
  
    // At the end, not to overwrite the original ones,
-   // needed by 'Referenced SOP Instance UID', 'Referenced SOP Class UID'   
+   // needed by 'Referenced SOP Instance UID', 'Referenced SOP Class UID'
    // 'SOP Instance UID'  
    CopyMandatoryEntry(0x0008,0x0018,sop,"UI");
 
@@ -1713,7 +1721,7 @@ is only from (0020,0030) and (0020,0035)
        // See PS 3.3, Page 408
    
        // DV = Digitized Video
-       // DI = Digital Interface   
+       // DI = Digital Interface 
        // DF = Digitized Film
        // WSD = Workstation
        // SD = Scanned Document
@@ -1730,7 +1738,7 @@ is only from (0020,0030) and (0020,0035)
    
    }
 */
-           
+  
    // ---- The user will never have to take any action on the following ----
 
    // new value for 'SOP Instance UID'
@@ -1739,7 +1747,7 @@ is only from (0020,0030) and (0020,0035)
    // Instance Creation Date
    const std::string &date = Util::GetCurrentDate();
    CopyMandatoryEntry(0x0008,0x0012,date,"DA");
- 
+
    // Instance Creation Time
    const std::string &time = Util::GetCurrentTime();
    CopyMandatoryEntry(0x0008,0x0013,time,"TM");
@@ -1787,7 +1795,7 @@ is only from (0020,0030) and (0020,0035)
 
    // Instance Number
    CheckMandatoryEntry(0x0020,0x0013,"","IS");
-   
+
    // Patient Orientation
    // Can be computed from (0020|0037) :  Image Orientation (Patient)
    GDCM_NAME_SPACE::Orientation *o = GDCM_NAME_SPACE::Orientation::New();
@@ -1795,7 +1803,7 @@ is only from (0020,0030) and (0020,0035)
    o->Delete();
    if (ori != "\\" && ori != GDCM_UNFOUND)
       CheckMandatoryEntry(0x0020,0x0020,ori,"CS");
-   else   
+   else
       CheckMandatoryEntry(0x0020,0x0020,"","CS");
 
    // Default Patient Position to HFS
@@ -1842,7 +1850,7 @@ is only from (0020,0030) and (0020,0035)
       CheckMandatoryEntry(it->first, 0x0000, "0"); 
   }    
   // Third stage : update all 'zero level' groups length
-*/ 
+*/
 
 
    if (PhotometricInterpretation == 1)
@@ -1918,7 +1926,6 @@ void FileHelper::RestoreWriteMandatory()
    Archive->Restore(0x0020,0x000e);
 }
 
-
 /**
  * \brief   CallStartMethod
  */
@@ -1955,12 +1962,12 @@ void FileHelper::Initialize()
 {
    UserFunction = 0;
    ContentType = USER_OWN_IMAGE;
-   
+
    WriteMode = WMODE_RAW;
    WriteType = ExplicitVR;
    
    PhotometricInterpretation = 2; // Black = 0
-   
+
    PixelReadConverter  = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
    Archive = new DocEntryArchive( FileInternal );
@@ -1994,7 +2001,6 @@ uint8_t *FileHelper::GetRaw()
    }
    return raw;
 }
-
 
 /**
  * \brief Deal with Grey levels i.e. re-arange them
@@ -2209,9 +2215,7 @@ void RescaleFunction(TBuffer* buffer, TSource *source,
       case 1:      *buffer++ = (TBuffer)(*source++);
                  }  while (--n > 0);
       }
-    }
-    
-    
+   }   
 }
 
 

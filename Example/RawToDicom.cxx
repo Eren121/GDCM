@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/05 13:17:26 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/07/13 08:17:20 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
       return 1;
    }
  
-    std::string strStudyUID;
+   std::string strStudyUID;
    std::string strSerieUID;
 
    if (userDefinedStudy)
@@ -222,8 +222,6 @@ int main(int argc, char *argv[])
  
  // Get the (empty) image header.  
    GDCM_NAME_SPACE::File *fileToBuild = fileH->GetFile();
-     
-   
 
    // 'Study Instance UID'
    // The user is allowed to create his own Study, 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2007/07/13 08:17:22 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ public:
 
    //BTX
    
-   /// \TODO fix possible problems around VTK pipelining
+   /// \todo fix possible problems around VTK pipelining
    
    void SetUserFunction (VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
                         { UserFunction = userFunc; } 

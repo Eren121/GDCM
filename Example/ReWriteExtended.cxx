@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWriteExtended.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/07/13 08:17:20 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
    "        noshadow : user doesn't want to load Private groups (odd number)",
    "        noseq    : user doesn't want to load Sequences                  ",
    "        rgb      : user wants to transform LUT (if any) to RGB pixels   ",
+   "        warning  : developper wants to run the program in 'warning mode'",
    "        debug    : developper wants to run the program in 'debug mode'  ",
    FINISH_USAGE
 
@@ -90,11 +91,10 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
  
+   if (am->ArgMgrDefined("warning"))
+      GDCM_NAME_SPACE::Debug::WarningOn(); 
  
- 
- 
- // ======================================================================= 
-   bool fail = false;
+    bool fail = false;
       
    int *boundRoiVal;
    bool roi = false; 
@@ -113,11 +113,9 @@ int main(int argc, char *argv[])
         roi = true;   
    }
   
-   int beg = am->ArgMgrGetInt("firstFrame",0);
-   int end = am->ArgMgrGetInt("lastFrame",0);
- // =======================================================================
- 
- 
+   int beg = am->ArgMgrGetInt("firstFrame",-1);
+   int end = am->ArgMgrGetInt("lastFrame",-1);
+  
    // if unused Params we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -146,8 +144,7 @@ int main(int argc, char *argv[])
        f->Delete();
        return 0;
    }
-
-
+   
    //std::cout <<std::endl <<" dataSize " << dataSize << std::endl;
    int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
@@ -173,19 +170,14 @@ int main(int argc, char *argv[])
    transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
              << std::endl;
-
-
-   
+  
    GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    void *imageData; 
    int dataSize;
  
- 
-  // ======================================================================= 
     int subImDimX = nX;
     int subImDimY = nY;
     
-
     if (roi)
     {  
     std::cout << " " << boundRoiVal[0] << " " <<  boundRoiVal[1] << " " << boundRoiVal[2] << " " <<
@@ -255,13 +247,11 @@ int main(int argc, char *argv[])
       std::cout << "Was unable to read pixels " << std::endl;
    }
 
-
    // We trust user. (just an example; *never* trust an user !)  
    fh->SetContentType((GDCM_NAME_SPACE::ImageContentType)filecontent);
    
    /// \todo Here, give the detail of operations a 'decent' user should perform,
    ///       according to what *he* wants to do.
-
 
    // an user shouldn't add images to a 'native' serie.
    // He is allowed to create his own Serie, within a 'native' Study :
@@ -355,4 +345,3 @@ int main(int argc, char *argv[])
    fh->Delete();
    return 0;
 }
-

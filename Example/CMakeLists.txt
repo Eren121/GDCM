@@ -7,7 +7,8 @@ SET(EXAMPLE_SOURCES
   #names starting with 'ex' are examples  
   #Txt2Mat  
   #exDicomRTStructSetFile  
-  #exExtractCSA  
+  #exExtractCSA
+  Dense2007ToDicom  
   exReadPapyrus  
   exReadWriteFile  
   exColorToRGB  
@@ -38,7 +39,7 @@ SET(EXAMPLE_SOURCES
   PatchHeader  
   ToInTag  
   ReWrite  
-  ReWriteExtended  
+  #ReWriteExtended  
   RawToDicom  
   TestValidate  
   ToMRIregister
@@ -54,7 +55,8 @@ SET(EXAMPLE_SOURCES
   Volume2Dicom  
   WriteDicomSimple  
   WriteRead  
-  #WriteDicomAsJPEG  
+  WriteDicomAsJPEG2000
+  WriteDicomAsJPEG 
   exCTPET  
   #Slice
 )
