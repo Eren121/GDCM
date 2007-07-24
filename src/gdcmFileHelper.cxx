@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/13 08:17:21 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2007/07/24 16:17:04 $
+  Version:   $Revision: 1.118 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -728,13 +728,15 @@ bool FileHelper::Write(std::string const &fileName)
    // Let's just *dream* about it; *never* trust a user !
    // We turn to Implicit VR if at least the VR of one element is unknown.
    
-   /// \TODO : better we put vr=UN for undocumented Shadow Groups !
- 
+   // Better we let DocEntry::WriteContent to put vr=UN for undocumented Shadow Groups !
+
+/*
          e = FileInternal->GetFirstEntry();
          while (e != 0)
          {
             if (e->GetVR() == "  ")  
             {
+
                SetWriteTypeToDcmImplVR();
                SetWriteFileTypeToImplicitVR();
                flag = true;
@@ -748,8 +750,10 @@ bool FileHelper::Write(std::string const &fileName)
             SetWriteFileTypeToExplicitVR();
          }
          break;
+*/
 
-         SetWriteFileTypeToExplicitVR(); // to see JPRx
+         SetWriteFileTypeToExplicitVR();
+
   break;
       case ACR:
       case ACR_LIBIDO:

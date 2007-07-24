@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2007/07/24 16:17:04 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,14 +125,25 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
       uint16_t zero = 0;
       uint16_t shortLgr = (uint16_t)lgth;
 
+/*
       if( IsVRUnknown() )
-      {
+      { 
          // GDCM_VRUNKNOWN was stored in the Entry VR;
          // deal with Entry as if TS were Implicit VR
          binary_write(*fp, lgth);
       }
       else
+*/
+      if( IsVRUnknown() )  
       {
+      // if VR was not set, we set it to "UN"
+      // (FileHelper::Write has no longer to switch to ImplicitVR 
+      // when undocumented VR DataElements exist!)
+         SetVR("UN");
+         vr=GetVR();
+      }      
+     
+      //{
          binary_write(*fp, vr.str());
          // See PS 3.5-2004 page 33, 36                  
          if ( (vr == "SQ") || (vr == "OB") || (vr == "OW") || (vr == "OF") 
@@ -160,7 +171,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
          {
             binary_write(*fp, shortLgr);
          }
-      }
+      //}
    } 
    else // IMPLICIT VR 
    { 
