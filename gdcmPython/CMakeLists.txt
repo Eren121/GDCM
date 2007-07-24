@@ -68,6 +68,9 @@ IF(GDCM_VTK)
     IF(NOT VTK_WRAP_PYTHON)
       MESSAGE(FATAL_ERROR "Can't build gdcm python wrapping if VTK_WRAP_PYTHON is OFF" )
     ENDIF(NOT VTK_WRAP_PYTHON)
+    IF("${VTK_MAJOR_VERSION}" GREATER 4)
+      INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+    ENDIF("${VTK_MAJOR_VERSION}" GREATER 4)
     VTK_WRAP_PYTHON2(vtkgdcmPython gdcmWrapSOURCES
                    ${vtkgdcmPython_la_SOURCES})
     # The C++ files must be made into a C++ library
@@ -76,10 +79,17 @@ IF(GDCM_VTK)
     #SET_TARGET_PROPERTIES(${foobar} PROPERTIES PREFIX "")
 
     #GET_TARGET_PROPERTY(swig_gdcm_fullpath "${SWIG_MODULE_gdcm_REAL_NAME}" LOCATION)
-    TARGET_LINK_LIBRARIES (vtkgdcmPython
-                           vtkgdcm
-                           vtkCommonPython
-                           vtkIOPython)
+    IF("${VTK_MAJOR_VERSION}" LESS 5)
+      TARGET_LINK_LIBRARIES (vtkgdcmPython
+                             vtkgdcm
+                             vtkCommonPython
+                             vtkIOPython)
+    ELSE("${VTK_MAJOR_VERSION}" LESS 5)
+      TARGET_LINK_LIBRARIES (vtkgdcmPython
+                             vtkgdcm
+                             vtkCommonPythonD
+                             vtkIOPythonD)
+    ENDIF("${VTK_MAJOR_VERSION}" LESS 5)
     INSTALL_TARGETS(/lib/gdcm/ vtkgdcmPython)
 
   ENDIF (GDCM_WRAP_PYTHON)
