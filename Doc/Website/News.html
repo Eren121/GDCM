@@ -276,7 +276,6 @@ new way :
 -->void FileHelper::CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
                                        const VRKey &vr = GDCM_VRUNKNOWN);
 </pre>
-CopyMandatoryEntry(0x0002,0x0003,sop)
 <LI> New features :
 <pre>
 For multivaluated numeric DataEntries
@@ -286,8 +285,19 @@ For multivaluated numeric DataEntries
 
 For converting 'Decimal String'
 -->bool GetDSValue(std::vector &lt;double&gt; &valueVector);  
-      </pre>
-      <LI>
+</pre>
+<LI> Avoid too many source file modifications from gdcm1.2 to gdcm1.3
+<pre>
+use :
+
+#define ValEntry              DataEntry
+
+#define GetEntryValue(g,e)    GetEntryString(g,e)
+#define GetValEntry(g,e)      GetDataEntry(g,e)
+#define GetValue()            GetString()
+#define InsertValEntry(a,b,c) InsertEntryString(a,b,c) // warning mind the VR!
+
+</pre>
    </UL> 
       
    <LI> Bug fixes
