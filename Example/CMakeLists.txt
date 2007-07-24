@@ -13,7 +13,7 @@ SET(EXAMPLE_SOURCES
   exReadWriteFile  
   exColorToRGB  
   exGrey2RGB  
-  exGC  
+  exGC
   exImageLighten  
   #exInLine  
   exOverlaysACR  
@@ -54,9 +54,12 @@ SET(EXAMPLE_SOURCES
   FlatHashTablePrint  
   Volume2Dicom  
   WriteDicomSimple  
-  WriteRead  
-  WriteDicomAsJPEG2000
-  #WriteDicomAsJPEG 
+
+  WriteRead 
+  ## Troubles on Windows ! 
+  #WriteDicomAsJPEG2000
+  #WriteDicomAsJPEG
+
   exCTPET  
   #Slice
 )
