@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.115 $
+  Date:      $Date: 2007/07/25 10:35:20 $
+  Version:   $Revision: 1.116 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1351,7 +1351,10 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    else
    {
       RGBSize = RawSize;
+      
    }
+   RawSize += RawSize%2;
+   RGBSize += RGBSize%2;
 }
 
 /// Allocates room for RGB Pixels
