@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/04 10:43:19 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2007/07/25 13:15:14 $
+  Version:   $Revision: 1.28 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,14 +56,14 @@ int main(int argc, char *argv[])
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
-      return 0;
+      return 1;
    }
    char *fileName = am->ArgMgrWantString("filein",usage);
    if ( fileName == NULL )
    {
       std::cout << "'filein= ...' is mandatory" << std::endl;
       delete am;
-      return 0;
+      return 1;
    }
 
    char *outputFileName = am->ArgMgrWantString("fileout",usage);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
    {
       std::cout << "'fileout= ...' is mandatory" << std::endl;
       delete am;
-      return 0;
+      return 1;
    }
 
    const char *mode = am->ArgMgrGetString("mode","X");
@@ -157,14 +157,14 @@ int main(int argc, char *argv[])
       if ( !res )
    {
       f->Delete();
-      return 0;
+      return 1;
    }
 
    if (!f->IsReadable())
    {
        std::cerr << "Sorry, not a Readable DICOM / ACR File"  <<std::endl;
        f->Delete();
-       return 0;
+       return 1;
    }
    
    GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
