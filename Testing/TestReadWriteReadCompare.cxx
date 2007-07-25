@@ -1,19 +1,19 @@
 /*=========================================================================
-                                                                                
+
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/25 15:47:20 $
-  Version:   $Revision: 1.30 $
-                                                                                
+  Date:      $Date: 2007/07/25 16:14:33 $
+  Version:   $Revision: 1.31 $
+
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
   http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
-                                                                                
+
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-                                                                                
+
 =========================================================================*/
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
@@ -47,14 +47,14 @@ int CompareInternal(std::string const &filename, std::string const &output)
    uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
           // GetImageData or if he wants to GetImageDataRaw
-          // (even if we do it by setting a flag, he will have to decide) 
+          // (even if we do it by setting a flag, he will have to decide)
 
    //filehelper->SetImageData(imageData, dataSize);
-   
+
    filehelper->SetWriteModeToRGB();
    filehelper->WriteDcmExplVR( output );
    std::cout << "2...";
- 
+
    //////////////// Step 3:
    GDCM_NAME_SPACE::File *fileout = GDCM_NAME_SPACE::File::New();
    fileout->SetFileName( output );
@@ -87,11 +87,11 @@ int CompareInternal(std::string const &filename, std::string const &output)
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
-         << "X: " << file->GetXSize() << " # " 
+         << "X: " << file->GetXSize() << " # "
                   << reread->GetFile()->GetXSize() << " | "
-         << "Y: " << file->GetYSize() << " # " 
+         << "Y: " << file->GetYSize() << " # "
                   << reread->GetFile()->GetYSize() << " | "
-         << "Z: " << file->GetZSize() << " # " 
+         << "Z: " << file->GetZSize() << " # "
                   << reread->GetFile()->GetZSize() << std::endl;
       file->Delete();
       filehelper->Delete();
@@ -104,8 +104,8 @@ int CompareInternal(std::string const &filename, std::string const &output)
    // beware of odd length Pixel Element!
    int dataSizeFixed = dataSize + dataSize%2;
    int dataSizeWrittenFixed = dataSizeWritten + dataSizeWritten%2;
-   
-   if (dataSizeFixedFixed != dataSizeWrittenFixed)
+
+   if (dataSizeFixed != dataSizeWrittenFixed)
    {
       std::cout << "Failed" << std::endl
          << "        Pixel areas lengths differ: "
