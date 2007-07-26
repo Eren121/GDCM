@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:05 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2007/07/26 09:25:38 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -542,7 +542,9 @@ int InternalTest(std::string const &filename,
       }
 
       // Test the data size
-      if (testedDataSize != referenceDataSize)
+      // *actual* image length may differ to 1 with Pixel Data Element length!
+      if ((testedDataSize+testedDataSize%2) !=
+                                      (referenceDataSize+referenceDataSize%2) )
       {
          std::cout << " Failed" << std::endl
                    << "        pixel ("
@@ -553,7 +555,8 @@ int InternalTest(std::string const &filename,
                    << "        Image size: ("
                    << tested->GetFile()->GetXSize() << ","
                    << tested->GetFile()->GetYSize() << ","
-                   << tested->GetFile()->GetZSize() << ")"
+                   << tested->GetFile()->GetZSize() << ") nb of scalar components "
+                   << tested->GetFile()->GetNumberOfScalarComponents()
                    << std::endl;
          tested->Delete();
          delete reference;
@@ -562,8 +565,14 @@ int InternalTest(std::string const &filename,
       }
 
       // Test the data content
+      int length = tested->GetFile()->GetXSize()*tested->GetFile()->GetYSize()*tested->GetFile()->GetZSize()
+                  *reference->GetScalarSize()*tested->GetFile()->GetNumberOfScalarComponents();
+
+      // *actual* image length may differ to 1 with Pixel Data Element length!
+      if (length != testedDataSize)
+         std::cout <<"--------------------length " << length << " != testedDataSize " << testedDataSize << std::endl;
       if ( memcmp(testedImageData, referenceImageData,
-                           testedDataSize) != 0 )
+                           length/*testedDataSize*/) != 0 )
       {
          std::string ts  = tested->GetFile()->GetTransferSyntax();
 
