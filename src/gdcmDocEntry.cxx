@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/24 16:17:04 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ DocEntry::~DocEntry()
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
-void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
+void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMetaElements)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
@@ -103,7 +103,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype)
    binary_write( *fp, elem);  //element number
 
    // Dicom V3 group 0x0002 is *always* Explicit VR !
-   if ( filetype == ExplicitVR || filetype == JPEG || filetype == JPEG2000 || group == 0x0002 )
+   if ( filetype == ExplicitVR || filetype == JPEG || filetype == JPEG2000 || (group == 0x0002 && insideMetaElements) )
    {
 // ----------- Writes the common part : the VR + the length 
   
@@ -321,8 +321,11 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    s << "[" << vr  << "] ";
 
    std::string name;
-   if ( GetElement() == 0x0000 )
+   uint16_t e = GetElement();
+   if ( e == 0x0000 )
       name = "Group Length";
+   else if ( GetGroup()%2 == 1 && ( e >= 0x0010 && e <= 0x00ff ) )
+      name = "Private Creator";
    else
    {
       name = GetName();

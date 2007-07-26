@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -80,7 +80,7 @@ SeqEntry::~SeqEntry()
  * @param fp pointer to an already open file
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
-void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
+void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype, bool dummy)
 {
    uint16_t seq_term_gr = 0xfffe;
    uint16_t seq_term_el = 0xe0dd;
@@ -89,13 +89,13 @@ void SeqEntry::WriteContent(std::ofstream *fp, FileType filetype)
    // ignore 'Zero length' Sequences
    if ( GetReadLength() == 0 )
       return;
-
-   DocEntry::WriteContent(fp, filetype);
+   // false : we are not in MetaElements
+   DocEntry::WriteContent(fp, filetype, false);
    for(ListSQItem::iterator cc  = Items.begin();
                             cc != Items.end();
                           ++cc)
-   {        
-      (*cc)->WriteContent(fp, filetype);
+   {   
+      (*cc)->WriteContent(fp, filetype, false);
    }
    
    // we force the writting of a Sequence Delimitation item

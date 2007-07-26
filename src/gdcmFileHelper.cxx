@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/24 16:17:04 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.119 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2094,7 +2094,7 @@ void FileHelper::ConvertFixGreyLevels(uint8_t *raw, size_t rawSize)
 
 //-----------------------------------------------------------------------------
 /**
- * \brief   Prints the common part of DataEntry, SeqEntry
+ * \brief   Prints the FileInternal + info on PixelReadConvertor
  * @param   os ostream we want to print in
  * @param indent (unused)
  */

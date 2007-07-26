@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.77 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,18 +49,32 @@ ElementSet::~ElementSet()
   * @param fp ofstream to write to  
   * @param filetype    ExplicitVR/ImplicitVR/ACR/ACR_LIBIDO/JPEG/JPEG2000/...
   */ 
-void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
+void ElementSet::WriteContent(std::ofstream *fp, FileType filetype, bool dummy)
 {
+   bool insideMetaElements     = false;
+   bool yetOutsideMetaElements = false;
+   
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
                                      i != TagHT.end(); 
                                     ++i)
-   { 
+   {
+        int group = (i->second)->GetGroup();
+       
+       if (yetOutsideMetaElements==false && group == 0x0002)
+          insideMetaElements = true;
+    
+       if (insideMetaElements == true && group != 0x0002)
+       {
+          yetOutsideMetaElements = true;
+          insideMetaElements     = false;
+       }
+   
        // depending on the gdcm::Document type 
        // (gdcm::File; gdcm::DicomDir, (more to come ?)
        // some groups *cannot* be present.
        // We hereby protect gdcm for writting stupid things
        // if they were found in the original document. 
-       if ( !MayIWrite( (i->second)->GetGroup() ) ) 
+       if ( !MayIWrite( group ) )
           continue;
   
       // Skip 'Group Length' element, since it may be wrong.
@@ -74,7 +88,8 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype)
              ||( (filetype == ACR || filetype == ACR_LIBIDO ) && (i->second)->GetGroup() == 0x0008 ) )
         )
        {
-             i->second->WriteContent(fp, filetype);
+             // There are DocEntries, written recursively
+             i->second->WriteContent(fp, filetype, insideMetaElements );
        }             
    } 
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/04 13:40:01 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -544,13 +544,15 @@ void DataEntry::Copy(DocEntry *doc)
 }
 
 /**
- * \brief   Writes the 'value' area of a DataEntry
+ * \brief   Writes the 'common part' + the 'value' area of a DataEntry
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
-void DataEntry::WriteContent(std::ofstream *fp, FileType filetype)
+void DataEntry::WriteContent(std::ofstream *fp, FileType filetype, 
+                                                      bool insideMetaElements)
 { 
-   DocEntry::WriteContent(fp, filetype);
+   // writes the 'common part'
+   DocEntry::WriteContent(fp, filetype, insideMetaElements);
 
    if ( GetGroup() == 0xfffe )
    {

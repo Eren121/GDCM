@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,8 @@ class GDCM_EXPORT DocEntry : public RefCounter
 
 public:
    virtual void Print (std::ostream &os = std::cout, std::string const &indent = ""); 
-   virtual void WriteContent(std::ofstream *fp, FileType filetype);
+   virtual void WriteContent(std::ofstream *fp, FileType filetype, 
+                             bool insideMetaElements);
 
    /// \brief  Gets the DicEntry of the current Dicom entry
    /// @return The DicEntry of the current Dicom entry

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.193 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.194 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -492,7 +492,7 @@ bool DicomDir::Write(std::string const &fileName)
    binary_write( *fp, "DICM");
  
    DicomDirMeta *ptrMeta = GetMeta();
-   ptrMeta->WriteContent(fp, ExplicitVR);
+   ptrMeta->WriteContent(fp, ExplicitVR, true);
    
    // force writing 0004|1220 [SQ ], that CANNOT exist within DicomDirMeta
    for(i=0;i<6;++i)
@@ -504,7 +504,7 @@ bool DicomDir::Write(std::string const &fileName)
                                      cc != Patients.end();
                                    ++cc )
    {
-      (*cc)->WriteContent( fp, ExplicitVR );
+      (*cc)->WriteContent( fp, ExplicitVR, false );
    }
    
    // force writing Sequence Delimitation Item

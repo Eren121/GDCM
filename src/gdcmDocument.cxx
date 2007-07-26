@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/11 12:21:01 $
-  Version:   $Revision: 1.363 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.364 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -722,7 +722,7 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
     * --> We don't write the element 0x0000 (group length)
     */
 
-   ElementSet::WriteContent(fp, filetype); // This one is recursive
+   ElementSet::WriteContent(fp, filetype, false); // This one is recursive
 }
 
 // -----------------------------------------
@@ -2219,7 +2219,7 @@ DocEntry *Document::ReadNextDocEntry()
    changeFromUN = false;
    CurrentGroup = GetInt16();
    CurrentElem  = GetInt16();
-   
+      
    // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
    {
@@ -2244,10 +2244,10 @@ DocEntry *Document::ReadNextDocEntry()
          realVR = "UL";
       }
 
-      // Commented out in order not to generate 'Shadow Groups' where some 
+      // Was commented out in order not to generate 'Shadow Groups' where some 
       // Data Elements are Explicit VR and some other ones Implicit VR
-      // (Stupid MatLab DICOM Reader couldn't read gdcm-written images)
-      /*
+      // -> Better we fix the problem at Write time
+     
       else if (CurrentGroup%2 == 1 &&  
                                (CurrentElem >= 0x0010 && CurrentElem <=0x00ff ))
       {  
@@ -2255,7 +2255,7 @@ DocEntry *Document::ReadNextDocEntry()
       // (gggg-0010->00FF where gggg is odd) attributes have to be LO
          realVR = "LO";
       }
-      */
+      
       else
       {
          DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);//only when ImplicitVR

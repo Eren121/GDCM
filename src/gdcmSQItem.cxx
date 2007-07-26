@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.86 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,7 +54,8 @@ SQItem::~SQItem()
  * @param fp     file pointer to an already open file. 
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
-void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
+void SQItem::WriteContent(std::ofstream *fp, FileType filetype, 
+                                                     bool insideMetaElements)
 {
    int j;
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
@@ -87,8 +88,8 @@ void SQItem::WriteContent(std::ofstream *fp, FileType filetype)
                  // --> makes no difference since the only bugged file we have
                  // contains 'impossible tag' fffe|0000 in last position !                            
       }
-
-      (*it)->WriteContent(fp, filetype);
+      // false : we are not in MetaElements
+      (*it)->WriteContent(fp, filetype, false);
    }
       
     //we force the writting of an 'Item Delimitation' item

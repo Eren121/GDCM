@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2007/07/26 08:36:49 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,8 +36,8 @@ class DictEntry;
 //-----------------------------------------------------------------------------
 /**
  * \brief
- * \ref DocEntrySet is an abstract base class for \ref ElementSet
- * and \ref SQItem which are both containers for DocEntries.
+ * \ref DocEntrySet is an abstract base class for \ref ElementSet, \ref SQItem
+ *  which are both containers for DocEntries.
  *  - \ref ElementSet is based on the STL map<> container
  * (see \ref ElementSet::TagHT)
  *  - \ref SQItem is based on an STL list container (see \ref ListDocEntry).
@@ -64,7 +64,8 @@ class GDCM_EXPORT DocEntrySet : public RefCounter
 
 public:
    /// \brief write any type of entry to the entry set
-   virtual void WriteContent (std::ofstream *fp, FileType filetype) = 0;
+   virtual void WriteContent (std::ofstream *fp, FileType filetype,
+                                                 bool insideMetaElements) = 0;
 
    /// \brief Remove all Entry of the current set
    virtual void ClearEntry() = 0;
