@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/05 10:53:48 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2007/07/27 21:21:48 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -184,6 +184,8 @@ protected:
    FileHelper( File *header );
    ~FileHelper();
 
+   /// \todo move all those 'protected' methods to 'privete'
+   ///       since FileHelper is not derived in anything!
    bool CheckWriteIntegrity();
 
    void SetWriteToRaw();

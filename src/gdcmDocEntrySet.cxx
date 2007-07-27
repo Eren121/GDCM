@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.74 $
+  Date:      $Date: 2007/07/27 21:21:48 $
+  Version:   $Revision: 1.75 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -417,18 +417,16 @@ bool DocEntrySet::CheckIfEntryExist(uint16_t group, uint16_t elem )
 
 /**
  * \brief   Build a new DataEntry from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
  * @param   group Group number   of the new Entry
  * @param   elem  Element number of the new Entry
  * @param   vr    V(alue) R(epresentation) of the new Entry 
  * \remarks The user of this method must destroy the DataEntry when unused
  */
-DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
+DataEntry *DocEntrySet::NewDataEntry(uint16_t group, uint16_t elem,
                                      VRKey const &vr) 
 {
 
-   DataEntry *newEntry = DataEntry::New(group,elem,vr);
+   DataEntry *newEntry = DataEntry::New(group, elem, vr);
    if (!newEntry) 
    {
       gdcmWarningMacro( "Failed to allocate DataEntry for ("
@@ -440,8 +438,6 @@ DataEntry *DocEntrySet::NewDataEntry(uint16_t group,uint16_t elem,
 
 /**
  * \brief   Build a new SeqEntry from all the low level arguments. 
- *          Check for existence of dictionary entry, and build
- *          a default one when absent.
  * @param   group Group   number of the new Entry
  * @param   elem  Element number of the new Entry
  * \remarks The user of this method must destroy the SeqEntry when unused
@@ -451,7 +447,7 @@ SeqEntry* DocEntrySet::NewSeqEntry(uint16_t group, uint16_t elem)
    //DictEntry *dictEntry = GetDictEntry(group, elem, "SQ");
 
    //SeqEntry *newEntry = SeqEntry::New( dictEntry );
-   SeqEntry *newEntry = SeqEntry::New( group,elem );
+   SeqEntry *newEntry = SeqEntry::New( group, elem );
    //dictEntry->Unregister(); // GetDictEntry register it
    if (!newEntry)
    {

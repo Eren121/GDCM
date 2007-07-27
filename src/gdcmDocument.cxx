@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/27 09:49:31 $
-  Version:   $Revision: 1.365 $
+  Date:      $Date: 2007/07/27 21:21:48 $
+  Version:   $Revision: 1.366 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2250,9 +2250,15 @@ DocEntry *Document::ReadNextDocEntry()
       else if (CurrentGroup%2 == 1 )
       { 
          if (CurrentElem >= 0x0010 && CurrentElem <=0x00ff )
-            // DICOM PS 3-5 7.8.1 a) states that those 
-            // (gggg-0010->00FF where gggg is odd) attributes have to be LO
+            // DICOM PS 3-5 7.8.1 a) states that :
+            // Private Creator Data Elements numbered (gggg,0010-00FF) (gggg is odd)
+            // attributes have to be LO (Long String) and the VM shall be equal to 1
             realVR = "LO";
+    
+           // Seems not to be true
+           // Still in gdcmtk, David Clunnie disagrees, Marco Eichelberg says it's OK ...
+           // We let it for a while? 
+           //(We should check length==4, for more security, but we don't have it yet !)
          else if ( CurrentElem == 0x0001)
             realVR = "UL"; // Private Group Length To End      
       }
@@ -2281,7 +2287,7 @@ DocEntry *Document::ReadNextDocEntry()
          // for VR = "UN", length is always stored on 4 bytes.
          changeFromUN=true;
          /// \todo : fixme If inside a supposed to be UN DataElement (but SQ according to a private dictionnary)
-         ///         there is some more supposed to UN DataElements, it will probabely fail.
+         ///         there is some more supposed to be UN DataElements, it will probabely fail.
          ///         --> find a -non time consuming- trick to store changeFromUN info at DataElement level,
          ///         not at the Document level.
       }   
