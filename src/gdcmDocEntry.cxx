@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2007/07/27 09:49:31 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -324,8 +324,13 @@ void DocEntry::Print(std::ostream &os, std::string const & )
    uint16_t e = GetElement();
    if ( e == 0x0000 )
       name = "Group Length";
-   else if ( GetGroup()%2 == 1 && ( e >= 0x0010 && e <= 0x00ff ) )
-      name = "Private Creator";
+   else if ( GetGroup()%2 == 1 )
+   {
+      if ( e >= 0x0010 && e <= 0x00ff )
+         name = "Private Creator";
+      else if (e == 0x0001)
+         name = "Private Group Length To End";
+   }
    else
    {
       name = GetName();

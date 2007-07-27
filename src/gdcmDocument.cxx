@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.364 $
+  Date:      $Date: 2007/07/27 09:49:31 $
+  Version:   $Revision: 1.365 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1349,7 +1349,6 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
          gdcmWarningMacro("in ParseSQ : should never get here!");
          UnexpectedEOF = true;
          return false;
-         //break;
       }
       if ( delim_mode )
       {
@@ -2248,12 +2247,14 @@ DocEntry *Document::ReadNextDocEntry()
       // Data Elements are Explicit VR and some other ones Implicit VR
       // -> Better we fix the problem at Write time
      
-      else if (CurrentGroup%2 == 1 &&  
-                               (CurrentElem >= 0x0010 && CurrentElem <=0x00ff ))
-      {  
-      // DICOM PS 3-5 7.8.1 a) states that those 
-      // (gggg-0010->00FF where gggg is odd) attributes have to be LO
-         realVR = "LO";
+      else if (CurrentGroup%2 == 1 )
+      { 
+         if (CurrentElem >= 0x0010 && CurrentElem <=0x00ff )
+            // DICOM PS 3-5 7.8.1 a) states that those 
+            // (gggg-0010->00FF where gggg is odd) attributes have to be LO
+            realVR = "LO";
+         else if ( CurrentElem == 0x0001)
+            realVR = "UL"; // Private Group Length To End      
       }
       
       else
