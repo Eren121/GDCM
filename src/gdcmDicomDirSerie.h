@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2007/08/20 13:24:04 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,9 @@ public:
 
    DicomDirImage *GetFirstImage();
    DicomDirImage *GetNextImage();
-
+   /// returns the number of Images currently held in the gdcm::DicomDirSerie
+   int            GetNumberOfImages() { return Images.size();}
+   
    // 'Private' methods (For SIEMENS 'CSA non image')
    DicomDirPrivate *NewPrivate();
    /// Add a new gdcm::DicomDirPrivate to the Serie
@@ -62,7 +64,8 @@ public:
 
    DicomDirPrivate *GetFirstPrivate();
    DicomDirPrivate *GetNextPrivate();   
-   
+   /// returns the number of 'Privates' currently held in the gdcm::DicomDirSerie
+   int             GetNumberOfPrivates() { return Privates.size();}   
    
    virtual void Copy(DocEntrySet *set);
 

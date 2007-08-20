@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.79 $
+  Date:      $Date: 2007/08/20 13:24:04 $
+  Version:   $Revision: 1.80 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,9 @@ public:
 
    DicomDirPatient *GetFirstPatient();
    DicomDirPatient *GetNextPatient();
-
+   /// returns the number of Patients currently held in the gdcm::DicomDir
+   int              GetNumberOfPatients() { return Patients.size();}
+   
    // Parsing
    void ParseDirectory();
 

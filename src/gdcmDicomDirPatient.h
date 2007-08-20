@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/08/20 13:24:04 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ public:
    void WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements);
   
    // Patient methods
-   /// \brief Adds a new gdcmDicomDirStudy to the Patient
+   /// \brief Adds a new gdcm::DicomDirStudy to the Patient
    void AddStudy(DicomDirStudy *obj) { Studies.push_back(obj); }
    DicomDirStudy *NewStudy(); 
    void ClearStudy();
@@ -53,7 +53,8 @@ public:
    DicomDirStudy *GetFirstStudy();
    DicomDirStudy *GetNextStudy();
    DicomDirStudy *GetLastStudy();
-
+   /// returns the number of Studies currently held in the gdcm::DicomDirPatient
+   int            GetNumberOfStudies() { return Studies.size();}
    virtual void Copy(DocEntrySet *set);
 
 protected:
