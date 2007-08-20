@@ -23,7 +23,7 @@ SET(TEST_SOURCES
   TestDicomDirElement.cxx
   TestDicomString.cxx
   TestEnumVR.cxx
-
+  TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
 )
 IF(UNIX)
   SET(TEST_SOURCES ${TEST_SOURCES}
@@ -37,17 +37,18 @@ IF (GDCM_DATA_ROOT)
     TestFileAccessors.cxx
     TestMakeIcon.cxx
     TestLoadAllDocumentsNoPrivNoSeq.cxx # includes generated gdcmDataImages.h
-    TestPrintAllDocument.cxx         # includes generated gdcmDataImages.h
-    #TestAllEntryVerify.cxx           # includes generated gdcmDataImages.h
-    TestAllReadCompareDicom.cxx      # includes generated gdcmDataImages.h
-    TestReadWriteReadCompare.cxx     # includes generated gdcmDataImages.h 
-    #TestCopyDicom.cxx                # includes generated gdcmDataImages.h 
-    #    TestCopyRescaleDicom.cxx         # includes generated gdcmDataImages.h 
+    #TestLoadAllDocumentsNoShadow.cxx   # includes generated gdcmDataImages.h
+    TestPrintAllDocument.cxx            # includes generated gdcmDataImages.h
+    #TestAllEntryVerify.cxx             # includes generated gdcmDataImages.h
+    TestAllReadCompareDicom.cxx         # includes generated gdcmDataImages.h
+    TestReadWriteReadCompare.cxx        # includes generated gdcmDataImages.h 
+    #TestCopyDicom.cxx                  # includes generated gdcmDataImages.h 
+    #    TestCopyRescaleDicom.cxx       # includes generated gdcmDataImages.h 
     #TestChangeHeader.cxx
     #    TestAnonymize.cxx
     TestDirList.cxx
     TestDicomDir.cxx                 # require DICOMDIR
-    TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
+
     TestMakeDicomDir.cxx             # writes a file named "NewDICOMDIR"
     TestSerieHelper.cxx              # uses gdcmData as a default root directory    
     TestAllVM.cxx

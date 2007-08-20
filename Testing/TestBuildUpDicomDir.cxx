@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/08/20 13:25:32 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -214,6 +214,17 @@ int TestBuildUpDicomDir(int argc, char *argv[])
       return 1;
    }
    // Check some value we are sure
+   
+   int numberOfPatients = newDicomDir->GetNumberOfPatients();
+   if (numberOfPatients != 3)
+   {
+      std::cout<<"  wrong GetNumberOfPatients() : " << newDicomDir->GetNumberOfPatients()
+               <<" (should be 3)" <<std::endl;
+
+      newDicomDir->Delete();
+      return 1;   
+   }
+   
    p1 = newDicomDir->GetFirstPatient();
    p2 = newDicomDir->GetNextPatient();
    p3 = newDicomDir->GetNextPatient();
