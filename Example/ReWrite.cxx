@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/25 13:15:14 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2007/08/21 13:17:51 $
+  Version:   $Revision: 1.29 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -418,6 +418,17 @@ int main(int argc, char *argv[])
          std::cout << "WriteRaw" << std::endl;
          fh->WriteRawData(outputFileName);
          break;
+ 
+ // UNDOCUMENT on purpose, because it's still bugged :-(
+      case 'J' :
+      case 'j' :
+      // writting a DICOM Jpeg Lossless 
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Jpeg Lossless" << std::endl;
+         //fh->SetWriteTypeToDcmExplVR();
+         fh->SetWriteTypeToJPEG();
+         fh->Write(outputFileName);
+         break; 
  
  // Just for fun :
  // Write a 'Video inverse' version of the file.
