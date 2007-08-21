@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/13 08:17:21 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/08/21 12:51:10 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -195,8 +195,8 @@ void UpdateBasicOffsetTable(std::ostream *fp, JpegVector const &v, size_t pos)
     {
     const JpegPair &jp = *i;
     if(i == v.begin() ){ assert( jp.first - first.first == 0); }
-    uint32_t offset = jp.first - first.first;
-    GDCM_NAME_SPACE::binary_write(*fp, offset);
+    uint32_t offset = (uint32_t)(jp.first - first.first);
+    gdcm::binary_write(*fp, offset);
     //std::cerr << "Updating Table:" << jp.first - first.first << std::endl;
     }
 }
@@ -273,7 +273,7 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
      size_t end = of->tellp();
      //static int i = 0;
      JpegPair &jp = JpegFragmentSize[i];
-     jp.second = end-beg;
+     jp.second = (uint32_t)(end-beg);
      if( ((end-beg) % 2) )
        {
        of->put( '\0' );
@@ -294,7 +294,7 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
    UserData = new uint8_t[of_size];
    memcpy(UserData, of->str().c_str(), of_size);
    UserDataSize = of_size;
-   
+   delete of;   
 }
 
 bool gdcm_write_JPEG_file8 (std::ostream *fp, char *inputdata, size_t inputlength,
@@ -369,7 +369,7 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
     size_t end = of->tellp();
     //static int i = 0;
     JpegPair &jp = JpegFragmentSize[i];
-      jp.second = end-beg;
+      jp.second = (uint32_t)(end-beg);
     if( ((end-beg) % 2) )
       {
       of->put( '\0' );
@@ -399,8 +399,7 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
    UserData = new uint8_t[of_size];
    memcpy(UserData, of->str().c_str(), of_size);
    UserDataSize = of_size;
-
- std::cerr << "Sortie ds PixelWriteConvert::SetCompressJPEGUserData" << std::endl; 
+   delete of;
 }
 
 

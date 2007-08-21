@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2007/08/21 12:51:09 $
+  Version:   $Revision: 1.120 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -736,7 +736,6 @@ bool FileHelper::Write(std::string const &fileName)
          {
             if (e->GetVR() == "  ")  
             {
-
                SetWriteTypeToDcmImplVR();
                SetWriteFileTypeToImplicitVR();
                flag = true;
@@ -810,7 +809,7 @@ bool FileHelper::Write(std::string const &fileName)
    }
 
    bool check = CheckWriteIntegrity(); // verifies length
-   if (WriteType == JPEG || WriteType == JPEG2000) 
+   if (WriteType == JPEG || WriteType == JPEG2000)
       check = true;
 
    if (check)
@@ -910,13 +909,13 @@ void FileHelper::SetWriteToRaw()
          photInt->SetString("PALETTE COLOR ");
       }
       else
-      {     
+      {
          if (GetPhotometricInterpretation() == 2)
             photInt->SetString("MONOCHROME2 ");  // 0 = Black
          else
             photInt->SetString("MONOCHROME1 ");  // 0 = White !
       }
-    
+
       PixelWriteConverter->SetReadData(PixelReadConverter->GetRaw(),
                                        PixelReadConverter->GetRawSize());
 
@@ -930,17 +929,18 @@ void FileHelper::SetWriteToRaw()
       {
          vr = "OW";
       }
-      
+
       DataEntry *pixel = 
          CopyDataEntry(GetFile()->GetGrPixel(),GetFile()->GetNumPixel(),vr);
       pixel->SetFlag(DataEntry::FLAG_PIXELDATA);
       pixel->SetBinArea(PixelWriteConverter->GetData(),false);
-      pixel->SetLength(PixelWriteConverter->GetDataSize());
-     
+      pixel->SetLength(
+         static_cast< uint32_t >(PixelWriteConverter->GetDataSize()) );
+
       if (!FileInternal->HasLUT() && GetPhotometricInterpretation() == 1)
       {
           ConvertFixGreyLevels( pixel->GetBinArea(), pixel->GetLength() );
-      }      
+      }
 
       Archive->Push(photInt);
       Archive->Push(pixel);
@@ -1175,10 +1175,10 @@ void FileHelper::SetWriteToLibido()
    if ( oldRow && oldCol )
    {
       std::string rows, columns; 
-      
+
       DataEntry *newRow=DataEntry::New(0x0028, 0x0010, "US");
       DataEntry *newCol=DataEntry::New(0x0028, 0x0011, "US");
-      
+
       newRow->Copy(oldCol);
       newCol->Copy(oldRow);
 
@@ -1310,7 +1310,7 @@ We have to deal with 4 *very* different cases :
    CREATED_IMAGE
 -4) user modified/added some tags *without processing* the pixels (anonymization...)
    UNMODIFIED_PIXELS_IMAGE
--Probabely some more to be added.  
+-Probabely some more to be added.
  
 gdcm::FileHelper::CheckMandatoryElements() deals automatically with these cases.
 
@@ -1484,10 +1484,10 @@ void FileHelper::CheckMandatoryElements()
    // 'Media Storage SOP Class UID'  --> [Secondary Capture Image Storage]
          CopyMandatoryEntry(0x0002,0x0002,"1.2.840.10008.5.1.4.1.1.7","UI");
       }
-      
-   // 'Media Storage SOP Instance UID'   
+
+   // 'Media Storage SOP Instance UID'
       CopyMandatoryEntry(0x0002,0x0003,sop,"UI");
-      
+
    // 'Implementation Class UID'
    // FIXME : in all examples we have, 0x0002,0x0012 is not so long :
    //         seems to be Root UID + 4 digits (?)
@@ -1503,9 +1503,9 @@ void FileHelper::CheckMandatoryElements()
 
    if ( ContentType != USER_OWN_IMAGE) // when it's not a user made image
    { 
-   
+
       gdcmDebugMacro( "USER_OWN_IMAGE (1)");
-    // If 'SOP Class UID' exists ('true DICOM' image)
+   // If 'SOP Class UID' exists ('true DICOM' image)
    // we create the 'Source Image Sequence' SeqEntry
    // to hold informations about the Source Image
   
@@ -1569,10 +1569,10 @@ void FileHelper::CheckMandatoryElements()
    Archive->Push(0x0028,0x0017);
    Archive->Push(0x0028,0x0198);  // very old versions
    Archive->Push(0x0028,0x0199);
- 
+
    // Replace deprecated 0028 0012 US Planes   
    // by new             0028 0008 IS Number of Frames
-   
+
   ///\todo : find if there is a rule!
    DataEntry *e_0028_0012 = FileInternal->GetDataEntry(0x0028, 0x0012);
    if ( e_0028_0012 )
@@ -1593,8 +1593,8 @@ void FileHelper::CheckMandatoryElements()
    std::ostringstream s;
    // check 'Bits Allocated' vs decent values
    int nbBitsAllocated = FileInternal->GetBitsAllocated();
-   if ( nbBitsAllocated == 0 || nbBitsAllocated > 32 
-      || ( nbBitsAllocated > 8 && nbBitsAllocated <16) )
+   if ( (nbBitsAllocated == 0 || nbBitsAllocated > 32)
+     || ( nbBitsAllocated > 8 && nbBitsAllocated <16) )
    {
       CopyMandatoryEntry(0x0028,0x0100,"16","US");
       gdcmWarningMacro("(0028,0100) changed from "
@@ -1628,7 +1628,7 @@ void FileHelper::CheckMandatoryElements()
    }
 
    // check Pixel Representation (default it as 0 -unsigned-)
-   
+
    DataEntry *e_0028_0103 = FileInternal->GetDataEntry(0x0028, 0x0103);
    if ( !e_0028_0103 )
    {
@@ -1657,7 +1657,7 @@ void FileHelper::CheckMandatoryElements()
    // --> This one is the *legal* one !
    if ( ContentType != USER_OWN_IMAGE)
    //  we write it only when we are *sure* the image comes from
-   //         an imager (see also 0008,0x0064)          
+   //         an imager (see also 0008,0x0064)
       CheckMandatoryEntry(0x0018,0x1164,pixelSpacing,"DS");
 
 /*
@@ -1665,7 +1665,7 @@ void FileHelper::CheckMandatoryElements()
 
 // See page 73 of ACR-NEMA_300-1988.pdf !
 
-// 0020,0020 : Patient Orientation : 
+// 0020,0020 : Patient Orientation :
 Patient direction of the first row and
 column of the images. The first entry id the direction of the raws, given by the
 direction of the last pixel in the first row from the first pixel in tha row.
@@ -1683,11 +1683,11 @@ equipment coordinate axes x,y,z, followed by direction cosines of the C axis of
 the image system with respect to the same axes
 
 //0020,0050 Location
-An image location reference, standard for the modality (such as CT bed
-position), used to indicate position. Calculation of position for other purposes
+An image location reference, standard for the modality (such as CT bed position),
+used to indicate position. Calculation of position for other purposes
 is only from (0020,0030) and (0020,0035)
 */
- 
+
 /*
 // if imagePositionPatient    not found, default it with imagePositionRet,    if any
 // if imageOrientationPatient not found, default it with imageOrientationRet, if any
@@ -1696,7 +1696,7 @@ is only from (0020,0030) and (0020,0035)
    std::string imageOrientationRet     = FileInternal->GetEntryString(0x0020,0x0035);
    std::string imagePositionPatient    = FileInternal->GetEntryString(0x0020,0x0032);
    std::string imageOrientationPatient = FileInternal->GetEntryString(0x0020,0x0037);
-   
+
    if(  imagePositionPatient == GDCM_UNFOUND && imageOrientationPatient == GDCM_UNFOUND
      && imagePositionRet     != GDCM_UNFOUND && imageOrientationRet     != GDCM_UNFOUND)
    {
@@ -1707,7 +1707,7 @@ is only from (0020,0030) and (0020,0035)
    }
 */
 
-   // Samples Per Pixel (type 1) : default to grayscale 
+   // Samples Per Pixel (type 1) : default to grayscale
    CheckMandatoryEntry(0x0028,0x0002,"1","US");
 
    // --- Check UID-related Entries ---
@@ -1719,11 +1719,11 @@ is only from (0020,0030) and (0020,0035)
 
    if ( ContentType == USER_OWN_IMAGE)
    {
-      gdcmDebugMacro( "USER_OWN_IMAGE (2)");   
+      gdcmDebugMacro( "USER_OWN_IMAGE (2)");
        // Conversion Type.
        // Other possible values are :
        // See PS 3.3, Page 408
-   
+
        // DV = Digitized Video
        // DI = Digital Interface 
        // DF = Digitized Film
@@ -1732,7 +1732,7 @@ is only from (0020,0030) and (0020,0035)
        // SI = Scanned Image
        // DRW = Drawing
        // SYN = Synthetic Image
-           
+
       CheckMandatoryEntry(0x0008,0x0064,"SYN","CS"); // Why not?
    } 
 /*
@@ -1742,7 +1742,7 @@ is only from (0020,0030) and (0020,0035)
    
    }
 */
-  
+
    // ---- The user will never have to take any action on the following ----
 
    // new value for 'SOP Instance UID'
@@ -1840,7 +1840,7 @@ is only from (0020,0030) and (0020,0035)
  /*
    // Deal with element 0x0000 (group length) of each group.
    // First stage : get all the different Groups
-   
+
   GroupHT grHT;
   DocEntry *d = FileInternal->GetFirstEntry();
   while(d)
@@ -1875,7 +1875,7 @@ void FileHelper::CheckMandatoryEntry(uint16_t group,uint16_t elem,std::string va
    }    
 }
 
-/// \todo : what is it used for ? (FileHelper::SetMandatoryEntry) 
+/// \todo : what is it used for ? (FileHelper::SetMandatoryEntry)
 void FileHelper::SetMandatoryEntry(uint16_t group,uint16_t elem,std::string value,const VRKey &vr)
 {
    //DataEntry *entry = DataEntry::New(Global::GetDicts()->GetDefaultPubDict()->GetEntry(group,elem));

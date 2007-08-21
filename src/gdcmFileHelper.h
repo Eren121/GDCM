@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/27 21:21:48 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2007/08/21 12:51:09 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ public:
    static FileHelper *New() {return new FileHelper();}
 /// \brief Constructs a FileHelper with a RefCounter from a fileHelper  
    static FileHelper *New(File *header) {return new FileHelper(header);}
-   
+
    void Print(std::ostream &os = std::cout, std::string const &indent = ""); 
 
    /// Accessor to \ref File
@@ -119,7 +119,7 @@ public:
    ///        (as opposed to 'Grey pixels + Palettes color')
    void SetWriteModeToRGB()           { SetWriteMode(WMODE_RGB);  }
    /// \brief Sets the Write Mode ( )
-   void SetWriteMode(FileMode mode)   {  WriteMode = mode;        }
+   void SetWriteMode(FileMode mode)   { WriteMode = mode;         }
    /// \brief Gets the Write Mode ( )
    FileMode GetWriteMode()            { return WriteMode;         }
 
@@ -133,26 +133,26 @@ public:
    void SetWriteTypeToAcr()           { SetWriteType(ACR);        }
    /// \brief Tells the writer we want to write as LibIDO
    void SetWriteTypeToAcrLibido()     { SetWriteType(ACR_LIBIDO); }
-   /// \brief Tells the writer we want to write as JPEG   
+   /// \brief Tells the writer we want to write as JPEG
    void SetWriteTypeToJPEG()          { SetWriteType(JPEG);       }
    /// \brief Tells the writer we want to write as JPEG2000
-   void SetWriteTypeToJPEG2000()      { SetWriteType(JPEG2000);   }         
+   void SetWriteTypeToJPEG2000()      { SetWriteType(JPEG2000);   }
    /// \brief Tells the writer which format we want to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    void SetWriteType(FileType format) { WriteType = format;       }
    /// \brief Gets the format we talled the write we wanted to write
    /// (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType GetWriteType()            { return WriteType;         }
-   /// \brief 1 : white=0, black=high value    
+   /// \brief 1 : white=0, black=high value
    void SetPhotometricInterpretationToMonochrome1() {
                                     PhotometricInterpretation = 1;}
-   /// \brief 2 : black=0, white=high value  (default)     
+   /// \brief 2 : black=0, white=high value  (default)
    void SetPhotometricInterpretationToMonochrome2() {
                                     PhotometricInterpretation = 2;}
-   /// \brief 1 : white=0, black=high value  
+   /// \brief 1 : white=0, black=high value
    int GetPhotometricInterpretation() {
-                                return PhotometricInterpretation; }    
-    
+                                return PhotometricInterpretation; }
+
    // Write pixels of ONE image on hard drive
    // No test is made on processor "endianness"
    // The user must call his reader correctly
@@ -184,7 +184,7 @@ protected:
    FileHelper( File *header );
    ~FileHelper();
 
-   /// \todo move all those 'protected' methods to 'privete'
+   /// \todo move all those 'protected' methods to 'private'
    ///       since FileHelper is not derived in anything!
    bool CheckWriteIntegrity();
 
@@ -194,7 +194,7 @@ protected:
 
    void SetWriteFileTypeToACR();
    void SetWriteFileTypeToJPEG();
-   void SetWriteFileTypeToJPEG2000();   
+   void SetWriteFileTypeToJPEG2000();
    void SetWriteFileTypeToExplicitVR();
    void SetWriteFileTypeToImplicitVR();
    void RestoreWriteFileType();
@@ -204,14 +204,14 @@ protected:
    void RestoreWriteOfLibido();
 
    DataEntry *CopyDataEntry(uint16_t group, uint16_t elem, 
-                               const VRKey &vr = GDCM_VRUNKNOWN);
+                            const VRKey &vr = GDCM_VRUNKNOWN);
    void CheckMandatoryElements();
    void CheckMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
-                               const VRKey &vr = GDCM_VRUNKNOWN);
+                            const VRKey &vr = GDCM_VRUNKNOWN);
    void SetMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
-                               const VRKey &vr = GDCM_VRUNKNOWN);
+                          const VRKey &vr = GDCM_VRUNKNOWN);
    void CopyMandatoryEntry(uint16_t group, uint16_t elem, std::string value,
-                               const VRKey &vr = GDCM_VRUNKNOWN);
+                           const VRKey &vr = GDCM_VRUNKNOWN);
    void RestoreWriteMandatory();
 
 private:
@@ -249,7 +249,7 @@ private:
 
    /// \brief (ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO)
    FileType WriteType;
-   
+
    /// \brief Pointer to a user supplied function to allow modification 
    /// of pixel order (e.g. : Mirror, UpsideDown, 90°Rotation, ...)
    /// use as : void userSuppliedFunction(uint8_t *im, gdcm::File *f)
@@ -265,8 +265,8 @@ private:
    /// - he anonymized and image (*no* modif on the pixels)
    ImageContentType ContentType;
  
-   /// \brief  1 : white=0, black=high value    
-   ///         2 : black=0, white=high value (default)   
+   /// \brief  1 : white=0, black=high value
+   ///         2 : black=0, white=high value (default)
    int PhotometricInterpretation;
 
 };

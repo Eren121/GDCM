@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:12 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/08/21 12:51:10 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,10 +79,10 @@ DocEntry *d;
     grHT[d->GetGroup()] = 0;
     d=input->GetNextEntry();
   }
-  for (GroupHT::iterator it = grHT.begin(); it != grHT.end(); ++it)  
+  for (GroupHT::iterator it = grHT.begin(); it != grHT.end(); ++it)
   {
       std::cout << std::hex << it->first << std::endl; 
-  } 
+  }
 */
 
   // berk for now SetInput do two things at the same time
@@ -95,28 +95,28 @@ DocEntry *d;
   while(d)
   { 
     if ( DataEntry *v = dynamic_cast<DataEntry *>(d) )
-    { 
+    {
       if ( v->GetVM() != GDCM_NAME_SPACE::GDCM_UNKNOWN )
          if ( !CheckVM(v) )
          {
             if (v->GetVM() == "FIXME" )
               std::cout << "For Tag " <<  v->GetKey() << " VM = ["
                        << v->GetVM() << "]" << std::endl;
- 
+
             std::cout << "Tag (" <<  v->GetKey() 
-                      << ")-> [" << v->GetName() << "] VR :" << v->GetVR() 
+                      << ")-> [" << v->GetName() << "] VR :" << v->GetVR()
                       << " contains an illegal VM. Expected VM :[" 
-                      << v->GetVM() << "], value [" << v->GetString() << "]" 
+                      << v->GetVM() << "], value [" << v->GetString() << "]"
                       << std::endl;
          }
-      
+
       if ( v->GetReadLength() % 2 )
       {
-        std::cout << "Tag (" <<  v->GetKey() 
+        std::cout << "Tag (" <<  v->GetKey()
                   << ")-> [" << v->GetName() << "] has an uneven length :"
                   << v->GetReadLength()
-                  << " [" << v->GetString() << "] " 
-                  << std::endl;         
+                  << " [" << v->GetString() << "] "
+                  << std::endl;
       }
     }
     else

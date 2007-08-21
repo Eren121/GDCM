@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/27 21:21:48 $
-  Version:   $Revision: 1.366 $
+  Date:      $Date: 2007/08/21 12:51:09 $
+  Version:   $Revision: 1.367 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2255,10 +2255,10 @@ DocEntry *Document::ReadNextDocEntry()
             // attributes have to be LO (Long String) and the VM shall be equal to 1
             realVR = "LO";
     
-           // Seems not to be true
-           // Still in gdcmtk, David Clunnie disagrees, Marco Eichelberg says it's OK ...
-           // We let it for a while? 
-           //(We should check length==4, for more security, but we don't have it yet !)
+            // Seems not to be true
+            // Still in gdcmtk, David Clunnie disagrees, Marco Eichelberg says it's OK ...
+            // We let it for a while? 
+            //(We should check length==4, for more security, but we don't have it yet !)
          else if ( CurrentElem == 0x0001)
             realVR = "UL"; // Private Group Length To End      
       }
