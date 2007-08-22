@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMSQDOCENTRY_H
-#define GDCMSQDOCENTRY_H
+#ifndef _GDCMSQDOCENTRY_H_
+#define _GDCMSQDOCENTRY_H_
 
 #include "gdcmDocEntry.h"
 

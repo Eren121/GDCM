@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMORIENTATION_H
-#define GDCMORIENTATION_H
+#ifndef _GDCMORIENTATION_H_
+#define _GDCMORIENTATION_H_
 
 #include "gdcmRefCounter.h"
 #include <map>

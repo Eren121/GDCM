@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/21 12:51:09 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -185,6 +185,9 @@ static int Headers()
 
   return ret;
 }
+
+
+
 static int Decode_Bitstream()
 {
   int ret;

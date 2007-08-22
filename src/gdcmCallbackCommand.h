@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCallbackCommand.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:07 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/08/22 16:14:03 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMCALLBACKCOMMAND_H
-#define GDCMCALLBACKCOMMAND_H
+#ifndef _GDCMCALLBACKCOMMAND_H_
+#define _GDCMCALLBACKCOMMAND_H_
 
 #include "gdcmDebug.h"
 #include "gdcmCommand.h"

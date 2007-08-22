@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 
-#ifndef GDCMRLEFRAMESINFO_H
-#define GDCMRLEFRAMESINFO_H
+#ifndef _GDCMRLEFRAMESINFO_H_
+#define _GDCMRLEFRAMESINFO_H_
 
 #include "gdcmRLEFrame.h"
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTagKey.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/08/22 16:14:05 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMTAGKEY_H
-#define GDCMTAGKEY_H
+#ifndef _GDCMTAGKEY_H_
+#define _GDCMTAGKEY_H_
 
 #include "gdcmCommon.h"
 

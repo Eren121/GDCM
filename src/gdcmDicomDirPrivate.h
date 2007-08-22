@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPrivate.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/08/22 16:14:03 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMDICOMDIRPRIVATE_H
-#define GDCMDICOMDIRPRIVATE_H
+#ifndef _GDCMDICOMDIRPRIVATE_H_
+#define _GDCMDICOMDIRPRIVATE_H_
 
 #include "gdcmDicomDirObject.h"
 

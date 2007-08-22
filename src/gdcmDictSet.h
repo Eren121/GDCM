@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDictSet.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMDICTSET_H
-#define GDCMDICTSET_H
+#ifndef _GDCMDICTSET_H
+#define _GDCMDICTSET_H
 
 #include "gdcmRefCounter.h"
 #include "gdcmDict.h"

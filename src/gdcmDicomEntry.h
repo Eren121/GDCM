@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:09 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/08/22 16:14:03 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMDICOMENTRY_H
-#define GDCMDICOMENTRY_H
+#ifndef _GDCMDICOMENTRY_H_
+#define _GDCMDICOMENTRY_H_
 
 #include "gdcmCommon.h"
 #include "gdcmRefCounter.h"

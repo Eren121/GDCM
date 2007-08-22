@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMacro.h,v $
   Language:  C++
-  Date:      $Date: 2006/05/23 14:16:08 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMMACRO_H
-#define GDCMMACRO_H
+#ifndef _GDCMMACRO_H_
+#define _GDCMMACRO_H_
 
 //-----------------------------------------------------------------------------
 #define gdcmTypeMacro(type)               \

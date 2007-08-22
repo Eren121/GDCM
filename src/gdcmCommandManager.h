@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommandManager.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/08/22 16:14:03 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMCOMMANDMANAGER_H
-#define GDCMCOMMANDMANAGER_H
+#ifndef _GDCMCOMMANDMANAGER_H_
+#define _GDCMCOMMANDMANAGER_H_
 
 #include "gdcmRefCounter.h"
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,8 +15,8 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-#ifndef GDCMSQITEM_H
-#define GDCMSQITEM_H
+#ifndef _GDCMSQITEM_H_
+#define _GDCMSQITEM_H_
 
 #include "gdcmDocEntrySet.h"
 #include "gdcmElementSet.h"

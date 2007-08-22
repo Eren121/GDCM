@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/13 08:17:21 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 
-#ifndef GDCMPIXELWRITECONVERT_H
-#define GDCMPIXELWRITECONVERT_H
+#ifndef _GDCMPIXELWRITECONVERT_H_
+#define _GDCMPIXELWRITECONVERT_H_
 
 #include "gdcmCommon.h"
 #include "gdcmBase.h"
@@ -72,7 +72,7 @@ private:
    /// Size of User image.
    size_t   UserDataSize;
 
-   /// Whether we want to write compressed
+   /// Whether we want to write compressed or not
    bool Compressed;
 };
 } // end namespace gdcm

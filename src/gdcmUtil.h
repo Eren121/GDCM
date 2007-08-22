@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2007/08/22 16:14:05 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMUTIL_H
-#define GDCMUTIL_H
+#ifndef _GDCMUTIL_H_
+#define _GDCMUTIL_H_
 
 #include "gdcmCommon.h"
 #include <vector>
@@ -149,7 +149,7 @@ private:
   ghost@aladdin.com
 */
 
-/* $Id: gdcmUtil.h,v 1.68 2007/05/23 14:18:11 jpr Exp $ */
+/* $Id: gdcmUtil.h,v 1.69 2007/08/22 16:14:05 jpr Exp $ */
 /*
   Independent implementation of MD5 (RFC 1321).
   This code implements the MD5 Algorithm defined in RFC 1321, whose

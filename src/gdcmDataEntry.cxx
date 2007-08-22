@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/08/22 16:14:03 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,7 +137,7 @@ void DataEntry::SetValue(const uint32_t &id, const double &val)
 
    if( id > GetValueCount() )
    {
-      gdcmErrorMacro("Index (" << id << ")is greater than the data size");
+      gdcmErrorMacro("Index (" << id << ") is greater than the data size");
       return;
    }
 
@@ -172,7 +172,7 @@ void DataEntry::SetValue(const uint32_t &id, const double &val)
    }
 }
 /**
- * \brief returns, as a double (?!?) one of the values 
+ * \brief returns, as a double one of the values 
  *      (when entry is multivaluated), identified by its index.
  *      Returns 0.0 if index is wrong
  * @param id id
@@ -196,13 +196,11 @@ double DataEntry::GetValue(const uint32_t &id) const
       return 0.0;
    }
 
-   /// \todo FIX the API : user *knows* that entry contains a US
-   ///               and he receives a double ?!?
+   // if user *knows* that entry contains a US, 
+   // he just has to cast the double he receives
    
    const VRKey &vr = GetVR();
-   /// \todo FIX the API : user *knows* that entry contains a US,
-   ///       the method is supposed to return a double
-   ///       but sends a US ?!? 
+
    if( vr == "US" || vr == "SS" )
       return ((uint16_t *)BinArea)[id];
    else if( vr == "UL" || vr == "SL" )

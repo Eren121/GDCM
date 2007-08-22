@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 
-#ifndef GDCMJPEGFRAGMENTSINFO_H
-#define GDCMJPEGFRAGMENTSINFO_H
+#ifndef _GDCMJPEGFRAGMENTSINFO_H_
+#define _GDCMJPEGFRAGMENTSINFO_H_
 
 #include "gdcmJPEGFragment.h"
 

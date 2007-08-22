@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/03 08:17:24 $
-  Version:   $Revision: 1.333 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.334 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -142,7 +142,6 @@ File::~File()
  * @return false if file cannot be open or no swap info was found,
  *         or no tag was found.
  */
-
 bool File::Load( ) 
 {
    if ( ! this->Document::Load( ) )
@@ -177,7 +176,6 @@ bool File::DoTheLoadingJob( )
    }
    else
    {
-
       GrPixel = (uint16_t) atoi( imgLocation.c_str() );
    }   
 
@@ -237,7 +235,7 @@ bool File::DoTheLoadingJob( )
 
          // Change only made if usefull
          if ( PixelVR != oldEntry->GetVR() )
-         {       
+         {
             //DictEntry* newDict = DictEntry::New(GrPixel,NumPixel,
             //                                    PixelVR,"1","Pixel Data");
             //DataEntry *newEntry = DataEntry::New(newDict);
@@ -249,7 +247,6 @@ bool File::DoTheLoadingJob( )
             //RemoveEntry(oldEntry);
             //AddEntry(newEntry);
             //newEntry->Delete();
-  
          }
       }
 */
@@ -481,7 +478,7 @@ bool File::GetSpacing(float &xspacing, float &yspacing, float &zspacing)
       TS *ts = Global::GetTS();
       std::string sopclassuid_used;
       // D 0002|0002 [UI] [Media Storage SOP Class UID]
-      
+ 
       //const std::string &mediastoragesopclassuid_str = GetEntryValue(0x0002,0x0002);  
       const std::string &mediastoragesopclassuid_str = GetEntryString(0x0002,0x0002);
       const std::string &mediastoragesopclassuid = ts->GetValue(mediastoragesopclassuid_str);
@@ -540,10 +537,9 @@ bool File::GetSpacing(float &xspacing, float &yspacing, float &zspacing)
           }
         return true;
         }
-   
      return false;
    }
-   
+
 /**
  * \brief   Retrieve the -unnormalized- number of 'times' of '4D image'.
  *          User has to tell gdcm the location of this '4th Dimension component'
@@ -559,7 +555,7 @@ int File::GetTSize()
       
    DataEntry *entry = GetDataEntry(FourthDimensionLocation.GetGroup(),
                                    FourthDimensionLocation.GetElement() );
-   if( !entry )   
+   if( !entry )
    {
       gdcmWarningMacro( " FourthDimensionLocation not found at : " <<
                     std::hex << FourthDimensionLocation.GetGroup()
@@ -570,7 +566,7 @@ int File::GetTSize()
    {
       return (int)entry->GetValue(0);
    }      
-}  
+}
 
 
 
@@ -583,19 +579,18 @@ int File::GetTSize()
 float File::GetXSpacing()
 {
    float xspacing = 1.0;
-   float yspacing = 1.0; 
+   float yspacing = 1.0;
    float zspacing = 1.0;
-       
+
    uint32_t nbValue;
    DataEntry *entry;
    bool ok = false; 
-    
   if ( GetSpacing(xspacing,yspacing,zspacing) )
   {
     return xspacing;
   }
- // else fallback  
-    
+ // else fallback
+
 /*
 From:David Clunie - view profile
 Date:Wed, May 24 2006 1:12 pm
@@ -690,7 +685,7 @@ and
       if( nbValue !=2 )
          gdcmWarningMacro("ImagerPixelSpacing (0x0018,0x1164) "
          << "has a wrong number of values :" << nbValue);
-     
+
       if( nbValue >= 3 )
          xspacing = (float)entry->GetValue(2);
       else if( nbValue >= 2 )
@@ -714,7 +709,7 @@ and
       if( nbValue !=2 )
          gdcmWarningMacro("PixelSpacing (0x0018,0x0030) "
           << "has a wrong number of values :" << nbValue);      
-      
+  
       if( nbValue >= 3 )
          xspacing = (float)entry->GetValue(2);
       else if( nbValue >= 2 )
@@ -745,14 +740,12 @@ float File::GetYSpacing()
    uint32_t nbValue;
    DataEntry *entry;
    bool ok = false;
-   
   if ( GetSpacing(xspacing,yspacing,zspacing) )
   {
     return yspacing;
   }
- // else fallback 
- 
-     
+ // else fallback
+
    std::string SOPClassUID = GetEntryString(0x0008,0x0016);
 
    /// \todo check the various SOP Class
@@ -1367,13 +1360,13 @@ std::string File::GetPixelType()
       // (in order no to be messed up by old RGB images)
       bitsAlloc = "8";
    }
-   
+
    int i= atoi(bitsAlloc.c_str());  // fix a bug in some headers
    if ( i > 8 &&  i < 16 )
    {
       bitsAlloc = "16";
    }
-   
+
    std::string sign;
    if( IsSignedPixelData() )
    {
@@ -1633,13 +1626,12 @@ int File::GetLUTNbits()
           }
         return true;
         }
-   
      return false;
    }
 
 /**
  *\brief gets the info from 0028,1052 : Rescale Intercept
- * @return Rescale Intercept. defaulted to 0.0 is not found or empty
+ * @return Rescale Intercept. defaulted to 0.0 if not found or empty
  */
 double File::GetRescaleIntercept()
 {
@@ -1656,7 +1648,7 @@ double File::GetRescaleIntercept()
 
 /**
  *\brief   gets the info from 0028,1053 : Rescale Slope
- * @return Rescale Slope. defaulted to 1.0 is not found or empty
+ * @return Rescale Slope. defaulted to 1.0 if not found or empty
  */
 double File::GetRescaleSlope()
 {
@@ -1839,7 +1831,7 @@ void File::AnonymizeNoLoad()
          gdcmWarningMacro( "You cannot 'Anonymize' a SeqEntry ");
          continue;
       }
-      
+
       valLgth = (*it).Value.size();
       if (valLgth == 0)
          continue;
@@ -2012,7 +2004,7 @@ bool File::Write(std::string fileName, FileType writetype)
          // no (GrPixel, NumPixel) element
          std::string s_lgPix = Util::Format("%d", i_lgPix+12);
          s_lgPix = Util::DicomString( s_lgPix.c_str() );
-         InsertEntryString(s_lgPix,GrPixel, 0x0000, "UL");   
+         InsertEntryString(s_lgPix,GrPixel, 0x0000, "UL");
       }
    }
    Document::WriteContent(fp, writetype);
@@ -2251,7 +2243,7 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
           << "   but instead we encountered tag ("
           << DictEntry::TranslateToKey(itemTagGroup,itemTagElem) << ")"
           << "  at address: " << "  0x(" << std::hex 
-          << (unsigned int)positionOnEntry  << std::dec << ")" 
+          << (unsigned int)positionOnEntry  << std::dec << ")"
           ) ;
       Fp->seekg(positionOnEntry, std::ios::beg);
 
@@ -2288,7 +2280,7 @@ uint32_t File::ReadTagLength(uint16_t testGroup, uint16_t testElem)
    }
                                                                                 
    //// Then read the associated Item Length
-   
+
    // long currentPosition = Fp->tellg(); // save time // JPRx
    uint32_t itemLength  = ReadInt32();
    gdcmDebugMacro( "Basic Item Length is: " << itemLength 

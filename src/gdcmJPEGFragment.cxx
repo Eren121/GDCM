@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,11 +67,13 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
    }
    else if ( nBits <= 12 )
    {
+       assert( nBits >= 8 );
       // JPEG Lossy : call to IJG 6b - 12 bits
       ReadJPEGFile12 ( fp, buffer, statesuspension);
    }
    else if ( nBits <= 16 )
    {
+       assert( nBits >= 12 );
       // JPEG Lossy : call to IJG 6b - 16 bits
       ReadJPEGFile16 ( fp, buffer, statesuspension);
       //gdcmAssertMacro( IsJPEGLossless );

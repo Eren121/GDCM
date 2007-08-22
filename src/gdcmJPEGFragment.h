@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 
-#ifndef GDCMJPEGFRAGMENT_H
-#define GDCMJPEGFRAGMENT_H
+#ifndef _GDCMJPEGFRAGMENT_H_
+#define _GDCMJPEGFRAGMENT_H_
 
 #include "gdcmBase.h"
 
@@ -39,7 +39,7 @@ namespace GDCM_NAME_SPACE
  *        a given Document as they are JPEG fragments and they are
  *        collected in a \ref JPEGFragmentsInfo )
  */
-   class GDCM_EXPORT JPEGFragment : public Base
+class GDCM_EXPORT JPEGFragment : public Base
 {
 public:
    JPEGFragment();

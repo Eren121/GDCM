@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 16:48:59 $
-  Version:   $Revision: 1.132 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.133 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
                                                                                 
 =========================================================================*/
 
-#ifndef GDCMFILE_H
-#define GDCMFILE_H
+#ifndef _GDCMFILE_H_
+#define _GDCMFILE_H_
 
 #include "gdcmDebug.h"
 #include "gdcmDocument.h"
@@ -120,7 +120,7 @@ public:
    int GetYSize();
    int GetZSize();
    int GetTSize(); // unnormalized in DICOM V3
-   
+
    bool GetSpacing(float &xspacing, float &yspacing, float &zspacing);
    float GetXSpacing();
    float GetYSpacing();
@@ -129,7 +129,7 @@ public:
    float GetXOrigin();
    float GetYOrigin();
    float GetZOrigin();
-   
+
    float GetXCosineOnX();
    float GetXCosineOnY();  
    float GetXCosineOnZ();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmValidator.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:12 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/08/22 16:14:05 $
+  Version:   $Revision: 1.7 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,8 +16,8 @@
  
 =========================================================================*/
 
-#ifndef GDCMVALIDATOR_H
-#define GDCMVALIDATOR_H
+#ifndef _GDCMVALIDATOR_H_
+#define _GDCMVALIDATOR_H_
 
 #include "gdcmRefCounter.h"
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/13 08:17:21 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,7 +107,7 @@ bool gdcm_read_JPEG2000_file (void* raw, char *inputdata, size_t inputlength)
   opj_dinfo_t* dinfo;  /* handle to a decompressor */
   opj_cio_t *cio;
   unsigned char *src = (unsigned char*)inputdata; 
-  int file_length = inputlength;
+  int file_length = static_cast< int >( inputlength );
 
   /* configure the event callbacks (not required) */
   memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
@@ -372,7 +372,8 @@ bool gdcm_write_JPEG2000_file (std::ostream *fp, char *inputdata, size_t inputle
   /* decode the source image */
   /* ----------------------- */
 
-  image = rawtoimage((char*)inputdata, &parameters, inputlength, 
+  image = rawtoimage((char*)inputdata, &parameters, 
+    static_cast<int>( inputlength ), 
     image_width, image_height,
     sample_pixel, bitsallocated, sign, quality);
   if (!image) {

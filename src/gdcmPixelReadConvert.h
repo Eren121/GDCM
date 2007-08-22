@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -17,8 +17,8 @@
 =========================================================================*/
 
 
-#ifndef GDCMPIXELREADCONVERT_H
-#define GDCMPIXELREADCONVERT_H
+#ifndef _GDCMPIXELREADCONVERT_H_
+#define _GDCMPIXELREADCONVERT_H_
 
 #include "gdcmBase.h"
 #include "gdcmFileHelper.h"

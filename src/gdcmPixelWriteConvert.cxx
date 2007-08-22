@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/21 12:51:10 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/08/22 16:14:04 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -196,7 +196,7 @@ void UpdateBasicOffsetTable(std::ostream *fp, JpegVector const &v, size_t pos)
     const JpegPair &jp = *i;
     if(i == v.begin() ){ assert( jp.first - first.first == 0); }
     uint32_t offset = (uint32_t)(jp.first - first.first);
-    gdcm::binary_write(*fp, offset);
+    GDCM_NAME_SPACE::binary_write(*fp, offset);
     //std::cerr << "Updating Table:" << jp.first - first.first << std::endl;
     }
 }
@@ -231,7 +231,7 @@ void CloseJpeg(std::ostream *fp, JpegVector &v)
 
 // I need to pass the File*. I do not understand how PixelWriteConvert is supposed
 // to access this information otherwise
-// size can now be computer from File attributes (what an API...)
+// size can now be computed from File attributes (what an API...)
 void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, File *image)
 {
   Compressed = true;
