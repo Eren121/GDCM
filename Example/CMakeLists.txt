@@ -57,8 +57,8 @@ SET(EXAMPLE_SOURCES
 
   WriteRead 
   ## Troubles on Windows ! 
-  #WriteDicomAsJPEG2000
-  #WriteDicomAsJPEG
+  WriteDicomAsJPEG2000
+  WriteDicomAsJPEG
 
   exCTPET  
   #Slice

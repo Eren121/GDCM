@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/21 15:10:04 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/08/24 10:48:08 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,13 +19,15 @@
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"
 #include "gdcmUtil.h"
+#include "gdcmDebug.h"
 
 // Open a dicom file and compress it as JPEG stream
 int main(int argc, char *argv[])
 {
   if( argc < 2)
     {
-    std::cerr << argv[0] << " inputfilename.dcm\n";
+    std::cerr << argv[0] << " inputfilename.dcm [ outputfilename.dcm"
+              << "quality debug]\n";
     return 1;
     }
 
@@ -37,8 +39,11 @@ int main(int argc, char *argv[])
    if( argc >= 4 )
      quality = atoi(argv[3]);
    std::cerr << "Using quality: " << quality << std::endl;
-
-// Step 1 : Create the header of the image
+   
+   if (argc > 4)
+      GDCM_NAME_SPACE::Debug::DebugOn();
+      
+// Step 1 : Read the image
    GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode ( GDCM_NAME_SPACE::LD_ALL ); // Load everything
    f->SetFileName( filename );
@@ -49,15 +54,16 @@ int main(int argc, char *argv[])
    int xsize = f->GetXSize();
    int ysize = f->GetYSize();
    int zsize = f->GetZSize();
-   //tested->Print( std::cout );
 
    int samplesPerPixel = f->GetSamplesPerPixel();
    size_t testedDataSize    = tested->GetImageDataSize();
    std::cerr << "testedDataSize:" << testedDataSize << std::endl;
    uint8_t *testedImageData = tested->GetImageData();
+   
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )  
+      tested->Print( std::cout );
 
-// Step 1 : Create the header of the image
-
+// Step 1 : Create the header of the new file
    GDCM_NAME_SPACE::File *fileToBuild = GDCM_NAME_SPACE::File::New();
    std::ostringstream str;
 
@@ -69,13 +75,13 @@ int main(int argc, char *argv[])
    str << ysize;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
  
-
    if(zsize>1)
    {
       str.str("");
       str << zsize;
       fileToBuild->InsertEntryString(str.str(),0x0028,0x0008,"IS"); // Number of Frames
    }
+   
    int bitsallocated = f->GetBitsAllocated();
    int bitsstored = f->GetBitsStored();
    int highbit = f->GetHighBitPosition();
@@ -109,14 +115,19 @@ int main(int argc, char *argv[])
                * samplesPerPixel  * bitsallocated / 8;
 
    GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
+
    assert( size == testedDataSize );
    fileH->SetWriteTypeToJPEG(  );
-   fileH->SetImageData(testedImageData, testedDataSize);
+
+   //fileH->SetImageData(testedImageData, testedDataSize);
+   
+   // SetUserData will ensure the compression
+   fileH->SetUserData(testedImageData, testedDataSize);
    if( !fileH->Write(outfilename) )
      {
      std::cerr << "write fails" << std::endl;
      }
-
+   
    f->Delete();
    tested->Delete();
    fileToBuild->Delete();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/13 08:17:20 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/08/24 10:48:08 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,7 +106,8 @@ int main(int argc, char *argv[])
 // Step 2 : Create the output image
    GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
    fileH->SetWriteTypeToJPEG2000(  );
-   fileH->SetImageData(testedImageData, testedDataSize);
+   //fileH->SetImageData(testedImageData, testedDataSize);
+   fileH->SetUserData(testedImageData, testedDataSize);
    if( !fileH->Write(outfilename) )
      {
      std::cerr << "write fails" << std::endl;

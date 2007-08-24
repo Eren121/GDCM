@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/21 13:17:51 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2007/08/24 10:48:08 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
    "       [firstframe=beg] [lastframe=end]                                 ", 
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
+   "               j (jpeg lossless), 2 (jpeg2000)                          ",
    "        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)  ",
    "        noshadowseq: user doesn't want to load Private Sequences        ",
    "        noshadow : user doesn't want to load Private groups (odd number)",
@@ -49,7 +50,8 @@ int main(int argc, char *argv[])
    "        debug    : developper wants to run the program in 'debug mode'  ",
    FINISH_USAGE
 
-   // ----- Initialize Arguments Manager ------   
+   // ----- Initialize Arguments Manager ------  
+    
    GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
@@ -168,10 +170,10 @@ int main(int argc, char *argv[])
    }
    
    GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
-   void *imageData; 
+   uint8_t *imageData; 
    int dataSize;
  
-    int nX,nY,nZ,sPP,planarConfig;
+   int nX,nY,nZ,sPP,planarConfig;
    std::string pixelType, transferSyntaxName;
    nX=f->GetXSize();
    nY=f->GetYSize();
@@ -273,6 +275,87 @@ int main(int argc, char *argv[])
       }   
    } 
 
+
+//------------------------------ Set the Writing mode ---------------------------------
+
+   switch (mode[0])
+   {
+      case 'A' :
+      case 'a' :
+      // Writting an ACR file
+      // from a full gdcm readable File
+         std::cout << "WriteACR" << std::endl;
+         fh->SetWriteTypeToAcr();
+         break;
+
+      case 'D' : // Not documented in the 'usage', because the method 
+      case 'd' : //                             is known to be bugged. 
+      // Writting a DICOM Implicit VR file
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Implicit VR" << std::endl;
+         fh->SetWriteTypeToDcmImplVR(); 
+         break;
+
+      case 'X' :
+      case 'x' :
+      // writting a DICOM Explicit VR 
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Explicit VR" << std::endl;
+         // fh->WriteDcmExplVR(outputFileName);
+         // Try this one :
+         fh->SetWriteTypeToDcmExplVR();
+
+         break;
+
+      case 'R' :
+      case 'r' :
+      //  Writting a Raw File, 
+         std::cout << "WriteRaw" << std::endl;
+         fh->WriteRawData(outputFileName);
+         break;
+ 
+      case 'J' :
+      case 'j' :
+      // writting a DICOM Jpeg Lossless 
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Jpeg Lossless" << std::endl;
+         fh->SetWriteTypeToJPEG();
+         break;
+
+      case '2' :
+      // writting a DICOM Jpeg 2000 
+      // from a full gdcm readable File
+         std::cout << "WriteDCM Jpeg 2000" << std::endl;
+         fh->SetWriteTypeToJPEG2000();
+         break; 
+ 
+ // Just for fun :
+ // Write a 'Video inverse' version of the file.
+ // *Not* described, on purpose,  in the USAGE  
+      case 'V' :
+      case 'v' :
+         if ( fh->GetFile()->GetBitsAllocated() == 8)
+         {
+            std::cout << "videoinv for 8 bits" << std::endl;
+            for (int i=0; i<dataSize; i++) 
+            {
+               ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
+            }
+         }
+         else
+         {
+            std::cout << "videoinv for 16 bits" << std::endl;    
+            for (int i=0; i<dataSize/2; i++) 
+            {
+               ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
+            }
+         }
+         std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
+         fh->SetWriteTypeToDcmExplVR();
+         break;
+   }
+
+
 //
 // user wants to keep only a part of the image (ROI, and/or some frames)
 // ---------------------------------------------------------------------
@@ -357,7 +440,7 @@ int main(int argc, char *argv[])
      { 
         for (int lineNb=roiBoundVal[2], lineCount=0; lineNb<=roiBoundVal[3]; lineNb++, lineCount++)
         {  
-            /// \todo increment data pointer, don't multiply so much!
+            /// \todo : increment data pointer, don't multiply so much!
             memcpy( (void *)(destCopy + frameCount*lgrSubFrame + lineCount*lgrSubLine), 
                     (void *)(srcCopy  + frameNb*frameSize + lineNb*lineSize + lineOffset ), 
                     lgrSubLine);
@@ -376,85 +459,20 @@ int main(int argc, char *argv[])
      str << end-beg+1; 
      fh->InsertEntryString(str.str(),0x0028,0x0008, "IS"); // Number of Frames 
       
-     fh->SetImageData(subImage,lgrSubImage);
-            
-  }     
+     //fh->SetImageData(subImage,lgrSubImage);
+      fh->SetUserData(subImage,lgrSubImage);   // ensures the compression (if any)    
+  }
+  else
+  {         
+      fh->SetUserData(imageData,dataSize); // ensures the compression (if any) 
+  }
+
 
 
 //----------------------------------- Write, now! ---------------------------------
 
-   switch (mode[0])
-   {
-      case 'A' :
-      case 'a' :
-      // Writting an ACR file
-      // from a full gdcm readable File
-         std::cout << "WriteACR" << std::endl;
-         fh->WriteAcr(outputFileName);
-         break;
-
-      case 'D' : // Not documented in the 'usage', because the method 
-      case 'd' : //                             is known to be bugged. 
-      // Writting a DICOM Implicit VR file
-      // from a full gdcm readable File
-         std::cout << "WriteDCM Implicit VR" << std::endl;
-         fh->WriteDcmImplVR(outputFileName);
-         break;
-
-      case 'X' :
-      case 'x' :
-      // writting a DICOM Explicit VR 
-      // from a full gdcm readable File
-         std::cout << "WriteDCM Explicit VR" << std::endl;
-         // fh->WriteDcmExplVR(outputFileName);
-         // Try this one :
-         fh->SetWriteTypeToDcmExplVR();
-         fh->Write(outputFileName);
-         break;
-
-      case 'R' :
-      case 'r' :
-      //  Writting a Raw File, 
-         std::cout << "WriteRaw" << std::endl;
-         fh->WriteRawData(outputFileName);
-         break;
- 
- // UNDOCUMENT on purpose, because it's still bugged :-(
-      case 'J' :
-      case 'j' :
-      // writting a DICOM Jpeg Lossless 
-      // from a full gdcm readable File
-         std::cout << "WriteDCM Jpeg Lossless" << std::endl;
-         //fh->SetWriteTypeToDcmExplVR();
-         fh->SetWriteTypeToJPEG();
-         fh->Write(outputFileName);
-         break; 
- 
- // Just for fun :
- // Write a 'Video inverse' version of the file.
- // *Not* described, on purpose,  in the USAGE  
-      case 'V' :
-      case 'v' :
-         if ( fh->GetFile()->GetBitsAllocated() == 8)
-         {
-            std::cout << "videoinv for 8 bits" << std::endl;
-            for (int i=0; i<dataSize; i++) 
-            {
-               ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
-            }
-         }
-         else
-         {
-            std::cout << "videoinv for 16 bits" << std::endl;    
-            for (int i=0; i<dataSize/2; i++) 
-            {
-               ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
-            }
-         }
-         std::cout << "WriteDCM Explicit VR + VideoInv" << std::endl;
-         fh->WriteDcmExplVR(outputFileName);
-         break;
-   }
+   if (mode[0] != 'R' && mode[0] != 'r')
+      fh->Write(outputFileName);
 
    f->Delete();
    fh->Delete();
