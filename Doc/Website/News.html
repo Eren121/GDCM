@@ -33,14 +33,6 @@ Any contribution is welcome.
           (LOw COmplexity LOssless COmpression for Images) 
           developed at Hewlett-Packard Laboratories] 
      </UL>
-     <LI> gdcm doesn't read yet all <TT>JPEG2000</TT> encoded files.
-     <UL>
-         But we are working on it (a lot of troubles with Jasper).
-         Update: as of Oct 10 2005, we are currently investigating another library:
-         openjpeg. The problem still exist for this library but one of the author
-         is currently working on it:
-            http://www.openjpeg.org/forum/viewtopic.php?t=18
-      </UL>
       <LI> gdcm doesn't read yet <TT>MPEG2</TT> encoded files.
 
    </UL>
@@ -63,8 +55,6 @@ Any contribution is welcome.
            <TT>SeqEntry</TT> (if any) 
       <LI> Allow user to tell the Writer he doesn't want to write down
            <TT>Shadow groups</TT> (if any)
-      <LI> Allow user to tell the Writer which compression mode he wants<br>
-           (Right now, no one is available)
       <LI> Allow user to tell the Writer he wants to split a
            <TT>Multiframe</TT> image into a serie of 
            <TT>Single frame</TT> images.
@@ -110,7 +100,7 @@ Any contribution is welcome.
            of the private <TT>Dicom Dictionary</TT>
            to be used to parse <TT>Shadow groups</TT> against.
       <LI> User friendly way of anonymizing image when Patient's name is
-           carved in the Pixels :-(
+           burnt-in within the Pixels :-(
    </UL>
 </UL>
 <!#######################################################################>
@@ -131,7 +121,13 @@ Any contribution is welcome.
       <LI> <a href= "DocCVS/html.developper/index.html">Developper
          Documentation</a> 
    <LI> New Features
+   
    <UL>
+      <LI> To be able to use gdcm1.3.x and ITK, developer is now allowed to
+      choose his own namespace for gdcm at CMake time : see GDCM_NAME_SPACE
+      option.
+      <LI> JPEG and JPEG2000 compression writting are now available.
+       see Examples/WriteDicomAsJPEG.cxx and Examples/WriteDicomAsJPEG2000.cxx
       <LI> To <i>try to</i> make gdcm images PACS usable, user is now allowed to
            gdcm what kind of image he wants to write, using :  <br>
    <TT>void FileHelper::SetContentType (ImageContentType c);</TT> <br>
