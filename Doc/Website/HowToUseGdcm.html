@@ -145,7 +145,70 @@ S 0018|6011 [SQ]                       [Sequence of Ultrasound Regions]
 
 0018|6011 is a 'Sequence' (SQ), composed of various Sequence Items(SQItem)
 Each SQItem is a set of Elements (an Element may be a DataElement (D) or a
-Sequence (S), recursively.
+Sequence (S), recursively, within any level of embedding :
+
+S 0029|263d [SQ]                                                                   []
+   |  --- SQItem number 0
+   | D fffe|e000 [UL]                                                              [Item ]
+   | D 0008|0000 [UL]                                                       [Group Length] [12]
+   | D 0008|0001 [UL]                                               [Length to End (RET) ] [28776]
+   | D 0029|0000 [UL]                                                       [Group Length] [28764]
+   | D 0029|002a [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;6 ]
+   | D 0029|2a02 [LO]                                                                   [] [PERFUSION_MR_T2STAR_GAMMA_VARIATE_ANALYSER]
+   | S 0029|2a06 [SQ]                                                                   []
+   |    |  --- SQItem number 0
+   |    | D fffe|e000 [UL]                                                              [Item ]
+   |    | D 0008|0000 [UL]                                                       [Group Length] [12]
+   |    | D 0008|0001 [UL]                                               [Length to End (RET) ] [20]
+   |    | D fffe|0000 [UL]                                                       [Group Length]
+   |    |  --- SQItem number 1
+   |    | D fffe|e000 [UL]                                                              [Item ]
+   |    | D 0008|0000 [UL]                                                       [Group Length] [12]
+   |    | D 0008|0001 [UL]                                               [Length to End (RET) ] [194]
+   |    | D 0029|0000 [UL]                                                       [Group Length] [182]
+   |    | D 0029|002a [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;6 ]
+   |    | S 0029|2a07 [SQ]                                                                   []
+   |    |    |  --- SQItem number 0
+   |    |    | D fffe|e000 [UL]                                                              [Item ]
+   |    |    | D 0008|0000 [UL]                                                       [Group Length] [12]
+   |    |    | D 0008|0001 [UL]                                               [Length to End (RET) ] [100]
+   |    |    | D 0029|0000 [UL]                                                       [Group Length] [88]
+   |    |    | D 0029|002a [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;6 ]
+   |    |    | D 0029|2a0a [US]                                                                   [] [1]
+   |    |    | D 0029|2a0b [US]                                                                   [] [2]
+   |    |    | D 0029|2a0c [US]                                                                   [] [2]
+   |    |    | D 0029|2a0d [US]                                                                   [] [1]
+   |    |    | D 0029|2a10 [US]                                                                   [] [1]
+   |    |    | S 0029|2a2e [SQ]                                                                   []
+   |    |    |    |  --- SQItem number 0
+   |    |    |    | D fffe|e000 [UL]                                                              [Item ]
+   |    |    |    | D 0008|0000 [UL]                                                       [Group Length] [12]
+   |    |    |    | D 0008|0001 [UL]                                               [Length to End (RET) ] [2266]
+   |    |    |    | D 0029|0000 [UL]                                                       [Group Length] [2254]
+   |    |    |    | D 0029|0025 [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;1 ]
+   |    |    |    | D 0029|0027 [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;3 ]
+   |    |    |    | D 0029|0028 [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;4 ]
+   |    |    |    | D 0029|2500 [SL]                                                                   [] [43]
+   |    |    |    | D 0029|256b [FD]                                                                   [] [0.5]
+   |    |    |    | D 0029|2700 [LO]                                                                   [] [L1]
+   |    |    |    | D 0029|276a [FL]                                                                   [] [0.35]
+   |    |    |    | S 0029|27c0 [SQ]                                                                   []
+   |    |    |    |    |  --- SQItem number 0
+   |    |    |    |    | D fffe|e000 [UL]                                                              [Item ]
+   |    |    |    |    | D 0008|0000 [UL]                                                       [Group Length] [12]
+   |    |    |    |    | D 0008|0001 [UL]                                               [Length to End (RET) ] [110]
+   |    |    |    |    | D 0029|0000 [UL]                                                       [Group Length] [98]
+   |    |    |    |    | D 0029|0027 [LO]                                                    [Private Creator] [SPI-P-Private_ICS Release 1;3 ]
+   |    |    |    |    | D 0029|27b0 [SL]                                                                   [] [0]
+   |    |    |    |    | D 0029|27b1 [FL]                                                                   [] [0]
+   |    |    |    |    | D 0029|27b2 [FL]                                                                   [] [0]
+   |    |    |    |    | D 0029|27b4 [FL]                                                                   [] [0]
+   |    |    |    |    | D 0029|27b9 [FL]                                                                   [] [1]   
+   | S 0029|2a14 [SQ]                                                                   []
+   |    |  --- SQItem number 0
+   |    | D fffe|e000 [UL]                                                              [Item ]
+   |    | D 0008|0000 [UL]                                                       [Group Length] [12]
+   
 Probabely, you'll never have to deal with Sequences (hope so!).
 
 1) How to Read a DICOM File
@@ -162,12 +225,12 @@ Probabely, you'll never have to deal with Sequences (hope so!).
 The first step is to load the file header :
 
            gdcm::File *f = new gdcm::File();
-                  f->SetLoadMode(NO_SEQ);            | depending on what
-                  f->SetLoadMode(NO_SHADOW);         | you want *not* 
-                  f->SetLoadMode(NO_SEQ | NO_SHADOW);| to load from the
-                  f->SetLoadMode(NO_SHADOWSEQ);      | target file
-            f->SetFileName(fileName);
-            f->Load( );
+                  f->SetLoadMode(LD_NOSEQ);              | depending on what
+                  f->SetLoadMode(LD_NOSHADOW);           | you want *not* 
+                  f->SetLoadMode(LD_NOSEQ | LD_NOSHADOW);| to load from the
+                  f->SetLoadMode(LD_NOSHADOWSEQ);        | target file
+           f->SetFileName(fileName);
+           f->Load( );
 
 Note :
 The 'long' Data Element (>4096 char) are not loaded by default
@@ -179,6 +242,7 @@ before calling gdcm::File::Load();
 
 Note :
 Except if you are really aware about it, do *not* use SetLoadMode().
+LD_ALL is the default.
 
 Check if the file is gdcm-readable.
 
@@ -244,6 +308,10 @@ You'll get an 'RGB Pixels' image in memory if you use:
            void *imageData = fh->GetImageData();
            uint32_t dataSize = fh->GetImageDataSize();
 
+If you don't want to convert a "Grey level images + LUT" into "RGB Pixel image" use
+           gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+           void *imageData = fh->GetImageDataRaw();
+           uint32_t dataSize = fh->GetImageDataRawSize();
 
 1-1-1-3) Get the value of a single Dicom DataElement 
 
@@ -659,20 +727,22 @@ you just have to process as follow :
       fileH->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
       
       // depending on what you did before!
-                  
+
+//--> Set the compression type : 
+      fileH->SetWriteTypeToJPEG();      // lossles compression        
+      fileH->SetWriteTypeToJPEG2000();  // lossles compression 
+      fileH->SetWriteTypeToDcmExplVR(); // Explicit Value Representation (no compression)
+      fileH->SetWriteTypeToDcmImplVR(); // Implicit Value Representation (no compression)
+      
+      fileH->SetWriteModeToRaw();       // Probabely you don't want to convert any LUT into RGB pixels ...
+
 //--> Set the Image Data
        fileH->SetImageData((unsigned char *)imageData,size);
       // ( Casting as 'unsigned char *' is just to avoid warnings.
       // It doesn't change the values. )
-
-//--> Set the compression type : 
-      fileH->SetWriteTypeToJPEG();         
-      fileH->SetWriteTypeToJPEG2000();
-      fileH->SetWriteTypeToDcmExplVR(); // Explicit Value Represtation (no compression)
-      fileH->SetWriteTypeToDcmImplVR(); // Implicit Value Represtation (no compression)
-      
-      fileH->SetWriteModeToRaw();       // Probabely you don't want to convert any LUT into RGB pixels ...
-
+      // or
+       fileH->SetUserData((unsigned char *)imageData,size); // performs compression, when required
+            
 //-> Write !      
       fileH->Write(fileName.str());
 

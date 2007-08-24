@@ -286,16 +286,32 @@ For multivaluated numeric DataEntries
 For converting 'Decimal String'
 -->bool GetDSValue(std::vector &lt;double&gt; &valueVector);  
 </pre>
+
 <LI> Avoid too many source file modifications from gdcm1.2 to gdcm1.3
 <pre>
 use :
 
-#define ValEntry              DataEntry
+#define ValEntry                      DataEntry
+#define BinEntry                      DataEntry
 
-#define GetEntryValue(g,e)    GetEntryString(g,e)
-#define GetValEntry(g,e)      GetDataEntry(g,e)
-#define GetValue()            GetString()
-#define InsertValEntry(a,b,c) InsertEntryString(a,b,c) // warning mind the VR!
+#define GetEntryValue(g,e)            GetEntryString(g,e)
+#define GetEntryForcedAsciiValue(g,e) GetEntryString(g,e)
+
+#define GetValEntry(g,e)              GetDataEntry(g,e)
+#define GetBinEntry(g,e)              GetDataEntry(g,e)
+#define GetValue()                    GetString()
+
+#define InsertValEntry(v,g,e,vr)      InsertEntryString(v,g,e,vr) // warning mind the VR!
+#define InsertBinEntry(b,l,g,e,vr)    InsertEntryBinArea(b,l,g,e,vr)
+
+#define SetValEntry(c,g,e)            SetEntryString(c,g,e)  | !!
+#define SetValEntry(c,en)             SetEntryString(c,en)   | !!
+
+#define SetBinEntry(c,l,en)           SetEntryBinArea(c,l,en)   | !!
+#define SetBinEntry(c,l,g,e)          SetEntryBinArea(c,l,g,e)  | !!
+
+#define NewValEntry(g,e,vr)           NewDataEntry(g,e,vr)
+#define NewBinEntry(g,e,vr)           NewDataEntry(g,e,vr)       
 
 </pre>
    </UL> 
