@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.334 $
+  Date:      $Date: 2007/08/24 10:45:18 $
+  Version:   $Revision: 1.335 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1978,6 +1978,7 @@ bool File::AnonymizeFile()
  */
 bool File::Write(std::string fileName, FileType writetype)
 {
+      gdcmDebugMacro(" File::Write ");
    std::ofstream *fp = new std::ofstream(fileName.c_str(), 
                                          std::ios::out | std::ios::binary);
    if (*fp == NULL)

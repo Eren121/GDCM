@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/08/24 10:45:18 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,6 +55,7 @@ PixelWriteConvert::PixelWriteConvert()
  */
 PixelWriteConvert::~PixelWriteConvert() 
 {
+   gdcmDebugMacro("PixelWriteConvert::~PixelWriteConvert()" );
    if( Compressed )
      {
      delete[] UserData;
@@ -309,9 +310,6 @@ bool gdcm_write_JPEG_file16 (std::ostream *fp, char *inputdata, size_t inputleng
 
 void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File *image)
 {
-
- std::cerr << "entree ds PixelWriteConvert::SetCompressJPEGUserData" << std::endl; 
- 
   (void)data;
   (void)size;
   (void)image;
@@ -320,8 +318,8 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
 
    std::ostringstream *of = new std::ostringstream();
     int xsize = image->GetXSize();
-   int ysize = image->GetYSize();
-  int zsize =  image->GetZSize();
+    int ysize = image->GetYSize();
+    int zsize = image->GetZSize();
     int samplesPerPixel = image->GetSamplesPerPixel();
    //std::cout << "X: " << xsize << std::endl;
    //std::cout << "Y: " << ysize << std::endl;

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2007/08/24 10:45:18 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -234,8 +234,10 @@ private:
    bool Parsed;
 
    // Utility pixel converter
+   
    /// \brief Pointer to the PixelReadConverter
    PixelReadConvert *PixelReadConverter;
+   
    /// \brief Pointer to the PixelWriteConverter
    PixelWriteConvert *PixelWriteConverter;
 

@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/21 12:51:09 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2007/08/24 10:45:18 $
+  Version:   $Revision: 1.121 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,15 +63,17 @@ std::string v = f->GetEntryValue(groupNb,ElementNb);
 
 // to get the pixels, user needs a gdcm::FileHelper
 gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+
 // user may ask not to convert Palette (if any) to RGB
 uint8_t *pixels = fh->GetImageDataRaw();
 int imageLength = fh->GetImageDataRawSize();
+
 // He can now use the pixels, create a new image, ...
 uint8_t *userPixels = ...
 
-To re-write the image, user re-uses the gdcm::FileHelper
+//To re-write the image, user re-uses the gdcm::FileHelper
+gdcm::File *fh = new gdcm::FileHelper();
 
-fh->SetImageData( userPixels, userPixelsLength);
 fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
                     // (WriteMode is set)
 
@@ -79,14 +81,20 @@ fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
 fh->SetPhotometricInterpretationToMonochrome1();
 
 fh->SetWriteTypeToDcmExpl();  // he wants Explicit Value Representation
-                              // Little Endian is the default
-                              // no other value is allowed
+                              // Little Endian is the default,
+                              // bigendian not supported for writting
                                 (-->SetWriteType(ExplicitVR);)
                                    -->WriteType = ExplicitVR;
+fh->SetWriteTypeToJPEG();     // lossless compression   
+fh->SetWriteTypeToJPEG2000(); // lossless compression   
+
+fh->SetImageData( userPixels, userPixelsLength);
+or
+fh->SetUserData( userPixels, userPixelsLength); // this one performs compression, when required
+   
 fh->Write(newFileName);      // overwrites the file, if any
 
-// or :
-fh->WriteDcmExplVR(newFileName);
+
 
 
 // ----------------------------- WARNING -------------------------
@@ -494,7 +502,7 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
  *          not to deallocate its data before gdcm uses them (e.g. with
  *          the Write() method )
  * @param inData user supplied pixel area (uint8_t* is just for the compiler.
- *               user is allowed to pass any kind of pixelsn since the size is
+ *               user is allowed to pass any kind of pixels since the size is
  *               given in bytes) 
  * @param expectedSize total image size, *in Bytes*
  */
@@ -706,7 +714,7 @@ bool FileHelper::WriteAcr (std::string const &fileName)
  * @return false if write fails
  */
 bool FileHelper::Write(std::string const &fileName)
-{
+{ 
    CheckMandatoryElements(); //called once, here !
    
    bool flag = false;
@@ -808,9 +816,11 @@ bool FileHelper::Write(std::string const &fileName)
          break;
    }
 
-   bool check = CheckWriteIntegrity(); // verifies length
+   bool check;
    if (WriteType == JPEG || WriteType == JPEG2000)
       check = true;
+   else
+      check = CheckWriteIntegrity(); // verifies length
 
    if (check)
    {
