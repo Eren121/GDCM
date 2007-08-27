@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/24 10:45:18 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2007/08/27 16:14:47 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -240,8 +240,8 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
 
    std::ostringstream *of = new std::ostringstream();
     int xsize = image->GetXSize();
-   int ysize = image->GetYSize();
-  int zsize =  image->GetZSize();
+    int ysize = image->GetYSize();
+    int zsize = image->GetZSize();
     int samplesPerPixel = image->GetSamplesPerPixel();
    //std::cout << "X: " << xsize << std::endl;
    //std::cout << "Y: " << ysize << std::endl;
@@ -367,7 +367,7 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
     size_t end = of->tellp();
     //static int i = 0;
     JpegPair &jp = JpegFragmentSize[i];
-      jp.second = (uint32_t)(end-beg);
+    jp.second = (uint32_t)(end-beg);
     if( ((end-beg) % 2) )
       {
       of->put( '\0' );

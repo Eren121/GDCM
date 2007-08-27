@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2007/08/27 16:14:47 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,7 +90,10 @@ DataEntry::~DataEntry ()
 /**
  * \brief Sets the value (non string) of the current DataEntry
  * @param area area
- * @param self self
+ * @param self self=true : The area : *belongs" to the DataEntry 
+ *                                  : will be delete with the DataEntry
+ *             self=false  The area *is not* deleted with the DataEntry
+ *              
  */
 void DataEntry::SetBinArea( uint8_t *area, bool self )  
 { 
@@ -118,7 +121,7 @@ void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
       NewBinArea();
       memcpy(BinArea,area,length);
       if( length!=lgh )
-         BinArea[length]=0;
+         BinArea[length]=0; // padd with zero
 
       State = STATE_LOADED;
    }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/24 10:45:18 $
-  Version:   $Revision: 1.335 $
+  Date:      $Date: 2007/08/27 16:14:47 $
+  Version:   $Revision: 1.336 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1997,10 +1997,10 @@ bool File::Write(std::string fileName, FileType writetype)
    }
 
    /// \todo FIXME : Derma?.dcm does not have it...let's remove it ?!? JPRx
-   if( writetype != JPEG )
+   if( writetype != JPEG && writetype != JPEG2000)
    {
       int i_lgPix = GetEntryLength(GrPixel, NumPixel);
-      if (i_lgPix != -2)
+      if (i_lgPix != -2)  /// \todo wtf "-2" ?!?
       {
          // no (GrPixel, NumPixel) element
          std::string s_lgPix = Util::Format("%d", i_lgPix+12);

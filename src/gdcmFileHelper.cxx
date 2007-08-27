@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/24 10:45:18 $
-  Version:   $Revision: 1.121 $
+  Date:      $Date: 2007/08/27 16:14:47 $
+  Version:   $Revision: 1.122 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,7 +97,6 @@ fh->Write(newFileName);      // overwrites the file, if any
 
 
 
-// ----------------------------- WARNING -------------------------
 
 These lines will be moved to the document-to-be 'Developer's Guide'
 
@@ -105,7 +104,12 @@ WriteMode : WMODE_RAW / WMODE_RGB
 WriteType : ImplicitVR, ExplicitVR, ACR, ACR_LIBIDO
 PhotometricInterpretation : MONOCHROME2 (0=black), MONOCHROME2 (0=white)
 
-
+fh->SetImageData( userPixels, userPixelsLength);
+or
+fh->SetUserData( userPixels, userPixelsLength);
+   PixelWriteConverter->SetUserData(inData, expectedSize);
+   
+   
 fh->SetWriteMode(WMODE_RAW / WMODE_RGB)
 
 fh->SetWriteType( ImplicitVR/ExplicitVR/ACR/ACR_LIBIDO/JPEG/JPEG2000)
@@ -509,6 +513,8 @@ size_t FileHelper::GetImageDataIntoVector (void *destination, size_t maxSize)
 void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
 {
    PixelWriteConverter->SetUserData(inData, expectedSize);
+   /// \todo : shouldn't we call SetCompressJPEGUserData/SetCompressJPEG2000UserData
+   ///         here, too?
 }
 
 /**
@@ -521,6 +527,8 @@ void FileHelper::SetImageData(uint8_t *inData, size_t expectedSize)
  */
 void FileHelper::SetUserData(uint8_t *inData, size_t expectedSize)
 {
+  // Shouldn't we move theese lines to FileHelper::Write()?
+/*  
    if( WriteType == JPEG2000 )
    {
       PixelWriteConverter->SetCompressJPEG2000UserData(inData, expectedSize, FileInternal);
@@ -533,6 +541,9 @@ void FileHelper::SetUserData(uint8_t *inData, size_t expectedSize)
    {
       PixelWriteConverter->SetUserData(inData, expectedSize);
    }
+   */
+   // Just try!
+   PixelWriteConverter->SetUserData(inData, expectedSize);
 }
 
 /**
@@ -727,38 +738,8 @@ bool FileHelper::Write(std::string const &fileName)
  
       case Unknown:  // should never happen; ExplicitVR is the default value
       case ExplicitVR:
-
-   // User should ask gdcm to write an image in Explicit VR mode
-   // only when he is sure *all* the VR of *all* the DataElements is known.
-   // i.e : when there are *only* Public Groups
-   // or *all* the Shadow Groups are fully described in the relevant Shadow
-   // Dictionnary
-   // Let's just *dream* about it; *never* trust a user !
-   // We turn to Implicit VR if at least the VR of one element is unknown.
    
-   // Better we let DocEntry::WriteContent to put vr=UN for undocumented Shadow Groups !
-
-/*
-         e = FileInternal->GetFirstEntry();
-         while (e != 0)
-         {
-            if (e->GetVR() == "  ")  
-            {
-               SetWriteTypeToDcmImplVR();
-               SetWriteFileTypeToImplicitVR();
-               flag = true;
-               break;         
-            } 
-            e = FileInternal->GetNextEntry();
-         }        
-
-         if (!flag)
-         {
-            SetWriteFileTypeToExplicitVR();
-         }
-         break;
-*/
-
+   // We let DocEntry::WriteContent to put vr=UN for undocumented Shadow Groups !
          SetWriteFileTypeToExplicitVR();
 
   break;
@@ -777,13 +758,27 @@ bool FileHelper::Write(std::string const &fileName)
         // SetWriteFileTypeToImplicitVR(); // ACR IS implicit VR !
          break;
  
-      /// \todo FIXME : JPEG may be either ExplicitVR or ImplicitVR
+      /// \todo FIXME : JPEG/JPEG2000 may be either ExplicitVR or ImplicitVR      
       case JPEG:
          SetWriteFileTypeToJPEG();
+         // was :
+         //PixelWriteConverter->SetCompressJPEGUserData(
+         //   inData, expectedSize, FileInternal);
+ PixelWriteConverter->SetCompressJPEGUserData(
+    PixelWriteConverter->GetUserData(),
+    PixelWriteConverter->GetUserDataSize(),FileInternal);
          break;
 
       case JPEG2000:
+         /// \TODO Maybe we should consider doing the compression here !
+         // PixelWriteConverter->SetCompressJPEG2000UserData(inData, expectedSize, FileInternal);
+
          SetWriteFileTypeToJPEG2000();
+         PixelWriteConverter->SetCompressJPEG2000UserData(
+            PixelWriteConverter->GetUserData(),
+            PixelWriteConverter->GetUserDataSize(),
+            FileInternal);
+ 
          break;
    }
 
@@ -901,7 +896,7 @@ bool FileHelper::CheckWriteIntegrity()
  *       (modifies, when necessary, photochromatic interpretation, 
  *       bits allocated, Pixels element VR)
  *       WARNING : if SetPhotometricInterpretationToMonochrome1() was called
- *                 before Pixel Elements if modified :-( 
+ *                 before Pixel Elements is modified :-( 
  */ 
 void FileHelper::SetWriteToRaw()
 {
@@ -934,7 +929,7 @@ void FileHelper::SetWriteToRaw()
          vr = "OW";
       if ( FileInternal->GetBitsAllocated()==24 ) // For RGB ACR files 
          vr = "OB";
-       // For non RAW data. Mainly JPEG
+       // For non RAW data. Mainly JPEG/JPEG2000
       if( WriteType == JPEG || WriteType == JPEG2000)
       {
          vr = "OW";
@@ -974,13 +969,13 @@ void FileHelper::SetWriteToRGB()
       PixelReadConverter->BuildRGBImage();
       
       DataEntry *spp = CopyDataEntry(0x0028,0x0002,"US");
-      spp->SetString("3 ");
+      spp->SetString("3 ");  // Don't drop trailing space
 
       DataEntry *planConfig = CopyDataEntry(0x0028,0x0006,"US");
-      planConfig->SetString("0 ");
+      planConfig->SetString("0 "); // Don't drop trailing space
 
       DataEntry *photInt = CopyDataEntry(0x0028,0x0004,"CS");
-      photInt->SetString("RGB ");
+      photInt->SetString("RGB "); // Don't drop trailing space
 
       if ( PixelReadConverter->GetRGB() )
       {
@@ -2272,3 +2267,8 @@ void RescaleFunction(ImageIOBase::IOComponentType bufferType,
     }
 }
 */
+
+      ::itk::ExceptionObject e(__FILE__, __LINE__, message.str().c_str(),ITK_LOCATION);
+      throw e;
+    }
+}
