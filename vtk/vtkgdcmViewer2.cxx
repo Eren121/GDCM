@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/08/28 14:02:13 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,6 @@
 
 #include "vtkGdcmReader.h"
 #include "gdcmDocument.h"  // for NO_SHADOWSEQ
-
 #ifndef vtkFloatingPointType
 #define vtkFloatingPointType float
 #endif
@@ -132,17 +131,15 @@ int main(int argc, char *argv[])
    // 0028|1051 [DS] [Window Width]
    // but vtkgdcmReader doesn't know about them :-(
 
-      vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
-      viewer->SetColorLevel (0.5 * (range[1] + range[0]));
-      viewer->SetColorWindow (range[1] - range[0]);
-
+   if( reader->GetOutput()->GetNumberOfScalarComponents() == 1 )
+     {
+     vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
+     viewer->SetColorLevel (0.5 * (range[1] + range[0]));
+     viewer->SetColorWindow (range[1] - range[0]);
+     }
       viewer->SetInput ( reader->GetOutput() );
    }
    viewer->SetupInteractor (iren);
-  
-   //vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
-   //viewer->SetColorWindow (range[1] - range[0]);
-   //viewer->SetColorLevel (0.5 * (range[1] + range[0]));
 
    // Here is where we setup the observer, 
    vtkgdcmObserver *obs = vtkgdcmObserver::New();
