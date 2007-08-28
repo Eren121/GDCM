@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 09:40:19 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/08/28 14:00:52 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
   if( argc < 2)
     {
     std::cerr << argv[0] << " inputfilename.dcm [ outputfilename.dcm"
-              << "quality debug]\n";
+              << " quality debug]\n";
     return 1;
     }
 
@@ -110,17 +110,41 @@ int main(int argc, char *argv[])
    str << samplesPerPixel; //img.components;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
-   // Set the Pixel Aspect Ratio
+// The image may be displayed uncorectly if these fields are missing
+
+   // Set the Pixel Aspect Ratio, if any
    std::string par = f->GetEntryString(0x0028,0x0034);
    std::cerr <<"Pixel Aspect Ratio [" << par << "]" << std::endl;
    if ( par != GDCM_NAME_SPACE::GDCM_UNFOUND )
       fileToBuild->InsertEntryString(par,0x0028,0x0034,"IS"); // Pixel Aspect Ratio
 
+   // Set the Modality, if any
+   std::string modality = f->GetEntryString(0x0008,0x0060);
+   std::cerr <<"Modality [" << modality << "]" << std::endl;
+   if ( modality != GDCM_NAME_SPACE::GDCM_UNFOUND )
+      fileToBuild->InsertEntryString(modality,0x0008,0x0060,"CS"); // Modality
+
+   // Set the Media Storage SOP Class UID, if any
+   std::string mssop = f->GetEntryString(0x0002,0x0002);
+   std::cerr <<"Media Storage SOP Class UID [" << mssop << "]" << std::endl;
+   if ( mssop != GDCM_NAME_SPACE::GDCM_UNFOUND )
+      fileToBuild->InsertEntryString(mssop,0x0002,0x0002,"UI"); // Media Storage SOP Class UID
+
+   // This one is mandatory to deal with Pixel Aspect Ratio, in ultrasound images !
+   // Set the SOP Class UID, if any
+   std::string sop = f->GetEntryString(0x0008,0x0016);
+   std::cerr <<"SOP Class UID [" << sop << "]" << std::endl;
+   if ( sop != GDCM_NAME_SPACE::GDCM_UNFOUND )
+      fileToBuild->InsertEntryString(sop,0x0008,0x0016,"UI"); // SOP Class UID
+     
 // Step 2 : Create the output image
    size_t size = xsize * ysize * zsize
                * samplesPerPixel  * bitsallocated / 8;
 
    GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New(fileToBuild);
+
+   // Consider that pixels are unmodified
+   fileH->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
 
    assert( size == testedDataSize );
    fileH->SetWriteTypeToJPEG2000(  );
