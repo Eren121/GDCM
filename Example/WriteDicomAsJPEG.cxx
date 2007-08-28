@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/24 10:48:08 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/08/28 09:40:19 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,10 +54,10 @@ int main(int argc, char *argv[])
    int xsize = f->GetXSize();
    int ysize = f->GetYSize();
    int zsize = f->GetZSize();
+   //tested->Print( std::cout );
 
    int samplesPerPixel = f->GetSamplesPerPixel();
    size_t testedDataSize    = tested->GetImageDataSize();
-   std::cerr << "testedDataSize:" << testedDataSize << std::endl;
    uint8_t *testedImageData = tested->GetImageData();
    
    if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )  
@@ -74,17 +74,17 @@ int main(int argc, char *argv[])
    str.str("");
    str << ysize;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
- 
+
    if(zsize>1)
    {
       str.str("");
       str << zsize;
       fileToBuild->InsertEntryString(str.str(),0x0028,0x0008,"IS"); // Number of Frames
    }
-   
+
    int bitsallocated = f->GetBitsAllocated();
-   int bitsstored = f->GetBitsStored();
-   int highbit = f->GetHighBitPosition();
+   int bitsstored    = f->GetBitsStored();
+   int highbit       = f->GetHighBitPosition();
    //std::string pixtype = f->GetPixelType();
    int sign = f->IsSignedPixelData();
 
@@ -110,6 +110,12 @@ int main(int argc, char *argv[])
    str << samplesPerPixel; //img.components;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
+   // Set the Pixel Aspect Ratio
+   std::string par = f->GetEntryString(0x0028,0x0034);
+   std::cerr <<"Pixel Aspect Ratio [" << par << "]" << std::endl;
+   if ( par != GDCM_NAME_SPACE::GDCM_UNFOUND )
+      fileToBuild->InsertEntryString(par,0x0028,0x0034,"IS"); // Pixel Aspect Ratio
+
 // Step 2 : Create the output image
    size_t size = xsize * ysize * zsize
                * samplesPerPixel  * bitsallocated / 8;
@@ -118,9 +124,8 @@ int main(int argc, char *argv[])
 
    assert( size == testedDataSize );
    fileH->SetWriteTypeToJPEG(  );
-
    //fileH->SetImageData(testedImageData, testedDataSize);
-   
+
    // SetUserData will ensure the compression
    fileH->SetUserData(testedImageData, testedDataSize);
    if( !fileH->Write(outfilename) )
