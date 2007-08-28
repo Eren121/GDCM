@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/28 09:29:26 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2007/08/28 14:05:33 $
+  Version:   $Revision: 1.124 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -93,7 +93,6 @@ or
 fh->SetUserData( userPixels, userPixelsLength); // this one performs compression, when required
    
 fh->Write(newFileName);      // overwrites the file, if any
-
 
 
 
@@ -764,9 +763,9 @@ bool FileHelper::Write(std::string const &fileName)
          // was :
          //PixelWriteConverter->SetCompressJPEGUserData(
          //   inData, expectedSize, FileInternal);
- PixelWriteConverter->SetCompressJPEGUserData(
-    PixelWriteConverter->GetUserData(),
-    PixelWriteConverter->GetUserDataSize(),FileInternal);
+         PixelWriteConverter->SetCompressJPEGUserData(
+                 PixelWriteConverter->GetUserData(),
+                 PixelWriteConverter->GetUserDataSize(),FileInternal);
          break;
 
       case JPEG2000:
@@ -778,7 +777,6 @@ bool FileHelper::Write(std::string const &fileName)
             PixelWriteConverter->GetUserData(),
             PixelWriteConverter->GetUserDataSize(),
             FileInternal);
- 
          break;
    }
 
@@ -1508,45 +1506,39 @@ void FileHelper::CheckMandatoryElements()
 
    if ( ContentType != USER_OWN_IMAGE) // when it's not a user made image
    { 
-
-      gdcmDebugMacro( "USER_OWN_IMAGE (1)");
-   // If 'SOP Class UID' exists ('true DICOM' image)
+   // If 'SOP Class UID' and 'SOP Instance UID' exist ('true DICOM' image)
    // we create the 'Source Image Sequence' SeqEntry
    // to hold informations about the Source Image
   
       DataEntry *e_0008_0016 = FileInternal->GetDataEntry(0x0008, 0x0016);
-      if ( e_0008_0016 )
+      DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
+      if ( e_0008_0016 && e_0008_0018)
       {
       // Create 'Source Image Sequence' SeqEntry
-//     SeqEntry *sis = SeqEntry::New (
-//            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x2112) );
       SeqEntry *sis = SeqEntry::New (0x0008, 0x2112);
       SQItem *sqi = SQItem::New(1);
-      // (we assume 'SOP Instance UID' exists too) 
-      // create 'Referenced SOP Class UID'
-//     DataEntry *e_0008_1150 = DataEntry::New(
-//            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1150) );
+      
+      // create 'Referenced SOP Class UID' from 'SOP Class UID'
+
       DataEntry *e_0008_1150 = DataEntry::New(0x0008, 0x1150, "UI");
       e_0008_1150->SetString( e_0008_0016->GetString());
       sqi->AddEntry(e_0008_1150);
       e_0008_1150->Delete();
       
-      // create 'Referenced SOP Instance UID'
+      // create 'Referenced SOP Instance UID' from 'SOP Instance UID'
       DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
-//      DataEntry *e_0008_1155 = DataEntry::New(
-//            Global::GetDicts()->GetDefaultPubDict()->GetEntry(0x0008, 0x1155) );
-      DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI");
+         
+      DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI"); 
       e_0008_1155->SetString( e_0008_0018->GetString());
       sqi->AddEntry(e_0008_1155);
       e_0008_1155->Delete();
-
+      
       sis->AddSQItem(sqi,1);
       sqi->Delete();
 
       // temporarily replaces any previous 'Source Image Sequence' 
       Archive->Push(sis);
       sis->Delete();
- 
       // FIXME : is 'Image Type' *really* depending on the presence of 'SOP Class UID'?
        if ( ContentType == FILTERED_IMAGE)      
       // the user *knows* he just modified the pixels
