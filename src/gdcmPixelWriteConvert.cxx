@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/27 16:14:47 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007/08/28 16:47:48 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -249,8 +249,9 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
     int bitsallocated = image->GetBitsAllocated();
     int sign = image->IsSignedPixelData();
    unsigned int fragment_size = xsize*ysize*samplesPerPixel * (bitsallocated / 8);
-    assert( fragment_size*zsize == size );
-
+    //assert( fragment_size*zsize == size );
+    gdcmDebugMacro("fragment_size " << fragment_size << " zsize " << zsize << " size " << size);    
+    assert( abs(fragment_size*zsize-size) <=1 );
    JpegVector JpegFragmentSize;
 #if WITHOFFSETTABLE
    size_t bots; //basic offset table start
@@ -326,7 +327,8 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
    //std::cout << "Sample: " << samplesPerPixel << std::endl;
     int bitsallocated = image->GetBitsAllocated();
    unsigned int fragment_size = xsize*ysize*samplesPerPixel * (bitsallocated / 8);
-    assert( fragment_size*zsize == size );
+    gdcmDebugMacro("fragment_size " << fragment_size << " zsize " << zsize << " size " << size);
+    assert( abs(fragment_size*zsize-size) <=1 );
 
    JpegVector JpegFragmentSize;
 #if WITHOFFSETTABLE
