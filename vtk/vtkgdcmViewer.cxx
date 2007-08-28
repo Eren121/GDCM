@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2007/08/28 09:41:39 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,10 +67,19 @@ public:
       {
          if ( event == vtkCommand::CharEvent )
          {
+#if (VTK_MAJOR_VERSION >= 5)
+            int max = ImageViewer->GetSliceMax();
+            int slice = (ImageViewer->GetSlice() + 1 ) % ++max;
+            ImageViewer->SetSlice( slice );
+#else
             int max = ImageViewer->GetWholeZMax();
             int slice = (ImageViewer->GetZSlice() + 1 ) % ++max;
             ImageViewer->SetZSlice( slice );
+#endif
+#if !( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
+         // This used to be a bug in version VTK 4.4 and earlier
             ImageViewer->GetRenderer()->ResetCameraClippingRange();
+#endif
             ImageViewer->Render();
          }
       }
@@ -116,6 +125,12 @@ int main(int argc, char *argv[])
    }
    else
    {
+   
+   // For a single medical image, it would be more efficient to use
+   // 0028|1050 [DS] [Window Center]
+   // 0028|1051 [DS] [Window Width]
+   // but vtkgdcmReader doesn't know about them :-(
+
       vtkFloatingPointType *range = reader->GetOutput()->GetScalarRange();
       viewer->SetColorLevel (0.5 * (range[1] + range[0]));
       viewer->SetColorWindow (range[1] - range[0]);
