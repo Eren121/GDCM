@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/27 16:14:47 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2007/08/28 09:29:26 $
+  Version:   $Revision: 1.123 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1650,21 +1650,24 @@ void FileHelper::CheckMandatoryElements()
       }
    }
 
-   std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
-   if ( pixelSpacing == GDCM_UNFOUND )
+   std::string pixelAspectRatio = FileInternal->GetEntryString(0x0028,0x0034);
+   if ( pixelAspectRatio == GDCM_UNFOUND ) // avoid conflict with pixelSpacing !
    {
-      pixelSpacing = "1.0\\1.0";
-       // if missing, Pixel Spacing forced to "1.0\1.0"
-      CopyMandatoryEntry(0x0028,0x0030,pixelSpacing,"DS");
-   }
-   
-   // 'Imager Pixel Spacing' : defaulted to 'Pixel Spacing'
-   // --> This one is the *legal* one !
-   if ( ContentType != USER_OWN_IMAGE)
-   //  we write it only when we are *sure* the image comes from
-   //         an imager (see also 0008,0x0064)
-      CheckMandatoryEntry(0x0018,0x1164,pixelSpacing,"DS");
-
+      std::string pixelSpacing = FileInternal->GetEntryString(0x0028,0x0030);
+      if ( pixelSpacing == GDCM_UNFOUND )
+      {
+         pixelSpacing = "1.0\\1.0";
+          // if missing, Pixel Spacing forced to "1.0\1.0"
+         CopyMandatoryEntry(0x0028,0x0030,pixelSpacing,"DS");
+      }
+  
+      // 'Imager Pixel Spacing' : defaulted to 'Pixel Spacing'
+      // --> This one is the *legal* one !
+      if ( ContentType != USER_OWN_IMAGE)
+      //  we write it only when we are *sure* the image comes from
+      //         an imager (see also 0008,0x0064)
+         CheckMandatoryEntry(0x0018,0x1164,pixelSpacing,"DS");
+   } 
 /*
 ///Exact meaning of RETired fields
 
@@ -2267,8 +2270,3 @@ void RescaleFunction(ImageIOBase::IOComponentType bufferType,
     }
 }
 */
-
-      ::itk::ExceptionObject e(__FILE__, __LINE__, message.str().c_str(),ITK_LOCATION);
-      throw e;
-    }
-}

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/27 09:49:31 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2007/08/28 09:29:26 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ DocEntry::~DocEntry()
 /**
  * \brief   Writes the common part of any DataEntry, SeqEntry
  * @param fp already open ofstream pointer
- * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
+ * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, JPEG, JPEG2000...)
  */
 void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMetaElements)
 {
@@ -125,20 +125,9 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMet
       uint16_t zero = 0;
       uint16_t shortLgr = (uint16_t)lgth;
 
-/*
-      if( IsVRUnknown() )
-      { 
-         // GDCM_VRUNKNOWN was stored in the Entry VR;
-         // deal with Entry as if TS were Implicit VR
-         binary_write(*fp, lgth);
-      }
-      else
-*/
       if( IsVRUnknown() )  
       {
-      // if VR was not set, we set it to "UN"
-      // (FileHelper::Write has no longer to switch to ImplicitVR 
-      // when undocumented VR DataElements exist!)
+      // if VR was not set by user, we set it to "UN"
          SetVR("UN");
          vr=GetVR();
       }      
@@ -152,7 +141,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMet
             binary_write(*fp, zero);
            if ( (filetype == JPEG || filetype == JPEG2000) && group == 0x7fe0 && elem == 0x0010)
             {
-               gdcmAssertMacro( GetVR() == "OW" );
+               // gdcmAssertMacro( GetVR() == "OW" ); //?!?
                binary_write(*fp, ffff);
             }  
             else if (vr == "SQ")
