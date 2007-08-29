@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeIcon.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/26 15:42:45 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/08/29 15:56:41 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,7 @@ int TestMakeIcon (int argc, char *argv[])
    icon->AddSQItem(sqi, 1);
    sqi->Delete();
 
-   // icone is just define like the image
+   // icone is just defined like the image
    // The purpose is NOT to imagine an icon, 
    // just check the stuff works
 

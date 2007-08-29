@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 08:26:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/08/29 15:56:41 $
+  Version:   $Revision: 1.4 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -79,7 +79,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
    if( !fileout->IsReadable() )
    {
       std::cout << "Failed" << std::endl
-                << "Test::TestReadWriteReadCompare: Could not parse the newly "
+                << "Test::TestReadWriteJPEGReadCompare: Could not parse the newly "
                 << "written image:" << filename << std::endl;
       file->Delete();
       filehelper->Delete();

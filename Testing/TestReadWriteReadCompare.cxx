@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/25 16:14:33 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2007/08/29 15:56:41 $
+  Version:   $Revision: 1.32 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ int CompareInternal(std::string const &filename, std::string const &output)
    uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
           // GetImageData or if he wants to GetImageDataRaw
-          // (even if we do it by setting a flag, he will have to decide)
+          // (even if we do it by setting a flag, *he* will have to decide)
 
    //filehelper->SetImageData(imageData, dataSize);
 
