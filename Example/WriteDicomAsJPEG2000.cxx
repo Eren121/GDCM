@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: WriteDicomAsJPEG2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 16:51:54 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/08/29 08:13:40 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,12 +57,13 @@ int main(int argc, char *argv[])
    //tested->Print( std::cout );
 
    int samplesPerPixel = f->GetSamplesPerPixel();
-   size_t testedDataSize    = tested->GetImageDataSize();
-   uint8_t *testedImageData = tested->GetImageData();
+   size_t testedDataSize    = tested->GetImageDataRawSize(); // Raw : Don't convert gray pixels+LUT to RBG pixels
+   uint8_t *testedImageData = tested->GetImageDataRaw();
    
-   if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )  
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag() ) { 
       tested->Print( std::cout );
-
+      std::cout << "-------------------------------------------------------------------------------" << std::endl;
+   }
 // Step 1 : Create the header of the new file
    GDCM_NAME_SPACE::File *fileToBuild = GDCM_NAME_SPACE::File::New();
    std::ostringstream str;
@@ -145,9 +146,10 @@ int main(int argc, char *argv[])
 
    // Consider that pixels are unmodified
    fileH->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
-   
+   std::cerr << "xsize " << xsize << " ysize " << ysize << " zsize " << zsize << " samplesPerPixel " << samplesPerPixel
+             << " bitsallocated " << bitsallocated << std::endl;
    std::cerr << "size " << size << " testedDataSize " << testedDataSize <<
-              std::endl;   
+                 std::endl;
    assert(abs (size-testedDataSize) <= 1 );
    fileH->SetWriteTypeToJPEG2000(  );
    //fileH->SetImageData(testedImageData, testedDataSize);
