@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/24 10:48:08 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2007/08/29 15:58:19 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -150,8 +150,10 @@ int main(int argc, char *argv[])
    delete am;  // we don't need Argument Manager any longer
 
    // ----------- End Arguments Manager ---------
-
    GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
+   
+   f->SetMaxSizeLoadEntry(0x7fff);
+   
    f->SetLoadMode( loadMode );
 
    f->SetFileName( fileName );
