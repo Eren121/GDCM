@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/28 14:05:33 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2007/08/29 08:10:14 $
+  Version:   $Revision: 1.125 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1314,6 +1314,7 @@ We have to deal with 4 *very* different cases :
 -4) user modified/added some tags *without processing* the pixels (anonymization...)
    UNMODIFIED_PIXELS_IMAGE
 -Probabely some more to be added.
+ --> Set it with FileHelper::SetContentType(int);
  
 gdcm::FileHelper::CheckMandatoryElements() deals automatically with these cases.
 

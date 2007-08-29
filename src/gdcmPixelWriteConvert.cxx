@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 16:47:48 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2007/08/29 08:10:14 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -248,20 +248,27 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
    //std::cout << "Sample: " << samplesPerPixel << std::endl;
     int bitsallocated = image->GetBitsAllocated();
     int sign = image->IsSignedPixelData();
-   unsigned int fragment_size = xsize*ysize*samplesPerPixel * (bitsallocated / 8);
+    unsigned int fragment_size = xsize*ysize*samplesPerPixel * (bitsallocated / 8);
     //assert( fragment_size*zsize == size );
+    
     gdcmDebugMacro("fragment_size " << fragment_size << " zsize " << zsize << " size " << size);    
     assert( abs(fragment_size*zsize-size) <=1 );
+    
    JpegVector JpegFragmentSize;
+      gdcmDebugMacro("Call Encode..BasicOffsetTable " );
 #if WITHOFFSETTABLE
    size_t bots; //basic offset table start
    EncodeWithBasicOffsetTable(of, zsize, bots);
 #else
    EncodeWithoutBasicOffsetTable(of, 1);
 #endif
+
+   gdcmDebugMacro("Out of Encode..BasicOffsetTable " );
+   
    uint8_t *pImageData = data;
    for(int i=0; i<zsize;i++)
-     {
+     {    
+     gdcmDebugMacro("Write fragment no " << i );
      WriteDICOMItems(of, JpegFragmentSize);
      size_t beg = of->tellp();
      gdcm_write_JPEG2000_file(of, (char*)pImageData,size, 
@@ -331,17 +338,20 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
     assert( abs(fragment_size*zsize-size) <=1 );
 
    JpegVector JpegFragmentSize;
+     gdcmDebugMacro("Call Encode..BasicOffsetTable " );   
 #if WITHOFFSETTABLE
    size_t bots; //basic offset table start
    EncodeWithBasicOffsetTable(of, zsize, bots);
 #else
    EncodeWithoutBasicOffsetTable(of, 1);
 #endif
+     gdcmDebugMacro("Out of Encode..BasicOffsetTable " );
    uint8_t *pImageData = data;
    for(int i=0; i<zsize;i++)
      {
+     gdcmDebugMacro("Write fragment no " << i );
      WriteDICOMItems(of, JpegFragmentSize);
-  size_t beg = of->tellp();
+     size_t beg = of->tellp();
      if( bitsallocated == 8 )
        {
        gdcm_write_JPEG_file8(of, (char*)pImageData,size, 
@@ -362,8 +372,18 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
          image->GetXSize(), image->GetYSize(), image->GetZSize(), image->GetSamplesPerPixel(),
          image->GetBitsAllocated(), 100);
        }
+     else if (bitsallocated <= 32)  // if we are lucky (?), it will compress as a 2 bytes stream
+       {                            // (Actually it doesn't !)
+       // Just to allow ctest not to abort on 32bits per pixel image RTDOSE.dcm
+       assert( bitsallocated >= 16 );
+       gdcmDebugMacro( "Warning : bitsallocated>16 not supported by JPEG !" );
+       gdcm_write_JPEG_file16(of, (char*)pImageData, size, 
+         image->GetXSize(), image->GetYSize(), image->GetZSize(), image->GetSamplesPerPixel(),
+         image->GetBitsAllocated(), 100);
+       }       
      else
        {
+       gdcmDebugMacro( "Major pb : bitsallocated =" << bitsallocated );
        abort();
        }
     size_t end = of->tellp();
@@ -382,7 +402,6 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
   //JpegPair &jp = v[0];
   //jp.second = 15328;
 
-
      //userData, UserDataSize);
      //     CreateOneFrame(of, pImageData, fragment_size, xsize, ysize, zsize, 
      //       samplesPerPixel, quality, JpegFragmentSize);
@@ -393,7 +412,6 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
 #if WITHOFFSETTABLE
    UpdateBasicOffsetTable(of, JpegFragmentSize, bots);
 #endif
-
 
    size_t of_size = of->str().size();
    UserData = new uint8_t[of_size];

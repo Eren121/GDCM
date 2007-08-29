@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/25 10:35:20 $
-  Version:   $Revision: 1.116 $
+  Date:      $Date: 2007/08/29 08:10:14 $
+  Version:   $Revision: 1.117 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -594,7 +594,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      // Precompute the offset localRaw will be shifted with
      int length = XSize * YSize * ZSize * SamplesPerPixel;
      int numberBytes = BitsAllocated / 8;
-
+     
      JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
      return true;
    }
