@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 16:57:00 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/08/29 08:26:54 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,6 +28,8 @@
 
 const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
 
+int nb_of_success___;
+int nb_of_failure___;
 
 static int CompareInternalJPEG(std::string const &filename, std::string const &output)
 {
@@ -45,48 +47,28 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                 << "Test::TestReadWriteJPEGReadCompare: Image not gdcm compatible:"
                 << filename << std::endl;
       file->Delete();
+      nb_of_failure___++;
       return 1;
    }
    std::cout << "           step 1...";
 
    //////////////// Step 2:
    GDCM_NAME_SPACE::FileHelper *filehelper = GDCM_NAME_SPACE::FileHelper::New( file );
-   int dataSize       = filehelper->GetImageDataSize();
-   uint8_t *imageData = filehelper->GetImageData(); //EXTREMELY IMPORTANT
+   int dataSize       = filehelper->GetImageDataRawSize();
+   uint8_t *imageData = filehelper->GetImageDataRaw(); //EXTREMELY IMPORTANT
           // Sure, it is : It's up to the user to decide if he wants to
           // GetImageData or if he wants to GetImageDataRaw
           // (even if we do it by setting a flag, *he* will have to decide)
 
    //filehelper->SetImageData(imageData, dataSize);
-
-         // Just to be sure the further Write() doesn't corrupt imageData ...
-         std::cout << std::endl;    
-         int i,j;
-         for(i=0, j=0;i<dataSize && j<MAX_NUMBER_OF_DIFFERENCE;i++)
-         {
-               std::cout << std::hex << "(" << i << " : " 
-                         << std::hex << (int)(imageData[i]) << ") "
-                         << std::dec;
-               ++j;
-         }
-         std::cout << std::endl;
-
-   filehelper->SetWriteModeToRGB();
-  
+ 
+   filehelper->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE); // lossless compression : pixels reain unimpared
+   filehelper->SetWriteModeToRaw();  
    filehelper->SetWriteTypeToJPEG(  ); 
+   
    filehelper->SetUserData(imageData,dataSize); // This one ensures the compression
    filehelper->Write( output ); 
 
-         // Just to be sure the previous Write() didn't corrupt imageData ..   
-         for(i=0, j=0;i<dataSize && j<MAX_NUMBER_OF_DIFFERENCE;i++)
-         {
-               std::cout << std::hex << "(" << i << " : " 
-                         << std::hex << (int)(imageData[i]) << ") "
-                         << std::dec;
-               ++j;
-         }
-         std::cout << std::endl << std::endl;
- 
    std::cout << "2...";
 
    //////////////// Step 3:
@@ -102,6 +84,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       file->Delete();
       filehelper->Delete();
       fileout->Delete();
+      nb_of_failure___++;
       return 1;
    }
 
@@ -109,19 +92,8 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
 
    std::cout << "3...";
    // For the next step:
-   int     dataSizeWritten   = reread->GetImageDataSize();
-   uint8_t *imageDataWritten = reread->GetImageData();
-   
-         // Just to see
-         std::cout << std::endl;
-         for(i=0, j=0;i<dataSize && j<MAX_NUMBER_OF_DIFFERENCE;i++)
-         {
-               std::cout << std::hex << "(" << i << " : " 
-                         << std::hex << (int)(imageDataWritten[i]) << ") "
-                         << std::dec;
-               ++j;
-         }
-         std::cout << std::endl << std::endl;
+   int     dataSizeWritten   = reread->GetImageDataRawSize();
+   uint8_t *imageDataWritten = reread->GetImageDataRaw();
  
    //////////////// Step 4:
    // Test the image size
@@ -130,7 +102,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
        file->GetZSize() != reread->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
-         << "        X Size differs: "
+         << "        Size differs: "
          << "X: " << file->GetXSize() << " # "
                   << reread->GetFile()->GetXSize() << " | "
          << "Y: " << file->GetYSize() << " # "
@@ -141,6 +113,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       filehelper->Delete();
       fileout->Delete();
       reread->Delete();
+      nb_of_failure___++;      
       return 1;
    }
 
@@ -158,54 +131,64 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       filehelper->Delete();
       fileout->Delete();
       reread->Delete();
+      nb_of_failure___++;      
       return 1;
    }
 
    // Test the data content
    
-   if (memcmp(imageData, imageDataWritten, dataSize) !=0)
+   if (memcmp(imageData, imageDataWritten, dataSizeFixed) !=0)
    {
-         std::string PixelType = filehelper->GetFile()->GetPixelType();
-         std::string ts        = filehelper->GetFile()->GetTransferSyntax();
-
-         std::cout << " Failed" << std::endl
-                   << "        pixel (" 
-                   << PixelType
-                   << ") differ (as expanded in memory)."
-                   << std::endl
-                   << "        compression : " 
-                   << GDCM_NAME_SPACE::Global::GetTS()->GetValue(ts) << std::endl;
-
-         std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
-                   << " pixels differing (pos : original - written) :" 
-                   << std::endl;
-  
-         int i;
-         unsigned int j;
-         for(i=0, j=0;i<dataSize && j<MAX_NUMBER_OF_DIFFERENCE;i++)
+      unsigned int j =0;
+      for(int i1=0; i1<dataSizeFixed; i1++)
+      {
+         if (abs ((int)imageData[i1]-(int)imageDataWritten[i1]) > 2)
          {
-            //if(imageData[i]!=imageDataWritten[i])
-            if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
-              {
-               std::cout << std::hex << "(" << i << " : " 
+            j=1;
+            break;
+         }
+       }
+       
+       if (j!=0)
+       {           
+          std::string PixelType = filehelper->GetFile()->GetPixelType();
+          std::string ts        = filehelper->GetFile()->GetTransferSyntax();
+
+          std::cout << " Failed" << std::endl
+                    << "        pixel (" 
+                    << PixelType
+                    << ") differ (as expanded in memory)."
+                    << std::endl
+                    << "        compression : " 
+                    << GDCM_NAME_SPACE::Global::GetTS()->GetValue(ts) << std::endl;
+
+          std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
+                    << " pixels differing (pos : original - written) :" 
+                    << std::endl;
+
+          for(int i=0, j=0;i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE;i++)
+          {
+             if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
+             {
+                std::cout << std::hex << "(" << i << " : " 
                          << std::hex << (int)(imageData[i]) << " - "
                          << std::hex << (int)(imageDataWritten[i]) << ") "
                          << std::dec;
-               ++j;
+                ++j;
               }
-         }
-         std::cout << std::endl;
-   
-     if (j !=0 ) { 
-      file->Delete();
-      filehelper->Delete();
-      fileout->Delete();
-      reread->Delete();
-      return 1;
-     }
-   }
-   std::cout << "========================================= 4...OK." << std::endl ;
+          }
+          std::cout << std::endl;
 
+          file->Delete();
+          filehelper->Delete();
+          fileout->Delete();
+          reread->Delete();
+          nb_of_failure___++;  
+          return 1;
+       }
+   }
+   std::cout << "=============== 4...OK." << std::endl ;
+   nb_of_success___ ++;
    //////////////// Clean up:
    file->Delete();
    filehelper->Delete();
@@ -220,6 +203,8 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
 int TestReadWriteJPEGReadCompare(int argc, char *argv[]) 
 {
    int result = 0;
+   nb_of_success___ =0;
+   nb_of_failure___ =0;
 
    if (argc == 4)
       GDCM_NAME_SPACE::Debug::DebugOn();
@@ -261,5 +246,9 @@ int TestReadWriteJPEGReadCompare(int argc, char *argv[])
          result += CompareInternalJPEG(filename, "TestReadWriteJPEGReadCompare.dcm"); 
       }
    }
+   std::cout << "==================================" << std::endl;
+   std::cout << "nb of success " << nb_of_success___ << std::endl;
+   std::cout << "nb of failure " << nb_of_failure___ << std::endl;
+   
    return result;
 }
