@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,22 +58,22 @@ DicomDirStudy::~DicomDirStudy()
  * @param t Type of the File (explicit VR, implicitVR, ...) 
  * @return
  */ 
-void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements)
+void DicomDirStudy::WriteContent(std::ofstream *fp, FileType t, bool dummy, bool dummy2)
 {
-   DicomDirObject::WriteContent(fp, t, false);
+   DicomDirObject::WriteContent(fp, t, false, true);
 
    for(ListDicomDirSerie::iterator cc = Series.begin();
                                    cc!= Series.end();
                                  ++cc )
    {
-      (*cc)->WriteContent( fp, t, false );
+      (*cc)->WriteContent( fp, t, false, true );
    }
 
    for(ListDicomDirVisit::iterator icc = Visits.begin();
                                    icc!= Visits.end();
                                  ++icc )
    {
-      (*icc)->WriteContent( fp, t, false );
+      (*icc)->WriteContent( fp, t, false, true );
    }
 }
 

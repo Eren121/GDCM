@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 09:29:26 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -71,7 +71,7 @@ DocEntry::~DocEntry()
  * @param fp already open ofstream pointer
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, JPEG, JPEG2000...)
  */
-void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMetaElements)
+void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMetaElements, bool insideSequence)
 {
    uint32_t ffff  = 0xffffffff;
    uint16_t group = GetGroup();
@@ -139,9 +139,10 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMet
           ||  (vr == "UN") || (vr == "UT") )
          {
             binary_write(*fp, zero);
-           if ( (filetype == JPEG || filetype == JPEG2000) && group == 0x7fe0 && elem == 0x0010)
-            {
-               // gdcmAssertMacro( GetVR() == "OW" ); //?!?
+
+           if ( (filetype == JPEG || filetype == JPEG2000) && group == 0x7fe0 && elem == 0x0010 && !insideSequence)
+            { 
+              // Only the 'true' Pixel Element may be compressed (hope so!)
                binary_write(*fp, ffff);
             }  
             else if (vr == "SQ")

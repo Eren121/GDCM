@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/21 12:51:09 $
-  Version:   $Revision: 1.367 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.368 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -721,8 +721,10 @@ void Document::WriteContent(std::ofstream *fp, FileType filetype)
     * --> was too much tricky / we were [in a hurry / too lazy]
     * --> We don't write the element 0x0000 (group length)
     */
-
-   ElementSet::WriteContent(fp, filetype, false); // This one is recursive
+ // This one is recursive
+ // false : outside MetaElements
+ // false : outside Sequence
+   ElementSet::WriteContent(fp, filetype, false, false);
 }
 
 // -----------------------------------------

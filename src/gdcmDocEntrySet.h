@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@ class GDCM_EXPORT DocEntrySet : public RefCounter
 public:
    /// \brief write any type of entry to the entry set
    virtual void WriteContent (std::ofstream *fp, FileType filetype,
-                                                 bool insideMetaElements) = 0;
+                               bool insideMetaElements,bool insideSequence ) = 0;
 
    /// \brief Remove all Entry of the current set
    virtual void ClearEntry() = 0;

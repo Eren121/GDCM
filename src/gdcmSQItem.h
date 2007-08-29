@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007/08/29 15:30:50 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,8 @@ public:
 
    virtual void Print(std::ostream &os = std::cout, 
                       std::string const &indent = "" ); 
-   void WriteContent(std::ofstream *fp, FileType filetype, bool insideMetaElements);
+   void WriteContent(std::ofstream *fp, FileType filetype,
+                           bool insideMetaElements, bool insideSequence);
    uint32_t ComputeFullLength();
 
    bool AddEntry(DocEntry *Entry); // add to the List

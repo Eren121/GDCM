@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.78 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,10 +49,11 @@ ElementSet::~ElementSet()
   * @param fp ofstream to write to  
   * @param filetype    ExplicitVR/ImplicitVR/ACR/ACR_LIBIDO/JPEG/JPEG2000/...
   */ 
-void ElementSet::WriteContent(std::ofstream *fp, FileType filetype, bool dummy)
+void ElementSet::WriteContent(std::ofstream *fp, FileType filetype, bool dummy, bool dummy2)
 {
    bool insideMetaElements     = false;
    bool yetOutsideMetaElements = false;
+   int countSQ =0;
    
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
                                      i != TagHT.end(); 
@@ -87,9 +88,10 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype, bool dummy)
             (  (i->second)->GetGroup() == 0x0002 
              ||( (filetype == ACR || filetype == ACR_LIBIDO ) && (i->second)->GetGroup() == 0x0008 ) )
         )
-       {
+       {           
              // There are DocEntries, written recursively
-             i->second->WriteContent(fp, filetype, insideMetaElements );
+             // false : we are outside any Sequence
+             i->second->WriteContent(fp, filetype, insideMetaElements, false );
        }             
    } 
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2007/08/29 15:30:48 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,11 +53,11 @@ DicomDirMeta::~DicomDirMeta()
 /**
  * \brief   Writes the Meta Elements
  * @param fp ofstream to write to
- * @param filetype type of the file (ImplicitVR, ExplicitVR, ...)
+ * @param filetype type of the file (ImplicitVR, ExplicitVR, JPEG, JPEG2000 ...)
  * @return
  */ 
 void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype,
-                                                     bool insideMetaElements)
+                                 bool dummy, bool dummy2)
 {
    // 'File Meta Information Version'
    
@@ -86,7 +86,7 @@ void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype,
                              ++i)
    {   
    // true : we are in MetaElements
-      (*i)->WriteContent(fp, filetype, true);
+      (*i)->WriteContent(fp, filetype, true, false);
    }
 }
 

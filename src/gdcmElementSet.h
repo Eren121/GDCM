@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -46,7 +46,7 @@ public:
                       std::string const &indent = "" ); 
 
    void WriteContent(std::ofstream *fp, FileType filetype,
-                                                    bool insideMetaElements); 
+                                    bool insideMetaElements, bool insideSequence); 
 
    bool AddEntry(DocEntry *Entry);
    bool RemoveEntry(DocEntry *EntryToRemove);

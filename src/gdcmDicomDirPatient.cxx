@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.42 $
+  Date:      $Date: 2007/08/29 15:30:48 $
+  Version:   $Revision: 1.43 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,15 +57,15 @@ DicomDirPatient::~DicomDirPatient()
  * @param fp ofstream to write to
  * @param t Type of the File (explicit VR, implicitVR, ...) 
  */ 
-void DicomDirPatient::WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements)
+void DicomDirPatient::WriteContent(std::ofstream *fp, FileType t, bool dummy, bool dummy2)
 {
-   DicomDirObject::WriteContent(fp, t, false);
+   DicomDirObject::WriteContent(fp, t, false, true);
 
    for(ListDicomDirStudy::iterator cc = Studies.begin();
                                    cc!= Studies.end();
                                  ++cc )
    {
-      (*cc)->WriteContent( fp, t, false );
+      (*cc)->WriteContent( fp, t, false, true );
    }
 }
 

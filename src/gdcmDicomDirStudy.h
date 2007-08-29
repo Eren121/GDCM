@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirStudy.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.37 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ public:
    static DicomDirStudy *New(bool empty=false) {return new DicomDirStudy(empty);}
 
    void Print(std::ostream &os = std::cout, std::string const &indent = "" );
-   void WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements);
+   void WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements,bool insideSequence );
 
    // 'Serie' methods
    DicomDirSerie *NewSerie();

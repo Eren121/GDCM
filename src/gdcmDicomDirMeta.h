@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2007/08/29 15:30:48 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ public:
    static DicomDirMeta *New(bool empty=false) {return new DicomDirMeta(empty);}
 
    virtual void Print(std::ostream &os = std::cout, std::string const &indent = "" );
-   virtual void WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements);
+   virtual void WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements, bool insideSequence);
    int ComputeGroup0002Length( );
    
 protected:

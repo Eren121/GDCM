@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirSerie.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 08:36:49 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2007/08/29 15:30:49 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,21 +58,21 @@ DicomDirSerie::~DicomDirSerie()
  * @param fp ofstream to write to
  * @param t Type of the File (explicit VR, implicitVR, ...)
  */ 
-void DicomDirSerie::WriteContent(std::ofstream *fp, FileType t, bool insideMetaElements)
+void DicomDirSerie::WriteContent(std::ofstream *fp, FileType t, bool dummy, bool dummy2)
 {
-   DicomDirObject::WriteContent(fp, t, false);
+   DicomDirObject::WriteContent(fp, t, false, true);
 
    for(ListDicomDirImage::iterator cc = Images.begin();
                                    cc!= Images.end();
                                  ++cc )
    {
-      (*cc)->WriteContent( fp, t, false );
+      (*cc)->WriteContent( fp, t, false, true );
    } 
    for(ListDicomDirPrivate::iterator cc2 = Privates.begin();
                                      cc2!= Privates.end();
                                    ++cc2 )
    {
-      (*cc2)->WriteContent( fp, t, false);
+      (*cc2)->WriteContent( fp, t, false, true);
    }   
 }
 
