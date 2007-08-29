@@ -24,6 +24,7 @@ SET(EXAMPLE_SOURCES
   exXCoherentFileSet
   exExtractDicomTags  
   exMoveImagesToSingleSerieUID
+  exMakeIcon
   #the following are utilities  
   PrintDicomDir  
   PrintFile  
