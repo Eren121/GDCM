@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/21 12:51:09 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2007/08/30 17:37:16 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -140,7 +140,7 @@ bool gdcm_write_JPEG_file (std::ostream *fp, char *inputdata, size_t inputlength
    * They only affect the compression ratio, not the image appearance,
    * which is lossless.
    */
-  jpeg_simple_lossless (&cinfo, 1, 1);
+  jpeg_simple_lossless (&cinfo, 1, 0);
   /* Now you can set any non-default parameters you wish to.
    * Here we just illustrate the use of quality (quantization table) scaling:
    */
