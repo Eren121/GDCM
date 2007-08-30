@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 08:10:14 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/08/30 17:38:20 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -267,7 +267,7 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
    
    uint8_t *pImageData = data;
    for(int i=0; i<zsize;i++)
-     {    
+     {
      gdcmDebugMacro("Write fragment no " << i );
      WriteDICOMItems(of, JpegFragmentSize);
      size_t beg = of->tellp();
@@ -383,7 +383,7 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
        }       
      else
        {
-       gdcmDebugMacro( "Major pb : bitsallocated =" << bitsallocated );
+       std::cerr << "Major pb : bitsallocated =" << bitsallocated << std::endl;
        abort();
        }
     size_t end = of->tellp();
