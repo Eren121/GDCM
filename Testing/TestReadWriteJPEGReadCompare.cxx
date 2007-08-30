@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:56:41 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/08/30 10:16:58 $
+  Version:   $Revision: 1.5 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
 
 int nb_of_success___;
 int nb_of_failure___;
-
+int nb_of_diffPM1___;
 static int CompareInternalJPEG(std::string const &filename, std::string const &output)
 {
    std::cout << "----------------------------------------------------------------------" << std::endl
@@ -138,7 +138,10 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
    // Test the data content
    
    if (memcmp(imageData, imageDataWritten, dataSizeFixed) !=0)
-   {
+   {   
+      std::string PixelType = filehelper->GetFile()->GetPixelType();
+      std::string ts        = filehelper->GetFile()->GetTransferSyntax();
+      
       unsigned int j =0;
       for(int i1=0; i1<dataSizeFixed; i1++)
       {
@@ -151,9 +154,6 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
        
        if (j!=0)
        {           
-          std::string PixelType = filehelper->GetFile()->GetPixelType();
-          std::string ts        = filehelper->GetFile()->GetTransferSyntax();
-
           std::cout << " Failed" << std::endl
                     << "        pixel (" 
                     << PixelType
@@ -166,7 +166,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                     << " pixels differing (pos : original - written) :" 
                     << std::endl;
 
-          for(int i=0, j=0;i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE;i++)
+          for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
           {
              if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
              {
@@ -186,9 +186,40 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
           nb_of_failure___++;  
           return 1;
        }
+       else
+       {
+          std::cout << " some pixels" << std::endl
+                    << "        (" 
+                    << PixelType
+                    << ") differ +/-1 (as expanded in memory)."
+                    << std::endl
+                    << "        compression : " 
+                    << GDCM_NAME_SPACE::Global::GetTS()->GetValue(ts) << std::endl;
+
+          std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
+                    << " pixels differing (pos : original - written) :" 
+                    << std::endl;
+
+          for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
+          {
+             if (imageData[i] != imageDataWritten[i])
+             {
+                std::cout << std::hex << "(" << i << " : " 
+                         << std::hex << (int)(imageData[i]) << " - "
+                         << std::hex << (int)(imageDataWritten[i]) << ") "
+                         << std::dec;
+                ++j;
+              }
+          }
+          std::cout << std::endl;       
+          nb_of_diffPM1___++;
+       }
+   }
+   else
+   {
+      nb_of_success___ ++;
    }
    std::cout << "=============== 4...OK." << std::endl ;
-   nb_of_success___ ++;
    //////////////// Clean up:
    file->Delete();
    filehelper->Delete();
@@ -203,9 +234,10 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
 int TestReadWriteJPEGReadCompare(int argc, char *argv[]) 
 {
    int result = 0;
-   nb_of_success___ =0;
-   nb_of_failure___ =0;
-
+   nb_of_success___ = 0;
+   nb_of_failure___ = 0;
+   nb_of_diffPM1___ = 0;
+   
    if (argc == 4)
       GDCM_NAME_SPACE::Debug::DebugOn();
 
@@ -247,8 +279,8 @@ int TestReadWriteJPEGReadCompare(int argc, char *argv[])
       }
    }
    std::cout << "==================================" << std::endl;
-   std::cout << "nb of success " << nb_of_success___ << std::endl;
-   std::cout << "nb of failure " << nb_of_failure___ << std::endl;
-   
+   std::cout << "nb of success  " << nb_of_success___ << std::endl;
+   std::cout << "nb of failure  " << nb_of_failure___ << std::endl;
+   std::cout << "nb of diff+/-1 " << nb_of_diffPM1___ << std::endl;   
    return result;
 }
