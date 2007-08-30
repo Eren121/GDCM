@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEG2000ReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/30 11:51:29 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/08/30 14:07:33 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -136,44 +136,44 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
    }
 
    // Test the data content
-   
+   unsigned int j  =0;
+   unsigned int nbDiff =0;  
    if (memcmp(imageData, imageDataWritten, dataSizeFixed) !=0)
    {   
       std::string PixelType = filehelper->GetFile()->GetPixelType();
       std::string ts        = filehelper->GetFile()->GetTransferSyntax();
       
-      unsigned int j =0;
-      for(int i1=0; i1<dataSizeFixed; i1++)
-      {
-         if (abs ((int)imageData[i1]-(int)imageDataWritten[i1]) > 2)
-         {
-            j=1;
-            break;
+       for(int i1=0; i1<dataSizeFixed; i1++)
+         if (abs ((int)imageData[i1]-(int)imageDataWritten[i1]) > 2) {
+            nbDiff++;
+           // break; // at debug time; keep line commented out; (uncommenting will save CPU time)
          }
-       }
-       
-       if (j!=0)
-       {           
-          std::cout  << std::endl << filename << " Failed"
-                    << "        pixel (" 
-                    << PixelType << " b alloc " << file->GetBitsAllocated() << " b stored " << file->GetBitsStored()
+
+       if (nbDiff!=0)
+       {
+          std::cout << std::endl << filename << " Failed : "
+                    << nbDiff/(file->GetBitsAllocated()/8) << " pixels -amongst "
+                    << dataSizeFixed/(file->GetBitsAllocated()/8) << "- (" 
+                    << PixelType << " bAlloc " << file->GetBitsAllocated() << " bStored " << file->GetBitsStored()
                     << ") differ (as expanded in memory)."
                     << std::endl
                     << "        compression : " 
                     << GDCM_NAME_SPACE::Global::GetTS()->GetValue(ts) << std::endl;
 
-          std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
-                    << " pixels differing (pos : original - written) :" 
+          std::cout << "   list of the first " << MAX_NUMBER_OF_DIFFERENCE
+                    << " bytes differing (pos : original - written) :"
                     << std::endl;
 
           for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
           {
              if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
              {
-                std::cout << std::hex << "(" << i << " : " 
-                         << std::hex << (int)(imageData[i]) << " - "
-                         << std::hex << (int)(imageDataWritten[i]) << ") "
-                         << std::dec;
+                if (j<MAX_NUMBER_OF_DIFFERENCE)
+                   std::cout << std::dec << "(" << i << " : "
+                     << std::hex
+                     << (int)(imageData[i]) << " - "
+                     << (int)(imageDataWritten[i]) << ") "
+                     << std::dec;
                 ++j;
               }
           }
@@ -183,21 +183,21 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
           filehelper->Delete();
           fileout->Delete();
           reread->Delete();
-          nb_of_failure2000___++;  
+          nb_of_failure2000___++;
           return 1;
        }
        else
        {
-          std::cout  << std::endl << filename << " : some pixels"
-                    << "        (" 
-                    << PixelType << " b alloc " << file->GetBitsAllocated() << " b stored " << file->GetBitsStored()
+          std::cout << std::endl << filename << " : some pixels"
+                    << "  ("
+                    << PixelType << " bAlloc " << file->GetBitsAllocated() << " bStored " << file->GetBitsStored()
                     << ") differ +/-1 (as expanded in memory)."
                     << std::endl
-                    << "        compression : " 
+                    << "        compression : "
                     << GDCM_NAME_SPACE::Global::GetTS()->GetValue(ts) << std::endl;
 
-          std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
-                    << " pixels differing (pos : original - written) :" 
+          std::cout << "   list of the first " << MAX_NUMBER_OF_DIFFERENCE
+                    << " bytes differing (pos : original - written) :"
                     << std::endl;
 
           for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
@@ -211,7 +211,7 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
                 ++j;
               }
           }
-          std::cout << std::endl;       
+          std::cout << std::endl;
           nb_of_diffPM12000___++;
        }
    }
@@ -275,7 +275,7 @@ int TestReadWriteJPEG2000ReadCompare(int argc, char *argv[])
          std::string filename = GDCM_DATA_ROOT;
          filename += "/";
          filename += gdcmDataImages[i++];
-         result += CompareInternalJPEG2000(filename, "TestReadWriteJPEG2000ReadCompare.dcm"); 
+         result += CompareInternalJPEG2000(filename, "TestReadWriteJPEG2000ReadCompare.dcm");
       }
    }
    std::cout << "==================================" << std::endl;
