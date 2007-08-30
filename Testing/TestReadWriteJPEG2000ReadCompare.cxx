@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEG2000ReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/30 11:29:03 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/08/30 11:51:29 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,9 +154,9 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
        
        if (j!=0)
        {           
-          std::cout << " Failed" << std::endl
+          std::cout  << std::endl << filename << " Failed"
                     << "        pixel (" 
-                    << PixelType
+                    << PixelType << " b alloc " << file->GetBitsAllocated() << " b stored " << file->GetBitsStored()
                     << ") differ (as expanded in memory)."
                     << std::endl
                     << "        compression : " 
@@ -188,9 +188,9 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
        }
        else
        {
-          std::cout << " some pixels" << std::endl
+          std::cout  << std::endl << filename << " : some pixels"
                     << "        (" 
-                    << PixelType
+                    << PixelType << " b alloc " << file->GetBitsAllocated() << " b stored " << file->GetBitsStored()
                     << ") differ +/-1 (as expanded in memory)."
                     << std::endl
                     << "        compression : " 
