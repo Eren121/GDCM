@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/29 08:10:14 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2007/08/31 14:11:00 $
+  Version:   $Revision: 1.126 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -848,14 +848,14 @@ bool FileHelper::CheckWriteIntegrity()
       int numberBitsAllocated = FileInternal->GetBitsAllocated();
       if ( numberBitsAllocated == 0 || numberBitsAllocated == 12 )
       {
-         gdcmWarningMacro( "numberBitsAllocated changed from " 
-                          << numberBitsAllocated << " to 16 " 
+         gdcmWarningMacro( "numberBitsAllocated changed from "
+                          << numberBitsAllocated << " to 16 "
                           << " for consistency purpose" );
          numberBitsAllocated = 16;
       }
 
       size_t decSize = FileInternal->GetXSize()
-                     * FileInternal->GetYSize() 
+                     * FileInternal->GetYSize()
                      * FileInternal->GetZSize()
                      * FileInternal->GetTSize()     
                      * FileInternal->GetSamplesPerPixel()
@@ -864,23 +864,24 @@ bool FileHelper::CheckWriteIntegrity()
       if ( FileInternal->HasLUT() )
          rgbSize = decSize * 3;
 
+      size_t userDataSize = PixelWriteConverter->GetUserDataSize();
       switch(WriteMode)
       {
          case WMODE_RAW :
-            if ( decSize!=PixelWriteConverter->GetUserDataSize() )
+            if ( abs(decSize-userDataSize)>1) // ignore padding zero
             {
                gdcmWarningMacro( "Data size (Raw) is incorrect. Should be " 
                            << decSize << " / Found :" 
-                           << PixelWriteConverter->GetUserDataSize() );
+                           << userDataSize );
                return false;
             }
             break;
          case WMODE_RGB :
-            if ( rgbSize!=PixelWriteConverter->GetUserDataSize() )
+            if ( abs(rgbSize-userDataSize)>1) // ignore padding zero
             {
                gdcmWarningMacro( "Data size (RGB) is incorrect. Should be " 
-                          << decSize << " / Found " 
-                          << PixelWriteConverter->GetUserDataSize() );
+                          << rgbSize << " / Found " 
+                          << userDataSize );
                return false;
             }
             break;
