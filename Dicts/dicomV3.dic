@@ -2945,6 +2945,165 @@
 600e 3000 OW 1 Overlay Data
 600e 4000 LT 1 Overlay Comments (RET)
 
+6010 0000 UL 1 Group Length
+6010 0010 US 1 Overlay Rows
+6010 0011 US 1 Overlay Columns
+6010 0012 US 1 Overlay Planes
+6010 0015 IS 1 Number of Frames in Overlay
+6010 0022 LO 1 Overlay Description
+6010 0040 CS 1 Overlay Type
+6010 0045 LO 1 Overlay Subtype
+6010 0050 SS 2 Overlay Origin
+6010 0051 US 1 Image Frame Origin
+6010 0052 US 1 Overlay Plane Origin
+6010 0060 CS 1 Overlay Compression Code (RET)
+6010 0100 US 1 Overlay Bits Allocated
+6010 0102 US 1 Overlay Bit Position
+6010 0110 CS 1 Overlay Format (RET)
+6010 0200 US 1 Overlay Location (RET)
+6010 1001 CS 1 Overlay Activation Layer
+6010 1100 US 1 Overlay Descriptor - Gray (RET)
+6010 1101 US 1 Overlay Descriptor - Red (RET)
+6010 1102 US 1 Overlay Descriptor - Green (RET)
+6010 1103 US 1 Overlay Descriptor - Blue (RET)
+6010 1200 US 1-n Overlays - Gray (RET)
+6010 1201 US 1-n Overlays - Red (RET)
+6010 1202 US 1-n Overlays - Green (RET)
+6010 1203 US 1-n Overlays - Blue (RET)
+6010 1301 IS 1 ROI Area
+6010 1302 DS 1 ROI Mean
+6010 1303 DS 1 ROI Standard Deviation
+6010 1500 LO 1 Overlay Label
+6010 3000 OW 1 Overlay Data
+6010 4000 LT 1 Overlay Comments (RET)
+
+6012 0000 UL 1 Group Length
+6012 0010 US 1 Overlay Rows
+6012 0011 US 1 Overlay Columns
+6012 0012 US 1 Overlay Planes
+6012 0015 IS 1 Number of Frames in Overlay
+6012 0022 LO 1 Overlay Description
+6012 0040 CS 1 Overlay Type
+6012 0045 LO 1 Overlay Subtype
+6012 0050 SS 2 Overlay Origin
+6012 0051 US 1 Image Frame Origin
+6012 0052 US 1 Overlay Plane Origin
+6012 0060 CS 1 Overlay Compression Code (RET)
+6012 0100 US 1 Overlay Bits Allocated
+6012 0102 US 1 Overlay Bit Position
+6012 0110 CS 1 Overlay Format (RET)
+6012 0200 US 1 Overlay Location (RET)
+6012 1001 CS 1 Overlay Activation Layer
+6012 1100 US 1 Overlay Descriptor - Gray (RET)
+6012 1101 US 1 Overlay Descriptor - Red (RET)
+6012 1102 US 1 Overlay Descriptor - Green (RET)
+6012 1103 US 1 Overlay Descriptor - Blue (RET)
+6012 1200 US 1-n Overlays - Gray (RET)
+6012 1201 US 1-n Overlays - Red (RET)
+6012 1202 US 1-n Overlays - Green (RET)
+6012 1203 US 1-n Overlays - Blue (RET)
+6012 1301 IS 1 ROI Area
+6012 1302 DS 1 ROI Mean
+6012 1303 DS 1 ROI Standard Deviation
+6012 1500 LO 1 Overlay Label
+6012 3000 OW 1 Overlay Data
+6012 4000 LT 1 Overlay Comments (RET)
+
+6014 0000 UL 1 Group Length
+6014 0010 US 1 Overlay Rows
+6014 0011 US 1 Overlay Columns
+6014 0012 US 1 Overlay Planes
+6014 0015 IS 1 Number of Frames in Overlay
+6014 0022 LO 1 Overlay Description
+6014 0040 CS 1 Overlay Type
+6014 0045 LO 1 Overlay Subtype
+6014 0050 SS 2 Overlay Origin
+6014 0051 US 1 Image Frame Origin
+6014 0052 US 1 Overlay Plane Origin
+6014 0060 CS 1 Overlay Compression Code (RET)
+6014 0100 US 1 Overlay Bits Allocated
+6014 0102 US 1 Overlay Bit Position
+6014 0110 CS 1 Overlay Format (RET)
+6014 0200 US 1 Overlay Location (RET)
+6014 1001 CS 1 Overlay Activation Layer
+6014 1100 US 1 Overlay Descriptor - Gray (RET)
+6014 1101 US 1 Overlay Descriptor - Red (RET)
+6014 1102 US 1 Overlay Descriptor - Green (RET)
+6014 1103 US 1 Overlay Descriptor - Blue (RET)
+6014 1200 US 1-n Overlays - Gray (RET)
+6014 1201 US 1-n Overlays - Red (RET)
+6014 1202 US 1-n Overlays - Green (RET)
+6014 1203 US 1-n Overlays - Blue (RET)
+6014 1301 IS 1 ROI Area
+6014 1302 DS 1 ROI Mean
+6014 1303 DS 1 ROI Standard Deviation
+6014 1500 LO 1 Overlay Label
+6014 3000 OW 1 Overlay Data
+6014 4000 LT 1 Overlay Comments (RET)
+
+6016 0000 UL 1 Group Length
+6016 0010 US 1 Overlay Rows
+6016 0011 US 1 Overlay Columns
+6016 0012 US 1 Overlay Planes
+6016 0015 IS 1 Number of Frames in Overlay
+6016 0022 LO 1 Overlay Description
+6016 0040 CS 1 Overlay Type
+6016 0045 LO 1 Overlay Subtype
+6016 0050 SS 2 Overlay Origin
+6016 0051 US 1 Image Frame Origin
+6016 0052 US 1 Overlay Plane Origin
+6016 0060 CS 1 Overlay Compression Code (RET)
+6016 0100 US 1 Overlay Bits Allocated
+6016 0102 US 1 Overlay Bit Position
+6016 0110 CS 1 Overlay Format (RET)
+6016 0200 US 1 Overlay Location (RET)
+6016 1001 CS 1 Overlay Activation Layer
+6016 1100 US 1 Overlay Descriptor - Gray (RET)
+6016 1101 US 1 Overlay Descriptor - Red (RET)
+6016 1102 US 1 Overlay Descriptor - Green (RET)
+6016 1103 US 1 Overlay Descriptor - Blue (RET)
+6016 1200 US 1-n Overlays - Gray (RET)
+6016 1201 US 1-n Overlays - Red (RET)
+6016 1202 US 1-n Overlays - Green (RET)
+6016 1203 US 1-n Overlays - Blue (RET)
+6016 1301 IS 1 ROI Area
+6016 1302 DS 1 ROI Mean
+6016 1303 DS 1 ROI Standard Deviation
+6016 1500 LO 1 Overlay Label
+6016 3000 OW 1 Overlay Data
+6016 4000 LT 1 Overlay Comments (RET)
+
+6018 0000 UL 1 Group Length
+6018 0010 US 1 Overlay Rows
+6018 0011 US 1 Overlay Columns
+6018 0012 US 1 Overlay Planes
+6018 0015 IS 1 Number of Frames in Overlay
+6018 0022 LO 1 Overlay Description
+6018 0040 CS 1 Overlay Type
+6018 0045 LO 1 Overlay Subtype
+6018 0050 SS 2 Overlay Origin
+6018 0051 US 1 Image Frame Origin
+6018 0052 US 1 Overlay Plane Origin
+6018 0060 CS 1 Overlay Compression Code (RET)
+6018 0100 US 1 Overlay Bits Allocated
+6018 0102 US 1 Overlay Bit Position
+6018 0110 CS 1 Overlay Format (RET)
+6018 0200 US 1 Overlay Location (RET)
+6018 1001 CS 1 Overlay Activation Layer
+6018 1100 US 1 Overlay Descriptor - Gray (RET)
+6018 1101 US 1 Overlay Descriptor - Red (RET)
+6018 1102 US 1 Overlay Descriptor - Green (RET)
+6018 1103 US 1 Overlay Descriptor - Blue (RET)
+6018 1200 US 1-n Overlays - Gray (RET)
+6018 1201 US 1-n Overlays - Red (RET)
+6018 1202 US 1-n Overlays - Green (RET)
+6018 1203 US 1-n Overlays - Blue (RET)
+6018 1301 IS 1 ROI Area
+6018 1302 DS 1 ROI Mean
+6018 1303 DS 1 ROI Standard Deviation
+6018 1500 LO 1 Overlay Label
+6018 3000 OW 1 Overlay Data
+6018 4000 LT 1 Overlay Comments (RET)
 7fe0 0000 UL 1 Group Length
 7fe0 0010 OB 1 Pixel Data
 
