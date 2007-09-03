@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 08:10:14 $
-  Version:   $Revision: 1.117 $
+  Date:      $Date: 2007/09/03 16:34:58 $
+  Version:   $Revision: 1.118 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -594,8 +594,14 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      // Precompute the offset localRaw will be shifted with
      int length = XSize * YSize * ZSize * SamplesPerPixel;
      int numberBytes = BitsAllocated / 8;
+      
+     int dummy;
+     if (BitsStored == 8 && BitsAllocated==16)
+        dummy = 16;
+     else
+        dummy = BitsStored;
      
-     JPEGInfo->DecompressFromFile(fp, Raw, BitsStored, numberBytes, length );
+     JPEGInfo->DecompressFromFile(fp, Raw, /*BitsStored*/ dummy , numberBytes, length );
      return true;
    }
 }
@@ -971,6 +977,8 @@ void PixelReadConvert::ConvertReorderEndianity()
    {
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
       uint16_t *deb = (uint16_t *)Raw;
+      int l = (int)( RawSize / ( BitsAllocated / 8 ) );
+      uint16_t *deb = (uint16_t *)Raw;
       for(int i = 0; i<l; i++)
       {
          if ( *deb == 0xffff )
@@ -1065,20 +1073,26 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       {
          // pmask : to mask the 'unused bits' (may contain overlays)
          uint16_t pmask = 0xffff;
-         pmask = pmask >> ( BitsAllocated - BitsStored );
+ 
+         // It's up to the user to remove overlays if any),
+         // not to gdcm, witout asking !
+         //pmask = pmask >> ( BitsAllocated - BitsStored );
 
          uint16_t *deb = (uint16_t*)Raw;
 
          if ( !PixelSign )  // Pixels are unsigned
          {
             for(int i = 0; i<l; i++)
-            {   
-               *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask;
+            {  
+              //                                                save CPU time
+               *deb = (*deb >> (BitsStored - HighBitPosition - 1))/* & pmask */;
                deb++;
             }
          }
          else // Pixels are signed
          {
+            // Hope there is never A
+ 
             // smask : to check the 'sign' when BitsStored != BitsAllocated
             uint16_t smask = 0x0001;
             smask = smask << ( 16 - (BitsAllocated - BitsStored + 1) );
@@ -1103,10 +1117,6 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else if ( BitsAllocated == 32 )
       {
-         // pmask : to mask the 'unused bits' (may contain overlays)
-         uint32_t pmask = 0xffffffff;
-         pmask = pmask >> ( BitsAllocated - BitsStored );
-
          uint32_t *deb = (uint32_t*)Raw;
 
          if ( !PixelSign )
@@ -1532,6 +1542,10 @@ to try again, since if one is not aware of this problem, one cannot
 effectively implement display using VOI LUTs, and there is a vast
 installed base to contend with.
 
+I did not check presentation states, in which VOI LUTs could also be
+encountered, for the prevalence of this mistake, nor did I look at the
+encoding of Modality LUT's, which are unusual. Nor did I check digital
+mammography images. I would be interested to hear from anyone who has.
 I did not check presentation states, in which VOI LUTs could also be
 encountered, for the prevalence of this mistake, nor did I look at the
 encoding of Modality LUT's, which are unusual. Nor did I check digital
