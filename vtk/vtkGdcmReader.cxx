@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:47:16 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2007/09/04 16:21:50 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.91 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.92 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -111,6 +111,8 @@ vtkGdcmReader::vtkGdcmReader()
 
    this->OwnFile=true;
    // this->Execution=false; // For VTK5.0
+   
+   this->KeepOverlays = false;
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -795,7 +797,9 @@ void vtkGdcmReader::LoadImageInMemory(
 
    GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New( f );
    fileH->SetUserFunction( UserFunction );
-
+   
+   fileH->SetKeepOverlays ( this->KeepOverlays);
+   
    int numColumns = f->GetXSize();
    int numLines   = f->GetYSize();
    int numPlanes  = f->GetZSize();

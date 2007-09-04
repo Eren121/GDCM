@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/13 08:17:22 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2007/09/04 16:21:50 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,6 +68,11 @@ public:
    vtkSetMacro(AllowLookupTable, bool);
    vtkGetMacro(AllowLookupTable, bool);
    vtkBooleanMacro(AllowLookupTable, bool);
+
+
+   vtkSetMacro(KeepOverlays, bool);
+   vtkGetMacro(KeepOverlays, bool);
+   vtkBooleanMacro(KeepOverlays, bool);
 
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
@@ -179,6 +184,8 @@ private:
    int LoadMode;
     
    bool DropDuplicatePositions;
+   
+   bool KeepOverlays;
    
    /// Pointer to a user suplied function to allow modification of pixel order
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;

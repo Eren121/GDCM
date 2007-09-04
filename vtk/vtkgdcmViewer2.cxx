@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 14:02:13 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/09/04 16:21:50 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,8 @@
 //    given as command line arguments,
 //  * you can navigate through the stack by hitting any character key,
 //  * the produced vtk file is named "foo.vtk" (in the invocation directory).
+//  * if the last 'filename' == "o", overlays (group 60xx)  are loaded.
+//  * just a test!
 // 
 //----------------------------------------------------------------------------
 #include <vtkRenderWindowInteractor.h>
@@ -95,6 +97,13 @@ int main(int argc, char *argv[])
   
    vtkGdcmReader *reader = vtkGdcmReader::New();
    reader->AllowLookupTableOff();
+
+
+   if (strcmp (argv[argc-1], "o") == 0)
+   {
+      argc--; // Is it allowed?!?
+      reader->SetKeepOverlays(true);
+   }
 
    if( argc == 2 )
       reader->SetFileName( argv[1] );
