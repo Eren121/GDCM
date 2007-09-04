@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:06 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2007/09/04 08:06:52 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,8 +37,8 @@ typedef struct
    int sizeY;         // Size Y of the image
    int sizeZ;         // Size Z of the image
    int components;    // Number of components for a pixel
-   int componentSize; // Component size (in bits : 8, 16)
-   int componentUse ; // Component size (in bits)
+   int componentSize; // Component size (in bits : 8, 16) // Bits Allocated
+   int componentUse ; // Component size (in bits)         // Bits Stored
    int sign;          // Sign of components
    char writeMode;    // Write mode
                       //  - 'a' : ACR
@@ -47,6 +47,18 @@ typedef struct
 } Image;
 
 Image Images [] = {
+// these ones are use to check further oddities.
+
+   {63, 127, 1, 1, 16,  8,  0 ,'e'},
+   {63, 127, 1, 1, 16,  9,  0 ,'e'},
+   {63, 127, 1, 1, 16, 10,  0 ,'e'},
+   {63, 127, 1, 1, 16, 11,  0 ,'e'},
+   {63, 127, 1, 1, 16, 12,  0 ,'e'},
+   {63, 127, 1, 1, 16, 13,  0 ,'e'},
+   {63, 127, 1, 1, 16, 14,  0 ,'e'},
+   {63, 127, 1, 1, 16, 15,  0 ,'e'}, 
+   {63, 127, 1, 1, 16, 16,  0 ,'e'},
+      
    {128, 128, 1, 1, 8,  8,  0, 'e'},
    {256, 128, 1, 1, 8,  8,  0, 'a'},
    {128, 128, 1, 1, 8,  8,  0, 'i'},
@@ -151,7 +163,7 @@ int WriteSimple(Image &img)
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0101,"US"); // Bits Stored
 
    str.str("");
-   str << ( img.componentSize - 1 );
+   str << ( img.componentUse - 1 );
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0102,"US"); // High Bit
 
    // Set the pixel representation
@@ -164,6 +176,8 @@ int WriteSimple(Image &img)
       fileName << "U";
    else
       fileName << "S";
+      
+   fileName << "-" << img.componentSize << "-" << img.componentUse;
  
    fileToBuild->InsertEntryString("0",0x0008,0x0000,"UL"); // Should be removed
                                                             // except for ACR 
@@ -249,7 +263,7 @@ int WriteSimple(Image &img)
    }
 
    std::cout << std::endl;
-   fileToBuild->Print();
+   //fileToBuild->Print();
 
    if( !fileH->Write(fileName.str()) )
    {
@@ -284,7 +298,7 @@ int WriteSimple(Image &img)
   // reread->Load();
    GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( f );  
 
-   reread->Print();
+   //reread->Print();
 
    if( !reread->GetFile()->IsReadable() )
    {
@@ -316,7 +330,7 @@ int WriteSimple(Image &img)
 
       return 1;
    }
-
+   std::cout << "6.1..." << std::endl;
    // Test the image size
    if (fileToBuild->GetXSize() != reread->GetFile()->GetXSize() ||
        fileToBuild->GetYSize() != reread->GetFile()->GetYSize() ||
@@ -337,7 +351,7 @@ int WriteSimple(Image &img)
 
       return 1;
    }
-
+ std::cout << "6.2..." << std::endl;
    // Test the data size
    if (size != dataSizeWritten)
    {
@@ -351,11 +365,11 @@ int WriteSimple(Image &img)
 
       return 1;
    }
-
+std::cout << "6.3..." << std::endl;
    // Test the data content
    if ( memcmp(imageData, imageDataWritten, size) !=0 )
    {
-      std::cout << "Failed" << std::endl
+      std::cout << fileName.str() << " Failed " << std::endl
                 << "        Pixel differ (as expanded in memory)." << std::endl;
       std::cout << "        list of the first " << MAX_NUMBER_OF_DIFFERENCE
                   << " pixels differing (pos : test - ref) :" 
@@ -381,7 +395,7 @@ int WriteSimple(Image &img)
 
       return 1;
    }
-
+std::cout << "======================= OK" << std::endl;
    fileH->Delete();
    reread->Delete();
    delete[] imageData;
