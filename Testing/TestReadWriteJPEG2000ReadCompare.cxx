@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEG2000ReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 13:02:45 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/09/04 14:44:45 $
+  Version:   $Revision: 1.5 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,6 +88,17 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
       return 1;
    }
 
+   if ( file->GetBitsAllocated()>16 )
+   {
+      std::cout << "=============== 32 bits, not checked...OK." << std::endl ;
+      //////////////// Clean up:
+      file->Delete();
+      filehelper->Delete();
+      fileout->Delete();
+      return 0;   
+   }
+   
+   
    GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( fileout );
 
    std::cout << "3...";
@@ -139,17 +150,7 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
    }
 
    // Test the data content
-   
-   if ( file->GetBitsAllocated()>16 )
-   {
-      std::cout << "=============== 32 bits, not checked...OK." << std::endl ;
-      //////////////// Clean up:
-      file->Delete();
-      filehelper->Delete();
-      fileout->Delete();
-      reread->Delete();
-      return 0;   
-   }
+
    
    unsigned int j  =0;
    unsigned int nbDiff =0;  
@@ -169,7 +170,7 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
           std::cout << std::endl << filename << " Failed : "
                     << nbDiff/(file->GetBitsAllocated()/8) << " pixels -amongst "
                     << dataSizeFixed/(file->GetBitsAllocated()/8) << "- (" 
-                    << PixelType << " bAlloc " << file->GetBitsAllocated() << " bStored " << file->GetBitsStored()
+                    << PixelType << " bAlloc:" << file->GetBitsAllocated() << " bStored:" << file->GetBitsStored()
                     << ") differ (as expanded in memory)."
                     << std::endl
                     << "        compression : " 
@@ -198,10 +199,10 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
           filehelper->Delete();
           fileout->Delete();
           reread->Delete();
-          nb_of_failure2000__++;
+          nb_of_failure2000___++;
   
           if (nbDiff>1)  // last pixel of (DermaColorLossLess.dcm) is diferent. ?!?
-                 // I don't want it to break the testsuite
+                         // I don't want it to break the testsuite
              return 1;
           else
              return 0;
@@ -210,7 +211,7 @@ static int CompareInternalJPEG2000(std::string const &filename, std::string cons
        {
           std::cout << std::endl << filename << " : some pixels"
                     << "  ("
-                    << PixelType << " bAlloc " << file->GetBitsAllocated() << " bStored " << file->GetBitsStored()
+                    << PixelType << " bAlloc:" << file->GetBitsAllocated() << " bStored:" << file->GetBitsStored()
                     << ") differ +/-1 (as expanded in memory)."
                     << std::endl
                     << "        compression : "
