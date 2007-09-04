@@ -40,8 +40,11 @@ IF (GDCM_DATA_ROOT)
     #TestLoadAllDocumentsNoShadow.cxx   # includes generated gdcmDataImages.h
     TestPrintAllDocument.cxx            # includes generated gdcmDataImages.h
     #TestAllEntryVerify.cxx             # includes generated gdcmDataImages.h
-    TestAllReadCompareDicom.cxx         # includes generated gdcmDataImages.h
+    #TestAllReadCompareDicom.cxx        # includes generated gdcmDataImages.h
     TestReadWriteReadCompare.cxx        # includes generated gdcmDataImages.h 
+    TestReadWriteJPEGReadCompare.cxx    # includes generated gdcmDataImages.h 
+    TestReadWriteJPEG2000ReadCompare.cxx # includes generated gdcmDataImages.h     
+        
     #TestCopyDicom.cxx                  # includes generated gdcmDataImages.h 
     #    TestCopyRescaleDicom.cxx       # includes generated gdcmDataImages.h 
     #TestChangeHeader.cxx
@@ -149,6 +152,10 @@ SET(BLACK_LIST
   # Jasper cannot handle this image, only kakadu so far, unless you patch jasper
   # but then it breaks other images...
   "CT_Phillips_JPEG2K_Decompr_Problem.dcm"
+  
+  #RTDOSE, 32 bits image : cannot be compressed
+  #"RTDOSE.dcm"
+  
   #
   # ------------
   #  

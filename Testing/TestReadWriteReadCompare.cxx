@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:56:41 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/09/04 13:02:45 $
+  Version:   $Revision: 1.33 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,8 @@ int CompareInternal(std::string const &filename, std::string const &output)
       return 1;
    }
    std::cout << "           step 1...";
-
+   std::cout << "--- End of Reading \n";
+   
    //////////////// Step 2:
    GDCM_NAME_SPACE::FileHelper *filehelper = GDCM_NAME_SPACE::FileHelper::New( file );
    int dataSize    = filehelper->GetImageDataSize();
@@ -54,7 +55,8 @@ int CompareInternal(std::string const &filename, std::string const &output)
    filehelper->SetWriteModeToRGB();
    filehelper->WriteDcmExplVR( output );
    std::cout << "2...";
-
+   std::cout << "--- End of Writting \n";
+   
    //////////////// Step 3:
    GDCM_NAME_SPACE::File *fileout = GDCM_NAME_SPACE::File::New();
    fileout->SetFileName( output );
@@ -71,14 +73,15 @@ int CompareInternal(std::string const &filename, std::string const &output)
       fileout->Delete();
       return 1;
    }
-
+   std::cout << "--- End of Re-Reading \n";
    GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( fileout );
 
    std::cout << "3...";
    // For the next step:
    int    dataSizeWritten = reread->GetImageDataSize();
    uint8_t *imageDataWritten = reread->GetImageData();
-
+   std::cout << "--- End of GetImageData \n";
+   
    //////////////// Step 4:
    // Test the image size
    if (file->GetXSize() != reread->GetFile()->GetXSize() ||
