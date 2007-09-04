@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:58:19 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2007/09/04 13:06:12 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,8 +31,9 @@ int main(int argc, char *argv[])
    " Re write a full gdcm-readable Dicom image                              ",
    "     (usefull when the file header is not very straight).               ",
    "                                                                        ",
-   " usage: ReWrite filein=inputFileName fileout=outputFileName             ", 
-   "       [mode=write mode] [monochrome1] [noshadow] [noseq][debug]        ",
+   " usage: ReWrite filein=inputFileName fileout=outputFileName             ",
+   "       [keepoverlays] [mode=write mode] [monochrome1]                   ",
+   "       [noshadow] [noseq][debug]                                        ",
    "  --> The following line to 'rubout' a burnt-in Patient name            ",
    "       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]         ",
    "  --> The 2 following lines, to extract a sub image within some frames  ",
@@ -41,6 +42,7 @@ int main(int argc, char *argv[])
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
    "               j (jpeg lossless), 2 (jpeg2000)                          ",
+   "        keepoverlays : user wants to keep ACR-NEMA-like overlays        ",
    "        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)  ",
    "        noshadowseq: user doesn't want to load Private Sequences        ",
    "        noshadow : user doesn't want to load Private groups (odd number)",
@@ -89,9 +91,9 @@ int main(int argc, char *argv[])
          loadMode |= GDCM_NAME_SPACE::LD_NOSEQ;
    }
 
-   bool rgb = ( 0 != am->ArgMgrDefined("RGB") );
-
-   bool monochrome1 = ( 0 != am->ArgMgrDefined("monochrome1") );
+   bool rgb          = ( 0 != am->ArgMgrDefined("RGB") );
+   bool keepoverlays = ( 0 != am->ArgMgrDefined("keepoverlays") );   
+   bool monochrome1  = ( 0 != am->ArgMgrDefined("monochrome1") );
    
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
@@ -200,7 +202,9 @@ int main(int argc, char *argv[])
    transferSyntaxName = f->GetTransferSyntaxName();
    std::cout << " TransferSyntaxName= [" << transferSyntaxName << "]" 
              << std::endl;
-  
+ 
+   fh->SetKeepOverlays( keepoverlays );
+    
    if(monochrome1)
       fh->SetPhotometricInterpretationToMonochrome1();
    
