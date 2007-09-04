@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 13:42:57 $
-  Version:   $Revision: 1.120 $
+  Date:      $Date: 2007/09/04 15:43:38 $
+  Version:   $Revision: 1.121 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1073,9 +1073,15 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
          // pmask : to mask the 'unused bits' (may contain overlays)
          uint16_t pmask = 0xffff;
  
-         // It's up to the user to remove overlays if any),
-         // not to gdcm, witout asking !
-         //pmask = pmask >> ( BitsAllocated - BitsStored );
+         // It's up to the user to decide if he wants to ignore overlays (if any),
+         // not to gdcm, without asking.
+         // default is NOT TO LOAD, in order not to confuse ITK users (and others!).
+
+         if ( !FH->GetKeepOverlays() ) // mask spurious bits ! (overlay are NOT loaded!)
+         {
+            pmask = pmask >> ( BitsAllocated - BitsStored );
+         }
+         // else : it's up to the user to manage the 'pixels + overlays' he just loaded!
 
          uint16_t *deb = (uint16_t*)Raw;
 
@@ -1083,22 +1089,21 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
          {
             for(int i = 0; i<l; i++)
             {  
-              //                                                save CPU time
-               *deb = (*deb >> (BitsStored - HighBitPosition - 1))/* & pmask */;
+               *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask ;
                deb++;
             }
          }
          else // Pixels are signed
          {
-            // Hope there is never A
- 
+            // Hope there is never ACR-NEMA-like overlays within signed pixels (?!?)
+
             // smask : to check the 'sign' when BitsStored != BitsAllocated
             uint16_t smask = 0x0001;
             smask = smask << ( 16 - (BitsAllocated - BitsStored + 1) );
             // nmask : to propagate sign bit on negative values
             int16_t nmask = (int16_t)0x8000;  
             nmask = nmask >> ( BitsAllocated - BitsStored - 1 );
- 
+
             for(int i = 0; i<l; i++)
             {
                *deb = *deb >> (BitsStored - HighBitPosition - 1);
@@ -1114,21 +1119,12 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
             }
          }
       }
-      /*
-      else if ( BitsAllocated == 32 )
-      {
-               }
-               deb++;
-            }
-         }
-      }
-      */
       else if ( BitsAllocated == 32 )
       { 
          // pmask : to mask the 'unused bits' (may contain overlays)
          uint32_t pmask = 0xffffffff;
          pmask = pmask >> ( BitsAllocated - BitsStored );
- 
+
          uint32_t *deb = (uint32_t*)Raw;
 
          if ( !PixelSign )
@@ -1209,9 +1205,9 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
   // except for the few patches of color on the image.
   // On such images, RLE achieves a compression ratio that is much better 
   // than the compression ratio on an equivalent RGB image. 
- 
+
    gdcmWarningMacro("--> ConvertYcBcRPlanesToRGBPixels");
-   
+
    uint8_t *localRaw = Raw;
    uint8_t *copyRaw = new uint8_t[ RawSize ];
    memmove( copyRaw, localRaw, RawSize );
@@ -1221,7 +1217,7 @@ void PixelReadConvert::ConvertYcBcRPlanesToRGBPixels()
    // ftp://medical.nema.org/medical/dicom/final/sup61_ft.pdf
    // and be *very* affraid
    //
-   
+
    /// \todo : find an example to see how 3rd dim and 4th dim work together
    int l        = XSize * YSize * TSize;
    int nbFrames = ZSize;
@@ -1547,6 +1543,13 @@ of 12 for the third value and a max of 0xfff).
 
 Since almost every vendor that I have encountered that encodes LUTs
 makes this mistake, perhaps it is time to amend the standard to warn
+implementor's of receivers and/or sanction this bad behavior. We have
+talked about this in the past in WG 6 but so far everyone has been
+reluctant to write into the standard such a comment. Maybe it is time
+to try again, since if one is not aware of this problem, one cannot
+effectively implement display using VOI LUTs, and there is a vast
+installed base to contend with.
+
 I did not check presentation states, in which VOI LUTs could also be
 encountered, for the prevalence of this mistake, nor did I look at the
 encoding of Modality LUT's, which are unusual. Nor did I check digital
