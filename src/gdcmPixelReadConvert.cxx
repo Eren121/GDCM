@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/03 16:34:58 $
-  Version:   $Revision: 1.118 $
+  Date:      $Date: 2007/09/04 13:14:33 $
+  Version:   $Revision: 1.119 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -595,6 +595,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      int length = XSize * YSize * ZSize * SamplesPerPixel;
      int numberBytes = BitsAllocated / 8;
       
+      // to avoid major troubles when BitsStored == 8 && BitsAllocated==16 !
      int dummy;
      if (BitsStored == 8 && BitsAllocated==16)
         dummy = 16;
@@ -976,7 +977,6 @@ void PixelReadConvert::ConvertReorderEndianity()
      && !PixelSign )
    {
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
-      uint16_t *deb = (uint16_t *)Raw;
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
       uint16_t *deb = (uint16_t *)Raw;
       for(int i = 0; i<l; i++)
@@ -1117,6 +1117,17 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       }
       else if ( BitsAllocated == 32 )
       {
+               }
+               deb++;
+            }
+         }
+      }
+      else if ( BitsAllocated == 32 )
+      { 
+         // pmask : to mask the 'unused bits' (may contain overlays)
+         uint32_t pmask = 0xffffffff;
+         pmask = pmask >> ( BitsAllocated - BitsStored );
+ 
          uint32_t *deb = (uint32_t*)Raw;
 
          if ( !PixelSign )
@@ -1141,8 +1152,8 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
                *deb = *deb >> (BitsStored - HighBitPosition - 1);
                if ( *deb & smask )
                   *deb = *deb | nmask;
-               else
-                  *deb = *deb & pmask;
+               else                
+                 *deb = *deb & pmask; 
                deb++;
             }
          }
@@ -1535,17 +1546,6 @@ of 12 for the third value and a max of 0xfff).
 
 Since almost every vendor that I have encountered that encodes LUTs
 makes this mistake, perhaps it is time to amend the standard to warn
-implementor's of receivers and/or sanction this bad behavior. We have
-talked about this in the past in WG 6 but so far everyone has been
-reluctant to write into the standard such a comment. Maybe it is time
-to try again, since if one is not aware of this problem, one cannot
-effectively implement display using VOI LUTs, and there is a vast
-installed base to contend with.
-
-I did not check presentation states, in which VOI LUTs could also be
-encountered, for the prevalence of this mistake, nor did I look at the
-encoding of Modality LUT's, which are unusual. Nor did I check digital
-mammography images. I would be interested to hear from anyone who has.
 I did not check presentation states, in which VOI LUTs could also be
 encountered, for the prevalence of this mistake, nor did I look at the
 encoding of Modality LUT's, which are unusual. Nor did I check digital

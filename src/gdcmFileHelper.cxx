@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/08/31 14:11:00 $
-  Version:   $Revision: 1.126 $
+  Date:      $Date: 2007/09/04 13:14:33 $
+  Version:   $Revision: 1.127 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1977,6 +1977,8 @@ void FileHelper::Initialize()
    PixelReadConverter  = new PixelReadConvert;
    PixelWriteConverter = new PixelWriteConvert;
    Archive = new DocEntryArchive( FileInternal );
+   
+   KeepOverlays = false;
 }
 
 /**

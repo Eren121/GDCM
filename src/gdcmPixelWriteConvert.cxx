@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/31 10:59:08 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2007/09/04 13:14:33 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -328,16 +328,20 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
     int xsize = image->GetXSize();
     int ysize = image->GetYSize();
     int zsize = image->GetZSize();
+    
     int samplesPerPixel = image->GetSamplesPerPixel();
+    int bitsAllocated   = image->GetBitsAllocated();
+    int bitsStored      = image->GetBitsStored();
+        
    //std::cout << "X: " << xsize << std::endl;
    //std::cout << "Y: " << ysize << std::endl;
    //std::cout << "Sample: " << samplesPerPixel << std::endl;
    
-    gdcmDebugMacro( "image->GetBitsAllocated() " << image->GetBitsAllocated() << " image->GetBitsStored() " <<image->GetBitsStored() <<
+    gdcmDebugMacro( "bitsAllocated " << bitsAllocated << " bitsStored " <<bitsStored <<
                     std::endl);
    
-    int bitsstored = image->GetBitsStored();
-    unsigned int fragment_size = xsize*ysize*samplesPerPixel * (image->GetBitsAllocated() / 8);
+
+    unsigned int fragment_size = xsize*ysize*samplesPerPixel * (bitsAllocated / 8);
     gdcmDebugMacro("fragment_size " << fragment_size << " zsize " << zsize << " size " << size);
     assert( abs(fragment_size*zsize-size) <=1 );
 
@@ -348,44 +352,50 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
 #else
    EncodeWithoutBasicOffsetTable(of, 1);
 #endif
+
+      // to avoid major troubles when BitsStored == 8 && BitsAllocated==16 !
+
+   if (bitsStored == 8 && bitsAllocated == 16)
+      bitsStored = 16;
+
    uint8_t *pImageData = data;
    for(int i=0; i<zsize;i++)
      {
      gdcmDebugMacro("Write fragment no " << i );
      WriteDICOMItems(of, JpegFragmentSize);
      size_t beg = of->tellp();
-     if( bitsstored == 8 )
+     if( bitsStored == 8 )
        {
        gdcm_write_JPEG_file8(of, (char*)pImageData,size, 
-         image->GetXSize(), image->GetYSize(), image->GetZSize(), image->GetSamplesPerPixel(),
-         image->GetBitsAllocated(), 100 );
+         xsize, ysize, zsize, samplesPerPixel,
+         bitsAllocated, 100 );
        }
-     else if (bitsstored <= 12)
+     else if (bitsStored <= 12)
        {
-       assert( bitsstored >= 8 );
-       gdcm_write_JPEG_file12(of, (char*)pImageData,size,
-         image->GetXSize(), image->GetYSize(), image->GetZSize(), image->GetSamplesPerPixel(),
-         image->GetBitsAllocated(), 100);
+       assert( bitsStored >= 8 );
+       gdcm_write_JPEG_file12(of, (char*)pImageData, size,
+         xsize, ysize, zsize, samplesPerPixel,
+         bitsAllocated, 100);
        }
-     else if (bitsstored <= 16)
+     else if (bitsStored <= 16)
        {
-       assert( bitsstored >= 12 );
+       assert( bitsStored >= 12 );
        gdcm_write_JPEG_file16(of, (char*)pImageData,size, 
-         image->GetXSize(), image->GetYSize(), image->GetZSize(), image->GetSamplesPerPixel(),
-         image->GetBitsAllocated(), 100);
+         xsize, ysize, zsize, samplesPerPixel,
+         bitsAllocated, 100);
        }
-     else if (bitsstored <= 32)  // if we are lucky (?), it will compress as a 2 bytes stream
+     else if (bitsStored <= 32)  // if we are lucky (?), it will compress as a 2 bytes stream
        {                            // (Actually it doesn't !)
        // Just to allow ctest not to abort on 32bits per pixel image RTDOSE.dcm
-       assert( bitsstored >= 16 );
-       gdcmDebugMacro( "Warning : bitsstored>16 not supported by JPEG !" );
+       assert( bitsStored >= 16 );
+       gdcmDebugMacro( "Warning : bitsStored>16 not supported by JPEG !" );
        gdcm_write_JPEG_file16(of, (char*)pImageData, size, 
-         image->GetXSize(), image->GetYSize(), image->GetZSize(), image->GetSamplesPerPixel(),
-         image->GetBitsAllocated(), 100);
+         xsize, ysize, zsize, samplesPerPixel,
+         bitsAllocated, 100);
        }       
      else
        {
-       std::cerr << "Major pb : bitsstored =" << bitsstored << std::endl;
+       std::cerr << "Major pb : bitsStored =" << bitsStored << std::endl;
        abort();
        }
     size_t end = of->tellp();

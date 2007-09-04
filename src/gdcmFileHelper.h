@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/24 10:45:18 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2007/09/04 13:14:33 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -62,7 +62,10 @@ public:
    /// Accessor to \ref File
    File *GetFile() { return FileInternal; }
    
-
+   /// \brief Tells gdcm wether we want to keep ACR-NEMA-like overlays or not.  
+   void SetKeepOverlays(bool k) { KeepOverlays =k; }
+   bool GetKeepOverlays( )      { return KeepOverlays; }
+     
    void SetLoadMode(int loadMode);
    void SetFileName(std::string const &fileName);
    bool Load();
@@ -270,6 +273,9 @@ private:
    /// \brief  1 : white=0, black=high value
    ///         2 : black=0, white=high value (default)
    int PhotometricInterpretation;
+ 
+   /// \brief wether we want to keep ACR-NEMA-like overlays or not.
+   bool KeepOverlays;   
 
 };
 } // end namespace gdcm
