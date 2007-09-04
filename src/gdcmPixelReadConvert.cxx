@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 13:14:33 $
-  Version:   $Revision: 1.119 $
+  Date:      $Date: 2007/09/04 13:42:57 $
+  Version:   $Revision: 1.120 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -977,7 +977,6 @@ void PixelReadConvert::ConvertReorderEndianity()
      && !PixelSign )
    {
       int l = (int)( RawSize / ( BitsAllocated / 8 ) );
-      int l = (int)( RawSize / ( BitsAllocated / 8 ) );
       uint16_t *deb = (uint16_t *)Raw;
       for(int i = 0; i<l; i++)
       {
@@ -1115,6 +1114,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
             }
          }
       }
+      /*
       else if ( BitsAllocated == 32 )
       {
                }
@@ -1122,6 +1122,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
             }
          }
       }
+      */
       else if ( BitsAllocated == 32 )
       { 
          // pmask : to mask the 'unused bits' (may contain overlays)
