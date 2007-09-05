@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 15:43:38 $
-  Version:   $Revision: 1.121 $
+  Date:      $Date: 2007/09/05 08:22:57 $
+  Version:   $Revision: 1.122 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@
 namespace GDCM_NAME_SPACE
 {
 
-//bool ReadMPEGFile (std::ifstream *fp, char *inputdata, size_t lenght); 
+//bool ReadMPEGFile (std::ifstream *fp, char *inputdata, size_t lenght);
 bool gdcm_read_JPEG2000_file (void* raw, 
                               char *inputdata, size_t inputlength);
 //-----------------------------------------------------------------------------
@@ -97,11 +97,11 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
    {
       BitsAllocated = 16;
    }
-
-   else if (BitsAllocated > 8 && BitsAllocated < 16 && BitsAllocated != 12)
+   else if ( BitsAllocated > 8 && BitsAllocated < 16 && BitsAllocated != 12 )
    {
       BitsAllocated = 16;
-   }   
+   }
+
    // Number of "Bits Stored", defaulted to number of "Bits Allocated"
    // when absent from the file.
    BitsStored = file->GetBitsStored();
@@ -154,13 +154,13 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
       }
       // cache whether this is a strange GE transfer syntax (which uses
       // a little endian transfer syntax for the header and a big endian
-      // transfer syntax for the pixel data). 
+      // transfer syntax for the pixel data).
       IsPrivateGETransferSyntax = 
                 ( Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE );
 
-      IsMPEG =  IsJPEG2000 =  IsJPEGLS =  IsJPEGLossy =  IsJPEGLossless = IsRLELossless = false;  
+      IsMPEG =  IsJPEG2000 =  IsJPEGLS =  IsJPEGLossy =  IsJPEGLossless = IsRLELossless = false;
       if (!IsRaw)
-      {     
+      {
          while(true)
          {
             // mind the order : check the most usual first.
@@ -323,7 +323,7 @@ bool PixelReadConvert::ReadAndDecompressPixelData( std::ifstream *fp )
       }
       if (remainingLength !=0 )
         fp->read( raw, remainingLength);
-                 
+
       if ( fp->fail() || fp->eof())
       {
          gdcmWarningMacro( "Reading of Raw pixel data failed." );
@@ -513,33 +513,60 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      // jpeg2000 stream to use jasper:
      // I don't think we'll ever be able to deal with multiple fragments properly
 
-      unsigned long inputlength = 0;
-      JPEGFragment *jpegfrag = JPEGInfo->GetFirstFragment();
-      while( jpegfrag )
-      {
+     if( ZSize == 1 )
+       {
+       unsigned long inputlength = 0;
+       JPEGFragment *jpegfrag = JPEGInfo->GetFirstFragment();
+       while( jpegfrag )
+         {
          inputlength += jpegfrag->GetLength();
          jpegfrag = JPEGInfo->GetNextFragment();
-      }
-      gdcmAssertMacro( inputlength != 0);
-      uint8_t *inputdata = new uint8_t[inputlength];
-      char *pinputdata = (char*)inputdata;
-      jpegfrag = JPEGInfo->GetFirstFragment();
-      while( jpegfrag )
-      {
+         }
+       gdcmAssertMacro( inputlength != 0);
+       uint8_t *inputdata = new uint8_t[inputlength];
+       char *pinputdata = (char*)inputdata;
+       jpegfrag = JPEGInfo->GetFirstFragment();
+       while( jpegfrag )
+         {
          fp->seekg( jpegfrag->GetOffset(), std::ios::beg);
          fp->read(pinputdata, jpegfrag->GetLength());
          pinputdata += jpegfrag->GetLength();
          jpegfrag = JPEGInfo->GetNextFragment();
-      }
-      // Warning the inputdata buffer is delete in the function
-      if ( ! gdcm_read_JPEG2000_file( Raw, 
-          (char*)inputdata, inputlength ) )
-      {
+         }
+       // Warning the inputdata buffer is deleted in the function
+       if ( gdcm_read_JPEG2000_file( Raw,
+           (char*)inputdata, inputlength ) )
+         {
          return true;
-      }
-      // wow what happen, must be an error
-      gdcmWarningMacro( "gdcm_read_JPEG2000_file() failed "); 
-      return false;
+         }
+       // wow what happen, must be an error
+       gdcmWarningMacro( "gdcm_read_JPEG2000_file() failed "); 
+       return false;
+       }
+     else
+       {
+       if( (unsigned int)ZSize != JPEGInfo->GetFragmentCount() )
+         {
+         gdcmErrorMacro( "Sorry GDCM does not handle this type of fragments" );
+         return false;
+         }
+       // Hopefully every dicom fragment is *exactly* the j2k stream
+       JPEGFragment *jpegfrag = JPEGInfo->GetFirstFragment();
+       char *praw = (char*)Raw;
+       while( jpegfrag )
+         {
+         unsigned long inputlength = jpegfrag->GetLength();
+         char *inputdata = new char[inputlength];
+         fp->seekg( jpegfrag->GetOffset(), std::ios::beg);
+         fp->read(inputdata, jpegfrag->GetLength());
+         // Warning the inputdata buffer is deleted in the function
+         gdcm_read_JPEG2000_file( praw, 
+           inputdata, inputlength) ;
+         praw += XSize*YSize*SamplesPerPixel*(BitsAllocated/8);
+         jpegfrag = JPEGInfo->GetNextFragment();
+         }
+       return true;
+       }
    }
    else if ( IsJPEGLS )
    {
@@ -594,15 +621,14 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      // Precompute the offset localRaw will be shifted with
      int length = XSize * YSize * ZSize * SamplesPerPixel;
      int numberBytes = BitsAllocated / 8;
-      
+
       // to avoid major troubles when BitsStored == 8 && BitsAllocated==16 !
      int dummy;
      if (BitsStored == 8 && BitsAllocated==16)
         dummy = 16;
      else
         dummy = BitsStored;
-     
-     JPEGInfo->DecompressFromFile(fp, Raw, /*BitsStored*/ dummy , numberBytes, length );
+     JPEGInfo->DecompressFromFile(fp, Raw, dummy, numberBytes, length );
      return true;
    }
 }
@@ -1072,7 +1098,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
       {
          // pmask : to mask the 'unused bits' (may contain overlays)
          uint16_t pmask = 0xffff;
- 
+
          // It's up to the user to decide if he wants to ignore overlays (if any),
          // not to gdcm, without asking.
          // default is NOT TO LOAD, in order not to confuse ITK users (and others!).
@@ -1089,7 +1115,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
          {
             for(int i = 0; i<l; i++)
             {  
-               *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask ;
+               *deb = (*deb >> (BitsStored - HighBitPosition - 1)) & pmask;
                deb++;
             }
          }
@@ -1120,7 +1146,7 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
          }
       }
       else if ( BitsAllocated == 32 )
-      { 
+      {
          // pmask : to mask the 'unused bits' (may contain overlays)
          uint32_t pmask = 0xffffffff;
          pmask = pmask >> ( BitsAllocated - BitsStored );
@@ -1149,8 +1175,8 @@ bool PixelReadConvert::ConvertReArrangeBits() throw ( FormatError )
                *deb = *deb >> (BitsStored - HighBitPosition - 1);
                if ( *deb & smask )
                   *deb = *deb | nmask;
-               else                
-                 *deb = *deb & pmask; 
+               else
+                  *deb = *deb & pmask;
                deb++;
             }
          }
@@ -1369,7 +1395,6 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    else
    {
       RGBSize = RawSize;
-      
    }
    RawSize += RawSize%2;
    RGBSize += RGBSize%2;
@@ -1461,7 +1486,6 @@ void PixelReadConvert::CallEndMethod()
    Progress = 1.0f;
    CommandManager::ExecuteCommand(FH,CMD_ENDPROGRESS);
 }
-
 
 //-----------------------------------------------------------------------------
 } // end namespace gdcm
