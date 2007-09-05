@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 14:44:45 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/09/05 09:55:01 $
+  Version:   $Revision: 1.10 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,9 +28,9 @@
 
 const unsigned int MAX_NUMBER_OF_DIFFERENCE = 10;
 
-int nb_of_success___;
-int nb_of_failure___;
-int nb_of_diffPM1___;
+int nb_of_successJPEG___;
+int nb_of_failureJPEG___;
+int nb_of_diffPM1JPEG___;
 static int CompareInternalJPEG(std::string const &filename, std::string const &output)
 {
    std::cout << "----------------------------------------------------------------------" << std::endl
@@ -47,7 +47,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                 << "Test::TestReadWriteJPEGReadCompare: Image not gdcm compatible:"
                 << filename << std::endl;
       file->Delete();
-      nb_of_failure___++;
+      nb_of_failureJPEG___++;
       return 1;
    }
    std::cout << "           step 1...";
@@ -61,13 +61,13 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
           // (even if we do it by setting a flag, *he* will have to decide)
 
    //filehelper->SetImageData(imageData, dataSize);
- 
-   filehelper->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE); // lossless compression : pixels reain unimpared
-   filehelper->SetWriteModeToRaw();  
-   filehelper->SetWriteTypeToJPEG(  ); 
-   
+
+   filehelper->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE); // lossless compression : pixels remain unimpared
+   filehelper->SetWriteModeToRaw();
+   filehelper->SetWriteTypeToJPEG(  );
+
    filehelper->SetUserData(imageData,dataSize); // This one ensures the compression
-   filehelper->Write( output ); 
+   filehelper->Write( output );
 
    std::cout << "2...";
 
@@ -84,10 +84,9 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       file->Delete();
       filehelper->Delete();
       fileout->Delete();
-      nb_of_failure___++;
+      nb_of_failureJPEG___++;
       return 1;
    }
-
 
    if ( file->GetBitsAllocated()>16 )
    {
@@ -98,7 +97,6 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       fileout->Delete();
       return 0;   
    }
-   
    
    GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( fileout );
 
@@ -125,7 +123,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       filehelper->Delete();
       fileout->Delete();
       reread->Delete();
-      nb_of_failure___++;      
+      nb_of_failureJPEG___++;      
       return 1;
    }
 
@@ -133,7 +131,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
    // beware of odd length Pixel Element!
    if (dataSize != dataSizeWritten)
       std::cout << std::endl << "dataSize:" << dataSize << " dataSizeWritten:" << dataSizeWritten << std::endl;
-      
+
    int dataSizeFixed = dataSize - dataSize%2;
    int dataSizeWrittenFixed = dataSizeWritten - dataSizeWritten%2;
 
@@ -146,16 +144,15 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       filehelper->Delete();
       fileout->Delete();
       reread->Delete();
-      nb_of_failure___++;      
+      nb_of_failureJPEG___++;      
       return 1;
    }
 
    // Test the data content
-   
-   unsigned int j  =0;
-   unsigned int nbDiff =0;  
+   unsigned int j      = 0;
+   unsigned int nbDiff = 0;
    if (memcmp(imageData, imageDataWritten, dataSizeFixed) !=0)
-   {   
+   {
       std::string PixelType = filehelper->GetFile()->GetPixelType();
       std::string ts        = filehelper->GetFile()->GetTransferSyntax();
 
@@ -199,10 +196,10 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
           filehelper->Delete();
           fileout->Delete();
           reread->Delete();
-          nb_of_failure___++;
+          nb_of_failureJPEG___++;
   
           if (nbDiff/2 > 8 )  // last pixel of (DermaColorLossLess.dcm) is diferent. ?!?
-                               // I don't want it to break the testsuite
+                              // I don't want it to break the testsuite
              return 1;
           else
              return 0;
@@ -233,12 +230,12 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
               }
           }
           std::cout << std::endl;
-          nb_of_diffPM1___++;
+          nb_of_diffPM1JPEG___++;
        }
    }
    else
    {
-      nb_of_success___ ++;
+      nb_of_successJPEG___ ++;
    }
    std::cout << "=============== 4...OK." << std::endl ;
    //////////////// Clean up:
@@ -255,9 +252,9 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
 int TestReadWriteJPEGReadCompare(int argc, char *argv[]) 
 {
    int result = 0;
-   nb_of_success___ = 0;
-   nb_of_failure___ = 0;
-//   nb_of_diffPM1___ = 0;
+   nb_of_successJPEG___ = 0;
+   nb_of_failureJPEG___ = 0;
+   nb_of_diffPM1JPEG___ = 0;
    
    if (argc == 4)
       GDCM_NAME_SPACE::Debug::DebugOn();
@@ -298,6 +295,7 @@ int TestReadWriteJPEGReadCompare(int argc, char *argv[])
          filename += "/";
          filename += gdcmDataImages[i];
          res = CompareInternalJPEG(filename, "TestReadWriteJPEGReadCompare.dcm");
+
          if (res == 1)
          {
             std::cout << "=============================== Failure on: " << gdcmDataImages[i] << std::endl;
@@ -307,8 +305,8 @@ int TestReadWriteJPEGReadCompare(int argc, char *argv[])
       }
    }
    std::cout << "==================================" << std::endl;
-   std::cout << "nb of success  " << nb_of_success___ << std::endl;
-   std::cout << "nb of failure  " << nb_of_failure___ << std::endl;
-//   std::cout << "nb of diff+/-1 " << nb_of_diffPM1___ << std::endl;   
+   std::cout << "nb of success  " << nb_of_successJPEG___ << std::endl;
+   std::cout << "nb of failure  " << nb_of_failureJPEG___ << std::endl;
+   std::cout << "nb of diff+/-1 " << nb_of_diffPM1JPEG___ << std::endl;   
    return result;
 }
