@@ -100,7 +100,10 @@ Any contribution is welcome.
            of the private <TT>Dicom Dictionary</TT>
            to be used to parse <TT>Shadow groups</TT> against.
       <LI> User friendly way of anonymizing image when Patient's name is
-           burnt-in within the Pixels :-(
+           burnt-in within the Pixels :-(  <br>
+           --> In many cases, the burnt-in Patient's name, etc
+               are actually stored as 'overlays'.<br>
+              'Normal' reading doesn't load those type of overlays.
    </UL>
 </UL>
 <!#######################################################################>
@@ -131,7 +134,7 @@ Any contribution is welcome.
       <LI> To <i>try to</i> make gdcm images PACS usable, user is now allowed to
            gdcm what kind of image he wants to write, using :  <br>
    <TT>void FileHelper::SetContentType (ImageContentType c);</TT> <br>
-   Four different types are identify (probabely more will be added) :
+   Four different types are identifyed (probabely more will be added) :
       <UL> 
          <LI>
       1) user created ex nihilo his own image and wants to write it as a Dicom image.<br>
