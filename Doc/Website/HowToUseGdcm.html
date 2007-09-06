@@ -20,7 +20,7 @@ Jean-Pierre Roux
 1-1-1-1) Deal with the file header
 1-1-1-2) Load the 'pixels' in memory
 1-1-1-3) Get the value of a single Dicom DataElement 
-1-1-1-4) Get the value of a Dicom Sequence  
+1-1-1-4) Get the values within a Dicom Sequence  
 1-1-2) A File Set
 
 1-2) using VTK
@@ -48,25 +48,31 @@ Jean-Pierre Roux
 
 2-4) Retrictions for Python users
 
-3) Some 'Command line' utilities
+3) DICOMDIR
+===========
+3-1) How to read a DICIMDIR
+3-2) How to modifiy a DICOMDIR
+3-3) How to create a DICOMDIR
+
+4) Some 'Command line' utilities
 ================================
-3-) PrintFile
-3-) exSerieHelper
-3-) exXCoherentFileSet
+4-) PrintFile
+4-) exSerieHelper
+4-) exXCoherentFileSet
 
-3-) AnonymizeNoLoad
-3-) AnonymizeMultiPatient
-3-) AnonymizeDicomDir
+4-) AnonymizeNoLoad
+4-) AnonymizeMultiPatient
+4-) AnonymizeDicomDir
 
-3-) ReWrite
-3-) RawToDicom
-3-) exMoveImagesToSingleSerieUID
+4-) ReWrite
+4-) RawToDicom
+4-) exMoveImagesToSingleSerieUID
 
-3-) vtkgdcmViewer2
-3-) vtkgdcmSerieViewer2
+4-) vtkgdcmViewer2
+4-) vtkgdcmSerieViewer2
 
-3-) PrintDicomDir
-3-) MakeDicomDir
+4-) PrintDicomDir
+4-) MakeDicomDir
 
 ----------------------------------------------------------------------------
 
@@ -347,10 +353,10 @@ Now, you can enjoy your image !
   You will have to cast them, according to the knowledge you have about them.
   LutRedData = (uint8_t*)f->GetEntryBinArea( 0x0028, 0x1201 ); 
    
-1-1-1-4) Get the value(s) of a Dicom Sequence           
+1-1-1-4) Get the value(s) within a Dicom Sequence           
 
 Actually, a 'Dicom Sequence' is composed of a list a 'Sequence Items',
-each Sequence Item is a set of DataElement (that can be a Sequence Element, recursively).
+each Sequence Item is a set of DataElement (that can be Dicom Sequences, recursively).
 You have to get the Sequence element, to get its number of Sequence items, to iterate on each one.
 e.g.:
 
@@ -377,7 +383,7 @@ of images, laying in a Directories tree-like structure, you don't know anything
 about the Patients, and so on)
 
 A class gdcm::SerieHelper is designed to help solving this problem.
-Use it as follows.
+Use it as follows :
 
     gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
     while (int i=0; i < nbOfFiles; i++) {
@@ -445,6 +451,7 @@ If you want to 'order' the files within each 'Single Serie UID File Set'
   
   If, for any reason of his own, user already get the file headers,
   he may add the gdcm::File (instead of the file name) to the SerieHelper.
+  (Sorry, not available in Python)
 
     gdcm::SerieHelper *sh = gdcm::SerieHelper::New();
     while (int i=0; i < nbOfFiles; i++) {
@@ -491,7 +498,7 @@ He wants to drop the 'duplicate images'
 Sometimes the previous stuff is *not enough* !
 
 Within a SingleSerieUIDFileSet, you can have have various orientations,
-or various positions, at various times. (not only various position , at a single
+or various positions, at various times. (not only various positions, at a single
 time, for a single orientation).
 
 User may consider that dealing only with the 'Series Instance UID' 
@@ -546,8 +553,8 @@ a vtkGdcmReader() method ( derived from vtkReader() ) is available.
 
    vtkGdcmReader *reader = vtkGdcmReader::New();
    reader->SetFileName( yourDicomFilename );      
-   reader->SetLoadMode( yourLoadMode);   // See C++ part 
-   reader->SetKeepOverlays( true/false); // See C++ part    
+   reader->SetLoadMode( yourLoadMode );   // See C++ part 
+   reader->SetKeepOverlays( true/false ); // See C++ part    
    reader->Update();
    vtkImageData* ima = reader->GetOutput();
    int* Size = ima->GetDimensions(); 
@@ -563,8 +570,8 @@ feel like:
    vtkGdcmReader *reader = vtkGdcmReader::New();
    for(int i=1; i< yourNumberOfFiles; i++)
          reader->AddFileName( yourTableOfFileNames[i] );     
-   reader->SetLoadMode( yourLoadMode);   // See C++ part 
-   reader->SetKeepOverlays( true/false); // See C++ part     
+   reader->SetLoadMode( yourLoadMode );   // See C++ part 
+   reader->SetKeepOverlays( true/false ); // See C++ part     
    reader->Update();
    vtkImageData* ima = reader->GetOutput();
    int* Size = ima->GetDimensions();
@@ -872,25 +879,204 @@ vtkGdcmWriter::void SetContentTypeToUnmodifiedPixelsImage()
 ---------------------------------
 /// \todo : write it!
 
-3) Some 'Command line' utilities  /// \todo: finish it!
+
+3) DICOMDIR /// \todo: finish it!
+===========
+3-1) How to read a DICIMDIR
+3-2) How to modifiy a DICOMDIR
+3-3) How to create a DICOMDIR
+
+
+4) Some 'Command line' utilities  /// \todo: finish it!
 ================================
 
-3-) PrintFile
-3-) exSerieHelper
-3-) exXCoherentFileSet
+4-) PrintFile
+4-) exSerieHelper
+4-) exXCoherentFileSet
 
-3-) AnonymizeNoLoad
-3-) AnonymizeMultiPatient
-3-) AnonymizeDicomDir
+4-) AnonymizeNoLoad
+4-) AnonymizeMultiPatient
+4-) AnonymizeDicomDir
+4-) PatchHeader
+4-) ReWrite
+4-) RawToDicom
+4-) exMoveImagesToSingleSerieUID
 
-3-) ReWrite
-3-) RawToDicom
-3-) exMoveImagesToSingleSerieUID
+4-) vtkgdcmViewer2
+4-) vtkgdcmSerieViewer2
 
-3-) vtkgdcmViewer2
-3-) vtkgdcmSerieViewer2
+4-) PrintDicomDir
+4-) MakeDicomDir
 
-3-) PrintDicomDir
-3-) MakeDicomDir
+
+    *   PrintFile
+
+         Displays the header of any kind of ACR-NEMA/PAPYRUS/DICOM File
+         usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]
+                       [forceload=listOfElementsToForceLoad]
+                       [4DLoc= ][dict= privateDirectory]
+                       [ { [noshadowseq] | [noshadow][noseq] } ]
+                       [debug] [warning]
+      level = 0,1,2 : depending on the amount of details user wants to see
+      4DLoc: group-elem(in hexa, no space) of the DataEntry holdind 4thDim
+      listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)
+                                of Elements to load whatever their length
+      privateDirectory : source file full path name of Shadow Group elems
+      noshadowseq: user doesn't want to load Private Sequences
+      noshadow   : user doesn't want to load Private groups (odd number)
+      noseq      : user doesn't want to load Sequences
+      debug      : user wants to run the program in 'debug mode'
+      warning    : user wants to be warned about any oddity in the File
+      showlut :user wants to display the Palette Color (as an int array)
+
+                          [ { [noshadowseq] | [noshadow][noseq] } ] [debug] [usage]
+                level = 0,1,2 : depending on the amount of details user wants to see
+                noshadowseq: user doesn't want to load Private Sequences
+                noshadow   : user doesn't want to load Private groups (odd number)
+                noseq      : user doesn't want to load Sequences
+                debug      : user wants to run the program in 'debug mode'
+                usage      : user wants to display usage
+         
+
+    * Anonymize
+
+         Anonymizes a full gdcm-readable Dicom image
+                Warning : probably segfaults if pixels are not gdcm readable.
+                          Use AnonymizeNoLoad instead.
+         usage: Anonymize filein=inputFileName fileout=anonymizedFileName [debug][usage]
+                debug    : user wants to run the program in 'debug mode'
+                usage    : user wants to display usage
+        
+
+    * AnonymizeNoLoad
+
+       
+         Anonymizes a gdcm-readable Dicom image even if pixels aren't gdcm readable
+               Warning : the image is overwritten;
+                         to preserve its integrity, use a copy.
+         usage: AnonymizeNoLoad {filein=inputFileName|dirin=inputDirectoryName}
+                                [rubout=listOfPrivateElementsToRubOut]
+                                [ { [noshadowseq] | [noshadow][noseq] } ] [debug]
+                inputFileName : Name of the (single) file user wants to anonymize
+                inputDirectoryName : user wants to anonymize *all* the files
+                                     within the (single Patient!) directory
+                listOfElementsToRubOut : group1-elem1,g2-e2,... (in hexa)
+                                         of extra Elements to rub out
+                noshadowseq: user doesn't want to load Private Sequences
+                noshadow   : user doesn't want to load Private groups (odd number)
+                noseq      : user doesn't want to load Sequences
+                debug      : user wants to run the program in 'debug mode'
+                usage      : user wants to display usage
+         
+
+    * ReWrite
+
+         Reads and rewrites a full gdcm-readable Dicom image
+     (usefull when the file header is not very straight).
+
+ usage: ReWrite filein=inputFileName fileout=outputFileName
+       [keepoverlays] [mode=write mode] [monochrome1]
+       [noshadow] [noseq][debug]
+  --> The following line to 'rubout' a burnt-in Patient name
+       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]
+  --> The 2 following lines, to extract a sub image within some frames
+       [ROI=xBegin,xEnd,yBegin,yEnd]
+       [firstframe=beg] [lastframe=end]
+
+        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)
+               j (jpeg lossless), 2 (jpeg2000)
+        keepoverlays : user wants to keep ACR-NEMA-like overlays
+        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)
+        noshadowseq: user doesn't want to load Private Sequences
+        noshadow : user doesn't want to load Private groups (odd number)
+        noseq    : user doesn't want to load Sequences
+        rgb      : user wants to transform LUT (if any) to RGB pixels
+        warning  : developper wants to run the program in 'warning mode'
+        debug    : developper wants to run the program in 'debug mode' a full gdcm-readable Dicom image (compressed Pixels are expanded)
+                         (usefull when the file is not very straight).                  
+        usage: ReWrite filein=inputFileName fileout=anonymizedFileName
+                        [mode=write mode] [rgb]
+                        [ { [noshadowseq] | [noshadow][noseq] } ] [debug] [usage]
+        write mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)
+        rgb        : user wants to transform LUT (if any) into RGB 
+        noshadowseq: user doesn't want to load Private Sequences
+        noshadow   : user doesn't want to load Private groups (odd number)
+        noseq      : user doesn't want to load Sequences
+        debug      : user wants to run the program in 'debug mode'
+        usage      : user wants to display usage
+         
+
+    * PrintDicomDir
+
+         Displays the tree-like structure of a DICOMDIR File
+         usage: PrintDicomDir filein=fileName [detail=n] [level=n] [debug] [usage]
+                detail = 1 : Patients, 2 : Studies, 3 : Series, 4 : Images
+                         5 : Full Content
+                level = 0,1,2 : depending on user (what he wants to see, when detail=5)
+                debug    : user wants to run the program in 'debug mode'
+                usage    : user wants to display usage
+         
+
+    * MakeDicomDir
+
+         Explores recursively the given directory, makes the relevant DICOMDIR
+                and writes it as 'NewDICOMDIR'
+         usage: MakeDicomDir dirname=rootDirectoryName 
+                            [ { [noshadowseq] | [noshadow][noseq] } ] [debug] [usage]
+                noshadowseq: user doesn't want to load Private Sequence
+                noshadow   : user doesn't want to load Private groups (odd number)
+                noseq      : user doesn't want to load Sequences
+                debug      : user wants to run the program in 'debug mode'
+                usage      : user wants to display usage
+         
+
+    * AnonymizeDicomDir
+
+         Anonymizes a gdcm-readable DICOMDIR even when some 'Objects'
+                are not yet taken into account
+                Warning : the DICOMDIR is overwritten; 
+                          to preserve its integrity, use a copy.
+         usage: AnonymizeDicomDir filein=dicomDirName [debug] [usage] [usage]
+                debug    : user wants to run the program in 'debug mode'
+                usage    : user wants to display usage
+         
+
+    * PatchHeader
+
+          Allows aware user to patch a gdcm-parsable image header, without 
+               loading image.
+               Warning : the image(s) is/are overwritten
+                         to preserve image(s) integrity, use a copy.
+               WARNING : *NO CHECK* is performed on the new values.
+                         Use only if you are sure the original values are wrong
+                         *and* your values are right...
+         usage: PatchHeader {filein=inputFileName|dirin=inputDirectoryName}
+                     [ { [size=] | [rows=][columns=] } ] [planes=]
+                     [bitsallocated=] [bitsstored=]
+                     [highbit=] [samplesperpixel=]
+                     [pixelrepresentation=] [samplesperpixel=]
+                     [ { [noshadowseq] | [noshadow][noseq] } ] [debug]
+                                                                                 
+             inputFileName : Name of the (single) file user wants to modify
+             inputDirectoryName : user wants to modify *all* the files
+                                  within the directory
+             newsize         : new size, to overwrite old (wrong) one
+                or
+             rows            : new Rows number,    to overwrite old (wrong) one
+             columns         : new Columns number, to overwrite old (wrong) one
+             planes          : new Planes number,  ...
+             bitsallocated   : new Bits Allocated number,  ...
+             bitsstored      : new Bits Stored number,  ...
+             highbit         : new High Bit number,  ...
+             samplesperpixel : new Samples Per Pixel, ...
+             pixelrepresentation : new Pixel Representation, ...
+                                                                                 
+             noshadowseq: user doesn't want to load Private Sequences
+             noshadow   : user doesn't want to load Private groups (odd number)
+             noseq      : user doesn't want to load Sequences
+             debug      : user wants to run the program in 'debug mode'
+             usage      : user wants to display usage
+         
+
 }}}
 </pre>

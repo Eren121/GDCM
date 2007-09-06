@@ -26,7 +26,7 @@ Any contribution is welcome.
    <UL>
       <LI> gdcm doesn't read yet <TT>JPEG-LS</TT> encoded files.
       <UL>
-          We said '<TT>JPEG-LS</TT>', not Lossless Jpeg ...<br>
+          We said '<TT>JPEG-LS</TT>', not <i>Lossless Jpeg </i>...<br>
           [<TT>JPEG-LS</TT> is the basis for new lossless/near-lossless compression
           standard for continuous-tone images intended for <TT>JPEG2000</TT>. 
           The standard is based on the LOCO-I algorithm 
@@ -51,10 +51,6 @@ Any contribution is welcome.
    </UL> 
    <LI>Writer 
    <UL> 
-      <LI> Allow user to tell the Writer he doesn't want to write down
-           <TT>SeqEntry</TT> (if any) 
-      <LI> Allow user to tell the Writer he doesn't want to write down
-           <TT>Shadow groups</TT> (if any)
       <LI> Allow user to tell the Writer he wants to split a
            <TT>Multiframe</TT> image into a serie of 
            <TT>Single frame</TT> images.
@@ -74,9 +70,9 @@ Any contribution is welcome.
       <LI> <TT>DICOMDIR</TT> full management (not limited to
            <TT> PATIENT</TT>/<TT>STUDY</TT>/<TT>SERIE</TT>/<TT>IMAGE</TT>)
       <LI> Allow user to add an entry (belonging to the file header Dicom
-           entries)to the default entry list, before
+           entries) to the default entry list, before
            making a <TT>DICOMDIR</TT> from a root directory
-      <LI> Allow user to add an entry of his owns (for instance an <TT>Icon</TT>
+      <LI> Allow user to add an entry of his own (for instance an <TT>Icon</TT>
            to each image, or to each Serie).  
       </UL>
 <LI> SerieHelper
@@ -344,6 +340,20 @@ use :
   
 <!#######################################################################>
 <A CLASS="anchor" NAME="NewsPreviousVersions">
+<!#######################################################################>
+<HR size="1"><ADDRESS style="align: right;"></ADDRESS>
+<H2>
+   <A CLASS="anchor" NAME="NewsVersion1_2">
+      <B>Version 1.2 </B></A>  
+</H2> 
+   <LI>State of the art
+   <UL>
+      <LI>
+         <a href="Doc1.0/uml-gdcmV1.0.pdf">gdcm 1.2 UML Class Diagram</a> version
+      (same as 1.1)
+      <LI> This is the Class Diagram of the version used within ITK.
+           (Hope we unify CVS version and ITK version, some day!)
+  
 <!#######################################################################>
 
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
