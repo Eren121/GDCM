@@ -25,3 +25,4 @@ UL Unsigned Long;         // Exactly 4 bytes
 UN Unknown;               // Any length of bytes
 US Unsigned Short;        // Exactly 2 bytes
 UT Unlimited Text;        // At most 2^32 -1 chars
+RT Undocumented VR in Siemens Sensation 64; // gdcmVR.cxx has to be updated, too.

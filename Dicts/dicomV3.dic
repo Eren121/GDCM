@@ -3104,6 +3104,7 @@
 6018 1500 LO 1 Overlay Label
 6018 3000 OW 1 Overlay Data
 6018 4000 LT 1 Overlay Comments (RET)
+
 7fe0 0000 UL 1 Group Length
 7fe0 0010 OB 1 Pixel Data
 

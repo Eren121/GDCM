@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/22 10:02:48 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2007/09/07 15:44:32 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -170,10 +170,16 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 bool VR::IsValidVR(VRKey const &tested)
 {
 //  return vr.find(key) != vr.end();
-  static const char VRvalues[] =
-    "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQ";
 
-  int nbVal = 26;
+// "RT" is an undocumented VR, found in some Siemens images.
+// We added it here to be able to read these images.
+// Dict/gdcmVR.dic has to be updated, too.
+  static const char VRvalues[] =
+    "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQRT";
+
+  //int nbVal = strlen(VRvalues)/2; // save CPU time.
+  int nbVal = 27;
+  
   const char *pt = VRvalues;
   for (int i=0;i<nbVal;i++)
   {
