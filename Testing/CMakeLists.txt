@@ -43,7 +43,7 @@ IF (GDCM_DATA_ROOT)
     #TestAllReadCompareDicom.cxx        # includes generated gdcmDataImages.h
     TestReadWriteReadCompare.cxx        # includes generated gdcmDataImages.h 
     TestReadWriteJPEGReadCompare.cxx    # includes generated gdcmDataImages.h 
-    TestReadWriteJPEG2000ReadCompare.cxx # includes generated gdcmDataImages.h     
+    #TestReadWriteJPEG2000ReadCompare.cxx # includes generated gdcmDataImages.h     
         
     #TestCopyDicom.cxx                  # includes generated gdcmDataImages.h 
     #    TestCopyRescaleDicom.cxx       # includes generated gdcmDataImages.h 
