@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 15:06:13 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/09/11 12:49:52 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,19 +43,6 @@
 #include "gdcmSQItem.h"
 #include "gdcmArgMgr.h"
 
-// Looks like there is mapping in between syngodt and vr...
-//  O <=> UN
-//  3 <=> DS
-//  4 <=> FD
-//  5 <=> FL
-//  6 <=> IS
-//  9 <=> UL
-// 10 <=> US
-// 16 <=> CS
-// 19 <=> LO
-// 20 <=> LT
-// 22 <=> SH
-// 25 <=> UI
 
 // --------------------------------------------------------
 
@@ -87,12 +74,27 @@ struct equ
   char vr[2+1];
 };
 
+// Looks like there is mapping in between syngodt and vr...
+//  O <=> UN
+//  3 <=> DS
+//  4 <=> FD
+//  5 <=> FL
+//  6 <=> IS
+//  9 <=> UL
+// 10 <=> US
+// 16 <=> CS
+// 19 <=> LO
+// 20 <=> LT
+// 22 <=> SH
+// 25 <=> UI
 static equ mapping[] = {
   {  0 , "UN" },
   {  3 , "DS" },
   {  4 , "FD" },
   {  5 , "FL" },
   {  6 , "IS" },
+  {  7 , "SL" },
+  {  8 , "SS" },
   {  9 , "UL" },
   { 10 , "US" },
   { 16 , "CS" },
@@ -101,6 +103,7 @@ static equ mapping[] = {
   { 22 , "SH" },
   { 23 , "ST" },
   { 25 , "UI" },
+  { 27 , "UT" },
 };
 
 bool check_mapping(uint32_t syngodt, const char *vr)
@@ -327,7 +330,10 @@ for (int tag_no=0; tag_no<extractNb; tag_no++) {
    o.close();
    
    
+//#define OLDFORMAT
+
 std::ifstream is( tempWorkFile );
+#ifndef OLDFORMAT
 char dummy[4+1];
 dummy[4] = 0;
 is.read(dummy, 4);
@@ -348,6 +354,7 @@ if( strcmp( dummy, "\4\3\2\1" )  )
 if (verbose)
    std::cout << (int)dummy[0] << (int)dummy[1] << (int)dummy[2] 
              << (int)dummy[3]<< std::endl;
+#endif
 uint32_t n;
 is.read((char*)&n, sizeof(n));
 if (verbose)
@@ -375,7 +382,9 @@ if (verbose)
      std::cout << "vm=" << vm <<  std::endl;
   char vr[4];
   is.read(vr, 4);
+#ifndef OLDFORMAT
      assert( vr[2] == vr[3] && vr[2] == 0 );
+#endif
 if (verbose)
      std::cout << "vr=[" << vr << "]" <<std::endl;
   uint32_t syngodt;
