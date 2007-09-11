@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/11 12:49:52 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/09/11 12:56:11 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,7 +103,7 @@ static equ mapping[] = {
   { 22 , "SH" },
   { 23 , "ST" },
   { 25 , "UI" },
-  { 27 , "UT" },
+  { 27 , "UT" }
 };
 
 bool check_mapping(uint32_t syngodt, const char *vr)
