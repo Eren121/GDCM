@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2007/09/12 12:36:50 $
+  Version:   $Revision: 1.85 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,11 +125,13 @@ int main(int argc, char *argv[])
    " \n PrintFile : \n                                                        ",
    " Display the header of a ACR-NEMA/PAPYRUS/DICOM File                      ",
    " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]",
-   "                       [forceload=listOfElementsToForceLoad]              ",
+   "                       [forceload=listOfElementsToForceLoad] [rec] [noex] ",
    "                       [4DLoc= ][dict= privateDirectory]                  ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ]          ",
    "                       [debug] [warning]                                  ",
    "      level = 0,1,2 : depending on the amount of details user wants to see",
+   "      rec : user wants to parse recursively the directory                 ",
+   "      noex : user doen't want extra 'user friendly' info                  ",   
    "      4DLoc: group-elem(in hexa, no space) of the DataEntry holdind 4thDim",
    "      listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)",
    "                                of Elements to load whatever their length ",
@@ -164,8 +166,11 @@ int main(int argc, char *argv[])
       am->ArgMgrUsage(usage); // Display 'usage'  
       delete am;
       return 1;
-   }
-
+   }   
+      
+   bool noex = ( 0 != am->ArgMgrDefined("noex") );
+   bool rec  = ( 0 != am->ArgMgrDefined("rec") );   
+        
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
 
@@ -278,7 +283,8 @@ errno = 0;
       std::cout <<std::endl;
       std::cout <<" dataSize    " << fh->GetImageDataSize()    << std::endl;
       std::cout <<" dataSizeRaw " << fh->GetImageDataRawSize() << std::endl;
-
+if (!noex)
+{
       int nX,nY,nZ,nT,sPP,planarConfig;
       std::string pixelType;
       nX=f->GetXSize();
@@ -418,8 +424,8 @@ errno = 0;
       std::string ori = o->GetOrientation ( f );
       if (ori != "\\" )
          std::cout << "Orientation [" << ori << "]" << std::endl;
- 
-      o->Delete();  
+      o->Delete();
+}  
 //------------------------------
 
 
@@ -525,7 +531,8 @@ errno = 0;
    else  // ====== Deal with a Directory ======
    {
       std::cout << "dirName [" << dirName << "]" << std::endl;
-      GDCM_NAME_SPACE::DirList dirList(dirName,1); // gets recursively the file list
+      
+      GDCM_NAME_SPACE::DirList dirList(dirName,rec); // gets recursively (or not) the file list
       GDCM_NAME_SPACE::DirListType fileList = dirList.GetFilenames();
       GDCM_NAME_SPACE::File *f;
       bool res;
@@ -569,7 +576,8 @@ errno = 0;
          fh->Print();
 
 //------------------------------
-
+if (!noex)
+{
          // Lets's get and print some usefull fields about 'Orientation'
          // ------------------------------------------------------------
 
@@ -630,7 +638,7 @@ errno = 0;
          if (ori != "\\" )
             std::cout << "Orientation [" << ori << "]" << std::endl;
          o->Delete(); 
-
+}
 //------------------------------- 
         
          if (f->IsReadable())
