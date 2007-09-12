@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 16:21:50 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/09/12 13:38:14 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
 // 
 //----------------------------------------------------------------------------
 #include <vtkRenderWindowInteractor.h>
-#include <vtkImageViewer2.h>
+#include "vtkImageColorViewer.h"
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
 #include <vtkCommand.h>
@@ -86,7 +86,7 @@ public:
          }
       }
    }
-   vtkImageViewer2 *ImageViewer;
+   vtkImageColorViewer *ImageViewer;
 };
 
 
@@ -119,8 +119,7 @@ int main(int argc, char *argv[])
    reader->GetOutput()->Print( cout );
 
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
-
-   vtkImageViewer2 *viewer = vtkImageViewer2::New();
+   vtkImageColorViewer *viewer = vtkImageColorViewer::New();
 
    if( reader->GetLookupTable() )
    {
@@ -156,7 +155,9 @@ int main(int argc, char *argv[])
    iren->AddObserver(vtkCommand::CharEvent,obs);
    obs->Delete();
 
-   //viewer->Render();
+#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
+   viewer->Render(); // Don't ask why...
+#endif
    iren->Initialize();
    iren->Start();
 
