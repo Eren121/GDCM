@@ -16,6 +16,8 @@ INCLUDE_DIRECTORIES(
 SET(VTKGDCM_LIB_SRCS
   vtkGdcmReader.cxx
   vtkGdcmWriter.cxx
+  vtkImageColorViewer.cxx
+  vtkImageMapToWindowLevelColors2.cxx
 )
 
 #-----------------------------------------------------------------------------
@@ -26,6 +28,7 @@ TARGET_LINK_LIBRARIES(vtkgdcm
   vtkCommon
   vtkIO
   vtkFiltering
+  vtkRendering
 )
 
 #-----------------------------------------------------------------------------
