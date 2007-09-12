@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/11 12:56:11 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/09/12 10:49:40 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,7 +125,7 @@ bool check_mapping(uint32_t syngodt, const char *vr)
 }
 
 
-     ///\to  fix the Desctructor!
+     ///\to  fix the Destructor!
 void  DeleteCSA_content (CSA_content &myMap) {
    for ( CSA_content::const_iterator it = myMap.begin();
                                     it != myMap.end();
