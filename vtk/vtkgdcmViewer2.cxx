@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/12 13:38:14 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/09/12 13:43:10 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,11 @@
 // 
 //----------------------------------------------------------------------------
 #include <vtkRenderWindowInteractor.h>
+#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
 #include "vtkImageColorViewer.h"
+#else
+#include <vtkImageViewer2.h>
+#endif
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
 #include <vtkCommand.h>
@@ -86,7 +90,11 @@ public:
          }
       }
    }
+#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
    vtkImageColorViewer *ImageViewer;
+#else
+   vtkImageViewer2 *ImageViewer;
+#endif
 };
 
 
@@ -119,7 +127,11 @@ int main(int argc, char *argv[])
    reader->GetOutput()->Print( cout );
 
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
+#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
    vtkImageColorViewer *viewer = vtkImageColorViewer::New();
+#else
+   vtkImageViewer2 *viewer = vtkImageViewer2::New();
+#endif
 
    if( reader->GetLookupTable() )
    {

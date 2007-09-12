@@ -13,12 +13,20 @@ INCLUDE_DIRECTORIES(
   ${GDCM_BINARY_DIR}/
 )
 
-SET(VTKGDCM_LIB_SRCS
-  vtkGdcmReader.cxx
-  vtkGdcmWriter.cxx
-  vtkImageColorViewer.cxx
-  vtkImageMapToWindowLevelColors2.cxx
-)
+# Depending on VTK version build more stuff:
+IF("${VTK_MAJOR_VERSION}" GREATER 4)
+  SET(VTKGDCM_LIB_SRCS
+    vtkGdcmReader.cxx
+    vtkGdcmWriter.cxx
+    vtkImageColorViewer.cxx
+    vtkImageMapToWindowLevelColors2.cxx
+  )
+ELSE("${VTK_MAJOR_VERSION}" GREATER 4)
+  SET(VTKGDCM_LIB_SRCS
+    vtkGdcmReader.cxx
+    vtkGdcmWriter.cxx
+  )
+ENDIF("${VTK_MAJOR_VERSION}" GREATER 4)
 
 #-----------------------------------------------------------------------------
 # Create vtkgdcm library
@@ -28,8 +36,12 @@ TARGET_LINK_LIBRARIES(vtkgdcm
   vtkCommon
   vtkIO
   vtkFiltering
-  vtkRendering
 )
+IF("${VTK_MAJOR_VERSION}" GREATER 4)
+  TARGET_LINK_LIBRARIES(vtkgdcm
+    vtkRendering
+  )
+ENDIF("${VTK_MAJOR_VERSION}" GREATER 4)
 
 #-----------------------------------------------------------------------------
 SET(vtkgdcmdemo_SOURCES
