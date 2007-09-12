@@ -4,11 +4,11 @@ INCLUDE_DIRECTORIES(
   ${GDCM_BINARY_DIR}  
   ${GDCM_BINARY_DIR}/src)
 SET(EXAMPLE_SOURCES
-  #names starting with 'ex' are examples  
+  #names starting with 'ex' are examples
+  #-------------------------------------      
   #Txt2Mat  
   #exDicomRTStructSetFile  
   #exExtractCSA
-  Dense2007ToDicom  
   exReadPapyrus  
   exReadWriteFile  
   exColorToRGB  
@@ -16,38 +16,39 @@ SET(EXAMPLE_SOURCES
   exGC
   exImageLighten  
   #exInLine  
-  exOverlaysACR  
-  exOverlaysDCM  
+  exExtractOverlaysACR # Extracts ACR-NEMA style overlays 
+  exExtractOverlaysDCM # Extracts DICOM style overlays
+  exExtractDicomTags
+  exExtractTag         
   exCurveData  
-  exExtractTag  
   exSerieHelper
   exXCoherentFileSet
-  exExtractDicomTags  
   exMoveImagesToSingleSerieUID
   exMakeIcon
-  #the following are utilities  
+  
+  # the following are utilities
+  #----------------------------  
   PrintDicomDir  
   PrintFile  
   MakeDicomDir  
-  AnonymizeDicomDir     
-  # without loading it as a gdcm::DicomDir  
-  Anonymize             
-  # for full gdcm readable files  
-  AnonymizeNoLoad       
-  # without loading the Pixel Data  
-  AnonymizeMultiPatient 
-  # without loading the Pixel Data  
+  AnonymizeDicomDir     # without loading it as a gdcm::DicomDir  
+  Anonymize             # for full gdcm readable files  
+  AnonymizeNoLoad       # without loading the Pixel Data  
+  AnonymizeMultiPatient # without loading the Pixel Data  
   PatchHeader  
   ToInTag  
   ReWrite  
   #ReWriteExtended  
   RawToDicom  
-  TestValidate  
+  TestValidate
+  
+  # the following produce usable files for some softwares.
+  #------------------------------------------------------   
   ToMRIregister
   DenseMultiFramesToDicom
+  Dense2007ToDicom
+  #BatchUncompress
     
-  #BatchUncompress  
-  ExtractOverlays   
   #the following will be transformed into 'examples', or 'utilities'
   #              or will be removed
   # Better you don't use them (not fully checked ...)   
@@ -56,10 +57,9 @@ SET(EXAMPLE_SOURCES
   Volume2Dicom  
   WriteDicomSimple  
 
-  WriteRead 
-  ## Troubles on Windows ! 
-  WriteDicomAsJPEG2000
-  WriteDicomAsJPEG
+  WriteRead
+  #WriteDicomAsJPEG2000  #Use ReWrite ... mode=2
+  #WriteDicomAsJPEG      #Use ReWrite ... mode=j
 
   exCTPET  
   #Slice
