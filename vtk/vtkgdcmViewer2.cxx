@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/12 13:43:10 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/09/13 11:32:53 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,7 +32,7 @@
 // 
 //----------------------------------------------------------------------------
 #include <vtkRenderWindowInteractor.h>
-#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
+#if VTK_MAJOR_VERSION >= 5
 #include "vtkImageColorViewer.h"
 #else
 #include <vtkImageViewer2.h>
@@ -73,7 +73,7 @@ public:
       {
          if ( event == vtkCommand::CharEvent )
          {
-#if (VTK_MAJOR_VERSION >= 5)
+#if VTK_MAJOR_VERSION >= 5
             int max = ImageViewer->GetSliceMax();
             int slice = (ImageViewer->GetSlice() + 1 ) % ++max;
             ImageViewer->SetSlice( slice );
@@ -90,7 +90,7 @@ public:
          }
       }
    }
-#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
+#if VTK_MAJOR_VERSION >= 5
    vtkImageColorViewer *ImageViewer;
 #else
    vtkImageViewer2 *ImageViewer;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
    reader->GetOutput()->Print( cout );
 
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
-#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
+#if VTK_MAJOR_VERSION >= 5
    vtkImageColorViewer *viewer = vtkImageColorViewer::New();
 #else
    vtkImageViewer2 *viewer = vtkImageViewer2::New();
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
    iren->AddObserver(vtkCommand::CharEvent,obs);
    obs->Delete();
 
-#if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
+#if VTK_MAJOR_VERSION >= 5
    viewer->Render(); // Don't ask why...
 #endif
    iren->Initialize();
