@@ -26,7 +26,7 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
 
-vtkCxxRevisionMacro(vtkImageColorViewer, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkImageColorViewer, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkImageColorViewer);
 
 //----------------------------------------------------------------------------
@@ -722,7 +722,7 @@ void vtkImageColorViewer::SetInputConnection(vtkAlgorithmOutput* input)
 {
   this->WindowLevel->SetInputConnection(input);
   this->UpdateDisplayExtent();
-};
+}
 
 //----------------------------------------------------------------------------
 #ifndef VTK_LEGACY_REMOVE
