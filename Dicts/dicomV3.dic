@@ -3105,6 +3105,70 @@
 6018 3000 OW 1 Overlay Data
 6018 4000 LT 1 Overlay Comments (RET)
 
+601a 0000 UL 1 Group Length
+601a 0010 US 1 Overlay Rows
+601a 0011 US 1 Overlay Columns
+601a 0012 US 1 Overlay Planes
+601a 0015 IS 1 Number of Frames in Overlay
+601a 0022 LO 1 Overlay Description
+601a 0040 CS 1 Overlay Type
+601a 0045 LO 1 Overlay Subtype
+601a 0050 SS 2 Overlay Origin
+601a 0051 US 1 Image Frame Origin
+601a 0052 US 1 Overlay Plane Origin
+601a 0060 CS 1 Overlay Compression Code (RET)
+601a 0100 US 1 Overlay Bits Allocated
+601a 0102 US 1 Overlay Bit Position
+601a 0110 CS 1 Overlay Format (RET)
+601a 0200 US 1 Overlay Location (RET)
+601a 1001 CS 1 Overlay Activation Layer
+601a 1100 US 1 Overlay Descriptor - Gray (RET)
+601a 1101 US 1 Overlay Descriptor - Red (RET)
+601a 1102 US 1 Overlay Descriptor - Green (RET)
+601a 1103 US 1 Overlay Descriptor - Blue (RET)
+601a 1200 US 1-n Overlays - Gray (RET)
+601a 1201 US 1-n Overlays - Red (RET)
+601a 1202 US 1-n Overlays - Green (RET)
+601a 1203 US 1-n Overlays - Blue (RET)
+601a 1301 IS 1 ROI Area
+601a 1302 DS 1 ROI Mean
+601a 1303 DS 1 ROI Standard Deviation
+601a 1500 LO 1 Overlay Label
+601a 3000 OW 1 Overlay Data
+601a 4000 LT 1 Overlay Comments (RET)
+
+601c 0000 UL 1 Group Length
+601c 0010 US 1 Overlay Rows
+601c 0011 US 1 Overlay Columns
+601c 0012 US 1 Overlay Planes
+601c 0015 IS 1 Number of Frames in Overlay
+601c 0022 LO 1 Overlay Description
+601c 0040 CS 1 Overlay Type
+601c 0045 LO 1 Overlay Subtype
+601c 0050 SS 2 Overlay Origin
+601c 0051 US 1 Image Frame Origin
+601c 0052 US 1 Overlay Plane Origin
+601c 0060 CS 1 Overlay Compression Code (RET)
+601c 0100 US 1 Overlay Bits Allocated
+601c 0102 US 1 Overlay Bit Position
+601c 0110 CS 1 Overlay Format (RET)
+601c 0200 US 1 Overlay Location (RET)
+601c 1001 CS 1 Overlay Activation Layer
+601c 1100 US 1 Overlay Descriptor - Gray (RET)
+601c 1101 US 1 Overlay Descriptor - Red (RET)
+601c 1102 US 1 Overlay Descriptor - Green (RET)
+601c 1103 US 1 Overlay Descriptor - Blue (RET)
+601c 1200 US 1-n Overlays - Gray (RET)
+601c 1201 US 1-n Overlays - Red (RET)
+601c 1202 US 1-n Overlays - Green (RET)
+601c 1203 US 1-n Overlays - Blue (RET)
+601c 1301 IS 1 ROI Area
+601c 1302 DS 1 ROI Mean
+601c 1303 DS 1 ROI Standard Deviation
+601c 1500 LO 1 Overlay Label
+601c 3000 OW 1 Overlay Data
+601c 4000 LT 1 Overlay Comments (RET)
+
 7fe0 0000 UL 1 Group Length
 7fe0 0010 OB 1 Pixel Data
 
