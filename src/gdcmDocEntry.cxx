@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2007/09/14 08:22:19 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -256,7 +256,7 @@ void DocEntry::Copy(DocEntry *doc)
 //-----------------------------------------------------------------------------
 // Print
 /**
- * \brief   Prints the common part of DataEntry, SeqEntry
+ * \brief   Prints the common part (vr [length offset] name) of DataEntry, SeqEntry
  * @param   os ostream we want to print in
  * @param indent Indentation string to be prepended during printing
  */
@@ -305,7 +305,7 @@ void DocEntry::Print(std::ostream &os, std::string const & )
       s << st << " ";
       s << std::setw(8) << o; 
    }
-   if (PrintLevel >= 1)
+   //if (PrintLevel >= 1)
       s << " ";
 
    s << "[" << vr  << "] ";

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:48 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2007/09/14 08:22:19 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,9 +81,6 @@ DataEntry::~DataEntry ()
    DeleteBinArea();
    
 }
-
-//-----------------------------------------------------------------------------
-// Print
 
 //-----------------------------------------------------------------------------
 // Public
@@ -654,6 +651,7 @@ uint32_t DataEntry::ComputeFullLength()
 
 //-----------------------------------------------------------------------------
 // Protected
+
 /// \brief Creates a DataEntry owned BinArea 
 ///       (remove previous one if any and relevant StrArea if any)
 void DataEntry::NewBinArea( )
@@ -691,7 +689,9 @@ void DataEntry::DeleteBinArea(void)
  */
 void DataEntry::Print(std::ostream &os, std::string const & )
 {
-   os << "D ";
+   //os << "D ";
+   
+   // First, Print the common part (vr [length offset] name).
    DocEntry::Print(os);
 
    uint16_t g = GetGroup();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:50 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2007/09/14 08:22:19 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -275,8 +275,9 @@ void SeqEntry::Copy(DocEntry *doc)
  */
 void SeqEntry::Print( std::ostream &os, std::string const & )
 {
-   // First, Print the Dicom Element itself.
-   os << "S ";
+   // os << "S ";
+   
+   // First, Print the common part (vr [length offset] name).
    DocEntry::Print(os);
    os << std::endl;
 
