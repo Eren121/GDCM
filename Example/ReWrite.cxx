@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 13:06:12 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/09/14 08:23:34 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -315,43 +315,43 @@ int main(int argc, char *argv[])
 
       case 'R' :
       case 'r' :
-      //  Writting a Raw File, 
+      //  Writting a Raw File,
          std::cout << "WriteRaw" << std::endl;
          fh->WriteRawData(outputFileName);
          break;
  
       case 'J' :
       case 'j' :
-      // writting a DICOM Jpeg Lossless 
+      // writting a DICOM Jpeg Lossless
       // from a full gdcm readable File
          std::cout << "WriteDCM Jpeg Lossless" << std::endl;
          fh->SetWriteTypeToJPEG();
          break;
 
       case '2' :
-      // writting a DICOM Jpeg 2000 
+      // writting a DICOM Jpeg 2000
       // from a full gdcm readable File
          std::cout << "WriteDCM Jpeg 2000" << std::endl;
          fh->SetWriteTypeToJPEG2000();
-         break; 
- 
+         break;
+
  // Just for fun :
  // Write a 'Video inverse' version of the file.
- // *Not* described, on purpose,  in the USAGE  
+ // *Not* described, on purpose,  in the USAGE
       case 'V' :
       case 'v' :
          if ( fh->GetFile()->GetBitsAllocated() == 8)
          {
             std::cout << "videoinv for 8 bits" << std::endl;
-            for (int i=0; i<dataSize; i++) 
+            for (int i=0; i<dataSize; i++)
             {
                ((uint8_t*)imageData)[i] = 255 - ((uint8_t*)imageData)[i];
             }
          }
          else
          {
-            std::cout << "videoinv for 16 bits" << std::endl;    
-            for (int i=0; i<dataSize/2; i++) 
+            std::cout << "videoinv for 16 bits" << std::endl;
+            for (int i=0; i<dataSize/2; i++)
             {
                ((uint16_t*)imageData)[i] =  65535 - ((uint16_t*)imageData)[i];
             }
@@ -361,17 +361,16 @@ int main(int argc, char *argv[])
          break;
    }
 
-
 //
 // user wants to keep only a part of the image (ROI, and/or some frames)
 // ---------------------------------------------------------------------
 // (==> this is no longer really 'ReWrite' !)
 
     int subImDimX = nX;
-    int subImDimY = nY;    
+    int subImDimY = nY;
 
     if (roi)
-    {  
+    {
       if (roiBoundVal[0]<0 || roiBoundVal[0]>=nX)
       { 
          std::cout << "xBegin out of bounds; 'roi' ignored" << std::endl;
@@ -385,27 +384,27 @@ int main(int argc, char *argv[])
       if (roiBoundVal[0] > roiBoundVal[1])
       { 
          std::cout << "xBegin greater than xEnd; 'roi' ignored" << std::endl;
-         fail = true;      
+         fail = true;
       }
 
       if (roiBoundVal[2]<0 || roiBoundVal[2]>=nY)
-      { 
+      {
          std::cout << "yBegin out of bounds; 'roi' ignored" << std::endl;
-         fail = true;      
+         fail = true;
       }
       if (roiBoundVal[3]<0 || roiBoundVal[3]>=nY)
-      { 
+      {
          std::cout << "yEnd out of bounds; 'roi' ignored" << std::endl;
-         fail = true;      
+         fail = true;
       }
       if (roiBoundVal[2] > roiBoundVal[3])
-      { 
+      {
          std::cout << "yBegin greater than yEnd; 'roi' ignored" << std::endl;
-         fail = true;      
-      }  
-   } 
+         fail = true;
+      }
+   }
    else
-   {  
+   {
      roiBoundVal = new int[4];
      roiBoundVal[0] = 0;
      roiBoundVal[1] = nX-1;
@@ -413,32 +412,32 @@ int main(int argc, char *argv[])
      roiBoundVal[3] = nY-1;  
   }
 
-   subImDimX = roiBoundVal[1]-roiBoundVal[0]+1;     
-   subImDimY = roiBoundVal[3]-roiBoundVal[2]+1;  
- 
+   subImDimX = roiBoundVal[1]-roiBoundVal[0]+1;  
+   subImDimY = roiBoundVal[3]-roiBoundVal[2]+1;
+
   if (roi || beg != -1 || end != -1)
-  {  
+  {
      if (beg == -1)
         beg = 0;  
      if (end == -1)
         end = nZ-1;
-     
+
      std::ostringstream str;
-     
+
     // Set the data that will be *actually* written.
 
      int pixelSize = fh->GetFile()->GetPixelSize();
      size_t lgrSubLine  = subImDimX* pixelSize * numberOfScalarComponents;
      size_t lgrSubFrame = subImDimY*lgrSubLine;
-                      ;
+
      int lgrSubImage = (end-beg+1) * lgrSubFrame;
-       
+
      uint8_t * subImage = new uint8_t[lgrSubImage];
-       
+
      uint8_t * srcCopy = (uint8_t *) imageData;
      uint8_t * destCopy = subImage;
      int lineSize = nX*pixelSize*numberOfScalarComponents;
-     int frameSize = nY*lineSize; 
+     int frameSize = nY*lineSize;
  
      int lineOffset = roiBoundVal[0]*pixelSize * numberOfScalarComponents;
      
@@ -450,7 +449,7 @@ int main(int argc, char *argv[])
             memcpy( (void *)(destCopy + frameCount*lgrSubFrame + lineCount*lgrSubLine), 
                     (void *)(srcCopy  + frameNb*frameSize + lineNb*lineSize + lineOffset ), 
                     lgrSubLine);
-        }        
+        }
      }
  
     // Set the image size
@@ -478,7 +477,10 @@ int main(int argc, char *argv[])
 //----------------------------------- Write, now! ---------------------------------
 
    if (mode[0] != 'R' && mode[0] != 'r')
-      fh->Write(outputFileName);
+      res = fh->Write(outputFileName);
+      
+   if(!res)
+      std::cout <<"Fail to write [" << outputFileName << "]" <<std::endl;    
 
    f->Delete();
    fh->Delete();
