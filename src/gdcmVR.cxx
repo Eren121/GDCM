@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/07 15:44:32 $
-  Version:   $Revision: 1.57 $
+  Date:      $Date: 2007/09/14 20:40:44 $
+  Version:   $Revision: 1.58 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -169,8 +169,8 @@ unsigned short VR::GetAtomicElementLength(VRKey const &tested)
 /// \brief checks is a supposed-to-be VR is a 'legal' one.
 bool VR::IsValidVR(VRKey const &tested)
 {
-//  return vr.find(key) != vr.end();
-
+  return vr.find(key) != vr.end();
+#ifdef USECOMPLETELYUNTESTEDCODE
 // "RT" is an undocumented VR, found in some Siemens images.
 // We added it here to be able to read these images.
 // Dict/gdcmVR.dic has to be updated, too.
@@ -192,6 +192,7 @@ bool VR::IsValidVR(VRKey const &tested)
      }        
   }
   return false;
+#endif
 
 }
 #endif
