@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/09/04 13:14:33 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2007/09/14 12:57:02 $
+  Version:   $Revision: 1.128 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -868,7 +868,7 @@ bool FileHelper::CheckWriteIntegrity()
       switch(WriteMode)
       {
          case WMODE_RAW :
-            if ( abs(decSize-userDataSize)>1) // ignore padding zero
+            if ( abs((long)(decSize-userDataSize))>1) // ignore padding zero
             {
                gdcmWarningMacro( "Data size (Raw) is incorrect. Should be " 
                            << decSize << " / Found :" 
@@ -877,7 +877,7 @@ bool FileHelper::CheckWriteIntegrity()
             }
             break;
          case WMODE_RGB :
-            if ( abs(rgbSize-userDataSize)>1) // ignore padding zero
+            if ( abs((long)(rgbSize-userDataSize))>1) // ignore padding zero
             {
                gdcmWarningMacro( "Data size (RGB) is incorrect. Should be " 
                           << rgbSize << " / Found " 
