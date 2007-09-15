@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 13:14:33 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/09/15 11:10:37 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -252,7 +252,7 @@ void PixelWriteConvert::SetCompressJPEG2000UserData(uint8_t *data, size_t size, 
     //assert( fragment_size*zsize == size );
     
     gdcmDebugMacro("fragment_size " << fragment_size << " zsize " << zsize << " size " << size);    
-    assert( abs(fragment_size*zsize-size) <=1 );
+    assert( abs((long)(fragment_size*zsize-size)) <=1 );
     
    JpegVector JpegFragmentSize;
       gdcmDebugMacro("Call Encode..BasicOffsetTable " );
@@ -343,7 +343,7 @@ void PixelWriteConvert::SetCompressJPEGUserData(uint8_t *data, size_t size, File
 
     unsigned int fragment_size = xsize*ysize*samplesPerPixel * (bitsAllocated / 8);
     gdcmDebugMacro("fragment_size " << fragment_size << " zsize " << zsize << " size " << size);
-    assert( abs(fragment_size*zsize-size) <=1 );
+    assert( abs((long)(fragment_size*zsize-size)) <=1 );
 
    JpegVector JpegFragmentSize;
 #if WITHOFFSETTABLE
