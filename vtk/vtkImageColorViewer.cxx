@@ -26,8 +26,8 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
 
-vtkCxxRevisionMacro(vtkImageColorViewer, "$Revision: 1.2 $");
-vtkStandardNewMacro(vtkImageColorViewer);
+vtkCxxRevisionMacro(vtkImageColorViewer, "$Revision: 1.3 $")
+vtkStandardNewMacro(vtkImageColorViewer)
 
 //----------------------------------------------------------------------------
 vtkImageColorViewer::vtkImageColorViewer()
