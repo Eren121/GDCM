@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2007/09/17 12:18:25 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,11 +77,11 @@ private:
    void BuildLUTRGBA();
 /// \brief Allow user to pass his own function to modify pixels 
 ///        (e.g; mirror, upsidedown, ...) just after reading
-   void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc ) 
+   void SetUserFunction( VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
                          { UserFunction = userFunc; }
 
    // Use the fp:
-   void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp ) 
+   void ReadAndDecompress12BitsTo16Bits( std::ifstream *fp )
                                  throw ( FormatError );
    bool ReadAndDecompressJPEGFile( std::ifstream *fp );
 
@@ -102,7 +102,7 @@ private:
    void CallStartMethod();
    void CallProgressMethod();
    void CallEndMethod();
-   
+
 // Variables
 /**
  * \brief Pixel data represented as RGB after LUT color interpretation.
@@ -117,7 +117,7 @@ private:
    /// Size of Decompressed image.
    size_t   RawSize;
    /// \brief Red/Green/Blue/Alpha LookUpTable build out of the
-   ///        Red/Green/Blue LUT descriptors (see \ref BuildLUTRGBA ).
+   ///        Red/Green/Blue LUT descriptors (see  BuildLUTRGBA ).
    uint8_t *LutRGBA;
    int LutItemNumber;
    int LutItemSize;

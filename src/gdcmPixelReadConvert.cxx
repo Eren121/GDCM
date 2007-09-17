@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/05 08:22:57 $
-  Version:   $Revision: 1.122 $
+  Date:      $Date: 2007/09/17 12:18:25 $
+  Version:   $Revision: 1.123 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,7 +70,7 @@ PixelReadConvert::~PixelReadConvert()
 // Public
 /**
  * \brief Predicate to know whether the image[s] (once Raw) is RGB.
- * \note See comments of \ref ConvertHandleColor
+ * \note See comments of ConvertHandleColor
  */
 bool PixelReadConvert::IsRawRGB()
 {
@@ -208,7 +208,7 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
       // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
       // loaded). Hence, we first try to obtain the LUTs data from the file
       // and when this fails we read the LUTs data directly from disk.
-      // \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
+      // \todo Reading a [Bin|Val]Entry directly from disk is a kludge.
       //       We should NOT bypass the [Bin|Val]Entry class. Instead
       //       an access to an UNLOADED content of a [Bin|Val]Entry occurence
       //       (e.g. DataEntry::GetBinArea()) should force disk access from
@@ -871,7 +871,7 @@ void PixelReadConvert::BuildLUTRGBA()
 }
 
 /**
- * \brief Swap the bytes, according to \ref SwapCode.
+ * \brief Swap the bytes, according to SwapCode.
  */
 void PixelReadConvert::ConvertSwapZone()
 {
@@ -1379,7 +1379,7 @@ void PixelReadConvert::ComputeRawAndRGBSizes()
    int bitsAllocated = BitsAllocated;
    // Number of "Bits Allocated" is fixed to 16 when it's 12, since
    // in this case we will expand the image to 16 bits (see
-   //    \ref ReadAndDecompress12BitsTo16Bits() )
+   //    ReadAndDecompress12BitsTo16Bits() )
    if (  BitsAllocated == 12 )
    {
       bitsAllocated = 16;
