@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:10 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2007/09/17 12:20:00 $
+  Version:   $Revision: 1.26 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -397,7 +397,7 @@ GetPatSliceOrient(gdcm::File &h)
   enum { transaxial, sagittal, coronal } slice_orientation;
 
   std::string patient_position = h.GetEntryByNumber(0x0018,0x5100);
-  if(patient_position == "gdcm::Unfound")
+  if(patient_position == GDCM_UNFOUND)
     {
     patient_position = "HF";
     }

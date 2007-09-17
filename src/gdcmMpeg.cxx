@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmMpeg.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/09/17 12:20:01 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -297,7 +297,7 @@ static int video_sequence(int *Bitstream_Framenumber)
 }
 } // End "C" extern
 
-namespace gdcm 
+namespace GDCM_NAME_SPACE 
 {
 /**
  * \brief   routine for MPEG decompression 
