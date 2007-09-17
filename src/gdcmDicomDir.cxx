@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:48 $
-  Version:   $Revision: 1.195 $
+  Date:      $Date: 2007/09/17 12:21:56 $
+  Version:   $Revision: 1.196 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -764,7 +764,7 @@ void DicomDir::CreateDicomDir()
             gdcmErrorMacro( "Add PatientToEnd failed");
          }
       }
-      /// \to do : deal with PRIVATE (not so easy, since PRIVATE appears 
+      /// \todo : deal with PRIVATE (not so easy, since PRIVATE appears 
       ///                           at different levels ?!? )
       
       else if ( v == "PRIVATE " ) // for SIEMENS 'CSA Non Image'      

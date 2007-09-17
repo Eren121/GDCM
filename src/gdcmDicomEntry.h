@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/09/17 12:21:56 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,12 +81,12 @@ protected:
    ~DicomEntry();
 
 private:
-   /// Dicom \ref TagKey. Contains Dicom Group number and Dicom Element number
+   /// Dicom  TagKey. Contains Dicom Group number and Dicom Element number
    TagKey Tag;
 
    /// \brief Value Representation i.e. some clue about the nature
    ///        of the data represented e.g. 
-   ///        - "FD" short for "Floating Point Double"(see \ref VR)
+   ///        - "FD" short for "Floating Point Double"(see  VR)
    ///        - "PN" short for "Person Name"       
    VRKey VR;
 };
