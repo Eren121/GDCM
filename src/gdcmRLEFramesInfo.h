@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRLEFramesInfo.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,17 +28,17 @@ namespace GDCM_NAME_SPACE
 {
 /**
  * \brief Utility class for gathering the informations of the collection
- *        of RLE frame[s] (see \ref RLEFrame)  when handling
+ *        of RLE frame[s] (see  RLEFrame)  when handling
  *        "Encapsulated RLE Compressed Images" (see PS 3.5-2003 annex G). 
  *        Note: a classical image can be considered as the degenerated case
  *              of a multiframe image. In this case the collection is limited
  *              to a single individual frame.
  *        The informations on each frame are obtained during the pixel parsing
  *        of a gdcm::File (refer to
- *          \ref File::ComputeRLEInfo() ).
+ *           File::ComputeRLEInfo() ).
  *        They shall be used when (if necessary) decoding the frames.
  *
- *        This class is simply a stl list<> of \ref RLEFrame.
+ *        This class is simply a stl list<> of RLEFrame.
  */
 class GDCM_EXPORT RLEFramesInfo
 {

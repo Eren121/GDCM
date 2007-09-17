@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSeqEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:50 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -97,10 +97,10 @@ private:
    /// sequence terminator item 
    DocEntry *SeqTerm;
 
-   /// \brief Defines the depth level of this \ref SeqEntry inside
-   ///        the (optionaly) nested sequences. \ref SQDepthLevel
-   ///        and its \ref SQItem::SQDepthLevel counterpart
-   ///        are only defined on printing purposes (see \ref Print).
+   /// \brief Defines the depth level of this  SeqEntry inside
+   ///        the (optionaly) nested sequences.  SQDepthLevel
+   ///        and its  SQItem::SQDepthLevel counterpart
+   ///        are only defined on printing purposes (see  Print).
    int SQDepthLevel;
 };
 } // end namespace gdcm

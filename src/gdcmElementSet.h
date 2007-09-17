@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,9 +32,9 @@ typedef std::map<TagKey, DocEntry *> TagDocEntryHT;
 //-----------------------------------------------------------------------------
 /**
  * \brief
- * \ref ElementSet is based on the STL map<> container
- * (see \ref ElementSet::TagHT), as opposed to \ref SQItem
- * which is based on an STL list container (see \ref ListDocEntry).
+ *  ElementSet is based on the STL map<> container
+ * (see  ElementSet::TagHT), as opposed to  SQItem
+ * which is based on an STL list container (see  ListDocEntry).
  * It contains the 'zero-level- DocEntry (out of any Dicom Sequence)
  */
 class GDCM_EXPORT ElementSet : public DocEntrySet

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/15 11:13:37 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ VR::~VR()
 
 /**
  * \brief   Simple predicate that checks whether the given argument
- *          corresponds to the Value Representation of a \ref DataEntry .
+ *          corresponds to the Value Representation of a DataEntry .
  * @param   tested value representation to check for.
  */
 bool VR::IsVROfBinaryRepresentable(VRKey const &tested)

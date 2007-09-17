@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/27 16:14:47 $
-  Version:   $Revision: 1.336 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.337 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2024,7 +2024,7 @@ bool File::Write(std::string fileName, FileType writetype)
 // Private
 /**
  * \brief Parse pixel data from disk of [multi-]fragment RLE encoding.
- *        Compute the RLE extra information and store it in \ref RLEInfo
+ *        Compute the RLE extra information and store it in RLEInfo
  *        for later pixel retrieval usage.
  */
 void File::ComputeRLEInfo()
@@ -2136,7 +2136,7 @@ void File::ComputeRLEInfo()
 /**
  * \brief Parse pixel data from disk of [multi-]fragment Jpeg encoding.
  *        Compute the jpeg extra information (fragment[s] offset[s] and
- *        length) and store it[them] in \ref JPEGInfo for later pixel
+ *        length) and store it[them] in JPEGInfo for later pixel
  *        retrieval usage.
  */
 void File::ComputeJPEGFragmentInfo()
@@ -2199,14 +2199,14 @@ void File::ComputeJPEGFragmentInfo()
 }
 
 /**
- * \brief   Assuming the internal file pointer \ref Document::Fp 
+ * \brief   Assuming the internal file pointer Document::Fp 
  *          is placed at the beginning of a tag, check whether this
  *          tag is (TestGroup, TestElem).
- * \warning On success the internal file pointer \ref Document::Fp
+ * \warning On success the internal file pointer Document::Fp
  *          is modified to point after the tag.
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElem) the internal file pointer
- *          \ref Document::Fp is restored to its original position.
+ *          Document::Fp is restored to its original position.
  * @param   testGroup The expected group   of the tag.
  * @param   testElem  The expected Element of the tag.
  * @return  True on success, false otherwise.
@@ -2254,14 +2254,14 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
 }
 
 /**
- * \brief   Assuming the internal file pointer \ref Document::Fp 
+ * \brief   Assuming the internal file pointer Document::Fp 
  *          is placed at the beginning of a tag (TestGroup, TestElement),
  *          read the length associated to the Tag.
- * \warning On success the internal file pointer \ref Document::Fp
+ * \warning On success the internal file pointer Document::Fp
  *          is modified to point after the tag and its length.
  *          On failure (i.e. when the tag wasn't the expected tag
  *          (TestGroup, TestElement) the internal file pointer
- *          \ref Document::Fp is restored to its original position.
+ *          Document::Fp is restored to its original position.
  * @param   testGroup The expected Group   of the tag.
  * @param   testElem  The expected Element of the tag.
  * @return  On success returns the length associated to the tag. On failure

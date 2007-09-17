@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/09/14 12:57:02 $
-  Version:   $Revision: 1.128 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.129 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -600,7 +600,7 @@ size_t FileHelper::GetRawDataSize()
 }
 
 /**
- * \brief Access to the underlying \ref PixelReadConverter RGBA LUT
+ * \brief Access to the underlying PixelReadConverter RGBA LUT
  */
 uint8_t* FileHelper::GetLutRGBA()
 {
@@ -610,7 +610,7 @@ uint8_t* FileHelper::GetLutRGBA()
 }
 
 /**
- * \brief Access to the underlying \ref PixelReadConverter RGBA LUT Item Number
+ * \brief Access to the underlying PixelReadConverter RGBA LUT Item Number
  */
 int FileHelper::GetLutItemNumber()
 {
@@ -618,7 +618,7 @@ int FileHelper::GetLutItemNumber()
 }
 
 /**
- * \brief Access to the underlying \ref PixelReadConverter RGBA LUT Item Size
+ * \brief Access to the underlying PixelReadConverter RGBA LUT Item Size
  */
 int FileHelper::GetLutItemSize()
 {
@@ -769,7 +769,7 @@ bool FileHelper::Write(std::string const &fileName)
          break;
 
       case JPEG2000:
-         /// \TODO Maybe we should consider doing the compression here !
+         /// \todo Maybe we should consider doing the compression here !
          // PixelWriteConverter->SetCompressJPEG2000UserData(inData, expectedSize, FileInternal);
 
          SetWriteFileTypeToJPEG2000();
@@ -1356,7 +1356,7 @@ If 'SOP Class UID' exists in the native image  ('true DICOM' image)
     --> 'Referenced SOP Instance UID' (0x0008, 0x1155)
          whose value is the original 'SOP Class UID'
 
-3) TODO : find a trick to allow user to pass to the writter the list of the Dicom images 
+3) TO DO : find a trick to allow user to pass to the writter the list of the Dicom images 
           or the Series, (or the Study ?) he used to created his image 
           (MIP, MPR, cartography image, ...)
            These info should be stored (?)

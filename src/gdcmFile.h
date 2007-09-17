@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.133 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.134 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,9 +164,9 @@ public:
    int GetNumberOfScalarComponents();
    int GetNumberOfScalarComponentsRaw();
 
-   /// Accessor to \ref File::GrPixel
+   /// Accessor to  File::GrPixel
    uint16_t GetGrPixel()  { return GrPixel; }
-   /// Accessor to \ref File::NumPixel
+   /// Accessor to  File::NumPixel
    uint16_t GetNumPixel() { return NumPixel; }
 
    size_t GetPixelOffset();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:05 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,7 +56,7 @@ public:
    bool IsVROfStringRepresentable(VRKey const &tested);
 
    /// \brief   Simple predicate that checks whether the given argument
-   ///          corresponds to the Value Representation of a \ref SeqEntry
+   ///          corresponds to the Value Representation of a SeqEntry
    bool IsVROfSequence(VRKey const &tested) { return tested == "SQ"; }
 
 // Remove inline optimization for VS6

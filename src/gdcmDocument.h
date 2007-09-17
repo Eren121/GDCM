@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.146 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.147 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -70,13 +70,13 @@ public:
    std::string GetTransferSyntaxName();
 
 // Swap code
-   /// 'Swap code' accessor (see \ref SwapCode )
+   /// 'Swap code' accessor (see  SwapCode )
    int GetSwapCode() { return SwapCode; }
    
 // File I/O
-   /// Accessor to \ref Filename
+   /// Accessor to  Filename
    const std::string &GetFileName() const { return Filename; }
-   /// Accessor to \ref Filename
+   /// Accessor to  Filename
    virtual void SetFileName(std::string const &fileName) 
                    { if (Filename != fileName)
                         Filename = fileName, IsDocumentModified = true; }

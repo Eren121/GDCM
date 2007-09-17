@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.368 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.369 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ const unsigned int Document::MAX_SIZE_LOAD_ELEMENT_VALUE = 0xfff; // 4096
 
 /**
  * \brief This default constructor neither loads nor parses the file. 
- *        You should then invoke \ref Document::Load.
+ *        You should then invoke Document::Load.
  *         
  */
 Document::Document() 
@@ -582,7 +582,7 @@ double Document::SwapDouble(double a)
 //
 // -----------------File I/O ---------------
 /**
- * \brief  Tries to open the file \ref Document::Filename and
+ * \brief  Tries to open the file Document::Filename and
  *         checks the preamble when existing,
  *         or if the file starts with an ACR-NEMA look-like element.
  * @return The FILE pointer on success, 0 on failure. 
@@ -853,7 +853,7 @@ void Document::LoadEntryBinArea(DataEntry *entry)
 //}
 
 /**
- * \brief   Compares two documents, according to \ref DicomDir rules
+ * \brief   Compares two documents, according to DicomDir rules
  * \warning Does NOT work with ACR-NEMA files
  * \todo    Find a trick to solve the pb (use RET fields ?)
  * @param   document to compare with current one

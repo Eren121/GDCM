@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:50 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,10 +67,10 @@ public:
    /// \brief   Sets the ordinal position of a given SQItem
    void SetSQItemNumber(int itemNumber) { SQItemNumber = itemNumber; }
 
-   ///  \brief Accessor on \ref SQDepthLevel.
+   ///  \brief Accessor on  SQDepthLevel.
    int GetDepthLevel() { return SQDepthLevel; }                                                                             
 
-   ///  \brief Accessor on \ref SQDepthLevel.
+   ///  \brief Accessor on  SQDepthLevel.
    void SetDepthLevel(int depth) { SQDepthLevel = depth; }
 
    virtual void Copy(DocEntrySet *set);
@@ -86,11 +86,11 @@ protected:
    ListDocEntry::iterator ItDocEntries;
   
 private:
-   /// \brief Sequences can be nested. This \ref SQDepthLevel represents
+   /// \brief Sequences can be nested. This  SQDepthLevel represents
    ///        the level of the nesting of instances of this class.
-   ///        \ref SQDepthLevel and its \ref SeqEntry::SQDepthLevel
+   ///         SQDepthLevel and its  SeqEntry::SQDepthLevel
    ///        counterpart are only defined on printing purposes
-   ///        (see \ref Print).
+   ///        (see  Print).
    int SQDepthLevel;
 
    /// \brief SQ Item ordinal number 

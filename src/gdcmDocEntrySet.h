@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,23 +36,23 @@ class DictEntry;
 //-----------------------------------------------------------------------------
 /**
  * \brief
- * \ref DocEntrySet is an abstract base class for \ref ElementSet, \ref SQItem
+ *  DocEntrySet is an abstract base class for ElementSet, SQItem
  *  which are both containers for DocEntries.
- *  - \ref ElementSet is based on the STL map<> container
- * (see \ref ElementSet::TagHT)
- *  - \ref SQItem is based on an STL list container (see \ref ListDocEntry).
+ *  -  ElementSet is based on the STL map<> container
+ * (see  ElementSet::TagHT)
+ *  -  SQItem is based on an STL list container (see  ListDocEntry).
  *
  * Since the syntax for adding a new element to a map<> or a list<>
- * differ, \ref DocEntrySet is designed as an adapter to unify the
- * interfaces of \ref DocEntrySet and \ref ElementSet.
+ * differ,  DocEntrySet is designed as an adapter to unify the
+ * interfaces of  DocEntrySet and  ElementSet.
  *
  * As an illustration of this design, please refer to the implementation
- * of \ref AddEntry (or any pure virtual method) in both derived classes.
+ * of  AddEntry (or any pure virtual method) in both derived classes.
  * This adapter unification of interfaces enables the parsing of a
  * DICOM header containing (optionaly heavily nested) sequences to be
- * written recursively [see \ref Document::ParseDES 
- * which calls \ref Document::ParseSQ, which in turn calls 
- * \ref Document::ParseDES ].
+ * written recursively [see  Document::ParseDES 
+ * which calls  Document::ParseSQ, which in turn calls 
+ *  Document::ParseDES ].
  *
  * \note Developpers should strongly resist to the temptation of adding
  *       members to this class since this class is designed as an adapter 

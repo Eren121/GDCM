@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -178,7 +178,7 @@ protected:
    /// \brief Value Representation (to avoid accessing Dicom Dict every time!)
    VRKey VR; // JPRx
       
-   /// \brief Dicom \ref TagKey. Contains Dicom Group number and Dicom Element number
+   /// \brief Dicom TagKey. Contains Dicom Group number and Dicom Element number
    ///        (to avoid accessing Dicom Dict every time !) // JPRx
    TagKey Key; // JPRx
 private:

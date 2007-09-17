@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFileHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 13:14:33 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ public:
 
    void Print(std::ostream &os = std::cout, std::string const &indent = ""); 
 
-   /// Accessor to \ref File
+   /// Accessor to File
    File *GetFile() { return FileInternal; }
    
    /// \brief Tells gdcm wether we want to keep ACR-NEMA-like overlays or not.  

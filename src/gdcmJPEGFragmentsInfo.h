@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragmentsInfo.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2007/09/17 12:16:01 $
+  Version:   $Revision: 1.24 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,13 +29,13 @@ namespace GDCM_NAME_SPACE
 {
 /**
  * \brief Utility class for gathering the informations of the collection
- *        of JPEG fragment[s] (see \ref JPEGFragment)  when handling
+ *        of JPEG fragment[s] (see JPEGFragment) when handling
  *        "Encapsulated JPEG Compressed Images". 
  *        The informations on each frame are obtained during the pixel parsing
- *        of a gdcm::File (refer to \ref File::ComputeJPEGFragmentInfo() ).
+ *        of a gdcm::File (refer to File::ComputeJPEGFragmentInfo() ).
  *        They shall be used when (if necessary) decoding the fragments.
  *
- *        This class is simply a stl list<> of \ref JPEGFragment.
+ *        This class is simply a stl list<> of JPEGFragment.
  */
 class GDCM_EXPORT JPEGFragmentsInfo
 {

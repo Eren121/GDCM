@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.82 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -69,7 +69,7 @@ public:
    void SetDirectoryName(std::string const &dirName)
         { ParseDir = true; if (Filename != dirName)
                                Filename = dirName, IsDocumentModified = true;}
-   /// Accessor to \ref Filename
+   /// Accessor to Filename
    virtual void SetFileName(std::string const &fileName)
                    { ParseDir = false; if (Filename != fileName)
                               Filename = fileName, IsDocumentModified = true;}

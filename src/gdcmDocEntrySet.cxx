@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntrySet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/27 21:21:48 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2007/09/17 12:16:02 $
+  Version:   $Revision: 1.76 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -94,7 +94,7 @@ int DocEntrySet::GetEntryLength(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief  Same as \ref Document::GetDocEntry except it returns a result 
+ * \brief  Same as DocEntrySet::GetDocEntry except it returns a result 
  *         only when the corresponding entry is of type DataEntry.
  * @param   group  Group number of the searched Dicom Element 
  * @param   elem Element number of the searched Dicom Element  
@@ -110,7 +110,7 @@ DataEntry *DocEntrySet::GetDataEntry(uint16_t group, uint16_t elem)
 }
 
 /**
- * \brief  Same as \ref Document::GetDocEntry except it returns a result
+ * \brief  Same as DocEntrySet::GetDocEntry except it returns a result
  *          only when the corresponding entry is of type SeqEntry.
  * @param   group  Group number of the searched Dicom Element 
  * @param   elem Element number of the searched Dicom Element  
