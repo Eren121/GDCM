@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:16:01 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2007/09/18 15:53:25 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -171,21 +171,26 @@ bool VR::IsValidVR(VRKey const &key)
 {
   return vr.find(key) != vr.end();
 #ifdef USECOMPLETELYUNTESTEDCODE
-// "RT" is an undocumented VR, found in some Siemens images.
-// We added it here to be able to read these images.
-// Dict/gdcmVR.dic has to be updated, too.
+  // to avoid to search in a std::map of std::string,
+  // since each std::string is 2 characters longs, we check the array
+  // (29 char comparisons in the worst case!)
+  
+  // "RT" is an undocumented VR, found in some Siemens images.
+  // We added it here to be able to read these images.
+  // Dict/gdcmVR.dic, Document has to be updated, too.
   static const char VRvalues[] =
-    "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQRT";
+    "AEASATCSDADSDTFLFDISLOLTOBOWOFPNSHSLSQSSSTTMUIULUNUSUTRT";
 
   //int nbVal = strlen(VRvalues)/2; // save CPU time.
-  int nbVal = 27;
-  
+  int nbVal = 28;
+ 
   const char *pt = VRvalues;
   for (int i=0;i<nbVal;i++)
   {
-     if(tested[0] == *pt++) {
-       if(tested[1] == *pt++)
+     if(key[0] == *pt++) {
+       if(key[1] == *pt++) {
           return true;
+       }
      }  
      else {
         pt++;
