@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCallbackCommand.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/09/18 15:59:48 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,10 +42,14 @@ public:
 /*   // Note: the CallbackCommand:: namespace prefix is needed by Swig in the 
    //       following method declarations. Refer to gdcmPython/gdcm.i
    //       for the reasons of this unnecessary notation at C++ level.
+   
    void SetCallback(CallbackCommand::CbkMethod *callback,void *arg = NULL );
+   
    void SetCallbackArgDelete(CallbackCommand::CbkMethod *callback);
+   
    // Note: replace CallbackCommand::Method *method to void(*method)(void *) to
    //       avoid wrapping problems with the typemap conversions
+   
    void SetCallback(void(*callback)(void *), // CallbackCommand::Method *method
                     void *arg,
                     void(*argDelete)(void *));

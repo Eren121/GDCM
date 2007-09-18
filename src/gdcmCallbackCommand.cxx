@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCallbackCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:07 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/09/18 15:59:48 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,35 +44,36 @@ CallbackCommand::~CallbackCommand ()
 // Public
 /**
  * \brief   Set the callback method
- * @param   method Method to call
+ * @param   callback Method to call
  * @param   arg    Argument to pass to the method
  * \warning In python : the arg parameter isn't considered
  */
+ 
 /*void CallbackCommand::SetCallback( CallbackCommand::CbkMethod *callback,void *arg )
 {
    SetCallback(callback,arg,NULL);
 }*/
 
-/**
- * \brief   Set the callback method to delete the argument
+/*
+ *\brief   Set the callback method to delete the argument
  *          The argument is destroyed when the callback method is changed 
  *          or when the class is destroyed
- * @param   method Method to call to delete the argument
+ * @param   callback Method to call to delete the argument
  */
 /*void CallbackCommand::SetCallbackArgDelete( CallbackCommand::CbkMethod *callback ) 
 {
    CallbackArgDelete = callback;
 }*/
 
-/**
- * \brief   Set the callback method
- * @param   method Method to call
+/*
+ *\brief   Set the callback method
+ * @param   callback Method to call
  * @param   arg    Argument to pass to the method
  * @param   argDelete    Argument 
  * \warning In python : the arg parameter isn't considered
  */
 /*void CallbackCommand::SetCallback( void(*callback)(void *),
-                                   void *arg,void(*argDelete)(void *) )
+                                  void *arg, void(*argDelete)(void *) )
 {
    if ( CallbackArg && CallbackArgDelete )
    {
