@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/13 08:17:20 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/09/18 11:01:55 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,8 +114,8 @@ int main(int argc, char *argv[])
       
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
+   bool userDefinedStudy = ( 0 != am->ArgMgrDefined("studyUID") );
 
-   bool userDefinedStudy = am->ArgMgrDefined("studyUID");
    const char *studyUID;
    if (userDefinedStudy)
       studyUID  = am->ArgMgrGetString("studyUID");  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/27 08:38:44 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/09/18 11:01:55 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,15 +128,16 @@ int main(int argc, char *argv[])
    int verbose  = am->ArgMgrDefined("verbose");      
    int listonly = am->ArgMgrDefined("listonly");
    std::string patName = am->ArgMgrGetString("patname", dirNamein);
+   
+   bool userDefinedStudy = ( 0 != am->ArgMgrDefined("studyUID") );
 
-   bool userDefinedStudy = am->ArgMgrDefined("studyUID");
    const char *studyUID;
    if (userDefinedStudy)
       studyUID  = am->ArgMgrGetString("studyUID");  
 
    // not described *on purpose* in the Usage !
-    
-   bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
+   bool userDefinedSerie = ( 0 != am->ArgMgrDefined("serieUID") );    
+ 
    const char *serieUID;
    if(userDefinedSerie)
       serieUID = am->ArgMgrGetString("serieUID");
