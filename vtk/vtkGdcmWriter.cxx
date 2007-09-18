@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/19 13:09:45 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2007/09/18 07:54:46 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,12 +33,12 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.34 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.35 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
-vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable);
+vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable)
 #if (VTK_MAJOR_VERSION >= 5)
-vtkCxxSetObjectMacro(vtkGdcmWriter,MedicalImageProperties,vtkMedicalImageProperties);
+vtkCxxSetObjectMacro(vtkGdcmWriter,MedicalImageProperties,vtkMedicalImageProperties)
 #endif
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
