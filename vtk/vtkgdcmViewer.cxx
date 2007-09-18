@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/28 09:41:39 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2007/09/18 07:54:30 $
+  Version:   $Revision: 1.31 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,19 +67,9 @@ public:
       {
          if ( event == vtkCommand::CharEvent )
          {
-#if (VTK_MAJOR_VERSION >= 5)
-            int max = ImageViewer->GetSliceMax();
-            int slice = (ImageViewer->GetSlice() + 1 ) % ++max;
-            ImageViewer->SetSlice( slice );
-#else
             int max = ImageViewer->GetWholeZMax();
             int slice = (ImageViewer->GetZSlice() + 1 ) % ++max;
             ImageViewer->SetZSlice( slice );
-#endif
-#if !( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
-         // This used to be a bug in version VTK 4.4 and earlier
-            ImageViewer->GetRenderer()->ResetCameraClippingRange();
-#endif
             ImageViewer->Render();
          }
       }
