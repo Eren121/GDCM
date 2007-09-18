@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/10 11:00:50 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/09/18 10:54:23 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,10 +68,9 @@ int main(int argc, char *argv[])
    
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-      
+
    int verbose  = am->ArgMgrDefined("verbose");      
 
-   
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    { 
@@ -84,28 +83,28 @@ int main(int argc, char *argv[])
    // ----- Begin Processing -----
 
 
-      std::ifstream fromPeakStrain( peak_strain );             
-      if ( !fromPeakStrain )
-      {
-         std::cout << "Can't open file" << peak_strain << std::endl;
-         exit(0);
-      }
-      
-      std::ifstream fromStrain( strain );      
-      if ( !fromStrain )
-      {
-         std::cout << "Can't open file" << strain << std::endl;
-          exit(0);
-     }      
-            
-      std::cout << "Success in open file" << peak_strain << std::endl;
-      LoadPeakStrain(fromPeakStrain, peak_strain);
-      fromPeakStrain.close();  
-     
-      std::cout << "Success in open file" << strain << std::endl;
-      LoadStrain(fromStrain, strain);
-      fromStrain.close();      
-               
+   std::ifstream fromPeakStrain( peak_strain );             
+   if ( !fromPeakStrain )
+   {
+      std::cout << "Can't open file" << peak_strain << std::endl;
+      exit(0);
+   }
+
+   std::ifstream fromStrain( strain );      
+   if ( !fromStrain )
+   {
+      std::cout << "Can't open file" << strain << std::endl;
+      exit(0);
+   }  
+       
+   std::cout << "Success in open file" << peak_strain << std::endl;
+   LoadPeakStrain(fromPeakStrain, peak_strain);
+   fromPeakStrain.close();  
+
+   std::cout << "Success in open file" << strain << std::endl;
+   LoadStrain(fromStrain, strain);
+   fromStrain.close();      
+   return 1;            
 }
 
 // =====================================================================================================================
