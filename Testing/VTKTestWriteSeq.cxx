@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWriteSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/09/18 07:58:39 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 #include "vtkImageShiftScale.h"
 
 #include <iostream>
+#include <sstream>
 
 //Generated file:
 #include "gdcmDataSeqImages.h"
@@ -107,7 +108,7 @@ int VTKWriteSeqTest(vtkTesting *t, vtkImageViewer *viewer,
 
    // make test
    int ret = 0;
-   ostrstream str;
+   std::ostringstream str;
    char *newFilePng = new char[referenceFileName.size()+1];
    for(int j=0;j<fileCount;j++)
    {
@@ -189,7 +190,6 @@ int VTKWriteSeqTest(vtkTesting *t, vtkImageViewer *viewer,
       {
          std::cerr << str.str();
       }
-      str.rdbuf()->freeze(1);
 
       if( retVal == vtkTesting::PASSED )
       {

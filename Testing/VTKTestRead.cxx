@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestRead.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/02/16 17:02:38 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/09/18 07:58:38 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,6 +27,7 @@
 #include "vtkPNGWriter.h"
 
 #include <iostream>
+#include <sstream>
 
 //Generated file:
 #include "gdcmDataImages.h"
@@ -147,7 +148,7 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
    //----------------------------------------------------------------------
 
    // make test
-   ostrstream str;
+   std::ostringstream str;
    retVal = t->RegressionTest(image,0.0,str);
    image->UnRegister(NULL);
 
@@ -155,7 +156,6 @@ int VTKReadTest(vtkTesting *t,vtkImageViewer *viewer,
    {
       std::cerr << str.str();
    }
-   str.rdbuf()->freeze(1);
 
    if( retVal == vtkTesting::PASSED )
    {

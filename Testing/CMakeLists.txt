@@ -127,6 +127,11 @@ FILE(GLOB GDCM_DATA_IMAGES_GLOB
   "${GDCM_DATA_ROOT}/*.ima"
   )
 
+FILE(GLOB GDCM_DATA_EXTRA_IMAGES_GLOB
+  "${GDCM_DATA_EXTRA_ROOT}/gdcmSampleData/images_of_interest/*.dcm"
+  )
+#MESSAGE(${GDCM_DATA_EXTRA_IMAGES_GLOB})
+
 # Black list of images known to break lots of readers (efilm, xmedcon ...):
 SET(BLACK_LIST
   # Multiframe Papyrus format image
@@ -171,7 +176,7 @@ SET(BLACK_LIST
   "MR_Philips_Intera_PrivateSequenceImplicitVR.dcm"
   
   # Seems this one hangs on 64 bits processors ?!?
-  # I blacklist it untill the pb is solved.
+  # I blacklist it until the pb is solved.
   # (to get some more green on the Dasboards)
   "MR_Philips-Intera_BreaksNOSHADOW.dcm"
   )
@@ -190,8 +195,8 @@ SET(GDCM_DATA_SEQ_IMAGES)
 FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
   GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
   IF(DCIODVFY_FOUND)
-    ADD_TEST("DCIODVFY-INPUT-${filename_temp}" "${DCIODVFY_EXECUTABLE}" "${filename}")
-    ADD_TEST("DCIODVFY-OUTPUT-${filename_temp}" "${DCIODVFY_EXECUTABLE}" "${GDCM_DATA_ROOT}/BaselineDicom/${filename_temp}")
+    #ADD_TEST("DCIODVFY-INPUT-${filename_temp}" "${DCIODVFY_EXECUTABLE}" "${filename}")
+    #ADD_TEST("DCIODVFY-OUTPUT-${filename_temp}" "${DCIODVFY_EXECUTABLE}" "${GDCM_DATA_ROOT}/BaselineDicom/${filename_temp}")
   ENDIF(DCIODVFY_FOUND)
   STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
   IF(NOT bad_dicom)
@@ -203,6 +208,26 @@ FOREACH(filename ${GDCM_DATA_IMAGES_GLOB})
     ENDIF(is_seq)
   ENDIF(NOT bad_dicom)
 ENDFOREACH(filename)
+
+# Paranoid / dcmdump
+IF(GDCM_DCMTK_CHECK)
+FOREACH(filename ${GDCM_DATA_IMAGES_GLOB} ${GDCM_DATA_EXTRA_IMAGES_GLOB})
+  GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
+  STRING(REGEX MATCH ${filename_temp} bad_dicom ${BLACK_LIST})
+  IF(NOT bad_dicom)
+    IF(BUILD_EXAMPLES)
+      FOREACH(mode a d x) #r
+        FOREACH(opt "" monochrome1 noshadowseq noshadow noseq rgb)
+          ADD_TEST(ReWrite-${mode}-${opt}-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/ReWrite filein=${filename} fileout=${GDCM_BINARY_DIR}/${mode}-${opt}-${filename_temp} mode=${mode} ${opt})
+          ADD_TEST(dcmdump-${mode}-${opt}-${filename_temp} /usr/bin/dcmdump -E -dc +ae ${GDCM_BINARY_DIR}/${mode}-${opt}-${filename_temp})
+          #ADD_TEST(ReWrite-${mode}-${opt}-${filename_temp}-bis ${EXECUTABLE_OUTPUT_PATH}/ReWrite filein=${GDCM_BINARY_DIR}/${mode}-${opt}-${filename_temp} fileout=${GDCM_BINARY_DIR}/reference.dcm mode=${mode} ${opt})
+          #ADD_TEST(diff-${mode}-${opt}-${filename_temp} /usr/bin/diff ${GDCM_BINARY_DIR}/${mode}-${opt}-${filename_temp} ${GDCM_BINARY_DIR}/reference.dcm)
+        ENDFOREACH(opt)
+      ENDFOREACH(mode)
+    ENDIF(BUILD_EXAMPLES)
+  ENDIF(NOT bad_dicom)
+ENDFOREACH(filename)
+ENDIF(GDCM_DCMTK_CHECK)
 
 # Populate GDCM_DATA_IMAGES:
 FILE(WRITE "${GDCM_BINARY_DIR}/gdcmDataImages.h"
