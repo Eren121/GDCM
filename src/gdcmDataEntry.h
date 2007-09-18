@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:48 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2007/09/18 16:07:20 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
 =========================================================================*/
-
+ 
 #ifndef G_DCMDATAENTRY_H_
 #define _GDCMDATAENTRY_H_
 
@@ -73,6 +73,8 @@ public:
    void SetString(std::string const &value);
    std::string const &GetString() const;
 
+   std::string const &GetHexaRepresentation() const;
+   
    /// \brief Sets SelfArea
    void SetSelfArea(bool area) { SelfArea = area; }
    /// \brief True if Entry owns its BinArea
@@ -145,9 +147,11 @@ protected:
    bool SelfArea;
    /// \brief  std::string representable value of the Entry. 
    ///        Parts of a multivaluated data are separated by back-slash
-   //mutable std::string StrArea;
    mutable std::string *StrArea; // to avoid allocating useless std::string
 
+   /// \brief  std::string Hexadecimal represention of the value Entry. 
+   ///        Parts of a multivaluated data are separated by back-slash
+   mutable std::string *StrHexaArea; // to avoid allocating useless std::string
 private:
    /// \brief 0 for straight entries, FLAG_PIXELDATA for Pixel Data entries
    TValueFlag Flag;

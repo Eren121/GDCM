@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/14 08:22:19 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2007/09/18 16:07:19 $
+  Version:   $Revision: 1.49 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,6 +31,9 @@
  #include <ctype.h>  // for isdigit
 #endif
 
+// Could be defined like MAX_SIZE_LOAD_ELEMENT_VALUE
+#define GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA 8
+
 namespace GDCM_NAME_SPACE 
 {
 //-----------------------------------------------------------------------------
@@ -52,9 +55,10 @@ DataEntry::DataEntry(uint16_t group,uint16_t elem,
    State = STATE_LOADED;
    Flag = FLAG_NONE;
 
-   StrArea = 0;
-   BinArea = 0;
-   SelfArea = true;
+   StrArea     = 0;
+   StrHexaArea = 0;   
+   BinArea     = 0;
+   SelfArea    = true;
 }
 
 /**
@@ -446,7 +450,7 @@ std::string const &DataEntry::GetString() const
 
   if( !BinArea )
      return *StrArea;
-      // When short integer(s) are stored, convert the following (n * 2) characters
+  // When short integer(s) are stored, convert the following (n * 2) characters
   // as a displayable string, the values being separated by a back-slash
   if( vr == "US" )
   {
@@ -491,7 +495,8 @@ std::string const &DataEntry::GetString() const
         s << data[i];
      }
      *StrArea=s.str();
-  }    else if( vr == "FL" )
+  }     // See above comment on multiple short integers (mutatis mutandis).
+  else if( vr == "FL" )
   {
      float *data=(float *)BinArea;
      for (unsigned int i=0; i < GetValueCount(); i++)
@@ -501,7 +506,7 @@ std::string const &DataEntry::GetString() const
         s << data[i];
      }
      *StrArea=s.str();
-  }
+  }     // See above comment on multiple short integers (mutatis mutandis).
   else if( vr == "FD" )
   {
      double *data=(double *)BinArea;
@@ -518,10 +523,117 @@ std::string const &DataEntry::GetString() const
      StrArea->append((const char *)BinArea,GetLength());
      // to avoid gdcm to propagate oddities in lengthes
      if ( GetLength()%2)
-        StrArea->append(" ",1);   }
+        StrArea->append(" ",1);
+   }
   return *StrArea;
 }
 
+/**
+ * \brief   returns an hexadecimal representation of the DataEntry value
+ */
+std::string const &DataEntry::GetHexaRepresentation() const
+{ 
+  static std::ostringstream s2;
+  const VRKey &vr = GetVR();
+   
+  s2.str("");
+  if (!StrHexaArea)
+     StrHexaArea = new std::string();
+  else 
+     *StrHexaArea="";
+  if( !BinArea )
+     return *StrHexaArea;
+  // When short integer(s) are stored, convert the following (n * 2) characters
+  // as a displayable string, the values being separated by a back-slash
+  s2 << std::hex;
+  
+  if( vr == "US" )
+  {
+     uint16_t *data=(uint16_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        s2  << std::setw( 2 ) << std::setfill( '0' );     
+        if( i!=0 )
+           s2 << '\\';
+        s2 << data[i];
+     }
+     *StrHexaArea=s2.str();
+  }
+  else if (vr == "SS" )
+  {
+     int16_t *data=(int16_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        s2  << std::setw( 4 ) << std::setfill( '0' );
+        if( i!=0 )
+           s2 << '\\';
+        s2  << data[i];
+     }
+     *StrHexaArea=s2.str();
+  }      // See above comment on multiple short integers (mutatis mutandis).
+  else if( vr == "UL" )
+  {
+     uint32_t *data=(uint32_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        s2  << std::setw( 4 ) << std::setfill( '0' );
+        if( i!=0 ) 
+           s2  << '\\';
+        s2 << data[i];
+     }
+     *StrHexaArea=s2.str();
+  }
+  else if( vr == "SL" )
+  {
+     int32_t *data=(int32_t *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        s2  << std::setw( 4 ) << std::setfill( '0' );
+         if( i!=0 )
+           s2  << '\\';
+        s2 << data[i];
+     }
+     *StrHexaArea=s2.str();
+  }    else if( vr == "FL" )
+  {
+     float *data=(float *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        s2  << std::setw( 4 ) << std::setfill( '0' );
+         if( i!=0 )
+           s2 << '\\';
+        s2 << data[i];
+     }
+     *StrHexaArea=s2.str();
+  }
+  else if( vr == "FD" )
+  {
+     double *data=(double *)BinArea;
+     for (unsigned int i=0; i < GetValueCount(); i++)
+     {
+        s2  << std::setw( 8 ) << std::setfill( '0' );
+         if( i!=0 )
+           s2 << '\\';
+        s2 << data[i];
+     }
+     *StrHexaArea=s2.str();
+  }
+  else
+  {
+     int l = (Length > GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA) ? GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA : Length;
+     uint8_t *data=(uint8_t *)BinArea;
+     for (unsigned int i=0; i < l; i++)
+     {
+        if( i!=0 )
+           s2 << '\\';
+        s2 << std::setw( 2 ) << (int)(data[i]);
+     }
+     if (Length > 16)
+        s2 << "\\...";
+     *StrHexaArea=s2.str();
+   }
+  return *StrHexaArea;
+}
 
 /**
  * \brief Copies all the attributes from an other DocEntry 
@@ -675,6 +787,11 @@ void DataEntry::DeleteBinArea(void)
       delete StrArea;
       StrArea = 0;
    }
+   if (StrArea)
+   {
+      delete StrHexaArea;
+      StrHexaArea = 0;
+   }   
 }
 
 //-----------------------------------------------------------------------------
@@ -710,7 +827,7 @@ void DataEntry::Print(std::ostream &os, std::string const & )
 
       if( vr == "US" || vr == "SS" || vr == "UL" || vr == "SL" 
        || vr == "FL" || vr == "FD")
-         s << " [" << GetString() << "]";
+         s << " [" << GetString() << "] =0x(" << GetHexaRepresentation() << ")";
       else
       { 
          if(Global::GetVR()->IsVROfStringRepresentable(vr))
@@ -749,7 +866,7 @@ void DataEntry::Print(std::ostream &os, std::string const & )
             else
             {
                s << " [" << GDCM_BINLOADED << ";"
-               << "length = " << GetLength() << "]";
+               << "length = " << GetLength() << "] =0x(" << GetHexaRepresentation() << ")";      
             }
          }
       }
