@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:16:02 $
-  Version:   $Revision: 1.369 $
+  Date:      $Date: 2007/09/18 15:56:41 $
+  Version:   $Revision: 1.370 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2133,17 +2133,19 @@ bool Document::CheckSwap()
                }
                // Check if next 2 bytes are a VR
                // Probabely something more time-consuming exists with std::string
-               const char VRvalues[] = "AEASCSDADSFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQ";
-               int nbVal = 26;
+               const char VRvalues[] = "AEASATCSDADTFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQRT";
+               int nbVal = 28;
                const char *pt = VRvalues;
                for (int i=0;i<nbVal;i++)
                {
-                  if(*(deb+4) == *pt++)
-                  if(*(deb+5) == *pt++) {
-                     Filetype = ExplicitVR;
-                     return true;       
-                  }
-
+                  if(*(deb+4) == *pt++) {
+                    if(*(deb+5) == *pt++) {
+                       Filetype = ExplicitVR;
+                       return true;
+                    }
+                    else {
+                       pt++;
+                    }
               }
               Filetype = ImplicitVR;
               return true;       
