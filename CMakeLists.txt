@@ -155,6 +155,10 @@ FIND_PATH(GDCM_DATA_ROOT gdcm-ACR-LibIDO.acr
   $ENV{GDCM_DATA}
   $ENV{PUB_DICT_PATH}/../../gdcmData
 )
+# Adding GDCM_DATA_ROOT
+FIND_PATH(GDCM_DATA_EXTRA_ROOT gdcmData.tar.gz
+  ${GDCM_SOURCE_DIR}/../gdcmDataExtra
+)
 
 # Set the place for the public dictionary, must be set before gdcmConfigure.h
 FIND_PATH(GDCM_PUB_DICT_PATH dicomV3.dic
@@ -257,7 +261,7 @@ OPTION(BUILD_TESTING "Build testing." ON)
 
 IF(BUILD_TESTING)
   CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/CTestCustom.ctest.in
-      ${GDCM_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
+      ${GDCM_BINARY_DIR}/CTestCustom.ctest @ONLY)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
   MARK_AS_ADVANCED(DART_ROOT)
