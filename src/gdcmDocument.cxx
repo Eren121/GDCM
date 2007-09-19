@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 15:56:41 $
-  Version:   $Revision: 1.370 $
+  Date:      $Date: 2007/09/19 06:42:08 $
+  Version:   $Revision: 1.371 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2146,6 +2146,7 @@ bool Document::CheckSwap()
                     else {
                        pt++;
                     }
+                 }
               }
               Filetype = ImplicitVR;
               return true;       
