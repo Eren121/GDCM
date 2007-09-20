@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:21:56 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2007/09/20 07:43:35 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -88,7 +88,8 @@ bool DirList::IsDirectory(std::string const &dirName)
    }
    else
    {
-      gdcmStaticErrorMacro( strerror(errno) );
+      gdcmStaticWarningMacro("[" << dirName << "] not found or is not a Directory");
+      //gdcmStaticErrorMacro( strerror(errno) );
       return false;
    }
 }
