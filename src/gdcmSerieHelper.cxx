@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/05 09:34:12 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2007/09/20 12:44:16 $
+  Version:   $Revision: 1.60 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -236,7 +236,7 @@ void SerieHelper::AddRestriction(uint16_t group, uint16_t elem,
 
 /**
  * \brief add an extra  'SerieDetail' for building a 'Serie Identifier'
- *        that ensures (hope so) File constistency (Series Instance UID doesn't.
+ *        that ensures (hope so) File consistency (Series Instance UID doesn't)
  * @param   group tag group number we want restrict on a given value
  * @param   elem  tag element number we want restrict on a given value
  * @param  convert wether we want 'convertion', to allow further ordering
@@ -952,7 +952,7 @@ void SerieHelper::CreateDefaultUniqueSeriesIdentifier()
  *         then additional identifying information is used.
  *  We allow user to add his own critierions, using AddSeriesDetail
  *        (he knows more than we do about his images!)
- *        ex : in tagging series, the only pertnent tag is
+ *        ex : in tagging series, the only pertinent tag is
  *        0018|1312 [In-plane Phase Encoding Direction] value : ROW/COLUMN
  * @param inFile GDCM_NAME_SPACE::File we want to build a Serie Identifier for.
  * @return the SeriesIdentifier
@@ -1014,7 +1014,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
  *       -File class? FileHelper class?-
  * @return FileIdentifier (Tokenizable on '%%%'. Hope it's enough !)
  */
-std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
+std::string SerieHelper::CreateUserDefinedFileIdentifier( File *inFile )
 {
   //     Deal with all user supplied tags.
   //      (user knows more than we do about his images!)
@@ -1050,11 +1050,13 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File * inFile )
       {
          while(i<s.size()
                && !( s[i] == '.' || s[i] == '%' || s[i] == '_'
+                 || (s[i] >= '+' && s[i] <= '-')       
                  || (s[i] >= 'a' && s[i] <= 'z')
                  || (s[i] >= '0' && s[i] <= '9')
                  || (s[i] >= 'A' && s[i] <= 'Z')))
          {
-            s.erase(i, 1);
+            //s.erase(i, 1);
+            s.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
          }
       }
       
