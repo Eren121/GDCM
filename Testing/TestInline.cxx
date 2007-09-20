@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/30 11:40:26 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/09/20 12:48:21 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -166,7 +166,9 @@ double passDirectDouble(double a, double b)
 
 int TestInline(int argc, char *argv[])
 {
-
+   std::cout << std::endl << std::endl
+             << "Just to be sure : sizes of native types" 
+             << std::endl << std::endl;
    // just to know, on every proc
    std::cout << "Size of short int " << sizeof(short int) << std::endl;
    std::cout << "Size of int  "      << sizeof(int)       << std::endl;
@@ -181,13 +183,15 @@ int TestInline(int argc, char *argv[])
    if (argc > 1)
       nbLoop = atoi(argv[1]);
    else
-      nbLoop = 10000000;
+      nbLoop = 100000000;
 
    //clock_t r1, r2;
    struct tms tms1, tms2;
    
    double a = 1, b = 2;
    
+   std::cout << "Exchange 2 scalars " << nbLoop << " times"
+             << std::endl << std::endl;
    uint8_t  x8 =1, y8 =2;    
    uint16_t x16=1, y16=2;    
    uint32_t x32=1, y32=2;    
@@ -374,7 +378,10 @@ int TestInline(int argc, char *argv[])
 
 
  // ----------------------------------------
- 
+   std::cout << std::endl << std::endl
+             << "Check different ways of passing scalars to a function, " 
+             << nbLoop << " times" << std::endl << std::endl; 
+    
    std::cout << "Pass uint_8 param directly"
              << std::endl;
    //r1 = times(&tms1);
@@ -422,7 +429,7 @@ int TestInline(int argc, char *argv[])
         << std::endl; 
 
  // ----------------------------------------
- 
+   std::cout << std::endl;
    std::cout << "Pass uint_16 param directly"
              << std::endl;
    //r1 = times(&tms1);
@@ -472,7 +479,7 @@ int TestInline(int argc, char *argv[])
 
 
  // ----------------------------------------
-
+   std::cout << std::endl;
    std::cout << "Pass uint_32 param directly"
              << std::endl;
    //r1 = times(&tms1);
@@ -520,7 +527,7 @@ int TestInline(int argc, char *argv[])
         << std::endl; 
 
  // ----------------------------------------
- 
+   std::cout << std::endl; 
    std::cout << "Pass float param directly"
              << std::endl;
    //r1 = times(&tms1);
@@ -571,7 +578,7 @@ int TestInline(int argc, char *argv[])
         << std::endl; 
 
  // ----------------------------------------
- 
+   std::cout << std::endl; 
    std::cout << "Pass double param directly"
              << std::endl;
    //r1 = times(&tms1);

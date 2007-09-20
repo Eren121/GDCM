@@ -27,7 +27,7 @@ SET(TEST_SOURCES
 )
 IF(UNIX)
   SET(TEST_SOURCES ${TEST_SOURCES}
-    #TestInline.cxx
+    TestInline.cxx
   )
 ENDIF(UNIX)
 
@@ -59,9 +59,11 @@ IF (GDCM_DATA_ROOT)
   )
   # add test that require VTK:
   IF(GDCM_VTK)
+  
     IF("${VTK_MAJOR_VERSION}" LESS 4)
       MESSAGE(FATAL_ERROR "This VTK version is not supported, you are on your own !")
     ELSE("${VTK_MAJOR_VERSION}" LESS 4)
+    
       IF("${VTK_MAJOR_VERSION}" EQUAL 4 AND "${VTK_MINOR_VERSION}" EQUAL 2)
         MESSAGE(FATAL_ERROR "This VTK version is not supported, you are on your own !"
                              "Although gdcm should compile fine. You just need to turn BUILD_TESTING:=OFF")
@@ -70,6 +72,7 @@ IF (GDCM_DATA_ROOT)
         MESSAGE(FATAL_ERROR "This VTK version is not supported, you are on your own !"
                              "Although gdcm should compile fine. You just need to turn BUILD_TESTING:=OFF")
       ENDIF("${VTK_MAJOR_VERSION}" EQUAL 4 AND "${VTK_MINOR_VERSION}" EQUAL 4 AND "${VTK_BUILD_VERSION}" LESS 3)
+      
       # Include the VTK library since we know this is going to work
       INCLUDE(${VTK_USE_FILE})
 
