@@ -158,6 +158,7 @@ ENDIF(WIN32)
 # python where to find the gdcmPython module
 IF(UNIX)
   FIND_PATH(PYTHON_DIR "site-packages"
+     /usr/lib/python2.5  
      /usr/lib/python2.4
      /usr/lib/python2.3
      /usr/lib/python2.2
