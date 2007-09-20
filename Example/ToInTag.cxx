@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/04 17:39:28 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2007/09/20 12:15:06 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,6 +113,18 @@ int main(int argc, char *argv[])
    " debug    : *developer*  wants to run the program in 'debug mode'         ",
    FINISH_USAGE
 
+
+   enum Index
+   { 
+      IND_PatientName,
+      IND_SerieInstanceUID,
+      IND_ImagePosition,
+      IND_TriggerTime,
+      IND_PhaseEncodingDirection,
+      IND_seriesDescription,
+      IND_FileName       
+   };
+   
    std::cout << "inside ToInTag" << std::endl;
    
    // ----- Initialize Arguments Manager ------
@@ -253,7 +265,7 @@ int main(int argc, char *argv[])
    std::vector<std::string> tokensForFileName;
    
    // For Siemens pb, we need Manufacturer's Model Name
-   
+   // (We read only the first file, to know)   
    GDCM_NAME_SPACE::DirListType::iterator it1 = fileNames.begin();
    f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);
@@ -287,19 +299,19 @@ int main(int argc, char *argv[])
    if (verbose)
       std::cout << "------------------Print Break levels-----------------" << std::endl;
 
-   std::string userFileIdentifier; 
+   std::string userFileIdentifier;
    SortedFiles sf;
 
    s->AddSeriesDetail(0x0010, 0x0010, false); // Patient's Name
    // for Siemens TrioTim, don't deal with 'Series Instance UID'
-   if ( !GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") ) 
+   if ( !GDCM_NAME_SPACE::Util::DicomStringEqual(modelName,"TrioTim") )
       s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
    else
       s->AddSeriesDetail(0x9999, 0x9999, false); // dirty trick to ignore 'Series Instance UID'
-   s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)     
+   s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)
    s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
-   s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction 
-   s->AddSeriesDetail(0x0008, 0x103e, false); // Series Description (special Siemens ...)  
+   s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction
+   s->AddSeriesDetail(0x0008, 0x103e, false); // Series Description (special Siemens ...)
 
    //uint8_t *imageData; // Useless : pixels will not be loaded 
                          //          (images are overwritten)
@@ -320,7 +332,7 @@ int main(int argc, char *argv[])
       // keep only requested Series      
       bool keep = false;
       if (nbSeriesToKeep != 0)
-      {     
+      {
          strSeriesNumber = f->GetEntryString(0x0020, 0x0011 );
          seriesNumber = atoi( strSeriesNumber.c_str() );
          for (j=0;j<nbSeriesToKeep; j++)
@@ -356,16 +368,20 @@ int main(int argc, char *argv[])
            f->Delete();
            continue;
         }
-      } 
+      }
 
-      userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
+      userFileIdentifier=s->CreateUserDefinedFileIdentifier(f);
       tokens.clear();
-      GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token); 
-   
+      GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token);
+
       int imageNum; // Within FileName
       char newName[1024];
-      
-      if ( tokens[3] == GDCM_NAME_SPACE::GDCM_UNFOUND)  // sometimes Trigger Time is not found. CreateUserDefinedFileIdentifier is not aware of the pb.
+
+      // sometimes Trigger Time is not found.
+      // CreateUserDefinedFileIdentifier is not aware of the pb.
+      // We use File name instead (hope it's significant)
+
+      if ( tokens[IND_TriggerTime] == GDCM_NAME_SPACE::GDCM_UNFOUND)
       {
          ///this is a trick to build up a lexicographical compliant name :
          ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
@@ -376,12 +392,12 @@ int main(int argc, char *argv[])
             imageNum = atoi ( tokensForFileName[0].c_str() );
             // probabely we could write something much more complicated using C++ !
             sprintf (newName, "%s%06d%s", skel, imageNum, extent);
-            tokens[3] = newName;
+            tokens[IND_TriggerTime] = newName;
             tokensForFileName.clear();    
          }
          else
-            tokens[3] = name;
- 
+            tokens[IND_TriggerTime] = name;
+
          // Patient's Name
          // Series Instance UID
          // Image Position (Patient)
@@ -390,8 +406,9 @@ int main(int argc, char *argv[])
          // Series Description
          // FileName
  
-         userFileIdentifier = tokens[0] + token + tokens[1] + token + tokens[2] + token 
-                    + tokens[3] + token + tokens[4] + token + tokens[5] + token +  tokens[6] + token;
+         userFileIdentifier = tokens[IND_PatientName] + token + tokens[IND_SerieInstanceUID] + token + tokens[IND_ImagePosition] + token 
+                    + tokens[IND_TriggerTime] + token + tokens[IND_PhaseEncodingDirection] + token + tokens[IND_seriesDescription] + token
+                    +  tokens[IND_FileName] + token;
       }
          
       if (verbose) 
@@ -443,7 +460,7 @@ int main(int argc, char *argv[])
 
    std::string defaultStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    std::string defaultSerieUID;
-     
+
    for (it2 = sf.begin() ; it2 != sf.end(); ++it2)
    {  
       currentFile = it2->second;
@@ -457,13 +474,13 @@ int main(int argc, char *argv[])
      
       tokens.clear();
       GDCM_NAME_SPACE::Util::Tokenize (it2->first, tokens, token);
-      
-      currentPatientName            = tokens[0];
-      currentSerieInstanceUID       = tokens[1];
-      currentImagePosition          = tokens[2];
-      currentTriggerTime            = tokens[3];
-      currentPhaseEncodingDirection = tokens[4];
-      seriesDescription             = tokens[5];  // For Siemens pb
+   
+      currentPatientName            = tokens[IND_PatientName];
+      currentSerieInstanceUID       = tokens[IND_SerieInstanceUID];
+      currentImagePosition          = tokens[IND_ImagePosition];
+      currentTriggerTime            = tokens[IND_TriggerTime];
+      currentPhaseEncodingDirection = tokens[IND_PhaseEncodingDirection];
+      seriesDescription             = tokens[IND_seriesDescription];  // For Siemens pb
 
       if ( currentImagePosition[0] == '-')
           currentImagePosition[0] = 'M';
@@ -483,7 +500,7 @@ int main(int argc, char *argv[])
       {
          currentFile->InsertEntryString("1.\\0.\\0.\\0.\\1.\\0.",0x0020, 0x0037, "DS" );
       }
-      
+
       if (previousPatientName != currentPatientName)
       {      
          if ( currentFile->GetEntryString(0x0020,0x000d) == GDCM_NAME_SPACE::GDCM_UNFOUND) // Study UID
@@ -519,7 +536,7 @@ int main(int argc, char *argv[])
 
       if (previousSerieInstanceUID != currentSerieInstanceUID)
       {        
-         if (verbose)   
+         if (verbose)
             std::cout << "==== === new Serie [" << currentSerieInstanceUID << "]"
                       << std::endl;
       
@@ -529,8 +546,8 @@ int main(int argc, char *argv[])
                std::cout << "--- --- new  Serie UID created" << std::endl;
             defaultSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
            // currentFile->InsertEntryString(defaultSerieUID, 0x0020, 0x000e, "UI" );
-         }       
-      
+         }
+
          if (split)
          {
              currentSerieWriteDir  = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
@@ -572,7 +589,7 @@ int main(int argc, char *argv[])
 /*
       if (previousPhaseEncodingDirection != currentPhaseEncodingDirection)
       {        
-         if (verbose)   
+         if (verbose)
             std::cout << "==== === === === new PhaseEncodingDirection [" 
                       << currentPhaseEncodingDirection  << "]" << std::endl;
       
@@ -582,12 +599,12 @@ int main(int argc, char *argv[])
                              + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentPhaseEncodingDirection;
              systemCommand   = "mkdir " + currentPhaseEncodingDirectionWriteDir;     
-             system (systemCommand.c_str());     
-         }      
-    
+             system (systemCommand.c_str()); 
+         }
+
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;
-      } 
-*/    
+      }
+*/
    
       if ( GDCM_NAME_SPACE::Debug::GetDebugFlag())
          std::cout << "--- --- --- --- --- " << it2->first << "  " 
