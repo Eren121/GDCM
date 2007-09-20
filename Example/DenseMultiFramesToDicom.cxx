@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 11:01:55 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/09/20 11:15:54 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -178,9 +178,6 @@ int main(int argc, char *argv[])
    
    std::string filenameout;
 
-
-
-
    std::string strStudyUID;
    std::string strSerieUID;
 
@@ -228,6 +225,7 @@ int main(int argc, char *argv[])
          //return 0;
       }   
    }
+   return 1;
 }
 
 

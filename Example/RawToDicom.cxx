@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 11:01:55 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/09/20 11:15:54 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,8 +120,9 @@ int main(int argc, char *argv[])
    if (userDefinedStudy)
       studyUID  = am->ArgMgrGetString("studyUID");  
 
-   // not described *on purpose* in the Usage !    
-   bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
+   // not described *on purpose* in the Usage !
+   bool userDefinedSerie = ( 0 != am->ArgMgrDefined("serieUID") );       
+
    const char *serieUID;
    if(userDefinedSerie)
       serieUID = am->ArgMgrGetString("serieUID");
