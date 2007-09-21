@@ -25,11 +25,11 @@ SET(TEST_SOURCES
   TestEnumVR.cxx
   TestBuildUpDicomDir.cxx          # writes a file named "NewDICOMDIR"
 )
-IF(UNIX)
+IF(UNIX OR WIN32)
   SET(TEST_SOURCES ${TEST_SOURCES}
     TestInline.cxx
   )
-ENDIF(UNIX)
+ENDIF(UNIX OR WIN32)
 
 # add tests that require data
 IF (GDCM_DATA_ROOT)
