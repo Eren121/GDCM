@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/21 13:34:09 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/09/25 10:07:42 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -572,6 +572,7 @@ int TestInline(int argc, char *argv[])
    GET_TIME(tms2);   
    HOW_LONG(tms2,tms1);
 
-
-   return 0;
+   return 1; // will generate an error, 
+             // just to allow us to see the full log in the dashboard
+   //return 0;
 }
