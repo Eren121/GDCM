@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/14 08:22:19 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2007/09/25 16:06:46 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -135,7 +135,7 @@ void DocEntry::WriteContent(std::ofstream *fp, FileType filetype, bool insideMet
       //{
          binary_write(*fp, vr.str());
          // See PS 3.5-2004 page 33, 36                  
-         if ( (vr == "SQ") || (vr == "OB") || (vr == "OW") || (vr == "OF") 
+         if ( (vr == "SQ") || (vr == "OB") || (vr == "OW") || (vr == "OL") || (vr == "OF") 
           ||  (vr == "UN") || (vr == "UT") )
          {
             binary_write(*fp, zero);
@@ -223,7 +223,7 @@ uint32_t DocEntry::GetFullLength()
    }
    else
    {
-      if ( GetVR()=="OB" || GetVR()=="OW" || GetVR()=="SQ" )
+      if ( GetVR()=="OB" || GetVR()=="OW" || GetVR()=="OL" || GetVR()=="SQ" )
       {
          l = l + 12; // 2 (gr) + 2 (el) + 2 (vr) + 2 (unused) + 4 (lgth)
       }
