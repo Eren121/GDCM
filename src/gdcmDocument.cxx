@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/19 06:42:08 $
-  Version:   $Revision: 1.371 $
+  Date:      $Date: 2007/09/25 15:21:57 $
+  Version:   $Revision: 1.372 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1035,10 +1035,10 @@ int Document::ComputeGroup0002Length( )
             vr = entry->GetVR();
 
             //if ( (vr == "OB")||(vr == "OW")||(vr == "UT")||(vr == "SQ"))
-            // (no SQ, OW, UT in group 0x0002;)
+            // (no SQ, OW, OL, UT in group 0x0002;)
                if ( vr == "OB" ) 
                {
-                  // explicit VR AND (OB, OW, SQ, UT) : 4 more bytes
+                  // explicit VR AND (OB, OW, OL, SQ, UT) : 4 more bytes
                   groupLength +=  4;
                }
             groupLength += 2 + 2 + 4 + entry->GetLength();   
@@ -1524,7 +1524,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
    // in the following line.
    // (the 'straight' images will no longer be readable ...)
    
-      if ( vr == "OB" || vr == "OW" || vr == "SQ" || vr == "UT" 
+      if ( vr == "OB" || vr == "OW" || vr == "OL" || vr == "SQ" || vr == "UT" 
                                                           || vr == "UN" || changeFromUN == true)
       {
          changeFromUN = false;
@@ -1532,10 +1532,10 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
 
-         //Fp->seekg( 2L, std::ios::cur); // Once per OW,OB,SQ DocEntry
-         uint32_t length32 = ReadInt32(); // Once per OW,OB,SQ DocEntry
+         //Fp->seekg( 2L, std::ios::cur); // Once per OB,OW,OL,SQ DocEntry
+         uint32_t length32 = ReadInt32(); // Once per Ob,OW,OL,SQ DocEntry
          CurrentOffsetPosition+=4;
-         if ( (vr == "OB" || vr == "OW") && length32 == 0xffffffff ) 
+         if ( (vr == "OB" || vr == "OW" || vr == "OL") && length32 == 0xffffffff ) 
          {
             uint32_t lengthOB;
             try 
@@ -1621,7 +1621,8 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       uint16_t elem;
 
       try
-      {
+      {  ///\todo make sure there is never OL encoded pixel data!
+      
          //group = ReadInt16(); // Once per fragment (if any) of OB,OW DataElements
          //elem  = ReadInt16(); // Once per fragment (if any) of OB,OW DataElements 
          ReadBegBuffer(4); // Once per fragment (if any) of OB,OW DataElements
@@ -2133,8 +2134,8 @@ bool Document::CheckSwap()
                }
                // Check if next 2 bytes are a VR
                // Probabely something more time-consuming exists with std::string
-               const char VRvalues[] = "AEASATCSDADTFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOFATUNSQRT";
-               int nbVal = 28;
+               const char VRvalues[] = "AEASATCSDADTFLFDISLOLTPNSHSLSSSTTMUIULUSUTOBOWOLOFATUNSQRT";
+               int nbVal = 29;
                const char *pt = VRvalues;
                for (int i=0;i<nbVal;i++)
                {
