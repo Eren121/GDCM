@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/26 08:14:27 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/09/26 16:19:54 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",
-   "                  [listonly]                                              ",
+   "                  [listonly]  [skel]                                      ",
    "                  [noshadowseq][noshadow][noseq] [verbose] [debug]        ",
    "                                                                          ",
    " dirout : will be created if doesn't exist                                ",
@@ -69,7 +69,8 @@ int main(int argc, char *argv[])
    " drop : if user wants to ignore a limited number of series                ",
    "            he gives the list of 'SeriesNumber' (tag 0020|0011)           ",
    "        SeriesNumber are short enough to be human readable                ",
-   "        e.g : 1030,1035,1043                                              ", 
+   "        e.g : 1030,1035,1043                                              ",
+   " skel : name skeleton eg : patName_1.nema -> skel=patName_                ",
    " noshadowseq: user doesn't want to load Private Sequences                 ",
    " noshadow : user doesn't want to load Private groups (odd number)         ",
    " noseq    : user doesn't want to load Sequences                           ",
@@ -82,7 +83,8 @@ int main(int argc, char *argv[])
    {
       IND_PatientName,
       IND_StudyInstanceUID,
-      IND_SerieInstanceUID
+      IND_SerieInstanceUID,
+      IND_FileName       
    };
       
    std::cout << "... inside " << argv[0] << std::endl;
@@ -133,11 +135,12 @@ int main(int argc, char *argv[])
       return 0;         
    }
 
-   int hasSkel = am->ArgMgrDefined("skel");
+   bool hasSkel = ( 0 != am->ArgMgrDefined("hasSkel") );    
    const char *skel;
    if (hasSkel)
       skel = am->ArgMgrGetString("skel");   
-
+      
+      
    const char *input   = am->ArgMgrGetString("input","DCM");
    
    // if unused Param we give up
@@ -301,23 +304,43 @@ int main(int argc, char *argv[])
            f->Delete();
            continue;
         }
-      } 
+      }
 
-      userFileIdentifier=s->CreateUserDefinedFileIdentifier(f); 
+      userFileIdentifier=s->CreateUserDefinedFileIdentifier(f);
       tokens.clear();
-      GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token); 
-   
+      GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token);
+
       int imageNum; // Within FileName
       char newName[1024];
       
- 
+      ///this is a trick to build up a lexicographical compliant name :
+      ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
+      std::string name = GDCM_NAME_SPACE::Util::GetName( *it );
+
+      if (hasSkel)
+      {
+         int imageNum; // Within FileName
+         GDCM_NAME_SPACE::Util::Tokenize (name, tokensForFileName, skel);
+         imageNum = atoi ( tokensForFileName[0].c_str() );
+         // probabely we could write something much more complicated using C++ !
+         sprintf (newName, "%s%06d.dcm", skel, imageNum);
+         tokens[IND_FileName] = newName;
+         tokensForFileName.clear();
+       }
+       else
+       {
+         tokens[IND_FileName] = name;
+       }   
+    
          // Patient's Name
          // Study Instance UID 
          // Series Instance UID
+         // file Name
 
       userFileIdentifier = tokens[IND_PatientName]      + token +
                            tokens[IND_StudyInstanceUID] + token + 
-                           tokens[IND_SerieInstanceUID] + token;
+                           tokens[IND_SerieInstanceUID] + token +
+                           tokens[IND_FileName] + token;
          
       if (verbose) 
          std::cout << "[" << userFileIdentifier  << "] : " << *it << std::endl;
@@ -337,7 +360,7 @@ int main(int argc, char *argv[])
       
    std::string writeDir, currentWriteDir;
    std::string currentPatientWriteDir;
-   std::string currentStudyWriteDir;    
+   std::string currentStudyWriteDir;
    std::string currentSerieWriteDir; 
 
    std::string fullWriteFilename;
@@ -390,6 +413,7 @@ int main(int argc, char *argv[])
       
       if (previousStudyInstanceUID != currentStudyInstanceUID)
       {        
+         previousStudyInstanceUID       = currentStudyInstanceUID;
          if (verbose)   
             std::cout << "==== === new Study [" << currentStudyInstanceUID << "]"
                       << std::endl;      
@@ -399,11 +423,11 @@ int main(int argc, char *argv[])
          systemCommand   = "mkdir " + currentStudyWriteDir;  
          system (systemCommand.c_str());
 
-         previousStudyInstanceUID       = currentStudyInstanceUID;
       }  
       
       if (previousSerieInstanceUID != currentSerieInstanceUID)
       {        
+         previousSerieInstanceUID       = currentSerieInstanceUID;
          if (verbose)   
             std::cout << "=== ==== === new Serie [" << currentSerieInstanceUID << "]"
                       << std::endl;      
@@ -412,8 +436,6 @@ int main(int argc, char *argv[])
                              + currentSerieInstanceUID;
          systemCommand   = "mkdir " + currentSerieWriteDir;  
          system (systemCommand.c_str());
-
-         previousSerieInstanceUID       = currentSerieInstanceUID;
       }            
    
       if ( GDCM_NAME_SPACE::Debug::GetDebugFlag())
