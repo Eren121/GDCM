@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/05 09:55:01 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/09/26 07:47:07 $
+  Version:   $Revision: 1.11 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -95,7 +95,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
       file->Delete();
       filehelper->Delete();
       fileout->Delete();
-      return 0;   
+      return 0;
    }
    
    GDCM_NAME_SPACE::FileHelper *reread = GDCM_NAME_SPACE::FileHelper::New( fileout );
@@ -151,13 +151,20 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
    // Test the data content
    unsigned int j      = 0;
    unsigned int nbDiff = 0;
-   if (memcmp(imageData, imageDataWritten, dataSizeFixed) !=0)
+   unsigned int lengthToCompare = file->GetXSize()*file->GetYSize()*file->GetZSize()
+                                  *file->GetPixelSize()*file->GetSamplesPerPixel();
+ 
+   // just to see !
+   if ( lengthToCompare!=dataSizeFixed)
+      std::cout << "lengthToCompare : " << lengthToCompare << " not= dataSizeFixed : " << dataSizeFixed << std::endl;
+  
+   if (memcmp(imageData, imageDataWritten, lengthToCompare) !=0)
    {
       std::string PixelType = filehelper->GetFile()->GetPixelType();
       std::string ts        = filehelper->GetFile()->GetTransferSyntax();
 
        for(int i1=0; i1<dataSizeFixed; i1++)
-         if (abs ((int)imageData[i1]-(int)imageDataWritten[i1]) > 2) {
+         if (abs ((int)imageData[i1]-(int)imageDataWritten[i1]) > 0) {
             nbDiff++;
            // break; // at debug time, keep line commented out; (uncommenting will save CPU time)
          }
