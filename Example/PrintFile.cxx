@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/12 12:36:50 $
-  Version:   $Revision: 1.85 $
+  Date:      $Date: 2007/09/26 08:07:42 $
+  Version:   $Revision: 1.86 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
    uint16_t *elemsToForceLoad 
                            = am->ArgMgrGetXInt16Enum("forceload", &forceLoadNb);
    
-   int nbP;
+   int nbP =0;
    uint16_t *FourthDimLoc;
    if ( am->ArgMgrDefined("4DLoc") )
    {
@@ -270,8 +270,10 @@ errno = 0;
          f->Delete();
          return 0;
       }
+      
       if (nbP == 1)
          f->SetFourthDimensionLocation(FourthDimLoc[0],FourthDimLoc[1]);
+
 
       GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
       fh->SetPrintLevel( level );
