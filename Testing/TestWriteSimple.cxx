@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestWriteSimple.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 08:06:52 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2007/09/28 14:20:22 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,6 +58,8 @@ Image Images [] = {
    {63, 127, 1, 1, 16, 14,  0 ,'e'},
    {63, 127, 1, 1, 16, 15,  0 ,'e'}, 
    {63, 127, 1, 1, 16, 16,  0 ,'e'},
+   
+   {63, 127, 1, 1, 32, 32,  0 ,'e'},   // Pixel VR should be OL?
       
    {128, 128, 1, 1, 8,  8,  0, 'e'},
    {256, 128, 1, 1, 8,  8,  0, 'a'},
@@ -194,6 +196,19 @@ int WriteSimple(Image &img)
          break;
    } 
 
+   if(img.componentSize == 32)
+   {
+      // Create a Private DataElement; VR =OL
+      fileToBuild->InsertEntryString("gdcm test OL",0x0009,0x0010,"LO");
+      uint32_t binArea[4];
+      binArea[0] = 0x01234567;
+      binArea[1] = 0x89abcdef;      
+      binArea[2] = 0x2468ace0;
+      binArea[2] = 0xfdb97531;
+      fileToBuild->InsertEntryBinArea((uint8_t *)binArea,16,0x0009,0x0100,"OL");              
+   }
+   
+   
    std::cout << "[" << fileName.str() << "]...";
    // Set the samples per pixel
    str.str("");
