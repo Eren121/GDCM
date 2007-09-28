@@ -172,7 +172,7 @@ SET(GDCM_CMAKE_DIR_CONFIG
 #      major_minor "${version}")
 #    SET(python_subdir "python${major_minor}/")
 #  ELSE(PYTHON_EXECUTABLE)
-#    SET(python_subdir "python2.4/")
+#    SET(python_subdir "python2.5/")
 #  ENDIF(PYTHON_EXECUTABLE)
 #ENDIF(WIN32)
 #SET(GDCM_PYTHON_MODULE_DIR_CONFIG 
