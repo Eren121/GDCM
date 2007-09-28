@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:07 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2007/09/28 11:03:53 $
+  Version:   $Revision: 1.25 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,12 +43,13 @@ namespace GDCM_NAME_SPACE
  * @param argv  pointers array on the arguments passed to main()  
  */
  ArgMgr::ArgMgr(int argc, char **argv)
+ : ArgUsed(NULL), ArgLab(NULL), ArgStr(NULL), ArgCount(0), Appel(NULL)
  {
    int i;
-   int nblettre;
-   ArgUsed = NULL;
-   Appel   = NULL;
-  
+   int nblettre;   
+   ArgLab = new char *[ARGMAXCOUNT];
+   ArgStr = new char *[ARGMAXCOUNT];
+   
    /* Read the parameters of the command line *************************/
    for ( ArgCount=0, nblettre=1 , i=0; i<argc; i++) 
    {
@@ -94,7 +95,8 @@ namespace GDCM_NAME_SPACE
       char * egaloufin = ArgLab[i] ;
       while ( (*egaloufin != '\0') && (*egaloufin != '=') ) 
          egaloufin ++ ;
-      if ( *egaloufin ) *(egaloufin++) = '\0';
+      if ( *egaloufin )
+          *(egaloufin++) = '\0';
       ArgStr[i]= egaloufin;
    }
 
@@ -119,10 +121,13 @@ ArgMgr::~ArgMgr()
    for(int i=0;i<ArgCount;i++)
       if ( ArgLab[i] )
          free(ArgLab[i]);
+   delete ArgLab;   
+   delete ArgStr;  
    if ( ArgUsed )
       free(ArgUsed);
    if ( Appel )
       free(Appel);
+ 
 }
  
 /**
