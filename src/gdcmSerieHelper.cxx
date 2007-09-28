@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/20 12:44:16 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2007/09/28 14:15:34 $
+  Version:   $Revision: 1.61 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -448,14 +448,16 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
    XCoherentFileSetmap CoherentFileSet;
 
    int nb = fileSet->size();
-   if (nb == 0 )
+   if (nb == 0 ) {
+      gdcmWarningMacro("Empty FileList passed to SplitOnOrientation");
       return CoherentFileSet;
+   }
+
    float iop[6];
    std::string strOrient;
    std::ostringstream ossOrient;
 
    FileList::const_iterator it = fileSet->begin();
-   //it ++;
    for ( ;
          it != fileSet->end();
        ++it)
@@ -464,7 +466,7 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
       // 0020 0037 : Image Orientation (Patient) or
       // 0020 0035 : Image Orientation (RET)
 
-      // Let's build again the 'cosines' string, to be sure of it's format      
+      // Let's build again the 'cosines' string, to be sure of its format      
       (*it)->GetImageOrientationPatient(iop);
 
       ossOrient << iop[0];      
@@ -480,9 +482,11 @@ XCoherentFileSetmap SerieHelper::SplitOnOrientation(FileList *fileSet)
          gdcmDebugMacro(" New Orientation :[" << strOrient << "]");
          // create a File set in 'orientation' position
          CoherentFileSet[strOrient] = new FileList;
+         gdcmDebugMacro(" CoherentFileSet[strOrient]" << strOrient << "created");
       }
       // Current Orientation and DICOM header match; add the file:
       CoherentFileSet[strOrient]->push_back( (*it) );
+      gdcmDebugMacro(" CoherentFileSet[strOrient]" << "pushed back")    
    }
    return CoherentFileSet;
 }
@@ -498,14 +502,15 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
    XCoherentFileSetmap CoherentFileSet;
 
    int nb = fileSet->size();
-   if (nb == 0 )
+   if (nb == 0 ) {
+      gdcmWarningMacro("Empty FileList passed to SplitOnPosition");
       return CoherentFileSet;
+   }
    float pos[3];
    std::string strImPos;  // read on disc
    std::ostringstream ossPosition;
    std::string strPosition; // re computed
    FileList::const_iterator it = fileSet->begin();
-   //it ++;
    for ( ;
          it != fileSet->end();
        ++it)
@@ -534,7 +539,7 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
       {
             gdcmWarningMacro( "Wrong number for Position : ["
                        << strImPos << "]" );
-             return CoherentFileSet;
+            return CoherentFileSet;
       }
 
       // Let's build again the 'position' string, to be sure of it's format      
@@ -575,8 +580,10 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
    XCoherentFileSetmap CoherentFileSet;
 
    int nb = fileSet->size();
-   if (nb == 0 )
+   if (nb == 0 ) {
+      gdcmWarningMacro("Empty FileList passed to SplitOnPosition");
       return CoherentFileSet;
+   }
 
    std::string strTagValue;  // read on disc
 
@@ -594,7 +601,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       
       if ( CoherentFileSet.count(strTagValue) == 0 )
       {
-         gdcmDebugMacro(" New Tag Value :[" << strTagValue << "]");
+         gdcmDebugMacro("  :[" << strTagValue << "]");
          // create a File set in 'position' position
          CoherentFileSet[strTagValue] = new FileList;
       }
@@ -902,8 +909,8 @@ void SerieHelper::Print(std::ostream &os, std::string const &indent)
 
       // For all the files of a SingleSerieUID File set
       for (FileList::iterator it =  (itl->second)->begin();
-                                  it != (itl->second)->end(); 
-                                ++it)
+                              it != (itl->second)->end(); 
+                            ++it)
       {
          os << indent << " --- " << (*it)->GetFileName() << std::endl;
       }
@@ -935,12 +942,12 @@ void SerieHelper::CreateDefaultUniqueSeriesIdentifier()
    
    // 0028 0010 Rows
    // If the 2D images in a sequence don't have the same number of rows,
-   // then it is difficult to reconstruct them into a 3D volume.
+   //   then it is difficult to reconstruct them into a 3D volume.
    AddRestriction( TagKey(0x0028, 0x0010));
    
    // 0028 0011 Columns
    // If the 2D images in a sequence don't have the same number of columns,
-   // then it is difficult to reconstruct them into a 3D volume.
+   //   then it is difficult to reconstruct them into a 3D volume.
    AddRestriction( TagKey(0x0028, 0x0011));
 }
 
@@ -985,17 +992,22 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
       }
     // Eliminate non-alnum characters, including whitespace...
     //   that may have been introduced by concats.
-    for(unsigned int i=0; i<id.size(); i++)
+    unsigned int s_size = id.size();
+    for(unsigned int i=0; i<s_size; i++)
+    {
+     while(i<s_size
+       && !( id[i] == '.' || id[i] == '%' || id[i] == '_'
+         || (id[i] >= '+' && id[i] <= '-')       
+         || (id[i] >= 'a' && id[i] <= 'z')
+         || (id[i] >= '0' && id[i] <= '9')
+         || (id[i] >= 'A' && id[i] <= 'Z')))
       {
-      while(i<id.size() 
-        && !( id[i] == '.'
-          || (id[i] >= 'a' && id[i] <= 'z')
-          || (id[i] >= '0' && id[i] <= '9')
-          || (id[i] >= 'A' && id[i] <= 'Z')))
-        {
-        id.erase(i, 1);
-        }
+         id.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
       }
+   }
+   // deal with Dicom strings trailing '\0' 
+    if(id[s_size-1] == '_')
+      id.erase(s_size-1, 1);
     return id;
     }
   else // Could not open inFile
@@ -1046,19 +1058,22 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File *inFile )
          }
       }
       // Eliminate non-alphanum characters, including whitespace.
-      for(unsigned int i=0; i<s.size(); i++)
+      unsigned int s_size = s.size();
+      for(unsigned int i=0; i<s_size; i++)
       {
-         while(i<s.size()
+         while(i<s_size
                && !( s[i] == '.' || s[i] == '%' || s[i] == '_'
                  || (s[i] >= '+' && s[i] <= '-')       
                  || (s[i] >= 'a' && s[i] <= 'z')
                  || (s[i] >= '0' && s[i] <= '9')
                  || (s[i] >= 'A' && s[i] <= 'Z')))
          {
-            //s.erase(i, 1);
             s.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
          }
       }
+      // deal with Dicom strings trailing '\0' 
+      if(s[s_size-1] == '_')
+         s.erase(s_size-1, 1);
       
       id += s.c_str();
       id += "%%%"; // make the FileIdentifier Tokenizable
