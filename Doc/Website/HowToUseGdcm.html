@@ -910,33 +910,26 @@ vtkGdcmWriter::void SetContentTypeToUnmodifiedPixelsImage()
 
 
     *   PrintFile
-
-         Displays the header of any kind of ACR-NEMA/PAPYRUS/DICOM File
-         usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]
-                       [forceload=listOfElementsToForceLoad]
-                       [4DLoc= ][dict= privateDirectory]
-                       [ { [noshadowseq] | [noshadow][noseq] } ]
-                       [debug] [warning]
+    
+     Display the header of a ACR-NEMA/PAPYRUS/DICOM File                      
+     usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]
+                       [forceload=listOfElementsToForceLoad] [rec] [noex] 
+                       [4DLoc= ][dict= privateDirectory]                  
+                       [ { [noshadowseq] | [noshadow][noseq] } ]          
+                       [debug] [warning]                                  
       level = 0,1,2 : depending on the amount of details user wants to see
+      rec : user wants to parse recursively the directory                 
+      noex : user doen't want extra 'user friendly' info                  
       4DLoc: group-elem(in hexa, no space) of the DataEntry holdind 4thDim
       listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)
-                                of Elements to load whatever their length
-      privateDirectory : source file full path name of Shadow Group elems
-      noshadowseq: user doesn't want to load Private Sequences
-      noshadow   : user doesn't want to load Private groups (odd number)
-      noseq      : user doesn't want to load Sequences
-      debug      : user wants to run the program in 'debug mode'
-      warning    : user wants to be warned about any oddity in the File
-      showlut :user wants to display the Palette Color (as an int array)
-
-                          [ { [noshadowseq] | [noshadow][noseq] } ] [debug] [usage]
-                level = 0,1,2 : depending on the amount of details user wants to see
-                noshadowseq: user doesn't want to load Private Sequences
-                noshadow   : user doesn't want to load Private groups (odd number)
-                noseq      : user doesn't want to load Sequences
-                debug      : user wants to run the program in 'debug mode'
-                usage      : user wants to display usage
-         
+                                of Elements to load whatever their length 
+      privateDirectory : source file full path name of Shadow Group elems 
+      noshadowseq: user doesn't want to load Private Sequences            
+      noshadow   : user doesn't want to load Private groups (odd number)  
+      noseq      : user doesn't want to load Sequences                    
+      debug      : user wants to run the program in 'debug mode'          
+      warning    : user wants to be warned about any oddity in the File   
+      showlut :user wants to display the Palette Color (as an int array)  
 
     * Anonymize
 
@@ -971,40 +964,28 @@ vtkGdcmWriter::void SetContentTypeToUnmodifiedPixelsImage()
 
     * ReWrite
 
-         Reads and rewrites a full gdcm-readable Dicom image
-     (usefull when the file header is not very straight).
-
- usage: ReWrite filein=inputFileName fileout=outputFileName
-       [keepoverlays] [mode=write mode] [monochrome1]
-       [noshadow] [noseq][debug]
-  --> The following line to 'rubout' a burnt-in Patient name
-       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]
-  --> The 2 following lines, to extract a sub image within some frames
-       [ROI=xBegin,xEnd,yBegin,yEnd]
-       [firstframe=beg] [lastframe=end]
-
-        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)
-               j (jpeg lossless), 2 (jpeg2000)
-        keepoverlays : user wants to keep ACR-NEMA-like overlays
-        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)
-        noshadowseq: user doesn't want to load Private Sequences
+ Re write a full gdcm-readable Dicom image                              
+     (usefull when the file header is not very straight).               
+                                                                        
+ usage: ReWrite filein=inputFileName fileout=outputFileName             
+       [keepoverlays] [mode=write mode] [monochrome1]                   
+       [noshadow] [noseq][debug]                                        
+  --> The following line to 'rubout' a burnt-in Patient name            
+       [rubout=xBegin,xEnd,yBegin,yEnd [ruboutvalue=n (<255)] ]         
+  --> The 2 following lines, to extract a sub image within some frames  
+       [ROI=xBegin,xEnd,yBegin,yEnd]                                    
+       [firstframe=beg] [lastframe=end]                                 
+                                                                        
+        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    
+               j (jpeg lossless), 2 (jpeg2000)                          
+        keepoverlays : user wants to keep ACR-NEMA-like overlays        
+        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)  
+        noshadowseq: user doesn't want to load Private Sequences        
         noshadow : user doesn't want to load Private groups (odd number)
-        noseq    : user doesn't want to load Sequences
-        rgb      : user wants to transform LUT (if any) to RGB pixels
+        noseq    : user doesn't want to load Sequences                  
+        rgb      : user wants to transform LUT (if any) to RGB pixels   
         warning  : developper wants to run the program in 'warning mode'
-        debug    : developper wants to run the program in 'debug mode' a full gdcm-readable Dicom image (compressed Pixels are expanded)
-                         (usefull when the file is not very straight).                  
-        usage: ReWrite filein=inputFileName fileout=anonymizedFileName
-                        [mode=write mode] [rgb]
-                        [ { [noshadowseq] | [noshadow][noseq] } ] [debug] [usage]
-        write mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)
-        rgb        : user wants to transform LUT (if any) into RGB 
-        noshadowseq: user doesn't want to load Private Sequences
-        noshadow   : user doesn't want to load Private groups (odd number)
-        noseq      : user doesn't want to load Sequences
-        debug      : user wants to run the program in 'debug mode'
-        usage      : user wants to display usage
-         
+        debug    : developper wants to run the program in 'debug mode'          
 
     * PrintDicomDir
 
@@ -1077,6 +1058,34 @@ vtkGdcmWriter::void SetContentTypeToUnmodifiedPixelsImage()
              debug      : user wants to run the program in 'debug mode'
              usage      : user wants to display usage
          
+
+    * exXCoherentFileSet :
+                                                 
+Shows the various 'XCoherent' Filesets within a directory                 
+Optionaly copies the images in a Directories tree                          
+usage: exXCoherentFileSet {dirin=inputDirectoryName}                      
+                           dirout=outputDirectoryName                     
+                       { tag=group-elem | pos | ori } [sort] [write]      
+                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  
+                                                                          
+       dirin : user wants to analyze *all* the files                      
+                            within the directory                          
+       write : user wants to create directories                           
+       dirout : will be created if doesn't exist                          
+       pos  : user wants to split each Single SerieUID Fileset on the     
+                         'Image Position '                                
+       ori  : user wants to split each Single SerieUID Fileset on the     
+                         'Image Orientation '                             
+       tag : group-elem    (in hexa, no space)                            
+                       the user wants to split on                         
+       sort :  user wants FileHelper to sort the images                   
+               Warning : will probabely crah if sort has no meaning       
+                (not only look at image names)                            
+       noshadowseq: user doesn't want to load Private Sequences           
+       noshadow   : user doesn't want to load Private groups (odd number) 
+       noseq      : user doesn't want to load Sequences                   
+       verbose    : user wants to run the program in 'verbose mode'       
+       debug      : developper wants to run the program in 'debug mode'  
 
 }}}
 </pre>
