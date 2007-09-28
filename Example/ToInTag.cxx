@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/20 12:15:06 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007/09/28 14:09:20 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -176,15 +176,15 @@ int main(int argc, char *argv[])
       return 0;         
    }
    
-   int taggrid = am->ArgMgrDefined("taggrid");
-   
-   int hasSkel = am->ArgMgrDefined("skel");
+   bool taggrid = ( 0 != am->ArgMgrDefined("taggrid") );
+      
+   bool hasSkel = ( 0 != am->ArgMgrDefined("hasSkel") );    
    const char *skel;
    if (hasSkel)
-      skel = am->ArgMgrGetString("skel");   
+      skel = am->ArgMgrGetString("skel");
       
    const char *extent  = am->ArgMgrGetString("extent",".DCM");
-   const char *input  = am->ArgMgrGetString("input","DCM");
+   const char *input   = am->ArgMgrGetString("input","DCM");
    
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
  
          userFileIdentifier = tokens[IND_PatientName] + token + tokens[IND_SerieInstanceUID] + token + tokens[IND_ImagePosition] + token 
                     + tokens[IND_TriggerTime] + token + tokens[IND_PhaseEncodingDirection] + token + tokens[IND_seriesDescription] + token
-                    +  tokens[IND_FileName] + token;
+                    + tokens[IND_FileName] + token;
       }
          
       if (verbose) 
