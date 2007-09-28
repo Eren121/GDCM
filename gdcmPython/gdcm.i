@@ -166,7 +166,7 @@ typedef unsigned long long uint64_t;
 
 %constant const char *UNKNOWN        = "GDCM::Unknown";
 %constant const char *UNFOUND        = "GDCM::Unfound";
-%constant const char *BINLOADED      = "GDCM::Binary data loaded";
+%constant const char *BINLOADED      = "GDCM::Binary data";
 %constant const char *NOTLOADED      = "GDCM::NotLoaded";
 %constant const char *UNREAD         = "GDCM::UnRead";
 %constant const char *GDCM_NOTASCII  = "GDCM::NotAscii";
