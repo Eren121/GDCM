@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 16:07:19 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2007/09/28 14:16:09 $
+  Version:   $Revision: 1.50 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -620,7 +620,7 @@ std::string const &DataEntry::GetHexaRepresentation() const
   }
   else
   {
-     int l = (Length > GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA) ? GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA : Length;
+     unsigned int l = (Length > GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA) ? GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA : Length;
      uint8_t *data=(uint8_t *)BinArea;
      for (unsigned int i=0; i < l; i++)
      {
