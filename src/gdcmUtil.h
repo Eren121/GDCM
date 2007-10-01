@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:05 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2007/10/01 09:25:06 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,6 +47,7 @@ public:
    static std::string CreateCleanString(uint8_t *s, int l);
    static bool IsCleanString(std::string const &s);
    static bool IsCleanArea(uint8_t *s, int l);
+   static void ReplaceSpecChar(std::string &s, std::string &rep);
    static std::string NormalizePath(std::string const &name);
    static std::string GetPath(std::string const &fullName);
    static std::string GetName(std::string const &fullName);
@@ -96,7 +97,8 @@ public:
       *a = *b;
       *b = tmp;
    }    
-   void hfpswap(double *a, double *b);   
+   void hfpswap(double *a, double *b);
+      
    static inline void sthifpswap(double *a, double *b)     
    {
       double tmp;
@@ -149,7 +151,7 @@ private:
   ghost@aladdin.com
 */
 
-/* $Id: gdcmUtil.h,v 1.69 2007/08/22 16:14:05 jpr Exp $ */
+/* $Id: gdcmUtil.h,v 1.70 2007/10/01 09:25:06 jpr Exp $ */
 /*
   Independent implementation of MD5 (RFC 1321).
   This code implements the MD5 Algorithm defined in RFC 1321, whose

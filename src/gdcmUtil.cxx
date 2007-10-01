@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.187 $
+  Date:      $Date: 2007/10/01 09:25:06 $
+  Version:   $Revision: 1.188 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -237,7 +237,6 @@ std::string Util::CreateCleanString(std::string const &s)
          str[i] = '.';
       }
    }
-
    if (str.size() > 0 )
    {
       if (!isprint((unsigned char)s[str.size()-1]) )
@@ -248,9 +247,32 @@ std::string Util::CreateCleanString(std::string const &s)
          }
       }
    }
-
    return str;
 }
+/**
+ * \brief  Replaces all special characters
+ * @param s string to modify
+ * @param rep replacement char
+ */
+void Util::ReplaceSpecChar(std::string &s, std::string &rep)
+{
+   unsigned int s_size = s.size();
+   for(unsigned int i=0; i<s_size; i++)
+   {
+      if (! ( s[i] == '.' || s[i] == '%' || s[i] == '_'
+          || (s[i] >= '+' && s[i] <= '-')       
+          || (s[i] >= 'a' && s[i] <= 'z')
+          || (s[i] >= '0' && s[i] <= '9')
+          || (s[i] >= 'A' && s[i] <= 'Z')))
+     {
+        s.replace(i, 1, rep);
+     }
+   }
+      // deal with Dicom strings trailing '\0' 
+   if(s[s_size-1] == rep.c_str()[0])
+      s.erase(s_size-1, 1);
+}
+
 
 /**
  * \brief  Weed out a string from the non-printable characters (in order
@@ -1247,7 +1269,7 @@ void Util::hfpswap(double *a, double *b)
   ghost@aladdin.com
  */
 
-/* $Id: gdcmUtil.cxx,v 1.187 2007/05/23 14:18:11 jpr Exp $ */
+/* $Id: gdcmUtil.cxx,v 1.188 2007/10/01 09:25:06 jpr Exp $ */
 
 /*
   Independent implementation of MD5 (RFC 1321).
