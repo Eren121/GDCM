@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 14:15:34 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2007/10/01 09:28:57 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -298,19 +298,23 @@ void SerieHelper::OrderFileList(FileList *fileSet)
    
    if ( SerieHelper::UserLessThanFunction )
    {
+      gdcmDebugMacro("Use UserLessThanFunction");     
       UserOrdering( fileSet );
       return; 
    }
    else if ( ImagePositionPatientOrdering( fileSet ) )
-   {
+   { 
+      gdcmDebugMacro("ImagePositionPatientOrdering succeeded");
       return ;
    }
    else if ( ImageNumberOrdering(fileSet ) )
    {
+      gdcmDebugMacro("ImageNumberOrdering succeeded");   
       return ;
    }
    else  
    {
+      gdcmDebugMacro("Use FileNameOrdering");    
       FileNameOrdering(fileSet );
    }
 }
@@ -618,7 +622,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
 // Private
 /**
  * \brief sorts the images, according to their Patient Position.
- *  As a side effect, it computes the ZSpacing, according to Jolinda Smith'
+ *  As a side effect, it computes the ZSpacing, according to Jolinda Smith's
  *  algorithm. (get it with double GetZSpacing() !)
  *  We may order, considering :
  *   -# Image Position Patient
@@ -650,6 +654,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          it = fileList->begin();
          it != fileList->end(); ++it )
    {
+      gdcmDebugMacro("deal with " << (*it)->GetFileName() );
       if ( first ) 
       {
          (*it)->GetImageOrientationPatient( cosines );
@@ -688,6 +693,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
             dist += normal[i]*ipp[i];
          }
     
+         gdcmDebugMacro("dist : " << dist);
          distmultimap.insert(std::pair<const double,File *>(dist, *it));
 
          max = min = dist;
@@ -708,7 +714,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          }
 
          distmultimap.insert(std::pair<const double,File *>(dist, *it));
-
+         gdcmDebugMacro("dist : " << dist);
          min = (min < dist) ? min : dist;
          max = (max > dist) ? max : dist;
       }
@@ -718,7 +724,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    if ( min == max )
    {
      gdcmWarningMacro("Looks like all images have the exact same image position. "
-                      << "No PositionPatientOrdering sort performed. " 
+                      << "No PositionPatientOrdering sort performed. "
                       << "No 'ZSpacing' calculated! ");
      return false;
    }
@@ -731,12 +737,12 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    {
       if (distmultimap.count((*it2).first) != 1)
       {
-         gdcmErrorMacro("File: ["
+         gdcmWarningMacro("File: ["
               << ((*it2).second->GetFileName())
               << "] : more than ONE file at distance: '"
               << (*it2).first
-              << " (position is not unique!) " 
-              << "No PositionPatientOrdering sort performed. " 
+              << " (position is not unique!) "
+              << "No PositionPatientOrdering sort performed. "
               << "No 'ZSpacing' calculated! ");      
 
          ok = false;
@@ -747,8 +753,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       if (! DropDuplicatePositions)
          return false;
    }
-
-// Now, we could calculate Z Spacing as the difference
+      
+// Now, we can calculate Z Spacing as the difference
 // between the "dist" values for the first two slices.
 
 // The following (un)-commented out code is let here
@@ -774,6 +780,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          fileList->push_back( (*it3).second );
          if (DropDuplicatePositions)
          {
+            /// \todo ImagePositionPatientOrdering  wrong duplicates are found ???
+   
             it3 =  distmultimap.upper_bound((*it3).first); // skip all duplicates
             if (it3 == distmultimap.end() )  // if last image, stop iterate
                break;

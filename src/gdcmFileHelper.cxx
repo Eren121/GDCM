@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/09/18 10:50:37 $
-  Version:   $Revision: 1.130 $
+  Date:      $Date: 2007/10/01 09:28:57 $
+  Version:   $Revision: 1.131 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2118,7 +2118,7 @@ void FileHelper::Print(std::ostream &os, std::string const &)
 
 
 /* Probabely something to be added to use Rescale Slope/Intercept
-Have a look ,at ITK code !
+Have a look at ITK code !
 
 // Internal function to rescale pixel according to Rescale Slope/Intercept
 template<class TBuffer, class TSource>

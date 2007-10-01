@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:16:02 $
-  Version:   $Revision: 1.337 $
+  Date:      $Date: 2007/10/01 09:28:57 $
+  Version:   $Revision: 1.338 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -567,8 +567,6 @@ int File::GetTSize()
       return (int)entry->GetValue(0);
    }      
 }
-
-
 
 /**
   * \brief gets the info from 0018,1164 : ImagerPixelSpacing
