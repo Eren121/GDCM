@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exMoveImagesToSingleSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/10/01 09:33:20 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -114,20 +114,22 @@ int main(int argc, char *argv[])
    }
 
    if (am->ArgMgrDefined("debug"))
-      GDCM_NAME_SPACE::Debug::DebugOn(); 
-   int verbose  = am->ArgMgrDefined("verbose");
+      GDCM_NAME_SPACE::Debug::DebugOn();
+
+   bool verbose = ( 0 != am->ArgMgrDefined("verbose") );
    
    std::string patName = am->ArgMgrGetString("patname", "g^PatientName");
    float zSpacing = am->ArgMgrGetFloat("zSpacing", 1.0);
       
-   const char *dirIn  = am->ArgMgrGetString("dirin");
+   const char *dirIn   = am->ArgMgrGetString("dirin");
    const char *dirOut  = am->ArgMgrGetString("dirout");
-   
-   int userDefinedStudy = am->ArgMgrDefined("studyUID");
+
+   bool userDefinedStudy = ( 0 != am->ArgMgrDefined("userDefinedStudy") );
    const char *studyUID  = am->ArgMgrGetString("studyUID");
 
 // not described *on purpose* in the Usage ! 
-   int userDefinedSerie = am->ArgMgrDefined("serieUID");   
+   bool userDefinedSerie = ( 0 != am->ArgMgrDefined("userDefinedSerie") );
+  
    const char *serieUID  = am->ArgMgrGetString("serieUID");      
  
    int loadMode = GDCM_NAME_SPACE::LD_ALL;
@@ -208,19 +210,18 @@ int main(int argc, char *argv[])
    else
       strStudyUID = studyUID;
 
-
    // 'Serie Instance UID'
    // The user is allowed to create his own Series, 
    // keeping the same 'Serie Instance UID' for various images
    // The user shouldn't add any image to a 'Manufacturer Serie'
    // but there is no way no to prevent him for doing that
-   
+
    std::string strSerieUID; 
    if ( !userDefinedSerie)   
       strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    else      
       strSerieUID = serieUID;
-        
+
    GDCM_NAME_SPACE::File *f;
    GDCM_NAME_SPACE::FileHelper *fh;
    std::string fullFilename, lastFilename;
@@ -240,14 +241,15 @@ int main(int argc, char *argv[])
       if ( !f->Load() )
       {
          if (verbose)
-            std::cout << "fail to load [" << it->c_str() << "]" << std::endl;      
+            std::cout << "fail to load [" << it->c_str() << "]" << std::endl;   
          f->Delete();
          continue;
       }
 
-      // Load the pixels in RAM.    
-      
-      fh = GDCM_NAME_SPACE::FileHelper::New(f);     
+      // Load the pixels in RAM.
+   
+      fh = GDCM_NAME_SPACE::FileHelper::New(f);
+      fh->SetKeepOverlays( true );
       uint8_t *imageData = fh->GetImageDataRaw(); // Don't convert (Gray Pixels + LUT) into (RGB pixels) ?!?
       if (!imageData)
          std::cout << "fail to read [" << it->c_str() << std::endl;

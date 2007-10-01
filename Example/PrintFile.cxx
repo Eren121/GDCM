@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/26 08:07:42 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2007/10/01 09:33:20 $
+  Version:   $Revision: 1.87 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@
 #include "gdcmOrientation.h"
 #include <iostream>
 
-// TODO : code factorization, for 'single file' an 'whole directory' processing
+/// \todo : code factorization, for 'single file' an 'whole directory' processing
 
 void ShowLutData(GDCM_NAME_SPACE::File *f);
 
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
    int forceLoadNb;
    uint16_t *elemsToForceLoad 
                            = am->ArgMgrGetXInt16Enum("forceload", &forceLoadNb);
-   
+
    int nbP =0;
    uint16_t *FourthDimLoc;
    if ( am->ArgMgrDefined("4DLoc") )
@@ -230,14 +230,14 @@ int main(int argc, char *argv[])
 
    // ----------- End Arguments Manager ---------
 
- 
+
    if (ddict)
    {
-      GDCM_NAME_SPACE::Global::GetDicts()->GetDefaultPubDict()->AddDict(dict);   
+      GDCM_NAME_SPACE::Global::GetDicts()->GetDefaultPubDict()->AddDict(dict);
    }
 
    if ( fileName != 0 ) // ====== Deal with a single file ======
-   { 
+   {
       GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
@@ -245,10 +245,10 @@ int main(int argc, char *argv[])
       for (int ri=0; ri<forceLoadNb; ri++)
       {
          f->AddForceLoadElement((uint32_t)elemsToForceLoad[2*ri], 
-                                (uint32_t)elemsToForceLoad[2*ri+1] ); 
+                                (uint32_t)elemsToForceLoad[2*ri+1] );
       }
 // TODO : find why such a polution
-// To avoid polluting the output with messages 
+// To avoid polluting the output with messages
 // 'Last system error was : No such file or directory'
 
 errno = 0; 
@@ -256,21 +256,21 @@ errno = 0;
 
       bool res = f->Load();
       // GDCM_NAME_SPACE::File::IsReadable() is no usable here, because we deal with
-      // any kind of gdcm-Parsable *document* 
+      // any kind of gdcm-Parsable *document*
       // not only GDCM_NAME_SPACE::File (as opposed to GDCM_NAME_SPACE::DicomDir)
       if ( !res )
       {
          std::cout << "Cannot process file [" << fileName << "]" << std::endl;
-         std::cout << "Either it doesn't exist, or it's read protected " 
+         std::cout << "Either it doesn't exist, or it's read protected "
                    << std::endl;
-         std::cout << "or it's not a Dicom File, or its 'header' is bugged" 
+         std::cout << "or it's not a Dicom File, or its 'header' is bugged"
                    << std::endl;
          std::cout << "use 'PrintFile filein=... debug' to try to guess the pb"
                    << std::endl;
          f->Delete();
          return 0;
       }
-      
+
       if (nbP == 1)
          f->SetFourthDimensionLocation(FourthDimLoc[0],FourthDimLoc[1]);
 
@@ -280,7 +280,7 @@ errno = 0;
 
       fh->Print();
 
-      std::cout << "\n\n" << std::endl; 
+      std::cout << "\n\n" << std::endl;
 
       std::cout <<std::endl;
       std::cout <<" dataSize    " << fh->GetImageDataSize()    << std::endl;
@@ -530,8 +530,9 @@ if (!noex)
       f->Delete();
       fh->Delete();
    }
-   else  // ====== Deal with a Directory ======
-   {
+         // ===========================================================================
+   else  // =============================== Deal with a Directory =====================
+   {     // ===========================================================================
       std::cout << "dirName [" << dirName << "]" << std::endl;
       
       GDCM_NAME_SPACE::DirList dirList(dirName,rec); // gets recursively (or not) the file list
@@ -539,6 +540,11 @@ if (!noex)
       GDCM_NAME_SPACE::File *f;
       bool res;
 
+      if (fileList.size() == 0)
+      {
+         std::cout << "No file found in : [" << dirName << "]" << std::endl;
+      }
+      
       for( GDCM_NAME_SPACE::DirListType::iterator it  = fileList.begin();
                                  it != fileList.end();
                                  ++it )

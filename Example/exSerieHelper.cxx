@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/22 11:01:57 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/10/01 09:33:20 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
   
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
    //   
-   // Something, using only SerieHelper is not enought !
+   // Sometimes using only SerieHelper is not enought !
    // See also exXcoherentFileSet
    //
 

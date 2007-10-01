@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 14:08:08 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/10/01 09:33:20 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,29 +24,6 @@
 
 #include "gdcmArgMgr.h"
 
-void removeSpecChar(std::string &s);
-
-void removeSpecChar(std::string &s) {
-      unsigned int s_size = s.size();
-      for(unsigned int i=0; i<s_size; i++)
-      {
-          if (
-         /*while(i<s_size
-               && */!( s[i] == '.' || s[i] == '%' || s[i] == '_'
-                 || (s[i] >= '+' && s[i] <= '-')       
-                 || (s[i] >= 'a' && s[i] <= 'z')
-                 || (s[i] >= '0' && s[i] <= '9')
-                 || (s[i] >= 'A' && s[i] <= 'Z')))
-         {
-            s.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
-         }
-      }
-
-      // deal with Dicom strings trailing '\0' 
-      if(s[s_size-1] == '_')
-         s.erase(s_size-1, 1);
-
-}
      
 int main(int argc, char *argv[])
 {  
@@ -238,8 +215,9 @@ int main(int argc, char *argv[])
    std::string xCoherentName = "";     
    std::string serieDirectory;
    std::string lastFilename;
-   
-   int controlCount = 0;    
+   std::string rep("_");   
+   int controlCount = 0;
+  
    while (l) // for each 'Single SerieUID FileSet'
    { 
       nbFiles = l->size() ;
@@ -247,7 +225,7 @@ int main(int argc, char *argv[])
                            // Why not ? Just an example, for testing!
       {
           serieUID = s->GetCurrentSerieUIDFileSetUID();
-          removeSpecChar(serieUID);
+          GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
  
           // --- for write
           if (write)
@@ -279,8 +257,9 @@ int main(int argc, char *argv[])
             xcm = s->SplitOnOrientation(l);
          else if (pos)
             xcm = s->SplitOnPosition(l);
-         else if (groupelem != 0)
+         else if (groupelem != 0) {
             xcm = s->SplitOnTagValue(l, groupelem[0],groupelem[1] );
+         }
 
          for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
                                                   i != xcm.end();
@@ -289,7 +268,7 @@ int main(int argc, char *argv[])
              xCoherentName = (*i).first;
             if (verbose)
                std::cout << "xCoherentName = " << xCoherentName << std::endl;
-             removeSpecChar(xCoherentName);
+            GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
              // --- for write
              if (write)
              { 
@@ -299,7 +278,7 @@ int main(int argc, char *argv[])
                    systemCommand   = "mkdir " + xCoherentWriteDir;
                    system( systemCommand.c_str());
                    if (verbose)
-                      std::cout << "2 " << systemCommand << std::endl;       
+                      std::cout << systemCommand << std::endl;       
                 }
             } 
             // --- end for write
