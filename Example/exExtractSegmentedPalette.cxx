@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractSegmentedPalette.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 08:46:02 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/10/03 08:50:48 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,11 @@
 #include <gdcm.h>
 // Ref: 
 // http://blog.goo.ne.jp/satomi_takeo/e/3643e5249b2a9650f9e10ef1c830e8b8
+// I bet the code was compiled on VS6. Make it compile on other platform:
+// * typedef are not inherited
+// * need to explicitely add typename keyword
+// * Uint8 / Uint16 are neither C nor C++
+// * replace all dcmtk code with identical gdcm code
 
 #include <assert.h>
 #include <algorithm>
