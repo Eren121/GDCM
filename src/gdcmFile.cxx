@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/01 09:28:57 $
-  Version:   $Revision: 1.338 $
+  Date:      $Date: 2007/10/03 09:32:10 $
+  Version:   $Revision: 1.339 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1506,7 +1506,13 @@ bool File::HasLUT()
       return false;
    }
    // Red Palette Color Lookup Table Data
-   if ( !GetDocEntry(0x0028,0x1201) )
+   bool segmented;
+   segmented = GetDocEntry(0x0028,0x1221) && 
+     GetDocEntry(0x0028,0x1222) && 
+     GetDocEntry(0x0028,0x1223);
+   if( segmented ) return true;
+
+   if( !GetDocEntry(0x0028,0x1201) )
    {
       return false;
    }
