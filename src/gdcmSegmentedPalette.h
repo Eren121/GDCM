@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:46:09 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/10/03 11:59:27 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,7 +131,7 @@ namespace gdcm {
             }
             EntryType nNumCopies = *(this->_first + 1);
             typename SegmentMap::const_iterator ppSeg = ppHeadSeg;
-            while ( std::distance(ppHeadSeg, ppSeg) <nNumCopies ) {
+            while ( std::distance(ppHeadSeg, ppSeg) < nNumCopies ) {
                 assert( ppSeg != instances.end() );
                 ppSeg->second->Expand(instances, expanded);
                 ++ppSeg;
@@ -181,18 +181,19 @@ namespace gdcm {
     void ReadPaletteInto(GDCM_NAME_SPACE::File* pds, const GDCM_NAME_SPACE::TagKey& descriptor,
       const GDCM_NAME_SPACE::TagKey& segment, uint8_t* lut)
       {
-      int desc_values[3] = {};
+      unsigned int desc_values[3] = {};
       unsigned long count = 0;
       //if ( pds->findAndGetUint16Array(descriptor, desc_values, &count).good() )
       std::string desc_values_str = pds->GetEntryString(descriptor.GetGroup(), descriptor.GetElement() );
-      count = sscanf( desc_values_str.c_str(), "%d\\%d\\%d", desc_values, desc_values+1, desc_values+2 );
+      count = sscanf( desc_values_str.c_str(), "%u\\%u\\%u", desc_values, desc_values+1, desc_values+2 );
         {
         assert( count == 3 );
         unsigned int num_entries = desc_values[0];
         if ( num_entries == 0 ) {
           num_entries = 0x10000;
         }
-        int min_pixel_value = desc_values[1];
+        unsigned int min_pixel_value = desc_values[1];
+        assert( min_pixel_value == 0 ); // FIXME
         unsigned int entry_size = desc_values[2];
         assert( entry_size == 8 || entry_size == 16 );
         //DcmElement* pe = NULL;
