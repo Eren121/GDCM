@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/13 11:32:53 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/10/03 15:50:13 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,6 +39,9 @@
 #endif
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsWriter.h>
+#include <vtkPNGWriter.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkRenderWindow.h>
 #include <vtkCommand.h>
 #include <vtkRenderer.h>
 #include <vtkImageMapToColors.h>
@@ -67,11 +70,14 @@ public:
    {
       this->ImageViewer = NULL;
    }
-   virtual void Execute(vtkObject *, unsigned long event, void* )
+   virtual void Execute(vtkObject *caller, unsigned long event, void* /*callData*/ )
    {
       if ( this->ImageViewer )
       {
-         if ( event == vtkCommand::CharEvent )
+         vtkRenderWindowInteractor * rwi = vtkRenderWindowInteractor::SafeDownCast( caller );
+         char keycode = 0;
+         if( rwi ) keycode = rwi->GetKeyCode();
+         if ( event == vtkCommand::CharEvent && keycode != 's' )
          {
 #if VTK_MAJOR_VERSION >= 5
             int max = ImageViewer->GetSliceMax();
@@ -87,6 +93,16 @@ public:
             ImageViewer->GetRenderer()->ResetCameraClippingRange();
 #endif
             ImageViewer->Render();
+         }
+         else if ( keycode == 's' )
+         {
+           vtkPNGWriter * writer = vtkPNGWriter::New();
+           vtkWindowToImageFilter * w2i = vtkWindowToImageFilter::New();
+           w2i->SetInput( rwi->GetRenderWindow() );
+           writer->SetInput( w2i->GetOutput() );
+           writer->SetFileName( "snapshot.png" );
+           writer->Write();
+           //std::cerr << "Screenshort saved to snapshot.png" << std::endl;
          }
       }
    }
