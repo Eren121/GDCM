@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:31:08 $
-  Version:   $Revision: 1.124 $
+  Date:      $Date: 2007/10/03 09:35:27 $
+  Version:   $Revision: 1.125 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -199,27 +199,28 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
       LutRedDescriptor   = file->GetEntryString( 0x0028, 0x1101 );
       LutGreenDescriptor = file->GetEntryString( 0x0028, 0x1102 );
       LutBlueDescriptor  = file->GetEntryString( 0x0028, 0x1103 );
-      if( file->GetDocEntry(0x0028,0x1221) ) // bla...
+      // Is it a Segmented Palette ? Check if we find the red one:
+      if( file->GetDocEntry(0x0028,0x1221) ) // no need to check for blue & green
         {
-  GDCM_NAME_SPACE::TagKey DCM_RedPaletteColorLookupTableDescriptor (0x0028, 0x1101);
-  GDCM_NAME_SPACE::TagKey DCM_GreenPaletteColorLookupTableDescriptor (0x0028, 0x1102);
-  GDCM_NAME_SPACE::TagKey DCM_BluePaletteColorLookupTableDescriptor (0x0028, 0x1103);
+        GDCM_NAME_SPACE::TagKey DCM_RedPaletteColorLookupTableDescriptor (0x0028, 0x1101);
+        GDCM_NAME_SPACE::TagKey DCM_GreenPaletteColorLookupTableDescriptor (0x0028, 0x1102);
+        GDCM_NAME_SPACE::TagKey DCM_BluePaletteColorLookupTableDescriptor (0x0028, 0x1103);
 
-  GDCM_NAME_SPACE::TagKey DCM_SegmentedRedPaletteColorLookupTableData (0x0028, 0x1221);
-  GDCM_NAME_SPACE::TagKey DCM_SegmentedGreenPaletteColorLookupTableData (0x0028, 0x1222);
-  GDCM_NAME_SPACE::TagKey DCM_SegmentedBluePaletteColorLookupTableData (0x0028, 0x1223);
+        GDCM_NAME_SPACE::TagKey DCM_SegmentedRedPaletteColorLookupTableData (0x0028, 0x1221);
+        GDCM_NAME_SPACE::TagKey DCM_SegmentedGreenPaletteColorLookupTableData (0x0028, 0x1222);
+        GDCM_NAME_SPACE::TagKey DCM_SegmentedBluePaletteColorLookupTableData (0x0028, 0x1223);
 
 
-    LutRedData = new uint8_t[65535];
-    LutGreenData = new uint8_t[65535];
-    LutBlueData = new uint8_t[65535];
-  // TODO need to check file is indeed PALETTE COLOR:
-  ReadPaletteInto(file, DCM_RedPaletteColorLookupTableDescriptor,
-    DCM_SegmentedRedPaletteColorLookupTableData,LutRedData);
-  ReadPaletteInto(file, DCM_GreenPaletteColorLookupTableDescriptor,
-    DCM_SegmentedGreenPaletteColorLookupTableData,LutGreenData);
-  ReadPaletteInto(file, DCM_BluePaletteColorLookupTableDescriptor,
-    DCM_SegmentedBluePaletteColorLookupTableData,LutBlueData);
+        LutRedData = new uint8_t[65535*2]; // FIXME: leak
+        LutGreenData = new uint8_t[65535*2];
+        LutBlueData = new uint8_t[65535*2];
+        // TODO need to check file is indeed PALETTE COLOR:
+        ReadPaletteInto(file, DCM_RedPaletteColorLookupTableDescriptor,
+          DCM_SegmentedRedPaletteColorLookupTableData,LutRedData);
+        ReadPaletteInto(file, DCM_GreenPaletteColorLookupTableDescriptor,
+          DCM_SegmentedGreenPaletteColorLookupTableData,LutGreenData);
+        ReadPaletteInto(file, DCM_BluePaletteColorLookupTableDescriptor,
+          DCM_SegmentedBluePaletteColorLookupTableData,LutBlueData);
 
         }
       else

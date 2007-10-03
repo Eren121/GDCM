@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:31:16 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/03 09:35:27 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -216,7 +216,7 @@ namespace {
               std::vector<uint16_t> palette;
               palette.reserve(num_entries);
               ExpandPalette(segment_values, length, palette);
-              memcpy(lut, &palette[0], palette.size() );
+              memcpy(lut, &palette[0], palette.size()*2 );
 //              std::copy(palette.begin(), palette.end(), 
 //                std::ostream_iterator<uint16_t>(std::cout, "\n"));
 
