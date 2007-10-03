@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 12:02:55 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/10/03 13:18:28 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -32,6 +32,8 @@
 // * replace all dcmtk code with equivalent gdcm code
 // * Add extra parameter to ReadPaletteInto to save extracted info
 
+// MM: Over 50000 DICOM files I only found two that had a Segmented Palette LUT
+// And both were coming from a ALOKA SSD-4000 station
 #include <assert.h>
 #include <algorithm>
 #include <deque>
@@ -206,32 +208,36 @@ namespace GDCM_NAME_SPACE
         //DcmElement* pe = NULL;
         GDCM_NAME_SPACE::DataEntry* pe = NULL;
 
-        pe = pds->GetDataEntry(segment.GetGroup(), segment.GetElement() ); {
+        pe = pds->GetDataEntry(segment.GetGroup(), segment.GetElement() );
+          {
           //if ( pds->findAndGetElement(segment, pe).good() )
           unsigned long length = pe->GetLength();
-          if ( entry_size == 8 ) {
+          if ( entry_size == 8 )
+            {
             uint8_t* segment_values = NULL;
             //if ( pe->getUint8Array(segment_values).good() )
-            segment_values = (uint8_t*)pe->GetBinArea(); {
+            segment_values = (uint8_t*)pe->GetBinArea();
+              {
               std::vector<uint8_t> palette;
               palette.reserve(num_entries);
               ExpandPalette(segment_values, length, palette);
               memcpy(lut, &palette[0], palette.size() );
-            }
-          } else if ( entry_size == 16 ) {
+              }
+            } 
+          else if ( entry_size == 16 ) 
+            {
             uint16_t* segment_values = NULL;
-            segment_values = (uint16_t*)pe->GetBinArea(); {
+            segment_values = (uint16_t*)pe->GetBinArea();
+              {
               //if ( pe->getUint16Array(segment_values).good() )
               std::vector<uint16_t> palette;
               palette.reserve(num_entries);
               ExpandPalette(segment_values, length, palette);
               memcpy(lut, &palette[0], palette.size()*2 );
-//              std::copy(palette.begin(), palette.end(), 
-//                std::ostream_iterator<uint16_t>(std::cout, "\n"));
 
+              }
             }
           }
-        }
         }
       }
 } // end namespace gdcm
