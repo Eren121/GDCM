@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 12:01:27 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/10/03 12:02:55 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,7 +39,7 @@
 #include <vector>
 #include <iterator>
 
-namespace gdcm
+namespace GDCM_NAME_SPACE
 {
     // abstract class for segment.
     template <typename EntryType>
