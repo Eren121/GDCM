@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 11:59:27 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/10/03 12:01:27 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -16,7 +16,13 @@
                                                                                 
 =========================================================================*/
 
-#include <gdcm.h>
+#ifndef _GDCMSEGMENTEDPALETTE_H_
+#define _GDCMSEGMENTEDPALETTE_H_
+
+#include "gdcmFile.h"
+#include "gdcmTagKey.h"
+#include "gdcmDataEntry.h"
+
 // Ref: 
 // http://blog.goo.ne.jp/satomi_takeo/e/3643e5249b2a9650f9e10ef1c830e8b8
 // I bet the code was compiled on VS6. Make it compile on other platform:
@@ -33,7 +39,8 @@
 #include <vector>
 #include <iterator>
 
-namespace gdcm {
+namespace gdcm
+{
     // abstract class for segment.
     template <typename EntryType>
     class Segment {
@@ -227,6 +234,7 @@ namespace gdcm {
         }
         }
       }
-} // end namespace
+} // end namespace gdcm
 
 
+#endif
