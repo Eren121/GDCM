@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSA.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/12 10:49:40 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007/10/03 09:14:55 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
    {
       am->ArgMgrUsage(usage); // Display 'usage'
       delete am;
-      return 0;
+      return 1;
    }
 
    if (am->ArgMgrDefined("debug"))
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
    {
       am->ArgMgrUsage(usage);
       delete am;
-      return 0;
+      return 1;
    }  
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
