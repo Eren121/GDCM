@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:35:27 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/10/03 09:46:09 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,8 @@
 // * typedef are not inherited
 // * need to explicitely add typename keyword
 // * Uint8 / Uint16 are neither C nor C++
-// * replace all dcmtk code with identical gdcm code
+// * replace all dcmtk code with equivalent gdcm code
+// * Add extra parameter to ReadPaletteInto to save extracted info
 
 #include <assert.h>
 #include <algorithm>
@@ -32,7 +33,7 @@
 #include <vector>
 #include <iterator>
 
-namespace {
+namespace gdcm {
     // abstract class for segment.
     template <typename EntryType>
     class Segment {
