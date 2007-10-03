@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:18:25 $
-  Version:   $Revision: 1.123 $
+  Date:      $Date: 2007/10/03 09:31:08 $
+  Version:   $Revision: 1.124 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,6 +24,7 @@
 #include "gdcmDocEntry.h"
 #include "gdcmRLEFramesInfo.h"
 #include "gdcmJPEGFragmentsInfo.h"
+#include "gdcmSegmentedPalette.h"
 
 #include <fstream>
 #include <stdio.h> //for sscanf
@@ -198,47 +199,73 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
       LutRedDescriptor   = file->GetEntryString( 0x0028, 0x1101 );
       LutGreenDescriptor = file->GetEntryString( 0x0028, 0x1102 );
       LutBlueDescriptor  = file->GetEntryString( 0x0028, 0x1103 );
-   
-      // FIXME : The following comment is probabely meaningless, since LUT are *always*
-      // loaded at parsing time, whatever their length is.
-         
-      // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
-      // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
-      // Document::Document() ], the loading of the value (content) of a
-      // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
-      // loaded). Hence, we first try to obtain the LUTs data from the file
-      // and when this fails we read the LUTs data directly from disk.
-      // \todo Reading a [Bin|Val]Entry directly from disk is a kludge.
-      //       We should NOT bypass the [Bin|Val]Entry class. Instead
-      //       an access to an UNLOADED content of a [Bin|Val]Entry occurence
-      //       (e.g. DataEntry::GetBinArea()) should force disk access from
-      //       within the [Bin|Val]Entry class itself. The only problem
-      //       is that the [Bin|Val]Entry is unaware of the FILE* is was
-      //       parsed from. Fix that. FIXME.
-   
-      // //// Red round
-      file->LoadEntryBinArea(0x0028, 0x1201);
-      LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
-      if ( ! LutRedData )
-      {
-         gdcmWarningMacro("Unable to read Red Palette Color Lookup Table data");
-      }
+      if( file->GetDocEntry(0x0028,0x1221) ) // bla...
+        {
+  GDCM_NAME_SPACE::TagKey DCM_RedPaletteColorLookupTableDescriptor (0x0028, 0x1101);
+  GDCM_NAME_SPACE::TagKey DCM_GreenPaletteColorLookupTableDescriptor (0x0028, 0x1102);
+  GDCM_NAME_SPACE::TagKey DCM_BluePaletteColorLookupTableDescriptor (0x0028, 0x1103);
 
-      // //// Green round:
-      file->LoadEntryBinArea(0x0028, 0x1202);
-      LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
-      if ( ! LutGreenData)
-      {
-         gdcmWarningMacro("Unable to read Green Palette Color Lookup Table data");
-      }
+  GDCM_NAME_SPACE::TagKey DCM_SegmentedRedPaletteColorLookupTableData (0x0028, 0x1221);
+  GDCM_NAME_SPACE::TagKey DCM_SegmentedGreenPaletteColorLookupTableData (0x0028, 0x1222);
+  GDCM_NAME_SPACE::TagKey DCM_SegmentedBluePaletteColorLookupTableData (0x0028, 0x1223);
 
-      // //// Blue round:
-      file->LoadEntryBinArea(0x0028, 0x1203);
-      LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
-      if ( ! LutBlueData )
-      {
-         gdcmWarningMacro("Unable to read Blue Palette Color Lookup Table data");
-      }
+
+    LutRedData = new uint8_t[65535];
+    LutGreenData = new uint8_t[65535];
+    LutBlueData = new uint8_t[65535];
+  // TODO need to check file is indeed PALETTE COLOR:
+  ReadPaletteInto(file, DCM_RedPaletteColorLookupTableDescriptor,
+    DCM_SegmentedRedPaletteColorLookupTableData,LutRedData);
+  ReadPaletteInto(file, DCM_GreenPaletteColorLookupTableDescriptor,
+    DCM_SegmentedGreenPaletteColorLookupTableData,LutGreenData);
+  ReadPaletteInto(file, DCM_BluePaletteColorLookupTableDescriptor,
+    DCM_SegmentedBluePaletteColorLookupTableData,LutBlueData);
+
+        }
+      else
+        {
+
+        // FIXME : The following comment is probabely meaningless, since LUT are *always*
+        // loaded at parsing time, whatever their length is.
+
+        // Depending on the value of Document::MAX_SIZE_LOAD_ELEMENT_VALUE
+        // [ refer to invocation of Document::SetMaxSizeLoadEntry() in
+        // Document::Document() ], the loading of the value (content) of a
+        // [Bin|Val]Entry occurence migth have been hindered (read simply NOT
+        // loaded). Hence, we first try to obtain the LUTs data from the file
+        // and when this fails we read the LUTs data directly from disk.
+        // \TODO Reading a [Bin|Val]Entry directly from disk is a kludge.
+        //       We should NOT bypass the [Bin|Val]Entry class. Instead
+        //       an access to an UNLOADED content of a [Bin|Val]Entry occurence
+        //       (e.g. DataEntry::GetBinArea()) should force disk access from
+        //       within the [Bin|Val]Entry class itself. The only problem
+        //       is that the [Bin|Val]Entry is unaware of the FILE* is was
+        //       parsed from. Fix that. FIXME.
+
+        // //// Red round
+        file->LoadEntryBinArea(0x0028, 0x1201);
+        LutRedData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1201 );
+        if ( ! LutRedData )
+          {
+          gdcmWarningMacro("Unable to read Red Palette Color Lookup Table data");
+          }
+
+        // //// Green round:
+        file->LoadEntryBinArea(0x0028, 0x1202);
+        LutGreenData = (uint8_t*)file->GetEntryBinArea(0x0028, 0x1202 );
+        if ( ! LutGreenData)
+          {
+          gdcmWarningMacro("Unable to read Green Palette Color Lookup Table data");
+          }
+
+        // //// Blue round:
+        file->LoadEntryBinArea(0x0028, 0x1203);
+        LutBlueData = (uint8_t*)file->GetEntryBinArea( 0x0028, 0x1203 );
+        if ( ! LutBlueData )
+          {
+          gdcmWarningMacro("Unable to read Blue Palette Color Lookup Table data");
+          }
+        }
    }
    FileInternal = file;   
    FH = fileHelper;
@@ -381,9 +408,9 @@ void PixelReadConvert::Squeeze()
       delete [] Raw;
    Raw = 0;
 
-   if ( LutRGBA )
-      delete [] LutRGBA;
-   LutRGBA = 0;
+   //if ( LutRGBA )
+   //   delete [] LutRGBA;
+   //LutRGBA = 0;
 }
 
 /**

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:22:45 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/10/03 09:31:16 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -177,8 +177,8 @@ namespace {
         }
     }
 
-    void ReadPalette(GDCM_NAME_SPACE::File* pds, const GDCM_NAME_SPACE::TagKey& descriptor,
-      const GDCM_NAME_SPACE::TagKey& segment)
+    void ReadPaletteInto(GDCM_NAME_SPACE::File* pds, const GDCM_NAME_SPACE::TagKey& descriptor,
+      const GDCM_NAME_SPACE::TagKey& segment, uint8_t* lut)
       {
       int desc_values[3] = {};
       unsigned long count = 0;
@@ -207,6 +207,7 @@ namespace {
               std::vector<uint8_t> palette;
               palette.reserve(num_entries);
               ExpandPalette(segment_values, length, palette);
+              memcpy(lut, &palette[0], palette.size() );
             }
           } else if ( entry_size == 16 ) {
             uint16_t* segment_values = NULL;
@@ -215,6 +216,7 @@ namespace {
               std::vector<uint16_t> palette;
               palette.reserve(num_entries);
               ExpandPalette(segment_values, length, palette);
+              memcpy(lut, &palette[0], palette.size() );
 //              std::copy(palette.begin(), palette.end(), 
 //                std::ostream_iterator<uint16_t>(std::cout, "\n"));
 
