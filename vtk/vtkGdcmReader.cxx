@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 16:21:50 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2007/10/03 15:49:51 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.92 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.93 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -335,14 +335,12 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 //}                           // end For VTK5.0
 
    data->AllocateScalars();  // For VTK5.0
+#if (VTK_MAJOR_VERSION >= 5)
    if (this->UpdateExtentIsEmpty(output))
    {
       return;
    }
-   
-//void vtkGdcmReader::BuildData(vtkDataObject *output)  // For VTK5.0
-//{
-//   vtkImageData *data = this->AllocateOutputData(output);  // end For VTK5.0
+#endif
 
    data->GetPointData()->GetScalars()->SetName("DicomImage-Volume");
 
@@ -849,7 +847,7 @@ void vtkGdcmReader::LoadImageInMemory(
       this->LookupTable->SetRange(0,255);
       vtkDataSetAttributes *a = this->GetOutput()->GetPointData();
       a->GetScalars()->SetLookupTable(this->LookupTable);
-      free(lut);
+      delete[] lut;
    }
    else
    {
