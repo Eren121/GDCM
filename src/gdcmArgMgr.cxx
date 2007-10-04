@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 11:03:53 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2007/10/04 17:50:42 $
+  Version:   $Revision: 1.26 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ namespace GDCM_NAME_SPACE
  * @param argv  pointers array on the arguments passed to main()  
  */
  ArgMgr::ArgMgr(int argc, char **argv)
- : ArgUsed(NULL), ArgLab(NULL), ArgStr(NULL), ArgCount(0), Appel(NULL)
+ : ArgParamOut (NULL), ArgUsed(NULL), ArgLab(NULL), ArgStr(NULL), ArgCount(0), Appel(NULL)
  {
    int i;
    int nblettre;   

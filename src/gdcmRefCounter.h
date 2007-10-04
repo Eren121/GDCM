@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmRefCounter.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/10/04 17:50:42 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,7 +63,7 @@ public:
 
 protected:
    /// Constructor
-   RefCounter() { RefCount = 1; }
+   RefCounter() : RefCount(1) { }
    /// Destructor
    virtual ~RefCounter() {}
 

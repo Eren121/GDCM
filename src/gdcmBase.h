@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmBase.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/10/04 17:50:42 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ class GDCM_EXPORT Base
 {
 public:
    /// \brief Constructor
-   Base( ) { PrintLevel = 0; }
+   Base( ) : PrintLevel(0) { }
    /// \brief Canonical Destructor   
    virtual ~Base() {}
    /// \brief Printer
