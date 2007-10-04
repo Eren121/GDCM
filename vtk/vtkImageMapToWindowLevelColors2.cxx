@@ -22,7 +22,7 @@
 #include "vtkScalarsToColors.h"
 #include "vtkPointData.h"
 
-vtkCxxRevisionMacro(vtkImageMapToWindowLevelColors2, "$Revision: 1.2 $")
+vtkCxxRevisionMacro(vtkImageMapToWindowLevelColors2, "$Revision: 1.3 $")
 vtkStandardNewMacro(vtkImageMapToWindowLevelColors2)
 
 // Constructor sets default values
@@ -376,13 +376,13 @@ void vtkImageMapToWindowLevelColors2Execute(
           switch (outputFormat)
             {
             case VTK_RGBA:
-              vtkClampHelper1<T>(iptr+1,optr+1,lower,upper,lower_val,upper_val,shift,scale);
-              vtkClampHelper1<T>(iptr+2,optr+2,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper1<T>(iptr+(1%numberOfComponents),optr+1,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper1<T>(iptr+(2%numberOfComponents),optr+2,lower,upper,lower_val,upper_val,shift,scale);
               *(optr+3) = 255;
               break;
             case VTK_RGB:
-              vtkClampHelper1<T>(iptr+1,optr+1,lower,upper,lower_val,upper_val,shift,scale);
-              vtkClampHelper1<T>(iptr+2,optr+2,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper1<T>(iptr+(1%numberOfComponents),optr+1,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper1<T>(iptr+(2%numberOfComponents),optr+2,lower,upper,lower_val,upper_val,shift,scale);
               break;
             case VTK_LUMINANCE_ALPHA:
               *(optr+1) = 255;
@@ -396,17 +396,21 @@ void vtkImageMapToWindowLevelColors2Execute(
         {
         for (idxX = 0; idxX < extX; idxX++)
           {
+          // We want to shift to the right position depending on the numberOfComponents from input
+          // if grayscale we should stay at the same position, otherwise need to shift to r,g,b
+          // (0%numberOfComponents) == 0 ...
+          // (1%numberOfComponents) == 0 or 1
           vtkClampHelper2<T>(iptr,optr,lower,upper,lower_val,upper_val,shift,scale);
           switch (outputFormat)
             {
             case VTK_RGBA:
-              vtkClampHelper2<T>(iptr+1,optr+1,lower,upper,lower_val,upper_val,shift,scale);
-              vtkClampHelper2<T>(iptr+2,optr+2,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper2<T>(iptr+(1%numberOfComponents),optr+1,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper2<T>(iptr+(2%numberOfComponents),optr+2,lower,upper,lower_val,upper_val,shift,scale);
               *(optr+3) = 255;
               break;
             case VTK_RGB:
-              vtkClampHelper2<T>(iptr+1,optr+1,lower,upper,lower_val,upper_val,shift,scale);
-              vtkClampHelper2<T>(iptr+2,optr+2,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper2<T>(iptr+(1%numberOfComponents),optr+1,lower,upper,lower_val,upper_val,shift,scale);
+              vtkClampHelper2<T>(iptr+(2%numberOfComponents),optr+2,lower,upper,lower_val,upper_val,shift,scale);
               break;
             case VTK_LUMINANCE_ALPHA:
               *(optr+1) = 255;
