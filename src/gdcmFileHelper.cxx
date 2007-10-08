@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/10/01 09:28:57 $
-  Version:   $Revision: 1.131 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.132 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -727,7 +727,6 @@ bool FileHelper::Write(std::string const &fileName)
 { 
    CheckMandatoryElements(); //called once, here !
    
-   bool flag = false;
    switch(WriteType)
    {
       case ImplicitVR:

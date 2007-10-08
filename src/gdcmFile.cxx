@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:32:10 $
-  Version:   $Revision: 1.339 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.340 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2012,7 +2012,7 @@ bool File::Write(std::string fileName, FileType writetype)
          InsertEntryString(s_lgPix,GrPixel, 0x0000, "UL");
       }
    }
-   Document::WriteContent(fp, writetype);
+   Document::WriteContent(fp, writetype,false,false);
 
    fp->close();
    delete fp;

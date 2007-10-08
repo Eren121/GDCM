@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/25 15:21:57 $
-  Version:   $Revision: 1.372 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.373 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -693,7 +693,7 @@ bool Document::CloseFile()
  * @param filetype Type of the File to be written 
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
-void Document::WriteContent(std::ofstream *fp, FileType filetype)
+void Document::WriteContent(std::ofstream *fp, FileType filetype, bool, bool)
 {
    // Skip if user wants to write an ACR-NEMA file
 

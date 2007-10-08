@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:16:02 $
-  Version:   $Revision: 1.147 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.148 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -83,7 +83,7 @@ public:
 
    std::ifstream *OpenFile();
    bool CloseFile();
-   void WriteContent( std::ofstream *fp, FileType type );
+   void WriteContent( std::ofstream *fp, FileType type, bool insideMetaElements, bool insideSequence );
 
 // Data entries
    virtual void LoadEntryBinArea(uint16_t group, uint16_t elem);

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 13:18:28 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,10 +41,17 @@
 #include <vector>
 #include <iterator>
 
+// Hack for VS6
+#if defined(_MSC_VER) && (_MSC_VER < 1310)
+#define GDCM_TYPENAME class
+#else
+#define GDCM_TYPENAME typename
+#endif
+
 namespace GDCM_NAME_SPACE
 {
     // abstract class for segment.
-    template <typename EntryType>
+    template <GDCM_TYPENAME EntryType>
     class Segment {
     public:
         typedef std::map<const EntryType*, const Segment*> SegmentMap;
@@ -69,7 +76,7 @@ namespace GDCM_NAME_SPACE
     };
 
     // discrete segment (opcode = 0)
-    template <typename EntryType>
+    template <GDCM_TYPENAME EntryType>
     class DiscreteSegment : public Segment<EntryType> {
     public:
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
@@ -84,7 +91,7 @@ namespace GDCM_NAME_SPACE
     };
 
     // linear segment (opcode = 1)
-    template <typename EntryType>
+    template <GDCM_TYPENAME EntryType>
     class LinearSegment : public Segment<EntryType> {
     public:
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
@@ -113,7 +120,7 @@ namespace GDCM_NAME_SPACE
     };
 
     // indirect segment (opcode = 2)
-    template <typename EntryType>
+    template <GDCM_TYPENAME EntryType>
     class IndirectSegment : public Segment<EntryType> {
     public:
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
@@ -149,7 +156,7 @@ namespace GDCM_NAME_SPACE
         }
     };
 
-    template <typename EntryType>
+    template <GDCM_TYPENAME EntryType>
     void ExpandPalette(const EntryType* raw_values, uint32_t length,
         std::vector<EntryType>& palette)
     {
@@ -242,5 +249,8 @@ namespace GDCM_NAME_SPACE
       }
 } // end namespace gdcm
 
+
+// do not pollute namespace:
+#undef GDCM_TYPENAME
 
 #endif

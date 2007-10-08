@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDirMeta.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:48 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,7 +57,7 @@ DicomDirMeta::~DicomDirMeta()
  * @return
  */ 
 void DicomDirMeta::WriteContent(std::ofstream *fp, FileType filetype,
-                                 bool dummy, bool dummy2)
+                                 bool , bool )
 {
    // 'File Meta Information Version'
    

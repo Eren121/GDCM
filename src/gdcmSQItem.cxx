@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSQItem.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2007/10/08 15:20:17 $
+  Version:   $Revision: 1.88 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ SQItem::~SQItem()
  * @param filetype type of the file (ACR, ImplicitVR, ExplicitVR, ...)
  */
 void SQItem::WriteContent(std::ofstream *fp, FileType filetype, 
-                               bool insideMetaElements, bool dummy2)
+                               bool , bool )
 {
    int j;
    uint16_t item[4] = { 0xfffe, 0xe000, 0xffff, 0xffff };
