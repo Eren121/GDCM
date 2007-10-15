@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 10:54:23 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/15 13:55:35 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,6 +38,7 @@ void LoadPeakStrain(std::ifstream &from, std::string imageName);
 void LoadStrain(std::ifstream &from, std::string imageName);
 void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::string dcmImageName);
 
+int verbose;  
 
 int main(int argc, char *argv[])
 {
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
 
-   int verbose  = am->ArgMgrDefined("verbose");      
+   verbose  = am->ArgMgrDefined("verbose");      
 
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -248,7 +249,8 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
       
    char c;
    int i;   
-   for (i=0; i<NP; i++) {   
+   for (i=0; i<NP; i++) {
+      
       from >> X[i];
       for (;;) {
         if (!from.get(c))
@@ -257,7 +259,8 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
           from.putback(c);
           break;
         }
-     }  
+     }
+  
       from >> Y[i];    
       for (;;) {
         if (!from.get(c))
@@ -267,13 +270,15 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
           break;
         }
      }        
-      from >> Z[i];              
-   }
+      from >> Z[i];
+                   
+   } // end for i<NP
 
    std::cout << "--------------- Ecc_strain ------------------" << std::endl;
    float *ecc_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> ecc_strain[i]; 
+       if (verbose)
        std::cout <<  ecc_strain[i] <<  std::endl;
    }
 
@@ -281,6 +286,7 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    float *err_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> err_strain[i]; 
+       if (verbose)
        std::cout <<  err_strain[i] <<  std::endl;
    }
    
@@ -288,6 +294,7 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    float *e11_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> e11_strain[i]; 
+       if (verbose)
        std::cout <<  e11_strain[i] <<  std::endl;
    }  
    
@@ -295,6 +302,7 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    float *e22_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> e22_strain[i]; 
+       if (verbose)
        std::cout <<  e22_strain[i] <<  std::endl;
    }    
  
@@ -516,7 +524,8 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    std::cout << "--------------- Ecc_strain ------------------" << std::endl;
    float *ecc_strain = new float[NP];
    for (i=0; i<NP; i++) {
-       from >> ecc_strain[i]; 
+       from >> ecc_strain[i];
+       if (verbose)
        std::cout <<  ecc_strain[i] <<  std::endl;
    }
 
@@ -524,6 +533,7 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    float *err_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> err_strain[i]; 
+       if (verbose)
        std::cout <<  err_strain[i] <<  std::endl;
    }
    
@@ -531,6 +541,7 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    float *e11_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> e11_strain[i]; 
+       if (verbose)
        std::cout <<  e11_strain[i] <<  std::endl;
    }  
    
@@ -538,6 +549,7 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
    float *e22_strain = new float[NP];
    for (i=0; i<NP; i++) {
        from >> e22_strain[i]; 
+       if (verbose)
        std::cout <<  e22_strain[i] <<  std::endl;
    }    
 
@@ -567,9 +579,10 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
 
 void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::string dcmImageName)
 {
-   float minX = 999., minY = 999., minZ = 999.;
+   float minX = 99999., minY = 99999., minZ = 99999.;
    float maxX = 0., maxY = 0., maxZ = 0.;
    int i;
+   
    for (i=0; i<NP; i++) {
       // std::cout << X[i] << " " << Y[i] << " " << Z[i] <<  std::endl;
       if(maxX < X[i])
@@ -585,47 +598,48 @@ void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::st
          minY = Y[i];
       if(minZ > Z[i])
          minZ = Z[i];
- 
    }   
-      std::cout << "Min X,Y,Z " << minX << " " << minY << " " << minZ <<  std::endl;
-      std::cout << "Max X,Y,Z " << maxX << " " << maxY << " " << maxZ <<  std::endl;
-      std::cout << "Size X,Y,Z " << maxX-minX << " " << maxY-minY << " " << maxZ-minZ <<  std::endl;      
+   std::cout << "Min X,Y,Z " << minX << " " << minY << " " << minZ <<  std::endl;
+   std::cout << "Max X,Y,Z " << maxX << " " << maxY << " " << maxZ <<  std::endl;
+   std::cout << "Size X,Y,Z " << maxX-minX << " " << maxY-minY << " " << maxZ-minZ <<  std::endl;      
 
-
-    uint16_t *img = new uint16_t[int(maxX*maxY)];
-    
-    for(int i3=0;i3<int(maxX*maxY);i3++)
-       img[i3] = 0; 
+   uint16_t *img = new uint16_t[int(maxX)*int(maxY)];
+   
+   // Set whole image to 0 
+   for(int i3=0;i3<int(maxX)*int(maxY);i3++)
+      img[i3] = 0; 
      
-    for(int i2=0; i2<NP; i2++) {
-    img[ int(maxX -(X[i2]-1))+  int((maxY -Y[i2])* maxX) ] = int(tabVal[i2]*100);
-    }       
+   for(int i2=0; i2<NP; i2++) {
+      img[ int(maxX) -int(X[i2]-1) +  (int(maxY) -int(Y[i2]))* int(maxX) ] = int(tabVal[i2]*100);
+   }       
   
  // GDCM_NAME_SPACE::Debug::DebugOn();
   
-       std::ostringstream str; 
-       GDCM_NAME_SPACE::File *file;
-       file = GDCM_NAME_SPACE::File::New();       
+   std::ostringstream str;
+    
+   GDCM_NAME_SPACE::File *file;
+   file = GDCM_NAME_SPACE::File::New();       
               
   // Set the image size
-        str.str("");
-        str << (int)maxX;
-        file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
-        str.str("");
-        str << (int)maxY;
-        file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
+   str.str(""); 
+   str << (int)(maxX);
+   file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
+   str.str("");
+   str << (int)(maxY);
+   file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
+   
   // Set the pixel type
   //      16; //8, 16, 32
-        file->InsertEntryString("16",0x0028,0x0100,"US"); // Bits Allocated
-        str.str("");
-        str << 16; // may be 12 or 16 if componentSize =16
-        file->InsertEntryString("16",0x0028,0x0101,"US"); // Bits Stored
-        file->InsertEntryString("15",0x0028,0x0102,"US"); // High Bit
+   file->InsertEntryString("16",0x0028,0x0100,"US"); // Bits Allocated
+   str.str("");
+   str << 16; // may be 12 or 16 if componentSize =16
+   file->InsertEntryString("16",0x0028,0x0101,"US"); // Bits Stored
+   file->InsertEntryString("15",0x0028,0x0102,"US"); // High Bit
 
   // Set the pixel representation // 0/1 , 0=unsigned
-        file->InsertEntryString("1",0x0028,0x0103, "US"); // Pixel Representation
+   file->InsertEntryString("1",0x0028,0x0103, "US"); // Pixel Representation
   // Set the samples per pixel // 1:Grey level, 3:RGB
-        file->InsertEntryString("1",0x0028,0x0002, "US"); // Samples per Pixel
+   file->InsertEntryString("1",0x0028,0x0002, "US"); // Samples per Pixel
 
 /*
   // Set Rescale Intercept
@@ -639,18 +653,19 @@ void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::st
         file->InsertEntryString(str.str(),0x0028,0x1053,"DS");
 */
     
-    GDCM_NAME_SPACE::FileHelper *fileH;
-    fileH = GDCM_NAME_SPACE::FileHelper::New(file);
-    // cast is just to avoid warnings (*no* conversion)
-    fileH->SetImageData((uint8_t *)img,int(maxX*maxY)*sizeof(uint16_t));
-    fileH->SetWriteModeToRaw(); 
-    fileH->SetWriteTypeToDcmExplVR();
+   GDCM_NAME_SPACE::FileHelper *fileH;
+   fileH = GDCM_NAME_SPACE::FileHelper::New(file);
+   // cast is just to avoid warnings (*no* conversion)
+   //fileH->SetImageData((uint8_t *)img,int(maxX*maxY)*sizeof(uint16_t)); // troubles when maxX, mayY are *actually* float!
+   fileH->SetImageData((uint8_t *)img,int(maxX)*int(maxY)*sizeof(uint16_t));
+   fileH->SetWriteModeToRaw(); 
+   fileH->SetWriteTypeToDcmExplVR();
         
-    if( !fileH->Write(dcmImageName))
-       std::cout << "Failed for [" << dcmImageName << "]\n"
-                 << "           File is unwrittable" << std::endl;
+   if( !fileH->Write(dcmImageName))
+      std::cout << "Failed for [" << dcmImageName << "]\n"
+                << "           File is unwrittable" << std::endl;
 
-    file->Print();
+   //file->Print();
            
    delete img;
    file->Delete();
