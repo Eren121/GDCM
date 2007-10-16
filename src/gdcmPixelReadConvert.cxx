@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 09:35:27 $
-  Version:   $Revision: 1.125 $
+  Date:      $Date: 2007/10/16 10:11:06 $
+  Version:   $Revision: 1.126 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ bool gdcm_read_JPEG2000_file (void* raw,
 //-----------------------------------------------------------------------------
 // Constructor / Destructor
 /// Constructor
-PixelReadConvert::PixelReadConvert() 
+PixelReadConvert::PixelReadConvert()
 {
    RGB          = 0;
    RGBSize      = 0;
@@ -171,7 +171,8 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
             if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
             if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
             if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
-            // DeflatedExplicitVRLittleEndian is considered as 'Unexpected' (we don't know yet how to process !)
+            // DeflatedExplicitVRLittleEndian is considered as 'Unexpected' 
+            // (we don't know yet how to process !)
             gdcmWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
             break;
          } 
@@ -195,7 +196,43 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
    HasLUT = file->HasLUT();
    if ( HasLUT )
    {
-      // Just in case some access to a File element requires disk access.
+/*   
+ C.7.6.3.1.5
+   The three values of Palette Color Lookup Table Descriptor (0028,1101-1103)
+   describe the format of the Lookup Table Data in the corresponding
+   Data Element (0028,1201-1203) or (0028,1221-1223).
+    
+   The first value is the number of entries in the lookup table. 
+   When the number of table entries is equal to 2**16 then this value shall be 0.
+
+   The second value is the first stored pixel value mapped. 
+   This pixel value is mapped to the first entry in the Lookup Table Data. 
+   All image pixel values less than the first entry value mapped are also 
+   mapped to the first entry in the Lookup Table Data. 
+   An image pixel value one greater than the first entry value mapped is 
+   mapped to the second entry in the Lookup Table Data. 
+   Subsequent image pixel values are mapped to the subsequent entries in 
+   the Lookup Table Data up to an image pixel value equal to number of 
+   entries + first entry value mapped - 1 which is mapped to the last entry 
+   in the Lookup Table Data. 
+   Image pixel values greater than or equal to number of entries + first entry
+   value mapped are also mapped to the last entry in the Lookup Table Data.
+
+   The third value specifies the number of bits for each entry in the Lookup 
+   Table Data. It shall take the value of 8 or 16. 
+   The LUT Data shall be stored in a format equivalent to 8 or 16 bits 
+   allocated where the high bit is equal to bits allocated-1.
+
+   When the Palette Color Lookup Table Descriptor (0028,1101-1103) are used as
+   part of the Palette Color Lookup Table Module, the third value shall be 
+   equal to 16.
+
+    Note: A value of 16 indicates the Lookup Table Data will range from (0,0,0)
+    minimum intensity to (65535,65535,65535) maximum intensity. 
+
+*/ 
+
+     // Just in case some access to a File element requires disk access.
       LutRedDescriptor   = file->GetEntryString( 0x0028, 0x1101 );
       LutGreenDescriptor = file->GetEntryString( 0x0028, 0x1102 );
       LutBlueDescriptor  = file->GetEntryString( 0x0028, 0x1103 );
