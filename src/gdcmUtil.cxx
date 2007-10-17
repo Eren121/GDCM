@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/01 09:25:06 $
-  Version:   $Revision: 1.188 $
+  Date:      $Date: 2007/10/17 08:57:55 $
+  Version:   $Revision: 1.189 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,9 +103,15 @@ std::string Util::RootUID        = GDCM_UID;
  * value 0x0001 encoded as a little endian 16 bit short value, 
  * which would be the other way around...
  */
-const uint16_t Util::FMIV = 0x0100;
-uint8_t *Util::FileMetaInformationVersion = (uint8_t *)&FMIV;
-std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
+
+#if defined(GDCM_WORDS_BIGENDIAN) || defined(GDCM_FORCE_BIGENDIAN_EMULATION)
+   const uint16_t Util::FMIV = 0x0001;
+#else
+   const uint16_t Util::FMIV = 0x0100;
+#endif   
+   uint8_t *Util::FileMetaInformationVersion = (uint8_t *)&FMIV;
+
+   std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
 
 //-------------------------------------------------------------------------
 // Public
@@ -1269,7 +1275,7 @@ void Util::hfpswap(double *a, double *b)
   ghost@aladdin.com
  */
 
-/* $Id: gdcmUtil.cxx,v 1.188 2007/10/01 09:25:06 jpr Exp $ */
+/* $Id: gdcmUtil.cxx,v 1.189 2007/10/17 08:57:55 jpr Exp $ */
 
 /*
   Independent implementation of MD5 (RFC 1321).
