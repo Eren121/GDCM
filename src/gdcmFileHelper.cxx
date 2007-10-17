@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/10/17 10:03:59 $
-  Version:   $Revision: 1.133 $
+  Date:      $Date: 2007/10/17 12:14:02 $
+  Version:   $Revision: 1.134 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1504,9 +1504,16 @@ void FileHelper::CheckMandatoryElements()
 
    // --------------------- For DataSet ---------------------
 
-   /// \todo check that 0018|0015 [CS] [Body Part Examined] value is UPPER CASE
-   ///      (avoid dciodvfy to complain!)
-   
+   // check whether 0018|0015 [CS] [Body Part Examined] value is UPPER CASE
+   //      (avoid dciodvfy to complain!)
+   DataEntry *e_0018_0015 = FileInternal->GetDataEntry(0x0018, 0x0015);  
+   if ( e_0018_0015)
+   {
+      std::string bodyPartExamined = e_0018_0015->GetString();
+      std::transform(bodyPartExamined.begin(), bodyPartExamined.end(), bodyPartExamined.begin(), 
+                    (int(*)(int)) toupper);
+      CopyMandatoryEntry(0x0018,0x0015,bodyPartExamined,"CS");       
+   }
 
    if ( ContentType != USER_OWN_IMAGE) // when it's not a user made image
    { 
