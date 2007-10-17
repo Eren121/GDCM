@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/10/08 15:20:17 $
-  Version:   $Revision: 1.132 $
+  Date:      $Date: 2007/10/17 10:03:59 $
+  Version:   $Revision: 1.133 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1504,6 +1504,10 @@ void FileHelper::CheckMandatoryElements()
 
    // --------------------- For DataSet ---------------------
 
+   /// \todo check that 0018|0015 [CS] [Body Part Examined] value is UPPER CASE
+   ///      (avoid dciodvfy to complain!)
+   
+
    if ( ContentType != USER_OWN_IMAGE) // when it's not a user made image
    { 
    // If 'SOP Class UID' and 'SOP Instance UID' exist ('true DICOM' image)
@@ -1514,36 +1518,52 @@ void FileHelper::CheckMandatoryElements()
       DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
       if ( e_0008_0016 && e_0008_0018)
       {
-      // Create 'Source Image Sequence' SeqEntry
-      SeqEntry *sis = SeqEntry::New (0x0008, 0x2112);
-      SQItem *sqi = SQItem::New(1);
+         // Create 'Source Image Sequence' SeqEntry
+         SeqEntry *sis = SeqEntry::New (0x0008, 0x2112);
+         SQItem *sqi = SQItem::New(1);
       
-      // create 'Referenced SOP Class UID' from 'SOP Class UID'
+         // create 'Referenced SOP Class UID' from 'SOP Class UID'
 
-      DataEntry *e_0008_1150 = DataEntry::New(0x0008, 0x1150, "UI");
-      e_0008_1150->SetString( e_0008_0016->GetString());
-      sqi->AddEntry(e_0008_1150);
-      e_0008_1150->Delete();
+         DataEntry *e_0008_1150 = DataEntry::New(0x0008, 0x1150, "UI");
+         e_0008_1150->SetString( e_0008_0016->GetString());
+         sqi->AddEntry(e_0008_1150);
+         e_0008_1150->Delete();
       
-      // create 'Referenced SOP Instance UID' from 'SOP Instance UID'
-      DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
+         // create 'Referenced SOP Instance UID' from 'SOP Instance UID'
+         DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
          
-      DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI"); 
-      e_0008_1155->SetString( e_0008_0018->GetString());
-      sqi->AddEntry(e_0008_1155);
-      e_0008_1155->Delete();
+         DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI"); 
+         e_0008_1155->SetString( e_0008_0018->GetString());
+         sqi->AddEntry(e_0008_1155);
+         e_0008_1155->Delete();
       
-      sis->AddSQItem(sqi,1);
-      sqi->Delete();
+         sis->AddSQItem(sqi,1);
+         sqi->Delete();
 
-      // temporarily replaces any previous 'Source Image Sequence' 
-      Archive->Push(sis);
-      sis->Delete();
-      // FIXME : is 'Image Type' *really* depending on the presence of 'SOP Class UID'?
-       if ( ContentType == FILTERED_IMAGE)      
-      // the user *knows* he just modified the pixels
-      // the image is no longer an 'Original' one
-         CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY","CS");    
+         // temporarily replaces any previous 'Source Image Sequence' 
+         Archive->Push(sis);
+         sis->Delete();
+         // FIXME : is 'Image Type' *really* depending on the presence of 'SOP Class UID'?
+         
+         if ( ContentType == FILTERED_IMAGE) // the user *knows* he just modified the pixels
+         { 
+            DataEntry *e_0008_0008 = FileInternal->GetDataEntry(0x0008, 0x0008);  
+            if ( e_0008_0008)
+            {
+               std::string imageType = e_0008_0008->GetString();
+               std::string::size_type p = imageType.find("ORIGINAL");
+               if (p == 0) // image is ORIGINAL one
+               {            
+                 // the image is no longer an 'Original' one
+                 CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY","CS");
+               }
+               // if Image Type was not ORIGINAL\..., we keep it.
+             }
+             else // 0008_0008 was missing, wee add it.
+             {
+                 CopyMandatoryEntry(0x0008,0x0008,"DERIVED\\PRIMARY","CS");             
+             }  
+         }    
       }
    }
       
