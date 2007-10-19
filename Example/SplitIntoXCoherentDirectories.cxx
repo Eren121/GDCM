@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/01 09:40:32 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/10/19 11:53:42 $
+  Version:   $Revision: 1.2 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
       }
 
       f = GDCM_NAME_SPACE::File::New();
-      f->SetLoadMode(loadMode);   
+      f->SetLoadMode(loadMode);
       f->SetMaxSizeLoadEntry(maxSize); 
       f->SetFileName( *it );
       f->Load();
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
    }
 
    std::string systemCommand;
-   std::string filenameout;   
+   std::string filenameout;
    if (write || copy) { 
       if (verbose)
          std::cout << "Check for output directory :[" << dirNameout << "]."
@@ -206,12 +206,11 @@ int main(int argc, char *argv[])
       else
       {
          if (verbose)
-            std::cout << "Output Directory [" << dirNameout 
+            std::cout << "Output Directory [" << dirNameout
                       << "] already exists; Used as is."
                       << std::endl;
-      }      
-   }
-   
+      }
+   } 
       // --> End of checking supposed-to-be-directory names
 
    int nbFiles;
@@ -252,7 +251,7 @@ int main(int argc, char *argv[])
                            // Why not ? Just an example, for testing!
       {
           // Just not to make too many modif in the code
-          serieUID = "aaaa"; //s->GetCurrentSerieUIDFileSetUID();
+          serieUID = "SingleSerie"; //s->GetCurrentSerieUIDFileSetUID();
           GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
  
           // --- for write
@@ -280,6 +279,9 @@ int main(int argc, char *argv[])
                    << serieUID
                    << "]  " << nbFiles << " long" << std::endl;
          std::cout << "-----------------------------------" << std::endl;
+ 
+GDCM_NAME_SPACE::Debug::DebugOn(); 
+ 
   
          if (ori) 
             xcm = s->SplitOnOrientation(l);
@@ -368,6 +370,7 @@ int main(int argc, char *argv[])
                      std::cout << "Fail to write :[" << filenameout << "]"
                                << std::endl;
                   }
+                  fh->Delete();
                } 
                else if (copy)
                {
@@ -376,7 +379,6 @@ int main(int argc, char *argv[])
                } 
                if (verbose)
                      std::cout << "3 " << systemCommand << std::endl;
-               fh->Delete();
             } 
 
             std::cout << std::endl;   
