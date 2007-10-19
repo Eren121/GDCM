@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/26 16:19:54 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/19 14:12:31 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
    "                  dirout=outputDirectoryName                              ",
    "                  {  [keep= list of seriesNumber to process]              ",
    "                   | [drop= list of seriesNumber to ignore] }             ",
-   "                  [listonly]  [skel]                                      ",
+   "                  [listonly]  [skel] [seriedescr]                         ",
    "                  [noshadowseq][noshadow][noseq] [verbose] [debug]        ",
    "                                                                          ",
    " dirout : will be created if doesn't exist                                ",
@@ -70,7 +70,9 @@ int main(int argc, char *argv[])
    "            he gives the list of 'SeriesNumber' (tag 0020|0011)           ",
    "        SeriesNumber are short enough to be human readable                ",
    "        e.g : 1030,1035,1043                                              ",
-   " skel : name skeleton eg : patName_1.nema -> skel=patName_                ",
+   " seriedescr : SerieDescription+SerieNumber use for directory name         ",
+   "              (instead of SeriesInstanceUID)                              ",
+   " skel     : name skeleton eg : patName_1.nema -> skel=patName_            ",
    " noshadowseq: user doesn't want to load Private Sequences                 ",
    " noshadow : user doesn't want to load Private groups (odd number)         ",
    " noseq    : user doesn't want to load Sequences                           ",
@@ -79,12 +81,18 @@ int main(int argc, char *argv[])
    FINISH_USAGE
 
 
+   // VERY IMPORTANT :
+   // Respect this order while creating 'UserFileIdentifier'
+   // (mind the order of the 'AddSeriesDetail' !)
+   
    enum Index
    {
       IND_PatientName,
       IND_StudyInstanceUID,
       IND_SerieInstanceUID,
-      IND_FileName       
+      IND_SerieDescription,
+      IND_SerieNumber,
+      IND_FileName
    };
       
    std::cout << "... inside " << argv[0] << std::endl;
@@ -120,9 +128,10 @@ int main(int argc, char *argv[])
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
 
-   bool verbose  = ( 0 != am->ArgMgrDefined("verbose") );
-   bool listonly = ( 0 != am->ArgMgrDefined("listonly") );
-           
+   bool verbose    = ( 0 != am->ArgMgrDefined("verbose") );
+   bool listonly   = ( 0 != am->ArgMgrDefined("listonly") );
+   bool seriedescr = ( 0 != am->ArgMgrDefined("seriedescr") );
+            
    int nbSeriesToKeep;
    int *seriesToKeep = am->ArgMgrGetListOfInt("keep", &nbSeriesToKeep);
    int nbSeriesToDrop;
@@ -231,7 +240,22 @@ int main(int argc, char *argv[])
 
    std::string userFileIdentifier;
    SortedFiles sf;
+
+
+   // VERY IMPORTANT :
+   // Respect the order you choosed in 'enum Index' !
  
+/*
+   enum Index
+   {
+      IND_PatientName,
+      IND_StudyInstanceUID,
+      IND_SerieInstanceUID,
+      IND_SerieDescription,
+      IND_SerieNumber,
+      IND_FileName
+   }; 
+*/     
    s->AddSeriesDetail(0x0010, 0x0010, false); // Patient's Name (false : no convert)
    
    // You may prefer 0020 0010  Study ID
@@ -247,6 +271,9 @@ int main(int argc, char *argv[])
    // use :
    // s->AddSeriesDetail(0x0020, 0x0011, true);    
    s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID (false : no convert)
+
+   s->AddSeriesDetail(0x0008, 0x103e, false); // Serie Description
+   s->AddSeriesDetail(0x0020, 0x0011, false);  // Serie Number (more than 1 serie may have the same Descr. don't 'convert!)
    
    // Feel free to add more fields, if they can help a suitable (for you)
    // image sorting
@@ -310,7 +337,7 @@ int main(int argc, char *argv[])
       tokens.clear();
       GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token);
 
-      int imageNum; // Within FileName
+      //int imageNum; // Within FileName
       char newName[1024];
       
       ///this is a trick to build up a lexicographical compliant name :
@@ -340,7 +367,10 @@ int main(int argc, char *argv[])
       userFileIdentifier = tokens[IND_PatientName]      + token +
                            tokens[IND_StudyInstanceUID] + token + 
                            tokens[IND_SerieInstanceUID] + token +
-                           tokens[IND_FileName] + token;
+
+                           tokens[IND_SerieDescription] + token +
+                           tokens[IND_SerieNumber]      + token +
+                           tokens[IND_FileName];
          
       if (verbose) 
          std::cout << "[" << userFileIdentifier  << "] : " << *it << std::endl;
@@ -357,6 +387,7 @@ int main(int argc, char *argv[])
    std::string previousStudyInstanceUID, currentStudyInstanceUID;   
    std::string previousSerieInstanceUID, currentSerieInstanceUID;
    
+   std::string currentSerieDescription, currentSerieNumber;   
       
    std::string writeDir, currentWriteDir;
    std::string currentPatientWriteDir;
@@ -391,7 +422,9 @@ int main(int argc, char *argv[])
       currentPatientName            = tokens[IND_PatientName];
       currentStudyInstanceUID       = tokens[IND_StudyInstanceUID];      
       currentSerieInstanceUID       = tokens[IND_SerieInstanceUID];
-     
+      currentSerieDescription       = tokens[IND_SerieDescription];
+      currentSerieNumber            = tokens[IND_SerieNumber];
+             
       if (previousPatientName != currentPatientName)
       {  
          previousPatientName = currentPatientName;
@@ -405,10 +438,10 @@ int main(int argc, char *argv[])
          currentPatientWriteDir = writeDir + currentPatientName;
 
          systemCommand   = "mkdir " + currentPatientWriteDir;
-         if (verbose)
-            std::cout << systemCommand << std::endl;
-   
-         system ( systemCommand.c_str() );
+         if (verbose || listonly)
+            std::cout << "[" << systemCommand << "]" << std::endl;
+         if (!listonly)               
+            system ( systemCommand.c_str() );
       }
       
       if (previousStudyInstanceUID != currentStudyInstanceUID)
@@ -420,8 +453,12 @@ int main(int argc, char *argv[])
 
          currentStudyWriteDir  = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentStudyInstanceUID;
-         systemCommand   = "mkdir " + currentStudyWriteDir;  
-         system (systemCommand.c_str());
+         systemCommand   = "mkdir " + currentStudyWriteDir;
+         
+         if (listonly)
+           std::cout << "[" << systemCommand << "]" << std::endl;         
+         else            
+            system (systemCommand.c_str());
 
       }  
       
@@ -430,12 +467,21 @@ int main(int argc, char *argv[])
          previousSerieInstanceUID       = currentSerieInstanceUID;
          if (verbose)   
             std::cout << "=== ==== === new Serie [" << currentSerieInstanceUID << "]"
-                      << std::endl;      
-
-         currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
-                             + currentSerieInstanceUID;
-         systemCommand   = "mkdir " + currentSerieWriteDir;  
-         system (systemCommand.c_str());
+                      << std::endl;
+                            
+         if (seriedescr) // more human readable!
+            currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
+                                  + currentSerieDescription + "_" + currentSerieNumber;
+         else
+            currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
+                                  + currentSerieInstanceUID;         
+                                 
+         systemCommand   = "mkdir " + currentSerieWriteDir;
+         
+         if (listonly)
+            std::cout << "[" << systemCommand << "]" << std::endl;         
+         else             
+            system (systemCommand.c_str());
       }            
    
       if ( GDCM_NAME_SPACE::Debug::GetDebugFlag())
@@ -449,7 +495,11 @@ int main(int argc, char *argv[])
                                          + lastFilename; 
 
       systemCommand   = "cp " + fullFilename + " " + fullWriteFilename;
-      system ( systemCommand.c_str());          
+      
+      if (listonly)
+         std::cout << "[" << systemCommand << "]" << std::endl;         
+      else             
+         system (systemCommand.c_str());
 
    }
    return 0;
