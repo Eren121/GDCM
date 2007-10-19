@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractOverlaysDCM.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/14 08:23:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/19 15:06:08 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,8 +149,6 @@ int main(int argc, char *argv[])
                       << currentOvlGroup+i << std::endl;
          continue;
       }
-
-      uint8_t *outputData = new uint8_t[nxy];
 
       GDCM_NAME_SPACE::DataEntry *e = f->GetDataEntry(currentOvlGroup, 0x3000);
       if (e == 0)

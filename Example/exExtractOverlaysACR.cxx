@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/14 08:23:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/19 15:06:08 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 
       if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
          std::cout << "Mask :[" <<std::hex << mask << "]" << std::endl;
-      for (int j=0; j<nxy; j++)
+      for (unsigned int j=0; j<nxy; j++)
       {
          if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
             if (pixels[j] >= 0x1000)// if it contains at least one overlay bit
