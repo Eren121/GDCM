@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/26 07:47:07 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/10/19 15:29:57 $
+  Version:   $Revision: 1.12 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -225,7 +225,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                     << " bytes differing (pos : original - written) :"
                     << std::endl;
 
-          for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
+          for(int i=0, j1=0; i<dataSizeFixed && j1<MAX_NUMBER_OF_DIFFERENCE; i++)
           {
              if (imageData[i] != imageDataWritten[i])
              {
@@ -233,7 +233,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                          << std::hex << (int)(imageData[i]) << " - "
                          << std::hex << (int)(imageDataWritten[i]) << ") "
                          << std::dec;
-                ++j;
+                ++j1;
               }
           }
           std::cout << std::endl;
