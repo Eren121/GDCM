@@ -42,8 +42,8 @@
 0000 5170 IS 1 Copies (RET)
 0000 5180 CS 1 Magnification Type (RET)
 0000 5190 CS 1 Erase (RET)
-0000 51A0 CS 1 Print (RET)
-0000 51B0 US 1-n Overlays (RET)
+0000 51a0 CS 1 Print (RET)
+0000 51b0 US 1-n Overlays (RET)
 
 0002 0000 UL 1 File Meta Information Group Length
 0002 0001 OB 1 File Meta Information Version
