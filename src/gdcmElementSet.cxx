@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmElementSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/29 15:30:49 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2007/10/19 14:47:18 $
+  Version:   $Revision: 1.79 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,7 +53,6 @@ void ElementSet::WriteContent(std::ofstream *fp, FileType filetype, bool dummy, 
 {
    bool insideMetaElements     = false;
    bool yetOutsideMetaElements = false;
-   int countSQ =0;
    
    for (TagDocEntryHT::const_iterator i = TagHT.begin(); 
                                      i != TagHT.end(); 
