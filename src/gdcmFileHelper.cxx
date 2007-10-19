@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/10/17 12:14:02 $
-  Version:   $Revision: 1.134 $
+  Date:      $Date: 2007/10/19 15:42:23 $
+  Version:   $Revision: 1.135 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,9 @@
 #include "gdcmDocEntryArchive.h"
 #include "gdcmDictSet.h"
 #include "gdcmOrientation.h"
- 
+
+#include <algorithm>  // for transform?
+
 #if defined(__BORLANDC__)
    #include <mem.h> // for memset
 #endif 
@@ -1520,8 +1522,10 @@ void FileHelper::CheckMandatoryElements()
    // If 'SOP Class UID' and 'SOP Instance UID' exist ('true DICOM' image)
    // we create the 'Source Image Sequence' SeqEntry
    // to hold informations about the Source Image
-  
+ 
+      // 'SOP Instance UID' 
       DataEntry *e_0008_0016 = FileInternal->GetDataEntry(0x0008, 0x0016);
+      //
       DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
       if ( e_0008_0016 && e_0008_0018)
       {
@@ -1537,7 +1541,7 @@ void FileHelper::CheckMandatoryElements()
          e_0008_1150->Delete();
       
          // create 'Referenced SOP Instance UID' from 'SOP Instance UID'
-         DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
+        // DataEntry *e_0008_0018 = FileInternal->GetDataEntry(0x0008, 0x0018);
          
          DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI"); 
          e_0008_1155->SetString( e_0008_0018->GetString());
