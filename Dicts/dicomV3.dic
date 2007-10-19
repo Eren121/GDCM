@@ -1,29 +1,49 @@
 0000 0000 UL 1 Group Length
-0000 0001 UL 1 Command Length to End (RET)
+0000 0001 UL 1 Length to End (RET)
 0000 0002 UI 1 Affected SOP Class UID
 0000 0003 UI 1 Requested SOP Class UID
-0000 0010 SH 1 Command Recognition Code (RET)
+0000 0010 CS 1 Recognition Code (RET)
 0000 0100 US 1 Command Field
-0000 0110 US 1 Message ID (first)
-0000 0120 US 1 Message ID Responded to
+0000 0110 US 1 Message ID
+0000 0120 US 1 Message ID Being Responded To
+0000 0200 AE 1 Initiator (RET)
+0000 0300 AE 1 Receiver (RET)
+0000 0400 AE 1 Find Location (RET)
 0000 0600 AE 1 Move Destination
 0000 0700 US 1 Priority
 0000 0800 US 1 Data Set Type
+0000 0850 US 1 Number of Matches (RET)
+0000 0860 US 1 Response Sequence Number (RET)
 0000 0900 US 1 Status
-0000 0901 AT 1 Offending Element
+0000 0901 AT 1-n Offending Element
 0000 0902 LO 1 Error Comment
 0000 0903 US 1 Error ID
-0000 1000 UI 1 SOP Affected Instance UID
-0000 1001 UI 1 SOP Requested Instance UID
+0000 1000 UI 1 Affected SOP Instance UID
+0000 1001 UI 1 Requested SOP Instance UID
 0000 1002 US 1 Event Type ID
-0000 1005 AT 1 Attribute Identifier List
+0000 1005 AT 1-n Attribute Identifier List
 0000 1008 US 1 Action Type ID
-0000 1020 US 1 Remaining Suboperations
-0000 1021 US 1 Completed Suboperations
-0000 1022 US 1 Failed Suboperations
-0000 1023 US 1 Warning Suboperations
-0000 1030 AE 1 AE Title
-0000 1031 US 1 Message ID (second)
+0000 1020 US 1 Number of Remaining Sub-operations
+0000 1021 US 1 Number of Completed Sub-operations
+0000 1022 US 1 Number of Failed Sub-operations
+0000 1023 US 1 Number of Warning Sub-operations
+0000 1030 AE 1 Move Originator Application Entity Title
+0000 1031 US 1 Move Originator Message ID
+0000 4000 AT 1 DIALOG Receiver (RET)
+0000 4010 AT 1 Terminal Type (RET)
+0000 5010 SH 1 Message Set ID (RET)
+0000 5020 SH 1 End Message ID (RET)
+0000 5110 AT 1 Display Format (RET)
+0000 5120 AT 1 Page Position ID (RET)
+0000 5130 CS 1 Text Format ID (RET)
+0000 5140 CS 1 Nor/Rev (RET)
+0000 5150 CS 1 Add Gray Scale (RET)
+0000 5160 CS 1 Borders (RET)
+0000 5170 IS 1 Copies (RET)
+0000 5180 CS 1 Magnification Type (RET)
+0000 5190 CS 1 Erase (RET)
+0000 51A0 CS 1 Print (RET)
+0000 51B0 US 1-n Overlays (RET)
 
 0002 0000 UL 1 File Meta Information Group Length
 0002 0001 OB 1 File Meta Information Version
