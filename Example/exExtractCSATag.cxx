@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSATag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/11 12:56:11 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/19 10:18:25 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -392,7 +392,7 @@ int convertCSA(std::istream &is, File *f)
     sq->Delete();
    f->Print( std::cout );
 
-   gdcm::FileHelper *fh = gdcm::FileHelper::New(f);
+   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
          fh->SetWriteTypeToDcmExplVR();
          fh->Write("/tmp/csa2.dcm");
 
@@ -402,7 +402,7 @@ int convertCSA(std::istream &is, File *f)
 
 int main(int argc, char *argv[])
 {  
-   gdcm::File *f;
+   GDCM_NAME_SPACE::File *f;
  
    if( argc < 5 )
    {
@@ -417,14 +417,14 @@ int main(int argc, char *argv[])
 //   Read the input image.
 // ============================================================
 
-   f = gdcm::File::New( );
+   f = GDCM_NAME_SPACE::File::New( );
 
-   //f->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
+   //f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
    f->SetMaxSizeLoadEntry(0xffff);
    bool res = f->Load();  
 
-   if( gdcm::Debug::GetDebugFlag())
+   if( GDCM_NAME_SPACE::Debug::GetDebugFlag())
    {
       std::cout << "---------------------------------------------" << std::endl;
       f->Print();
@@ -450,16 +450,16 @@ int main(int argc, char *argv[])
    std::cout << "Extracting tag: (0x" << std::hex << std::setw(4) << std::setfill('0')
      << group << ",0x" << std::setw(4) << std::setfill('0') << elem << ")" << std::endl;
    std::string dicom_tag_value = f->GetEntryString(group, elem);
-   if (dicom_tag_value == gdcm::GDCM_UNFOUND)
+   if (dicom_tag_value == GDCM_NAME_SPACE::GDCM_UNFOUND)
    {
-     gdcm::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
+     GDCM_NAME_SPACE::DictEntry *dictEntry = f->GetPubDict()->GetEntry( group, elem);
      std::cerr << "Image doesn't contain any tag: " << dictEntry->GetName() << std::endl;
      f->Delete();
      return 1;
    }
 
-   gdcm::DocEntry *dicom_tag_doc = f->GetDocEntry(group, elem);
-   gdcm::DataEntry *dicom_tag = dynamic_cast<gdcm::DataEntry *>(dicom_tag_doc);
+   GDCM_NAME_SPACE::DocEntry *dicom_tag_doc = f->GetDocEntry(group, elem);
+   GDCM_NAME_SPACE::DataEntry *dicom_tag = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(dicom_tag_doc);
    if( !dicom_tag )
    {
       std::cerr << "Sorry DataEntry only please" << std::endl;
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
    std::istringstream is;
    is.str( std::string( (char*)dicom_tag->GetBinArea(), dicom_tag->GetLength()) );
 
-   gdcm::convertCSA(is, f);
+   GDCM_NAME_SPACE::convertCSA(is, f);
 
    f->Delete();
 
