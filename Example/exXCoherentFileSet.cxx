@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/01 09:33:20 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/10/19 15:15:16 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -231,8 +231,8 @@ int main(int argc, char *argv[])
           if (write)
           {
              currentSerieWriteDir = currentSerieWriteDir + dirNameout;
-             unsigned int l = strlen(dirNameout)-1;
-             if ( dirNameout[l] != '/'  &&  dirNameout[l] != '\\')
+             unsigned int lg = strlen(dirNameout)-1;
+             if ( dirNameout[lg] != '/'  &&  dirNameout[lg] != '\\')
                 currentSerieWriteDir = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR;
     
              currentSerieWriteDir = currentSerieWriteDir + serieUID;
