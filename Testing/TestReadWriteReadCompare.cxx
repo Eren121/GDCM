@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/05 09:55:02 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2007/10/19 15:14:05 $
+  Version:   $Revision: 1.35 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -165,17 +165,17 @@ static int CompareInternal(std::string const &filename, std::string const &outpu
                     << " bytes differing (pos : original - written) :"
                     << std::endl;
 
-          for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
+          for(int i=0, j1=0; i<dataSizeFixed && j1<MAX_NUMBER_OF_DIFFERENCE; i++)
           {
              if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
              {
-                if (j<MAX_NUMBER_OF_DIFFERENCE)
+                if (j1<MAX_NUMBER_OF_DIFFERENCE)
                    std::cout << std::dec << "(" << i << " : "
                      << std::hex
                      << (int)(imageData[i]) << " - "
                      << (int)(imageDataWritten[i]) << ") "
                      << std::dec;
-                ++j;
+                ++j1;
               }
           }
           std::cout << std::endl;
