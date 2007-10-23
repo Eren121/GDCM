@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/08 15:20:17 $
-  Version:   $Revision: 1.340 $
+  Date:      $Date: 2007/10/23 15:52:33 $
+  Version:   $Revision: 1.341 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1453,6 +1453,13 @@ bool File::IsPaletteColor()
    {
       return true;
    }
+   
+   // MONOCHROME + [Enhanced CT Image Storage] actually have Palettes
+   std::string sopClassUid = GetEntryString( 0x0008, 0x0016 );
+   if (Util::DicomStringEqual( sopClassUid, "1.2.840.10008.5.1.4.1.1.2.1"))
+   {
+      return true;
+   }   
    if ( PhotometricInterp == GDCM_UNFOUND )
    {
       gdcmDebugMacro( "Not found : Palette color (0028,0004)");
@@ -1467,7 +1474,7 @@ bool File::IsPaletteColor()
  */
 bool File::IsYBRFull()
 {
-   std::string PhotometricInterp = GetEntryString( 0x0028, 0x0004 );
+   std::string PhotometricInterp = GetEntryString( 0x0028, 0x0004 );   
    if (   PhotometricInterp == "YBR_FULL" )
    {
       return true;
