@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/08 15:20:17 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/10/23 14:48:26 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,6 +34,12 @@
 
 // MM: Over 50000 DICOM files I only found two that had a Segmented Palette LUT
 // And both were coming from a ALOKA SSD-4000 station
+//
+// JPRx :
+// It compiles fine under gcc 4.1.2 and msvc 7
+// It doesn't compile on msvc 6, borland and SunOS
+// Any fix welcome !
+
 #include <assert.h>
 #include <algorithm>
 #include <deque>
@@ -197,7 +203,7 @@ namespace GDCM_NAME_SPACE
     void ReadPaletteInto(GDCM_NAME_SPACE::File* pds, const GDCM_NAME_SPACE::TagKey& descriptor,
       const GDCM_NAME_SPACE::TagKey& segment, uint8_t* lut)
       {
-      unsigned int desc_values[3] = {};
+      unsigned int desc_values[3] = {0,0,0};
       unsigned long count = 0;
       //if ( pds->findAndGetUint16Array(descriptor, desc_values, &count).good() )
       std::string desc_values_str = pds->GetEntryString(descriptor.GetGroup(), descriptor.GetElement() );
