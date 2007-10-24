@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 15:15:16 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/10/24 08:03:10 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,12 +21,9 @@
 #include <iostream>
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
-
 #include "gdcmArgMgr.h"
-
-     
 int main(int argc, char *argv[])
-{  
+{
 
    START_USAGE(usage)
    "\n exXCoherentFileSet :\n                                                 ",
@@ -53,7 +50,7 @@ int main(int argc, char *argv[])
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
-   "       verbose    : user wants to run the program in 'verbose mode'       ",   
+   "       verbose    : user wants to run the program in 'verbose mode'       ",
    "       debug      : developper wants to run the program in 'debug mode'   ",
    FINISH_USAGE
    
@@ -74,7 +71,7 @@ int main(int argc, char *argv[])
    int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
       loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
-   else 
+   else
    {
       if ( am->ArgMgrDefined("noshadow") )
          loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
@@ -144,17 +141,17 @@ int main(int argc, char *argv[])
    s = GDCM_NAME_SPACE::SerieHelper::New();
    s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL);     // Load everything for each File
    
-   //GDCM_NAME_SPACE::TagKey t(0x0020,0x0013);   
+   //GDCM_NAME_SPACE::TagKey t(0x0020,0x0013);
    //s->AddRestriction(t, "340", GDCM_NAME_SPACE::GDCM_LESS); // Keep only files where
                                                               // restriction is true
-     
+   
    s->SetDirectory(dirName, true); // true : recursive exploration
 
    // The Dicom file set is splitted into several 'Single SerieUID Files Sets'
    // (a 'Single SerieUID Files Set' per SerieUID)
    // In some cases, it's not enough, since, in some cases
    // we can find scout view with the same SerieUID
-   
+
 /*
    std::cout << " ---------------------------------------- "
              << "'Single UID' Filesets found in :["
@@ -166,8 +163,8 @@ int main(int argc, char *argv[])
 */
 
    std::string systemCommand;
-   std::string filenameout;   
-   if (write) { 
+   std::string filenameout;
+   if (write) {
       if (verbose)
          std::cout << "Check for output directory :[" << dirNameout << "]."
                    <<std::endl;
@@ -193,29 +190,27 @@ int main(int argc, char *argv[])
       else
       {
          if (verbose)
-            std::cout << "Output Directory [" << dirNameout 
+            std::cout << "Output Directory [" << dirNameout
                       << "] already exists; Used as is."
                       << std::endl;
-      }      
+      }
    }
-   
       // --> End of checking supposed-to-be-directory names
-      
+
    int nbFiles;
    std::string fileName;
-   
+
    // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
    GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
-   
    GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
-   
+
    std::string serieUID;
    std::string currentSerieWriteDir = "";
-   std::string xCoherentWriteDir = ""; 
-   std::string xCoherentName = "";     
+   std::string xCoherentWriteDir = "";
+   std::string xCoherentName = "";
    std::string serieDirectory;
    std::string lastFilename;
-   std::string rep("_");   
+   std::string rep("_");
    int controlCount = 0;
   
    while (l) // for each 'Single SerieUID FileSet'
@@ -265,7 +260,7 @@ int main(int argc, char *argv[])
                                                   i != xcm.end();
                                                 ++i)
          {
-             xCoherentName = (*i).first;
+            xCoherentName = (*i).first;
             if (verbose)
                std::cout << "xCoherentName = " << xCoherentName << std::endl;
             GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
@@ -299,7 +294,7 @@ int main(int argc, char *argv[])
            // OrderFileList() causes trouble, since some files
            // (eg:MIP views) don't have 'Position', now considered as mandatory
            // Commented out for the moment.
-           
+
            if (sort) {
               s->OrderFileList((*i).second);  // sort the XCoherent Fileset
               std::cout << "ZSpacing for the file set " << s->GetZSpacing()
@@ -318,14 +313,14 @@ int main(int argc, char *argv[])
                if (write)
                {  
                   lastFilename =  GDCM_NAME_SPACE::Util::GetName( fileName );
-                  filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename; 
+                  filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename;
                   systemCommand   = "cp " + fileName + " " + filenameout;
                   system( systemCommand.c_str());
                   if (verbose)
                      std::cout << "3 " << systemCommand << std::endl;
-                } 
+                }
                // --- end for write       
-            } 
+            }
             std::cout << std::endl;   
          }
       }
@@ -334,7 +329,7 @@ int main(int argc, char *argv[])
     
    if ( controlCount == 0 )
       std::cout << "No suitable file was found!" << std::endl;
- 
+
    s->Delete();
 
    return 0;

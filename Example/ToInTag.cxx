@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 14:09:20 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2007/10/24 08:03:10 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -599,7 +599,7 @@ int main(int argc, char *argv[])
                              + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentPhaseEncodingDirection;
              systemCommand   = "mkdir " + currentPhaseEncodingDirectionWriteDir;     
-             system (systemCommand.c_str()); 
+             system (systemCommand.c_str());
          }
 
          previousPhaseEncodingDirection = currentPhaseEncodingDirection;

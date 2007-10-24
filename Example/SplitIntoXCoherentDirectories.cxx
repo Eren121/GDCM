@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 11:53:42 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/24 08:03:10 $
+  Version:   $Revision: 1.3 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,14 +34,14 @@ int main(int argc, char *argv[])
    "usage: exXCoherentFileSet {dirin=inputDirectoryName}                      ",
    "                           dirout=outputDirectoryName                     ",
    "                       { tag=group-elem | pos | ori } [sort]              ",
-   "                       [{ write | copy }] [studyUID = ]                   ", 
+   "                       [{ write | copy }] [studyUID = ]                   ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "                                                                          ",
    "       dirin : user wants to analyze *all* the files                      ",
    "                            within the directory                          ",
    "       copy  : user wants to copy the files into a directories tree       ",
    "       write : user wants to rewrite the files into a directories tree    ",
-   "               each directory with the same 'Series Instance UID'         ", 
+   "               each directory with the same 'Series Instance UID'         ",
    "       dirout : will be created if doesn't exist                          ",
    "       pos  : user wants to split each Single SerieUID Fileset on the     ",
    "                         'Image Position '                                ",
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
    bool ori  =    ( 0 != am->ArgMgrDefined("ori") );   
    bool sort =    ( 0 != am->ArgMgrDefined("sort") );
    bool copy =    ( 0 != am->ArgMgrDefined("copy") );
-   bool write =   ( 0 != am->ArgMgrDefined("write") );   
+   bool write =   ( 0 != am->ArgMgrDefined("write") );
    bool verbose = ( 0 != am->ArgMgrDefined("verbose") );
    bool tag     = ( 0 != am->ArgMgrDefined("tag") );
    
@@ -143,8 +143,7 @@ int main(int argc, char *argv[])
  
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
-
-      
+   
    GDCM_NAME_SPACE::SerieHelper *s;  
    s = GDCM_NAME_SPACE::SerieHelper::New();
    
@@ -161,26 +160,26 @@ int main(int argc, char *argv[])
    {
       if (verbose)
          std::cout << *it << std::endl;
- 
+
       if (write) {
          loadMode = GDCM_NAME_SPACE::LD_ALL; // load any DataElement
           maxSize  = 0x7fff;                  // load any length
       } else {
          loadMode = GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW ; 
-         maxSize  = 0x0100;      
+         maxSize  = 0x0100;
       }
 
       f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
-      f->SetMaxSizeLoadEntry(maxSize); 
+      f->SetMaxSizeLoadEntry(maxSize);
       f->SetFileName( *it );
       f->Load();
-      l->push_back(f);     
+      l->push_back(f);
    }
 
    std::string systemCommand;
    std::string filenameout;
-   if (write || copy) { 
+   if (write || copy) {
       if (verbose)
          std::cout << "Check for output directory :[" << dirNameout << "]."
                    <<std::endl;
@@ -210,7 +209,7 @@ int main(int argc, char *argv[])
                       << "] already exists; Used as is."
                       << std::endl;
       }
-   } 
+   }
       // --> End of checking supposed-to-be-directory names
 
    int nbFiles;
@@ -225,12 +224,12 @@ int main(int argc, char *argv[])
    std::string serieUID;
    std::string currentSerieWriteDir = "";
    std::string xCoherentWriteDir = "";
-   std::string xCoherentName = ""; 
+   std::string xCoherentName = "";
    std::string serieDirectory;
    std::string lastFilename;
    std::string rep("_");
    int controlCount = 0;
-   
+  
    // 'Study Instance UID'
    // The user is allowed to create his own Study, 
    //          keeping the same 'Study Instance UID' for various images
@@ -293,9 +292,9 @@ GDCM_NAME_SPACE::Debug::DebugOn();
  
             xcm = s->SplitOnTagValue(l, groupelem[0],groupelem[1] );
          }
- 
+
          GDCM_NAME_SPACE::FileHelper *fh;
- 
+
          for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
                                                   i != xcm.end();
                                                 ++i)
@@ -334,7 +333,7 @@ GDCM_NAME_SPACE::Debug::DebugOn();
            // OrderFileList() causes trouble, since some files
            // (eg:MIP views) don't have 'Position', now considered as mandatory
            // --> Activated on user demand.
-           
+
             if (sort) {
               s->OrderFileList((*i).second);  // sort the XCoherent Fileset
               std::cout << "ZSpacing for the file set " << s->GetZSpacing()
@@ -353,10 +352,10 @@ GDCM_NAME_SPACE::Debug::DebugOn();
     
                // --- for write
                lastFilename =  GDCM_NAME_SPACE::Util::GetName( fileName );
-               filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename;   
+               filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename;
                if (write)
                {  
-                  fh = GDCM_NAME_SPACE::FileHelper::New( (*it2) );  
+                  fh = GDCM_NAME_SPACE::FileHelper::New( (*it2) );
                   fh->SetKeepOverlays( true );       
                   fh->InsertEntryString(strSerieUID,0x0020,0x000e,"UI");
                   unsigned int dataSize  = fh->GetImageDataRawSize();
@@ -371,16 +370,15 @@ GDCM_NAME_SPACE::Debug::DebugOn();
                                << std::endl;
                   }
                   fh->Delete();
-               } 
+               }
                else if (copy)
                {
                    systemCommand   = "cp " + fileName + " " + filenameout;
                    system( systemCommand.c_str());
-               } 
+               }
                if (verbose)
                      std::cout << "3 " << systemCommand << std::endl;
-            } 
-
+            }
             std::cout << std::endl;   
          }
       }
@@ -388,7 +386,7 @@ GDCM_NAME_SPACE::Debug::DebugOn();
     
    if ( controlCount == 0 )
       std::cout << "No suitable file was found!" << std::endl;
- 
+
    s->Delete();
    return 0;
 }

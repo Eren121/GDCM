@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/15 13:55:35 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/10/24 08:03:10 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -603,14 +603,27 @@ void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::st
    std::cout << "Max X,Y,Z " << maxX << " " << maxY << " " << maxZ <<  std::endl;
    std::cout << "Size X,Y,Z " << maxX-minX << " " << maxY-minY << " " << maxZ-minZ <<  std::endl;      
 
-   uint16_t *img = new uint16_t[int(maxX)*int(maxY)];
+//   uint16_t *img = new uint16_t[int(maxX+0.5)*int(maxY+0.5)];
+   uint16_t *img = new uint16_t[int(maxX*4.)*int(maxY*4.)];
    
    // Set whole image to 0 
-   for(int i3=0;i3<int(maxX)*int(maxY);i3++)
+   for(int i3=0;i3<int(maxX*4.)*int(maxY*4.);i3++)
+//   for(int i3=0;i3<int(maxX+0.5)*int(maxY+0.5);i3++)
       img[i3] = 0; 
-     
+
    for(int i2=0; i2<NP; i2++) {
-      img[ int(maxX) -int(X[i2]-1) +  (int(maxY) -int(Y[i2]))* int(maxX) ] = int(tabVal[i2]*100);
+   
+      int ordX = int(X[i2]*4.-30);
+      int ordY = int(maxY*4.) - int(Y[i2]*4.)+30;      
+//   img[ /*int(maxX) -*/ int(X[i2]+0.5-1)   +  (int(maxY+0.5) - int(Y[i2]+0.5))   * int(maxX+0.5) ] = int(tabVal[i2]*100);
+   
+//   img[ /*int(maxX) -*/ int(X[i2]*4.-30)   +  (int(maxY*4.) - int(Y[i2]*4.)+30)   * int(maxX*4.) ] = int(tabVal[i2]*100);
+   img[ /*int(maxX) -*/ ordX   +  ordY   * int(maxX*4.) ] = int(tabVal[i2]*100);
+
+      // Try to round up, just to see.   
+       for(int iii=ordY-3; iii<ordY+4; iii++) for(int jjj=ordX-3; jjj<ordX+4; jjj++) 
+          img[  jjj  +  iii   * int(maxX*4.) ] = int(tabVal[i2]*100);         
+      std::cout << int(X[i2]*4.) << " " << int(Y[i2]*4.) << " = " << int(tabVal[i2]*100) << std::endl;      
    }       
   
  // GDCM_NAME_SPACE::Debug::DebugOn();
@@ -622,10 +635,10 @@ void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::st
               
   // Set the image size
    str.str(""); 
-   str << (int)(maxX);
+   str << (int)(maxX*4.);
    file->InsertEntryString(str.str(),0x0028,0x0011,"US"); // Columns
    str.str("");
-   str << (int)(maxY);
+   str << (int)(maxY*4.);
    file->InsertEntryString(str.str(),0x0028,0x0010,"US"); // Rows
    
   // Set the pixel type
@@ -657,7 +670,7 @@ void MakeDicomImage(float *tabVal, float *X, float *Y, float *Z, int NP, std::st
    fileH = GDCM_NAME_SPACE::FileHelper::New(file);
    // cast is just to avoid warnings (*no* conversion)
    //fileH->SetImageData((uint8_t *)img,int(maxX*maxY)*sizeof(uint16_t)); // troubles when maxX, mayY are *actually* float!
-   fileH->SetImageData((uint8_t *)img,int(maxX)*int(maxY)*sizeof(uint16_t));
+   fileH->SetImageData((uint8_t *)img,int(maxX*4.)*int(maxY*4.)*sizeof(uint16_t));
    fileH->SetWriteModeToRaw(); 
    fileH->SetWriteTypeToDcmExplVR();
         
