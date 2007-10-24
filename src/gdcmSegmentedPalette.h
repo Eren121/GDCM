@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/23 14:48:26 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007/10/24 07:15:32 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,7 +23,7 @@
 #include "gdcmTagKey.h"
 #include "gdcmDataEntry.h"
 
-// Ref: 
+// Notepad from Satomi Takeo:
 // http://blog.goo.ne.jp/satomi_takeo/e/3643e5249b2a9650f9e10ef1c830e8b8
 // I bet the code was compiled on VS6. Make it compile on other platform:
 // * typedef are not inherited
@@ -49,7 +49,7 @@
 
 // Hack for VS6
 #if defined(_MSC_VER) && (_MSC_VER < 1310)
-#define GDCM_TYPENAME class
+#define GDCM_TYPENAME
 #else
 #define GDCM_TYPENAME typename
 #endif
@@ -57,7 +57,7 @@
 namespace GDCM_NAME_SPACE
 {
     // abstract class for segment.
-    template <GDCM_TYPENAME EntryType>
+    template <typename EntryType>
     class Segment {
     public:
         typedef std::map<const EntryType*, const Segment*> SegmentMap;
@@ -82,7 +82,7 @@ namespace GDCM_NAME_SPACE
     };
 
     // discrete segment (opcode = 0)
-    template <GDCM_TYPENAME EntryType>
+    template <typename EntryType>
     class DiscreteSegment : public Segment<EntryType> {
     public:
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
@@ -97,7 +97,7 @@ namespace GDCM_NAME_SPACE
     };
 
     // linear segment (opcode = 1)
-    template <GDCM_TYPENAME EntryType>
+    template <typename EntryType>
     class LinearSegment : public Segment<EntryType> {
     public:
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
@@ -126,7 +126,7 @@ namespace GDCM_NAME_SPACE
     };
 
     // indirect segment (opcode = 2)
-    template <GDCM_TYPENAME EntryType>
+    template <typename EntryType>
     class IndirectSegment : public Segment<EntryType> {
     public:
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
@@ -146,13 +146,13 @@ namespace GDCM_NAME_SPACE
                 = (*pOffset) | (static_cast<unsigned long>(*(pOffset + 1)) << 16);
             const EntryType* copied_part_head
                 = first_segment + offsetBytes / sizeof(EntryType);
-            typename SegmentMap::const_iterator ppHeadSeg = instances.find(copied_part_head);
+            GDCM_TYPENAME SegmentMap::const_iterator ppHeadSeg = instances.find(copied_part_head);
             if ( ppHeadSeg == instances.end() ) {
                 // referred segment not found
                 return false;
             }
             EntryType nNumCopies = *(this->_first + 1);
-            typename SegmentMap::const_iterator ppSeg = ppHeadSeg;
+            GDCM_TYPENAME SegmentMap::const_iterator ppSeg = ppHeadSeg;
             while ( std::distance(ppHeadSeg, ppSeg) < nNumCopies ) {
                 assert( ppSeg != instances.end() );
                 ppSeg->second->Expand(instances, expanded);
@@ -162,7 +162,7 @@ namespace GDCM_NAME_SPACE
         }
     };
 
-    template <GDCM_TYPENAME EntryType>
+    template <typename EntryType>
     void ExpandPalette(const EntryType* raw_values, uint32_t length,
         std::vector<EntryType>& palette)
     {
@@ -186,11 +186,11 @@ namespace GDCM_NAME_SPACE
                 break;
             }
         }
-        typename Segment<EntryType>::SegmentMap instances;
+        GDCM_TYPENAME Segment<EntryType>::SegmentMap instances;
         std::transform(segments.begin(), segments.end(),
-            std::inserter(instances, instances.end()), typename Segment<EntryType>::ToMap());
-        typename SegmentList::iterator ppSeg = segments.begin();
-        typename SegmentList::iterator endOfSegments = segments.end();
+            std::inserter(instances, instances.end()), GDCM_TYPENAME Segment<EntryType>::ToMap());
+        GDCM_TYPENAME SegmentList::iterator ppSeg = segments.begin();
+        GDCM_TYPENAME SegmentList::iterator endOfSegments = segments.end();
         for ( ; ppSeg != endOfSegments; ++ppSeg ) {
             (*ppSeg)->Expand(instances, palette);
         }
