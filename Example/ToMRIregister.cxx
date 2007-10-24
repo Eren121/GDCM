@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToMRIregister.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/10/24 08:03:44 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
     
          //int sliceNumber = 0; 
          
-         float position =0.0;
+         double position =0.0;
          char charPosition[10];
          
          for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin();
