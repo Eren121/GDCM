@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/08 15:20:17 $
-  Version:   $Revision: 1.373 $
+  Date:      $Date: 2007/10/24 10:38:51 $
+  Version:   $Revision: 1.374 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2256,6 +2256,7 @@ DocEntry *Document::ReadNextDocEntry()
       else if (CurrentGroup%2 == 1 )
       { 
          if (CurrentElem >= 0x0010 && CurrentElem <=0x00ff )
+         {
             // DICOM PS 3-5 7.8.1 a) states that :
             // Private Creator Data Elements numbered (gggg,0010-00FF) (gggg is odd)
             // attributes have to be LO (Long String) and the VM shall be equal to 1
@@ -2265,8 +2266,20 @@ DocEntry *Document::ReadNextDocEntry()
             // Still in gdcmtk, David Clunnie disagrees, Marco Eichelberg says it's OK ...
             // We let it for a while? 
             //(We should check length==4, for more security, but we don't have it yet !)
+         }
          else if ( CurrentElem == 0x0001)
-            realVR = "UL"; // Private Group Length To End      
+         {
+            realVR = "UL"; // Private Group Length To Eng
+         }
+         else  // check the private dictionary for shadow elements when Implicit VR!
+         {
+            DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);
+            if ( dictEntry )
+            {
+               realVR = dictEntry->GetVR(); 
+               dictEntry->Unregister(); // GetDictEntry registered it
+            }   
+         }               
       }
       
       else
@@ -2298,7 +2311,6 @@ DocEntry *Document::ReadNextDocEntry()
          ///         not at the Document level.
       }   
    }
-
 
    DocEntry *newEntry;
    //if ( Global::GetVR()->IsVROfSequence(realVR) )
