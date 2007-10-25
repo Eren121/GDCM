@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractOverlaysDCM.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 15:06:08 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/10/25 07:55:02 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -174,9 +174,9 @@ int main(int argc, char *argv[])
       // ============================================================
 
          unsigned char *result=outputData;
-         for (unsigned int i=0;i<(nxy/8);i++)
+         for (unsigned int i2=0;i2<(nxy/8);i2++)
          {
-            explodeByte(overlay[i], result);
+            explodeByte(overlay[i2], result);
             result+=8;
          }
       }
