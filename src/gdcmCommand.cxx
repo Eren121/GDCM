@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:08 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/10/25 08:04:50 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,11 +26,12 @@ namespace GDCM_NAME_SPACE
  * \brief Constructor used when we want to generate dicom files from scratch
  */
 Command::Command()
+  : Cmd(CMD_UNKNOWN), Object(NULL), ConstObject(NULL), Text("")
 {
-   Cmd = CMD_UNKNOWN;
-   Object = NULL;
-   ConstObject = NULL;
-   Text = "";
+//   Cmd = CMD_UNKNOWN;
+//   Object = NULL;
+//   ConstObject = NULL;
+//   Text = "";
 }
 
 

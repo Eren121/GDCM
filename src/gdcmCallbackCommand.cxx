@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmCallbackCommand.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 15:59:48 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/10/25 08:02:38 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,11 +25,13 @@ namespace GDCM_NAME_SPACE
 /**
  * \brief Constructor used when we want to generate dicom files from scratch
  */
-CallbackCommand::CallbackCommand()
+CallbackCommand::CallbackCommand() :
+   Callback(NULL), CallbackArgDelete(NULL), CallbackArg(NULL)
+   
 {
-   Callback             = NULL;
-   CallbackArgDelete    = NULL;
-   CallbackArg          = NULL;
+//   Callback             = NULL;
+//   CallbackArgDelete    = NULL;
+//   CallbackArg          = NULL;
 }
 
 /**
