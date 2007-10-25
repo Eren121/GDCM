@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/10/19 15:42:23 $
-  Version:   $Revision: 1.135 $
+  Date:      $Date: 2007/10/25 07:52:59 $
+  Version:   $Revision: 1.136 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -34,10 +34,14 @@
 #include "gdcmDictSet.h"
 #include "gdcmOrientation.h"
 
+
+
 #include <algorithm>  // for transform?
 
 #if defined(__BORLANDC__)
-   #include <mem.h> // for memset
+   #include <mem.h>   // for memset
+   #include <ctype.h> //for toupper
+   #include <math.h>
 #endif 
 
 #include <fstream>
