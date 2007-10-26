@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 07:15:32 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/10/26 08:14:18 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -66,10 +66,7 @@ namespace GDCM_NAME_SPACE
         const EntryType* First() const { return _first; }
         const EntryType* Last() const { return _last; }
         struct ToMap {
-            std::pair<
-                typename SegmentMap::key_type,
-                typename SegmentMap::mapped_type
-            >
+            typename SegmentMap::value_type
                 operator()(const Segment* segment) const
             { return std::make_pair(segment->First(), segment); }
         };
