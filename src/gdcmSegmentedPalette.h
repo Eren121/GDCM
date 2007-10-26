@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/26 08:14:18 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/10/26 09:00:31 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -56,6 +56,24 @@
 
 namespace GDCM_NAME_SPACE
 {
+// Long stody short: Sun compiler only provide the second interface of std::distance, since the implemenation
+// is so trivial, I'd rather redo it myself.
+// Ref:
+// http://www.sgi.com/tech/stl/distance.html#2
+// The second version of distance was the one defined in the original STL, and the first version is the one defined in the draft C++ standard; the definition was changed because the older interface was clumsy and error-prone. The older interface required the use of a temporary variable, and it has semantics that are somewhat nonintuitive: it increments n by the distance from first to last, rather than storing that distance in n
+  template<typename InputIterator>
+    inline int32_t
+    mydistance(InputIterator first, InputIterator last)
+      {
+      int32_t n = 0;
+      while (first != last)
+        {
+        ++first;
+        ++n;
+        }
+      return n;
+      }
+
     // abstract class for segment.
     template <typename EntryType>
     class Segment {
@@ -150,7 +168,8 @@ namespace GDCM_NAME_SPACE
             }
             EntryType nNumCopies = *(this->_first + 1);
             GDCM_TYPENAME SegmentMap::const_iterator ppSeg = ppHeadSeg;
-            while ( std::distance(ppHeadSeg, ppSeg) < nNumCopies ) {
+            while ( mydistance(ppHeadSeg, ppSeg) < nNumCopies ) {
+                // assert( mydistance(ppHeadSeg, ppSeg) == std::distance(ppHeadSeg, ppSeg) );
                 assert( ppSeg != instances.end() );
                 ppSeg->second->Expand(instances, expanded);
                 ++ppSeg;
@@ -166,7 +185,8 @@ namespace GDCM_NAME_SPACE
         typedef std::deque<Segment<EntryType>*> SegmentList;
         SegmentList segments;
         const EntryType* raw_seg = raw_values;
-        while ( (std::distance(raw_values, raw_seg) * sizeof(EntryType)) <length ) {
+        while ( (mydistance(raw_values, raw_seg) * sizeof(EntryType)) < length ) {
+            // assert( mydistance(raw_values, raw_seg) == std::distance(raw_values, raw_seg) );
             Segment<EntryType>* segment = NULL;
             if ( *raw_seg == 0 ) {
                 segment = new DiscreteSegment<EntryType>(raw_seg);
@@ -182,6 +202,7 @@ namespace GDCM_NAME_SPACE
                 // invalid opcode
                 break;
             }
+
         }
         GDCM_TYPENAME Segment<EntryType>::SegmentMap instances;
         std::transform(segments.begin(), segments.end(),
