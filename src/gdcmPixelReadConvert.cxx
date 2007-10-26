@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/16 10:11:06 $
-  Version:   $Revision: 1.126 $
+  Date:      $Date: 2007/10/26 16:06:57 $
+  Version:   $Revision: 1.127 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -144,10 +144,10 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
       while (true) // shorter to write than 'if elseif elseif elseif' ...
       {
          // mind the order : check the most usual first.
-         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian)         break;
-         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian )        break;
-         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian)            break;
-         if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE)   break;
+         if( IsRaw = (Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRLittleEndian))         break;
+         if( IsRaw = (Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRLittleEndian))         break;
+         if( IsRaw = (Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ExplicitVRBigEndian))            break;
+         if( IsRaw = (Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::ImplicitVRBigEndianPrivateGE))   break;
          // DeflatedExplicitVRLittleEndian syntax means the whole Dataset (Header + Pixels) is compressed !
          // Not dealt with ! (Parser hangs)
          //if( IsRaw = Global::GetTS()->GetSpecialTransferSyntax(ts) == TS::DeflatedExplicitVRLittleEndian) break;
@@ -165,12 +165,12 @@ void PixelReadConvert::GrabInformationsFromFile( File *file,
          while(true)
          {
             // mind the order : check the most usual first.
-            if( IsJPEGLossy     = Global::GetTS()->IsJPEGLossy(ts) )    break;
-            if( IsJPEGLossless  = Global::GetTS()->IsJPEGLossless(ts) ) break;
-            if( IsRLELossless   = Global::GetTS()->IsRLELossless(ts) )  break;
-            if( IsJPEG2000      = Global::GetTS()->IsJPEG2000(ts) )     break;
-            if( IsMPEG          = Global::GetTS()->IsMPEG(ts) )         break;
-            if( IsJPEGLS        = Global::GetTS()->IsJPEGLS(ts) )       break;
+            if( IsJPEGLossy     = (Global::GetTS()->IsJPEGLossy(ts)))    break;
+            if( IsJPEGLossless  = (Global::GetTS()->IsJPEGLossless(ts))) break;
+            if( IsRLELossless   = (Global::GetTS()->IsRLELossless(ts)))  break;
+            if( IsJPEG2000      = (Global::GetTS()->IsJPEG2000(ts)))     break;
+            if( IsMPEG          = (Global::GetTS()->IsMPEG(ts)))         break;
+            if( IsJPEGLS        = (Global::GetTS()->IsJPEGLS(ts)))       break;
             // DeflatedExplicitVRLittleEndian is considered as 'Unexpected' 
             // (we don't know yet how to process !)
             gdcmWarningMacro("Unexpected Transfer Syntax :[" << ts << "]");
@@ -921,7 +921,7 @@ void PixelReadConvert::BuildLUTRGBA()
          *a16 = 1; // Alpha component
          a16 += 4;
       }
-/* Just to 'see' the LUT, at debug time
+// Just to 'see' the LUT, at debug time
 // Don't remove this commented out code.
 
       a16=(uint16_t*)LutRGBA;
@@ -931,7 +931,7 @@ void PixelReadConvert::BuildLUTRGBA()
                    << *(a16+2) << " " << *(a16+3) << std::endl;
          a16+=4;
       }
-*/
+
    }
 }
 
