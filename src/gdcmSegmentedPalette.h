@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/26 09:00:31 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/10/27 17:34:16 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -53,6 +53,14 @@
 #else
 #define GDCM_TYPENAME typename
 #endif
+
+// Hack for Borland
+#if defined(__BORLANDC__)
+#define GDCM_TYPENAME2
+#else
+#define GDCM_TYPENAME2 typename
+#endif
+
 
 namespace GDCM_NAME_SPACE
 {
@@ -206,7 +214,7 @@ namespace GDCM_NAME_SPACE
         }
         GDCM_TYPENAME Segment<EntryType>::SegmentMap instances;
         std::transform(segments.begin(), segments.end(),
-            std::inserter(instances, instances.end()), GDCM_TYPENAME Segment<EntryType>::ToMap());
+            std::inserter(instances, instances.end()), GDCM_TYPENAME2 Segment<EntryType>::ToMap());
         GDCM_TYPENAME SegmentList::iterator ppSeg = segments.begin();
         GDCM_TYPENAME SegmentList::iterator endOfSegments = segments.end();
         for ( ; ppSeg != endOfSegments; ++ppSeg ) {

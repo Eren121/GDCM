@@ -24,7 +24,7 @@ SET(EXAMPLE_SOURCES
   exSerieHelper
   exXCoherentFileSet
   exMoveImagesToSingleSerieUID
-  exExtractSegmentedPalette
+  #exExtractSegmentedPalette
   exMakeIcon
   
   # the following are utilities
