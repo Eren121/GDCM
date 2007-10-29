@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: DenseMultiFramesToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/20 11:15:54 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007/10/29 17:13:59 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,10 @@
 #include <fstream>
 #include <iostream>
 //#include <values.h>
+
+#if defined(__BORLANDC__)
+#include <ctype.h>
+#endif
 
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"

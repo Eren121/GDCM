@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 08:03:10 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/10/29 17:13:59 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -19,6 +19,10 @@
 #include <fstream>
 #include <iostream>
 //#include <values.h>
+
+#if defined(__BORLANDC__)
+#include <ctype.h>
+#endif
 
 #include "gdcmFile.h"
 #include "gdcmFileHelper.h"

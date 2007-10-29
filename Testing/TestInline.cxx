@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 07:35:49 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/10/29 17:13:23 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,14 @@
 
 #include "gdcmUtil.h"
 
-#ifdef _MSC_VER
+#if defined(__BORLANDC__)
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#define GET_TIME(a) a=clock()
+#define HOW_LONG(b,a)                             \
+   std::cout  << (double) (b-a)  << std::endl 
+#elif def _MSC_VER
 #include <time.h>
 #define GET_TIME(a) a=clock()
 #define HOW_LONG(b,a)                             \
@@ -182,7 +189,9 @@ double passDirectDouble(double a, double b)
 int TestInline(int argc, char *argv[])
 {
 
-#ifdef _MSC_VER
+#if defined(__BORLANDC__)
+   clock_t tms1, tms2;
+#elif def _MSC_VER
    clock_t tms1, tms2;
 #else
    struct tms tms1, tms2;
