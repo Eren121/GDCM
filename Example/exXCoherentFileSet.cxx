@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 08:03:10 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/10/30 14:55:20 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    "\n exXCoherentFileSet :\n                                                 ",
    "Shows the various 'XCoherent' Filesets within a directory                 ",
-   "Optionaly copis the images in a Directories tree                          ",
+   "Optionaly copies the images in a Directories tree                         ",
    "usage: exXCoherentFileSet {dirin=inputDirectoryName}                      ",
    "                           dirout=outputDirectoryName                     ",
    "                       { tag=group-elem | pos | ori } [sort] [write]      ",
