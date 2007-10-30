@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 13:31:54 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/10/30 13:35:08 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -86,7 +86,7 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class Segment {
     public:
-        typedef std::map<const EntryType*, const Segment*> SegmentMap;
+        typedef std::map<const EntryType* const, const Segment*> SegmentMap;
         virtual bool Expand(const SegmentMap& instances,
             std::vector<EntryType>& expanded) const = 0;
         const EntryType* First() const { return _first; }
