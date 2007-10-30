@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 14:12:31 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/10/30 11:37:16 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -243,7 +243,8 @@ int main(int argc, char *argv[])
 
 
    // VERY IMPORTANT :
-   // Respect the order you choosed in 'enum Index' !
+   // While coding the various AddSeriesDetail,
+   // respect the order you choosed in 'enum Index' !
  
 /*
    enum Index
@@ -273,12 +274,13 @@ int main(int argc, char *argv[])
    s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID (false : no convert)
 
    s->AddSeriesDetail(0x0008, 0x103e, false); // Serie Description
-   s->AddSeriesDetail(0x0020, 0x0011, false);  // Serie Number (more than 1 serie may have the same Descr. don't 'convert!)
+   s->AddSeriesDetail(0x0020, 0x0011, false); // Serie Number (more than 1 serie may have the same Ser.Nbr don't 'convert!)
+
    
    // Feel free to add more fields, if they can help a suitable (for you)
    // image sorting
 
-// Loop on all the gdcm-readable files
+   // Loop on all the gdcm-readable files
    for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();
                                     it != fileNames.end();
                                   ++it)
@@ -286,8 +288,17 @@ int main(int argc, char *argv[])
       f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( *it );
+      if (verbose)
+         std::cout << "Try[" << *it << "]\n";
       f->Load();
-
+      if (!f->IsReadable())
+      {
+         if (verbose)
+            std::cout << "File : [" << *it << "] not gdcm-readable -> skipped !" << std::endl;
+         continue;     
+      }
+      if (verbose)
+         std::cout << "Loaded!\n";
       std::string strSeriesNumber;
       int seriesNumber;
       int j;
@@ -334,16 +345,19 @@ int main(int argc, char *argv[])
       }
 
       userFileIdentifier=s->CreateUserDefinedFileIdentifier(f);
+      if (verbose)
+         std::cout << "userFileIdentifier [" << userFileIdentifier << "]" << std::endl; 
       tokens.clear();
       GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token);
 
-      //int imageNum; // Within FileName
       char newName[1024];
       
       ///this is a trick to build up a lexicographical compliant name :
       ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
       std::string name = GDCM_NAME_SPACE::Util::GetName( *it );
-
+      
+      std::cout << "name :[" << name << "]\n";
+      
       if (hasSkel)
       {
          int imageNum; // Within FileName
@@ -357,13 +371,15 @@ int main(int argc, char *argv[])
        else
        {
          tokens[IND_FileName] = name;
-       }   
+       }
     
          // Patient's Name
          // Study Instance UID 
          // Series Instance UID
+         // SerieDescription
+         // Serie Number
          // file Name
-
+           
       userFileIdentifier = tokens[IND_PatientName]      + token +
                            tokens[IND_StudyInstanceUID] + token + 
                            tokens[IND_SerieInstanceUID] + token +
@@ -380,7 +396,7 @@ int main(int argc, char *argv[])
    }
    
    if (verbose)
-      std::cout << "  " << std::endl;
+      std::cout << " ==== " << std::endl;
       
    std::string fullFilename, lastFilename;
    std::string previousPatientName, currentPatientName;
