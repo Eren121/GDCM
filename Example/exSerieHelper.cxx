@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/01 09:33:20 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/10/30 11:45:01 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
    GDCM_NAME_SPACE::FileList::const_iterator it;
    GDCM_NAME_SPACE::FileList *l;
-   std::cout << " ---------------------------------------- Recap"
+   std::cout << std::endl << " ---------------------------------------- Recap"
              << std::endl;  
    l = s->GetFirstSingleSerieUIDFileSet();
    while (l)
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
       l = s->GetNextSingleSerieUIDFileSet();
    } 
     std::cout << " ----------------------------------------End Recap"
-             << std::endl;
+             << std::endl << std::endl;
 
    int nbFiles;
    double zspacing = 0.;
@@ -88,26 +88,31 @@ int main(int argc, char *argv[])
          //---------------------------------------------------------
          s->OrderFileList(l);  // sort the list (and compute ZSpacing !)
          //---------------------------------------------------------
- 
+         std::cout << "List after sorting : " << nbFiles << " long" << std::endl;
+           
           zspacing = s->GetZSpacing();
          // Just to show : GetZSpacing from a GDCM_NAME_SPACE::SerieHelper is right  
          std::cout << "GetZSpacing() of sorted SingleSerieUIDFileSet "
                    << "from GDCM_NAME_SPACE::SerieHelper: " << zspacing << std::endl;
          std::cout << " ('-1' means all the files have the same position)" << std::endl;
+         int fileCount = 0;
          for (std::vector<GDCM_NAME_SPACE::File* >::iterator it2 =  l->begin();
                                             it2 != l->end();
                                           ++it2)
          {
           // Just to show : GetZSpacing from a GDCM_NAME_SPACE::File may be different        
              std::cout << (*it2)->GetFileName() << " -->  GetZSpacing() from GDCM_NAME_SPACE::File : " 
-                       << (*it2)->GetZSpacing() << std::endl;      
-         }  
+                       << (*it2)->GetZSpacing() << std::endl; 
+           fileCount++;      
+         }
+         std::cout << "Iterate trough vector, nb of files : " << fileCount << std::endl;  
 
-         break; // we only deal with the first one ... Why not ?
+         //break; // we only deal with the first one ... Why not ?
       }
       l = s->GetNextSingleSerieUIDFileSet();
    } 
-   std::cout << " ------------------Prints all the Single SerieUID File Sets (sorted or not) -----"
+   std::cout << std::endl
+             << " ------------------Prints all the Single SerieUID File Sets (sorted or not) -----"
              << std::endl;
    s->Print(); // Prints all the Single SerieUID File Sets (sorted or not)
    std::cout << " -------------------------------------------- Finish printing"
