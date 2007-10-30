@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/21 08:35:49 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2007/10/30 09:13:45 $
+  Version:   $Revision: 1.44 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,9 +41,9 @@ int CopyDicom(std::string const &filename,
 
       //////////////// Step 1:
       std::cout << "      1...";
-      
-      gdcm::File *originalH = new gdcm::File( );
-      gdcm::File *copyH     = new gdcm::File( );
+      GDCM_NAME_SPACE::File *originalH = GDCM_NAME_SPACE::File::New();
+      GDCM_NAME_SPACE::File *copyH     = GDCM_NAME_SPACE::File::New();
+
 
       originalH->SetFileName( filename );
       originalH->Load( );
@@ -51,10 +51,10 @@ int CopyDicom(std::string const &filename,
 
       //////////////// Step 2:
       std::cout << "2...";
-      gdcm::DocEntry *d=originalH->GetFirstEntry();
+      GDCM_NAME_SPACE::DocEntry *d=originalH->GetFirstEntry();
       while(d)
       {
-         if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
+         if ( GDCM_NAME_SPACE::DataEntry *de = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d) )
          {              
             copyH->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
                                        de->GetGroup(),de->GetElement(),
@@ -67,9 +67,8 @@ int CopyDicom(std::string const &filename,
 
          d=originalH->GetNextEntry();
       }
-
-      gdcm::FileHelper *original = new gdcm::FileHelper( originalH );
-      gdcm::FileHelper *copy     = new gdcm::FileHelper( copyH );
+      GDCM_NAME_SPACE::FileHelper *original = GDCM_NAME_SPACE::FileHelper::New(originalH);
+      GDCM_NAME_SPACE::FileHelper *copy     = GDCM_NAME_SPACE::FileHelper::New(copyH);
 
       size_t dataSize = original->GetImageDataSize();
       uint8_t *imageData = original->GetImageData();
@@ -89,29 +88,29 @@ int CopyDicom(std::string const &filename,
          std::cout << " Failed" << std::endl
                    << "       " << output << " not written" << std::endl;
 
-         delete original;
-         delete copy;
-         delete originalH;
-         delete copyH;
+         original->Delete();
+         copy->Delete();
+         originalH->Delete();
+         copyH->Delete();
 
          return 1;
       }
 
-      delete copy;
-      delete copyH;
+      copy->Delete();
+      copyH->Delete();
 
       //////////////// Step 4:
       std::cout << "4...";
-      copy = new gdcm::FileHelper( output );
-
+//      copy = new GDCM_NAME_SPACE::FileHelper( output );
+      copy = GDCM_NAME_SPACE::FileHelper::New(output);  // ???
       //Is the file written still gdcm parsable ?
       if ( !copy->GetFile()->IsReadable() )
       { 
          std::cout << " Failed" << std::endl
                    << "        " << output << " not readable" << std::endl;
 
-         delete original;
-         delete originalH;
+         original->Delete();
+         originalH->Delete();
 
          return 1;
       }
@@ -127,9 +126,9 @@ int CopyDicom(std::string const &filename,
                    << "        Pixel areas lengths differ: "
                    << dataSize << " # " << dataSizeWritten << std::endl;
 
-         delete original;
-         delete copy;
-         delete originalH;
+         original->Delete();
+         copy->Delete();
+         originalH->Delete();
 
          return 1;
       }
@@ -140,17 +139,17 @@ int CopyDicom(std::string const &filename,
          std::cout << " Failed" << std::endl
                    << "        Pixel differ (as expanded in memory)." << std::endl;
 
-         delete original;
-         delete copy;
-         delete originalH;
+         original->Delete();
+         copy->Delete();
+         originalH->Delete();
 
          return 1;
       }
       std::cout << "OK." << std::endl ;
 
-      delete original;
-      delete copy;
-      delete originalH;
+      original->Delete();
+      copy->Delete();
+      originalH->Delete();
 
       return 0;
 }
