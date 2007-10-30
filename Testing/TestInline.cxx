@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/29 17:13:23 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007/10/30 09:07:46 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,18 +31,16 @@
 
 #include "gdcmUtil.h"
 
-#if defined(__BORLANDC__)
+#if defined(__BORLANDC__)  || defined (_MSC_VER)
 #include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
+   #if defined(__BORLANDC__)
+   #include <stdio.h>
+   #include <stdlib.h>
+   #endif
 #define GET_TIME(a) a=clock()
 #define HOW_LONG(b,a)                             \
    std::cout  << (double) (b-a)  << std::endl 
-#elif def _MSC_VER
-#include <time.h>
-#define GET_TIME(a) a=clock()
-#define HOW_LONG(b,a)                             \
-   std::cout  << (double) (b-a)  << std::endl  
+
 #else
 #include <sys/times.h>
 #define GET_TIME(a)  times(&a)
@@ -189,9 +187,7 @@ double passDirectDouble(double a, double b)
 int TestInline(int argc, char *argv[])
 {
 
-#if defined(__BORLANDC__)
-   clock_t tms1, tms2;
-#elif def _MSC_VER
+#if defined(__BORLANDC__) || defined (_MSC_VER)
    clock_t tms1, tms2;
 #else
    struct tms tms1, tms2;
