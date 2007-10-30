@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Bmp2Dcm.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/27 08:43:25 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/10/30 16:42:58 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,9 +67,9 @@ int main( int argc, char *argv[] )
 
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-      
-   int verbose  = am->ArgMgrDefined("verbose");
-         
+
+   bool verbose = ( 0 != am->ArgMgrDefined("verbose") );
+
    const char *fileName = am->ArgMgrGetString("filein");
    const char *dirName  = am->ArgMgrGetString("dirin");
 
@@ -78,53 +78,52 @@ int main( int argc, char *argv[] )
         (fileName != 0 && dirName != 0) )
    {
        std::cout <<std::endl
-                 << "Either 'filein=' or 'dirin=' must be present;" 
+                 << "Either 'filein=' or 'dirin=' must be present;"
                  << std::endl << "Not both" << std::endl;
-       am->ArgMgrUsage(usage); // Display 'usage'  
+       am->ArgMgrUsage(usage); // Display 'usage'
        delete am;
        return 0;
  }
- 
+
    std::string patName  = am->ArgMgrGetString("patname", dirName);
-    
-   bool userDefinedStudy = am->ArgMgrDefined("studyUID");
+   bool userDefinedStudy = ( 0 != am->ArgMgrDefined("studyUID") );
    const char *studyUID;
    if (userDefinedStudy)
-      studyUID  = am->ArgMgrGetString("studyUID");  
+      studyUID  = am->ArgMgrGetString("studyUID");
 
-   // not described *on purpose* in the Usage !    
-   bool userDefinedSerie = am->ArgMgrDefined("serieUID");   
+   // not described *on purpose* in the Usage !
+   bool userDefinedSerie = ( 0 != am->ArgMgrDefined("serieUID") );
    const char *serieUID;
    if(userDefinedSerie)
       serieUID = am->ArgMgrGetString("serieUID");
-       
+
     /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
    {
       am->ArgMgrUsage(usage);
       delete am;
       return 0;
-   } 
- 
+   }
+
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
 
    // ----- Begin Processing -----
-   
+
    int *dim;
    std::string nomFich;
-   
+
    if ( fileName != 0 ) // ====== Deal with a single file ======
-   { 
+   {
      vtkBMPReader* Reader = vtkBMPReader::New();
      if ( Reader->CanReadFile(fileName ) == 0) {
-         // skip 'non BMP' files   
+         // skip 'non BMP' files
         Reader->Delete();
         if (verbose)
             std::cout << "Sorry, [" << fileName << "] is not a BMP file!" << std::endl;
         return 0;
     }
-    
+
     if (verbose)
        std::cout << "deal with [" <<  fileName << "]" << std::endl;
      //Read BMP file
