@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 11:45:01 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/10/30 11:56:52 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -81,22 +81,24 @@ int main(int argc, char *argv[])
    while (l)
    { 
       nbFiles = l->size() ;
-      if ( l->size() > 5 ) // Why not ? Just an example, for testing
+      if ( nbFiles > 5 ) // Why not ? Just an example, for testing
       {
-         std::cout << "Sort list : " << nbFiles << " long" << std::endl; 
- 
+         std::cout << "List to sort : " << nbFiles << " long" << std::endl;  
          //---------------------------------------------------------
          s->OrderFileList(l);  // sort the list (and compute ZSpacing !)
          //---------------------------------------------------------
-         std::cout << "List after sorting : " << nbFiles << " long" << std::endl;
+         std::cout << "List after sorting : " << l->size() << " long" << std::endl;
            
           zspacing = s->GetZSpacing();
          // Just to show : GetZSpacing from a GDCM_NAME_SPACE::SerieHelper is right  
          std::cout << "GetZSpacing() of sorted SingleSerieUIDFileSet "
                    << "from GDCM_NAME_SPACE::SerieHelper: " << zspacing << std::endl;
          std::cout << " ('-1' means all the files have the same position)" << std::endl;
+         
+         // Check the vector content
          int fileCount = 0;
-         for (std::vector<GDCM_NAME_SPACE::File* >::iterator it2 =  l->begin();
+      // for (std::vector<GDCM_NAME_SPACE::File* >::iterator it2 =  l->begin();
+         for (GDCM_NAME_SPACE::FileList::const_iterator it2 = l->begin();
                                             it2 != l->end();
                                           ++it2)
          {
