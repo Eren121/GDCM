@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 09:14:42 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007/10/30 13:31:54 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@
 #endif
 
 // Hack for Borland
-#if defined(__BORLANDC__)
+#if (defined(_MSC_VER) && (_MSC_VER < 1310)) || defined(__BORLANDC__)
 #define GDCM_TYPENAME2
 #else
 #define GDCM_TYPENAME2 typename
