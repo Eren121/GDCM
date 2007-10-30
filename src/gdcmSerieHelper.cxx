@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 11:11:04 $
-  Version:   $Revision: 1.63 $
+  Date:      $Date: 2007/10/30 14:51:00 $
+  Version:   $Revision: 1.64 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,7 +43,7 @@ SerieHelper::SerieHelper()
    ClearAll();
    UserLessThanFunction = 0;
    DirectOrder = true;
-   
+   DropDuplicatePositions = false;   
 }
 
 /**
@@ -648,6 +648,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
    bool first = true;
    ZSpacing = -1.0;  // will be updated if process doesn't fail
 
+   gdcmDebugMacro("============================================DropDuplicatePositions : " << DropDuplicatePositions );
+    
    std::multimap<double,File *> distmultimap;
    // Use a multimap to sort the distances from 0,0,0
    for ( FileList::const_iterator 
@@ -720,6 +722,8 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
       }
    }
 
+   gdcmDebugMacro("After parsing vector, nb of elements : " << fileList->size() );
+
    // Find out if min/max are coherent
    if ( min == max )
    {
@@ -735,6 +739,9 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
         it2 != distmultimap.end();
         ++it2)
    {
+   
+      gdcmDebugMacro("Check if image shares a common position : " << (*it2).second->GetFileName() );   
+   
       if (distmultimap.count((*it2).first) != 1)
       {
          gdcmWarningMacro("File: ["
