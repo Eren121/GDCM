@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/25 16:06:46 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2007/10/30 09:14:42 $
+  Version:   $Revision: 1.96 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ namespace GDCM_NAME_SPACE
 
 // Constructor / Destructor
 /**
- * \brief   Constructor from a given DictEntry
+ * \brief   Constructor from a given DocEntry
  * @param   group Group number
  * @param   elem Element number
  * @param   vr VR 
@@ -42,7 +42,7 @@ DocEntry::DocEntry(uint16_t group, uint16_t elem, VRKey const &vr)
 {
    ImplicitVR = false;
    DicomDict  = 0;   
-   Offset     = 0 ; // To avoid further missprinting
+   Offset     = 0 ; // To avoid further misprinting
 
    // init some variables
    ReadLength = 0;
@@ -53,7 +53,7 @@ DocEntry::DocEntry(uint16_t group, uint16_t elem, VRKey const &vr)
 }
 
 /**
- * \brief   Destructor from a given DictEntry
+ * \brief   Destructor from a given DocEntry
  */
 DocEntry::~DocEntry()
 {

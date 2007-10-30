@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/27 17:34:16 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007/10/30 09:14:42 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,7 +36,7 @@
 // And both were coming from a ALOKA SSD-4000 station
 //
 // JPRx :
-// It compiles fine under gcc 4.1.2 and msvc 7
+// It compiles fine under gcc 4.1.2, msvc 7 and DarwinG5-g++
 // It doesn't compile on msvc 6, borland and SunOS
 // Any fix welcome !
 
@@ -90,7 +90,7 @@ namespace GDCM_NAME_SPACE
         virtual bool Expand(const SegmentMap& instances,
             std::vector<EntryType>& expanded) const = 0;
         const EntryType* First() const { return _first; }
-        const EntryType* Last() const { return _last; }
+        const EntryType* Last()  const { return _last;  }
         struct ToMap {
             typename SegmentMap::value_type
                 operator()(const Segment* segment) const

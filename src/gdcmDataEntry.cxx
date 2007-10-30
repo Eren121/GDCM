@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 14:16:09 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2007/10/30 09:14:41 $
+  Version:   $Revision: 1.51 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -545,6 +545,7 @@ std::string const &DataEntry::GetHexaRepresentation() const
      return *StrHexaArea;
   // When short integer(s) are stored, convert the following (n * 2) characters
   // as a displayable string, the values being separated by a back-slash
+  
   s2 << std::hex;
   
   if( vr == "US" )
@@ -594,7 +595,8 @@ std::string const &DataEntry::GetHexaRepresentation() const
         s2 << data[i];
      }
      *StrHexaArea=s2.str();
-  }    else if( vr == "FL" )
+  }
+  else if( vr == "FL" )
   {
      float *data=(float *)BinArea;
      for (unsigned int i=0; i < GetValueCount(); i++)
