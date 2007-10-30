@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestCopyRescaleDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/11 16:05:03 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2007/10/30 09:13:03 $
+  Version:   $Revision: 1.23 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,23 +74,23 @@ int CopyRescaleDicom(std::string const &filename,
  
    //////////////// Step 1:
    std::cout << "      1...";
-   gdcm::File originalF = gdcm::File( );
-   originalF.SetFileName( filename );
-   originalF.Load();
+   GDCM_NAME_SPACE::File *originalF = GDCM_NAME_SPACE::File::New( );
+   originalF->SetFileName( filename );
+   originalF->Load();
    
-   gdcm::File copyF     = gdcm::File( );
+   GDCM_NAME_SPACE::File *copyF     = GDCM_NAME_SPACE::File::New( );
 
    //First of all copy the file, field by field
 
    //////////////// Step 2:
    std::cout << "2...";
    // Copy of the file content
-   gdcm::DocEntry *d = originalF.GetFirstEntry();
+   GDCM_NAME_SPACE::DocEntry *d = originalF->GetFirstEntry();
    while(d)
    {
-      if ( gdcm::DataEntry *de = dynamic_cast<gdcm::DataEntry *>(d) )
+      if ( GDCM_NAME_SPACE::DataEntry *de = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(d) )
       {              
-         copyF.InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
+         copyF->InsertEntryBinArea( de->GetBinArea(),de->GetLength(),
                                    de->GetGroup(),de->GetElement(),
                                    de->GetVR() );
       }
@@ -99,31 +99,31 @@ int CopyRescaleDicom(std::string const &filename,
        // We skip pb of SQ recursive exploration
       }
 
-      d = originalF.GetNextEntry();
+      d = originalF->GetNextEntry();
    }
 
-   gdcm::FileHelper original = gdcm::FileHelper( &originalF );
-   gdcm::FileHelper copy     = gdcm::FileHelper( &copyF );
+   GDCM_NAME_SPACE::FileHelper *original = GDCM_NAME_SPACE::FileHelper::New( originalF );
+   GDCM_NAME_SPACE::FileHelper *copy     = GDCM_NAME_SPACE::FileHelper::New( copyF );
 
-   size_t dataSize = original.GetImageDataSize();
+   size_t dataSize = original->GetImageDataSize();
 
    size_t rescaleSize;
    uint8_t *rescaleImage;
 
-   const std::string &bitsStored = originalF.GetEntryValue(0x0028,0x0101);
+   const std::string &bitsStored = originalF->GetEntryString(0x0028,0x0101);
    if( bitsStored == "16" )
    {
       std::cout << "Rescale...";
-      copyF.InsertEntryString( "8", 0x0028, 0x0100, "US"); // Bits Allocated
-      copyF.InsertEntryString( "8", 0x0028, 0x0101, "US"); // Bits Stored
-      copyF.InsertEntryString( "7", 0x0028, 0x0102, "US"); // High Bit
-      copyF.InsertEntryString( "0", 0x0028, 0x0103, "US"); // Pixel Representation
+      copyF->InsertEntryString( "8", 0x0028, 0x0100, "US"); // Bits Allocated
+      copyF->InsertEntryString( "8", 0x0028, 0x0101, "US"); // Bits Stored
+      copyF->InsertEntryString( "7", 0x0028, 0x0102, "US"); // High Bit
+      copyF->InsertEntryString( "0", 0x0028, 0x0103, "US"); // Pixel Representation
 
       // We assume the value were from 0 to uint16_t max
       rescaleSize = dataSize / 2;
       rescaleImage = new uint8_t[dataSize];
 
-      uint16_t *imageData16 = (uint16_t*)original.GetImageData();
+      uint16_t *imageData16 = (uint16_t*)original->GetImageData();
       uint16_t *tmpImage = imageData16;
       uint8_t *tmpRescale = rescaleImage;
       for(unsigned int i=0; i<rescaleSize; i++)
@@ -138,15 +138,15 @@ int CopyRescaleDicom(std::string const &filename,
       std::cout << "Same...";
       rescaleSize = dataSize;
       rescaleImage = new uint8_t[dataSize];
-      memcpy(rescaleImage,original.GetImageData(),dataSize);
+      memcpy(rescaleImage,original->GetImageData(),dataSize);
    }
 
-   copy.SetImageData(rescaleImage, rescaleSize);
+   copy->SetImageData(rescaleImage, rescaleSize);
 
    //////////////// Step 3:
    std::cout << "3...";
-   copy.SetWriteModeToRGB();
-   if( !copy.WriteDcmExplVR(output) )
+   copy->SetWriteModeToRGB();
+   if( !copy->WriteDcmExplVR(output) )
    {
       std::cout << " Failed" << std::endl
                 << "        " << output << " not written" << std::endl;
@@ -158,10 +158,10 @@ int CopyRescaleDicom(std::string const &filename,
 
    //////////////// Step 4:
    std::cout << "4...";
-   gdcm::FileHelper copy2 = gdcm::FileHelper( output );
+   GDCM_NAME_SPACE::FileHelper *copy2 = GDCM_NAME_SPACE::FileHelper::New( output );
 
    //Is the file written still gdcm parsable ?
-   if ( !copy2.GetFile()->IsReadable() )
+   if ( !copy2->GetFile()->IsReadable() )
    { 
       std::cout << " Failed" << std::endl
                 << "        " << output << " not readable" << std::endl;
@@ -173,21 +173,21 @@ int CopyRescaleDicom(std::string const &filename,
 
    //////////////// Step 5:
    std::cout << "5...";
-   size_t    dataSizeWritten = copy2.GetImageDataSize();
-   uint8_t *imageDataWritten = copy2.GetImageData();
+   size_t    dataSizeWritten = copy2->GetImageDataSize();
+   uint8_t *imageDataWritten = copy2->GetImageData();
 
-   if (originalF.GetXSize() != copy2.GetFile()->GetXSize() ||
-       originalF.GetYSize() != copy2.GetFile()->GetYSize() ||
-       originalF.GetZSize() != copy2.GetFile()->GetZSize())
+   if (originalF->GetXSize() != copy2->GetFile()->GetXSize() ||
+       originalF->GetYSize() != copy2->GetFile()->GetYSize() ||
+       originalF->GetZSize() != copy2->GetFile()->GetZSize())
    {
       std::cout << "Failed" << std::endl
          << "        X Size differs: "
-         << "X: " << originalF.GetXSize() << " # " 
-                  << copy2.GetFile()->GetXSize() << " | "
-         << "Y: " << originalF.GetYSize() << " # " 
-                  << copy2.GetFile()->GetYSize() << " | "
-         << "Z: " << originalF.GetZSize() << " # " 
-                  << copy2.GetFile()->GetZSize() << std::endl;
+         << "X: " << originalF->GetXSize() << " # " 
+                  << copy2->GetFile()->GetXSize() << " | "
+         << "Y: " << originalF->GetYSize() << " # " 
+                  << copy2->GetFile()->GetYSize() << " | "
+         << "Z: " << originalF->GetZSize() << " # " 
+                  << copy2->GetFile()->GetZSize() << std::endl;
       delete[] rescaleImage;
 
       return 1;
