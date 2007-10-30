@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractOverlaysDCM.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/25 07:55:02 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007/10/30 09:15:58 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,16 +25,17 @@
 
 #include <iostream>
 
-// Each BIT of Overlay Data (0x6000,0x3000) corresponds 
+// Each BIT of Overlay Data (0x60xx,0x3000) corresponds
 // to a BYTE of overlay image.
-void explodeByte(unsigned char byte, unsigned char* result) 
+
+void explodeByte(unsigned char byte, unsigned char* result)
 {
    unsigned char mask = 1;
-   for (int i=0;i<8;i++) 
+   for (int i=0;i<8;i++)
    {
-      if ((byte & mask)==0) 
+      if ((byte & mask)==0)
          result[i]=0;
-      else 
+      else
          result[i]=1;
       mask<<=1;
    }
@@ -44,14 +45,16 @@ void explodeByte(unsigned char byte, unsigned char* result)
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n ExtractOverlays :\n                                                   ",
+   " \n exExtractOverlaysDCM :\n                                              ",
    " Extract DICOM style overlays from an image                               ",
-   " usage: exExtractOverlaysDCM filein=inputFileName  [debug]                ",
+   "         Resulting image name(s) are postpended with .ovly.dcm            ",
+   " usage: exExtractOverlaysDCM filein=inputFileName  [debug] [warning]      ",
+   "        warning  : user wants to run the program in 'warning mode'        ",
    "        debug    : developper wants to run the program in 'debug mode'    ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------
-   
+
    GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
 
    if (argc == 1 || am->ArgMgrDefined("usage"))
@@ -65,10 +68,10 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-      
+
    if (am->ArgMgrDefined("warning"))
       GDCM_NAME_SPACE::Debug::WarningOn();
-      
+
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    {
@@ -79,7 +82,7 @@ int main(int argc, char *argv[])
 
    delete am;  // we don't need Argument Manager any longer
 
-   // ========================== Now, we can do the job! ================ 
+   // ========================== Now, we can do the job! ================
 
    GDCM_NAME_SPACE::File *f;
 
@@ -88,7 +91,7 @@ int main(int argc, char *argv[])
 // ============================================================
 
    f = GDCM_NAME_SPACE::File::New( );
-   
+
    f->AddForceLoadElement(0x6000,0x3000);  // Overlay Data
    f->AddForceLoadElement(0x6002,0x3000); 
    f->AddForceLoadElement(0x6004,0x3000); 
@@ -125,7 +128,7 @@ int main(int argc, char *argv[])
 
    unsigned int nx = f->GetXSize();
    unsigned int ny = f->GetYSize();
-   unsigned int nxy=nx*ny;   
+   unsigned int nxy=nx*ny;
    uint16_t currentOvlGroup;
    int i;
 
@@ -137,7 +140,7 @@ int main(int argc, char *argv[])
    GDCM_NAME_SPACE::FileHelper *fh = 0;
 
 // ============================================================
-//   Get each overlay 
+//   Get each overlay group into the image header
 // ============================================================
    for(i=0, currentOvlGroup=0x6000; i<32; i+=2 ,currentOvlGroup+=2)
    {

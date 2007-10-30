@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractOverlaysACR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 15:06:08 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007/10/30 09:15:57 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,12 +60,14 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    " \n exExtractOverlaysACR :\n                                              ",
    " Extract ACR-NEMA style overlays from an image                            ",
-   " usage: exExtractOverlaysACR filein=inputFileName  [debug]                ",
+   "         Resulting image name(s) are postpended with .ovly.dcm            ",
+   " usage: exExtractOverlaysACR filein=inputFileName  [debug] [warning]      ",
+   "        warning  : user wants to run the program in 'warning mode'        ",
    "        debug    : developper wants to run the program in 'debug mode'    ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------
-   
+
    GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
 
    if (argc == 1 || am->ArgMgrDefined("usage"))
@@ -79,10 +81,10 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-      
+
    if (am->ArgMgrDefined("warning"))
       GDCM_NAME_SPACE::Debug::WarningOn();
-      
+
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
    {
@@ -93,7 +95,7 @@ int main(int argc, char *argv[])
 
    delete am;  // we don't need Argument Manager any longer
 
-   // ========================== Now, we can do the job! ================ 
+   // ========================== Now, we can do the job! ================
 
    GDCM_NAME_SPACE::File *f;
 
@@ -105,8 +107,7 @@ int main(int argc, char *argv[])
 
    f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
-   bool res = f->Load();  
-
+   bool res = f->Load();
 
    if (!res) {
        std::cout << "Sorry, " << fileName <<"  not a gdcm-readable "
@@ -137,7 +138,7 @@ int main(int argc, char *argv[])
    }
    std::cout << fileName << " is read! " << std::endl;
 
-   
+
 // ============================================================
 //   Load the pixels in memory.
 // ============================================================
@@ -156,7 +157,7 @@ int main(int argc, char *argv[])
 
    unsigned int nx = f->GetXSize();
    unsigned int ny = f->GetYSize();
-   unsigned int nxy=nx*ny;   
+   unsigned int nxy=nx*ny;
    uint16_t currentOvlGroup;
    int i;
 
