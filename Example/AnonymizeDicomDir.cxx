@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007/11/08 10:40:39 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -142,6 +142,7 @@ int main(int argc, char *argv[])
    std::string v;
 
    int patientNumber = 0;
+
    std::ostringstream oss;
 
    GDCM_NAME_SPACE::SQItem *tmpSI=s->GetFirstSQItem();  // For all the SQItems
@@ -165,7 +166,7 @@ int main(int argc, char *argv[])
          continue;
       }
 
-      oss << patientNumber;      
+      oss << "P^" << patientNumber;      
 
       //   Overwrite the sensitive Entries
 
@@ -174,7 +175,7 @@ int main(int argc, char *argv[])
       // Patient's ID
       AnoNoLoad(tmpSI, fp, 0x0010, 0x0020, oss.str());
       // Patient's Birth Date
-      AnoNoLoad(tmpSI, fp, 0x0010, 0x0030, oss.str());
+      AnoNoLoad(tmpSI, fp, 0x0010, 0x0030, "11111111");
      // Telephone
       AnoNoLoad(tmpSI, fp, 0x0010, 0x2154, oss.str()); 
 
