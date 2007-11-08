@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/01 09:33:20 $
-  Version:   $Revision: 1.87 $
+  Date:      $Date: 2007/11/08 18:14:55 $
+  Version:   $Revision: 1.88 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -241,6 +241,7 @@ int main(int argc, char *argv[])
       GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
+   f->SetMaxSizeLoadEntry(0xffff);
 
       for (int ri=0; ri<forceLoadNb; ri++)
       {
@@ -254,7 +255,15 @@ int main(int argc, char *argv[])
 errno = 0; 
 
 
-      bool res = f->Load();
+      bool res = false;
+      try
+        {
+        f->Load();
+        }
+      catch(std::exception &ex)
+        {
+        std::cerr << "sorry an exception was thrown: " << ex.what() << std::endl;
+        }
       // GDCM_NAME_SPACE::File::IsReadable() is no usable here, because we deal with
       // any kind of gdcm-Parsable *document*
       // not only GDCM_NAME_SPACE::File (as opposed to GDCM_NAME_SPACE::DicomDir)
