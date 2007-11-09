@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/08 18:14:55 $
-  Version:   $Revision: 1.88 $
+  Date:      $Date: 2007/11/09 17:52:59 $
+  Version:   $Revision: 1.89 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -258,7 +258,7 @@ errno = 0;
       bool res = false;
       try
         {
-        f->Load();
+        res = f->Load();
         }
       catch(std::exception &ex)
         {
