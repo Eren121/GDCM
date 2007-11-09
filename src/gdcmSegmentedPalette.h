@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 13:35:08 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2007/11/09 16:11:18 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,9 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class DiscreteSegment : public Segment<EntryType> {
     public:
+#if defined(__sun__)
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
+#endif
         DiscreteSegment(const EntryType* first)
             : Segment<EntryType>(first, first+2+*(first+1)) {}
         virtual bool Expand(const SegmentMap&,
@@ -123,7 +125,9 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class LinearSegment : public Segment<EntryType> {
     public:
+#if defined(__sun__)
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
+#endif
         LinearSegment(const EntryType* first)
             : Segment<EntryType>(first, first+3) {}
         virtual bool Expand(const SegmentMap&,
@@ -152,7 +156,9 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class IndirectSegment : public Segment<EntryType> {
     public:
+#if defined(__sun__)
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
+#endif
         IndirectSegment(const EntryType* first)
             : Segment<EntryType>(first, first+2+4/sizeof(EntryType)) {}
         virtual bool Expand(const SegmentMap& instances,
