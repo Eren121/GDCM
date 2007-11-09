@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/09 08:33:19 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007/11/09 10:18:21 $
+  Version:   $Revision: 1.14 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -188,7 +188,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
           {
              if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
              {
-                if (j<MAX_NUMBER_OF_DIFFERENCE)
+                if (j2<MAX_NUMBER_OF_DIFFERENCE)
                    std::cout << std::dec << "(" << i << " : "
                      << std::hex
                      << (int)(imageData[i]) << " - "
