@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/11/09 16:11:18 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007/11/09 17:53:19 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -108,7 +108,7 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class DiscreteSegment : public Segment<EntryType> {
     public:
-#if defined(__sun__)
+#if !defined(__sun__)
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
 #endif
         DiscreteSegment(const EntryType* first)
@@ -125,7 +125,7 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class LinearSegment : public Segment<EntryType> {
     public:
-#if defined(__sun__)
+#if !defined(__sun__)
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
 #endif
         LinearSegment(const EntryType* first)
@@ -156,7 +156,7 @@ namespace GDCM_NAME_SPACE
     template <typename EntryType>
     class IndirectSegment : public Segment<EntryType> {
     public:
-#if defined(__sun__)
+#if !defined(__sun__)
         typedef typename Segment<EntryType>::SegmentMap SegmentMap;
 #endif
         IndirectSegment(const EntryType* first)
