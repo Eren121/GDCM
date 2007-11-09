@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:04 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007/11/09 17:23:48 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,11 +44,13 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    " \n AnonymizeMultiPatient :\n                                             ",
    " AnonymizeMultiPatient a full gdcm-readable Dicom image                   ",
+   "         optionnaly, creates the DICOMDIR                                 ",
    "         Warning : the image is OVERWRITTEN                               ",
    "                   to preserve image integrity, use a copy.               ",
-   " usage: AnonymizeMultiPatient dirin=inputDirectoryName                    ",
+   " usage: AnonymizeMultiPatient dirin=inputDirectoryName  dicomdir          ",
    "       listOfElementsToRubOut : group-elem,g2-e2,... (in hexa, no space)  ",
    "                                of extra Elements to rub out              ",
+   "       dicomdir   : user wants to generate a DICOMDIR                     ",
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
@@ -75,8 +77,9 @@ int main(int argc, char *argv[])
    }
    
    std::string dirName = name;
- 
-   int verbose  = am->ArgMgrDefined("verbose");
+   
+   bool verbose  = ( 0 != am->ArgMgrDefined("verbose") ); 
+   bool dicomdir = ( 0 != am->ArgMgrDefined("dicomdir") );
    
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
@@ -140,10 +143,12 @@ int main(int argc, char *argv[])
    GDCM_NAME_SPACE::DicomDirSerie *se;
    GDCM_NAME_SPACE::DicomDirImage *im;
 
-   std::string codedName; 
+   std::string codedName;
+   std::string codedID;
    std::string fullFileName;
    std::string patName;
-      
+   std::string patID;
+        
    GDCM_NAME_SPACE::File *f;
   
    pa = dcmdir->GetFirstPatient(); 
@@ -151,8 +156,13 @@ int main(int argc, char *argv[])
    {  // on degouline les PATIENT du DICOMDIR
       patName = pa->GetEntryString(0x0010, 0x0010);
       codedName = "g^" + GDCM_NAME_SPACE::Util::ConvertToMD5(patName);
-      if (verbose)
-         std::cout << patName << " --> " << codedName << std::endl;         
+      patID = pa->GetEntryString(0x0010, 0x0020);
+      codedID = GDCM_NAME_SPACE::Util::ConvertToMD5(patID);
+      
+      if (verbose) {
+         std::cout << "[" << patName << "] --> [" << codedName << "]" << std::endl;
+         std::cout << "[" << patID   << "] --> [" << codedID   << "]"  << std::endl;                 
+      } 
       st = pa->GetFirstStudy();
       while ( st ) 
       { // on degouline les STUDY de ce patient
@@ -188,7 +198,8 @@ int main(int argc, char *argv[])
                f->AddAnonymizeElement( 0x0010, 0x0010, codedName ); 
     
                // Patient's ID
-               f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
+               //f->AddAnonymizeElement( 0x0010, 0x0020,"1515" );
+               f->AddAnonymizeElement( 0x0010, 0x0020,codedID );
                // Patient's Birthdate
                f->AddAnonymizeElement( 0x0010, 0x0030,"11111111" );
                // Patient's Adress
@@ -228,6 +239,11 @@ int main(int argc, char *argv[])
         st = pa->GetNextStudy();
      }     
      pa = dcmdir->GetNextPatient();    
+   }
+
+   if (dicomdir)
+   {
+      dcmdir->Write("DICOMDIR");   
    }
 
    dcmdir->Delete();        
