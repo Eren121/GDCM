@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 15:29:57 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007/11/09 08:33:19 $
+  Version:   $Revision: 1.13 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,7 +149,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
    }
 
    // Test the data content
-   unsigned int j      = 0;
+  // unsigned int j      = 0;
    unsigned int nbDiff = 0;
    unsigned int lengthToCompare = file->GetXSize()*file->GetYSize()*file->GetZSize()
                                   *file->GetPixelSize()*file->GetSamplesPerPixel();
@@ -184,7 +184,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                     << " bytes differing (pos : original - written) :"
                     << std::endl;
 
-          for(int i=0, j=0; i<dataSizeFixed && j<MAX_NUMBER_OF_DIFFERENCE; i++)
+          for(unsigned int i=0, j2=0; i<dataSizeFixed && j2<MAX_NUMBER_OF_DIFFERENCE; i++)
           {
              if (abs ((int)imageData[i]-(int)imageDataWritten[i]) > 2)
              {
@@ -194,7 +194,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                      << (int)(imageData[i]) << " - "
                      << (int)(imageDataWritten[i]) << ") "
                      << std::dec;
-                ++j;
+                ++j2;
               }
           }
           std::cout << std::endl;
@@ -225,7 +225,7 @@ static int CompareInternalJPEG(std::string const &filename, std::string const &o
                     << " bytes differing (pos : original - written) :"
                     << std::endl;
 
-          for(int i=0, j1=0; i<dataSizeFixed && j1<MAX_NUMBER_OF_DIFFERENCE; i++)
+          for(unsigned int i=0, j1=0; i<dataSizeFixed && j1<MAX_NUMBER_OF_DIFFERENCE; i++)
           {
              if (imageData[i] != imageDataWritten[i])
              {
