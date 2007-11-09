@@ -229,8 +229,7 @@ Probabely, you'll never have to deal with Sequences (hope so!).
 1-1-1-1) Deal with the file header
 
 The first step is to load the file header :
-
-           gdcm::File *f = new gdcm::File();
+           gdcm::File *f = gdcm::File::New();
                   f->SetLoadMode(LD_NOSEQ);              | depending on what
                   f->SetLoadMode(LD_NOSHADOW);           | you want *not* 
                   f->SetLoadMode(LD_NOSEQ | LD_NOSHADOW);| to load from the
@@ -599,7 +598,7 @@ When user knows the files with same Serie UID have same sizes,
 same 'pixel' type, same color convention, ... 
 the right way to proceed is as follow :
 
-        gdcm::SerieHelper *sh= new gdcm::SerieHelper();
+        gdcm::SerieHelper *sh= gdcm::NewSerieHelper();
    //      if user wants *not* to load some parts of the file headers
         sh->SetLoadMode(yourLoadMode);
 
