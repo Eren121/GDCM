@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/09 17:23:48 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007/11/13 11:49:09 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -241,12 +241,18 @@ int main(int argc, char *argv[])
      pa = dcmdir->GetNextPatient();    
    }
 
+   dcmdir->Delete();
+   
    if (dicomdir)
    {
+      std::cout << "DICOMDIR creation in progress ..." << std::endl;      
+      dcmdir = GDCM_NAME_SPACE::DicomDir::New( );
+      dcmdir->SetLoadMode(loadMode);
+      dcmdir->SetDirectoryName(dirName);
+      dcmdir->Load();
       dcmdir->Write("DICOMDIR");   
    }
-
-   dcmdir->Delete();        
+             
    return 0;
    
 }
