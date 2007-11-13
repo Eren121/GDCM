@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSegmentedPalette.h,v $
   Language:  C++
-  Date:      $Date: 2007/11/09 17:53:19 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2007/11/13 09:37:22 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,11 +64,16 @@
 
 namespace GDCM_NAME_SPACE
 {
-// Long stody short: Sun compiler only provide the second interface of std::distance, since the implemenation
-// is so trivial, I'd rather redo it myself.
+// Long stody short: Sun compiler only provide the second interface of 
+// std::distance, since the implementation is so trivial, I'd rather redo it myself.
 // Ref:
 // http://www.sgi.com/tech/stl/distance.html#2
-// The second version of distance was the one defined in the original STL, and the first version is the one defined in the draft C++ standard; the definition was changed because the older interface was clumsy and error-prone. The older interface required the use of a temporary variable, and it has semantics that are somewhat nonintuitive: it increments n by the distance from first to last, rather than storing that distance in n
+// The second version of distance was the one defined in the original STL, and
+// the first version is the one defined in the draft C++ standard; the definition
+// was changed because the older interface was clumsy and error-prone. 
+// The older interface required the use of a temporary variable, and it has semantics 
+// that are somewhat nonintuitive: it increments n by the distance from first to last, 
+// rather than storing that distance in n
   template<typename InputIterator>
     inline int32_t
     mydistance(InputIterator first, InputIterator last)
