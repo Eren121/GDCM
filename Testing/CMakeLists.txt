@@ -182,6 +182,9 @@ SET(BLACK_LIST
   # I blacklist it until the pb is solved.
   # (to get some more green on the Dasboards)
   "MR_Philips-Intera_BreaksNOSHADOW.dcm"
+
+  # No way we'll ever be able to read that...
+  "ELSCINT1_LOSSLESS_RICE.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
