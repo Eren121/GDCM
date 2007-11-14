@@ -185,6 +185,9 @@ SET(BLACK_LIST
 
   # No way we'll ever be able to read that...
   "ELSCINT1_LOSSLESS_RICE.dcm"
+
+  # Are we even be able to support our own bugs ?
+  "SIEMENS_MAGNETOM-12-MONO2-GDCM12-VRUN.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
