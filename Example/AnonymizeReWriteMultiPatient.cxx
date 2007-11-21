@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeReWriteMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/21 12:53:59 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007/11/21 16:24:08 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,6 +48,8 @@ int main(int argc, char *argv[])
    "         Warning : the image is OVERWRITTEN                               ",
    "                   to preserve image integrity, use a copy.               ",
    " usage: AnonymizeReWriteMultiPatient dirin=inputDirectoryName  dicomdir   ",
+   "       dirin : directory holding images to anonymize                      ",
+   "       rootname : root for the 'anonymized' name                          ",
    "       listOfElementsToRubOut : group-elem,g2-e2,... (in hexa, no space)  ",
    "                                of extra Elements to rub out              ",
    "       dicomdir   : user wants to generate a DICOMDIR                     ",
@@ -78,8 +80,10 @@ int main(int argc, char *argv[])
    bool verbose  = ( 0 != am->ArgMgrDefined("verbose") ); 
    bool dicomdir = ( 0 != am->ArgMgrDefined("dicomdir") );
    
+   const char *rootname  = am->ArgMgrGetString("rootname","Patient");
+     
    if (am->ArgMgrDefined("debug"))
-      GDCM_NAME_SPACE::Debug::DebugOn();
+     GDCM_NAME_SPACE::Debug::DebugOn();
 
    int loadMode = GDCM_NAME_SPACE::LD_ALL;
 
@@ -136,10 +140,14 @@ int main(int argc, char *argv[])
    std::string patID;
         
    GDCM_NAME_SPACE::File *f;
+ 
+ 
+  //GDCM_NAME_SPACE::Debug::DebugOn();
   
+   
    int sequentialPatientNumber = 0;
    char  char_sequentialPatientNumber[10]; // 999999999 patients in a directory should be enough?
-   pa = dcmdir->GetFirstPatient(); 
+   pa = dcmdir->GetFirstPatient();    
    while ( pa )
    {  // on degouline les PATIENT du DICOMDIR
    
@@ -149,7 +157,7 @@ int main(int argc, char *argv[])
       
      
       //codedName = "g^" + GDCM_NAME_SPACE::Util::ConvertToMD5(patName);
-      codedName = "g^Patient" + std::string(char_sequentialPatientNumber);
+      codedName = "g^" + std::string(rootname) + std::string(char_sequentialPatientNumber);
       patID = pa->GetEntryString(0x0010, 0x0020);
       codedID = GDCM_NAME_SPACE::Util::ConvertToMD5(patID);
       
@@ -167,21 +175,37 @@ int main(int argc, char *argv[])
             while ( im ) 
             { // on degouline les Images de cette serie       
                fullFileName = dirName;
-               fullFileName +=  GDCM_NAME_SPACE::GDCM_FILESEPARATOR;
+               const char lastChar = dirName.c_str()[strlen(dirName.c_str())-1];
+               if ( lastChar != '/' && lastChar != '\\')
+                  fullFileName +=  GDCM_NAME_SPACE::GDCM_FILESEPARATOR;
                fullFileName += im->GetEntryString(0x0004, 0x1500);
+               
+               // -- remove trailing space, if any
+               int pos=fullFileName.length()-1;
+               if (fullFileName[pos] == ' ')
+               {
+                  fullFileName.erase(pos);
+               }
+               // --
+               
                if (verbose)
-                  std::cout << "FileName " << fullFileName << std::endl;
+                  std::cout << "FileName [" << fullFileName << "]" << std::endl;
 
                f = GDCM_NAME_SPACE::File::New( );
                   f->SetMaxSizeLoadEntry(0x7fff);  // we want to load entries of any length !
                   f->SetLoadMode(loadMode);
                   f->SetFileName( fullFileName );
                if ( !f->Load() )
-                 std::cout << "Load failed for [" << fullFileName << "]" << std::endl; 
+               {
+                 std::cout << "Load failed for [" << fullFileName << "]" << std::endl;
+                 //f->Delete();
+                 //continue;  // or return 0; ?
+               }
                else
+               {
                   if (verbose)
                      std::cout << "Load successed for [" << fullFileName << "]" << std::endl;
-
+               }
                // 
                //  Choose the fields to anonymize.
                // 
@@ -225,7 +249,7 @@ int main(int argc, char *argv[])
                GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
 
                // unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
-               // Feel free to cast if you know it's not. 
+               // Feel free to cast if you know it's not.
 
                uint8_t *imageData = fh->GetImageData();
 
@@ -240,12 +264,12 @@ int main(int argc, char *argv[])
                }
                
    // ============================================================
-      
               f->AnonymizeFile();    
-
               f->ClearAnonymizeList();
-              f->Delete();
- 
+              
+              fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
+              fh->Write(fullFileName);  // WARNING : overwrites the file!
+              
               im = se->GetNextImage(); 
               f->Delete();
               fh->Delete();                  
@@ -254,9 +278,7 @@ int main(int argc, char *argv[])
         }
         st = pa->GetNextStudy();
      }     
-     pa = dcmdir->GetNextPatient(); 
-     
-
+     pa = dcmdir->GetNextPatient();      
    }
 
    dcmdir->Delete();
