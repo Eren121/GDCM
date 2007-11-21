@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: AnonymizeReWriteMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/21 11:52:22 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/11/21 12:53:59 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
       
      
       //codedName = "g^" + GDCM_NAME_SPACE::Util::ConvertToMD5(patName);
-      codedName = "g^Patient" + char_sequentialPatientNumber;
+      codedName = "g^Patient" + std::string(char_sequentialPatientNumber);
       patID = pa->GetEntryString(0x0010, 0x0020);
       codedID = GDCM_NAME_SPACE::Util::ConvertToMD5(patID);
       
@@ -173,9 +173,9 @@ int main(int argc, char *argv[])
                   std::cout << "FileName " << fullFileName << std::endl;
 
                f = GDCM_NAME_SPACE::File::New( );
-               f->SetMaxSizeLoadEntry(0x7fff);  // we want to load entries of any length !
-               f->SetLoadMode(loadMode);
-               f->SetFileName( fullFileName );
+                  f->SetMaxSizeLoadEntry(0x7fff);  // we want to load entries of any length !
+                  f->SetLoadMode(loadMode);
+                  f->SetFileName( fullFileName );
                if ( !f->Load() )
                  std::cout << "Load failed for [" << fullFileName << "]" << std::endl; 
                else
@@ -221,31 +221,34 @@ int main(int argc, char *argv[])
    //   Load the pixels in memory.
    // ============================================================
 
-   // We need a gdcm::FileHelper, since we want to load the pixels        
-   GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
+               // We need a gdcm::FileHelper, since we want to load the pixels        
+               GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
 
-   // unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
-   // Feel free to cast if you know it's not. 
+               // unit8_t DOESN'T mean it's mandatory for the image to be a 8 bits one !
+               // Feel free to cast if you know it's not. 
 
-   uint8_t *imageData = fh->GetImageData();
+               uint8_t *imageData = fh->GetImageData();
 
-   if ( imageData == 0 )
-   {
-       std::cerr << "Sorry, Pixels of" << fileName <<"  are not "
-                 << " gdcm-readable."       << std::endl
-                 << "Use exAnonymizeNoLoad" << std::endl;
-       f->Delete();
-       fh->Delete();
-       return 0;
-   } 
-
-   
-              f->Anonymize();    
+               if ( imageData == 0 )
+               {
+                   std::cerr << "Sorry, Pixels of [" << fullFileName <<"]  are not "
+                             << " gdcm-readable."       << std::endl
+                             << "Use exAnonymizeNoLoad" << std::endl;
+                   f->Delete();
+                   fh->Delete();
+                   return 0;
+               }
+               
+   // ============================================================
+      
+              f->AnonymizeFile();    
 
               f->ClearAnonymizeList();
               f->Delete();
  
-              im = se->GetNextImage();   
+              im = se->GetNextImage(); 
+              f->Delete();
+              fh->Delete();                  
            }
            se = st->GetNextSerie();   
         }
@@ -253,8 +256,7 @@ int main(int argc, char *argv[])
      }     
      pa = dcmdir->GetNextPatient(); 
      
-     f->Delete();
-     fh->Delete();  
+
    }
 
    dcmdir->Delete();
