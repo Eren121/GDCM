@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/23 15:52:33 $
-  Version:   $Revision: 1.341 $
+  Date:      $Date: 2007/11/21 16:25:26 $
+  Version:   $Revision: 1.342 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1913,12 +1913,13 @@ bool File::AnonymizeFile()
             gdcmWarningMacro( "You cannot 'Anonymize' a SeqEntry ");
             continue;
          }
-
+/*
          if ( dynamic_cast<DataEntry *>(d) )
          {
             gdcmWarningMacro( "To 'Anonymize' a DataEntry, better use AnonymizeNoLoad (FIXME) ");
             continue;
          }
+*/
          else
             SetEntryString ((*it).Value, (*it).Group, (*it).Elem);
       }
