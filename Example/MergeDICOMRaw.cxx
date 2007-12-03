@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MergeDICOMRaw.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/12/03 16:43:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007/12/03 17:16:25 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
    GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    // Convert Media Storage SOP Class if needed
    std::string mssop = f->GetEntryString(0x0002,0x0002);
-   if ( GDCM_NAME_SPACE::Util::DicomStringEqual(mssop, "1.2.392.200036.9116.7.8.1.1.1") )
+   // See http://www.toshiba-europe.com/medical/Materials/PDF/Dicom/MIIUS0026EA.pdf
+   if ( GDCM_NAME_SPACE::Util::DicomStringEqual(mssop, "1.2.392.200036.9116.7.8.1.1.1") ) // Toshiba US Private Data Storage
      {
      fh->InsertEntryString("1.2.840.10008.5.1.4.1.1.3.1",0x0002,0x0002,"UI"); // Media Storage SOP Class UID
      fh->InsertEntryString("1.2.840.10008.5.1.4.1.1.3.1",0x0008,0x0016,"UI"); // SOP Class UID
