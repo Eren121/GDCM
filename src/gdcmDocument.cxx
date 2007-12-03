@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 10:38:51 $
-  Version:   $Revision: 1.374 $
+  Date:      $Date: 2007/12/03 11:46:38 $
+  Version:   $Revision: 1.375 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -281,9 +281,10 @@ bool Document::DoTheLoadingDocumentJob(  )
    //
    std::string RecCode;
    RecCode = GetEntryString(0x0008, 0x0010); // recognition code (RET)
-   if (RecCode == "ACRNEMA_LIBIDO_1.1" ||
-       RecCode == "CANRME_AILIBOD1_1." )  // for brain-damaged softwares
-                                          // with "little-endian strings"
+   
+   if(RecCode.find("ACRNEMA_LIBIDO") == 0 || // any version
+      RecCode.find("CANRME_AILIBOD") == 0)   // for brain-damaged softwares
+                                             // with "little-endian strings"
    {
          Filetype = ACR_LIBIDO; 
          std::string rows    = GetEntryString(0x0028, 0x0010);
@@ -1038,7 +1039,7 @@ int Document::ComputeGroup0002Length( )
             // (no SQ, OW, OL, UT in group 0x0002;)
                if ( vr == "OB" ) 
                {
-                  // explicit VR AND (OB, OW, OL, SQ, UT) : 4 more bytes
+                  // explicit VR AND (OB, OW, OL, SQ, UT, UN) : 4 more bytes
                   groupLength +=  4;
                }
             groupLength += 2 + 2 + 4 + entry->GetLength();   
@@ -1532,8 +1533,8 @@ void Document::FindDocEntryLength( DocEntry *entry )
          // "7.1.2 Data element structure with explicit vr", p 27) must be
          // skipped before proceeding on reading the length on 4 bytes.
 
-         //Fp->seekg( 2L, std::ios::cur); // Once per OB,OW,OL,SQ DocEntry
-         uint32_t length32 = ReadInt32(); // Once per Ob,OW,OL,SQ DocEntry
+         //Fp->seekg( 2L, std::ios::cur); // Once per OB,OW,OL,UT,UN,SQ DocEntry
+         uint32_t length32 = ReadInt32(); // Once per OB,OW,OL,UT,UN,SQ DocEntry
          CurrentOffsetPosition+=4;
          if ( (vr == "OB" || vr == "OW" || vr == "OL") && length32 == 0xffffffff ) 
          {
@@ -2300,15 +2301,18 @@ DocEntry *Document::ReadNextDocEntry()
       DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);
       if ( dictEntry )
       {
-         realVR = dictEntry->GetVR(); 
+         realVR = dictEntry->GetVR();                   
          dictEntry->Unregister(); // GetDictEntry registered it
 
          // for VR = "UN", length is always stored on 4 bytes.
+         // remember this info, in order not to crash later
          changeFromUN=true;
-         /// \todo : fixme If inside a supposed to be UN DataElement (but SQ according to a private dictionnary)
-         ///         there is some more supposed to be UN DataElements, it will probabely fail.
+         /// \todo : fixme If inside a vr = "UN" DataElement (but SQ according to a private dictionnary)
+         ///         there is some more vr = "UN" DataElements, it will probabely fail.
          ///         --> find a -non time consuming- trick to store changeFromUN info at DataElement level,
          ///         not at the Document level.
+         /// --> ?!? JPR
+  
       }   
    }
 
