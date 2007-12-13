@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmWriter.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 07:54:46 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2007/12/13 15:16:19 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@
 #define vtkFloatingPointType float
 #endif
 
-vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.35 $")
+vtkCxxRevisionMacro(vtkGdcmWriter, "$Revision: 1.36 $")
 vtkStandardNewMacro(vtkGdcmWriter)
 
 vtkCxxSetObjectMacro(vtkGdcmWriter,LookupTable,vtkLookupTable)
@@ -220,7 +220,7 @@ void SetImageInformation(GDCM_NAME_SPACE::FileHelper *file, vtkImageData *image)
       str.str("");
       str << dim[2];
       //file->Insert(str.str(),0x0028,0x0012); // Planes
-      file->InsertEntryString(str.str(),0x0028,0x0008,"US"); // Number of Frames
+      file->InsertEntryString(str.str(),0x0028,0x0008,"IS"); // Number of Frames
    }
 
    // Pixel type
