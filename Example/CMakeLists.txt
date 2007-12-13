@@ -36,6 +36,7 @@ SET(EXAMPLE_SOURCES
   Anonymize             # for full gdcm readable files  
   AnonymizeNoLoad       # without loading the Pixel Data  
   AnonymizeMultiPatient # without loading the Pixel Data  
+  AnonymizeReWriteMultiPatient # without loading the Pixel Data  
   PatchHeader  
   ToInTag  
   ReWrite  
