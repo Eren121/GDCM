@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 15:49:51 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2007/12/13 16:18:13 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.93 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.94 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -335,7 +335,9 @@ void vtkGdcmReader::ExecuteData(vtkDataObject *output)
 //}                           // end For VTK5.0
 
    data->AllocateScalars();  // For VTK5.0
-#if (VTK_MAJOR_VERSION >= 5)
+   
+#if (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION > 2 )
+//#if (VTK_MAJOR_VERSION >= 5)
    if (this->UpdateExtentIsEmpty(output))
    {
       return;
