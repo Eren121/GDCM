@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVRKey.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:05 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008/01/02 10:48:52 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -107,6 +107,23 @@ public :
       return key[0] < _val[0] || (key[0] == _val[0] && key[1] < _val[1]);
    }
 
+   inline std::string GetHexaRepresentation()
+   {
+     // We could probabelly write something much more complicated using C++ features !
+     // (I really want HexaRepresentation as xx|xx, not ffffffxx|ffffffxx !)
+      char vr_char[6];
+      char buf[5];
+      sprintf(buf, "%04x",( unsigned short int)key[0]);
+      vr_char[0] = buf[2];
+      vr_char[1] = buf[3];      
+      sprintf(buf, "%04x",( unsigned short int)key[1]);
+      vr_char[2] = '|';
+      vr_char[3] = buf[2];            
+      vr_char[4] = buf[3];
+      vr_char[5] = '\0';
+      return(vr_char);
+   }
+   
 private :
    char key[2];
 };

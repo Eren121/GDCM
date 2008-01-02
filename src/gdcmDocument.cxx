@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/12/05 16:36:21 $
-  Version:   $Revision: 1.376 $
+  Date:      $Date: 2008/01/02 10:48:52 $
+  Version:   $Revision: 1.377 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -63,6 +63,7 @@ Document::Document()
    SwapCode = 1234;
    Filetype = ExplicitVR;
    CurrentOffsetPosition = 0;
+   OffsetOfPreviousParseDES =0;
    // Load will set it to true if sucessfull
    Group0002Parsed = false;
    IsDocumentAlreadyLoaded = false;
@@ -161,6 +162,7 @@ bool Document::DoTheLoadingDocumentJob(  )
 
    // Recursive call.
    // Loading is done during parsing
+   OffsetOfPreviousParseDES = beg; 
    ParseDES( this, beg, lgt, false); // delim_mode is first defaulted to false
 
    if ( IsEmpty() )
@@ -1117,14 +1119,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    {
    
    ///\todo FIXME : On 64 bits processors, tellg gives unexpected results after a while ?
-   ///              Probabely a bug in gdcm code somwhere (some memory erased ?)
+   ///              Probabely a bug in gdcm code somewhere (some memory erased ?)
 
 // Uncomment to track the bug
-/*   
+  
    if( Debug::GetDebugFlag() )   
       std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) // in Debug mode
                 << std::hex << " 0x(" <<(long)(Fp->tellg()) <<  ")" << std::endl;
- */ 
+  
  
    // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry   
       if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
@@ -1152,7 +1154,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       if ( !first && newDocEntry->IsItemStarter() )
       {
          // Debug message within the method !
-         newDocEntry = Backtrack(newDocEntry);
+         newDocEntry = Backtrack(newDocEntry, set);
       }
       else
       { 
@@ -1383,8 +1385,23 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
          dlm_mod = false;
       }
             
+      // avoid infinite loop when Bad assumption was made on illegal 'unknown length' UN //JPRx
+    
+      if (offsetStartCurrentSQItem <= OffsetOfPreviousParseDES)
+      {
+         gdcmWarningMacro("Bad assumption was made on illegal 'unknown length' UN!");
+         gdcmWarningMacro("OffsetOfPreviousParseDES " << std::hex << OffsetOfPreviousParseDES
+                           << " offsetStartCurrentSQItem " << offsetStartCurrentSQItem);
+         /// \todo when  "Bad assumption (SQ) on illegal 'unknown length' UN", Backtrack again + try OB      
+         return false; 
+      }
+      else 
+      {
+         OffsetOfPreviousParseDES = offsetStartCurrentSQItem;
+      }
+     
       // fill up the current SQItem, starting at the beginning of fff0,e000
-      
+            
       Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);        // Once per SQItem
       ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
       offsetStartCurrentSQItem = Fp->tellg();                    // Once per SQItem
@@ -1408,7 +1425,7 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
  *           Item Starter. We then backtrack to do the job.
  * @param   docEntry Item Starter that warned us 
  */
-DocEntry *Document::Backtrack(DocEntry *docEntry)
+DocEntry *Document::Backtrack(DocEntry *docEntry, DocEntrySet *set)
 {
    // delete the Item Starter, built erroneously out of any Sequence
    // it's not yet in the HTable/chained list
@@ -1423,7 +1440,8 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    gdcmDebugMacro( "Backtrack :" << std::hex << group 
                                  << "|" << elem
                                  << " at offset 0x(" <<offset << ")" );
-   RemoveEntry( PreviousDocEntry );
+   
+   set->RemoveEntry( PreviousDocEntry );
 
    // forge the Seq Entry
    DocEntry *newEntry = NewSeqEntry(group, elem);
@@ -1433,7 +1451,7 @@ DocEntry *Document::Backtrack(DocEntry *docEntry)
    // Move back to the beginning of the Sequence
 
    Fp->seekg(offset, std::ios::beg); // Only for Shadow Implicit VR SQ
-   return newEntry;
+   return newEntry; // It will added where it has to be!
 }
 
 /**
@@ -1704,21 +1722,12 @@ VRKey Document::FindDocEntryVR()
    
    //if ( !CheckDocEntryVR(vr) ) // avoid useless function call
    if ( !Global::GetVR()->IsValidVR(vr) )
-   {
-/*   
-//      std::cout << "================================================================Unknown VR" 
-               << std::hex << "0x(" 
-                        << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
-                        << ")" << "for : " <<  CurrentGroup
-                        << " at offset : 0x(" << positionOnEntry << ")"
-                        << std::endl;
-*/
-      gdcmWarningMacro( "Unknown VR " << std::hex << "0x(" 
-                        << (unsigned int)vr[0] << "|" << (unsigned int)vr[1] 
-                        << ")"  
-                        << " at offset : 0x(" << CurrentOffsetPosition-4<< ") for group " << CurrentGroup
-                        );
+   {  
 
+      gdcmWarningMacro( "Unknown VR " << vr.GetHexaRepresentation() 
+                        << " at offset : 0x(" << CurrentOffsetPosition-4
+                        << ") for group " << std::hex << CurrentGroup );
+                        
       //Fp->seekg(positionOnEntry, std::ios::beg); //JPRx
       //Fp->seekg((long)-2, std::ios::cur);// only for unrecognized VR (?!?) 
                                          //see :MR_Philips_Intera_PrivateSequenceExplicitVR.dcm
@@ -1792,10 +1801,12 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
      
    if ( foundLength % 2)
    {
-      gdcmWarningMacro( "Warning : Tag with uneven length " << foundLength
-        <<  " in x(" << std::hex << gr << "," << elem <<")");
+      gdcmWarningMacro( "Warning : Tag (" << std::hex << gr << "|" << elem << ") with uneven length " 
+        << std::dec << foundLength << " 0x(" << std::hex << foundLength << ") "
+        //<< " at offset x(" << offset << ")"
+       );
    }
-      
+
    //////// Fix for some naughty General Electric images.
    // Allthough not recent many such GE corrupted images are still present
    // on Creatis hard disks. Hence this fix shall remain when such images
@@ -2270,7 +2281,7 @@ DocEntry *Document::ReadNextDocEntry()
          }
          else if ( CurrentElem == 0x0001)
          {
-            realVR = "UL"; // Private Group Length To Eng
+            realVR = "UL"; // Private Group Length To End
          }
          else  // check the private dictionary for shadow elements when Implicit VR!
          {
@@ -2341,7 +2352,7 @@ DocEntry *Document::ReadNextDocEntry()
             int offset = Fp->tellg();//Only when heuristic for Explicit/Implicit was wrong
 
             gdcmWarningMacro("Entry (" << newEntry->GetKey() << ") at x("
-                     <<  offset << ") should be Explicit VR");
+                     <<  std::hex << offset << ") should be Explicit VR");
           }
       }
       newEntry->SetImplicitVR();

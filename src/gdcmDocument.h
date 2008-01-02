@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2007/12/03 11:47:40 $
-  Version:   $Revision: 1.149 $
+  Date:      $Date: 2008/01/02 10:48:52 $
+  Version:   $Revision: 1.150 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -225,7 +225,7 @@ private:
 
    void HandleBrokenEndian  (uint16_t &group, uint16_t &elem);
    void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);
-   DocEntry *Backtrack(DocEntry *docEntry);
+   DocEntry *Backtrack(DocEntry *docEntry, DocEntrySet *set);
 
 // Variables
 protected:
@@ -265,6 +265,8 @@ private:
    bool changeFromUN;
    /// \brief whether an unexpected EOF was encountered
    bool UnexpectedEOF;
+   /// \brief to avoid infinite loop when illegal UN stands for OB
+   size_t OffsetOfPreviousParseDES;
 };
 
 } // end namespace gdcm

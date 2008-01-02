@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJPEGFragment.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2008/01/02 10:48:52 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,8 +104,10 @@ void JPEGFragment::DecompressJPEGFramesFromFile(std::ifstream *fp,
 void JPEGFragment::Print( std::ostream &os, std::string const &indent )
 {
    os << indent
-      << "JPEG fragment: offset : " <<  Offset
-      << "   length : " <<  Length
+      << "JPEG fragment: offset : " <<  std::dec << Offset 
+      << " 0x(" << std::hex << Offset << ") "
+      << std::dec << "   length : " <<  Length
+      << " 0x(" << std::hex << Length << ") "      
       << std::endl;
 }
 
