@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmUtil.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/17 08:57:55 $
-  Version:   $Revision: 1.189 $
+  Date:      $Date: 2008/01/02 14:58:00 $
+  Version:   $Revision: 1.190 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,7 +111,7 @@ std::string Util::RootUID        = GDCM_UID;
 #endif   
    uint8_t *Util::FileMetaInformationVersion = (uint8_t *)&FMIV;
 
-   std::string Util::GDCM_MAC_ADRESS = GetMACAddress();
+   std::string Util::GDCM_MAC_ADDRESS = GetMACAddress();
 
 //-------------------------------------------------------------------------
 // Public
@@ -965,6 +965,7 @@ std::string Util::CreateUniqueUID(const std::string &root)
    if ( root.empty() )
    {
       // gdcm UID prefix, as supplied by http://www.medicalconnections.co.uk
+      assert( !RootUID.empty() );
       prefix = RootUID; 
    }
    else
@@ -975,8 +976,11 @@ std::string Util::CreateUniqueUID(const std::string &root)
    // A root was specified use it to forge our new UID:
    append += ".";
    //append += Util::GetMACAddress(); // to save CPU time
-   append += Util::GDCM_MAC_ADRESS;
-   append += ".";
+   if( !Util::GDCM_MAC_ADDRESS.empty() ) // When mac address was empty we would end up with a double . which is illegal
+     {
+     append += Util::GDCM_MAC_ADDRESS;
+     append += ".";
+     }
    append += Util::GetCurrentDateTime();
    append += ".";
    //Also add a mini random number just in case:
@@ -1275,7 +1279,7 @@ void Util::hfpswap(double *a, double *b)
   ghost@aladdin.com
  */
 
-/* $Id: gdcmUtil.cxx,v 1.189 2007/10/17 08:57:55 jpr Exp $ */
+/* $Id: gdcmUtil.cxx,v 1.190 2008/01/02 14:58:00 malaterre Exp $ */
 
 /*
   Independent implementation of MD5 (RFC 1321).
