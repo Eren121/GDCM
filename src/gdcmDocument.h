@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2008/01/02 10:48:52 $
-  Version:   $Revision: 1.150 $
+  Date:      $Date: 2008/01/04 13:32:01 $
+  Version:   $Revision: 1.151 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -200,7 +200,7 @@ private:
    uint32_t UnswapLong(uint32_t a) { return SwapLong(a);}
    
    // Read
-   void ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
+   bool ParseDES(DocEntrySet *set, long offset, long l_max, bool delim_mode);
    bool ParseSQ (SeqEntry *seq,    long offset, long l_max, bool delim_mode);
 
    void LoadDocEntry         (DocEntry *e, bool forceLoad = false);
@@ -225,9 +225,8 @@ private:
 
    void HandleBrokenEndian  (uint16_t &group, uint16_t &elem);
    void HandleOutOfGroup0002(uint16_t &group, uint16_t &elem);
-   DocEntry *Backtrack(DocEntry *docEntry, DocEntrySet *set);
-
-// Variables
+   DocEntry  *Backtrack(DocEntry *docEntry, DocEntrySet *set);
+   DataEntry *BacktrackSQtoOB(SeqEntry *docEntry, DocEntrySet *set);
 protected:
    /// value of the ??? for any progress bar
    float Progress;

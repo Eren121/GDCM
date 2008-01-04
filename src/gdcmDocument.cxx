@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/01/02 10:48:52 $
-  Version:   $Revision: 1.377 $
+  Date:      $Date: 2008/01/04 13:32:01 $
+  Version:   $Revision: 1.378 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1102,7 +1102,7 @@ void Document::Initialize()
  * @param l_max  length to parse (meaningless when we are in 'delimitor mode')
  * @param delim_mode : whether we are in 'delimitor mode' (l=0xffffff) or not
  */ 
-void Document::ParseDES(DocEntrySet *set, long offset, 
+bool Document::ParseDES(DocEntrySet *set, long offset, 
                         long l_max, bool delim_mode)
 {
    DocEntry *newDocEntry;
@@ -1113,6 +1113,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
               // (Entry will then be deleted)
    bool delim_mode_intern = delim_mode;
    bool first = true;
+   bool successParseDES = true;
    gdcmDebugMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
                      << " at offset " << std::hex << "0x(" << offset << ")" );    
    while (true)
@@ -1228,7 +1229,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       {
          /////////////////////// SeqEntry :  VR = "SQ"
 
-         unsigned long l = newDocEntry->GetReadLength();          
+         unsigned long l = newDocEntry->GetReadLength();
          if ( l != 0 ) // don't mess the delim_mode for 'zero-length sequence'
          {
             if ( l == 0xffffffff )
@@ -1281,7 +1282,8 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          {
             newSeqEntry->SetDepthLevel( parentSQItem->GetDepthLevel() + 1 );
          }
-
+         
+         bool res = true;
          if ( l != 0 )
          {  // Don't try to parse zero-length sequences
 
@@ -1289,12 +1291,32 @@ void Document::ParseDES(DocEntrySet *set, long offset,
                                << " at offset 0x(" << std::hex
                                << newDocEntry->GetOffset() << ")");
 
-            bool res = ParseSQ( newSeqEntry, 
+            res = ParseSQ( newSeqEntry, 
                          newDocEntry->GetOffset(),
                          l, delim_mode_intern);
 
             gdcmDebugMacro( "Exit from ParseSQ, delim " << delim_mode_intern << " -->return : " << res);
+
          }
+         
+         if ( !res )
+         {
+            gdcmDebugMacro( "in ParseDES : ParseSQ failed " << newSeqEntry->GetKey()
+                                << " (at offset : 0x(" << std::hex
+                                << newSeqEntry->GetOffset() << ") )" );                
+                              
+             successParseDES = false;
+             newDocEntry = BacktrackSQtoOB(newSeqEntry, set);
+             set->AddEntry( newDocEntry);   /// \todo fixme : the whole process is not done
+                                            /// (check SQItem length, when the DataElement is inside a Sequence)
+             
+             //
+             //
+             //
+             
+             continue;
+         }
+                
          if ( !set->AddEntry( newSeqEntry ) )
          {
             gdcmWarningMacro( "in ParseDES : cannot add a SeqEntry "
@@ -1327,9 +1349,14 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       first = false;
       
       if (UnexpectedEOF) // some terminator was missing
+      {
          break;
+      }
    }                               // end While
+   
    gdcmDebugMacro( "Exit from ParseDES, delim-mode " << delim_mode );
+   
+   return successParseDES;
 }
 
 /**
@@ -1389,8 +1416,8 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
     
       if (offsetStartCurrentSQItem <= OffsetOfPreviousParseDES)
       {
-         gdcmWarningMacro("Bad assumption was made on illegal 'unknown length' UN!");
-         gdcmWarningMacro("OffsetOfPreviousParseDES " << std::hex << OffsetOfPreviousParseDES
+         gdcmWarningMacro("Bad assumption was made on illegal 'unknown length' UN!" << std::endl <<
+                          "OffsetOfPreviousParseDES " << std::hex << OffsetOfPreviousParseDES
                            << " offsetStartCurrentSQItem " << offsetStartCurrentSQItem);
          /// \todo when  "Bad assumption (SQ) on illegal 'unknown length' UN", Backtrack again + try OB      
          return false; 
@@ -1403,13 +1430,18 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
       // fill up the current SQItem, starting at the beginning of fff0,e000
             
       Fp->seekg(offsetStartCurrentSQItem, std::ios::beg);        // Once per SQItem
-      ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
+      bool res = ParseDES(itemSQ, offsetStartCurrentSQItem, l+8, dlm_mod);
       offsetStartCurrentSQItem = Fp->tellg();                    // Once per SQItem
  
       seqEntry->AddSQItem( itemSQ, SQItemNumber ); 
       itemSQ->Delete();
       newDocEntry->Delete();
       SQItemNumber++;
+      if (!res)  // to avoid extra -useless- work when illegal UN stands for OB ...
+      {
+         gdcmDebugMacro("in ParseSQ : ParseDES failed");
+         return false;
+      }
       //if ( !delim_mode && ((long)(Fp->tellg())-offset ) >= l_max ) //JPRx
       if ( !delim_mode && (offsetStartCurrentSQItem-offset ) >= l_max )
       {
@@ -1420,10 +1452,12 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
 }
 
 /**
- * \brief   When a private Sequence + Implicit VR is encountered
+ * \brief   When a private Sequence + Implicit VR 
+ *          (or UN + undefined length element) is encountered
  *           we cannot guess it's a Sequence till we find the first
  *           Item Starter. We then backtrack to do the job.
- * @param   docEntry Item Starter that warned us 
+ * @param   docEntry Item Starter that warned us
+ * @param   set DocEntrySet (ElementSet/SQItem) the DocEntry will belong
  */
 DocEntry *Document::Backtrack(DocEntry *docEntry, DocEntrySet *set)
 {
@@ -1451,7 +1485,56 @@ DocEntry *Document::Backtrack(DocEntry *docEntry, DocEntrySet *set)
    // Move back to the beginning of the Sequence
 
    Fp->seekg(offset, std::ios::beg); // Only for Shadow Implicit VR SQ
-   return newEntry; // It will added where it has to be!
+   return newEntry; // It will be added where it has to be!
+}
+
+
+/**
+ * \brief   When a private OB + Implicit VR 
+ *          (or UN + undefined length element) is encountered
+ *          we made first a bad assumption -it should be a Sequence-
+ *          When we realize we were wrong, we backtrack.
+ *          WARNING : it will probabely fail if the element 
+ *          is embedded within a sequence
+ * @param   docEntry Item Starter that warned us
+ * @param   set DocEntrySet (ElementSet/SQItem) the DocEntry will belong
+ */
+
+DataEntry *Document::BacktrackSQtoOB(SeqEntry *docEntry, DocEntrySet *set)
+{
+   // Get all info we can from SeqEntry
+   
+   uint16_t group = docEntry->GetGroup();
+   uint16_t elem  = docEntry->GetElement();
+   uint32_t lgt   = docEntry->GetLength();
+   long offset    = docEntry->GetOffset();
+
+   gdcmDebugMacro( "BacktrackSQtoOB(" << std::hex << group 
+                                 << "|" << elem
+                                 << " at offset 0x(" <<offset << ")" );
+   
+   //set->RemoveEntry( docEntry );
+   docEntry->Delete(); // not yet included into a DocEntrySet !
+
+   // forge the OB Entry
+   DataEntry *newEntry = NewDataEntry(group, elem, "OB");
+   newEntry->SetOffset(offset);
+  
+   // Move back to the beginning of the Element
+   Fp->seekg(offset, std::ios::beg);
+
+            uint32_t lengthOB = FindDocEntryLengthOBOrOW();// for encapsulation of encoded pixel 
+
+            newEntry->SetReadLength(lengthOB);
+            newEntry->SetLength(lengthOB);
+            
+            Fp->seekg(offset, std::ios::beg);            
+            LoadDocEntry(newEntry, true); // true : forceload 
+            
+            /// \todo fixme : it will  fail if the element 
+            /// is embedded within a sequence (sequence length checking is not done)
+            
+   return newEntry; // It will be added (ElementSet/SQItem) where it has to be!
 }
 
 /**
@@ -1660,8 +1743,8 @@ uint32_t Document::FindDocEntryLengthOBOrOW()
       {
          gdcmWarningMacro( 
               "Neither an Item tag nor a Sequence delimiter tag on :" 
-           << std::hex << group << " , " << elem 
-           << ")" );
+           << std::hex << group << "|" << elem << ") Pos. on entry was 0x(" <<positionOnEntry<< ") "
+            );
   
          Fp->seekg(positionOnEntry, std::ios::beg); // Once per fragment (if any) of OB,OW DataElements
          throw FormatUnexpected( 
@@ -1724,7 +1807,7 @@ VRKey Document::FindDocEntryVR()
    if ( !Global::GetVR()->IsValidVR(vr) )
    {  
 
-      gdcmWarningMacro( "Unknown VR " << vr.GetHexaRepresentation() 
+      gdcmWarningMacro( "Unknown VR " << vr.GetHexaRepresentation() << std::hex
                         << " at offset : 0x(" << CurrentOffsetPosition-4
                         << ") for group " << std::hex << CurrentGroup );
                         
