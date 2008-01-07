@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/21 16:25:26 $
-  Version:   $Revision: 1.342 $
+  Date:      $Date: 2008/01/07 17:16:06 $
+  Version:   $Revision: 1.343 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2239,8 +2239,9 @@ bool File::ReadTag(uint16_t testGroup, uint16_t testElem)
    }
    catch ( FormatError )
    {
-      gdcmErrorMacro( "Can not read tag for "
-       << "   We should have found tag ("
+      gdcmErrorMacro( "Can not read tag at 0x(" 
+       << std::hex << positionOnEntry
+       << ").  We should have found tag ("
        << DictEntry::TranslateToKey(testGroup,testElem) << ")"
        ) ;
 
