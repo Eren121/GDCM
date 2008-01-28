@@ -17,6 +17,13 @@ OPTION(GDCM_LEGACY_REMOVE "Remove all legacy code completely." OFF)
 OPTION(GDCM_LEGACY_SILENT "Silence all legacy code messages." OFF)
 MARK_AS_ADVANCED(GDCM_LEGACY_REMOVE GDCM_LEGACY_SILENT)
 
+# VS 2005 declared that some C functions were deprecated...
+IF(CMAKE_COMPILER_2005)
+  ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+  ADD_DEFINITIONS(-D_SCL_SECURE_NO_DEPRECATE)
+ENDIF(CMAKE_COMPILER_2005) 
+
+
 #-----------------------------------------------------------------------------
 # Build shared lib by default
 OPTION(BUILD_SHARED_LIBS "Build GDCM with shared libraries." ON)
