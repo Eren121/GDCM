@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Bmp2Dcm.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 16:42:58 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008/01/28 12:47:07 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
