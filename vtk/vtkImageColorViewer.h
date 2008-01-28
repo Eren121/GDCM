@@ -2,7 +2,8 @@
 
   Program:   Visualization Toolkit
   Module:    $RCSfile: vtkImageColorViewer.h,v $
-
+  Date:      $Date: 2008/01/28 09:26:24 $
+  Version:   $Revision: 1.3 $
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
