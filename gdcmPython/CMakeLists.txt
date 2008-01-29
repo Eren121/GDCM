@@ -74,7 +74,15 @@ IF(GDCM_VTK)
     VTK_WRAP_PYTHON2(vtkgdcmPython gdcmWrapSOURCES
                    ${vtkgdcmPython_la_SOURCES})
     # The C++ files must be made into a C++ library
-    ADD_LIBRARY(vtkgdcmPython SHARED ${gdcmWrapSOURCES})  #MODULE on apple ?
+    ADD_LIBRARY(vtkgdcmPython MODULE ${gdcmWrapSOURCES})  #MODULE on apple ?
+
+    # Python extension modules on Windows must have the extension ".pyd"
+    # instead of ".dll" as of Python 2.5.  Older python versions do support
+    # this suffix.
+    IF(WIN32 AND NOT CYGWIN)
+      SET_TARGET_PROPERTIES(vtkgdcmPython PROPERTIES SUFFIX ".pyd")
+    ENDIF(WIN32 AND NOT CYGWIN)
+
     # set the libraries to link against
     #SET_TARGET_PROPERTIES(${foobar} PROPERTIES PREFIX "")
 
