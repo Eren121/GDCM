@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 09:14:41 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2008/02/13 11:44:09 $
+  Version:   $Revision: 1.52 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -789,7 +789,7 @@ void DataEntry::DeleteBinArea(void)
       delete StrArea;
       StrArea = 0;
    }
-   if (StrArea)
+   if (StrHexaArea)
    {
       delete StrHexaArea;
       StrHexaArea = 0;
