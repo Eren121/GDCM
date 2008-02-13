@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 09:07:46 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2008/02/13 19:08:34 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -206,6 +206,7 @@ int TestInline(int argc, char *argv[])
    std::cout << "Size of long      " << sizeof(long)      << std::endl;
    std::cout << "Size of float     " << sizeof(float)     << std::endl;
    std::cout << "Size of double    " << sizeof(double)    << std::endl;
+   std::cout << "Size of bool      " << sizeof(bool)    << std::endl;   
    std::cout << std::endl;
    std::cout << "Size of char*     " << sizeof(char*)     << std::endl;
    std::cout << "Size of short int*" << sizeof(short int*)<< std::endl;
