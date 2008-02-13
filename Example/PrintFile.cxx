@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/09 17:52:59 $
-  Version:   $Revision: 1.89 $
+  Date:      $Date: 2008/02/13 13:58:40 $
+  Version:   $Revision: 1.90 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,11 +127,12 @@ int main(int argc, char *argv[])
    " usage: PrintFile {filein=inputFileName|dirin=inputDirectoryName}[level=n]",
    "                       [forceload=listOfElementsToForceLoad] [rec] [noex] ",
    "                       [4DLoc= ][dict= privateDirectory]                  ",
-   "                       [ { [noshadowseq] | [noshadow][noseq] } ]          ",
+   "                       [ { [noshadowseq] | [noshadow][noseq] } ] [load]   ",
    "                       [debug] [warning]                                  ",
    "      level = 0,1,2 : depending on the amount of details user wants to see",
    "      rec : user wants to parse recursively the directory                 ",
-   "      noex : user doen't want extra 'user friendly' info                  ",   
+   "      load : user wants to load the pixels, as well (to see warning info) ",
+   "      noex : user doesn't want extra 'user friendly' info                 ",   
    "      4DLoc: group-elem(in hexa, no space) of the DataEntry holdind 4thDim",
    "      listOfElementsToForceLoad : group-elem,g2-e2,... (in hexa, no space)",
    "                                of Elements to load whatever their length ",
@@ -208,6 +209,8 @@ int main(int argc, char *argv[])
       }
    }
 
+   bool load = ( 0 != am->ArgMgrDefined("load") );
+   
    bool showlut = ( 0 != am->ArgMgrDefined("SHOWLUT") );
 
    bool ddict = am->ArgMgrDefined("dict") ? true : false;
@@ -436,6 +439,20 @@ if (!noex)
       if (ori != "\\" )
          std::cout << "Orientation [" << ori << "]" << std::endl;
       o->Delete();
+/*      
+std::vector <double> valueVector; 
+GDCM_NAME_SPACE::DataEntry *e_0018_5212 = f->GetDataEntry(0x0018, 0x5212);
+bool resJP = e_0018_5212->GetDSValue(valueVector);
+if (resJP) {
+   double test;
+   for ( int i=0; i < 3; i++ ) {
+       test = valueVector[i];
+       std::cout << " test " << test << std::endl;
+    }
+}
+//e_0018_5212->Delete();
+*/       
+      
 }  
 //------------------------------
 
@@ -486,6 +503,7 @@ if (!noex)
             else
                std::cout << "No LUT Data (0x0028,0x3000) found " << std::endl;
         }
+        /*
          else
          {
             if ( fh->GetLutItemSize() == 8 )
@@ -506,6 +524,7 @@ if (!noex)
                          << (int)(lutrgba16[i*4+2]) << std::endl;
             }
          }
+         */
       }
       else if (showlut)
       {
@@ -654,15 +673,26 @@ if (!noex)
          std::string ori = o->GetOrientation ( f );
          if (ori != "\\" )
             std::cout << "Orientation [" << ori << "]" << std::endl;
-         o->Delete(); 
+         o->Delete();
 }
 //------------------------------- 
         
          if (f->IsReadable())
+         {
+            if (load)  // just to see warning messages at load time !
+            {
+               uint8_t *pixels = fh->GetImageData();
+               uint32_t lgth   = fh->GetImageDataSize(); 
+            }         
+
             std::cout <<std::endl<<it->c_str()<<" is Readable"<<std::endl;
+         }
          else
             std::cout <<std::endl<<it->c_str()<<" is NOT Readable"<<std::endl;
          std::cout << "\n\n" << std::endl;
+         
+
+
          f->Delete();
          fh->Delete();
       }
