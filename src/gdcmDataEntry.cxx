@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 11:44:09 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2008/02/13 15:41:26 $
+  Version:   $Revision: 1.53 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -598,25 +598,39 @@ std::string const &DataEntry::GetHexaRepresentation() const
   }
   else if( vr == "FL" )
   {
-     float *data=(float *)BinArea;
+     unsigned char *toto=(unsigned char *)BinArea;
      for (unsigned int i=0; i < GetValueCount(); i++)
      {
-        s2  << std::setw( 4 ) << std::setfill( '0' );
+         s2.str("");
          if( i!=0 )
            s2 << '\\';
-        s2 << data[i];
+         unsigned int a4;
+         for(int iif=0; iif<4; iif++)
+         {
+            a4=toto[iif];
+            s2 << a4; 
+         }
      }
      *StrHexaArea=s2.str();
   }
   else if( vr == "FD" )
   {
-     double *data=(double *)BinArea;
+     //double *data=(double *)BinArea;
+     unsigned char *toto=(unsigned char *)BinArea;
      for (unsigned int i=0; i < GetValueCount(); i++)
      {
-        s2  << std::setw( 8 ) << std::setfill( '0' );
-         if( i!=0 )
+        s2.str("");
+        if( i!=0 )
            s2 << '\\';
-        s2 << data[i];
+        //s2 << data[i];
+
+         unsigned int a4;
+         for(int iid=0; iid<8; iid++)
+         {
+            a4=toto[iid];
+            s2 << a4; 
+         }
+
      }
      *StrHexaArea=s2.str();
   }
