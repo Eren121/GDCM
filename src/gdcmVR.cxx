@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmVR.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/25 15:21:57 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2008/02/13 11:42:13 $
+  Version:   $Revision: 1.63 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,6 +113,7 @@ bool VR::IsVROfStringRepresentable(VRKey const &tested)
           tested == "CS" ||
           tested == "DA" ||
           tested == "DS" ||
+          tested == "DT" || 
           tested == "FL" ||
           tested == "FD" ||
           tested == "IS" || 
