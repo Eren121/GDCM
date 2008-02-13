@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/14 08:23:34 $
-  Version:   $Revision: 1.33 $
+  Date:      $Date: 2008/02/13 18:55:28 $
+  Version:   $Revision: 1.34 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,11 +154,10 @@ int main(int argc, char *argv[])
    // ----------- End Arguments Manager ---------
    GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    
-   f->SetMaxSizeLoadEntry(0x7fff);
-   
+   f->SetMaxSizeLoadEntry(0x7fffffff);
    f->SetLoadMode( loadMode );
-
    f->SetFileName( fileName );
+
    bool res = f->Load();  
       if ( !res )
    {
