@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 14:51:00 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2008/02/13 18:53:33 $
+  Version:   $Revision: 1.65 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -263,6 +263,9 @@ void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
    for( DirListType::const_iterator it = filenames_list.begin(); 
         it != filenames_list.end(); ++it)
    {
+     // std::cout << "--------------------------------filename [" << *it << "]"
+     //           << std::endl; 
+      gdcmDebugMacro("filename [" << *it << "]" );
       AddFileName( *it );
    }
 }

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSystem.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:05 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008/02/13 18:53:34 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -61,6 +61,7 @@
 typedef  signed char         int8_t;
 typedef  signed short        int16_t;
 typedef  signed int          int32_t;
+/// \fixme : what about 64 bits ?
 typedef  unsigned char       uint8_t;
 typedef  unsigned short      uint16_t;
 typedef  unsigned int        uint32_t;
