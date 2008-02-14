@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 18:53:33 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2008/02/14 21:21:58 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -790,9 +790,14 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          fileList->push_back( (*it3).second );
          if (DropDuplicatePositions)
          {
-            /// \todo ImagePositionPatientOrdering  wrong duplicates are found ???
-   
+            // ImagePositionPatientOrdering  wrong duplicates are found ???
+            // --> fixed. See comment
+
             it3 =  distmultimap.upper_bound((*it3).first); // skip all duplicates
+           // the upper_bound function increments the iterator to the next non-duplicate entry
+           // The for loop iteration also increments the iterator, which causes the code to skip every other image
+           // --> decrement the iterator after the upper_bound function call
+            it3--;
             if (it3 == distmultimap.end() )  // if last image, stop iterate
                break;
          }
