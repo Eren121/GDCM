@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/03/10 13:10:48 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008/03/10 13:12:09 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -187,23 +187,23 @@ int main(int argc, char *argv[])
    {
       case 0:
          sz = PrintCurveData((DataRepToType<0>::Type*)(curve_data), num_points);
-         sizeofdatarep = sizeof( DataRepToType<0> );
+         sizeofdatarep = sizeof( DataRepToType<0>::Type );
          break;
       case 1:
          sz = PrintCurveData((DataRepToType<1>::Type*)(curve_data), num_points);
-         sizeofdatarep = sizeof( DataRepToType<1> );
+         sizeofdatarep = sizeof( DataRepToType<1>::Type );
          break;
       case 2:
          sz = PrintCurveData((DataRepToType<2>::Type*)(curve_data), num_points);
-         sizeofdatarep = sizeof( DataRepToType<2> );
+         sizeofdatarep = sizeof( DataRepToType<2>::Type );
          break;
       case 3:
          sz = PrintCurveData((DataRepToType<3>::Type*)(curve_data), num_points);
-         sizeofdatarep = sizeof( DataRepToType<3> );
+         sizeofdatarep = sizeof( DataRepToType<3>::Type );
          break;
       case 4:
          sz = PrintCurveData((DataRepToType<4>::Type*)(curve_data), num_points);
-         sizeofdatarep = sizeof( DataRepToType<4> );
+         sizeofdatarep = sizeof( DataRepToType<4>::Type );
          break;
       default:
          std::cerr << "Error don't know the type: " << data_rep_str << std::endl;
