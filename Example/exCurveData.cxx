@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008/03/10 13:10:48 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,6 +67,13 @@ inline size_t PrintCurveData(DataValueRepresentation* data, unsigned short numPt
    // ok this is ugly but I need the size outside of the function
    return sizeof(DataValueRepresentation);
 }
+
+template <int datarep> struct DataRepToType;
+template<> struct DataRepToType<0> { typedef unsigned short Type; };
+template<> struct DataRepToType<1> { typedef signed short Type; };
+template<> struct DataRepToType<2> { typedef float Type; };
+template<> struct DataRepToType<3> { typedef double Type; };
+template<> struct DataRepToType<4> { typedef signed long Type; };
  
 /*
  // Example (sorry, we've got no more than this one ...)
@@ -175,22 +182,28 @@ int main(int argc, char *argv[])
    
    // From Part3, C.10.2.1.2 Data value representation (p668)
    size_t sz;
+   int sizeofdatarep = 0;
    switch( data_rep)
    {
       case 0:
-         sz = PrintCurveData((unsigned short*)(curve_data), num_points);
+         sz = PrintCurveData((DataRepToType<0>::Type*)(curve_data), num_points);
+         sizeofdatarep = sizeof( DataRepToType<0> );
          break;
       case 1:
-         sz = PrintCurveData((signed short*)(curve_data), num_points);
+         sz = PrintCurveData((DataRepToType<1>::Type*)(curve_data), num_points);
+         sizeofdatarep = sizeof( DataRepToType<1> );
          break;
       case 2:
-         sz = PrintCurveData((float*)(curve_data), num_points);
+         sz = PrintCurveData((DataRepToType<2>::Type*)(curve_data), num_points);
+         sizeofdatarep = sizeof( DataRepToType<2> );
          break;
       case 3:
-         sz = PrintCurveData((double*)(curve_data), num_points);
+         sz = PrintCurveData((DataRepToType<3>::Type*)(curve_data), num_points);
+         sizeofdatarep = sizeof( DataRepToType<3> );
          break;
       case 4:
-         sz = PrintCurveData((signed long*)(curve_data), num_points);
+         sz = PrintCurveData((DataRepToType<4>::Type*)(curve_data), num_points);
+         sizeofdatarep = sizeof( DataRepToType<4> );
          break;
       default:
          std::cerr << "Error don't know the type: " << data_rep_str << std::endl;
@@ -198,7 +211,7 @@ int main(int argc, char *argv[])
          return 1;
    }
    // Just to make sure that values read are consistant and we won't read out of bound data:
-   assert( sz*num_points == pCurveData->GetLength());
+   assert( sz*num_points*sizeofdatarep == pCurveData->GetLength());
 
    // Write out the data as a file:
    //std::ofstream o("/tmp/curve_data.raw");
