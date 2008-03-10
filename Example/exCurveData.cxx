@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exCurveData.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/03/10 13:12:09 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008/03/10 14:30:08 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -45,7 +45,7 @@ const char *ConvertTypeOfData(std::string const &type)
   const char **p = *TypeOfDataArrays;
   while(*p != NULL)
     {
-    if( p[0] == type ) // std::string== operator
+    if( strncmp(p[0], type.c_str(), strlen(p[0])) == 0 ) // std::string== operator
       {
       // ok we found it:
       return p[1];
@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
 
    f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    f->SetFileName( fileName );
+   f->SetMaxSizeLoadEntry(0xffff);
    bool res = f->Load();  
 
    if( GDCM_NAME_SPACE::Debug::GetDebugFlag() )
@@ -133,8 +134,9 @@ int main(int argc, char *argv[])
 //   Check whether image contains Overlays ACR-NEMA style.
 // ============================================================
 
+   const uint16_t curvedatagroup = 0x5000;
    //* B 5004|3000 [OW]                    [Curve Data] [GDCM_NAME_SPACE::Binary data loaded;length = 1938]
-   std::string curve_data_str = f->GetEntryString(0x5004, 0x3000);
+   std::string curve_data_str = f->GetEntryString(curvedatagroup, 0x3000);
    if (curve_data_str == GDCM_NAME_SPACE::GDCM_UNFOUND)
    {
       std::cout << " Image doesn't contain any Curve Data" << std::endl;
@@ -149,34 +151,35 @@ int main(int argc, char *argv[])
 // ============================================================
   std::istringstream convert;
  //* V 5004|0005 [US]              [Curve Dimensions] [1] x(1)
-   std::string curve_dim_str = f->GetEntryString(0x5004,0x0005);
+   std::string curve_dim_str = f->GetEntryString(curvedatagroup,0x0005);
    unsigned short curve_dim;
    convert.str(curve_dim_str);
    convert >> curve_dim;
    std::cout << "Curve Dimensions: " << curve_dim << std::endl;
  //* V 5004|0010 [US]              [Number of Points] [969] x(3c9)
-   std::string num_points_str = f->GetEntryString(0x5004,0x0010);
+   std::string num_points_str = f->GetEntryString(curvedatagroup,0x0010);
    unsigned short num_points;
    convert.clear(); //important
    convert.str(num_points_str);
    convert >> num_points;
    std::cout << "Number of Points: " << num_points << std::endl;
  //* V 5004|0020 [CS]                  [Type of Data] [PHYSIO]
-   std::string data_type = f->GetEntryString(0x5004,0x0020);
+   std::string data_type = f->GetEntryString(curvedatagroup,0x0020);
    std::cout << "Type of Data: " << data_type << std::endl;
-   std::cout << " this is thus a : " << ConvertTypeOfData(data_type) << std::endl;
+   const char *datatype = ConvertTypeOfData(data_type);
+   std::cout << " this is thus a : " << (datatype ? datatype : "") << std::endl;
  //* V 5004|0022 [LO]             [Curve Description] []
-   std::string curve_desc = f->GetEntryString(0x5004,0x0022);
+   std::string curve_desc = f->GetEntryString(curvedatagroup,0x0022);
    std::cout << "Curve Description: " << curve_desc << std::endl;
  //* V 5004|0103 [US]     [Data Value Representation] [0] x(0)
-   std::string data_rep_str = f->GetEntryString(0x5004,0x0103);
+   std::string data_rep_str = f->GetEntryString(curvedatagroup,0x0103);
    unsigned short data_rep;
    convert.clear(); //important
    convert.str(data_rep_str);
    convert >> data_rep;
 
 
-   GDCM_NAME_SPACE::DocEntry *pCurveDataDoc = f->GetDocEntry(0x5004, 0x3000);
+   GDCM_NAME_SPACE::DocEntry *pCurveDataDoc = f->GetDocEntry(curvedatagroup, 0x3000);
    GDCM_NAME_SPACE::DataEntry *pCurveData = dynamic_cast<GDCM_NAME_SPACE::DataEntry *>(pCurveDataDoc);
    uint8_t *curve_data = pCurveData->GetBinArea();
    
@@ -211,7 +214,7 @@ int main(int argc, char *argv[])
          return 1;
    }
    // Just to make sure that values read are consistant and we won't read out of bound data:
-   assert( sz*num_points*sizeofdatarep == pCurveData->GetLength());
+   //assert( sz*num_points*sizeofdatarep == pCurveData->GetLength());
 
    // Write out the data as a file:
    //std::ofstream o("/tmp/curve_data.raw");
