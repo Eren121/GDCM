@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/29 17:13:59 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008/03/17 13:16:10 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -67,7 +67,18 @@ int main(int argc, char *argv[])
       delete am;
       return 0;
    }
-
+   // Seems that ArgMgrWantString doesn't work on MacOS   
+   if(!am->ArgMgrDefined("strain"))
+   {
+      std::cout << "strain is mandatory" << std::endl;
+      exit(0);   
+   }
+   if(!am->ArgMgrDefined("peak_strain"))
+   {
+      std::cout << "peak_strain is mandatory" << std::endl;
+      exit(0);   
+   }
+      
    const char *strain      = am->ArgMgrWantString("strain",usage);
    const char *peak_strain = am->ArgMgrWantString("peak_strain",usage);
    
