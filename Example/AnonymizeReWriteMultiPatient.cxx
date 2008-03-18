@@ -1,10 +1,10 @@
 /*=========================================================================
-                                                                                
+                                                                                 
   Program:   gdcm
   Module:    $RCSfile: AnonymizeReWriteMultiPatient.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/21 16:24:08 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008/03/18 13:37:54 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
