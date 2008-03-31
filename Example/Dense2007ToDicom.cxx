@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/03/31 14:44:02 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008/03/31 15:05:07 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -121,11 +121,11 @@ int main(int argc, char *argv[])
    std::string strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
        
    std::cout << "Success in open file [" << peak_strain << "]" << std::endl;
-   LoadPeakStrain(fromPeakStrain, peak_strain, patientName,strStudyUID);
+   LoadPeakStrain(fromPeakStrain, GDCM_NAME_SPACE::Util::GetName(peak_strain), patientName,strStudyUID);
    fromPeakStrain.close();  
 
    std::cout << "Success in open file [" << strain << "]" << std::endl;
-   LoadStrain(fromStrain, strain, patientName, createMultiFrame, strStudyUID);
+   LoadStrain(fromStrain, GDCM_NAME_SPACE::Util::GetName(strain), patientName, createMultiFrame, strStudyUID);
    fromStrain.close();      
    return 1;            
 }
