@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: Dense2007ToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/03/28 15:36:57 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008/03/31 14:44:02 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
    const char *strain      = am->ArgMgrWantString("strain",usage);
    const char *peak_strain = am->ArgMgrWantString("peak_strain",usage);
 
-   const char *patientName = am->ArgMgrGetString("patientname");
+   const char *patientName = am->ArgMgrGetString("patientname", "Patient^Name");
    
    bool createMultiFrame = (am->ArgMgrDefined("m") != 0);
          
@@ -295,64 +295,62 @@ std::cout << "------------stop skipping ---------------- " << std::endl;
 
    } // end for i<NP
 
+   std::string dcmImageName;    
+   std::string serieUID;
+
    std::cout << "--------------- Ecc_strain ------------------" << std::endl;
    float *ecc_strain = new float[NP];
    for (i=0; i<NP; i++) {
       from >> ecc_strain[i]; 
-      if (verbose)
-         std::cout <<  ecc_strain[i] <<  std::endl;
+     // if (verbose)
+     //    std::cout <<  ecc_strain[i] <<  std::endl;
    }
+//followed by their peak Ecc strain, an array of NP elements,
+   serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   dcmImageName = textFileName + "_peak_Ecc_strain.dcm";
+   MakeDicomImage(ecc_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);   
    delete []ecc_strain;
 
    std::cout << "--------------- Err_strain ------------------" << std::endl;
    float *err_strain = new float[NP];
    for (i=0; i<NP; i++) {
       from >> err_strain[i]; 
-      if (verbose)
-         std::cout <<  err_strain[i] <<  std::endl;
+      //if (verbose)
+      //   std::cout <<  err_strain[i] <<  std::endl;
    }
+//followed by their peak Err strain, an array of NP elements,
+   serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   dcmImageName = textFileName + "_peak_Err_strain.dcm";
+   MakeDicomImage(err_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);
    delete []err_strain;
 
    std::cout << "--------------- E11_strain ------------------" << std::endl;
    float *e11_strain = new float[NP];
    for (i=0; i<NP; i++) {
       from >> e11_strain[i]; 
-      if (verbose)
-         std::cout <<  e11_strain[i] <<  std::endl;
-   }  
-   delete []e11_strain;
+      //if (verbose)
+      //   std::cout <<  e11_strain[i] <<  std::endl;
+   }
+//followed by their peak E11 strain, an array of NP elements,
+   serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   dcmImageName = textFileName + "_peak_E11_strain.dcm";
+   MakeDicomImage(e11_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);
+   delete []e11_strain;          
+
 
    std::cout << "--------------- E22_strain ------------------" << std::endl;
    float *e22_strain = new float[NP];
    for (i=0; i<NP; i++) {
       from >> e22_strain[i]; 
-      if (verbose)
-         std::cout <<  e22_strain[i] <<  std::endl;
-   }    
-   delete []e22_strain;
-
-   std::string dcmImageName;    
-   std::string serieUID;
-   
-//followed by their peak Ecc strain, an array of NP elements,
-   serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   dcmImageName = textFileName + "_peak_Ecc_strain.dcm";
-   MakeDicomImage(ecc_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);
-
-//followed by their peak Err strain, an array of NP elements,
-   serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   dcmImageName = textFileName + "_peak_Err_strain.dcm";
-   MakeDicomImage(err_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);
-
-//followed by their peak E11 strain, an array of NP elements,
-   serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   dcmImageName = textFileName + "_peak_E11_strain.dcm";
-   MakeDicomImage(e11_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);
-
+      //if (verbose)
+      //   std::cout <<  e22_strain[i] <<  std::endl;
+   }
 //followed by their Peak E22 strain, an array of NP elements,
    serieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    dcmImageName = textFileName + "_peak_E22_strain.dcm";
    MakeDicomImage(e22_strain, X, Y, Z, NP, dcmImageName, patientname, 1, studyUID, serieUID);         
+   delete []e22_strain;
+     
 }
 
 // =====================================================================================================================
