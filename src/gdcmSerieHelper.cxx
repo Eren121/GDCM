@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/14 21:21:58 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2008/04/02 11:15:07 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1029,7 +1029,7 @@ std::string SerieHelper::CreateUniqueSeriesIdentifier( File *inFile )
       }
    }
    // deal with Dicom strings trailing '\0' 
-    if(id[s_size-1] == '_')
+    if(s_size && id[s_size-1] == '_')
       id.erase(s_size-1, 1);
     return id;
     }
