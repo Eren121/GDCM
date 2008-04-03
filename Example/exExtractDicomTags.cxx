@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractDicomTags.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008/04/03 17:00:24 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmSQItem.h"
 #include "gdcmDebug.h"
 #include "gdcmUtil.h"
+#include "gdcmOrientation.h"
 
 #include "gdcmArgMgr.h"
 #include <iostream>
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
    // ----- Initialize Arguments Manager ------
    
    GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
-  
+
    if (am->ArgMgrDefined("usage")) 
    {
       am->ArgMgrUsage(usage); // Display 'usage'
@@ -151,14 +152,20 @@ int main(int argc, char *argv[])
    InstitutionalDepartmentName     
                      = f->GetEntryString(0x0008,0x1040);  //departement
 
+   // --> I'll have to ask people working on PACS which one they use. JPRx
    // Radiologist :
    // 0008|0090  [Referring Physician's Name]
    // 0008|1050  [Performing Physician's Name]
    // 0008|1060  [Name of Physician(s) Reading Study] 
    // 0008|1048  [Physician(s) of Record] 
-   // 0032|1032  [Requesting Physician] 
-
-   // --> I'll have to ask people working on PACS which one they use. JPRx
+   // 0032|1032  [Requesting Physician]
+   
+   std::string ReferringPhysiciansName          = f->GetEntryString(0x0008,0x0090);   
+   std::string PerformingPhysiciansName         = f->GetEntryString(0x0008,0x1050);
+   std::string NameofPhysiciansReadingStudy     = f->GetEntryString(0x0008,0x1060);   
+   std::string PhysiciansofRecord               = f->GetEntryString(0x0008,0x1048);
+   std::string RequestingPhysician              = f->GetEntryString(0x0032,0x1032);   
+        
 
    ProtocolName = f->GetEntryString(0x0018,0x1030); 
   
@@ -200,30 +207,31 @@ int main(int argc, char *argv[])
    int iBitsAllocated   = (uint32_t) atoi( BitsAllocated.c_str() );
 */
 
-  
+
 
    float sx =  f->GetXSpacing();
    float sy =  f->GetYSpacing();
    float sz =  f->GetZSpacing(); // meaningless for DICOM 
                                  // (cannot be extracted from a single image)
 
-   std::cout << "Rows = ["            << Rows << "]" << std::endl;
-   std::cout << "Columns = ["         << Columns << "]" << std::endl;
-   std::cout << "Planes = ["          << Planes << "]" << std::endl;
-   std::cout << "SamplesPerPixel = [" << SamplesPerPixel << "]" << std::endl;
-   std::cout << "BitsAllocated = ["   << BitsAllocated << "]" << std::endl;
-   std::cout << "BitsStored = ["      << BitsStored << "]" << std::endl;
-   std::cout << "HighBit = ["         << HighBit << "]" << std::endl;
+   std::cout << "Rows = ["            << Rows                    << "]" << std::endl;
+   std::cout << "Columns = ["         << Columns                 << "]" << std::endl;
+   std::cout << "Planes = ["          << Planes                  << "]" << std::endl;
+   std::cout << "SamplesPerPixel = [" << SamplesPerPixel         << "]" << std::endl;
+   std::cout << "BitsAllocated = ["   << BitsAllocated           << "]" << std::endl;
+   std::cout << "BitsStored = ["      << BitsStored              << "]" << std::endl;
+   std::cout << "HighBit = ["         << HighBit                 << "]" << std::endl;
    std::cout << "PixelRepresentation = [" << PixelRepresentation << "]" << std::endl;
-   std::cout << "PixelType = ["       << PixelType << "]" << std::endl;
+   std::cout << "PixelType = ["       << PixelType               << "]" << std::endl;
 
    std::cout << "TransferSyntax = [" << TransferSyntax << "]" << std::endl;
-   std::cout << "StudyDate = ["      << StudyDate << "]" << std::endl;
-   std::cout << "StudyTime = ["      << StudyTime << "]" << std::endl;
-   std::cout << "Modality = ["       << Modality << "]" << std::endl;
-   std::cout << "PatientName = ["    << PatientName << "]" << std::endl;
-   std::cout << "PatientID = ["      << PatientID << "]" << std::endl;
-   std::cout << "PatientSex = ["     << PatientSex << "]" << std::endl;
+   std::cout << "StudyDate = ["      << StudyDate      << "]" << std::endl;
+   std::cout << "StudyTime = ["      << StudyTime      << "]" << std::endl;
+   std::cout << "Modality = ["       << Modality       << "]" << std::endl;
+   std::cout << "PatientName = ["    << PatientName    << "]" << std::endl;
+   std::cout << "PatientID = ["      << PatientID      << "]" << std::endl;
+   std::cout << "PatientSex = ["     << PatientSex     << "]" << std::endl;
+   std::cout << std::endl;  
    std::cout << "SOPInstanceUID = ["              << SOPInstanceUID << "]" 
           << std::endl; 
    std::cout << "StudyInstanceUID = ["            << StudyInstanceUID 
@@ -236,17 +244,121 @@ int main(int argc, char *argv[])
           << "]" << std::endl;
    std::cout << "AcquisitionDateTime = ["         << AcquisitionDateTime << "]" 
              << std::endl;
-   std::cout << "InstitutionName = ["             << InstitutionName 
+   
+   std::cout << std::endl;
+       
+   std::cout << "ReferringPhysiciansName = ["             << ReferringPhysiciansName 
           << "]" << std::endl;
+   std::cout << "PerformingPhysiciansName = ["            << PerformingPhysiciansName 
+          << "]" << std::endl;  
+   std::cout << "NameofPhysiciansReadingStudy = ["        << NameofPhysiciansReadingStudy 
+          << "]" << std::endl;  
+   std::cout << "PhysiciansofRecord = ["                  << PhysiciansofRecord 
+          << "]" << std::endl;  
+   std::cout << "RequestingPhysician = ["                 << RequestingPhysician 
+          << "]" << std::endl; 
+   
+   std::cout << std::endl;
+   
    std::cout << "InstitutionalDepartmentName = [" 
                                         << InstitutionalDepartmentName << "]"
                                << std::endl;
+       
+   std::cout << "InstitutionName = ["             << InstitutionName 
+          << "]" << std::endl;       
+       
    std::cout << "ProtocolName = ["                << ProtocolName << "]" << std::endl;
 
    std::cout << "GetXSpacing = ["            << sx << "]" << std::endl;
    std::cout << "GetYSpacing = ["            << sy << "]" << std::endl;
    std::cout << "GetZSpacing = ["            << sz << "]" << std::endl;
 
+
+      // Let's get and print some usefull fields about 'Orientation'
+      // ------------------------------------------------------------
+
+      std::string strPatientPosition = 
+                                      f->GetEntryString(0x0018,0x5100);
+      if ( strPatientPosition != GDCM_NAME_SPACE::GDCM_UNFOUND 
+        && strPatientPosition != "" )  
+            std::cout << "PatientPosition (0x0010,0x5100)= [" 
+                      << strPatientPosition << "]" << std::endl;
+ 
+      std::string strViewPosition = 
+                                      f->GetEntryString(0x0018,0x5101);
+      if ( strViewPosition != GDCM_NAME_SPACE::GDCM_UNFOUND 
+        && strViewPosition != "" )  
+            std::cout << "View Position (0x0018,0x5101)= [" 
+                      << strViewPosition << "]" << std::endl;
+      
+     std::string strPatientOrientation = 
+                                      f->GetEntryString(0x0020,0x0020);
+      if ( strPatientOrientation != GDCM_NAME_SPACE::GDCM_UNFOUND
+        && strPatientOrientation != "")  
+         std::cout << "PatientOrientation (0x0020,0x0020)= [" 
+                   << strPatientOrientation << "]" << std::endl;
+
+      std::string strImageOrientationPatient = 
+                                      f->GetEntryString(0x0020,0x0037);  
+      if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND
+        && strImageOrientationPatient != "" )  
+         std::cout << "ImageOrientationPatient (0x0020,0x0037)= [" 
+                   << strImageOrientationPatient << "]" << std::endl;
+
+      std::string strImageOrientationRET = 
+                                      f->GetEntryString(0x0020,0x0035);
+      if ( strImageOrientationRET != GDCM_NAME_SPACE::GDCM_UNFOUND
+        && strImageOrientationRET != "" )  
+         std::cout << "ImageOrientationRET (0x0020,0x0035)= [" 
+                   << strImageOrientationRET << "]" << std::endl;
+
+      std::string strImagePositionPatient = 
+                                      f->GetEntryString(0x0020,0x0032);  
+      if ( strImagePositionPatient != GDCM_NAME_SPACE::GDCM_UNFOUND
+        && strImagePositionPatient != "" )  
+         std::cout << "ImagePositionPatient (0x0020,0x0032)= [" 
+                   << strImagePositionPatient << "]" << std::endl;
+
+      std::string strImagePositionPatientRET = 
+                                      f->GetEntryString(0x0020,0x0030);
+      if ( strImagePositionPatientRET != GDCM_NAME_SPACE::GDCM_UNFOUND
+        && strImagePositionPatientRET != "" )  
+         std::cout << "ImagePositionPatientRET (0x0020,0x0030)= [" 
+                   << strImagePositionPatientRET << "]" << std::endl;
+  
+     float iop[6];
+     /*bool riop = */f->GetImageOrientationPatient(iop);  
+     float ipp[3];
+     /*bool ripp = */f->GetImagePositionPatient(ipp);
+
+     std::cout << "Image Position (0x0020,0x0032|0x0030) : "
+               << ipp[0] << " , " << ipp[1] << " , "<< ipp[2]
+               << std::endl;
+     std::cout << "Image Orientation (0x0020,0x0037|0x0035) : "
+               << iop[0] << " , " << iop[1] << " , "<< iop[2] << " , "
+               << iop[3] << " , " << iop[4] << " , "<< iop[5]
+               << std::endl; 
+
+
+      // Let's compute 'user friendly' results about 'Orientation'
+      // ---------------------------------------------------------
+ 
+      GDCM_NAME_SPACE::Orientation *o = GDCM_NAME_SPACE::Orientation::New();
+
+      if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND ||
+           strImageOrientationRET     != GDCM_NAME_SPACE::GDCM_UNFOUND )
+      {
+  
+         GDCM_NAME_SPACE::OrientationType orient = o->GetOrientationType( f );
+ 
+         std::cout << "TypeOrientation = " << orient << " (-> " 
+                   << o->GetOrientationTypeString(orient) << " )" << std::endl;
+      }
+
+      std::string ori = o->GetOrientation ( f );
+      if (ori != "\\" )
+         std::cout << "Orientation [" << ori << "]" << std::endl;
+      o->Delete();
    f->Delete();
    return 0;
 }
