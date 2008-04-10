@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/04 17:50:42 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2008/04/10 12:03:46 $
+  Version:   $Revision: 1.27 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -805,7 +805,7 @@ const char *ArgMgr::LoadedParam ( const char *param, FILE *fd )
   int    nbcar = 0;
 
   /* remove spaces at the beginning****/
-  while ( isspace(carlu=fgetc (fd)) );
+  while ( isspace(carlu=fgetc (fd)) ) {}
   if (carlu==EOF)
      return 0;
   /* Search for a " */

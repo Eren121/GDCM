@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.h,v $
   Language:  C++
-  Date:      $Date: 2007/09/28 11:03:52 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2008/04/10 12:03:46 $
+  Version:   $Revision: 1.15 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -106,6 +106,9 @@ private :
    char **ArgStr; //[ARGMAXCOUNT];  // Arguments 'strings'
    int   ArgCount;             // Number of arguments passed 
    char *Appel;                
+
+   ArgMgr(const ArgMgr&); // Not implemented
+   void operator=(const ArgMgr&); // Not implemented
 };
 } // end namespace gdcm
 
