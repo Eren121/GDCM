@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestReadWriteJPEGReadCompare.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/11/09 10:18:21 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2008/04/10 12:15:34 $
+  Version:   $Revision: 1.15 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,6 +21,8 @@
 
 #include "gdcmGlobal.h"
 #include "gdcmTS.h"
+
+#include <stdlib.h>
 
 //Generated file:
 #include "gdcmDataImages.h"

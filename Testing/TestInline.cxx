@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 19:08:34 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2008/04/10 12:15:34 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,11 +31,11 @@
 
 #include "gdcmUtil.h"
 
+#include <stdlib.h> // atoi
 #if defined(__BORLANDC__)  || defined (_MSC_VER)
 #include <time.h>
    #if defined(__BORLANDC__)
    #include <stdio.h>
-   #include <stdlib.h>
    #endif
 #define GET_TIME(a) a=clock()
 #define HOW_LONG(b,a)                             \

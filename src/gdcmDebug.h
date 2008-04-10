@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDebug.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:03 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2008/04/10 12:15:36 $
+  Version:   $Revision: 1.59 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,7 @@
 #include <sstream>
 #include <fstream>
 #include <assert.h>
+#include <string.h> // strerror
 #include <errno.h>
 
 namespace GDCM_NAME_SPACE

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 15:41:26 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2008/04/10 12:15:35 $
+  Version:   $Revision: 1.54 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,6 +30,8 @@
  #include <stdlib.h> // for atof
  #include <ctype.h>  // for isdigit
 #endif
+#include <string.h> // memcpy
+#include <stdlib.h> // atof
 
 // Could be defined like MAX_SIZE_LOAD_ELEMENT_VALUE
 #define GDCM_MAX_LENGTH_TO_CONVERT_TO_HEXA 8
@@ -427,10 +429,12 @@ void DataEntry::SetString(std::string const &value)
       NewBinArea();
       memcpy(BinArea, value.c_str(), l);
       if (l%2) // padded with blank except for UI
-         if ( vr == "UI" ) 
-            BinArea[l] = '\0';
-         else
-            BinArea[l] = ' ';                
+        {
+        if ( vr == "UI" )
+          BinArea[l] = '\0';
+        else
+          BinArea[l] = ' ';
+        }
    }
    State = STATE_LOADED;
 }

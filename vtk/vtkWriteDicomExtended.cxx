@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n vtkWriteDicomExtended : \n",
-   " Reads a DICOM file and re writes it according to user's requierements.   ",
+   " Reads a DICOM file and re writes it according to user's requirements.    ",
    "                                                                          ",
    " usage: vtkWriteDicomExtended filein=dicom file to read                   ",
    "                           [filecontent = ] [2D]                          ",

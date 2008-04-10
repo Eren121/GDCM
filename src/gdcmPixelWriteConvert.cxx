@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelWriteConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/15 11:10:37 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2008/04/10 12:15:36 $
+  Version:   $Revision: 1.25 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,6 +22,7 @@
 #include "gdcmUtil.h"
 
 #include <vector>
+#include <stdlib.h> // abs
 
 #define WITHOFFSETTABLE 1
 

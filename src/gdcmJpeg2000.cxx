@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/25 07:52:59 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2008/04/10 12:15:36 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,8 @@
 
 #if defined(__BORLANDC__)
    #include <mem.h> // for memset
-   #include <stdlib.h>
 #endif
+#include <stdlib.h> // abort
 
 extern "C" {
   #include <openjpeg.h>
