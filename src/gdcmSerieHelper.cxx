@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/04/02 11:15:07 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2008/05/13 08:02:59 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -161,7 +161,7 @@ bool SerieHelper::AddFile(File *header)
       std::string id = CreateUniqueSeriesIdentifier( header );
       // if id == GDCM_UNFOUND then consistently we should find GDCM_UNFOUND
       // no need here to do anything special
- 
+
       if ( SingleSerieUIDFileSetHT.count(id) == 0 )
       {
          gdcmDebugMacro(" New/gdcmSerieHelper.cxx Serie UID :[" << id << "]");
@@ -258,13 +258,13 @@ void SerieHelper::AddSeriesDetail(uint16_t group, uint16_t elem, bool convert)
 void SerieHelper::SetDirectory(std::string const &dir, bool recursive)
 {
    DirList dirList(dir, recursive); // OS specific
-  
+
    DirListType filenames_list = dirList.GetFilenames();
    for( DirListType::const_iterator it = filenames_list.begin(); 
         it != filenames_list.end(); ++it)
    {
-     // std::cout << "--------------------------------filename [" << *it << "]"
-     //           << std::endl; 
+     // std::cout << "-----------------------------filename [" << *it << "]"
+     //           << std::endl;
       gdcmDebugMacro("filename [" << *it << "]" );
       AddFileName( *it );
    }
@@ -813,7 +813,16 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
          fileList->push_back( (*it4).second );
          if (DropDuplicatePositions)  // skip all duplicates
          {
-           it4 =  distmultimap.upper_bound((*it4).first);
+            // lower_bound finds the next element that is 
+            // less than or *equal to* the current value!
+            //it4 =  distmultimap.lower_bound((*it4).first);
+   
+           // David Feng's fix
+           itPrev = it4;
+           while (itPrev->first == it4->first)
+              --itPrev;
+           it4 = itPrev;
+    
            if (it4 == distmultimap.begin() ) // if first image, stop iterate
                break;
          } 
