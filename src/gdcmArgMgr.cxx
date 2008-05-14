@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmArgMgr.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/04/10 12:03:46 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2008/05/14 10:45:11 $
+  Version:   $Revision: 1.28 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -764,7 +764,7 @@ char *ArgMgr::Majuscule (const char *chaine )
   char *ptr, *ptr2, *ptr3;
   ptr2 = (char *)malloc(strlen(chaine)*sizeof(char)+1);
   ptr3=ptr2;
-  for ( ptr = (char *)chaine ; *ptr!='\0' ; ptr ++ ) 
+ for ( ptr = const_cast<char *>(chaine) ; *ptr!='\0' ; ptr ++ ) 
    {  
        *ptr3 = toupper ( * ptr ); ptr3++; 
    }
@@ -800,7 +800,7 @@ int ArgMgr::FiltreLong ( const char *arg  )
 const char *ArgMgr::LoadedParam ( const char *param, FILE *fd )
 {
   int    carlu;
-  char  *car = (char *)param;
+  char  *car = const_cast<char *>(param);
   int    quote = false;
   int    nbcar = 0;
 
@@ -846,14 +846,14 @@ const char *ArgMgr::LoadedParam ( const char *param, FILE *fd )
  +------------------------------------------------------------------------*/
 int ArgMgr::ArgLoadFromFile ( const char *filename )
 {
-  int   nbl = 0;
+  size_t   nbl = 0;
   char  param[ARG_LONG_MAX+1];
   FILE  *fch;
 
   fch = fopen ( filename, ID_RFILE_TEXT );
   while ( LoadedParam (param, fch ) )
   {
-    int n = strlen(param);
+    size_t n = strlen(param);
     if ( param[0]=='@' )
     {
       nbl  += ArgLoadFromFile ( &param[1] );
@@ -868,7 +868,7 @@ int ArgMgr::ArgLoadFromFile ( const char *filename )
     }
   }
   fclose ( fch );
-  return nbl;
+  return static_cast< int >( nbl );
 }
 
 /*------------------------------------------------------------------------
@@ -881,12 +881,12 @@ void ArgMgr::ArgStdArgs()
   char *logfile;
   FILE *fd;
 
-  if ( (ArgParamOut=ArgMgrValue((char*)ARG_LABEL_PARAMOUT))==0 )
+  if ( (ArgParamOut=ArgMgrValue(const_cast<char*>(ARG_LABEL_PARAMOUT)))==0 )
     ArgParamOut = ARG_DEFAULT_PARAMOUT;
-  if ( (logfile = ArgMgrValue((char*)ARG_LABEL_LOGFILE))!=0) 
+  if ( (logfile = ArgMgrValue(const_cast<char*>(ARG_LABEL_LOGFILE)))!=0) 
   {
     if ( *logfile == '\0' )
-       logfile = (char *)ARG_DEFAULT_LOGFILE;
+       logfile = const_cast<char *>(ARG_DEFAULT_LOGFILE);
     fd = fopen ( logfile, "a+" );
     if ( fd ) 
     {
