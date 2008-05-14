@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/05/13 08:02:59 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2008/05/14 07:48:52 $
+  Version:   $Revision: 1.69 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -818,7 +818,7 @@ bool SerieHelper::ImagePositionPatientOrdering( FileList *fileList )
             //it4 =  distmultimap.lower_bound((*it4).first);
    
            // David Feng's fix
-           itPrev = it4;
+           std::multimap<double, File *>::const_iterator itPrev = it4;
            while (itPrev->first == it4->first)
               --itPrev;
            it4 = itPrev;
