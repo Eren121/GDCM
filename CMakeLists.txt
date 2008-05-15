@@ -8,7 +8,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
 SET(GDCM_MAJOR_VERSION 1)
 SET(GDCM_MINOR_VERSION 3)
 SET(GDCM_BUILD_VERSION 2)
-SET(GDCM_VERSION 
+SET(GDCM_VERSION
     "${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION}.${GDCM_BUILD_VERSION}")
 
 #-----------------------------------------------------------------------------
@@ -22,7 +22,6 @@ IF(CMAKE_COMPILER_2005)
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
   ADD_DEFINITIONS(-D_SCL_SECURE_NO_DEPRECATE)
 ENDIF(CMAKE_COMPILER_2005) 
-
 
 #-----------------------------------------------------------------------------
 # Build shared lib by default
@@ -268,10 +267,11 @@ OPTION(BUILD_TESTING "Build testing." ON)
 
 IF(BUILD_TESTING)
   CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/CTestCustom.ctest.in
-      ${GDCM_BINARY_DIR}/CTestCustom.ctest @ONLY)
+      ${GDCM_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
+  FILE(WRITE ${GDCM_BINARY_DIR}/CTestCustom.cmake
+    "INCLUDE(\"${GDCM_BINARY_DIR}/CMake/CTestCustom.ctest\")\n")
   ENABLE_TESTING()
-  INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
-  MARK_AS_ADVANCED(DART_ROOT)
+  INCLUDE(CTest)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
 
