@@ -190,6 +190,7 @@ SET(BLACK_LIST
   "SIEMENS_MAGNETOM-12-MONO2-GDCM12-VRUN.dcm"
   "SIEMENS_GBS_III-16-ACR_NEMA_1-ULis2Bytes.dcm"
   "SIEMENS_ImageLocationUN.dcm"
+  "TheralysGDCM120Bug.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
