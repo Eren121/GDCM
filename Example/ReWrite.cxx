@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ReWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 18:55:28 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2008/05/16 10:40:23 $
+  Version:   $Revision: 1.35 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
    "                                                                        ",
    "        mode = a (ACR), x (Explicit VR Dicom), r (RAW : only pixels)    ",
    "               j (jpeg lossless), 2 (jpeg2000)                          ",
+   "               NOTE : JPEG encapsulated in a Dicom File, not JPEG File !",
    "        keepoverlays : user wants to keep ACR-NEMA-like overlays        ",
    "        monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)  ",
    "        noshadowseq: user doesn't want to load Private Sequences        ",
