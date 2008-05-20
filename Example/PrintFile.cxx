@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 13:58:40 $
-  Version:   $Revision: 1.90 $
+  Date:      $Date: 2008/05/20 09:21:22 $
+  Version:   $Revision: 1.91 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -681,8 +681,8 @@ if (!noex)
          {
             if (load)  // just to see warning messages at load time !
             {
-               uint8_t *pixels = fh->GetImageData();
-               uint32_t lgth   = fh->GetImageDataSize(); 
+               uint8_t *pixels = fh->GetImageData(); (void)pixels;
+               uint32_t lgth   = fh->GetImageDataSize(); (void)lgth;
             }         
 
             std::cout <<std::endl<<it->c_str()<<" is Readable"<<std::endl;
