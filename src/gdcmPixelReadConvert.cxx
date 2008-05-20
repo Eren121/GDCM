@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmPixelReadConvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/26 16:06:57 $
-  Version:   $Revision: 1.127 $
+  Date:      $Date: 2008/05/20 09:22:03 $
+  Version:   $Revision: 1.128 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -679,7 +679,7 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
 //    if ( ! gdcm_read_JPEGLS_file( fp,Raw ) )
          return false;
    }
-   else
+   else if( JPEGInfo )
    {
      // make sure this is the right JPEG compression
      assert( !IsJPEGLS || !IsJPEG2000 );
@@ -696,6 +696,8 @@ bool PixelReadConvert::ReadAndDecompressJPEGFile( std::ifstream *fp )
      JPEGInfo->DecompressFromFile(fp, Raw, dummy, numberBytes, length );
      return true;
    }
+   //else (not sure how get there...), must be one of those crazy DICOM file
+   return false;
 }
 
 /**
