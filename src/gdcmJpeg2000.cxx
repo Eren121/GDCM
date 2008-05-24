@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmJpeg2000.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/04/10 12:15:36 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2008/05/24 12:24:04 $
+  Version:   $Revision: 1.48 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,29 +24,11 @@
 #if defined(__BORLANDC__)
    #include <mem.h> // for memset
 #endif
-#include <stdlib.h> // abort
+#include <stdio.h> // for fprintf
+#include <stdlib.h> // for abort
 
 extern "C" {
   #include <openjpeg.h>
-
-/**
-sample error callback expecting a FILE* client object
-*/
-void error_callback(const char *msg, void *) {
-  std::cerr << "Error in gdcmopenjpeg" << msg << std::endl;
-}
-/**
-sample warning callback expecting a FILE* client object
-*/
-void warning_callback(const char *msg, void *) {
-  std::cerr << "Warning in gdcmopenjpeg" << msg << std::endl;
-}
-/**
-sample debug callback expecting no client object
-*/
-void info_callback(const char *msg, void *) {
-  std::cerr << "Info in gdcmopenjpeg" << msg << std::endl;
-}
 }
 
 namespace GDCM_NAME_SPACE 
@@ -63,6 +45,7 @@ namespace GDCM_NAME_SPACE
 /**
 sample error callback expecting a FILE* client object
 */
+extern "C" {
 void error_callback(const char *msg, void *) {
   std::cerr << "Error in gdcmopenjpeg" << msg << std::endl;
 }
@@ -77,6 +60,7 @@ sample debug callback expecting no client object
 */
 void info_callback(const char *msg, void *) {
   std::cerr << "Info in gdcmopenjpeg" << msg << std::endl;
+}
 }
 
 #define J2K_CFMT 0
