@@ -28,7 +28,8 @@ SET(EXAMPLE_SOURCES
   exMakeIcon
   
   # the following are utilities
-  #----------------------------  
+  #----------------------------
+  RawToDicomStack  
   PrintDicomDir  
   PrintFile  
   MakeDicomDir  
