@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/01/07 18:12:02 $
-  Version:   $Revision: 1.379 $
+  Date:      $Date: 2008/06/12 13:18:15 $
+  Version:   $Revision: 1.380 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1546,7 +1546,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
    // (the 'straight' images will no longer be readable ...)
    
       if ( vr == "OB" || vr == "OW" || vr == "OL" || vr == "SQ" || vr == "UT" 
-                                                          || vr == "UN" || changeFromUN == true)
+                                                         || vr == "UN"  || changeFromUN == true)
       {
          changeFromUN = false;
          // The following reserved two bytes (see PS 3.5-2003, section

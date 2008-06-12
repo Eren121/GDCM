@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2007/10/25 07:52:59 $
-  Version:   $Revision: 1.136 $
+  Date:      $Date: 2008/06/12 13:18:15 $
+  Version:   $Revision: 1.137 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -875,7 +875,14 @@ bool FileHelper::CheckWriteIntegrity()
             if ( abs((long)(decSize-userDataSize))>1) // ignore padding zero
             {
                gdcmWarningMacro( "Data size (Raw) is incorrect. Should be " 
-                           << decSize << " / Found :" 
+                           << decSize << "(" 
+                           << FileInternal->GetXSize() << " * "
+                           << FileInternal->GetYSize() << " * "
+                           << FileInternal->GetZSize() << " * "
+                           << FileInternal->GetTSize() << " * "   
+                           << FileInternal->GetSamplesPerPixel() << " * "
+                           << numberBitsAllocated / 8   
+                           << ") / Found :" 
                            << userDataSize );
                return false;
             }
