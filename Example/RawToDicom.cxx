@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/06/03 10:01:14 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2008/06/12 13:21:20 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
    "                   [studyid = ] [patientname = Patient's name]            ",
    "                   [debug]                                                ",
    "                                                                          ",
-   "  monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)          ", 
+   "  monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)          ",
    "  studyUID   : *aware* user wants to add the serie                        ",
    "                                             to an already existing study ",
    "  debug      : developper wants to run the program in 'debug mode'        ",
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
    const char *inputFileName  = am->ArgMgrGetString("filein");
    const char *outputFileName = am->ArgMgrGetString("fileout");
    
-  const char *patientName = am->ArgMgrGetString("patientname", "g^Fantomas");
+   const char *patientName = am->ArgMgrGetString("patientname", "g^Fantomas");
    
    int nX = am->ArgMgrWantInt("rows", usage);
    int nY = am->ArgMgrWantInt("lines", usage);
@@ -111,18 +111,17 @@ int main(int argc, char *argv[])
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
 
    bool monochrome1 = ( 0 != am->ArgMgrDefined("monochrome1") );
-      
+   
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-   bool userDefinedStudy = ( 0 != am->ArgMgrDefined("studyUID") );
 
+   bool userDefinedStudy = ( 0 != am->ArgMgrDefined("studyUID") );
    const char *studyUID;
    if (userDefinedStudy)
       studyUID  = am->ArgMgrGetString("studyUID");  
 
    // not described *on purpose* in the Usage !
    bool userDefinedSerie = ( 0 != am->ArgMgrDefined("serieUID") );       
-
    const char *serieUID;
    if(userDefinedSerie)
       serieUID = am->ArgMgrGetString("serieUID");
@@ -170,7 +169,7 @@ int main(int argc, char *argv[])
    else if (strPixelType == "16S")
    {
       pixelSize = 2;
-      pixelSign = 1; 
+      pixelSign = 1;
    }   
    else if (strPixelType == "16U")
    {
@@ -192,22 +191,24 @@ int main(int argc, char *argv[])
       std::cout << "Wrong 'pixeltype' (" << strPixelType << ")" << std::endl;
       return 1;
    }
- 
+
    std::string strStudyUID;
    std::string strSerieUID;
 
    if (userDefinedStudy)
-      strSerieUID =  studyUID;
+      strSerieUID = studyUID;
    else
-      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+      strStudyUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
    
-   if (userDefinedStudy)
-     strSerieUID =  serieUID;
+   if (userDefinedSerie)
+     strSerieUID = serieUID;
    else
-      strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();  
+      strSerieUID = GDCM_NAME_SPACE::Util::CreateUniqueUID();
       
-        
-   int dataSize =  nX*nY*nZ*pixelSize*samplesPerPixel;
+   // Read the pixels
+
+   int dataSize =  nX*nY*nZ*samplesPerPixel*pixelSize;
+
    uint8_t *pixels = new uint8_t[dataSize];
    
    Fp->read((char*)pixels, (size_t)dataSize);
@@ -215,13 +216,13 @@ int main(int argc, char *argv[])
    if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
    {  
       ConvertSwapZone(pixelSize, pixels, dataSize);   
-   }   
-   
+   }
+
 // Create an empty FileHelper
 
    GDCM_NAME_SPACE::FileHelper *fileH = GDCM_NAME_SPACE::FileHelper::New();
  
- // Get the (empty) image header.  
+ // Get the (empty) image header.
    GDCM_NAME_SPACE::File *fileToBuild = fileH->GetFile();
 
    // 'Study Instance UID'
