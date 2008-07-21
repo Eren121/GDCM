@@ -22,6 +22,25 @@ If you don't see in the left part of your screen
 <HR size="1"><ADDRESS style="align: right;"></ADDRESS>
 <br><br><br>
 
+<H2>(Important note for ITK users)</H2>
+
+   <UL>
+   <LI> ITK (Insight ToolKit) still uses gdcm 1.2.x
+   <LI> Current gdcm version is 1.3.x
+   </UL>  
+   
+<H2>(Important note for new DICOM  users)</H2>
+   <UL>
+   <LI> An other version, called gdcm2 exists, an is a complete ground up rewrite of GDCM 1.x. 
+   (have a look at <a href="http://gdcm.sourceforge.net/wiki/index.php/GDCM_Release_2.0">
+                            http://gdcm.sourceforge.net/wiki/index.php/GDCM_Release_2.0
+                   </a>)</br>
+   If you are a new DICOM user, better use gdcm2, because its structure will allow much more features than gdcm1.x does (it's almost exclusively 'image oriented')
+   </UL> 
+
+<br><br><br>
+
+ 
 
 Gdcm is yet another C++ library dedicated to reading/parsing and writing
 <A HREF="http://medical.nema.org/">Dicom</A> medical files.
@@ -121,12 +140,8 @@ gdcm doesn't implement (yet?)
 <UL>
   <LI>the integration of (optional) overlays on image.
   </li>
-  <LI>a support to write files according to the 
-     <A HREF="ConformanceSummary.html">various classical Jpeg encodings</A>
-             (only read methods are provided)
-  </li>
-  <LI>a support to deal with JPEG 2000 encodings</A>
-  </li>
+  <LI> ...
+  </li>  
 </UL>
 Gdcm also still needs
 <UL>
