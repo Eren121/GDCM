@@ -194,6 +194,7 @@ SET(BLACK_LIST
   "IM-0001-0066.dcm"
   "DMCPACS_ExplicitImplicit_BogusIOP.dcm"
   "MR_ELSCINT1_00e1_1042_SQ_feff_00e0_Item.dcm"
+  "MR_Spectroscopy_SIEMENS_OF.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
