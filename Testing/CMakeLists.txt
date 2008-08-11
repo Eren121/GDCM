@@ -199,6 +199,7 @@ SET(BLACK_LIST
   "ELSCINT1_JP2vsJ2K.dcm"
   "GE_MR_0025xx1bProtocolDataBlock.dcm"
   "TG18-CH-2k-01.dcm"
+  "CT-SIEMENS-MissingPixelDataInIconSQ.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
