@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/17 12:20:00 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2008/08/18 12:27:10 $
+  Version:   $Revision: 1.27 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -33,7 +33,7 @@ namespace GDCM_NAME_SPACE
 
 /**
  * \brief  THERALYS' Algorithm to determine the most similar basic orientation
- *           (Axial, Coronal, Sagital) of the image
+ *           (Axial, Coronal, Sagittal) of the image
  * \note Should be run on the first gdcm::File of a 'coherent' Serie
  * @return orientation code
  *   #   0 : Not Applicable (neither 0020,0037 Image Orientation Patient 
@@ -42,35 +42,35 @@ namespace GDCM_NAME_SPACE
  *   #  -1 : Axial invert
  *   #   2 : Coronal
  *   #  -2 : Coronal invert
- *   #   3 : Sagital
- *   #  -3 : Sagital invert
+ *   #   3 : Sagittal
+ *   #  -3 : Sagittal invert
  *   #   4 : Heart Axial
  *   #  -4 : Heart Axial invert
  *   #   5 : Heart Coronal
  *   #  -5 : Heart Coronal invert
- *   #   6 : Heart Sagital
- *   #  -6 : Heart Sagital invert
+ *   #   6 : Heart Sagittal
+ *   #  -6 : Heart Sagittal invert
  */
 
 static const char  *OrientationTypeStrings[] = { 
   "Not Applicable",
   "Axial",
   "Coronal",
-  "Sagital",
+  "Sagittal",
   "Heart Axial",
   "Heart Coronal",
-  "Heart Sagital",
+  "Heart Sagittal",
   "Axial invert",
   "Coronal invert",
-  "Sagital invert",
+  "Sagittal invert",
   "Heart Axial invert",
   "Heart Coronal invert",
-  "Heart Sagital invert",
+  "Heart Sagittal invert",
   NULL
 };
 
 /// \brief returns human readable interpretation of the most 
-///        similar basic orientation (Axial, Coronal, Sagital, ...) of the image
+///        similar basic orientation (Axial, Coronal, Sagittal, ...) of the image
 const char* Orientation::GetOrientationTypeString(OrientationType const o)
 {
   int k = (int)o;
@@ -81,7 +81,7 @@ const char* Orientation::GetOrientationTypeString(OrientationType const o)
 }
 
 /// \brief returns of the most similar basic orientation
-///        (Axial, Coronal, Sagital, ...) of the image
+///        (Axial, Coronal, Sagittal, ...) of the image
 OrientationType Orientation::GetOrientationType( File *f )
 {
    float iop[6];

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmOrientation.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2008/08/18 12:27:10 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,14 +40,14 @@ typedef enum {
    AxialInvert = -1,
    Coronal = 2,
    CoronalInvert = -2,
-   Sagital = 3,
-   SagitalInvert = -3,
+   Sagittal = 3,
+   SagittalInvert = -3,
    HeartAxial = 4,
    HeartAxialInvert = -4,
    HeartCoronal = 5,
    HeartCoronalInvert = -5,
-   HeartSagital = 6,
-   HeartSagitalInvert = -6
+   HeartSagittal = 6,
+   HeartSagittalInvert = -6
 } OrientationType;
 
 //-----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ typedef enum {
  *
  * Example #1:
  * Imagine the patient, in "HFS" position.
- * Full body sagital images are requested.
+ * Full body sagittal images are requested.
  * All the cosines will be -1, 0, or +1;
  * "Patient Orientation" (deduced) will be "A/F".
  * Positive X axis is oriented 'towards patient's nose
@@ -83,15 +83,15 @@ typedef enum {
  *
  * Example #2:
  * Imagine now that patient has a stiffneck and his head is *turned* 30 degrees towards the left.
- * Head sagital images are requested.
+ * Head sagittal images are requested.
  * One of the cosines will be almost 0.5
  * Deduced "Patient Orientation" will be "AL\F"
  * (main X axis orientation is towards patient's nose, and a little bit towards the left)
- * but the image looks *perfectly* sagital (for the head, not for the patient) !
+ * but the image looks *perfectly* sagittal (for the head, not for the patient) !
  *
  * Imagine the patient's stiffneck causes head to be *bended* 30 degrees towards the left AND *turned* left.
- * Sagital images are requested...
- * You'll probabely have 3 letters for X axis and  Y axis, and the image remains *perfectly* sagital !
+ * Sagittal images are requested...
+ * You'll probabely have 3 letters for X axis and  Y axis, and the image remains *perfectly* sagittal !
  * The values are given within the 'Patient referential', *not* within the 'Organ referential' ...
  */
 
