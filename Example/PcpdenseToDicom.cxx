@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/09/04 14:10:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008/09/08 08:10:33 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -368,7 +368,7 @@ XY Dimensions           47          50
      for( i=0;i<NY;i++)
         for(j=0;j<NX;j++) {
            from >> pixelValue;
-           image[i*NX+j] = (unsigned short int)(pixelValue * 1000.)
+           image[i*NX+j] = (unsigned short int)(pixelValue * 1000.);
         }
 }
 

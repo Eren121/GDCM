@@ -50,7 +50,7 @@ SET(EXAMPLE_SOURCES
   ToMRIregister
   DenseMultiFramesToDicom
   Dense2007ToDicom
-  pcpdenseToDicom
+  PcpdenseToDicom
     
   #BatchUncompress
     
