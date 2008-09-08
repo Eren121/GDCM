@@ -50,6 +50,8 @@ SET(EXAMPLE_SOURCES
   ToMRIregister
   DenseMultiFramesToDicom
   Dense2007ToDicom
+  pcpdenseToDicom
+    
   #BatchUncompress
     
   #the following will be transformed into 'examples', or 'utilities'
