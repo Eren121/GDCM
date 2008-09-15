@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/04/07 14:14:40 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,13 +41,13 @@ int TestDataEntry(int , char *[])
    (we don't use any longer DictEntry to build a DocEntry!
    
    unsigned int i;
-   gdcm::DictEntry *dict;
-   gdcm::DataEntry *entry;
+   GDCM_NAME_SPACE::DictEntry *dict;
+   GDCM_NAME_SPACE::DataEntry *entry;
       
-   dict = gdcm::DictEntry::New(0x0003,0x0004);
+   dict = GDCM_NAME_SPACE::DictEntry::New(0x0003,0x0004);
    // SetVR *before* making the DataEntry!
    dict->SetVR("US");   
-   entry = gdcm::DataEntry::New(dict);
+   entry = GDCM_NAME_SPACE::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
 
@@ -105,10 +105,10 @@ int TestDataEntry(int , char *[])
    entry->Delete();
 
    //------------------------------------------------------------------
-   dict = gdcm::DictEntry::New(0x0000,0x0000);
+   dict = GDCM_NAME_SPACE::DictEntry::New(0x0000,0x0000);
    // SetVR *before* making the DataEntry!   
    dict->SetVR("LT");
-   entry = gdcm::DataEntry::New(dict);
+   entry = GDCM_NAME_SPACE::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(data);
@@ -172,10 +172,10 @@ int TestDataEntry(int , char *[])
    entry->Delete();
 
    //------------------------------------------------------------------
-   dict = gdcm::DictEntry::New(0x0000,0x0000);
+   dict = GDCM_NAME_SPACE::DictEntry::New(0x0000,0x0000);
    // SetVR *before* making the DataEntry! 
    dict->SetVR("US");
-   entry = gdcm::DataEntry::New(dict);
+   entry = GDCM_NAME_SPACE::DataEntry::New(dict);
 
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
@@ -273,9 +273,9 @@ int TestDataEntry(int , char *[])
    entry->Delete();
 
    //------------------------------------------------------------------
-   dict = gdcm::DictEntry::New(0x0000,0x0000);
+   dict = GDCM_NAME_SPACE::DictEntry::New(0x0000,0x0000);
    dict->SetVR("UL");
-   entry = gdcm::DataEntry::New(dict);
+   entry = GDCM_NAME_SPACE::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(data);
@@ -372,9 +372,9 @@ int TestDataEntry(int , char *[])
    entry->Delete();
 
    //------------------------------------------------------------------
-   dict = gdcm::DictEntry::New(0x0000,0x0000);
+   dict = GDCM_NAME_SPACE::DictEntry::New(0x0000,0x0000);
    dict->SetVR("FL");
-   entry = gdcm::DataEntry::New(dict);
+   entry = GDCM_NAME_SPACE::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(fdata);
@@ -471,9 +471,9 @@ int TestDataEntry(int , char *[])
    entry->Delete();
 
    //------------------------------------------------------------------
-   dict = gdcm::DictEntry::New(0x0000,0x0000);
+   dict = GDCM_NAME_SPACE::DictEntry::New(0x0000,0x0000);
    dict->SetVR("FD");
-   entry = gdcm::DataEntry::New(dict);
+   entry = GDCM_NAME_SPACE::DataEntry::New(dict);
 
    std::cout << "Test for VR = " << dict->GetVR() << "..." << std::endl;
    entry->SetString(fdata);

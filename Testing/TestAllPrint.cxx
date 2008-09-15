@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllPrint.cxx,v $
   Language:  C++
-  Date:      $Date: 2006/03/17 14:33:54 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,8 +47,8 @@ int TestAllPrint(int, char *[])
       filename += "/";
       filename += gdcmDataImages[i];
 
-      gdcm::File file;
-      //file.SetLoadMode( gdcm::LD_NOSEQ | gdcm::LD_NOSHADOWSEQ );
+      GDCM_NAME_SPACE::File file;
+      //file.SetLoadMode( GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOWSEQ );
       file.SetFileName( filename );
       if( !file.Load() )
         return 1;

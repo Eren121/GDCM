@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestLoadAllDocumentsNoShadow.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/27 21:20:13 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -47,7 +47,7 @@ int TestLoadAllDocumentsNoShadow(int, char *[])
       filename += "/";
       filename += gdcmDataImages[i];
 
-      GDCM_NAME_SPACE::File *file = gdcm::File::New();;
+      GDCM_NAME_SPACE::File *file = GDCM_NAME_SPACE::File::New();;
       file->SetLoadMode( GDCM_NAME_SPACE::LD_NOSHADOW );
       file->SetFileName( filename );
       std::cout << "File Name [" << filename << "]" << std::endl;

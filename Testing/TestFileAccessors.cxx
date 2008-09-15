@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestFileAccessors.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,7 +60,7 @@ int TestFileAccessors(int argc, char *argv[])
    float iop[6];
    float ipp[3];
 
-  // gdcm::Debug::DebugOn();
+  // GDCM_NAME_SPACE::Debug::DebugOn();
    
    while( gdcmDataImages[i] != 0 )
    {
@@ -69,9 +69,9 @@ int TestFileAccessors(int argc, char *argv[])
      // for all the OS.
      
      // if (gdcmDataImages[i] == "00191113.dcm" )
-     //    gdcm::Debug::DebugOn();
+     //    GDCM_NAME_SPACE::Debug::DebugOn();
      // else
-     //    gdcm::Debug::DebugOff();
+     //    GDCM_NAME_SPACE::Debug::DebugOff();
 
       std::string filename;      
       if (argc ==2)

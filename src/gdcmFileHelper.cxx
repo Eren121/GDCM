@@ -4,8 +4,8 @@
   Module:    $RCSfile: gdcmFileHelper.cxx,v $
   Language:  C++
 
-  Date:      $Date: 2008/06/12 13:18:15 $
-  Version:   $Revision: 1.137 $
+  Date:      $Date: 2008/09/15 15:49:22 $
+  Version:   $Revision: 1.138 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -51,11 +51,11 @@
 
 These lines will be moved to the document-to-be 'User's Guide'
 
-// To read an image, user needs a gdcm::File
-gdcm::File *f = new gdcm::File(fileName);
+// To read an image, user needs a GDCM_NAME_SPACE::File
+GDCM_NAME_SPACE::File *f = new GDCM_NAME_SPACE::File(fileName);
 // or (advanced) :
 // user may also decide he doesn't want to load some parts of the header
-gdcm::File *f = new gdcm::File();
+GDCM_NAME_SPACE::File *f = new GDCM_NAME_SPACE::File();
 f->SetFileName(fileName);
    f->SetLoadMode(LD_NOSEQ);               // or      
    f->SetLoadMode(LD_NOSHADOW);            // or
@@ -67,8 +67,8 @@ f->Load();
 // user can now check some values
 std::string v = f->GetEntryValue(groupNb,ElementNb);
 
-// to get the pixels, user needs a gdcm::FileHelper
-gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+// to get the pixels, user needs a GDCM_NAME_SPACE::FileHelper
+GDCM_NAME_SPACE::FileHelper *fh = new GDCM_NAME_SPACE::FileHelper(f);
 
 // user may ask not to convert Palette (if any) to RGB
 uint8_t *pixels = fh->GetImageDataRaw();
@@ -77,8 +77,8 @@ int imageLength = fh->GetImageDataRawSize();
 // He can now use the pixels, create a new image, ...
 uint8_t *userPixels = ...
 
-//To re-write the image, user re-uses the gdcm::FileHelper
-gdcm::File *fh = new gdcm::FileHelper();
+//To re-write the image, user re-uses the GDCM_NAME_SPACE::FileHelper
+GDCM_NAME_SPACE::File *fh = new GDCM_NAME_SPACE::FileHelper();
 
 fh->SetTypeToRaw(); // Even if it was possible to convert Palette to RGB
                     // (WriteMode is set)
@@ -157,7 +157,7 @@ fh->Write(newFileName);
          ElementSet::WriteContent(fp, writetype);
             writes recursively all DataElements    
    RestoreWrite();
-         (moves back to the gdcm::File all the archived elements)
+         (moves back to the GDCM_NAME_SPACE::File all the archived elements)
 */
 
 
@@ -170,7 +170,7 @@ typedef std::map<uint16_t, int> GroupHT;    //  Hash Table
 // Constructor / Destructor
 /**
  * \brief Constructor dedicated to deal with the *pixels* area of a ACR/DICOMV3
- *        file (gdcm::File only deals with the ... header)
+ *        file (GDCM_NAME_SPACE::File only deals with the ... header)
  *        Opens (in read only and when possible) an existing file and checks
  *        for DICOM compliance. Returns NULL on failure.
  *        It will be up to the user to load the pixels into memory
@@ -216,7 +216,7 @@ FileHelper::FileHelper(File *header)
 
 /**
  * \brief canonical destructor
- * \note  If the header (gdcm::File) was created by the FileHelper constructor,
+ * \note  If the header (GDCM_NAME_SPACE::File) was created by the FileHelper constructor,
  *        it is destroyed by the FileHelper
  */
 FileHelper::~FileHelper()
@@ -241,7 +241,7 @@ FileHelper::~FileHelper()
 // Public
 
 /**
- * \brief Sets the LoadMode of the internal gdcm::File as a boolean string. 
+ * \brief Sets the LoadMode of the internal GDCM_NAME_SPACE::File as a boolean string. 
  *        NO_SEQ, NO_SHADOW, NO_SHADOWSEQ ... (nothing more, right now)
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
@@ -253,7 +253,7 @@ void FileHelper::SetLoadMode(int loadMode)
    GetFile()->SetLoadMode( loadMode ); 
 }
 /**
- * \brief Sets the LoadMode of the internal gdcm::File
+ * \brief Sets the LoadMode of the internal GDCM_NAME_SPACE::File
  * @param  fileName name of the file to be open  
  */
 void FileHelper::SetFileName(std::string const &fileName)
@@ -1328,7 +1328,7 @@ We have to deal with 4 *very* different cases :
 -Probabely some more to be added.
  --> Set it with FileHelper::SetContentType(int);
  
-gdcm::FileHelper::CheckMandatoryElements() deals automatically with these cases.
+GDCM_NAME_SPACE::FileHelper::CheckMandatoryElements() deals automatically with these cases.
 
 1)2)3)4)
 0008 0012 Instance Creation Date
@@ -1383,7 +1383,7 @@ If 'SOP Class UID' exists in the native image  ('true DICOM' image)
 
 
 Bellow follows the full description (hope so !) of the consistency checks performed 
-by gdcm::FileHelper::CheckMandatoryElements()
+by GDCM_NAME_SPACE::FileHelper::CheckMandatoryElements()
 
 
 -->'Media Storage SOP Class UID' (0x0002,0x0002)

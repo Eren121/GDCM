@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAnonymize.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:46 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,8 +54,8 @@ int Anonymize(std::string const &filename,
       std::cout << "      1...";
       std::cout << std::endl;
       
-      gdcm::File *f;
-      f = new gdcm::File( );
+      GDCM_NAME_SPACE::File *f;
+      f = new GDCM_NAME_SPACE::File( );
       f->SetFileName( filename );
       f->Load();
       
@@ -65,8 +65,8 @@ int Anonymize(std::string const &filename,
       //   Write a new file
       // ============================================================
 
-      // We need a gdcm::FileHelper, since we want to load the pixels        
-      gdcm::FileHelper *fh = new gdcm::FileHelper(f);
+      // We need a GDCM_NAME_SPACE::FileHelper, since we want to load the pixels        
+      GDCM_NAME_SPACE::FileHelper *fh = new GDCM_NAME_SPACE::FileHelper(f);
 
       // --- Don't forget to load the Pixels ...
       // We shall not use them, but we have to load them
@@ -102,7 +102,7 @@ int Anonymize(std::string const &filename,
       delete fh;
 
       // Read the file we just wrote
-      f = new gdcm::File( output );
+      f = new GDCM_NAME_SPACE::File( output );
 
       std::cout << " Anonymized File... Re-Read ! " << std::endl;
 
@@ -111,21 +111,21 @@ int Anonymize(std::string const &filename,
 
       // Compare and abort if different.
       v = f->GetEntryValue(0x0008, 0x0080);
-      if ( v != gdcm::GDCM_UNFOUND ) 
+      if ( v != GDCM_NAME_SPACE::GDCM_UNFOUND ) 
          if (v.find("Xanadoo") >= v.length() )
             plouf = true;
 
       v = f->GetEntryValue(0x0010, 0x0010);
-      if ( v != gdcm::GDCM_UNFOUND ) 
+      if ( v != GDCM_NAME_SPACE::GDCM_UNFOUND ) 
          if (v.find("Fantomas") >= v.length() )
             plouf = true;
 
-      if ( v != gdcm::GDCM_UNFOUND )
+      if ( v != GDCM_NAME_SPACE::GDCM_UNFOUND )
          v = f->GetEntryValue(0x0010, 0x0020);
          if (v.find("1515") >= v.length() )
             plouf = true;
 
-       if ( v != gdcm::GDCM_UNFOUND )
+       if ( v != GDCM_NAME_SPACE::GDCM_UNFOUND )
          v = f->GetEntryValue(0x0010, 0x000d);
          if (v.find("9.99.999.9999") >= v.length() )
             plouf = true;
@@ -145,7 +145,7 @@ int Anonymize(std::string const &filename,
 
       // Read the file we just anonymize and check
 
-      f = new gdcm::File( output );
+      f = new GDCM_NAME_SPACE::File( output );
 
       // First, we set values to replace the ones we want to hide
    
@@ -162,7 +162,7 @@ int Anonymize(std::string const &filename,
       // --------------------- we overwrite the file
 
       // No need to load the pixels.
-      // The gdcm::File remains untouched in memory
+      // The GDCM_NAME_SPACE::File remains untouched in memory
 
       std::cout <<"Let's AnonymizeNoLoad " << std::endl;;
       f->AnonymizeNoLoad();
@@ -171,22 +171,22 @@ int Anonymize(std::string const &filename,
       // No need to write the File : modif were done on disc !
  
       delete f;
-      f = new gdcm::File( output );
+      f = new GDCM_NAME_SPACE::File( output );
 
       std::string val;
       plouf = false;
 
       val = f->GetEntryValue(0x0010, 0x0010);
-      if ( val != gdcm::GDCM_UNFOUND ) 
+      if ( val != GDCM_NAME_SPACE::GDCM_UNFOUND ) 
          if (val.find("XXL") >= v.length() )
             plouf = true;
      
-      if ( val != gdcm::GDCM_UNFOUND )
+      if ( val != GDCM_NAME_SPACE::GDCM_UNFOUND )
          val = f->GetEntryValue(0x0010, 0x0020);
          if (val.find("007") >= v.length() )
       plouf = true;
 
-      if ( val != gdcm::GDCM_UNFOUND )
+      if ( val != GDCM_NAME_SPACE::GDCM_UNFOUND )
          val = f->GetEntryValue(0x0010, 0x000d);
          if (val.find("6.66.666.6666") >= v.length() )
       plouf = true;
@@ -205,7 +205,7 @@ int Anonymize(std::string const &filename,
 
 int TestAnonymize(int argc, char *argv[])
 {
-   //gdcm::Debug::DebugOn();
+   //GDCM_NAME_SPACE::Debug::DebugOn();
 
    if ( argc == 3 )
    {

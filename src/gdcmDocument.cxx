@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/06/12 13:18:15 $
-  Version:   $Revision: 1.380 $
+  Date:      $Date: 2008/09/15 15:49:22 $
+  Version:   $Revision: 1.381 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -284,10 +284,12 @@ bool Document::DoTheLoadingDocumentJob(  )
    std::string RecCode;
    RecCode = GetEntryString(0x0008, 0x0010); // recognition code (RET)
    
+    
    if(RecCode.find("ACRNEMA_LIBIDO") == 0 || // any version
       RecCode.find("CANRME_AILIBOD") == 0)   // for brain-damaged softwares
                                              // with "little-endian strings"
    {
+   
          Filetype = ACR_LIBIDO; 
          std::string rows    = GetEntryString(0x0028, 0x0010);
          std::string columns = GetEntryString(0x0028, 0x0011);

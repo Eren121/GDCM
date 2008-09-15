@@ -17,6 +17,9 @@ SET(GDCM_LIBRARIES "@GDCM_LIBRARIES@")
 # The list of available languages.
 #SET(GDCM_LANGUAGES "Python")
 
+# The gdcm namespace
+SET(GDCM_NAME_SPACE @GDCM_NAME_SPACE@)
+
 # The CMake macros dir.
 SET(GDCM_CMAKE_DIR "@GDCM_CMAKE_DIR_CONFIG@")
 

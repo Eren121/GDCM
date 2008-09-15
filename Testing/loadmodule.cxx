@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: loadmodule.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/11/07 10:18:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -77,7 +77,7 @@ int main(int, char* [])
   // Create an instance of the GDCMImageIO class. This makes sure
   // that the problematic gdcm-library is linked.
   //itk::GDCMImageIO::Pointer gdcmio = itk::GDCMImageIO::New();
-  gdcm::File *file = gdcm::File::New();
+  GDCM_NAME_SPACE::File *file = GDCM_NAME_SPACE::File::New();
   file->Print(); // to avoid warning
   
   std::cerr << "Closing libs" << std::endl;

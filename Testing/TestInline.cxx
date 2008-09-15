@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/04/10 12:15:34 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.20 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -527,7 +527,7 @@ int TestInline(int argc, char *argv[])
    std::cout << "Use inline, .h defined, WITH inline keyword, param passed by pointer"
              << std::endl;
 
-   gdcm::Util util;
+   GDCM_NAME_SPACE::Util util;
 
    GET_TIME(tms1);    
    for(i = 0 ; i< nbLoop ; i++)
@@ -560,7 +560,7 @@ int TestInline(int argc, char *argv[])
    GET_TIME(tms1);   
    for(i = 0 ; i< nbLoop ; i++)
    {
-      gdcm::Util::sthifpswap (&a, &b);
+      GDCM_NAME_SPACE::Util::sthifpswap (&a, &b);
    }
    GET_TIME(tms2);   
    HOW_LONG(tms2,tms1);
@@ -573,11 +573,124 @@ int TestInline(int argc, char *argv[])
    GET_TIME(tms1);    
    for(i = 0 ; i< nbLoop ; i++)
    {
-      gdcm::Util::sthNoifpswap (&a, &b);
+      GDCM_NAME_SPACE::Util::sthNoifpswap (&a, &b);
    }
    GET_TIME(tms2);   
    HOW_LONG(tms2,tms1);
+ 
+ // ----------------------------------------
+ 
+ // Just to point out that playing with pointers doesn't save so much time ...
+ 
+  std::cout << "Play with arrays\n================" << std::endl; 
+ 
+   nbLoop=1000;
 
+   std::cout << "Copy 2 arrays [i][j]"
+             << std::endl; 
+
+     
+   unsigned short int  z1[128][3118], z2[128][3118];       
+   GET_TIME(tms1);  
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+   unsigned short int *pv1=&z1[0][0], *pv2=&z2[0][0];     
+   for (int j=0;j<3118;j++)
+      for(int i=0; i<128;i++)
+         z2[i][j] = z1[i][j];
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);
+
+   std::cout << "Copy 2 arrays ([i][j], pointer)"
+             << std::endl;
+       
+   GET_TIME(tms1); 
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+   unsigned short int *pv1=&z1[0][0], *pv2=&z2[0][0];
+   for (int j=0;j<3118;j++)
+      for(int i=0; i<128;i++)
+         z2[i][j] = *pv1++;
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);
+   
+   std::cout << "Copy 2 arrays (2 pointers)"    << std::endl;      
+   GET_TIME(tms1);     
+  // unsigned short int  w1[3118*128], w2[3118][128];
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+   unsigned short int *pw1=&z1[0][0], *pw2=&z2[0][0];  
+   for (int j=0;j<3118;j++)
+      for(int i=0; i<128;i++)
+         *pw2++ = *pw1++;
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);  
+
+
+   std::cout << "Copy 2 arrays (memcpy)"    << std::endl;   
+   GET_TIME(tms1);    
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+    unsigned short int *pw1=&z1[0][0], *pw2=&z2[0][0];  
+    memcpy(pw2,pw1,3118*128*sizeof(unsigned short int));
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);   
+   
+   
+         
+   std::cout << "Transpose 2 arrays [i][j]"
+             << std::endl; 
+     
+   unsigned short int  t1[3118][128], t2[128][3118];       
+   GET_TIME(tms1);  
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+   unsigned short int *pv1=&t1[0][0], *pv2=&t2[0][0];     
+   for (int j=0;j<3118;j++)
+      for(int i=0; i<128;i++)
+         t2[i][j] = t1[j][i];
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);
+
+
+   std::cout << "Transpose 2 arrays ([i][j], pointer)"
+             << std::endl;
+     
+   unsigned short int  w1[3118*128], w2[3118][128];      
+   GET_TIME(tms1); 
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+   unsigned short int *pw1=w1, *pw2=&w2[0][0];  
+   for (int j=0;j<3118;j++)
+      for(int i=0; i<128;i++)
+         w2[i][j] = *pw1++;
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);
+   
+      
+   std::cout << "Transpose 2 arrays (2 pointers)"
+             << std::endl; 
+     
+   unsigned short int  v1[3118*128], v2[128*3118];       
+   GET_TIME(tms1);  
+   for(i = 0 ; i< nbLoop ; i++)
+   {
+   unsigned short int *pv1=v1, *pv2=v2;  
+   for (int j=0;j<3118;j++)
+      for(int i=0; i<128;i++)
+         *(pv2+i*128+j) = *pv1++;
+   }      
+   GET_TIME(tms2);   
+   HOW_LONG(tms2,tms1);
+
+
+   
    //return 1; // will generate an error, 
              // just to allow us to see the full log in the dashboard
    return 0;

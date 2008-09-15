@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllEntryVerify.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/10/18 08:35:45 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2008/09/15 15:49:20 $
+  Version:   $Revision: 1.30 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 #include <sstream>
 
 typedef std::string EntryValueType;   // same type as DataEntry::value
-typedef std::map< gdcm::TagKey, EntryValueType > MapEntryValues;
+typedef std::map< GDCM_NAME_SPACE::TagKey, EntryValueType > MapEntryValues;
 typedef MapEntryValues *MapEntryValuesPtr;
 typedef std::string FileNameType;
 typedef std::map< FileNameType, MapEntryValuesPtr > MapFileValuesType;
@@ -227,8 +227,8 @@ bool ReferenceFileParser::Check( MapFileValuesType::iterator &fileIt )
    std::string fileName = DataPath + fileIt->first;
    std::cout << Indent << "FileName: " << fileName << std::endl;
    
-   gdcm::File *tested;
-   tested = new gdcm::File( );
+   GDCM_NAME_SPACE::File *tested;
+   tested = new GDCM_NAME_SPACE::File( );
    tested->SetFileName( fileName.c_str() );
    tested->Load( );
    if( !tested->IsReadable() )
@@ -599,7 +599,7 @@ void ReferenceFileParser::ParseRegularLine( std::string &line)
 bool ReferenceFileParser::SecondPassReferenceFile()
    throw ( ParserException )
 {
-   gdcm::TagKey key;
+   GDCM_NAME_SPACE::TagKey key;
    EntryValueType value;
    std::string line;
    bool inBlock = false;

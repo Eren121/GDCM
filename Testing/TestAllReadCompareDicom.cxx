@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestAllReadCompareDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 09:25:38 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.62 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -688,7 +688,7 @@ GDCM_NAME_SPACE::Debug::WarningOn();
       }
 
 //if (gdcmDataImages[i] == "D_CLUNIE_CT2_RLE.dcm")
-//   gdcm::Debug::DebugOn(); // track pb on BigEndian Proc
+//   GDCM_NAME_SPACE::Debug::DebugOn(); // track pb on BigEndian Proc
 //else 
    GDCM_NAME_SPACE::Debug::DebugOff();
    

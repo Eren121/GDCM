@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 18:53:33 $
-  Version:   $Revision: 1.153 $
+  Date:      $Date: 2008/09/15 15:49:22 $
+  Version:   $Revision: 1.154 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,7 +37,7 @@ class Dict;
 
 //-----------------------------------------------------------------------------
 /**
- * \brief Derived by both gdcm::File and gdcm::DicomDir
+ * \brief Derived by both GDCM_NAME_SPACE::File and GDCM_NAME_SPACE::DicomDir
  */
 class GDCM_EXPORT Document : public ElementSet
 {
@@ -59,7 +59,7 @@ public:
    bool SetShaDict(Dict *dict);
    bool SetShaDict(DictKey const &dictName);
 
-// Informations contained in the gdcm::Document
+// Informations contained in the GDCM_NAME_SPACE::Document
    bool IsParsable();
    virtual bool IsReadable();
    bool IsDicomV3();
@@ -110,8 +110,8 @@ public:
 protected:
 // Methods
    // Constructor and destructor are protected to forbid end user
-   // to instanciate from this class Document (only gdcm::File and
-   // gdcm::DicomDir are meaningfull).
+   // to instanciate from this class Document (only GDCM_NAME_SPACE::File and
+   // GDCM_NAME_SPACE::DicomDir are meaningfull).
    Document();
    virtual ~Document();
 
@@ -174,12 +174,12 @@ protected:
    ///        Probabely, some more to add
    int LoadMode;
    
-   /// \brief Whether the gdcm::Document is already parsed/loaded :
-   /// False from the creation of the gdcm::Document untill 
-   ///   gdcm::Document:Load()
+   /// \brief Whether the GDCM_NAME_SPACE::Document is already parsed/loaded :
+   /// False from the creation of the GDCM_NAME_SPACE::Document untill 
+   ///   GDCM_NAME_SPACE::Document:Load()
    bool IsDocumentAlreadyLoaded; // FIXME : probabely useless now
 
-   /// Whether the gdcm::Document was modified since the last Load()
+   /// Whether the GDCM_NAME_SPACE::Document was modified since the last Load()
    bool IsDocumentModified;
 
 private:

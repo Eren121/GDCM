@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: VTKTestWrite.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 07:58:38 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.13 $
 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -203,7 +203,7 @@ int VTKTestWrite(int argc, char *argv[])
       }
    }
 
-//   gdcm::Debug::DebugOn();
+//   GDCM_NAME_SPACE::Debug::DebugOn();
 
    int ret = 0;
    vtkTesting *t = vtkTesting::New();

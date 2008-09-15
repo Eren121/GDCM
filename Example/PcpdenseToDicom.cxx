@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/09/08 08:10:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008/09/15 15:49:20 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
 
   }
 
-   delete []image;      
+   delete []image;
    return 1;            
 }
 

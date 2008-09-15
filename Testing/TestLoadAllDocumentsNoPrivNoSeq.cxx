@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestLoadAllDocumentsNoPrivNoSeq.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -103,9 +103,9 @@ int TestLoadAllDocumentsNoPrivNoSeq(int, char *[])
 
       std::string strImageOrientationPatient = 
                                           f->GetEntryValue(0x0020,0x0037);
-      if ( strImageOrientationPatient != gdcm::GDCM_UNFOUND )
+      if ( strImageOrientationPatient != GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
-         gdcm::Orientation o;
+         GDCM_NAME_SPACE::Orientation o;
          double orient = o.TypeOrientation( f );
          std::cout << " ---------------------- Orientation " << orient
                    << std::endl;

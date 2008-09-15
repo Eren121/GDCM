@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestChangeHeader.cxx,v $
   Language:  C++
-  Date:      $Date: 2005/07/08 13:39:57 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -36,11 +36,11 @@ int TestChangeHeader(int argc, char *argv[])
 
    std::string firstArgument = argv[1];
    
-   gdcm::File  *f1 = new gdcm::File();
+   GDCM_NAME_SPACE::File  *f1 = new GDCM_NAME_SPACE::File();
    f1->SetFileName(firstArgument);
    f1->Load( );
    std::string secondArgument = argv[2];
-   gdcm::File  *f2 = new gdcm::File(secondArgument);
+   GDCM_NAME_SPACE::File  *f2 = new GDCM_NAME_SPACE::File(secondArgument);
 
    //f1->PrintPubElVal();
 

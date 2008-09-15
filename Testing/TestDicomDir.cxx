@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,8 +29,8 @@
 
 #include <stdlib.h>
 
-// check *all* the dicom elements (gdcm::DocEntry)
-// of this gdcm::DicomDirObject
+// check *all* the dicom elements (GDCM_NAME_SPACE::DocEntry)
+// of this GDCM_NAME_SPACE::DicomDirObject
 int CompareSQItem(GDCM_NAME_SPACE::SQItem *pa1, GDCM_NAME_SPACE::SQItem *pa2 )
 {
    GDCM_NAME_SPACE::DocEntry *e1;
@@ -133,7 +133,7 @@ int TestDicomDir(int argc, char *argv[])
                <<"' is readable"<<std::endl;
    }
 
-   // Test if the gdcm::DicomDir contains any patient
+   // Test if the GDCM_NAME_SPACE::DicomDir contains any patient
    if( !dicomdir->GetFirstPatient() )
    {
       std::cout<<"          DicomDir '"<<file
@@ -151,7 +151,7 @@ int TestDicomDir(int argc, char *argv[])
 
    pa1 = dicomdir->GetFirstPatient(); 
    while ( pa1 ) 
-   {  // we process all the PATIENT of this gdcm::DicomDir 
+   {  // we process all the PATIENT of this GDCM_NAME_SPACE::DicomDir 
       std::cout << pa1->GetEntryString(0x0010, 0x0010) << std::endl; // Patient's Name
 
       st1 = pa1->GetFirstStudy();

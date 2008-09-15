@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestMakeDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/06/21 14:59:06 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -85,14 +85,14 @@ void EndMethod(void *endMethod)
   *            (or GDCM_DATA_ROOT by default)
   *          - Orders the gdcm-readable found Files
   *             according their Patient/Study/Serie/Image characteristics
-  *          - Makes the gdcm::DicomDir. 
+  *          - Makes the GDCM_NAME_SPACE::DicomDir. 
   *          - Writes a file named "NewDICOMDIR".
   *          - Reads "NewDICOMDIR" file.
   */  
 
 int TestMakeDicomDir(int argc, char *argv[])
 {
-   //gdcm::Debug::DebugOn();
+   //GDCM_NAME_SPACE::Debug::DebugOn();
    std::string dirName;   
 
    if (argc > 1)
@@ -120,7 +120,7 @@ int TestMakeDicomDir(int argc, char *argv[])
    GDCM_NAME_SPACE::CommandManager::SetCommand(dcmdir,GDCM_NAME_SPACE::CMD_ENDPROGRESS,cmd);
    cmd->Delete();
 
-   // dcmdir->SetLoadMode(gdcm::LD_NOSEQ | gdcm::LD_NOSHADOW);
+   // dcmdir->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
    // some images have a wrong length for element 0x0000 of private groups
    dcmdir->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ);
    dcmdir->SetDirectoryName(dirName);

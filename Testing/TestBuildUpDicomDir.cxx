@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestBuildUpDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/08/20 13:25:32 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2008/09/15 15:49:21 $
+  Version:   $Revision: 1.13 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -40,7 +40,7 @@ int TestBuildUpDicomDir(int argc, char *argv[])
       std::cerr << "Usage: " << argv[0] << " dummy " << std::endl;
    }
    
- // gdcm::Debug::DebugOn();
+ // GDCM_NAME_SPACE::Debug::DebugOn();
  
    bool errorFound = false; 
    GDCM_NAME_SPACE::DicomDir *dcmdir;
