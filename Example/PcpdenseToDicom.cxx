@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/09/15 15:49:20 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008/09/19 09:33:16 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -37,8 +37,8 @@
   * Hope they don't change soon!
   */  
 
-void MakeDicomImage(unsigned short int *tabVal, int X, int Y, std::string dcmImageName,
-                    const char * patientname, int nbFrames, std::string studyUID, std::string serieUID, std::string studyUID, int imgNum,bool m );
+void MakeDicomImage(unsigned short int *tabVal, int X, int Y, std::string dcmImageName, const char * patientName, int nbFrames,
+                    std::string studyUID, std::string serieUID, std::string SerieDescr, int imgNum, bool m );
 
 void LoadImage(std::ifstream &from,  unsigned short int * );
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: TestInline.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/09/15 15:49:21 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2008/09/19 09:33:17 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@
 // Which CXX_FLAGS, LINKER_FLAGS, ...,  must we set to see the difference?
 
 #include "gdcmUtil.h"
-
+#include <string.h>  // Needed under Suse?!? 
 #include <stdlib.h> // atoi
 #if defined(__BORLANDC__)  || defined (_MSC_VER)
 #include <time.h>
