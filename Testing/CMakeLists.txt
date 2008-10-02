@@ -202,6 +202,7 @@ SET(BLACK_LIST
   "CT-SIEMENS-MissingPixelDataInIconSQ.dcm"
   "KODAK_CompressedIcon.dcm"
   "LJPEG_BuginGDCM12.dcm"
+  "DX_J2K_0Padding.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
