@@ -204,6 +204,8 @@ SET(BLACK_LIST
   "LJPEG_BuginGDCM12.dcm"
   "DX_J2K_0Padding.dcm"
   "DX_GE_FALCON_SNOWY-VOI.dcm"
+  "PHILIPS_Brilliance_ExtraBytesInOverlay.dcm"
+  "JPEG_LossyYBR.dcm"
   )
 
 # Create a specific list of dicom files that we know are part of a sequence
