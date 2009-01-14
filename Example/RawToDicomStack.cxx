@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicomStack.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/06/12 13:26:39 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2009/01/14 12:32:35 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,22 +30,22 @@
 #include <iostream>
 #include <sstream>
 
-typedef char * PS8;
-typedef unsigned char * PU8;
-typedef short int * PS16;
+typedef char               * PS8;
+typedef unsigned char      * PU8;
+typedef short int          * PS16;
 typedef unsigned short int * PU16;
-typedef int * PS32;
-typedef unsigned int * PU32;
+typedef int                * PS32;
+typedef unsigned int       * PU32;
 
 #define CRR(t1,t2)     { for(int i=0;i<nY;i++)                   \
                            for(int j=0;j<nX;j++)                 \
                              for(int k=0;k<samplesPerPixel;k++)  \
-                                 *((t2)planePixels + i*nX +j+k) = *(((t1)pixels)+ nbPlanes*nX*nY + i*nX +j+k);\
+                                 *((t2)planePixelsOut + i*nX +j+k) = *(((t1)pixels)+ nbPlanes*nX*nY + i*nX +j+k);\
                        }
     
 #define CFR(PPt)  switch ( pixelTypeOutCode ) {     \
-          case -8   : CRR(PPt,PS8); break;          \
-          case 8    : CRR(PPt,PU8); break;          \
+          case -8   : CRR(PPt,PS8);  break;         \
+          case 8    : CRR(PPt,PU8);  break;         \
           case -16  : CRR(PPt,PS16); break;         \
           case 16   : CRR(PPt,PU16); break;         \
           case -32  : CRR(PPt,PS32); break;         \
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
    const char *inputFileName          = am->ArgMgrGetString("filein");
    const char *outputSkeletonFileName = am->ArgMgrGetString("fileout");
    
-  const char *patientName = am->ArgMgrGetString("patientname", "g^Fantomas");
+   const char *patientName = am->ArgMgrGetString("patientname", "g^Fantomas");
    
    int nX = am->ArgMgrWantInt("rows", usage);
    int nY = am->ArgMgrWantInt("lines", usage);
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
    std::string strPixelTypeOut(pixelTypeOut);
    int pixelSignOut;
    int pixelSizeOut;
-   int pixelTypeOutCode; // for the swirch case
+   int pixelTypeOutCode; // for the switch case
     
    if (strPixelTypeOut == "8S")
    {
@@ -290,11 +290,11 @@ int main(int argc, char *argv[])
    int singlePlaneDataSize =  nX*nY*samplesPerPixel*pixelSizeOut;
    int dataSize            =  singlePlaneDataSize*nZ;
 
-   uint8_t *pixels = new uint8_t[dataSize];
-   uint8_t *planePixels = new uint8_t[singlePlaneDataSize];   
+   uint8_t *pixels      = new uint8_t[dataSize];
+   uint8_t *planePixelsOut = new uint8_t[singlePlaneDataSize];   
    
    Fp->read((char*)pixels, (size_t)dataSize);
-     
+
    if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
    {  
       ConvertSwapZone(pixelSize, pixels, dataSize);   
@@ -304,21 +304,22 @@ int main(int argc, char *argv[])
 
    char outputFileName[200];
    
-for(int nbPlanes=0; nbPlanes<nZ; nbPlanes++)
-{
+   for(int nbPlanes=0; nbPlanes<nZ; nbPlanes++)
+   {
 
-sprintf(outputFileName, "%s.%04d.dcm", outputSkeletonFileName,nbPlanes);
+      sprintf(outputFileName, "%s.%04d.dcm", outputSkeletonFileName,nbPlanes);
 
 // Copy (and convert) pixels of a single plane
 
-  switch ( pixelTypeCode ) {
-    case 8    : CFR(PU8);  break;
-    case -8   : CFR(PS8);  break;
-    case -16  : CFR(PU16); break;
-    case 16   : CFR(PS16); break;
-    case -32  : CFR(PS32); break;
-    case 32   : CFR(PU32); break;
-  }
+     switch ( pixelTypeCode ) 
+     {
+       case 8    : CFR(PU8);  break;
+       case -8   : CFR(PS8);  break;
+       case -16  : CFR(PU16); break;
+       case 16   : CFR(PS16); break;
+       case -32  : CFR(PS32); break;
+       case 32   : CFR(PU32); break;
+     }
 
 // Create an empty FileHelper
 
@@ -356,15 +357,15 @@ sprintf(outputFileName, "%s.%04d.dcm", outputSkeletonFileName,nbPlanes);
    // Set the pixel type
    
    str.str("");
-   str << pixelSize*8;
+   str << pixelSizeOut*8;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0100, "US"); // Bits Allocated
 
    str.str("");
-   str << pixelSize*8;
+   str << pixelSizeOut*8;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0101, "US"); // Bits Stored
 
    str.str("");
-   str << ( pixelSize*8 - 1 );
+   str << ( pixelSizeOut*8 - 1 );
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0102, "US"); // High Bit
 
    str.str("");
@@ -393,7 +394,7 @@ sprintf(outputFileName, "%s.%04d.dcm", outputSkeletonFileName,nbPlanes);
       fileH->SetPhotometricInterpretationToMonochrome1();
      
 // Set the image Pixel Data (plane)
-   fileH->SetImageData(planePixels,singlePlaneDataSize);
+   fileH->SetImageData(planePixelsOut,singlePlaneDataSize);
 
 // Set the writting mode and write the image
    fileH->SetWriteModeToRaw();
@@ -412,6 +413,6 @@ sprintf(outputFileName, "%s.%04d.dcm", outputSkeletonFileName,nbPlanes);
 } // end iterate on the planes
 
    delete[] pixels;
-   delete[] planePixels;
+   delete[] planePixelsOut;
    return 1;
 }
