@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/06/12 13:21:20 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2009/01/19 17:05:13 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,6 +29,31 @@
 
 #include <iostream>
 #include <sstream>
+
+typedef char               * PS8;
+typedef unsigned char      * PU8;
+typedef short int          * PS16;
+typedef unsigned short int * PU16;
+typedef int                * PS32;
+typedef unsigned int       * PU32;
+typedef float              * PF32;
+typedef double             * PD64;
+
+#define CRR(t1,t2)   { for(int l=0;l<nX*nY*nZ*samplesPerPixel;l++)              \
+                               *((t2)planePixelsOut + l) = *(((t1)pixels)+ l);\
+                     }
+    
+#define CFR(PPt)  switch ( pixelTypeOutCode ) {     \
+          case -8   : CRR(PPt,PS8);  break;         \
+          case 8    : CRR(PPt,PU8);  break;         \
+          case -16  : CRR(PPt,PS16); break;         \
+          case 16   : CRR(PPt,PU16); break;         \
+          case -32  : CRR(PPt,PS32); break;         \
+          case 32   : CRR(PPt,PU32); break;         \
+          case 33   : CRR(PPt,PF32); break;         \
+          case 64   : CRR(PPt,PD64); break;         \
+          }
+
 
 void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize);
 
@@ -71,7 +96,8 @@ int main(int argc, char *argv[])
    "                   rows=nb of Rows                                        ",
    "                   lines=nb of Lines,                                     ",
    "                   [frames = nb of Frames] //defaulted to 1               ",
-   "                   pixeltype={8U|8S|16U|16S|32U|32S}                      ",
+   "                   pixeltype={8U|8S|16U|16S|32U|32S|32F|64D}              ",
+   "                   pixeltypeout={8U|8S|16U|16S|32U|32S}                   ",
    "                   [{b|l}] b:BigEndian,l:LittleEndian default : l         ",
    "                   [samples = {1|3}}       //(1:Gray,3:RGB) defaulted to 1",
    "                   [monochrome1]                                          ",
@@ -109,6 +135,7 @@ int main(int argc, char *argv[])
    int l = am->ArgMgrDefined("l");
       
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
+   const char *pixelTypeOut = am->ArgMgrGetString("pixeltypeout", pixelType);   
 
    bool monochrome1 = ( 0 != am->ArgMgrDefined("monochrome1") );
    
@@ -155,40 +182,107 @@ int main(int argc, char *argv[])
    std::string strPixelType(pixelType);
    int pixelSign;
    int pixelSize;
+   int pixelTypeCode; // for the switch case
    
    if (strPixelType == "8S")
    {
       pixelSize = 1;
       pixelSign = 1;
+      pixelTypeCode = -8;
    }
    else if (strPixelType == "8U")
    {
       pixelSize = 1;
       pixelSign = 0;
+      pixelTypeCode = 8;
    }
    else if (strPixelType == "16S")
    {
       pixelSize = 2;
       pixelSign = 1;
+      pixelTypeCode = -16;
    }   
    else if (strPixelType == "16U")
    {
       pixelSize = 2;
       pixelSign = 0;
+      pixelTypeCode = 16;
    }      
    else if (strPixelType == "32S")
    {
       pixelSize = 4;
       pixelSign = 1;
+      pixelTypeCode = -32;
    }   
    else if (strPixelType == "32U")
    {
       pixelSize = 4;
       pixelSign = 0;
+      pixelTypeCode = 32;
+   }
+   else if (strPixelType == "32F")
+   {
+      pixelSize = 4;
+      pixelSign = 0;
+      pixelTypeCode = 33;
+   }
+
+   else if (strPixelType == "64D")
+   {
+      pixelSize = 8;
+      pixelSign = 0;
+      pixelTypeCode = 64;
    }
    else
    {
       std::cout << "Wrong 'pixeltype' (" << strPixelType << ")" << std::endl;
+      return 1;
+   }
+
+   std::string strPixelTypeOut(pixelTypeOut);
+   int pixelSignOut;
+   int pixelSizeOut;
+   int pixelTypeOutCode; // for the switch case
+    
+   if (strPixelTypeOut == "8S")
+   {
+      pixelSizeOut = 1;
+      pixelSignOut = 1;
+      pixelTypeOutCode = -8;
+   }
+   else if (strPixelTypeOut == "8U")
+   {
+      pixelSizeOut = 1;
+      pixelSignOut = 0;
+      pixelTypeOutCode = 8;
+   }
+   else if (strPixelTypeOut == "16S")
+   {
+      pixelSizeOut = 2;
+      pixelSignOut = 1; 
+      pixelTypeOutCode = -16;
+   }   
+   else if (strPixelTypeOut == "16U")
+   {
+      pixelSizeOut = 2;
+      pixelSignOut = 0;
+      pixelTypeOutCode = 16;
+   }      
+   else if (strPixelTypeOut == "32S")
+   {
+      pixelSizeOut = 4;
+      pixelSignOut = 1;
+      pixelTypeOutCode = -32;
+   }   
+   else if (strPixelTypeOut == "32U")
+   {
+      pixelSizeOut = 4;
+      pixelSignOut = 0;
+      pixelTypeOutCode = 32;
+   }
+   else
+   {
+      std::cout << "Wrong 'pixeltypeout' (" << strPixelTypeOut << ")" << std::endl;
       return 1;
    }
 
@@ -207,16 +301,32 @@ int main(int argc, char *argv[])
       
    // Read the pixels
 
-   int dataSize =  nX*nY*nZ*samplesPerPixel*pixelSize;
+   int singlePlaneDataSize =  nX*nY*samplesPerPixel*pixelSizeOut;
+   int dataSizeIn          =  nX*nY*samplesPerPixel*pixelSize*nZ;
 
-   uint8_t *pixels = new uint8_t[dataSize];
-   
-   Fp->read((char*)pixels, (size_t)dataSize);
-     
+   uint8_t *pixels         = new uint8_t[dataSizeIn];
+   uint8_t *planePixelsOut = new uint8_t[singlePlaneDataSize];
+
+   Fp->read((char*)pixels, (size_t)dataSizeIn);
+
    if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
    {  
-      ConvertSwapZone(pixelSize, pixels, dataSize);   
+      ConvertSwapZone(pixelSize, pixels, dataSizeIn);
    }
+
+// Copy (and convert) pixels of a single plane
+
+     switch ( pixelTypeCode )
+     {
+       case 8    : CFR(PU8);  break;
+       case -8   : CFR(PS8);  break;
+       case -16  : CFR(PU16); break;
+       case 16   : CFR(PS16); break;
+       case -32  : CFR(PS32); break;
+       case 32   : CFR(PU32); break;
+       case 33   : CFR(PF32); break;
+       case 64   : CFR(PD64); break;
+     }
 
 // Create an empty FileHelper
 
@@ -258,23 +368,20 @@ int main(int argc, char *argv[])
    // Set the pixel type
    
    str.str("");
-   str << pixelSize*8;
+   str << pixelSizeOut*8;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0100, "US"); // Bits Allocated
 
    str.str("");
-   str << pixelSize*8;
+   str << pixelSizeOut*8;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0101, "US"); // Bits Stored
 
    str.str("");
-   str << ( pixelSize*8 - 1 );
+   str << ( pixelSizeOut*8 - 1 );
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0102, "US"); // High Bit
 
    str.str("");
    str << pixelSign;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0103, "US"); // Pixel Representation
-
-   str.str("");
-   str << samplesPerPixel;
    
 // If you deal with a Serie of images, as slices of a volume,
 // it up to you to tell gdcm, for each image, what are the values of :
@@ -282,6 +389,12 @@ int main(int argc, char *argv[])
 // 0020 0032 DS 3 Image Position (Patient)
 // 0020 0037 DS 6 Image Orientation (Patient)
 
+   str.str("");
+   str << "0.0 \\ 0.0 \\ 0.0";
+   fileToBuild->InsertEntryString(str.str(),0x0020,0x0032, "DS");
+
+   str.str("");
+   str << samplesPerPixel;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0002, "US"); // Samples per Pixel
 
    if (strlen(patientName) != 0)
@@ -292,7 +405,7 @@ int main(int argc, char *argv[])
       fileH->SetPhotometricInterpretationToMonochrome1();
      
 // Set the image Pixel Data
-   fileH->SetImageData(pixels,dataSize);
+   fileH->SetImageData(planePixelsOut,singlePlaneDataSize);
 
 // Set the writting mode and write the image
    fileH->SetWriteModeToRaw();
@@ -309,5 +422,6 @@ int main(int argc, char *argv[])
    fileH->Delete();
 
    delete[] pixels;
+   delete[] planePixelsOut;
    return 1;
 }

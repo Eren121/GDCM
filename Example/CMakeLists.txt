@@ -29,6 +29,7 @@ SET(EXAMPLE_SOURCES
   
   # the following are utilities
   #----------------------------
+  RawToInTagDicom
   RawToDicomStack  
   PrintDicomDir  
   PrintFile  

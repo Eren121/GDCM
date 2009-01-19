@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToDicomStack.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/01/14 14:07:40 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2009/01/19 17:05:13 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -39,12 +39,12 @@ typedef unsigned int       * PU32;
 typedef float              * PF32;
 typedef double             * PD64;
 
-#define CRR(t1,t2)     { for(int i=0;i<nY;i++)                   \
-                           for(int j=0;j<nX;j++)                 \
-                             for(int k=0;k<samplesPerPixel;k++)  {\
-                                 *((t2)planePixelsOut + i*nX +j+k) = *(((t1)pixels)+ nbPlanes*nX*nY + i*nX +j+k);\
-     }                                                                              \
-                       }
+#define CRR(t1,t2)   { for(int i=0;i<nY;i++)                   \
+                         for(int j=0;j<nX;j++)                 \
+                           for(int k=0;k<samplesPerPixel;k++)  {\
+                               *((t2)planePixelsOut + i*nX +j+k) = *(((t1)pixels)+ nbPlanes*nX*nY + i*nX +j+k);\
+                           }                                                                                  \
+                     }
     
 #define CFR(PPt)  switch ( pixelTypeOutCode ) {     \
           case -8   : CRR(PPt,PS8);  break;         \
@@ -69,7 +69,7 @@ void ConvertSwapZone(int pixelSize, void *Raw, size_t RawSize)
       for( i = 0; i < RawSize / 2; i++ )
       {
          im16[i]= (im16[i] >> 8) | (im16[i] << 8 );
-      }     
+      }
    }
    else if ( pixelSize == 4 )
    {
@@ -100,14 +100,14 @@ int main(int argc, char *argv[])
    "                   lines=nb of Lines,                                     ",
    "                   [frames = nb of Frames] //defaulted to 1               ",
    "                   pixeltype={8U|8S|16U|16S|32U|32S|32F|64D}              ",
-   "                   pixeltypeout={8U|8S|16U|16S|32U|32S}                   ",   
+   "                   pixeltypeout={8U|8S|16U|16S|32U|32S}                   ",
    "                   [{b|l}] b:BigEndian,l:LittleEndian default : l         ",
    "                   [samples = {1|3}}       //(1:Gray,3:RGB) defaulted to 1",
    "                   [monochrome1]                                          ",
    "                   [studyid = ] [patientname = Patient's name]            ",
    "                   [debug]                                                ",
    "                                                                          ",
-   "  monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)          ", 
+   "  monochrome1 = user wants MONOCHROME1 photom. interp. (0=white)          ",
    "  studyUID   : *aware* user wants to add the serie                        ",
    "                                             to an already existing study ",
    "  debug      : developper wants to run the program in 'debug mode'        ",
@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
    int l = am->ArgMgrDefined("l");
       
    char *pixelType = am->ArgMgrWantString("pixeltype", usage);
-  
    const char *pixelTypeOut = am->ArgMgrGetString("pixeltypeout", pixelType);   
 
    bool monochrome1 = ( 0 != am->ArgMgrDefined("monochrome1") );
@@ -170,16 +169,16 @@ int main(int argc, char *argv[])
    // ----------- End Arguments Manager ---------
    
  /// \TODO Deal with all the images of a directory
-  
- // Read the Raw file  
+
+ // Read the Raw file
    std::ifstream *Fp = new std::ifstream(inputFileName, std::ios::in | std::ios::binary);
    if ( ! *Fp )
-   {   
+   {
       std::cout << "Cannot open file: " << inputFileName;
       delete Fp;
       Fp = 0;
       return 0;
-   }  
+   }
 
    bool bigEndian = GDCM_NAME_SPACE::Util::IsCurrentProcessorBigEndian();
 
@@ -198,7 +197,7 @@ int main(int argc, char *argv[])
    {
       pixelSize = 1;
       pixelSign = 0;
-      pixelTypeCode = 8;      
+      pixelTypeCode = 8;
    }
    else if (strPixelType == "16S")
    {
@@ -216,26 +215,26 @@ int main(int argc, char *argv[])
    {
       pixelSize = 4;
       pixelSign = 1;
-      pixelTypeCode = -32;      
+      pixelTypeCode = -32;
    }   
    else if (strPixelType == "32U")
    {
       pixelSize = 4;
       pixelSign = 0;
-      pixelTypeCode = 32;       
+      pixelTypeCode = 32;
    }
    else if (strPixelType == "32F")
    {
       pixelSize = 4;
       pixelSign = 0;
-      pixelTypeCode = 33;       
-   }   
-   
+      pixelTypeCode = 33;
+   }
+
    else if (strPixelType == "64D")
    {
       pixelSize = 8;
       pixelSign = 0;
-      pixelTypeCode = 64;       
+      pixelTypeCode = 64;
    }
    else
    {
@@ -289,7 +288,7 @@ int main(int argc, char *argv[])
       std::cout << "Wrong 'pixeltypeout' (" << strPixelTypeOut << ")" << std::endl;
       return 1;
    }
- 
+
    std::string strStudyUID;
    std::string strSerieUID;
 
@@ -309,19 +308,19 @@ int main(int argc, char *argv[])
    int dataSizeIn          =  nX*nY*samplesPerPixel*pixelSize*nZ;
 
    uint8_t *pixels         = new uint8_t[dataSizeIn];
-   uint8_t *planePixelsOut = new uint8_t[singlePlaneDataSize];   
-   
+   uint8_t *planePixelsOut = new uint8_t[singlePlaneDataSize];
+
    Fp->read((char*)pixels, (size_t)dataSizeIn);
 
    if ( pixelSize !=1 && ( (l && bigEndian) || (b && ! bigEndian) ) )
    {  
-      ConvertSwapZone(pixelSize, pixels, dataSizeIn);   
+      ConvertSwapZone(pixelSize, pixels, dataSizeIn);
    }
 
 // iterate on the planes.
 
    char outputFileName[200];
-   
+
    for(int nbPlanes=0; nbPlanes<nZ; nbPlanes++)
    {
 
@@ -329,7 +328,7 @@ int main(int argc, char *argv[])
 
 // Copy (and convert) pixels of a single plane
 
-     switch ( pixelTypeCode ) 
+     switch ( pixelTypeCode )
      {
        case 8    : CFR(PU8);  break;
        case -8   : CFR(PS8);  break;
@@ -338,7 +337,7 @@ int main(int argc, char *argv[])
        case -32  : CFR(PS32); break;
        case 32   : CFR(PU32); break;
        case 33   : CFR(PF32); break;
-       case 64   : CFR(PD64); break;       
+       case 64   : CFR(PD64); break;
      }
 
 // Create an empty FileHelper
@@ -391,7 +390,7 @@ int main(int argc, char *argv[])
    str.str("");
    str << pixelSign;
    fileToBuild->InsertEntryString(str.str(),0x0028,0x0103, "US"); // Pixel Representation
-   
+
 // If you deal with a Serie of images, as slices of a volume,
 // it up to you to tell gdcm, for each image, what are the values of :
 // 
@@ -399,7 +398,7 @@ int main(int argc, char *argv[])
 // 0020 0037 DS 6 Image Orientation (Patient)
 
    str.str("");
-   str << "0.0 \\ 0.0 \\" <<  nbPlanes;   
+   str << "0.0 \\ 0.0 \\" <<  nbPlanes;
    fileToBuild->InsertEntryString(str.str(),0x0020,0x0032, "DS");
 
    str.str("");

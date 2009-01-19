@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToInTag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 08:03:10 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2009/01/19 17:05:13 $
+  Version:   $Revision: 1.21 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,9 +22,10 @@
 #include "gdcmFileHelper.h"
 #include "gdcmDirList.h"
 #include "gdcmDebug.h"
-#include "gdcmArgMgr.h"
 #include "gdcmUtil.h"
 #include "gdcmSerieHelper.h"
+
+#include "gdcmArgMgr.h"
 
 #include <iostream>
 
@@ -139,10 +140,10 @@ int main(int argc, char *argv[])
    }
 
    const char *dirNamein;   
-   dirNamein  = am->ArgMgrGetString("dirin","."); 
+   dirNamein  = am->ArgMgrGetString("dirin",".");
 
    const char *dirNameout;   
-   dirNameout  = am->ArgMgrGetString("dirout",".");  
+   dirNameout  = am->ArgMgrGetString("dirout",".");
    
    int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
@@ -234,6 +235,8 @@ int main(int argc, char *argv[])
    {
        std::cout << "Output Directory [" << dirNameout << "] already exists; Used as is." << std::endl;
    }
+ 
+ 
     
    std::string strDirNamein(dirNamein);
    GDCM_NAME_SPACE::DirList dirList(strDirNamein, true); // get recursively the list of files
@@ -308,10 +311,10 @@ int main(int argc, char *argv[])
       s->AddSeriesDetail(0x0020, 0x000e, false); // Series Instance UID
    else
       s->AddSeriesDetail(0x9999, 0x9999, false); // dirty trick to ignore 'Series Instance UID'
-   s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)
-   s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
-   s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction
-   s->AddSeriesDetail(0x0008, 0x103e, false); // Series Description (special Siemens ...)
+      s->AddSeriesDetail(0x0020, 0x0032, false); // Image Position (Patient)
+      s->AddSeriesDetail(0x0018, 0x1060, true);  // Trigger Time (true: convert to keep numerical order)
+      s->AddSeriesDetail(0x0018, 0x1312, false); // In-plane Phase Encoding Direction
+      s->AddSeriesDetail(0x0008, 0x103e, false); // Series Description (special Siemens ...)
 
    //uint8_t *imageData; // Useless : pixels will not be loaded 
                          //          (images are overwritten)
@@ -494,7 +497,7 @@ int main(int argc, char *argv[])
          currentFile->InsertEntryString("0.\\0.\\0.",0x0020, 0x0032, "DS" );
       }
 
-      // Add a default ImagePositionPatient to avoid confusion at post processing time
+      // Add a default ImageOrientationPatient to avoid confusion at post processing time
       if ( currentFile->GetEntryString(0x0020,0x0037) == GDCM_NAME_SPACE::GDCM_UNFOUND && 
            currentFile->GetEntryString(0x0020,0x0035) == GDCM_NAME_SPACE::GDCM_UNFOUND )
       {
