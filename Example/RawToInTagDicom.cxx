@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: RawToInTagDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/01/19 17:03:38 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2009/01/22 16:30:39 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -547,6 +547,15 @@ if (verbose)
       fileH->InsertEntryString(fov, 0x0019, 0x1000, "DS");
 
 
+// We want to create MR-like image !
+      fileH->InsertEntryString("MR", 0x0008, 0x0060, "CS");
+      fileH->InsertEntryString("1.2.840.10008.5.1.4.1.1.4" , 0x0002, 0x0002, "UI");
+      fileH->InsertEntryString("1.2.840.10008.5.1.4.1.1.4" , 0x0008, 0x0016, "UI");
+
+      fileH->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
+      
+      
+
 // Set the image Pixel Data
    fileH->SetImageData(planePixelsOut,singlePlaneDataSize);
 
@@ -559,7 +568,7 @@ if (verbose)
    fileH->SetWriteTypeToDcmExplVR();
 
 
-   outputFileName = strDirNameout +  GDCM_NAME_SPACE::GDCM_FILESEPARATOR + *it + "_ForInTag.dcm";
+   outputFileName = strDirNameout +  GDCM_NAME_SPACE::GDCM_FILESEPARATOR + GDCM_NAME_SPACE::Util::GetName(*it) + "_ForInTag.dcm";
    if( !fileH->Write(outputFileName ) )
    {
       std::cout << "Failed for [" << outputFileName << "]\n"
