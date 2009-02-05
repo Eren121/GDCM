@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.h,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 16:07:20 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2009/02/05 09:50:09 $
+  Version:   $Revision: 1.22 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -74,7 +74,10 @@ public:
    std::string const &GetString() const;
 
    std::string const &GetHexaRepresentation() const;
-   
+
+   bool IsNumerical();
+   bool GetNumerical(std::vector <double> &valueVector);
+    
    /// \brief Sets SelfArea
    void SetSelfArea(bool area) { SelfArea = area; }
    /// \brief True if Entry owns its BinArea

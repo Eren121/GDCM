@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/04/10 12:15:35 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2009/02/05 09:50:09 $
+  Version:   $Revision: 1.55 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -129,6 +129,99 @@ void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
       State = STATE_LOADED;
    }
 }
+
+/**
+ * \brief Checks wether the current DataEntry contains number(s)
+ */
+
+bool DataEntry::IsNumerical()
+{
+   const VRKey &vr = GetVR();
+   
+   return 
+          vr == "DS" ||
+          vr == "FL" ||
+          vr == "FD" ||
+          vr == "IS" || 
+          vr == "SH" ||
+          vr == "SL" ||
+          vr == "SS" ||
+          vr == "UI" ||
+          vr == "UL" ||
+          vr == "US" ;      
+}
+
+/**
+ * \brief Gets a std::vector of 'double' holding the value(s) of any 'numerical' DataEntry
+ * @param valueVector std::vector double of value(s)
+ * \return false if VR not "a 'numerical" one
+ */
+ bool DataEntry::GetNumerical(std::vector <double> &valueVector)
+ {
+    valueVector.clear();
+    
+    if (!IsNumerical()) // never trust a user !
+       return false;    
+
+    const VRKey &vr = GetVR();
+    int loop;
+    if (vr == "IS" || vr == "DS")
+    {
+       /// \todo rewrite the whole method, in order *not to use* std::string !
+       std::vector<std::string> tokens;
+           
+       Util::Tokenize ( GetString().c_str(), tokens, "\\" );
+        
+       int nbValues= tokens.size();
+       if (nbValues == 0)
+          return false;
+
+       if (vr == "DS")        
+          for (loop=0; loop<nbValues; loop++) 
+             valueVector.push_back(atof(tokens[loop].c_str()));
+       else
+          for (loop=0; loop<nbValues; loop++) 
+             valueVector.push_back(atoi(tokens[loop].c_str()));
+               
+       return true;     
+    }    
+    
+    uint32_t nbValues = GetValueCount();
+    if (nbValues == 0)
+       return false;
+       
+    if( vr == "US") {
+       for (loop=0; loop<nbValues; loop++)
+             valueVector.push_back(((uint16_t *)BinArea)[loop]);  
+       return true;
+    }
+    if( vr == "SS" ) {
+       for (loop=0; loop<nbValues; loop++)
+             valueVector.push_back(((int16_t *)BinArea)[loop]);  
+       return true;
+    }
+    if( vr == "UL") {
+       for (loop=0; loop<nbValues; loop++) 
+             valueVector.push_back(((uint32_t *)BinArea)[loop]);      
+       return true;
+    }
+    if(vr == "SL" ) {
+       for (loop=0; loop<nbValues; loop++) 
+             valueVector.push_back(((int32_t *)BinArea)[loop]);      
+       return true;
+    }       
+    if( vr == "FL" ) {
+       for (loop=0; loop<nbValues; loop++) 
+             valueVector.push_back(((float *)BinArea)[loop]);     
+       return true;
+    }
+    if( vr == "FD" ) {
+       for (loop=0; loop<nbValues; loop++) 
+             valueVector.push_back(((double *)BinArea)[loop]);
+       return true;
+    }     
+    return false;   // ?!? 
+ }
 
 /**
  * \brief Inserts the elementary (non string) value into the current DataEntry
