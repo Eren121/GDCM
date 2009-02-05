@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 18:53:33 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2009/02/05 09:03:26 $
+  Version:   $Revision: 1.66 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -44,10 +44,10 @@ namespace GDCM_NAME_SPACE
  * @param  dirName root directory name
  * @param  recursive whether we want to explore recursively or not 
  */
-DirList::DirList(std::string const &dirName, bool recursive)
+DirList::DirList(std::string const &dirName, bool recursive, bool all)
 {
    DirName = dirName;
-   Explore(dirName, recursive);
+   Explore(dirName, recursive, all);
 }
 
 /**
@@ -144,15 +144,16 @@ int DirList::Explore(DicomDirSerie *se)
       im = se->GetNextImage();   
    }
    return numberOfFiles;
-}   
+}
    
 /**
  * \brief   Explore a directory with possibility of recursion
  *          return number of files read
  * @param  dirpath   directory to explore
  * @param  recursive whether we want recursion or not
+ * @param all whether we want all (i.e; File names + Directory names) default=false
  */
-int DirList::Explore(std::string const &dirpath, bool recursive)
+int DirList::Explore(std::string const &dirpath, bool recursive, bool all)
 {
    int numberOfFiles = 0;
    std::string fileName;
@@ -166,13 +167,14 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
        b = FindNextFile(hFile, &fileData))
    {
       fileName = fileData.cFileName;
-      if ( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+      // avoid infinite loop! 
+      if ( GDCM_NAME_SPACE::Util::GetName(fileName) == "." || GDCM_NAME_SPACE::Util::GetName(fileName) == "..")
+         continue;
+
+      if ( ( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) || !all) ) 
+      // all : whe return ALL the names, no recursion
       {
-         // Need to check for . and .. to avoid infinite loop
-         if ( fileName != "." && fileName != ".." && recursive )
-         {
-            numberOfFiles += Explore(dirName+fileName,recursive);
-         }
+         numberOfFiles += Explore(dirName+fileName,recursive);
       }
       else
       {
@@ -218,28 +220,43 @@ int DirList::Explore(std::string const &dirpath, bool recursive)
    for (d = readdir(dir); d; d = readdir(dir))
    {
       fileName = dirName + d->d_name;
+      //std::cout << d->d_name << std::endl;
+      // avoid infinite loop!  
+      if ( GDCM_NAME_SPACE::Util::GetName(d->d_name) == "." || GDCM_NAME_SPACE::Util::GetName(d->d_name) == "..")
+         continue;      
+      
       if( stat(fileName.c_str(), &buf) != 0 )
       {
          gdcmErrorMacro( strerror(errno) );
       }
-      if ( S_ISREG(buf.st_mode) )    //is it a regular file?
+      
+      if (all)  // meaningfull only when recursive=false
       {
          Filenames.push_back( fileName );
-         numberOfFiles++;
-      }
-      else if ( S_ISDIR(buf.st_mode) ) //directory?
-      {
-         if ( d->d_name[0] != '.' && recursive ) //we also skip hidden files
-         {
-            numberOfFiles += Explore( fileName, recursive);
-         }
+         numberOfFiles++;      
       }
       else
       {
-         gdcmErrorMacro( "Unexpected error" );
-         return -1;
-      }
+        if ( S_ISREG(buf.st_mode) )    //is it a regular file?
+        {
+           Filenames.push_back( fileName );
+           numberOfFiles++;
+        }
+        else if ( S_ISDIR(buf.st_mode) ) //directory?
+        {
+           if ( d->d_name[0] != '.' && recursive ) //we also skip hidden files
+           {
+              numberOfFiles += Explore( fileName, recursive);
+           }
+        }
+        else
+        {
+           gdcmErrorMacro( "Unexpected error" );
+           return -1;
+        }
+     }
    }
+   
    if( closedir(dir) != 0 )
    {
       gdcmErrorMacro( strerror(errno) );
