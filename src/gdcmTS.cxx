@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmTS.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:11 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2009/03/04 08:57:42 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 // Implicit VR - Big Endian
 // http://www.gemedicalsystemseurope.com/euen/it_solutions/pdf/lsqxi_rev2.pdf
 // G.E. deliberately violated a lot of Dicom rules are
-// (probabely to to avoid other people to read their images)
+// (probabely to avoid other people to read their images)
 // Just try and error on new images :
 // PrintFile debug filein=...
 // and fix the bugs

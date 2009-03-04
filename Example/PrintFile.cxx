@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/05/20 09:21:22 $
-  Version:   $Revision: 1.91 $
+  Date:      $Date: 2009/03/04 08:57:40 $
+  Version:   $Revision: 1.92 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -439,6 +439,8 @@ if (!noex)
       if (ori != "\\" )
          std::cout << "Orientation [" << ori << "]" << std::endl;
       o->Delete();
+      
+      
 /*      
 std::vector <double> valueVector; 
 GDCM_NAME_SPACE::DataEntry *e_0018_5212 = f->GetDataEntry(0x0018, 0x5212);
@@ -452,7 +454,65 @@ if (resJP) {
 }
 //e_0018_5212->Delete();
 */       
-      
+
+
+/* -----------------------------
+
+// Try :
+std::cout << std::endl << std::endl << "===========Try Get Numerical ======="
+          << std::endl;
+GDCM_NAME_SPACE::DataEntry *e;
+bool res;
+std::vector<double> vd;
+
+// Transfert Syntax
+e=f->GetDataEntry(0x0002,0x0010);
+if (e){
+  res=e->GetNumerical(vd);
+  if (!res){
+    std::cout << "0x0002,0x0010 not numerical, size =" << vd.size() << std::endl;  
+  }
+}
+// Columns
+e=f->GetDataEntry(0x0028,0x0011);
+if (e){
+  res=e->GetNumerical(vd);
+  if (!res){
+    std::cout << "0x0028,0x0011 not numerical, size =" << vd.size() << std::endl;  
+  } else {
+    std::cout << "0x0028,0x0011 numerical, size =" << vd.size() << std::endl;
+    std::cout << vd[0]<< std::endl;
+  }
+}
+// Im Orient (Pat)
+e=f->GetDataEntry(0x0020,0x0032);
+if (e){
+  res=e->GetNumerical(vd);
+  if (!res){
+    std::cout << "0x0020,0x0032 not numerical, size =" << vd.size() << std::endl;  
+  } else {
+    std::cout << "0x0020,0x0032 numerical, size =" << vd.size() << std::endl;
+    for(int l=0; l<vd.size(); l++)
+      std::cout << "vd[" << l << "]=" << vd[l]<< std::endl;
+  }
+}
+
+// Pixel Spacing
+
+e=f->GetDataEntry(0x0028,0x0030);
+if (e){
+  res=e->GetNumerical(vd);
+  if (!res){
+    std::cout << "0x0028,0x0030 not numerical, size =" << vd.size() << std::endl;  
+  } else {
+    std::cout << "0x0028,0x0030 numerical, size =" << vd.size() << std::endl;
+    for(int l=0; l<vd.size(); l++)
+      std::cout << "vd[" << l << "]=" << vd[l]<< std::endl;
+  }
+}
+
+----------------------------------------------*/  
+    
 }  
 //------------------------------
 

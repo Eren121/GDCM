@@ -9,6 +9,7 @@ SET(EXAMPLE_SOURCES
   #Txt2Mat  
   #exDicomRTStructSetFile  
   #exExtractCSA
+ 
   exReadPapyrus  
   exReadWriteFile  
   exColorToRGB  
@@ -29,6 +30,7 @@ SET(EXAMPLE_SOURCES
   
   # the following are utilities
   #----------------------------
+  #BrukerToMhd
   RawToInTagDicom
   RawToDicomStack  
   PrintDicomDir  
@@ -45,6 +47,10 @@ SET(EXAMPLE_SOURCES
   #ReWriteExtended  
   RawToDicom  
   TestValidate
+  
+ SplitIntoDirectories
+ SplitIntoXCoherentDirectories
+ SplitIntoXCoherentDirectoriesIgnoreSerieUID 
   
   # the following produce usable files for some softwares.
   #------------------------------------------------------   
