@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2007/09/04 16:21:50 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2009/04/18 14:42:51 $
+  Version:   $Revision: 1.36 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -64,15 +64,19 @@ public:
    // Description:
    // If this flag is set and the DICOM reader encounters a dicom file with 
    // lookup table the data will be kept as unsigned chars and a lookuptable 
-   // will be exported and accessible through GetLookupTable() 
+   // will be exported and accessible through GetLookupTable()
+   
    vtkSetMacro(AllowLookupTable, bool);
    vtkGetMacro(AllowLookupTable, bool);
    vtkBooleanMacro(AllowLookupTable, bool);
 
-
    vtkSetMacro(KeepOverlays, bool);
    vtkGetMacro(KeepOverlays, bool);
    vtkBooleanMacro(KeepOverlays, bool);
+   
+   vtkSetMacro(FlipY, bool);
+   vtkGetMacro(FlipY, bool);
+   vtkBooleanMacro(FlipY, bool);   
 
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
@@ -186,6 +190,8 @@ private:
    bool DropDuplicatePositions;
    
    bool KeepOverlays;
+   
+   bool FlipY;
    
    /// Pointer to a user suplied function to allow modification of pixel order
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;

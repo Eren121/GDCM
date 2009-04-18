@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/12/13 16:18:13 $
-  Version:   $Revision: 1.94 $
+  Date:      $Date: 2009/04/18 14:42:51 $
+  Version:   $Revision: 1.95 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@
 //      sh->SetDropDuplicatePositions(true);
 //
 //      // Sorting the list is mandatory
-//      // a side effect is to compute ZSpacing for the fle set
+//      // a side effect is to compute ZSpacing for the file set
 //      sh->OrderFileList(l);        // sort the list
 //
 //      vtkGdcmReader *reader = vtkGdcmReader::New();
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.94 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.95 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -113,6 +113,8 @@ vtkGdcmReader::vtkGdcmReader()
    // this->Execution=false; // For VTK5.0
    
    this->KeepOverlays = false;
+   
+   this->FlipY = true; // to keep old behaviour  
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -855,9 +857,14 @@ void vtkGdcmReader::LoadImageInMemory(
    {
       //size = fileH->GetImageDataSize(); 
       // useless - just an accessor;  'size' unused
-      src  = (unsigned char*)fileH->GetImageData();  
+      //if (this->GetFlipY())
+         src  = (unsigned char*)fileH->GetImageData();
+      //else
+      //   dest  = (unsigned char*)fileH->GetImageData();        
    } 
 
+
+if (this->GetFlipY()) {
    unsigned char *dst = dest + planeSize - lineSize;
    for (int plane = 0; plane < numPlanes; plane++)
    {
@@ -877,7 +884,11 @@ void vtkGdcmReader::LoadImageInMemory(
       }
       dst += 2 * planeSize;
    }
-
+}
+else
+{
+  memcpy((void*)dest, (void*)src,  numPlanes * numLines * lineSize);
+}
    fileH->Delete();
 }
 

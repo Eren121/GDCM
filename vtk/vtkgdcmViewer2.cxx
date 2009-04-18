@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/03 15:50:13 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2009/04/18 14:42:51 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -127,6 +127,14 @@ int main(int argc, char *argv[])
    {
       argc--; // Is it allowed?!?
       reader->SetKeepOverlays(true);
+   }
+
+// not a very clever way to pass several params
+// but it's just for checking
+   if (strcmp (argv[argc-1], "n") == 0)
+   {
+      argc--; // Is it allowed?!?
+      reader->SetFlipY(false);
    }
 
    if( argc == 2 )
