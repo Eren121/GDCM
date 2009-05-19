@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/02/05 09:03:26 $
-  Version:   $Revision: 1.66 $
+  Date:      $Date: 2009/05/19 15:04:15 $
+  Version:   $Revision: 1.67 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -163,25 +163,42 @@ int DirList::Explore(std::string const &dirpath, bool recursive, bool all)
    //assert( dirName[dirName.size()-1] == '' );
    HANDLE hFile = FindFirstFile((dirName+"*").c_str(), &fileData);
 
-   for(BOOL b = (hFile != INVALID_HANDLE_VALUE); b;
+   for(BOOL b = (hFile != INVALID_HANDLE_VALUE);
        b = FindNextFile(hFile, &fileData))
    {
-      fileName = fileData.cFileName;
+      fileName = dirName + fileData.cFileName;
       // avoid infinite loop! 
       if ( GDCM_NAME_SPACE::Util::GetName(fileName) == "." || GDCM_NAME_SPACE::Util::GetName(fileName) == "..")
          continue;
 
-      if ( ( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) || !all) ) 
-      // all : whe return ALL the names, no recursion
+      if (all)  // meaningfull only when recursive=false
       {
-         numberOfFiles += Explore(dirName+fileName,recursive);
+         Filenames.push_back( fileName );
+         numberOfFiles++;
       }
       else
       {
-         Filenames.push_back(dirName+fileName);
-         numberOfFiles++;
-      }
+        if ( !( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) )    //is it a regular file?
+        {
+           Filenames.push_back( fileName );
+           numberOfFiles++;
+
+        }
+        else if ( fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) //directory?
+        {
+           if ( GDCM_NAME_SPACE::Util::GetName(fileName)[0] != '.' && recursive ) //we also skip hidden files
+           {
+              numberOfFiles += Explore( fileName, recursive);
+           }
+        }
+        else
+        {
+           gdcmErrorMacro( "Unexpected error" );
+           return -1;
+        }
+     }
    }
+
    DWORD dwError = GetLastError();
    if (hFile != INVALID_HANDLE_VALUE) 
       FindClose(hFile);
