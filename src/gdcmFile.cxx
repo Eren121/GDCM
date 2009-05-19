@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/01/07 17:16:06 $
-  Version:   $Revision: 1.343 $
+  Date:      $Date: 2009/05/19 15:08:36 $
+  Version:   $Revision: 1.344 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -491,7 +491,7 @@ bool File::GetSpacing(float &xspacing, float &yspacing, float &zspacing)
         }
       else
         {
-        if( mediastoragesopclassuid == sopclassuid )
+        if ( mediastoragesopclassuid == sopclassuid )
           {
           sopclassuid_used = mediastoragesopclassuid;
           }
@@ -502,7 +502,7 @@ bool File::GetSpacing(float &xspacing, float &yspacing, float &zspacing)
           return false;
           }
         }
-      // ok we have now the correc SOP Class UID
+      // ok we have now the correct SOP Class UID
       if( sopclassuid_used == "Enhanced MR Image Storage" )
         {
         SeqEntry *PerframeFunctionalGroupsSequence = GetSeqEntry(0x5200,0x9230);

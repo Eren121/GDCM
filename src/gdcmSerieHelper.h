@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2007/08/22 16:14:04 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2009/05/19 15:08:37 $
+  Version:   $Revision: 1.45 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -35,7 +35,7 @@ class File;
 
    typedef std::vector<File* > FileList;
 #ifndef GDCM_LEGACY_REMOVE
-typedef std::vector<File* > GdcmFileList;
+  typedef std::vector<File* > GdcmFileList;
 #endif
 
    /// \brief XCoherent stands for 'Extra Coherent',

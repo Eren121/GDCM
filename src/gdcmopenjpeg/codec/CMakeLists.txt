@@ -1,5 +1,11 @@
 # Build the demo app, small examples
 
+
+     if(COMMAND cmake_policy)
+       cmake_policy(SET CMP0003 NEW)
+     endif(COMMAND cmake_policy)
+
+
 # First thing define the common source:
 SET(common_SRCS
   convert.c
