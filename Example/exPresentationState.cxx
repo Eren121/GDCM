@@ -4,8 +4,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPresentationState.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/20 09:45:30 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2009/05/25 14:29:16 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -31,7 +31,7 @@
 
 #include "gdcmArgMgr.h"
   
-  GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists(GDCM_NAME_SPACE::File *fPR,  uint16_t gr, uint16_t el);
+  GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists(GDCM_NAME_SPACE::File *fPS,  uint16_t gr, uint16_t el);
   GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists(GDCM_NAME_SPACE::SQItem *si, uint16_t gr, uint16_t el);   
   bool dealWithTopLevelItem(GDCM_NAME_SPACE::SQItem* currentItem);
   bool dealWithEndLevelItem(GDCM_NAME_SPACE::SQItem* currentItem);
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
    "usage: exPresentationState {filein=inputFileName|dirin=inputDirectoryName}",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "       filein : Name of the image  file                                   ",
-   "       PRFile :   Name of the PresentationState  file :                   ", 
+   "       PSFile : Name of the PresentationState  file :                     ", 
    "       noshadowseq: user doesn't want to load Private Sequences           ",
    "       noshadow   : user doesn't want to load Private groups (odd number) ",
    "       noseq      : user doesn't want to load Sequences                   ",
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
    bool verbose = am->ArgMgrDefined("verbose");
    
    const char *fileName = am->ArgMgrGetString("filein");
-   const char *PRName   = am->ArgMgrGetString("PRfile");  
+   const char *PSName   = am->ArgMgrGetString("PSfile");  
    
       /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
@@ -114,24 +114,22 @@ int main(int argc, char *argv[])
 
 // =================================================================================
 
-   GDCM_NAME_SPACE::File *fPR = GDCM_NAME_SPACE::File::New( );
-   fPR->SetFileName( PRName );
-   fPR->SetMaxSizeLoadEntry(0xffff);
-   bool res2 = fPR->Load();
+   GDCM_NAME_SPACE::File *fPS = GDCM_NAME_SPACE::File::New( );
+   fPS->SetFileName( PSName );
+   fPS->SetMaxSizeLoadEntry(0xffff);
+   bool res2 = fPS->Load();
            
    if (!res2) {
-       std::cout << "Sorry, " << PRName << " not a gdcm-readable "
+       std::cout << "Sorry, " << PSName << " not a gdcm-readable "
            << "DICOM / ACR File"
            << std::endl;
       f->Delete();
       return 1;
    }
-   std::cout << " ... is readable " << std::endl;
    
    GDCM_NAME_SPACE::SeqEntry *se;
    
-
-   se = CheckIfSequenceExists( fPR, 0x0070, 0x0001);
+   se = CheckIfSequenceExists( fPS, 0x0070, 0x0001);
    //displaySeekResult(se, 0x0070, 0x0001);
    if (!se)
    {
@@ -139,7 +137,8 @@ int main(int argc, char *argv[])
          exit (0);      
    }
        
-   std::cout << "[" << PRName << "] is a gdcm-readable PresentationState file, that holds one or more 'ROI'\n" <<std::endl; 
+   std::cout << "[" << PSName << "] is a gdcm-readable PresentationState file, "
+             << "that (probabely?) holds one or more 'ROI' within [0070|0001] (Graphic Annotation Sequence)\n" <<std::endl; 
 
    GDCM_NAME_SPACE::SQItem* currentItem = se->GetFirstSQItem(); // Get the first 'ROI'
    int i =0;
@@ -156,21 +155,21 @@ int main(int argc, char *argv[])
    }
    
  /*         
-  bool res3 = TestPresentationState(f, fPR);
+  bool res3 = TestPresentationState(f, fPS);
   
   if (res3)
   {
-     std::cout << "[" << PRName << "] is a gdcm-readable PresentationState file" <<std::endl; 
+     std::cout << "[" << PSName << "] is a gdcm-readable PresentationState file" <<std::endl; 
   }
   else
   {
-     std::cout << "Sorry, [" << PRName << "] is not a gdcm-readable PresentationState file" <<std::endl; 
+     std::cout << "Sorry, [" << PSName << "] is not a gdcm-readable PresentationState file" <<std::endl; 
   }
 */
    
    
    f->Delete();
-   fPR->Delete();
+   fPS->Delete();
 return 0;
 }
 
@@ -178,7 +177,8 @@ return 0;
  
 bool dealWithTopLevelItem(GDCM_NAME_SPACE::SQItem* currentItem)
 {
-
+  // probably this list should be cleaned up.
+  // (I didn't find the exact architecture of Presentation State)
    int tabElement[] = {         0x0008, 0x0009, 0x005a, 0x0060, 0x0086, 
                         0x0308, 0x0309, 0x030A, 0x030d, 0x0311, 0x0314, 
                         0x0318, 0x031c, 0x031e, 0x0402, 0x0404, 0x0000 };
@@ -212,7 +212,8 @@ bool dealWithTopLevelItem(GDCM_NAME_SPACE::SQItem* currentItem)
  
 bool dealWithEndLevelItem(GDCM_NAME_SPACE::SQItem* currentItem)
 {
-
+  // probably this list should be cleaned up, too.
+  // (I didn't find the exact architecture of Presentation State)
    int tabElement[] = {         0x0008, 0x0009, 0x005a, 0x0060, 0x0086, 
                         0x0308, 0x0309, 0x030A, 0x030d, 0x0311, 0x0314, 
                         0x0318, 0x031c, 0x031e, 0x0402, 0x0404, 0x0000 };
@@ -290,7 +291,7 @@ void displaySeekResult(GDCM_NAME_SPACE::SeqEntry* se, uint16_t g, uint16_t e)
       
 //----------------------------------------------------------------------------------------------------  
 
-bool TestPresentationState(GDCM_NAME_SPACE::File *f, GDCM_NAME_SPACE::File *fPR)
+bool TestPresentationState(GDCM_NAME_SPACE::File *f, GDCM_NAME_SPACE::File *fPS)
 {
 
 /*------------------------------------------------------
@@ -388,9 +389,9 @@ Relevant part of Dicom V3 Dict
 // ----------------------------------------------------------------------------------
 
 
-GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists( GDCM_NAME_SPACE::File *fPR, uint16_t gr, uint16_t el)
+GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists( GDCM_NAME_SPACE::File *fPS, uint16_t gr, uint16_t el)
 {
-   GDCM_NAME_SPACE::SeqEntry *se= fPR->GetSeqEntry(gr, el);
+   GDCM_NAME_SPACE::SeqEntry *se= fPS->GetSeqEntry(gr, el);
    return se;     
 }
 
