@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDirList.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/19 15:04:15 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2009/05/26 10:27:38 $
+  Version:   $Revision: 1.68 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -164,6 +164,7 @@ int DirList::Explore(std::string const &dirpath, bool recursive, bool all)
    HANDLE hFile = FindFirstFile((dirName+"*").c_str(), &fileData);
 
    for(BOOL b = (hFile != INVALID_HANDLE_VALUE);
+       b;
        b = FindNextFile(hFile, &fileData))
    {
       fileName = dirName + fileData.cFileName;
