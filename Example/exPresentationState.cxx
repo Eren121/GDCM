@@ -4,8 +4,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPresentationState.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/25 14:29:16 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,6 +54,10 @@ int main(int argc, char *argv[])
    "       noseq      : user doesn't want to load Sequences                   ",
    "       verbose    : developper wants to run the program in 'verbose mode' ",
    "       debug      : developper wants to run the program in 'debug mode'   ",
+   "                                                                          ",
+   " you can use it as :                                                      ",
+   " for i in `ls PS*`; do exPresentationState PSFile=$i; done                ",
+   " just to see ...                                                          ",
    FINISH_USAGE
 
    // ----- Initialize Arguments Manager ------
@@ -133,14 +137,19 @@ int main(int argc, char *argv[])
    //displaySeekResult(se, 0x0070, 0x0001);
    if (!se)
    {
-         std::cout << "Hopeless : " << std::hex <<  0x0070 << "|" << 0x0001 << std::dec << " doesn't exist..." <<std::endl;
+         std::cout << "[" << PSName << "] : Hopeless (" << std::hex <<  0x0070 << "|" << 0x0001 << std::dec << " doesn't exist...)" <<std::endl;
          exit (0);      
    }
-       
+   std::cout << "\n\n =========================================================================================" <<std::endl;       
    std::cout << "[" << PSName << "] is a gdcm-readable PresentationState file, "
-             << "that (probabely?) holds one or more 'ROI' within [0070|0001] (Graphic Annotation Sequence)\n" <<std::endl; 
+             << "that (probabely?) holds one or more 'ROI' within [0070|0001] (Graphic Annotation Sequence)"   <<std::endl; 
+   std::cout << " =========================================================================================\n\n" <<std::endl;
 
    GDCM_NAME_SPACE::SQItem* currentItem = se->GetFirstSQItem(); // Get the first 'ROI'
+   if (currentItem == NULL)
+   {
+      std::cout << "======== Deal With NOTHING! (Sequence 0070|0001 [Graphic Annotation Sequence] has NO item ?!?)" << std::endl;
+   }
    int i =0;
    while (currentItem != NULL)
    {
@@ -170,6 +179,8 @@ int main(int argc, char *argv[])
    
    f->Delete();
    fPS->Delete();
+   
+   std::cout << "\n\n"  <<std::endl;  
 return 0;
 }
 
@@ -197,7 +208,7 @@ bool dealWithTopLevelItem(GDCM_NAME_SPACE::SQItem* currentItem)
    for(int i=0; tabElement[i]!=0x0000; i++)
    {
       se = CheckIfSequenceExists(currentItem, 0x0070, tabElement[i]);
-      displaySeekResult(se, 0x0070, tabElement[i]);       
+      //displaySeekResult(se, 0x0070, tabElement[i]);       
       if (se != 0)
       {
          res = true;

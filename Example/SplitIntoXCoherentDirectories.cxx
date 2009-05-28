@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 08:03:10 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.4 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    "\n exXCoherentFileSet :\n                                                 ",
    "Shows the various 'XCoherent' Filesets within a directory                 ",
-   "Optionaly copis the images in a Directories tree                          ",
+   "Optionaly copies the images in a Directories tree                         ",
    "usage: exXCoherentFileSet {dirin=inputDirectoryName}                      ",
    "                           dirout=outputDirectoryName                     ",
    "                       { tag=group-elem | pos | ori } [sort]              ",
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
  
    int loadMode;
    int maxSize;
-   
+
    const char *dirName  = am->ArgMgrGetString("dirin");
    if (dirName == 0)
    {
@@ -96,13 +96,13 @@ int main(int argc, char *argv[])
    bool write =   ( 0 != am->ArgMgrDefined("write") );
    bool verbose = ( 0 != am->ArgMgrDefined("verbose") );
    bool tag     = ( 0 != am->ArgMgrDefined("tag") );
-   
+
    if( copy && write )
    {
       std::cout << "COPY and WRITE are mutually exclusive" << std::endl;
       delete am;
-      return 0;      
-   }   
+      return 0;
+   }
 
    if( (tag && (pos || ori)) || (pos && (tag || ori)) || (ori && (tag || pos)) )
    {
@@ -143,10 +143,13 @@ int main(int argc, char *argv[])
  
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
-   
+
    GDCM_NAME_SPACE::SerieHelper *s;  
    s = GDCM_NAME_SPACE::SerieHelper::New();
-   
+
+   s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL); // Load everything for each File
+   s->SetDirectory(dirName, true);          // true : recursive exploration
+
    GDCM_NAME_SPACE::File *f;
    
    GDCM_NAME_SPACE::DirList dirlist(dirName, true); // recursive exploration
@@ -163,7 +166,7 @@ int main(int argc, char *argv[])
 
       if (write) {
          loadMode = GDCM_NAME_SPACE::LD_ALL; // load any DataElement
-          maxSize  = 0x7fff;                  // load any length
+         maxSize  = 0x7fff;                  // load any length
       } else {
          loadMode = GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW ; 
          maxSize  = 0x0100;
@@ -217,7 +220,13 @@ int main(int argc, char *argv[])
 
    // For all the Single SerieUID Files Sets of the GDCM_NAME_SPACE::Serie
 
-   //GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();//===> Ignore 'Serie UID"
+  // GDCM_NAME_SPACE::FileList *l = s->GetFirstSingleSerieUIDFileSet();
+
+   l = s->GetFirstSingleSerieUIDFileSet();
+   if (l == NULL) {
+      std::cout << "No Serie found ?!?" << std::endl;
+      exit (0);
+   }
 
    GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
 
@@ -229,7 +238,7 @@ int main(int argc, char *argv[])
    std::string lastFilename;
    std::string rep("_");
    int controlCount = 0;
-  
+
    // 'Study Instance UID'
    // The user is allowed to create his own Study, 
    //          keeping the same 'Study Instance UID' for various images
@@ -243,16 +252,19 @@ int main(int argc, char *argv[])
          strStudyUID = studyUID;
    }
 
-//   while (l) // for each 'Single SerieUID FileSet' //===> Ignore 'Serie UID"
-//   { 
+   while (l) // for each 'Single SerieUID FileSet' //===> Ignore 'Serie UID"
+   { 
+ currentSerieWriteDir = "";
       nbFiles = l->size() ;
       if ( l->size() > 2 ) // ignore a Directory with less than 2 images.
                            // Why not ? Just an example, for testing!
       {
           // Just not to make too many modif in the code
-          serieUID = "SingleSerie"; //s->GetCurrentSerieUIDFileSetUID();
+          //serieUID = "SingleSerie"; // s->GetCurrentSerieUIDFileSetUID();
+          serieUID = s->GetCurrentSerieUIDFileSetUID();
+
           GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
- 
+
           // --- for write
           if (write || copy)
           {
@@ -278,17 +290,14 @@ int main(int argc, char *argv[])
                    << serieUID
                    << "]  " << nbFiles << " long" << std::endl;
          std::cout << "-----------------------------------" << std::endl;
- 
-GDCM_NAME_SPACE::Debug::DebugOn(); 
- 
   
          if (ori) 
             xcm = s->SplitOnOrientation(l);
          else if (pos)
             xcm = s->SplitOnPosition(l);
          else if (groupelem != 0) {
- 
-            std:: cout << GDCM_NAME_SPACE::Global::GetDicts()->GetDefaultPubDict()->GetEntry(groupelem[0],groupelem[1])->GetName() << std::endl;
+         // Crashes if DataElement not found
+         //std:: cout << GDCM_NAME_SPACE::Global::GetDicts()->GetDefaultPubDict()->GetEntry(groupelem[0],groupelem[1])->GetName() << std::endl;
  
             xcm = s->SplitOnTagValue(l, groupelem[0],groupelem[1] );
          }
@@ -301,7 +310,7 @@ GDCM_NAME_SPACE::Debug::DebugOn();
          {
             xCoherentName = (*i).first;
             if (verbose)
-               std::cout << "xCoherentName = " << xCoherentName << std::endl;
+               std::cout << "==========================================xCoherentName = " << xCoherentName << std::endl;
              GDCM_NAME_SPACE::Util::ReplaceSpecChar(xCoherentName, rep);
              // --- for write
              if (write || copy)
@@ -334,11 +343,11 @@ GDCM_NAME_SPACE::Debug::DebugOn();
            // (eg:MIP views) don't have 'Position', now considered as mandatory
            // --> Activated on user demand.
 
-            if (sort) {
+           if (sort) {
               s->OrderFileList((*i).second);  // sort the XCoherent Fileset
               std::cout << "ZSpacing for the file set " << s->GetZSpacing()
                         << std::endl;
-            } 
+           } 
 
             std::string strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
 
@@ -348,11 +357,9 @@ GDCM_NAME_SPACE::Debug::DebugOn();
             {
                controlCount ++;
                fileName = (*it2)->GetFileName();
-               std::cout << "    " << fileName << std::endl;
-    
                // --- for write
                lastFilename =  GDCM_NAME_SPACE::Util::GetName( fileName );
-               filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename;
+               filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename; 
                if (write)
                {  
                   fh = GDCM_NAME_SPACE::FileHelper::New( (*it2) );
@@ -361,7 +368,7 @@ GDCM_NAME_SPACE::Debug::DebugOn();
                   unsigned int dataSize  = fh->GetImageDataRawSize();
                   uint8_t *imageData = fh->GetImageDataRaw();// somewhat important : Loads the Pixels in memory !
                   if (!imageData)
-                     std::cout << "fail to read [" << (*it2)->GetFileName() << std::endl; 
+                     std::cout << "fail to read [" << (*it2)->GetFileName() << std::endl;
                   fh->SetWriteTypeToDcmExplVR();
                   fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
                   if (!fh->Write(filenameout))
@@ -379,10 +386,11 @@ GDCM_NAME_SPACE::Debug::DebugOn();
                if (verbose)
                      std::cout << "3 " << systemCommand << std::endl;
             }
-            std::cout << std::endl;   
          }
+         std::cout << std::endl;
       }
-     // l = s->GetNextSingleSerieUIDFileSet(); //===> Ignore 'Serie UID"
+      l = s->GetNextSingleSerieUIDFileSet();
+   }
     
    if ( controlCount == 0 )
       std::cout << "No suitable file was found!" << std::endl;

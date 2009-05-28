@@ -9,6 +9,7 @@ SET(EXAMPLE_SOURCES
   #Txt2Mat  
   #exDicomRTStructSetFile  
   #exExtractCSA
+ exPresentationState
  
   exReadPapyrus  
   exReadWriteFile  

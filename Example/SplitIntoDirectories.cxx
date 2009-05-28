@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 11:37:16 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,16 +29,16 @@
 #include <iostream>
 
 /**
-  * \brief   
+  * \brief
   *          - explores recursively the given directory
   *          - keeps the requested series
   *          - orders the gdcm-readable found Files
   *            according to their Patient/Study/Serie/Image characteristics
-  */  
+  */
 
 typedef std::map<std::string, GDCM_NAME_SPACE::File*> SortedFiles;
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n SplitIntoDirectories :\n                                              ",
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
    " - keeps the requested series / drops the unrequested series              ",
    " - orders the gdcm-readable found Files according to their                ",
    "           (0x0010, 0x0010) Patient's Name                                ",
-   "           (0x0020, 0x000d) Study Instance UID                            ",   
+   "           (0x0020, 0x000d) Study Instance UID                            ",
    "           (0x0020, 0x000e) Series Instance UID                           ",
    " - fills a tree-like structure of directories as :                        ",
    "        - Patient                                                         ",
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
    std::cout << "... inside " << argv[0] << std::endl;
    
    // ----- Initialize Arguments Manager ------
-      
+
    GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (argc == 1 || am->ArgMgrDefined("usage")) 
@@ -108,16 +108,16 @@ int main(int argc, char *argv[])
       return 0;
    }
 
-   const char *dirNamein;   
-   dirNamein  = am->ArgMgrGetString("dirin","."); 
+   const char *dirNamein;
+   dirNamein  = am->ArgMgrGetString("dirin",".");
 
    const char *dirNameout;   
-   dirNameout  = am->ArgMgrGetString("dirout",".");  
+   dirNameout  = am->ArgMgrGetString("dirout",".");
    
    int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
       loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
-   else 
+   else
    {
    if ( am->ArgMgrDefined("noshadow") )
          loadMode |= GDCM_NAME_SPACE::LD_NOSHADOW;
@@ -131,30 +131,30 @@ int main(int argc, char *argv[])
    bool verbose    = ( 0 != am->ArgMgrDefined("verbose") );
    bool listonly   = ( 0 != am->ArgMgrDefined("listonly") );
    bool seriedescr = ( 0 != am->ArgMgrDefined("seriedescr") );
-            
+
    int nbSeriesToKeep;
    int *seriesToKeep = am->ArgMgrGetListOfInt("keep", &nbSeriesToKeep);
    int nbSeriesToDrop;
    int *seriesToDrop = am->ArgMgrGetListOfInt("drop", &nbSeriesToDrop);
- 
+
    if ( nbSeriesToKeep!=0 && nbSeriesToDrop!=0)
    {
       std::cout << "KEEP and DROP are mutually exclusive !" << std::endl;
       delete am;
-      return 0;         
+      return 0;
    }
 
-   bool hasSkel = ( 0 != am->ArgMgrDefined("hasSkel") );    
+   bool hasSkel = ( 0 != am->ArgMgrDefined("hasSkel") );
    const char *skel;
    if (hasSkel)
-      skel = am->ArgMgrGetString("skel");   
-      
-      
+      skel = am->ArgMgrGetString("skel");
+
+
    const char *input   = am->ArgMgrGetString("input","DCM");
    
    // if unused Param we give up
    if ( am->ArgMgrPrintUnusedLabels() )
-   { 
+   {
       am->ArgMgrUsage(usage);
       delete am;
       return 0;
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
    }
 
    std::string systemCommand;
-   
+
    std::cout << "Check for output directory :[" << dirNameout << "]."
              <<std::endl;
    if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNameout) )    // dirout not found
@@ -191,10 +191,9 @@ int main(int argc, char *argv[])
       system (systemCommand.c_str());
       if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNameout) ) // be sure it worked
       {
-          std::cout << "KO : not a dir : [" << dirNameout << "] (creation failure ?)" 
+         std::cout << "KO : not a dir : [" << dirNameout << "] (creation failure ?)" 
                     << std::endl;
-      return 0;
-
+         return 0;
       }
       else
       {
@@ -291,11 +290,11 @@ int main(int argc, char *argv[])
       if (verbose)
          std::cout << "Try[" << *it << "]\n";
       f->Load();
-      if (!f->IsReadable())
+      if (!f->Document::IsReadable())
       {
          if (verbose)
             std::cout << "File : [" << *it << "] not gdcm-readable -> skipped !" << std::endl;
-         continue;     
+         continue;
       }
       if (verbose)
          std::cout << "Loaded!\n";
@@ -326,13 +325,13 @@ int main(int argc, char *argv[])
       // drop all unrequested Series
       bool drop = false;
       if (nbSeriesToDrop != 0)
-      {     
+      {
          strSeriesNumber = f->GetEntryString(0x0020, 0x0011 );
          seriesNumber = atoi( strSeriesNumber.c_str() );
          for (j=0;j<nbSeriesToDrop; j++)
          {
             if(seriesNumber == seriesToDrop[j])
-            { 
+            {
                drop = true;
                break;
             }
@@ -351,13 +350,13 @@ int main(int argc, char *argv[])
       GDCM_NAME_SPACE::Util::Tokenize (userFileIdentifier, tokens, token);
 
       char newName[1024];
-      
+
       ///this is a trick to build up a lexicographical compliant name :
       ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
       std::string name = GDCM_NAME_SPACE::Util::GetName( *it );
-      
+
       std::cout << "name :[" << name << "]\n";
-      
+
       if (hasSkel)
       {
          int imageNum; // Within FileName
@@ -372,14 +371,14 @@ int main(int argc, char *argv[])
        {
          tokens[IND_FileName] = name;
        }
-    
+
          // Patient's Name
-         // Study Instance UID 
+         // Study Instance UID
          // Series Instance UID
          // SerieDescription
          // Serie Number
          // file Name
-           
+
       userFileIdentifier = tokens[IND_PatientName]      + token +
                            tokens[IND_StudyInstanceUID] + token + 
                            tokens[IND_SerieInstanceUID] + token +
@@ -387,11 +386,11 @@ int main(int argc, char *argv[])
                            tokens[IND_SerieDescription] + token +
                            tokens[IND_SerieNumber]      + token +
                            tokens[IND_FileName];
-         
+
       if (verbose) 
          std::cout << "[" << userFileIdentifier  << "] : " << *it << std::endl;
-               
-      // storing in a map ensures automatic sorting !      
+
+      // storing in a map ensures automatic sorting !
       sf[userFileIdentifier] = f;
    }
    
@@ -450,22 +449,22 @@ int main(int argc, char *argv[])
          previousPatientName            = currentPatientName;
          previousStudyInstanceUID       = ""; 
          previousSerieInstanceUID       = "";
-  
+
          currentPatientWriteDir = writeDir + currentPatientName;
 
          systemCommand   = "mkdir " + currentPatientWriteDir;
          if (verbose || listonly)
             std::cout << "[" << systemCommand << "]" << std::endl;
-         if (!listonly)               
+         if (!listonly)
             system ( systemCommand.c_str() );
       }
-      
+
       if (previousStudyInstanceUID != currentStudyInstanceUID)
-      {        
+      {
          previousStudyInstanceUID       = currentStudyInstanceUID;
-         if (verbose)   
+         if (verbose)
             std::cout << "==== === new Study [" << currentStudyInstanceUID << "]"
-                      << std::endl;      
+                      << std::endl;
 
          currentStudyWriteDir  = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentStudyInstanceUID;
@@ -487,11 +486,12 @@ int main(int argc, char *argv[])
                             
          if (seriedescr) // more human readable!
             currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
-                                  + currentSerieDescription + "_" + currentSerieNumber;
+                                  + currentSerieDescription + "_" + currentSerieNumber
+                                  + "_" + currentSerieInstanceUID;
          else
             currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                                   + currentSerieInstanceUID;         
-                                 
+                      
          systemCommand   = "mkdir " + currentSerieWriteDir;
          
          if (listonly)

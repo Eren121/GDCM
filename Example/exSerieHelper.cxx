@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 14:55:20 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.18 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -151,7 +151,9 @@ int main(int argc, char *argv[])
                                           ++it2)
          {
           // Just to show : GetZSpacing from a GDCM_NAME_SPACE::File may be different        
-             std::cout << (*it2)->GetFileName() << " -->  GetZSpacing() from GDCM_NAME_SPACE::File : " 
+             std::cout << (*it2)->GetFileName() << " -->  Get{X/Y/Z}Spacing() from GDCM_NAME_SPACE::File : " 
+                       << (*it2)->GetXSpacing() << " " 
+                       << (*it2)->GetYSpacing() << " " 
                        << (*it2)->GetZSpacing() << std::endl; 
            fileCount++;      
          }

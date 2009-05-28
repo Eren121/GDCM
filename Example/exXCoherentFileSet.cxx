@@ -1,15 +1,15 @@
 /*=========================================================================
-                                                                                
+
   Program:   gdcm
   Module:    $RCSfile: exXCoherentFileSet.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 14:55:20 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
   http://www.creatis.insa-lyon.fr/Public/Gdcm/License.html for details.
-                                                                                
+
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
@@ -24,7 +24,6 @@
 #include "gdcmArgMgr.h"
 int main(int argc, char *argv[])
 {
-
    START_USAGE(usage)
    "\n exXCoherentFileSet :\n                                                 ",
    "Shows the various 'XCoherent' Filesets within a directory                 ",
@@ -55,7 +54,7 @@ int main(int argc, char *argv[])
    FINISH_USAGE
    
    // ----- Initialize Arguments Manager ------
-  
+
    GDCM_NAME_SPACE::ArgMgr *am = new GDCM_NAME_SPACE::ArgMgr(argc, argv);
   
    if (am->ArgMgrDefined("usage") || argc == 1) 
@@ -67,7 +66,7 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-      
+
    int loadMode = GDCM_NAME_SPACE::LD_ALL;
    if ( am->ArgMgrDefined("noshadowseq") )
       loadMode |= GDCM_NAME_SPACE::LD_NOSHADOWSEQ;
@@ -85,16 +84,16 @@ int main(int argc, char *argv[])
        std::cout <<std::endl
                  << "'dirin=' must be present;" 
                  <<  std::endl;
-       am->ArgMgrUsage(usage); // Display 'usage'  
+       am->ArgMgrUsage(usage); // Display 'usage'
        delete am;
        return 0;
    }
 
-   const char *dirNameout;   
+   const char *dirNameout;
    dirNameout  = am->ArgMgrGetString("dirout",".");
 
-   bool pos  =    ( 0 != am->ArgMgrDefined("pos") ); 
-   bool ori  =    ( 0 != am->ArgMgrDefined("ori") );   
+   bool pos  =    ( 0 != am->ArgMgrDefined("pos") );
+   bool ori  =    ( 0 != am->ArgMgrDefined("ori") );
    bool sort =    ( 0 != am->ArgMgrDefined("sort") );
    bool write =   ( 0 != am->ArgMgrDefined("write") );
    bool verbose = ( 0 != am->ArgMgrDefined("verbose") );
@@ -104,15 +103,15 @@ int main(int argc, char *argv[])
    {
       std::cout << " POS, ORI and TAG are mutually exclusive" << std::endl;
       delete am;
-      return 0;      
+      return 0;
    }
    
    if( (!tag && !pos && !ori))
    {
       std::cout << " One of POS, ORI and TAG is mandatory!" << std::endl;
       delete am;
-      return 0;      
-   }         
+      return 0;
+   }
    int nb;
    uint16_t *groupelem;
    if (tag)
@@ -124,16 +123,16 @@ int main(int argc, char *argv[])
          delete am;
          return 0;
       }
-   }      
-            
+   }
+
    /* if unused Param we give up */
    if ( am->ArgMgrPrintUnusedLabels() )
    {
       am->ArgMgrUsage(usage);
       delete am;
       return 0;
-   } 
- 
+   }
+
    delete am;  // ------ we don't need Arguments Manager any longer ------
    
    GDCM_NAME_SPACE::SerieHelper *s;
@@ -144,7 +143,7 @@ int main(int argc, char *argv[])
    //GDCM_NAME_SPACE::TagKey t(0x0020,0x0013);
    //s->AddRestriction(t, "340", GDCM_NAME_SPACE::GDCM_LESS); // Keep only files where
                                                               // restriction is true
-   
+
    s->SetDirectory(dirName, true); // true : recursive exploration
 
    // The Dicom file set is splitted into several 'Single SerieUID Files Sets'
@@ -212,7 +211,7 @@ int main(int argc, char *argv[])
    std::string lastFilename;
    std::string rep("_");
    int controlCount = 0;
-  
+
    while (l) // for each 'Single SerieUID FileSet'
    { 
       nbFiles = l->size() ;
@@ -221,7 +220,7 @@ int main(int argc, char *argv[])
       {
           serieUID = s->GetCurrentSerieUIDFileSetUID();
           GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
- 
+
           // --- for write
           if (write)
           {
@@ -229,25 +228,25 @@ int main(int argc, char *argv[])
              unsigned int lg = strlen(dirNameout)-1;
              if ( dirNameout[lg] != '/'  &&  dirNameout[lg] != '\\')
                 currentSerieWriteDir = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR;
-    
+
              currentSerieWriteDir = currentSerieWriteDir + serieUID;
              if (verbose)
                 std::cout << "[" << currentSerieWriteDir<< "]" << std::endl;
             // if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(currentSerieWriteDir) )
-             {     
+             {
                 systemCommand   = "mkdir " + currentSerieWriteDir;
                 system( systemCommand.c_str());
                 if (verbose)
                    std::cout <<  "1 " <<systemCommand << std::endl;
-             }
+            }
          } 
           // --- end for write
-    
+
          std::cout << "Split the 'Single SerieUID' FileSet :[" 
                    << serieUID
                    << "]  " << nbFiles << " long" << std::endl;
          std::cout << "-----------------------------------" << std::endl;
-  
+
          if (ori) 
             xcm = s->SplitOnOrientation(l);
          else if (pos)
@@ -266,18 +265,18 @@ int main(int argc, char *argv[])
             GDCM_NAME_SPACE::Util::ReplaceSpecChar(serieUID, rep);
              // --- for write
              if (write)
-             { 
+             {
                 xCoherentWriteDir = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ xCoherentName;
                // if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(xCoherentWriteDir) )
-                {      
+                {
                    systemCommand   = "mkdir " + xCoherentWriteDir;
                    system( systemCommand.c_str());
                    if (verbose)
-                      std::cout << systemCommand << std::endl;       
+                      std::cout << systemCommand << std::endl;
                 }
             } 
             // --- end for write
-    
+
             if (ori) 
                std::cout << "Orientation : ";
             else if (pos) 
@@ -286,10 +285,10 @@ int main(int argc, char *argv[])
                std::cout << "Tag (" << std::hex << groupelem[0]
                          << "|" << groupelem[1] << ") value : ";
             std::cout << "[" << (*i).first << "]" << std::endl;
-        
+
             if (verbose)
                std::cout << "xCoherentName [" << xCoherentName << "]" << std::endl;
-    
+
            // Within a 'just to see' program, 
            // OrderFileList() causes trouble, since some files
            // (eg:MIP views) don't have 'Position', now considered as mandatory
@@ -299,7 +298,7 @@ int main(int argc, char *argv[])
               s->OrderFileList((*i).second);  // sort the XCoherent Fileset
               std::cout << "ZSpacing for the file set " << s->GetZSpacing()
                         << std::endl;
-            } 
+            }
 
             for (GDCM_NAME_SPACE::FileList::iterator it =  ((*i).second)->begin();
                                           it != ((*i).second)->end();
@@ -308,7 +307,7 @@ int main(int argc, char *argv[])
                controlCount ++;
                fileName = (*it)->GetFileName();
                std::cout << "    " << fileName << std::endl;
-    
+
                // --- for write
                if (write)
                {  
@@ -319,9 +318,9 @@ int main(int argc, char *argv[])
                   if (verbose)
                      std::cout << "3 " << systemCommand << std::endl;
                 }
-               // --- end for write       
+               // --- end for write
             }
-            std::cout << std::endl;   
+            std::cout << std::endl;
          }
       }
       l = s->GetNextSingleSerieUIDFileSet();

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/03/04 08:57:40 $
-  Version:   $Revision: 1.92 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.93 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -347,12 +347,17 @@ if (!noex)
       std::cout << " SwapCode= " << f->GetSwapCode() << std::endl;
       std::cout << " ------" << std::endl;
 
+
       std::cout << "\n\n" << std::endl; 
       std::cout << "X spacing " << f->GetXSpacing() << std::endl;
       std::cout << "Y spacing " << f->GetYSpacing() << std::endl;
       std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
-    
+   
 //------------------------------
+
+
+
+
 
       // Let's get and print some usefull fields about 'Orientation'
       // ------------------------------------------------------------
@@ -407,9 +412,11 @@ if (!noex)
                    << strImagePositionPatientRET << "]" << std::endl;
   
      float iop[6];
-     /*bool riop = */f->GetImageOrientationPatient(iop);  
+     //bool riop = 
+        f->GetImageOrientationPatient(iop);  
      float ipp[3];
-     /*bool ripp = */f->GetImagePositionPatient(ipp);
+     //bool ripp = 
+        f->GetImagePositionPatient(ipp);
 
      std::cout << "Image Position (0x0020,0x0032|0x0030) : "
                << ipp[0] << " , " << ipp[1] << " , "<< ipp[2]

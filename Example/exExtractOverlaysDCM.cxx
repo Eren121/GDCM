@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractOverlaysDCM.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/30 09:15:58 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2009/05/28 15:44:34 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -236,7 +236,7 @@ str << fileName << ".ovly." << tmp.str() << ".dcm" << std::ends;
 
    } // end on loop on 60xx
 
-   if (f)
+   if (fh)
       fh->Delete();
    if (fileToBuild)
       fileToBuild->Delete();
