@@ -4,8 +4,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPresentationState.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/28 15:44:34 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2009/09/16 12:28:44 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -389,7 +389,7 @@ Relevant part of Dicom V3 Dict
 0070 0404 SQ 1 Referenced Spatial Registration Sequence
 0070 0405 CS 1 Blending Position
 ------------------------------------------------------- */
-
+return true;
 }
 
 
