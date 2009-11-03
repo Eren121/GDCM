@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/11/03 14:05:23 $
-  Version:   $Revision: 1.96 $
+  Date:      $Date: 2009/11/03 14:07:00 $
+  Version:   $Revision: 1.97 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.96 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.97 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -514,7 +514,7 @@ void vtkGdcmReader::LoadFileInformation()
       if (   (type !=  "8U") && (type !=  "8S")
           && (type != "16U") && (type != "16S")
           && (type != "32U") && (type != "32S")
-          && (type != "FD")  )  // Not so sure this one is kosher
+          && (type != "FD")  )                // Sure this one is NOT kosher
       {
          vtkErrorMacro(<< "Bad File Type for file " << filename->c_str() << "\n"
                        << "   File type found : " << type.c_str() 
