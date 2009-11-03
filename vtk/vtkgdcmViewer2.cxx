@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/04/18 14:42:51 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2009/11/03 14:05:23 $
+  Version:   $Revision: 1.17 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,6 +113,7 @@ public:
 #endif
 };
 
+// --------------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {

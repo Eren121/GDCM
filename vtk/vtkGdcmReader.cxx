@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/04/18 14:42:51 $
-  Version:   $Revision: 1.95 $
+  Date:      $Date: 2009/11/03 14:05:23 $
+  Version:   $Revision: 1.96 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.95 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.96 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -282,7 +282,7 @@ void vtkGdcmReader::ExecuteInformation()
          vtkDebugMacro(<< "32 bits signed image");
          this->SetDataScalarTypeToInt();
       }
-      else if ( ImageType == "FD" )
+      else if ( ImageType == "FD" )  // This is not genuine DICOM, but so usefull
       {
          vtkDebugMacro(<< "64 bits Double image");
          this->SetDataScalarTypeToDouble();
@@ -513,11 +513,12 @@ void vtkGdcmReader::LoadFileInformation()
       type = file->GetPixelType();
       if (   (type !=  "8U") && (type !=  "8S")
           && (type != "16U") && (type != "16S")
-          && (type != "32U") && (type != "32S") )
+          && (type != "32U") && (type != "32S")
+          && (type != "FD")  )  // Not so sure this one is kosher
       {
          vtkErrorMacro(<< "Bad File Type for file " << filename->c_str() << "\n"
                        << "   File type found : " << type.c_str() 
-                       << " (might be 8U, 8S, 16U, 16S, 32U, 32S) \n"
+                       << " (might be 8U, 8S, 16U, 16S, 32U, 32S, FD) \n"
                        << "   Removing this file from read files");
          file->Delete();
          file=NULL;
@@ -860,9 +861,9 @@ void vtkGdcmReader::LoadImageInMemory(
       //if (this->GetFlipY())
          src  = (unsigned char*)fileH->GetImageData();
       //else
+      // very strange, but it doesn't work (I have to memcpy the pixels ?!?)
       //   dest  = (unsigned char*)fileH->GetImageData();        
-   } 
-
+   }
 
 if (this->GetFlipY()) {
    unsigned char *dst = dest + planeSize - lineSize;
@@ -885,7 +886,7 @@ if (this->GetFlipY()) {
       dst += 2 * planeSize;
    }
 }
-else
+else // we don't flip (upside down) the image
 {
   memcpy((void*)dest, (void*)src,  numPlanes * numLines * lineSize);
 }

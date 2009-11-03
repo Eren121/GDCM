@@ -3,6 +3,13 @@
 # Rebuild gdcm whenever a file starting with vtk* is modified
 INCLUDE_REGULAR_EXPRESSION("^vtk.*$")
 
+
+     if(COMMAND cmake_policy)
+       cmake_policy(SET CMP0003 NEW)
+     endif(COMMAND cmake_policy)
+
+
+
 #-----------------------------------------------------------------------------
 # Include the VTK library
 INCLUDE(${VTK_USE_FILE})
@@ -70,6 +77,14 @@ SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
 
+SET(vtkJPEGViewer_SOURCES
+  vtkJPEGViewer.cxx
+)
+
+SET(vtkJPEGViewer2_SOURCES
+  vtkJPEGViewer2.cxx
+)
+
 # let's do some APPLE/WIN32 magic here
 #IF(WIN32)
 #  SET(GUI_EXECUTABLE WIN32)
@@ -89,16 +104,30 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer
   vtkgdcm
   vtkRendering
 )
+
+ADD_EXECUTABLE(vtkJPEGViewer ${GUI_EXECUTABLE} ${vtkJPEGViewer_SOURCES})
+TARGET_LINK_LIBRARIES( vtkJPEGViewer
+  vtkRendering
+)
+
+ADD_EXECUTABLE(vtkJPEGViewer2 ${GUI_EXECUTABLE} ${vtkJPEGViewer2_SOURCES})
+TARGET_LINK_LIBRARIES( vtkJPEGViewer2
+  vtkgdcm
+  vtkRendering
+)
+
 ADD_EXECUTABLE(vtkgdcmViewer2 ${GUI_EXECUTABLE} vtkgdcmViewer2.cxx)
 TARGET_LINK_LIBRARIES(vtkgdcmViewer2
   vtkgdcm
   vtkRendering
 )
+
 ADD_EXECUTABLE(vtkgdcmSerieViewer ${GUI_EXECUTABLE} vtkgdcmSerieViewer.cxx)
 TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer
   vtkgdcm
   vtkRendering
 )
+
 ADD_EXECUTABLE(vtkgdcmSerieViewer2 ${GUI_EXECUTABLE} vtkgdcmSerieViewer2.cxx)
 TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer2
   vtkgdcm
@@ -110,15 +139,18 @@ TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer2
 SET(vtkWriteDicom_SOURCES
   vtkWriteDicom.cxx
 )
+
 SET(vtkWriteDicomExtended_SOURCES
   vtkWriteDicomExtended.cxx  
 )
+
 ADD_EXECUTABLE(vtkWriteDicom ${vtkWriteDicom_SOURCES})
 TARGET_LINK_LIBRARIES(vtkWriteDicom
   vtkgdcm
   vtkIO
   vtkRendering
 )
+
 ADD_EXECUTABLE(vtkWriteDicomExtended ${vtkWriteDicomExtended_SOURCES})
 TARGET_LINK_LIBRARIES(vtkWriteDicomExtended
   vtkgdcm
@@ -135,7 +167,11 @@ ENDIF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
 IF(NOT GDCM_INSTALL_NO_LIBRARIES)
   INSTALL_TARGETS(${GDCM_INSTALL_LIB_DIR} vtkgdcm)
   INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer)
-  INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer2)
+  INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer)
+  
+ # INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkJPEGViewer)
+ # INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkJPEGViewer2)
+      
   INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmSerieViewer)
 ENDIF(NOT GDCM_INSTALL_NO_LIBRARIES)
 

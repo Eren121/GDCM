@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/09/18 07:54:30 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2009/11/03 14:05:23 $
+  Version:   $Revision: 1.32 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -96,6 +96,18 @@ int main(int argc, char *argv[])
    reader->SetLoadMode(GDCM_NAME_SPACE::LD_NOSHADOWSEQ);  
    reader->Update();
 
+
+
+std::cout << "[0][0]==========" <<
+reader->GetOutput()->GetScalarComponentAsFloat(0,0,0,0) <<
+"===================="
+<< std::endl;
+std::cout << "[127][127]==========" <<
+reader->GetOutput()->GetScalarComponentAsFloat(0,127,0,0) <<
+"===================="
+<< std::endl;
+
+
    //print debug info:
    reader->GetOutput()->Print( cout );
 
@@ -143,12 +155,22 @@ int main(int argc, char *argv[])
    iren->Initialize();
    iren->Start();
 
-   //if you wish you can export dicom to a vtk file  
+   //if you wish you can export dicom to a vtk file
+ 
    vtkStructuredPointsWriter *writer = vtkStructuredPointsWriter::New();
    writer->SetInput( reader->GetOutput());
    writer->SetFileName( "foo.vtk" );
    writer->SetFileTypeToBinary();
    //writer->Write();
+   
+std::cout << "==========" << std::endl;
+   
+std::cout << "==========" <<
+reader->GetOutput()->GetScalarComponentAsFloat(0,0,0,0) <<
+"===================="
+<< std::endl;
+     
+   
 
    reader->Delete();
    iren->Delete();
