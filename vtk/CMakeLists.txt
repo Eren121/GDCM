@@ -77,13 +77,13 @@ SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
 
-SET(vtkJPEGViewer_SOURCES
-  vtkJPEGViewer.cxx
-)
+#SET(vtkJPEGViewer_SOURCES
+#  vtkJPEGViewer.cxx
+#)
 
-SET(vtkJPEGViewer2_SOURCES
-  vtkJPEGViewer2.cxx
-)
+#SET(vtkJPEGViewer2_SOURCES
+#  vtkJPEGViewer2.cxx
+#)
 
 # let's do some APPLE/WIN32 magic here
 #IF(WIN32)
@@ -105,16 +105,16 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer
   vtkRendering
 )
 
-ADD_EXECUTABLE(vtkJPEGViewer ${GUI_EXECUTABLE} ${vtkJPEGViewer_SOURCES})
-TARGET_LINK_LIBRARIES( vtkJPEGViewer
-  vtkRendering
-)
+#ADD_EXECUTABLE(vtkJPEGViewer ${GUI_EXECUTABLE} ${vtkJPEGViewer_SOURCES})
+#TARGET_LINK_LIBRARIES( vtkJPEGViewer
+#  vtkRendering
+#)
 
-ADD_EXECUTABLE(vtkJPEGViewer2 ${GUI_EXECUTABLE} ${vtkJPEGViewer2_SOURCES})
-TARGET_LINK_LIBRARIES( vtkJPEGViewer2
-  vtkgdcm
-  vtkRendering
-)
+#ADD_EXECUTABLE(vtkJPEGViewer2 ${GUI_EXECUTABLE} ${vtkJPEGViewer2_SOURCES})
+#TARGET_LINK_LIBRARIES( vtkJPEGViewer2
+#  vtkgdcm
+#  vtkRendering
+#)
 
 ADD_EXECUTABLE(vtkgdcmViewer2 ${GUI_EXECUTABLE} vtkgdcmViewer2.cxx)
 TARGET_LINK_LIBRARIES(vtkgdcmViewer2
