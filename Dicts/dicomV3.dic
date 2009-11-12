@@ -1591,6 +1591,7 @@
 0070 0403 FL 1 Relative Opacity
 0070 0404 SQ 1 Referenced Spatial Registration Sequence
 0070 0405 CS 1 Blending Position
+
 0072 0002 SH 1 Hanging Protocol Name
 0072 0004 LO 1 Hanging Protocol Description
 0072 0006 CS 1 Hanging Protocol Level
