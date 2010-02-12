@@ -149,7 +149,7 @@
 1.2.840.10008.5.1.4.1.1.66        Raw Data Storage
 1.2.840.10008.5.1.4.1.1.66.1      Spacial Registration Storage
 1.2.840.10008.5.1.4.1.1.66.2      Spacial Fiducials Storage
-
+1.2.840.10008.5.1.4.1.1.66.4      Spatial Registration Storage
 1.2.840.10008.5.1.4.1.1.77.1      VL Image Storage (Retired)
 1.2.840.10008.5.1.4.1.1.77.2      VL MultiFrame Image Storage (Retired)
 1.2.840.10008.5.1.4.1.1.77.1.1    VL Endoscoping Image Storage
@@ -177,6 +177,7 @@
 1.2.840.10008.5.1.4.1.1.104.1     Encapsulated PDF Storage
 1.2.840.10008.5.1.4.1.1.128       Positron Emission Tomography Image Storage
 1.2.840.10008.5.1.4.1.1.129       Standalone PET Curve Storage
+
 1.2.840.10008.5.1.4.1.1.481.1     RT Image Storage
 1.2.840.10008.5.1.4.1.1.481.2     RT Dose Storage
 1.2.840.10008.5.1.4.1.1.481.3     RT Structure Set Storage
@@ -184,6 +185,8 @@
 1.2.840.10008.5.1.4.1.1.481.5     RT Plan Storage
 1.2.840.10008.5.1.4.1.1.481.6     RT Brachy Treatment Record Storage
 1.2.840.10008.5.1.4.1.1.481.7     RT Treatment Summary Record Storage
+1.2.840.10008.5.1.4.1.1.481.8     RT Ion Plan Storage
+1.2.840.10008.5.1.4.1.1.481.9     RT Ion Beams Treatment Record Storage
 
 1.2.840.10008.5.1.4.1.2.1.1       Patient Root Query/Retrieve Information Model - FIND
 1.2.840.10008.5.1.4.1.2.1.2       Patient Root Query/Retrieve Information Model - MOVE
