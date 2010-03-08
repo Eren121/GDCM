@@ -12,6 +12,10 @@ INCLUDE_REGULAR_EXPRESSION("^vtk.*$")
 
 #-----------------------------------------------------------------------------
 # Include the VTK library
+
+# EED 5/Mars/2010
+SET(VTK_BUILD_SETTINGS_FILE OFF)
+
 INCLUDE(${VTK_USE_FILE})
 
 # Need gdcm header files
