@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/05/14 07:48:52 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2010/04/09 15:38:18 $
+  Version:   $Revision: 1.70 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -13,7 +13,7 @@
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-                                                                                
+                                                                              
 =========================================================================*/
 
 #include "gdcmSerieHelper.h"
@@ -1092,23 +1092,30 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File *inFile )
          }
       }
       // Eliminate non-alphanum characters, including whitespace.
+
       unsigned int s_size = s.size();
-      for(unsigned int i=0; i<s_size; i++)
+      if(s_size == 0)
+      { // to avoid further troubles when wild anonymization was performed
+         s = "a";
+      }
+      else
       {
-         while(i<s_size
+         for(unsigned int i=0; i<s_size; i++)
+         {
+            while(i<s_size
                && !( s[i] == '.' || s[i] == '%' || s[i] == '_'
                  || (s[i] >= '+' && s[i] <= '-')       
                  || (s[i] >= 'a' && s[i] <= 'z')
                  || (s[i] >= '0' && s[i] <= '9')
                  || (s[i] >= 'A' && s[i] <= 'Z')))
-         {
-            s.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
+            {
+               s.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
+            }
          }
+         // deal with Dicom strings trailing '\0' 
+         if(s[s_size-1] == '_')
+            s.erase(s_size-1, 1);
       }
-      // deal with Dicom strings trailing '\0' 
-      if(s[s_size-1] == '_')
-         s.erase(s_size-1, 1);
-      
       id += s.c_str();
       id += "%%%"; // make the FileIdentifier Tokenizable
    }

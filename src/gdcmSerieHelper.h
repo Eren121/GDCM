@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2009/05/19 15:08:37 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2010/04/09 15:38:18 $
+  Version:   $Revision: 1.46 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -60,13 +60,14 @@ class File;
  *    into several XCoherent Filesets 
  *   XCoherent stands for 'Extra Coherent' (same orientation, or same position)
  */
+
 class GDCM_EXPORT SerieHelper  : public RefCounter
 {
    gdcmTypeMacro(SerieHelper);
    
 public:
    /// SingleSerieUIDFileSetmap replaces the former CoherentFileListmap
-   /// ( List were actually std::vectors, and where no coherent at all :
+   /// (List were actually std::vectors, and where no coherent at all :
    ///   They were only Single SeriesInstanceUID File sets)
    typedef std::map<std::string, FileList *> SingleSerieUIDFileSetmap;
 
