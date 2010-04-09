@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDicomDir.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/02/13 18:53:33 $
-  Version:   $Revision: 1.197 $
+  Date:      $Date: 2010/04/09 15:23:40 $
+  Version:   $Revision: 1.198 $
   
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -944,6 +944,8 @@ void DicomDir::SetElements(std::string const &path, VectDocument const &list)
    {
       // get the current file characteristics
       patCurName         = (*it)->GetEntryString(0x0010,0x0010);
+      if (patCurName == "") // to prevent further troubles when wild anonymization was performed
+         patCurName = "gdcm^Patient";
       patCurID           = (*it)->GetEntryString(0x0010,0x0011);
       studCurInstanceUID = (*it)->GetEntryString(0x0020,0x000d);
       studCurID          = (*it)->GetEntryString(0x0020,0x0010);
