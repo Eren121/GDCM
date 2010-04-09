@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/09/15 15:49:22 $
-  Version:   $Revision: 1.381 $
+  Date:      $Date: 2010/04/09 15:32:39 $
+  Version:   $Revision: 1.382 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2097,7 +2097,7 @@ bool Document::CheckSwap()
          s16 = *((uint16_t *)(deb));
  
          gdcmDebugMacro("not a DicomV3 nor a 'clean' ACR/NEMA;"
-                     << " (->despaired wild guesses !)");       
+                     << " (->despaired wild guesses !)");
          switch ( s16 )
          {
             case 0x0001 :
@@ -2110,7 +2110,9 @@ bool Document::CheckSwap()
             case 0x0008 :
             case 0x0028 :
                SwapCode = 1234;
-               Filetype = ACR;
+               // Brute hack to allow reading DICOM RT files
+               //Filetype = ACR;  // DICOM RT are *not* ACR-Nema files!
+               Filetype = ExplicitVR;
                return true;
             case 0x0100 :
             case 0x0200 :
