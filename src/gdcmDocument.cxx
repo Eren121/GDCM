@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/04/09 15:32:39 $
-  Version:   $Revision: 1.382 $
+  Date:      $Date: 2010/06/24 04:34:20 $
+  Version:   $Revision: 1.383 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -284,7 +284,7 @@ bool Document::DoTheLoadingDocumentJob(  )
    std::string RecCode;
    RecCode = GetEntryString(0x0008, 0x0010); // recognition code (RET)
    
-    
+
    if(RecCode.find("ACRNEMA_LIBIDO") == 0 || // any version
       RecCode.find("CANRME_AILIBOD") == 0)   // for brain-damaged softwares
                                              // with "little-endian strings"
@@ -443,7 +443,7 @@ std::string Document::GetTransferSyntax()
    // happen at different stages): try loading and proceed with check...
    
    // Well ...
-   // (parsing and loading happen at the very same stage!) 
+   // (parsing and loading happen at the very same stage!)
    //LoadDocEntrySafe(entry); //JPRx
    if (DataEntry *dataEntry = dynamic_cast<DataEntry *>(entry) )
    {
@@ -533,11 +533,11 @@ uint32_t Document::SwapLong(uint32_t a)
 // save CPU time
          a=( ( a<<24)               | ((a<<8)  & 0x00ff0000) | 
              ((a>>8)  & 0x0000ff00) |  (a>>24)                );
-         break;   
+         break;
       case 3412 :
 //       a=( ((a<<16) & 0xffff0000) | ((a>>16) & 0x0000ffff) );
          a=( (a<<16)                | (a>>16)  );
-         break;  
+         break;
       case 2143 :
          a=( ((a<< 8) & 0xff00ff00) | ((a>>8) & 0x00ff00ff)  );
       break;
@@ -546,7 +546,7 @@ uint32_t Document::SwapLong(uint32_t a)
          a = 0;
    }
    return a;
-} 
+}
 
 /**
  * \brief   Swaps back the bytes of 8-byte long 'double' accordingly to
@@ -590,12 +590,12 @@ double Document::SwapDouble(double a)
  * \brief  Tries to open the file Document::Filename and
  *         checks the preamble when existing,
  *         or if the file starts with an ACR-NEMA look-like element.
- * @return The FILE pointer on success, 0 on failure. 
+ * @return The FILE pointer on success, 0 on failure.
  */
 std::ifstream *Document::OpenFile()
 {
    HasDCMPreamble = false;
-   if (Filename.length() == 0) 
+   if (Filename.length() == 0)
    {
       return 0;
    }
@@ -610,13 +610,13 @@ std::ifstream *Document::OpenFile()
    if ( ! *Fp )
    {
    // Don't user gdcmErrorMacro :
-   // a spurious message will appear when you use, for instance 
+   // a spurious message will appear when you use, for instance
    // gdcm::FileHelper *fh = new gdcm::FileHelper( outputFileName );
    // to create outputFileName.
-   
-   // FIXME : if the upper comment is still usefull 
+
+   // FIXME : if the upper comment is still usefull
    //         --> the constructor is not so good ...
-   
+
       gdcmWarningMacro( "Cannot open file: " << Filename.c_str());
       delete Fp;
       Fp = 0;
@@ -624,7 +624,7 @@ std::ifstream *Document::OpenFile()
       //exit(1); // No function is allowed to leave the application instead
                  // of warning the caller
    }
- 
+
    uint16_t zero = 0;
    Fp->read((char*)&zero, (size_t)2);
    if ( Fp->eof() )
@@ -632,7 +632,7 @@ std::ifstream *Document::OpenFile()
       CloseFile();
       return 0;
    }
- 
+
    //-- DICOM --
    Fp->seekg(126L, std::ios::cur);  // Once per Document
    char dicm[4]; // = {' ',' ',' ',' '};
@@ -642,7 +642,7 @@ std::ifstream *Document::OpenFile()
       CloseFile();
       return 0;
    }
-   
+
    if ( memcmp(dicm, "DICM", 4) == 0 )
    {
       HasDCMPreamble = true;
@@ -652,13 +652,13 @@ std::ifstream *Document::OpenFile()
    //-- Broken ACR or DICOM (?) with no Preamble; may start with a Shadow Group --
    // FIXME : We cannot be sure the preable is only zeroes..
    //         (see ACUSON-24-YBR_FULL-RLE.dcm )
-   if ( 
+   if (
        zero == 0x0001 || zero == 0x0100 || zero == 0x0002 || zero == 0x0200 ||
        zero == 0x0003 || zero == 0x0300 || zero == 0x0004 || zero == 0x0400 ||
        zero == 0x0005 || zero == 0x0500 || zero == 0x0006 || zero == 0x0600 ||
        zero == 0x0007 || zero == 0x0700 || zero == 0x0008 || zero == 0x0800 ||
        zero == 0x0028 || 0x2800    // worse : some ACR-NEMA like files 
-                                   // start 00028 group ?!?      
+                                   // start 00028 group ?!?
        )
    {
       std::string msg = Util::Format(
@@ -667,19 +667,19 @@ std::ifstream *Document::OpenFile()
       gdcmWarningMacro( msg.c_str() );
       return Fp;
    }
-   
+
    // -- Neither ACR/No Preamble Dicom nor DICOMV3 file
    CloseFile();
    // Don't user Warning nor Error, not to pollute the output
    // while directory recursive parsing ...
    gdcmDebugMacro( "Neither ACR/No Preamble Dicom nor DICOMV3 file: "
-                      << Filename.c_str()); 
+                      << Filename.c_str());
    return 0;
 }
 
 /**
- * \brief closes the file  
- * @return  TRUE if the close was successfull 
+ * \brief closes the file
+ * @return  TRUE if the close was successfull
  */
 bool Document::CloseFile()
 {
@@ -693,9 +693,9 @@ bool Document::CloseFile()
 }
 
 /**
- * \brief Writes in a file all the Entries (Dicom Elements) 
+ * \brief Writes in a file all the Entries (Dicom Elements)
  * @param fp file pointer on an already open file (actually: Output File Stream)
- * @param filetype Type of the File to be written 
+ * @param filetype Type of the File to be written
  *          (ACR-NEMA, ExplicitVR, ImplicitVR)
  */
 void Document::WriteContent(std::ofstream *fp, FileType filetype, bool, bool)
@@ -1009,7 +1009,7 @@ uint32_t Document::ReadInt32()
 uint32_t Document::GetInt32()
 {
    uint32_t g = *((uint32_t*)PtrBegBuffer);
-   g = SwapLong(g); 
+   g = SwapLong(g);
    PtrBegBuffer+=4;
    return g;
 }
@@ -1017,7 +1017,7 @@ uint32_t Document::GetInt32()
 /**
  * \brief   Re-computes the length of the Dicom group 0002.
  */
-int Document::ComputeGroup0002Length( ) 
+int Document::ComputeGroup0002Length( )
 {
    uint16_t gr;
    VRKey vr;
@@ -1116,7 +1116,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    bool delim_mode_intern = delim_mode;
    bool first = true;
    gdcmDebugMacro( "Enter in ParseDES, delim-mode " <<  delim_mode
-                     << " at offset " << std::hex << "0x(" << offset << ")" );    
+                     << " at offset " << std::hex << "0x(" << offset << ")" );
    while (true)
    {
    
@@ -1124,12 +1124,12 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    ///              Probabely a bug in gdcm code somewhere (some memory erased ?)
 
 // Uncomment to track the bug
-  
-   if( Debug::GetDebugFlag() )   
+
+   if( Debug::GetDebugFlag() )
       std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) // in Debug mode
                 << std::hex << " 0x(" <<(long)(Fp->tellg()) <<  ")" << std::endl;
-  
- 
+
+
    // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry   
       if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
          if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry, when no delim mode
@@ -1146,7 +1146,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
       
       // Uncoment this cerr line to be able to 'follow' the DocEntries
       // when something *very* strange happens
-      if( Debug::GetDebugFlag() ) 
+      if( Debug::GetDebugFlag() )
          std::cerr<<newDocEntry->GetKey()<<" "<<newDocEntry->GetVR()<<std::endl;
 
        // an Item Starter found elsewhere but in the first position
@@ -1159,17 +1159,17 @@ void Document::ParseDES(DocEntrySet *set, long offset,
          newDocEntry = Backtrack(newDocEntry, set);
       }
       else
-      { 
-         PreviousDocEntry = newDocEntry; 
+      {
+         PreviousDocEntry = newDocEntry;
       }
- 
+
       used = true;
       newDataEntry = dynamic_cast<DataEntry*>(newDocEntry);
 
-      if ( newDataEntry )  
+      if ( newDataEntry )
       {
          //////////////////////////// DataEntry
- 
+
          //vr = newDocEntry->GetVR(); // useless ?
 
          if ( !set->AddEntry( newDataEntry ) )
@@ -1206,7 +1206,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
             }
          }
 
-         bool delimitor = newDataEntry->IsItemDelimitor(); 
+         bool delimitor = newDataEntry->IsItemDelimitor();
          bool outOfBounds = false;
          if (!delim_mode )
             if ( ((long)(Fp->tellg())-offset) >= l_max ) //Once per DataEntry when no delim mode
@@ -1314,7 +1314,7 @@ void Document::ParseDES(DocEntrySet *set, long offset,
  
          if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(
             if ( ((long)(Fp->tellg())-offset) >= l_max) // Once per SeqEntry when no delim mode
-     
+
          {
             if ( !used )
                newDocEntry->Delete();
@@ -1353,7 +1353,7 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
       DocEntry *newDocEntry = ReadNextDocEntry();
 
       if ( !newDocEntry )
-      { 
+      {
          // The most frequent is when a SQ terminator is missing (?!?)
          gdcmWarningMacro("in ParseSQ : should never get here!");
          UnexpectedEOF = true;
@@ -1388,7 +1388,7 @@ bool Document::ParseSQ( SeqEntry *seqEntry,
       {
          dlm_mod = false;
       }
-            
+
       // avoid infinite loop when Bad assumption was made on illegal 'unknown length' UN //JPRx
     
       if (offsetStartCurrentSQItem <= OffsetOfPreviousParseDES)
@@ -1515,7 +1515,7 @@ void Document::LoadDocEntry(DocEntry *entry, bool forceLoad)
          return;
       }
    }
-   
+
    /// \todo: a method that *doesn't* load anything (maybe with MaxSizeLoadEntry=0 ?)
    ///       + a ForceLoad call on the +/- 20 'usefull' fields  
    ///       Allow user to tell the fields he wants to ForceLoad 
@@ -1537,7 +1537,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
    uint16_t length16;       
    if ( Filetype == ExplicitVR && !entry->IsImplicitVR() ) 
    {
-   
+
    // WARNING :
    //
    // For some images, length of UN elements is coded on 2 bytes (instead of 4)
@@ -1546,7 +1546,7 @@ void Document::FindDocEntryLength( DocEntry *entry )
    //| vr == "UN"
    // in the following line.
    // (the 'straight' images will no longer be readable ...)
-   
+
       if ( vr == "OB" || vr == "OW" || vr == "OL" || vr == "SQ" || vr == "UT" 
                                                          || vr == "UN"  || changeFromUN == true)
       {
@@ -1703,11 +1703,11 @@ VRKey Document::FindDocEntryVR()
    // Delimiters (0xfffe), are not explicit VR ... 
    if ( CurrentGroup == 0xfffe )
       return GDCM_VRUNKNOWN;
-         
-   //long positionOnEntry;     
-   //if( Debug::GetWarningFlag() ) 
+
+   //long positionOnEntry;
+   //if( Debug::GetWarningFlag() )
    //  positionOnEntry = Fp->tellg(); // Only in Warning Mode
-   
+
    // Warning: we believe this is explicit VR (Value Representation) because
    // we used a heuristic that found "UL" in the first tag and/or
    // 'Transfer Syntax' told us it is.
@@ -1723,17 +1723,17 @@ VRKey Document::FindDocEntryVR()
    //Fp->read(&(vr[0]),(size_t)2);
    vr[0] = *PtrBegBuffer++;
    vr[1] = *PtrBegBuffer++;
-   
+
    //if ( !CheckDocEntryVR(vr) ) // avoid useless function call
    if ( !Global::GetVR()->IsValidVR(vr) )
-   {  
+   {
 
       gdcmWarningMacro( "Unknown VR " << vr.GetHexaRepresentation() << std::hex
                         << " at offset : 0x(" << CurrentOffsetPosition-4
                         << ") for group " << std::hex << CurrentGroup );
-                        
+
       //Fp->seekg(positionOnEntry, std::ios::beg); //JPRx
-      //Fp->seekg((long)-2, std::ios::cur);// only for unrecognized VR (?!?) 
+      //Fp->seekg((long)-2, std::ios::cur);// only for unrecognized VR (?!?)
                                          //see :MR_Philips_Intera_PrivateSequenceExplicitVR.dcm
       PtrBegBuffer-=2;
       return GDCM_VRUNKNOWN;
@@ -1799,7 +1799,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
       entry->SetLength(0);
       return;  // return ASAP; don't waist time on useless tests
    }
-      
+
    uint16_t gr   = entry->GetGroup();
    uint16_t elem = entry->GetElement(); 
      
@@ -1832,7 +1832,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
    // 'Leonardo' source. Hence, one might consider commenting out the
    // following fix on efficiency reasons.
    else if ( gr == 0x0009 && ( elem == 0x1113 || elem == 0x1114 ) )
-   { 
+   {
    // Ideally we should check we are in Explicit and double check
    // that VR=UL... this is done properly in gdcm2
       if( foundLength == 6 )
@@ -1840,7 +1840,7 @@ void Document::FixDocEntryFoundLength(DocEntry *entry,
          gdcmWarningMacro( "Replacing Length from 6 into 4" );
          foundLength = 4;
          entry->SetReadLength(4); // a bug is to be fixed !
-      } 
+      }
       else if ( foundLength%4 )
       {
         gdcmErrorMacro( "This looks like to a buggy Siemens DICOM file."
@@ -1906,7 +1906,7 @@ bool Document::IsDocEntryAnInteger(DocEntry *entry)
          // message and proceed on parsing (while crossing fingers).
          long filePosition = Fp->tellg(); // Only when elem 0x0000 length is not 4 (?!?)
          (void)filePosition;
-         gdcmWarningMacro( "Erroneous Group Length element length  on : (" 
+         gdcmWarningMacro( "Erroneous Group Length element length  on : ("
            << std::hex << group << " , " << elem
            << ") -before- position x(" << filePosition << ")"
            << "lgt : " << length );
@@ -2095,7 +2095,7 @@ bool Document::CheckSwap()
          //  Find a trick to tell it the caller...
       
          s16 = *((uint16_t *)(deb));
- 
+
          gdcmDebugMacro("not a DicomV3 nor a 'clean' ACR/NEMA;"
                      << " (->despaired wild guesses !)");
          switch ( s16 )
@@ -2127,7 +2127,7 @@ bool Document::CheckSwap()
                Filetype = ACR;
                return true;
             default :
-    
+
                s16 = *((uint16_t *)(deb));
                if (s16 != 0x0000)
                    return false;
@@ -2144,7 +2144,7 @@ bool Document::CheckSwap()
                      break;
                   case 0x0400 :
                      SwapCode = 3412;
-                     break;      
+                     break;
                   default:
                      gdcmWarningMacro("ACR/NEMA unfound swap info (Hopeless !)");
                      Filetype = Unknown;
@@ -2168,7 +2168,7 @@ bool Document::CheckSwap()
                  }
               }
               Filetype = ImplicitVR;
-              return true;       
+              return true;
          }
    }
 }
@@ -2238,11 +2238,11 @@ DocEntry *Document::ReadNextDocEntry()
       // header parsing has to be considered as finished.
       return 0;
    }
-   
+
    changeFromUN = false;
    CurrentGroup = GetInt16();
    CurrentElem  = GetInt16();
-      
+
    // In 'true DICOM' files Group 0002 is always little endian
    if ( HasDCMPreamble )
    {
@@ -2253,8 +2253,24 @@ DocEntry *Document::ReadNextDocEntry()
          HandleBrokenEndian(CurrentGroup, CurrentElem);
     }
 
-   VRKey vr = FindDocEntryVR();
-   VRKey realVR = vr;
+   //VRKey vr = FindDocEntryVR();
+   //VRKey realVR = vr;
+   
+   std::string vr, realVR;
+   if (group == 0xfffe && (elem == 0xe000 || elem == 0xe00d || elem == 0xe0dd))
+   {
+    // DICOM PS 3.6-2009, page 117 states:
+    // The VR for Data Elements, Item (FFFE,E000), Item Delimitation
+    // Item (FFFE,E00D), and Sequence Delimitation Item (FFFE,E0DD)
+    // do not exist. See PS 3.5 for explanation.
+       vr = GDCM_UNKNOWN;
+       realVR = GDCM_UNKNOWN;   
+   }
+   else
+   {
+      vr = FindDocEntryVR();
+      realVR = vr;
+   }
 
    if ( vr == GDCM_VRUNKNOWN )
    {
@@ -2272,7 +2288,7 @@ DocEntry *Document::ReadNextDocEntry()
       // -> Better we fix the problem at Write time
      
       else if (CurrentGroup%2 == 1 )
-      { 
+      {
          if (CurrentElem >= 0x0010 && CurrentElem <=0x00ff )
          {
             // DICOM PS 3-5 7.8.1 a) states that :
@@ -2312,13 +2328,13 @@ DocEntry *Document::ReadNextDocEntry()
    }
 
    // if UN found, let's check the dictionary, and trust it!
-   // (maybe a private dictionary exists?)    
+   // (maybe a private dictionary exists?)
    else if (vr == "UN")
    {
       DictEntry *dictEntry = GetDictEntry(CurrentGroup,CurrentElem);
       if ( dictEntry )
       {
-         realVR = dictEntry->GetVR();                   
+         realVR = dictEntry->GetVR();
          dictEntry->Unregister(); // GetDictEntry registered it
 
          // for VR = "UN", length is always stored on 4 bytes.
@@ -2351,10 +2367,10 @@ DocEntry *Document::ReadNextDocEntry()
       {
          // We thought this was explicit VR, but we end up with an
          // implicit VR tag. Let's backtrack.
- 
-         //if ( newEntry->GetGroup() != 0xfffe ) 
+
+         //if ( newEntry->GetGroup() != 0xfffe )
          if (CurrentGroup != 0xfffe)
-         { 
+         {
             int offset = Fp->tellg();//Only when heuristic for Explicit/Implicit was wrong
 
             gdcmWarningMacro("Entry (" << newEntry->GetKey() << ") at x("
@@ -2465,7 +2481,7 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
 
       if ( s == TS::ImplicitVRLittleEndian 
         ||
-          s == TS::ImplicitVRBigEndianPrivateGE  
+          s == TS::ImplicitVRBigEndianPrivateGE
          )
       {
          Filetype = ImplicitVR;
@@ -2478,10 +2494,10 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
       // to trust manufacturers.
       // (we often find 'Implicit VR' tag, 
       // even when Transfer Syntax tells us it's Explicit ...
-      
+
        // NEVER trust the meta elements!
        // (see what ezDICOM does ...)
-             
+
       /*
       if ( s ==  TS::ExplicitVRBigEndian )
       {
@@ -2502,34 +2518,34 @@ void Document::HandleOutOfGroup0002(uint16_t &group, uint16_t &elem)
        elem  = SwapShort(elem); 
        // not what we where told (by meta elements) !
        gdcmDebugMacro("Transfer Syntax Name = ["       
-                       << GetTransferSyntaxName() << "]" );         
+                       << GetTransferSyntaxName() << "]" );
     }
-      
+
       /// \todo  find a trick to warn user and stop processing
-            
+
       if ( s == TS::DeflatedExplicitVRLittleEndian)
       {
            gdcmWarningMacro("Transfer Syntax [" 
                         << GetTransferSyntaxName() << "] :"
                         << " not yet dealt with ");
-           return;       
+           return;
       }
-      
+
       // The following shouldn't occur very often
       // Let's check at the very end.
 
       if ( ts == GDCM_UNKNOWN )
       {
          gdcmDebugMacro("True DICOM File, with NO Transfer Syntax (?!) " );
-         return;      
+         return;
       }
-      
+
       if ( !Global::GetTS()->IsTransferSyntax(ts) )
       {
          gdcmWarningMacro("True DICOM File, with illegal Transfer Syntax: [" 
                           << ts << "]");
          return;
-      }      
+      }
 }
 
 //-----------------------------------------------------------------------------
