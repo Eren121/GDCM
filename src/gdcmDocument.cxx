@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/06/24 04:34:20 $
-  Version:   $Revision: 1.383 $
+  Date:      $Date: 2010/07/01 11:13:09 $
+  Version:   $Revision: 1.384 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2253,9 +2253,9 @@ DocEntry *Document::ReadNextDocEntry()
          HandleBrokenEndian(CurrentGroup, CurrentElem);
     }
 
-   //VRKey vr = FindDocEntryVR();
-   //VRKey realVR = vr;
-   
+   VRKey vr = FindDocEntryVR();
+   VRKey realVR = vr;
+ /*  
    std::string vr, realVR;
    if (group == 0xfffe && (elem == 0xe000 || elem == 0xe00d || elem == 0xe0dd))
    {
@@ -2282,7 +2282,7 @@ DocEntry *Document::ReadNextDocEntry()
       {
          realVR = "UL";
       }
-
+*/
       // Was commented out in order not to generate 'Shadow Groups' where some 
       // Data Elements are Explicit VR and some other ones Implicit VR
       // -> Better we fix the problem at Write time
