@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/07/01 11:13:09 $
-  Version:   $Revision: 1.384 $
+  Date:      $Date: 2010/07/09 09:20:21 $
+  Version:   $Revision: 1.385 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -2255,22 +2255,6 @@ DocEntry *Document::ReadNextDocEntry()
 
    VRKey vr = FindDocEntryVR();
    VRKey realVR = vr;
- /*  
-   std::string vr, realVR;
-   if (group == 0xfffe && (elem == 0xe000 || elem == 0xe00d || elem == 0xe0dd))
-   {
-    // DICOM PS 3.6-2009, page 117 states:
-    // The VR for Data Elements, Item (FFFE,E000), Item Delimitation
-    // Item (FFFE,E00D), and Sequence Delimitation Item (FFFE,E0DD)
-    // do not exist. See PS 3.5 for explanation.
-       vr = GDCM_UNKNOWN;
-       realVR = GDCM_UNKNOWN;   
-   }
-   else
-   {
-      vr = FindDocEntryVR();
-      realVR = vr;
-   }
 
    if ( vr == GDCM_VRUNKNOWN )
    {
@@ -2282,7 +2266,7 @@ DocEntry *Document::ReadNextDocEntry()
       {
          realVR = "UL";
       }
-*/
+
       // Was commented out in order not to generate 'Shadow Groups' where some 
       // Data Elements are Explicit VR and some other ones Implicit VR
       // -> Better we fix the problem at Write time

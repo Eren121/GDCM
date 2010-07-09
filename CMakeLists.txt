@@ -3,6 +3,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
 # okay in fact you need at least cmake 2.0.4 to get swig working properly
 # and you cannot use cmake 2.0.6 out of the box due to a bug (patched in debian package)
 
+
+     if(COMMAND cmake_policy)
+       cmake_policy(SET CMP0003 NEW)
+     endif(COMMAND cmake_policy)
+
+
+
 #-----------------------------------------------------------------------------
 # GDCM version number, usefull for packaging and doxygen doc:
 SET(GDCM_MAJOR_VERSION 1)

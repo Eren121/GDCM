@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/02/05 09:50:09 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2010/07/09 09:20:20 $
+  Version:   $Revision: 1.56 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,7 @@ DataEntry::DataEntry(DocEntry *e)
 {
    Flag = FLAG_NONE;
    BinArea = 0;
-   
+
    SelfArea = true;
 
    Copy(e);
@@ -85,7 +85,6 @@ DataEntry::DataEntry(DocEntry *e)
 DataEntry::~DataEntry ()
 {
    DeleteBinArea();
-   
 }
 
 //-----------------------------------------------------------------------------
@@ -137,7 +136,7 @@ void DataEntry::CopyBinArea( uint8_t *area, uint32_t length )
 bool DataEntry::IsNumerical()
 {
    const VRKey &vr = GetVR();
-   
+
    return 
           vr == "DS" ||
           vr == "FL" ||
@@ -169,9 +168,9 @@ bool DataEntry::IsNumerical()
     {
        /// \todo rewrite the whole method, in order *not to use* std::string !
        std::vector<std::string> tokens;
-           
+    
        Util::Tokenize ( GetString().c_str(), tokens, "\\" );
-        
+
        int nbValues= tokens.size();
        if (nbValues == 0)
           return false;
@@ -182,14 +181,14 @@ bool DataEntry::IsNumerical()
        else
           for (loop=0; loop<nbValues; loop++) 
              valueVector.push_back(atoi(tokens[loop].c_str()));
-               
+      
        return true;     
     }    
-    
+
     uint32_t nbValues = GetValueCount();
     if (nbValues == 0)
        return false;
-       
+  
     if( vr == "US") {
        for (loop=0; loop<nbValues; loop++)
              valueVector.push_back(((uint16_t *)BinArea)[loop]);  
