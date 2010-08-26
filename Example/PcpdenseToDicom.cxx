@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2008/09/19 09:33:16 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2010/08/26 12:46:12 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,7 +154,9 @@ int main(int argc, char *argv[])
    // === Ecc ===
    
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
- 
+   
+   serieDescr = "Ecc";
+   
    if (!multiframe) {
              
      for (int i=0; i<numberOfSlices; i++)
@@ -217,7 +219,9 @@ int main(int argc, char *argv[])
 // === perf ===
 
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-
+   
+   serieDescr = "perf";
+   
    if (!multiframe) {    
      for (int i=0; i<numberOfSlices; i++)
      {      
@@ -278,6 +282,8 @@ int main(int argc, char *argv[])
 
 
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
+   
+   serieDescr = "WashoutTc";   
    
    if (multiframe) {    
      for (int i=0; i<numberOfSlices; i++)
@@ -368,7 +374,7 @@ XY Dimensions           47          50
      for( i=0;i<NY;i++)
         for(j=0;j<NX;j++) {
            from >> pixelValue;
-           image[i*NX+j] = (unsigned short int)(pixelValue * 1000.);
+           image[i*NX+j] = (unsigned short int)(pixelValue * 1000.); // Why do we multiply by 1000? // JPR
         }
 }
 
@@ -404,7 +410,7 @@ XY Dimensions           47          50
      for( i=0;i<NY;i++) {
            for(j=0;j<NX;j++) {
               from >> pixelValue;
-              pixelValue*=1000.;
+              pixelValue*=1000.;  // Why do we multiply by 1000? // JPR
               image[i*4*NX + j*2] = image[i*4*NX + j*2+1] =  image[(i*4+2)*NX + j*2] =  image[(i*4+2)*NX + j*2+1] = (unsigned short int)(pixelValue);  
    }
         }
