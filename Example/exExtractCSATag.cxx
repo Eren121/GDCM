@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exExtractCSATag.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/19 10:18:25 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2010/08/30 15:23:23 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,8 +26,8 @@
 
 #include <iomanip>
 
-namespace gdcm
-{
+//namespace gdcm
+//{
 
    static const char *lookupTable1[] = {
       "UsedPatientWeight",
@@ -293,7 +293,7 @@ uint32_t readCSAHeader(std::istream &is)
   return n;
 }
 
-DataEntry *readCSAElement(std::istream &is)
+GDCM_NAME_SPACE::DataEntry *readCSAElement(std::istream &is)
 {
       char name[64+1];
       name[64] = 0; // security
@@ -309,7 +309,7 @@ DataEntry *readCSAElement(std::istream &is)
     assert( vr[2] == vr[3] && vr[2] == 0 );
       std::cout << "vr=" << vr << std::endl;
 
-      DataEntry *de = DataEntry::New(0x0029, element, vr);
+      GDCM_NAME_SPACE::DataEntry *de = GDCM_NAME_SPACE::DataEntry::New(0x0029, element, vr);
 
       uint32_t syngodt;
       is.read((char*)&syngodt, sizeof(syngodt));
@@ -358,18 +358,18 @@ DataEntry *readCSAElement(std::istream &is)
   return de;
 }
 
-int convertCSA(std::istream &is, File *f)
+int convertCSA(std::istream &is, GDCM_NAME_SPACE::File *f)
 {
    f->RemoveEntry( f->GetDataEntry(0X0029,0x1010) );
 
-    SeqEntry *sq = SeqEntry::New(0x0029,0x1010);
-    SQItem *sqi = SQItem::New(1);
-//    DataEntry *e_0008_1150 = DataEntry::New(0x0008, 0x1150, "UI");
+    GDCM_NAME_SPACE::SeqEntry *sq = GDCM_NAME_SPACE::SeqEntry::New(0x0029,0x1010);
+    GDCM_NAME_SPACE::SQItem *sqi = GDCM_NAME_SPACE::SQItem::New(1);
+//    GDCM_NAME_SPACE::DataEntry *e_0008_1150 = DataEntry::New(0x0008, 0x1150, "UI");
 //    e_0008_1150->SetString( "coucou" );
 //    sqi->AddEntry(e_0008_1150);
 //    e_0008_1150->Delete();
 //
-//    DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI");
+//    GDCM_NAME_SPACE::DataEntry *e_0008_1155 = DataEntry::New(0x0008, 0x1155, "UI");
 //    e_0008_1155->SetString( "mathieu" );
 //    sqi->AddEntry(e_0008_1155);
 //    e_0008_1155->Delete();
@@ -380,7 +380,7 @@ int convertCSA(std::istream &is, File *f)
 
    for(uint32_t i = 0; i < n; ++i)
       {
-    DataEntry *de = readCSAElement(is);
+    GDCM_NAME_SPACE::DataEntry *de = readCSAElement(is);
     sqi->AddEntry(de);
     de->Delete();
       }
@@ -398,7 +398,7 @@ int convertCSA(std::istream &is, File *f)
 
    return 0;
 }
-} // end namespace gdcm
+//} // end namespace gdcm
 
 int main(int argc, char *argv[])
 {  
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
    std::istringstream is;
    is.str( std::string( (char*)dicom_tag->GetBinArea(), dicom_tag->GetLength()) );
 
-   GDCM_NAME_SPACE::convertCSA(is, f);
+   convertCSA(is, f);
 
    f->Delete();
 
