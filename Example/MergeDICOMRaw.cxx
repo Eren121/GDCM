@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MergeDICOMRaw.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/12/03 17:16:25 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2010/09/01 14:41:48 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -125,9 +125,6 @@ int main(int argc, char *argv[])
    f->InsertEntryString(str.str(),0x0028,0x0002,"US"); // Samples per Pixel
 
 
-
-
-
    GDCM_NAME_SPACE::FileHelper *fh = GDCM_NAME_SPACE::FileHelper::New(f);
    // Convert Media Storage SOP Class if needed
    std::string mssop = f->GetEntryString(0x0002,0x0002);
@@ -157,7 +154,6 @@ int main(int argc, char *argv[])
                    << "Error when writting the file " << fileOut << "\n"
                 << "No file written\n";
    }
-
 
    fh->Delete();
    f->Delete();

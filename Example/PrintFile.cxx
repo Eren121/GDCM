@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PrintFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/28 15:44:34 $
-  Version:   $Revision: 1.93 $
+  Date:      $Date: 2010/09/01 14:41:48 $
+  Version:   $Revision: 1.94 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -244,13 +244,14 @@ int main(int argc, char *argv[])
       GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
       f->SetLoadMode(loadMode);
       f->SetFileName( fileName );
-   f->SetMaxSizeLoadEntry(0xffff);
+      f->SetMaxSizeLoadEntry(0xffff);
 
       for (int ri=0; ri<forceLoadNb; ri++)
       {
          f->AddForceLoadElement((uint32_t)elemsToForceLoad[2*ri], 
                                 (uint32_t)elemsToForceLoad[2*ri+1] );
       }
+
 // TODO : find why such a polution
 // To avoid polluting the output with messages
 // 'Last system error was : No such file or directory'
@@ -354,10 +355,6 @@ if (!noex)
       std::cout << "Z spacing " << f->GetZSpacing() << std::endl;
    
 //------------------------------
-
-
-
-
 
       // Let's get and print some usefull fields about 'Orientation'
       // ------------------------------------------------------------
@@ -748,7 +745,7 @@ if (!noex)
          {
             if (load)  // just to see warning messages at load time !
             {
-               uint8_t *pixels = fh->GetImageData(); (void)pixels;
+               uint8_t *pixels = fh->GetImageData();     (void)pixels;
                uint32_t lgth   = fh->GetImageDataSize(); (void)lgth;
             }         
 

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/28 15:44:34 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2010/09/01 14:41:48 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    "\n exSerieHelper :\n                                                      ",
-   "Example on how to use the methodes of gdcm::SerieHelper                   ",
+   "Example on how to use the methods of gdcm::SerieHelper                    ",
    "usage: exSerieHelper {dirin=inputDirectoryName}                           ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
    "                                                                          ",
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
    if (am->ArgMgrDefined("debug"))
       GDCM_NAME_SPACE::Debug::DebugOn();
-      
+
    if (am->ArgMgrDefined("warning"))
       GDCM_NAME_SPACE::Debug::WarningOn();      
 
@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
        return 0;
    }
 
-  
    std::cout << "Dir Name :[" << dirName << "]" << std::endl;
    //   
    // Sometimes using only SerieHelper is not enought !
@@ -129,7 +128,7 @@ int main(int argc, char *argv[])
    while (l)
    { 
       nbFiles = l->size() ;
-      if ( nbFiles > 5 ) // Why not ? Just an example, for testing
+      if ( nbFiles > 2 ) // Why not ? Just an example, for testing
       {
          std::cout << "List to sort : " << nbFiles << " long" << std::endl;  
          //---------------------------------------------------------

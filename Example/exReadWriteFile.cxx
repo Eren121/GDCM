@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exReadWriteFile.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/05/23 14:18:05 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2010/09/01 14:41:48 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,8 +26,6 @@
  
 int main(int argc, char *argv[])
 {
-
-
 std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
 std::cout << " "                                                    <<std::endl; 
 std::cout << " This source program is NOT intendend to be run as is"<<std::endl;
@@ -36,7 +34,7 @@ std::cout << " It just shows a set of possible uses."               <<std::endl;
 std::cout << "User MUST read it, "                                  <<std::endl;
 std::cout << "          comment out the useless parts "             <<std::endl;
 std::cout << "          invoke it with an ad hoc image(*) "         <<std::endl;
-std::cout << "           check the resulting image   "              <<std::endl; 
+std::cout << "          check the resulting image   "               <<std::endl;
 std::cout << "  "                                                   <<std::endl;
 std::cout << " (*) For samples, user can refer to gdcmData"         <<std::endl;
 std::cout << "         and read README.txt file "                   <<std::endl;
@@ -232,7 +230,7 @@ std::cout << " --- WARNING --- WARNING --- WARNING --- WARNING ---" <<std::endl;
    // Get the image data size
    size_t dataRawSize    = fh1->GetImageDataRawSize();
 
-   // TODO : Newbee user would appreciate any comment !
+   /// \TODO : Newbee user would appreciate any comment !
  
    std::cout << "GetImageDataSize()"    
           << fh1->GetImageDataSize()    << std::endl;

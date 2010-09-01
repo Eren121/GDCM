@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/08/26 12:46:12 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2010/09/01 14:41:48 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,10 +48,10 @@ bool verbose;
 int main(int argc, char *argv[])
 {
    START_USAGE(usage)
-   " \n pcpdenseToDicom :\n                                                  ",
+   " \n pcpdenseToDicom :\n                                                   ",
    "        Converts the '.txt' files into 16 bits Dicom Files,               ",
    " usage:                                                                   ",
-   " pcpdenseToDicom rootfilename=...                                        ",
+   " pcpdenseToDicom rootfilename=...                                         ",
    "                 (e.g.. :   meas_MID380_DENSE_stacked_slices_aif_FID81637)",
    "                 numberOfSlices =  (default : 3)                          ",
    "                 X2 : multiply x 2 image size                             ",

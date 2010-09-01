@@ -4,8 +4,8 @@
   Program:   gdcm
   Module:    $RCSfile: exPresentationState.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/09/16 12:28:44 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2010/09/01 14:41:48 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,7 +25,7 @@
 #include "gdcmSeqEntry.h"
 #include "gdcmSQItem.h"
 #include "gdcmDocEntrySet.h"
-#include "gdcmSerieHelper.h"
+//#include "gdcmSerieHelper.h"
 #include "gdcmDirList.h"
 #include "gdcmUtil.h"
 
@@ -33,6 +33,7 @@
   
   GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists(GDCM_NAME_SPACE::File *fPS,  uint16_t gr, uint16_t el);
   GDCM_NAME_SPACE::SeqEntry *CheckIfSequenceExists(GDCM_NAME_SPACE::SQItem *si, uint16_t gr, uint16_t el);   
+  bool dealWithCurrentFile(const char *PSName);
   bool dealWithTopLevelItem(GDCM_NAME_SPACE::SQItem* currentItem);
   bool dealWithEndLevelItem(GDCM_NAME_SPACE::SQItem* currentItem);
   void displaySeekResult(GDCM_NAME_SPACE::SeqEntry* currentItem, uint16_t g, uint16_t e);
@@ -89,34 +90,22 @@ int main(int argc, char *argv[])
    delete am;  // ------ we don't need Arguments Manager any longer ------
 
 // ============================================================
-//   Read the input image.
+//   Read the input file.
 // ============================================================ 
 
    GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New( );
 
-/*
-   //f->SetLoadMode(GDCM_NAME_SPACE::LD_NOSEQ | GDCM_NAME_SPACE::LD_NOSHADOW);
-   f->SetFileName( fileName );
-   f->SetMaxSizeLoadEntry(0xffff);
-   bool res = f->Load();  
-
-   if( GDCM_NAME_SPACE::Debug::GetDebugFlag())
-   {
-      std::cout << "---------------------------------------------" << std::endl;
-      f->Print();
-      std::cout << "---------------------------------------------" << std::endl;
-   }
-   if (!res) {
-       std::cerr << "Sorry, " << fileName << " not a gdcm-readable "
-           << "DICOM / ACR File"
-           << std::endl;
-      f->Delete();
-      return 1;
-   }
-   std::cout << " ... is readable " << std::endl;
-*/
-
 // =================================================================================
+
+   bool resFile = dealWithCurrentFile(PSName);
+   std::cout << "\n\n"  <<std::endl;
+   std::cout << "=====================================================[" <<  PSName << "]==" << resFile << std::endl;
+   return resFile;
+}
+
+//----------------------------------------------------------------------------------------------------
+bool dealWithCurrentFile(const char *PSName)
+{
 
    GDCM_NAME_SPACE::File *fPS = GDCM_NAME_SPACE::File::New( );
    fPS->SetFileName( PSName );
@@ -127,8 +116,8 @@ int main(int argc, char *argv[])
        std::cout << "Sorry, " << PSName << " not a gdcm-readable "
            << "DICOM / ACR File"
            << std::endl;
-      f->Delete();
-      return 1;
+      fPS->Delete();
+      return false;
    }
    
    GDCM_NAME_SPACE::SeqEntry *se;
@@ -138,7 +127,7 @@ int main(int argc, char *argv[])
    if (!se)
    {
          std::cout << "[" << PSName << "] : Hopeless (" << std::hex <<  0x0070 << "|" << 0x0001 << std::dec << " doesn't exist...)" <<std::endl;
-         exit (0);      
+         return false;
    }
    std::cout << "\n\n =========================================================================================" <<std::endl;       
    std::cout << "[" << PSName << "] is a gdcm-readable PresentationState file, "
@@ -175,13 +164,11 @@ int main(int argc, char *argv[])
      std::cout << "Sorry, [" << PSName << "] is not a gdcm-readable PresentationState file" <<std::endl; 
   }
 */
-   
-   
-   f->Delete();
+
    fPS->Delete();
    
-   std::cout << "\n\n"  <<std::endl;  
-return 0;
+   std::cout << "\n\n"  <<std::endl;
+   return true;
 }
 
 //----------------------------------------------------------------------------------------------------
