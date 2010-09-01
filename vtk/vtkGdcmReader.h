@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2009/11/03 14:05:23 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2010/09/01 13:33:36 $
+  Version:   $Revision: 1.38 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -65,7 +65,7 @@ public:
    // If this flag is set and the DICOM reader encounters a dicom file with 
    // lookup table the data will be kept as unsigned chars and a lookuptable 
    // will be exported and accessible through GetLookupTable()
-   
+
    vtkSetMacro(AllowLookupTable, bool);
    vtkGetMacro(AllowLookupTable, bool);
    vtkBooleanMacro(AllowLookupTable, bool);

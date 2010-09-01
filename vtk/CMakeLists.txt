@@ -8,8 +8,6 @@ INCLUDE_REGULAR_EXPRESSION("^vtk.*$")
        cmake_policy(SET CMP0003 NEW)
      endif(COMMAND cmake_policy)
 
-
-
 #-----------------------------------------------------------------------------
 # Include the VTK library
 

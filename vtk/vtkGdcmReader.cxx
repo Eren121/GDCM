@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/11/03 14:07:00 $
-  Version:   $Revision: 1.97 $
+  Date:      $Date: 2010/09/01 13:33:36 $
+  Version:   $Revision: 1.98 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -92,7 +92,7 @@
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 
-vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.97 $")
+vtkCxxRevisionMacro(vtkGdcmReader, "$Revision: 1.98 $")
 vtkStandardNewMacro(vtkGdcmReader)
 
 //-----------------------------------------------------------------------------
@@ -113,8 +113,7 @@ vtkGdcmReader::vtkGdcmReader()
    // this->Execution=false; // For VTK5.0
    
    this->KeepOverlays = false;
-   
-   this->FlipY = true; // to keep old behaviour  
+   this->FlipY = true; // to keep old behaviour
 }
 
 vtkGdcmReader::~vtkGdcmReader()
@@ -862,7 +861,7 @@ void vtkGdcmReader::LoadImageInMemory(
          src  = (unsigned char*)fileH->GetImageData();
       //else
       // very strange, but it doesn't work (I have to memcpy the pixels ?!?)
-      //   dest  = (unsigned char*)fileH->GetImageData();        
+      //   dest  = (unsigned char*)fileH->GetImageData();  
    }
 
 if (this->GetFlipY()) {
