@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 12:51:21 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2011/03/29 13:33:48 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -26,6 +26,73 @@ On Wed, Feb 16, 2011 at 11:51 AM, Roger Bramon Feixas <rogerbramon@gmail.com>
     itkImageSeriesReader makes from ImageFileReader's output to its own output 
     (ImageSeriesReader::GenerateData() line 393).
 */
+
+
+/* ====================================================================
+vtkGdcm4DSplitter
+
+3D, 2D+T, 3D+T, n*2D+T, 4D images are not always stored the same way :
+        a single 'Dicom Serie', 
+        several 'Dicom series' within a single directory
+        several 'Dicom series' within several directories
+A 'Dicom Serie' doesn't mean always the same thing :
+        a given Slice along the time
+        a given Volume at a given time
+Sometimes, an image within a serie is so artefacted than user decides to replace
+it by an other image.
+
+User needs to be aware, *only him* knows want he wants to do.
+vtkGdcm4DSplitter class does the job for hom
+(it works on 3D or 2D+T images too)
+
+User will have to specify some points
+
+. Select input data
+------------------- 
+
+- a single directory
+       bool setDirName(std::string &dirName);
+- a list of directories
+       bool setVectDirName(std::vector<std::string> &vectDirName);
+- a list of files       
+       bool setVectFileName(std::vector<std::string> &vectFileName);
+
+- Recursive directory exploration
+       void setRecursive(bool recursive);
+ 
+. Choose 'split' criterion :
+---------------------------
+
+ - ImagePositionPatient
+        void setSplitOnPosition();
+ - ImageOrientationPatient
+        void setSplitOnOrientation();
+ - User choosen tag
+        void setSplitOnTag(unsigned short splitGroup, unsigned short splitElem);
+        void setSplitConvertToFloat(bool conv);
+
+. Choose 'sort' criterion :
+--------------------------
+
+ - ImagePositionPatient
+        void setSortOnPosition();
+ - User choosen tag
+        void setSortOnTag(unsigned short sortGroup, unsigned short sortElem);
+        void setSortConvertToFloat(bool conv)
+
+. Execute
+-----------
+        bool Go();
+
+. Get the result
+----------------
+
+ -a single vtkImageData:
+        vtkImageData *GetImageData();
+- a vector of vtkImageData
+        std::vector<vtkImageData*> *GetImageDataVector();
+
+  ===================================================================== */
 
 #include "gdcmSerieHelper.h"
 
