@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 12:49:27 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2011/03/29 12:51:21 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -267,7 +267,7 @@ On Wed, Feb 16, 2011 at 11:51 AM, Roger Bramon Feixas <rogerbramon@gmail.com>
               if (verbose) std::cout << "SortOnPosition" << std::endl;
               // (will be IPPSorter, in GDCM2)
               s->ImagePositionPatientOrdering((*i).second);
-              if (verbose) std::cout << "out of SortOnPosition" << std::endl      
+              if (verbose) std::cout << "out of SortOnPosition" << std::endl;     
             }
 
            if (SortOnOrientation)
