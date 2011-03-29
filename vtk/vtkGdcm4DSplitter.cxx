@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 13:33:48 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2011/03/29 15:45:38 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,11 +43,11 @@ it by an other image.
 
 User needs to be aware, *only him* knows want he wants to do.
 vtkGdcm4DSplitter class does the job for hom
-(it works on 3D or 2D+T images too)
+(despite its name, it works on 3D or 2D+T images too)
 
 User will have to specify some points
 
-. Select input data
+. Choose input data
 ------------------- 
 
 - a single directory
@@ -312,7 +312,8 @@ User will have to specify some points
       TypeResult=2;
 
    ImageDataVector = new std::vector<vtkImageData*>;
-   vtkGdcmReader *reader = vtkGdcmReader::New();
+  // vtkGdcmReader *reader = vtkGdcmReader::New(); // move inside the loop, or be clever using vtk!
+   
    for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
                                                   i != xcm.end();
                                                 ++i)
@@ -326,19 +327,22 @@ User will have to specify some points
                                                   i != xcm.end();
                                                 ++i)
    {
-           if (verbose)
+   
+      vtkGdcmReader *reader = vtkGdcmReader::New(); /// \FIXME : unable to delete!
+       
+      if (verbose)
                std::cout << "==========================================xCoherentName = [" << (*i).first << "]" << std::endl;
 
-           if (SortOnPosition)
-           {
+      if (SortOnPosition)
+      {
               if (verbose) std::cout << "SortOnPosition" << std::endl;
               // (will be IPPSorter, in GDCM2)
               s->ImagePositionPatientOrdering((*i).second);
               if (verbose) std::cout << "out of SortOnPosition" << std::endl;     
-            }
+      }
 
-           if (SortOnOrientation)
-           {
+      else if (SortOnOrientation)
+      {
               if (verbose) std::cout << "SortOnOrientation" << std::endl;
              /// \TODO SortOnOrientation()
            // Within a 'just to see' program, 
@@ -351,48 +355,55 @@ User will have to specify some points
            // 0020,0030 : Image Position (RET)
       
             // we still miss an algo to sort an Orientation, given by 6 cosines!
-    //  Anything like this, in GDCM2? 
-      std::cout << "SortOnOrientation : not so easy - I(mage)O(rientation)P(atient)Sorter still missing! -" << std::endl;
-    // have a look at SerieHelper::SplitOnPosition() to have an idea of the mess!
+            //  Anything like this, in GDCM2? 
+            std::cout << "SortOnOrientation : not so easy - I(mage)O(rientation)P(atient)Sorter still missing! -" << std::endl;
+            // have a look at SerieHelper::SplitOnOrientation() to have an idea of the mess!
 
-      //Better sort on the file name, right now...
-      s->FileNameOrdering((*i).second);   
-   }
+            //Better sort on the file name, right now...
+             s->FileNameOrdering((*i).second);   
+      }
 
-   if (SortOnFileName)
-   {
-      if (verbose) std::cout << "SortOnFileName" << std::endl;
-      if (verbose) std::cout << "taille " << ((*i).second)->size() << std::endl;
-      s->FileNameOrdering((*i).second);
-      if (verbose) std::cout << "Out of SortOnFileName" << std::endl;
-   }
+      else if (SortOnFileName)
+      {
+         if (verbose) std::cout << "SortOnFileName" << std::endl;
+         if (verbose) std::cout << "taille " << ((*i).second)->size() << std::endl;
 
-   if (SortOnTag)
-   {  
-      if (verbose) std::cout << "SortOnTag" << std::endl;   
-      printf ("--> %04x %04x\n", SortGroup,SortElem);
-              if ( SortConvertToFloat )
-         s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)> 
-                                                              ( &vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat));     
-      else
-         s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)>
-                                                              ( &vtkGdcm4DSplitter::CompareOnSortTag)); 
+         s->FileNameOrdering((*i).second);
+         if (verbose) std::cout << "Out of SortOnFileName" << std::endl;
+      }
+
+      else if (SortOnTag)
+      {  
+         if (verbose) std::cout << "SortOnTag" << std::endl;   
+         printf ("--> %04x %04x\n", SortGroup,SortElem);
+         if ( SortConvertToFloat )
+            s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)> 
+                                                                 ( &vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat));     
+         else
+            s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)>
+                                                                 ( &vtkGdcm4DSplitter::CompareOnSortTag)); 
        
-      // Anything like this, in GDCM2? 
-      s->UserOrdering((*i).second);
-      if (verbose) std::cout << "Out of SortOnTag" << std::endl;
+         // Anything like this, in GDCM2? 
+         s->UserOrdering((*i).second);
+         if (verbose) std::cout << "Out of SortOnTag" << std::endl;
+      }
+
+       reader->SetCoherentFileList((*i).second);
+       reader->Update();
+       
+       /// \TODO : remove the following
+       //if (verbose) reader->GetOutput()->PrintSelf(std::cout, vtkIndent(2));
+       
+       ImageDataVector->push_back(reader->GetOutput() );
+
+       std::cout << std::endl;
    }
 
-    reader->SetCoherentFileList((*i).second);
-    reader->Update();
-            ImageDataVector->push_back(reader->GetOutput() );
-
-         std::cout << std::endl;
-   }
-
-   reader->Delete();
+   //reader->Delete();  // \TODO : fix
    s->Delete(); 
    f->Delete();
    delete l;
+   
+   return true;
  }
 
