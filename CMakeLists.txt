@@ -1,3 +1,12 @@
+# ---------------------------------
+#
+# Unless you are an experimented cmake user,
+# have a look at :
+# http://www.creatis.insa-lyon.fr/site/fr/CreatoolsGettingStarted-v2.0.X
+# before starting.
+#
+# ---------------------------------
+
 PROJECT(GDCM)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
 # okay in fact you need at least cmake 2.0.4 to get swig working properly

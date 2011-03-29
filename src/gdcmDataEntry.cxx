@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDataEntry.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/07/09 09:20:20 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2011/03/29 07:36:00 $
+  Version:   $Revision: 1.57 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -168,7 +168,7 @@ bool DataEntry::IsNumerical()
     {
        /// \todo rewrite the whole method, in order *not to use* std::string !
        std::vector<std::string> tokens;
-    
+
        Util::Tokenize ( GetString().c_str(), tokens, "\\" );
 
        int nbValues= tokens.size();
@@ -181,14 +181,14 @@ bool DataEntry::IsNumerical()
        else
           for (loop=0; loop<nbValues; loop++) 
              valueVector.push_back(atoi(tokens[loop].c_str()));
-      
+
        return true;     
     }    
 
     uint32_t nbValues = GetValueCount();
     if (nbValues == 0)
        return false;
-  
+
     if( vr == "US") {
        for (loop=0; loop<nbValues; loop++)
              valueVector.push_back(((uint16_t *)BinArea)[loop]);  

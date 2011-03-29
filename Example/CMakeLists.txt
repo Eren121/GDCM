@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES(
   ${GDCM_BINARY_DIR}/src)
 SET(EXAMPLE_SOURCES
   #names starting with 'ex' are examples
-  #------------------------------------- 
+  #-------------------------------------
   #SingleFrames2Multiframe
   #Txt2Mat  
   #exDicomRTStructSetFile  

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/07/09 09:20:21 $
-  Version:   $Revision: 1.385 $
+  Date:      $Date: 2011/03/29 07:36:00 $
+  Version:   $Revision: 1.386 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1128,7 +1128,6 @@ void Document::ParseDES(DocEntrySet *set, long offset,
    if( Debug::GetDebugFlag() )
       std::cout << std::dec <<"(long)(Fp->tellg()) " << (long)(Fp->tellg()) // in Debug mode
                 << std::hex << " 0x(" <<(long)(Fp->tellg()) <<  ")" << std::endl;
-
 
    // if ( !delim_mode && ((long)(Fp->tellg())-offset) >= l_max) // Once per DocEntry   
       if ( !delim_mode ) // 'and then' doesn't exist in C++ :-(

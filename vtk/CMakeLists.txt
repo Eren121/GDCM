@@ -29,6 +29,7 @@ IF("${VTK_MAJOR_VERSION}" GREATER 4)
     vtkGdcmWriter.cxx
     vtkImageColorViewer.cxx
     vtkImageMapToWindowLevelColors2.cxx
+    # vtkGdcm4DSplitter.cxx
   )
 ELSE("${VTK_MAJOR_VERSION}" GREATER 4)
   SET(VTKGDCM_LIB_SRCS
@@ -67,11 +68,11 @@ TARGET_LINK_LIBRARIES(vtkgdcmdemo
 SET(Bmp2Dcm_SOURCES
   Bmp2Dcm.cxx
 )
+
 ADD_EXECUTABLE(Bmp2Dcm ${Bmp2Dcm_SOURCES})
 TARGET_LINK_LIBRARIES(Bmp2Dcm
   vtkgdcm
   vtkImaging
-
 )
 
 #-----------------------------------------------------------------------------
@@ -136,7 +137,6 @@ TARGET_LINK_LIBRARIES(vtkgdcmSerieViewer2
   vtkRendering
 )
 
-
 #-----------------------------------------------------------------------------
 SET(vtkWriteDicom_SOURCES
   vtkWriteDicom.cxx
@@ -170,10 +170,10 @@ IF(NOT GDCM_INSTALL_NO_LIBRARIES)
   INSTALL_TARGETS(${GDCM_INSTALL_LIB_DIR} vtkgdcm)
   INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer)
   INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmViewer)
-  
+
  # INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkJPEGViewer)
  # INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkJPEGViewer2)
-      
+
   INSTALL_TARGETS(${GDCM_INSTALL_BIN_DIR} vtkgdcmSerieViewer)
 ENDIF(NOT GDCM_INSTALL_NO_LIBRARIES)
 

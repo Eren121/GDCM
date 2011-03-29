@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/09/01 14:41:48 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2011/03/29 07:35:57 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -154,9 +154,9 @@ int main(int argc, char *argv[])
    // === Ecc ===
    
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   
+
    serieDescr = "Ecc";
-   
+
    if (!multiframe) {
              
      for (int i=0; i<numberOfSlices; i++)
@@ -219,9 +219,8 @@ int main(int argc, char *argv[])
 // === perf ===
 
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   
+
    serieDescr = "perf";
-   
    if (!multiframe) {    
      for (int i=0; i<numberOfSlices; i++)
      {      
@@ -282,8 +281,8 @@ int main(int argc, char *argv[])
 
 
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   
-   serieDescr = "WashoutTc";   
+
+   serieDescr = "WashoutTc";
    
    if (multiframe) {    
      for (int i=0; i<numberOfSlices; i++)

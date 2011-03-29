@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer2.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/09/01 13:33:36 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2011/03/29 07:36:02 $
+  Version:   $Revision: 1.19 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 {
    if( argc < 2 )
       return 0;
-      
+
    bool metaWrite = false;
   
    vtkGdcmReader *reader = vtkGdcmReader::New();
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
       argc--; // Is it allowed?!?
       reader->SetKeepOverlays(true);
    }
- 
+
 // not a very clever way to pass several params
 // but it's just for checking
    if (strcmp (argv[argc-1], "n") == 0)
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
       argc--; // Is it allowed?!?
       metaWrite = true;
    }
-   
+
    if( argc == 2 )
       reader->SetFileName( argv[1] );
    else
@@ -174,8 +174,7 @@ int main(int argc, char *argv[])
       //w->Delete();
       std::cout << "end write .mhd" << std::endl;
     //}
-    
-    
+
    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
 #if VTK_MAJOR_VERSION >= 5
    vtkImageColorViewer *viewer = vtkImageColorViewer::New();
@@ -229,7 +228,7 @@ int main(int argc, char *argv[])
    writer->SetFileName( "foo.vtk" );
    writer->SetFileTypeToBinary();
    //writer->Write();
-   
+
    //if you wish you can export dicom to a .mhd file
    /*
    if (metaWrite) {

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: MergeDICOMRaw.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/09/01 14:41:48 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2011/03/29 07:35:57 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
   // TODO
   // for UltrasoundMultiframeImageStorage we may need also:
-  // (0028,0009) AT (0018,1063)                              #   4, 1 FrameIncrementPointer
+  // (0028,0009) AT (0018,1063)  #   4, 1 FrameIncrementPointer
   // and
   // Pixel Aspect Ratio
 

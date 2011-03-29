@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2010/04/09 15:38:18 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2011/03/29 07:36:00 $
+  Version:   $Revision: 1.71 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -13,7 +13,7 @@
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-                                                                              
+
 =========================================================================*/
 
 #include "gdcmSerieHelper.h"
@@ -581,14 +581,14 @@ XCoherentFileSetmap SerieHelper::SplitOnPosition(FileList *fileSet)
  * \return  std::map of 'Xcoherent' File sets
  */
 
-XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet, 
+XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
                                                uint16_t group, uint16_t element)
 {
    XCoherentFileSetmap CoherentFileSet;
 
    int nb = fileSet->size();
    if (nb == 0 ) {
-      gdcmWarningMacro("Empty FileList passed to SplitOnPosition");
+      gdcmWarningMacro("Empty FileList passed to SplitOnTagValue");
       return CoherentFileSet;
    }
 
@@ -605,6 +605,60 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValue(FileList *fileSet,
       // 0020,0030 : Image Position (RET)
 
       strTagValue = (*it)->GetEntryString(group,element);
+
+      if ( CoherentFileSet.count(strTagValue) == 0 )
+      {
+         gdcmDebugMacro("  :[" << strTagValue << "]");
+         // create a File set in 'position' position
+         CoherentFileSet[strTagValue] = new FileList;
+      }
+      // Current Tag value and DICOM header match; add the file:
+      CoherentFileSet[strTagValue]->push_back( (*it) );
+   }
+   return CoherentFileSet;
+}
+
+
+/**
+ * \brief   Splits a 'Single SerieUID' File set Coherent according to the
+ *          value of a given Tag
+ * @param fileSet File Set to be splitted
+ * @param   group  group number of the target Element
+ * @param   element element number of the target Element
+ * \return  std::map of 'Xcoherent' File sets
+ */
+
+XCoherentFileSetmap SerieHelper::SplitOnTagValueConvertToFloat(FileList *fileSet,
+                                               uint16_t group, uint16_t element)
+{
+   XCoherentFileSetmap CoherentFileSet;
+
+   int nb = fileSet->size();
+   if (nb == 0 ) {
+      gdcmWarningMacro("Empty FileList passed to SplitOnTagValue");
+      return CoherentFileSet;
+   }
+
+   std::string strTagValue;  // read on disc
+
+   double      dTagValue;
+   int         iTagValue;
+   char        cTagValue[11];
+   std::string sTagValue;
+
+   FileList::const_iterator it = fileSet->begin();
+   //it ++;
+   for ( ;
+         it != fileSet->end();
+       ++it)
+   {
+      /// \TODO : find a trick to create a string whose value follows lexicographical order 
+
+      strTagValue = (*it)->GetEntryString(group,element);
+      dTagValue = atof( strTagValue.c_str());
+      iTagValue = dTagValue;
+      sprintf(cTagValue, "%010d", iTagValue);
+      strTagValue = cTagValue;
       
       if ( CoherentFileSet.count(strTagValue) == 0 )
       {

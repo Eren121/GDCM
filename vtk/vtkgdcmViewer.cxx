@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkgdcmViewer.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/11/03 14:05:23 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2011/03/29 07:36:02 $
+  Version:   $Revision: 1.33 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -156,7 +156,6 @@ reader->GetOutput()->GetScalarComponentAsFloat(0,127,0,0) <<
    iren->Start();
 
    //if you wish you can export dicom to a vtk file
- 
    vtkStructuredPointsWriter *writer = vtkStructuredPointsWriter::New();
    writer->SetInput( reader->GetOutput());
    writer->SetFileName( "foo.vtk" );

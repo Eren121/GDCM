@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: ToMRIregister.cxx,v $
   Language:  C++
-  Date:      $Date: 2007/10/24 08:03:44 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/03/29 07:35:58 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
    "\n ToMriregister :\n                                                      ",
    " - Converts the Siemens Sonata MRI '*tfl2d1'                              ",
    " to be processable by MriRegister software                                ",
-   " - May be used as a template for GDCM_NAME_SPACE::SerieHelper use.                   ",
+   " - May be used as a template for GDCM_NAME_SPACE::SerieHelper use.        ",
    "                                                                          ",
    "usage: ToMriRegister dirin=inputDirectoryName                             ",
    "                     dirout=outputDirectoryName                           ",

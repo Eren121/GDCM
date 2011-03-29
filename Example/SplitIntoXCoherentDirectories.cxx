@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/28 15:44:34 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2011/03/29 07:35:58 $
+  Version:   $Revision: 1.5 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
    "       tag : group-elem    (in hexa, no space)                            ",
    "                       the user wants to split on                         ",
    "       sort :  user wants FileHelper to sort the images                   ",
-   "               Warning : will probabely crah if sort has no meaning       ",
+   "               Warning : will probabely crash if sort has no meaning      ",
    "                (not only look at image names)                            ",
    "       studyUID   : *aware* user wants to add the serie                   ",
    "                                             to an already existing study ",
@@ -149,13 +149,12 @@ int main(int argc, char *argv[])
 
    s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL); // Load everything for each File
    s->SetDirectory(dirName, true);          // true : recursive exploration
-
-   GDCM_NAME_SPACE::File *f;
    
    GDCM_NAME_SPACE::DirList dirlist(dirName, true); // recursive exploration
    GDCM_NAME_SPACE::DirListType fileNames = dirlist.GetFilenames();
-
    GDCM_NAME_SPACE::FileList *l = new GDCM_NAME_SPACE::FileList;
+
+   GDCM_NAME_SPACE::File *f;
 // Loop on all the gdcm-readable files
    for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();
                                     it != fileNames.end();

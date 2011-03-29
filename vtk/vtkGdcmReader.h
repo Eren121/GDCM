@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2010/09/01 13:33:36 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2011/03/29 07:36:02 $
+  Version:   $Revision: 1.39 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,17 +73,17 @@ public:
    vtkSetMacro(KeepOverlays, bool);
    vtkGetMacro(KeepOverlays, bool);
    vtkBooleanMacro(KeepOverlays, bool);
- 
+
 //  Implementation note: when FileLowerLeft (gdcm2) is set to on the image is not flipped
 // upside down as VTK would expect, use this option only if you know what you are doing.   
   // vtkSetMacro(FileLowerLeft, bool);
   // vtkGetMacro(FileLowerLeft, bool);
   // vtkBooleanMacro(FileLowerLeft, bool);
-     
+
   vtkSetMacro(FlipY, bool);
   vtkGetMacro(FlipY, bool);
   vtkBooleanMacro(FlipY, bool);
-     
+
    vtkGetObjectMacro(LookupTable, vtkLookupTable);
 
 // FIXME : HOW to doxygen a VTK macro?
@@ -199,6 +199,7 @@ private:
    
   // bool FileLowerLeft;
    bool FlipY;
+
    /// Pointer to a user suplied function to allow modification of pixel order
    VOID_FUNCTION_PUINT8_PFILE_POINTER UserFunction;
 

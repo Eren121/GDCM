@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectoriesIgnoreSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/28 15:44:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2011/03/29 07:35:58 $
+  Version:   $Revision: 1.3 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
    "       tag : group-elem    (in hexa, no space)                            ",
    "                       the user wants to split on                         ",
    "       sort :  user wants FileHelper to sort the images                   ",
-   "               Warning : will probabely crah if sort has no meaning       ",
+   "               Warning : will probabely crash if sort has no meaning      ",
    "                (not only look at image names)                            ",
    "       studyUID   : *aware* user wants to add the serie                   ",
    "                                             to an already existing study ",

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.h,v $
   Language:  C++
-  Date:      $Date: 2010/04/09 15:38:18 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2011/03/29 07:36:00 $
+  Version:   $Revision: 1.47 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -90,6 +90,11 @@ public:
    bool IsCoherent(FileList *fileSet);
    void OrderFileList(FileList *fileSet);
    void Clear() { ClearAll(); }
+
+   bool UserOrdering(FileList *fileSet);
+   bool ImagePositionPatientOrdering(FileList *fileSet);
+   bool ImageNumberOrdering(FileList *fileSet);
+   bool FileNameOrdering(FileList *fileSet);
 
    /// \brief Gets the FIRST Single SerieUID Fileset.
    ///        Deprecated; kept not to break the API
@@ -187,16 +192,21 @@ public:
    XCoherentFileSetmap SplitOnPosition(FileList *fileSet); 
    XCoherentFileSetmap SplitOnTagValue(FileList *fileSet,
                                                uint16_t group, uint16_t element);
+   XCoherentFileSetmap SplitOnTagValueConvertToFloat(FileList *fileSet,
+                                               uint16_t group, uint16_t element);
 protected :
    SerieHelper();
    
 private:
    void ClearAll();
+
+   /*
+   //move them to public (usefull for aware user!)
    bool UserOrdering(FileList *fileSet);
    bool ImagePositionPatientOrdering(FileList *fileSet);
    bool ImageNumberOrdering(FileList *fileSet);
    bool FileNameOrdering(FileList *fileSet);
-   
+  */
    static bool ImageNumberLessThan(File *file1, File *file2);
    static bool ImageNumberGreaterThan(File *file1, File *file2);
    static bool FileNameLessThan(File *file1, File *file2);
