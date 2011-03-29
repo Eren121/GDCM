@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES(
 SET(EXAMPLE_SOURCES
   #names starting with 'ex' are examples
   #-------------------------------------
+  exUnMosaic
   #SingleFrames2Multiframe
   #Txt2Mat  
   #exDicomRTStructSetFile  
