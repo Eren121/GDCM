@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 12:49:27 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2011/03/30 14:49:04 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,8 +23,12 @@
 #include <vtkImageData.h>
 #include "gdcmDirList.h" 
 
+typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
+//typedef  bool (vtkGdcm4DSplitter::*MembFoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
+#define CALL_MEMBER_FONC(object, ptrToFoncMember)  ((object).*(ptrToFoncMember)) 
+ 
 //namespace GDCM_NAME_SPACE 
-//{ 
+//{
   class vtkGdcm4DSplitter {
     public:
     
@@ -34,6 +38,8 @@
        bool setVectDirName(std::vector<std::string> &vectDirName);
        bool setVectFileName(std::vector<std::string> &vectFileName);       
        
+       // Split
+       // =====
        inline void setSplitOnPosition()   {SplitOnPosition=true;  SplitOnOrientation=false; SplitOnTag=false;}
        inline void setSplitOnOrientation(){SplitOnPosition=false; SplitOnOrientation=true;  SplitOnTag=false;}
        inline void setSplitOnTag(unsigned short int splitGroup, unsigned short int splitElem)       
@@ -41,17 +47,28 @@
                                            SplitGroup=splitGroup;    SplitElem=splitElem;}
        inline void setSplitConvertToFloat(bool conv) {SplitConvertToFloat=conv;}
        
-       inline void setSortOnPosition()   {SortOnPosition=true;  SortOnOrientation=false; SortOnTag=false; SortOnFileName=false;}
-       // SortOnOrientation : not yet made
-       //inline void setSortOnOrientation(){SortOnPosition=false; SortOnOrientation=true;  SortOnTag=false; SortOnFileName=false;}     
+       // Sort
+       // ====
+       inline void setSortOnPosition()   {SortOnPosition=true; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;
+                                          SortOnPosition=true;}
+  
        inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)       
-                                         {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false;
-                                          SortGroup=sortGroup;     SortElem=sortElem;}
+                                         {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false; SortOnUserFunction=false;
+                                          SortGroup=sortGroup;  SortElem=sortElem;}
+  
+       inline void setSortOnUserFunction (FoncComp f) 
+                                         { UserCompareFunction=f;
+                                           SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=true;}
+
        inline void setSortConvertToFloat(bool conv) {SortConvertToFloat=conv;}
                                     
-       inline void setSortOnFileName()   {SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=true;}
+       inline void setSortOnFileName()   {SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=true; SortOnUserFunction=false;}
+       
        inline void setRecursive(bool recursive) { Recursive=recursive;}
 
+       // SortOnOrientation : not yet made
+       //inline void setSortOnOrientation(){SortOnPosition=false; SortOnOrientation=true;  SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;}   
+       
         std::vector<vtkImageData*> *GetImageDataVector();
         vtkImageData *GetImageData();
 
@@ -83,7 +100,10 @@
        bool SortOnOrientation;
        bool SortOnTag;    
        bool SortOnFileName;
-
+       bool SortOnUserFunction;
+       
+       FoncComp UserCompareFunction;
+       
        unsigned short int SortGroup;
        unsigned short int SortElem;
        bool SortConvertToFloat;

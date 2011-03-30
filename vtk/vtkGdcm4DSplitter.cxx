@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 15:45:38 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2011/03/30 14:49:04 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,9 +68,12 @@ User will have to specify some points
  - ImageOrientationPatient
         void setSplitOnOrientation();
  - User choosen tag
+        ==> WARNING : This one has troubles; do NOT use it, right now!
         void setSplitOnTag(unsigned short splitGroup, unsigned short splitElem);
         void setSplitConvertToFloat(bool conv);
-
+ - UserDefined Function
+        void setSortOnUserFunction (FoncComp f);
+ 
 . Choose 'sort' criterion :
 --------------------------
 
@@ -186,18 +189,20 @@ User will have to specify some points
     return true;
  }      
 
- bool vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
+ /*static */bool vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
  { 
-   if (verbose) printf ("%04x %04x\n", this->SortGroup,this->SortElem);
+  /* if (verbose) printf ("%04x %04x\n", this->SortGroup,this->SortElem);
    if (verbose) std :: cout << file1->GetEntryString(SortGroup,SortElem).c_str() << " : " 
                             << atof(file1->GetEntryString(SortGroup,SortElem).c_str())
                             << std::endl;
-   return atof(file1->GetEntryString(SortGroup,SortElem).c_str()) < atof(file2->GetEntryString(SortGroup,SortElem).c_str());  
+*/
+//   return atof(file1->GetEntryString(vtkGdcm4DSplitter::SortGroup,vtkGdcm4DSplitter::SortElem).c_str()) < atof(file2->GetEntryString(vtkGdcm4DSplitter::SortGroup,vtkGdcm4DSplitter::SortElem).c_str()); 
+   return atof(file1->GetEntryString(SortGroup,SortElem).c_str()) < atof(file2->GetEntryString(SortGroup,SortElem).c_str()); 
  } 
 
- bool vtkGdcm4DSplitter::CompareOnSortTag(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
+ /*static */bool vtkGdcm4DSplitter::CompareOnSortTag(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
  {
-   return file1->GetEntryString(SortGroup,SortElem) < file2->GetEntryString(SortGroup,SortElem);  
+   return file1->GetEntryString(vtkGdcm4DSplitter::SortGroup,vtkGdcm4DSplitter::SortElem) < file2->GetEntryString(vtkGdcm4DSplitter::SortGroup,vtkGdcm4DSplitter::SortElem);  
  }
    
  bool vtkGdcm4DSplitter::Go()
@@ -376,6 +381,9 @@ User will have to specify some points
       {  
          if (verbose) std::cout << "SortOnTag" << std::endl;   
          printf ("--> %04x %04x\n", SortGroup,SortElem);
+         std::cout << "Sorry, troubles not solved yet; use SortOnUserFunction, right now!" << std::endl;
+ 
+        /*        ==> WARNING : This one has troubles; do NOT use it, right now!
          if ( SortConvertToFloat )
             s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)> 
                                                                  ( &vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat));     
@@ -385,7 +393,19 @@ User will have to specify some points
        
          // Anything like this, in GDCM2? 
          s->UserOrdering((*i).second);
-         if (verbose) std::cout << "Out of SortOnTag" << std::endl;
+        */
+
+         //if (verbose) std::cout << "Out of SortOnTag" << std::endl;
+         std::cout << "NO ordering performed  :-( " << std::endl;
+      }
+      
+      else if (SortOnUserFunction)
+      {   
+          if (verbose) std::cout << "SortOnUserFunction" << std::endl;
+          s->SetUserLessThanFunction( UserCompareFunction );
+         // Anything like this, in GDCM2? 
+         s->UserOrdering((*i).second);
+         if (verbose) std::cout << "Out of SortOnUserFunction" << std::endl;   
       }
 
        reader->SetCoherentFileList((*i).second);
