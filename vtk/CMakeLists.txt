@@ -29,7 +29,7 @@ IF("${VTK_MAJOR_VERSION}" GREATER 4)
     vtkGdcmWriter.cxx
     vtkImageColorViewer.cxx
     vtkImageMapToWindowLevelColors2.cxx
-    # vtkGdcm4DSplitter.cxx
+    vtkGdcm4DSplitter.cxx
   )
 ELSE("${VTK_MAJOR_VERSION}" GREATER 4)
   SET(VTKGDCM_LIB_SRCS
@@ -76,6 +76,24 @@ TARGET_LINK_LIBRARIES(Bmp2Dcm
 )
 
 #-----------------------------------------------------------------------------
+#ADD_EXECUTABLE(exUnMosaic2 exUnMosaic2.cxx)
+#TARGET_LINK_LIBRARIES(exUnMosaic2
+#  vtkgdcm
+  ##vtkRendering
+#)
+
+#ADD_EXECUTABLE(exUnMosaic3 exUnMosaic3.cxx)
+#TARGET_LINK_LIBRARIES(exUnMosaic3
+#  vtkgdcm
+#  #vtkRendering
+#)
+
+#ADD_EXECUTABLE(exUnMosaic4 exUnMosaic4.cxx)
+#TARGET_LINK_LIBRARIES(exUnMosaic4
+#  vtkgdcm
+#  #vtkRendering
+#)
+#-----------------------------------------------------------------------------
 SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
@@ -118,6 +136,26 @@ TARGET_LINK_LIBRARIES(vtkgdcmViewer
 #  vtkgdcm
 #  vtkRendering
 #)
+
+#-----------------------------------------------------------------------------
+SET(test4DSplitter_SOURCES
+  test4DSplitter.cxx
+)
+
+ADD_EXECUTABLE(test4DSplitter ${GUI_EXECUTABLE} ${test4DSplitter_SOURCES})
+TARGET_LINK_LIBRARIES( test4DSplitter
+  vtkgdcm 
+)
+#-----------------------------------------------------------------------------
+#SET(testEmilie1_SOURCES
+#  testEmilie1.cxx
+#)
+#
+#ADD_EXECUTABLE(testEmilie1 ${GUI_EXECUTABLE} ${testEmilie1_SOURCES})
+#TARGET_LINK_LIBRARIES( testEmilie1
+#  vtkgdcm 
+#)
+#-----------------------------------------------------------------------------
 
 ADD_EXECUTABLE(vtkgdcmViewer2 ${GUI_EXECUTABLE} vtkgdcmViewer2.cxx)
 TARGET_LINK_LIBRARIES(vtkgdcmViewer2
