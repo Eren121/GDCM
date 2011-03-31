@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 07:36:02 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2011/03/31 12:37:54 $
+  Version:   $Revision: 1.40 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -14,8 +14,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
                                                                                 
-=========================================================================*/
-                                                                                
+==========================================================================*/
 #ifndef __vtkGdcmReader_h
 #define __vtkGdcmReader_h
 
@@ -46,7 +45,7 @@ public:
 
    //BTX
    void SetCoherentFileList( std::vector<GDCM_NAME_SPACE::File* > *cfl) {
-                                                      CoherentFileList = cfl; }    
+                             CoherentFileList = cfl; }
    //ETX
 
    //vtkSetMacro(AllowLightChecking, bool);
@@ -54,13 +53,13 @@ public:
    //vtkBooleanMacro(AllowLightChecking, bool);
 
    //BTX
-   
+
    /// \todo fix possible problems around VTK pipelining
-   
+
    void SetUserFunction (VOID_FUNCTION_PUINT8_PFILE_POINTER userFunc )
                         { UserFunction = userFunc; } 
    //ETX
-  
+
    // Description:
    // If this flag is set and the DICOM reader encounters a dicom file with 
    // lookup table the data will be kept as unsigned chars and a lookuptable 
@@ -94,7 +93,7 @@ public:
  *        WARNING : before using NO_SHADOW, be sure *all* your files
  *        contain accurate values in the 0x0000 element (if any) 
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
- * @param   mode Load mode to be used    
+ * @param   mode Load mode to be used
  */
    vtkSetMacro(LoadMode, int);
    vtkGetMacro(LoadMode, int);
@@ -103,11 +102,11 @@ public:
 /*
  * \ brief drop images with duplicate position  
  *         and therefore calculate ZSpacing for the whole file set
- * @param   mode user wants to drop images with duplicate position    
- */   
+ * @param   mode user wants to drop images with duplicate position
+ */
    vtkSetMacro(DropDuplicatePositions, bool);
    vtkGetMacro(DropDuplicatePositions, bool);
-   vtkBooleanMacro(DropDuplicatePositions, bool);      
+   vtkBooleanMacro(DropDuplicatePositions, bool);
 
 protected:
    vtkGdcmReader();
@@ -183,7 +182,7 @@ private:
    std::list<std::string> InternalFileNameList;
    gdcmFileList InternalFileList;
    //bool Execution;  // For VTK5.0
-  
+
    //ETX
 
    /// \brief Bit string integer (each one considered as a boolean)
@@ -207,4 +206,3 @@ private:
 
 //-----------------------------------------------------------------------------
 #endif
-

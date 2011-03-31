@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/30 14:49:04 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2011/03/31 12:37:54 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -25,19 +25,19 @@
 
 typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 //typedef  bool (vtkGdcm4DSplitter::*MembFoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
-#define CALL_MEMBER_FONC(object, ptrToFoncMember)  ((object).*(ptrToFoncMember)) 
+#define CALL_MEMBER_FONC(object, ptrToFoncMember)  ((object).*(ptrToFoncMember))
  
-//namespace GDCM_NAME_SPACE 
+//namespace GDCM_NAME_SPACE
 //{
   class vtkGdcm4DSplitter {
     public:
     
        vtkGdcm4DSplitter();
-       ~vtkGdcm4DSplitter(){};       
+       ~vtkGdcm4DSplitter(){};
        bool setDirName(std::string &dirName);
        bool setVectDirName(std::vector<std::string> &vectDirName);
-       bool setVectFileName(std::vector<std::string> &vectFileName);       
-       
+       bool setVectFileName(std::vector<std::string> &vectFileName);
+
        // Split
        // =====
        inline void setSplitOnPosition()   {SplitOnPosition=true;  SplitOnOrientation=false; SplitOnTag=false;}
@@ -46,76 +46,76 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
                                           {SplitOnPosition=false; SplitOnOrientation=false; SplitOnTag=true; 
                                            SplitGroup=splitGroup;    SplitElem=splitElem;}
        inline void setSplitConvertToFloat(bool conv) {SplitConvertToFloat=conv;}
-       
+
        // Sort
        // ====
        inline void setSortOnPosition()   {SortOnPosition=true; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;
                                           SortOnPosition=true;}
-  
+
        inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)       
                                          {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false; SortOnUserFunction=false;
                                           SortGroup=sortGroup;  SortElem=sortElem;}
-  
-       inline void setSortOnUserFunction (FoncComp f) 
+
+       inline void setSortOnUserFunction (FoncComp f)
                                          { UserCompareFunction=f;
                                            SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=true;}
 
        inline void setSortConvertToFloat(bool conv) {SortConvertToFloat=conv;}
-                                    
+
        inline void setSortOnFileName()   {SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=true; SortOnUserFunction=false;}
-       
+
        inline void setRecursive(bool recursive) { Recursive=recursive;}
 
        // SortOnOrientation : not yet made
        //inline void setSortOnOrientation(){SortOnPosition=false; SortOnOrientation=true;  SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;}   
-       
+
         std::vector<vtkImageData*> *GetImageDataVector();
         vtkImageData *GetImageData();
 
-        bool Go();  
-                
+        bool Go();
+
     protected:
     private:
        bool CompareOnSortTag              (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
        bool CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2); 
-               
+
     // Data
     // ----
-    public:  
+    public:
     protected:
     private:
        std::string DirName;
        std::vector<std::string> VectDirName;
        std::vector<std::string> VectFileName;
-       
+
        bool SplitOnPosition;
        bool SplitOnOrientation;
        bool SplitOnTag;
- 
+
        unsigned short int SplitGroup;
        unsigned short int SplitElem;
        bool SplitConvertToFloat;
-                    
+
        bool SortOnPosition;
        bool SortOnOrientation;
        bool SortOnTag;    
        bool SortOnFileName;
        bool SortOnUserFunction;
-       
+
        FoncComp UserCompareFunction;
-       
+
        unsigned short int SortGroup;
        unsigned short int SortElem;
        bool SortConvertToFloat;
-              
+
        bool Recursive;
        int TypeDir;
        int TypeResult;
        bool verbose;
        std::vector<vtkImageData*> *ImageDataVector;
-       vtkImageData *ImageData;               
+       vtkImageData *ImageData
   };
- 
+
 //} // end namespace gdcm
 
 //-----------------------------------------------------------------------------
