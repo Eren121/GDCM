@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: test4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/30 14:50:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2011/03/31 16:12:33 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -29,15 +29,8 @@ On Wed, Feb 16, 2011 at 11:51 AM, Roger Bramon Feixas <rogerbramon@gmail.com>
     the same time.
 */
 
-//#include "gdcmDocEntry.h"
-//#include "gdcmDicomDir.h"
-//#include "gdcmDicomDirPatient.h"
+
 #include "gdcmFile.h"
-#include "gdcmFileHelper.h"
-//#include "gdcmDirList.h"
-//#include "gdcmDebug.h"
-//#include "gdcmArgMgr.h"
-#include "gdcmUtil.h"
 #include "gdcmSerieHelper.h"
 #include <vtkImageData.h>
 #include <iostream>

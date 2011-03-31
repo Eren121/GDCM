@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 12:37:54 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2011/03/31 16:12:33 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -113,7 +113,7 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
        int TypeResult;
        bool verbose;
        std::vector<vtkImageData*> *ImageDataVector;
-       vtkImageData *ImageData
+       vtkImageData *ImageData;
   };
 
 //} // end namespace gdcm

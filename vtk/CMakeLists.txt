@@ -25,18 +25,19 @@ INCLUDE_DIRECTORIES(
 # Depending on VTK version build more stuff:
 IF("${VTK_MAJOR_VERSION}" GREATER 4)
   SET(VTKGDCM_LIB_SRCS
-    vtkGdcmReader.cxx
-    vtkGdcmWriter.cxx
-    vtkImageColorViewer.cxx
-    vtkImageMapToWindowLevelColors2.cxx
-    vtkGdcm4DSplitter.cxx
+    vtkGdcmReader.cxx 
+    vtkGdcmWriter.cxx 
+    vtkImageColorViewer.cxx 
+    vtkImageMapToWindowLevelColors2.cxx 
+    vtkGdcm4DSplitter.cxx 
   )
 ELSE("${VTK_MAJOR_VERSION}" GREATER 4)
   SET(VTKGDCM_LIB_SRCS
-    vtkGdcmReader.cxx
-    vtkGdcmWriter.cxx
+    vtkGdcmReader.cxx 
+    vtkGdcmWriter.cxx 
   )
 ENDIF("${VTK_MAJOR_VERSION}" GREATER 4)
+
 
 #-----------------------------------------------------------------------------
 # Create vtkgdcm library
@@ -202,6 +203,7 @@ TARGET_LINK_LIBRARIES(vtkWriteDicomExtended
 IF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
   INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcmReader.h)
   INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcmWriter.h)
+  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcm4DSplitter.h)  
 ENDIF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
 
 IF(NOT GDCM_INSTALL_NO_LIBRARIES)
