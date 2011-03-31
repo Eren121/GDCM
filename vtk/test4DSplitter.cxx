@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: test4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 16:12:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2011/03/31 21:45:12 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or

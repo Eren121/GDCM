@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exUnMosaic2.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 07:45:00 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2011/03/31 21:45:08 $
+  Version:   $Revision: 1.2 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
   {
      std::cout << "outputdims[0] : " << outputdims[0] << " outputdims[1] : " <<  outputdims[1] << " numberOfImagesInMosaic : " << numberOfImagesInMosaic
                << " ( = " << outputdims[0] *  outputdims[1] * outputdims[2] * 2 << " ) doesn't match with dataRawSize : " << dataRawSize << std::endl;
-     //exit(0);       
+     //exit(0);
   }
 */ 
 

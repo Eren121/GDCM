@@ -25,19 +25,18 @@ INCLUDE_DIRECTORIES(
 # Depending on VTK version build more stuff:
 IF("${VTK_MAJOR_VERSION}" GREATER 4)
   SET(VTKGDCM_LIB_SRCS
-    vtkGdcmReader.cxx 
-    vtkGdcmWriter.cxx 
-    vtkImageColorViewer.cxx 
-    vtkImageMapToWindowLevelColors2.cxx 
-    vtkGdcm4DSplitter.cxx 
+    vtkGdcmReader.cxx
+    vtkGdcmWriter.cxx
+    vtkImageColorViewer.cxx
+    vtkImageMapToWindowLevelColors2.cxx
+    vtkGdcm4DSplitter.cxx
   )
 ELSE("${VTK_MAJOR_VERSION}" GREATER 4)
   SET(VTKGDCM_LIB_SRCS
-    vtkGdcmReader.cxx 
-    vtkGdcmWriter.cxx 
+    vtkGdcmReader.cxx
+    vtkGdcmWriter.cxx
   )
 ENDIF("${VTK_MAJOR_VERSION}" GREATER 4)
-
 
 #-----------------------------------------------------------------------------
 # Create vtkgdcm library

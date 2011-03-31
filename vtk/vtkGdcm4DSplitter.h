@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 16:12:33 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2011/03/31 21:45:12 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <vtkImageData.h>
-#include "gdcmDirList.h" 
+#include "gdcmDirList.h"
 
 typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 //typedef  bool (vtkGdcm4DSplitter::*MembFoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
@@ -31,7 +31,7 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
 //{
   class vtkGdcm4DSplitter {
     public:
-    
+
        vtkGdcm4DSplitter();
        ~vtkGdcm4DSplitter(){};
        bool setDirName(std::string &dirName);
@@ -42,8 +42,8 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
        // =====
        inline void setSplitOnPosition()   {SplitOnPosition=true;  SplitOnOrientation=false; SplitOnTag=false;}
        inline void setSplitOnOrientation(){SplitOnPosition=false; SplitOnOrientation=true;  SplitOnTag=false;}
-       inline void setSplitOnTag(unsigned short int splitGroup, unsigned short int splitElem)       
-                                          {SplitOnPosition=false; SplitOnOrientation=false; SplitOnTag=true; 
+       inline void setSplitOnTag(unsigned short int splitGroup, unsigned short int splitElem)
+                                          {SplitOnPosition=false; SplitOnOrientation=false; SplitOnTag=true;
                                            SplitGroup=splitGroup;    SplitElem=splitElem;}
        inline void setSplitConvertToFloat(bool conv) {SplitConvertToFloat=conv;}
 
@@ -52,7 +52,7 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
        inline void setSortOnPosition()   {SortOnPosition=true; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;
                                           SortOnPosition=true;}
 
-       inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)       
+       inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)
                                          {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false; SortOnUserFunction=false;
                                           SortGroup=sortGroup;  SortElem=sortElem;}
 
@@ -67,7 +67,7 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
        inline void setRecursive(bool recursive) { Recursive=recursive;}
 
        // SortOnOrientation : not yet made
-       //inline void setSortOnOrientation(){SortOnPosition=false; SortOnOrientation=true;  SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;}   
+       //inline void setSortOnOrientation(){SortOnPosition=false; SortOnOrientation=true;  SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;}
 
         std::vector<vtkImageData*> *GetImageDataVector();
         vtkImageData *GetImageData();
@@ -77,7 +77,7 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
     protected:
     private:
        bool CompareOnSortTag              (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
-       bool CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2); 
+       bool CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 
     // Data
     // ----
@@ -98,7 +98,7 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
 
        bool SortOnPosition;
        bool SortOnOrientation;
-       bool SortOnTag;    
+       bool SortOnTag;
        bool SortOnFileName;
        bool SortOnUserFunction;
 

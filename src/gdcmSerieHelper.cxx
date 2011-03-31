@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 07:36:00 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2011/03/31 21:45:11 $
+  Version:   $Revision: 1.72 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -301,7 +301,7 @@ void SerieHelper::OrderFileList(FileList *fileSet)
    
    if ( SerieHelper::UserLessThanFunction )
    {
-      gdcmDebugMacro("Use UserLessThanFunction");     
+      gdcmDebugMacro("Use UserLessThanFunction");
       UserOrdering( fileSet );
       return; 
    }
@@ -656,7 +656,7 @@ XCoherentFileSetmap SerieHelper::SplitOnTagValueConvertToFloat(FileList *fileSet
 
       strTagValue = (*it)->GetEntryString(group,element);
       dTagValue = atof( strTagValue.c_str());
-      iTagValue = dTagValue;
+      iTagValue = dTagValue*10000.;
       sprintf(cTagValue, "%010d", iTagValue);
       strTagValue = cTagValue;
       
