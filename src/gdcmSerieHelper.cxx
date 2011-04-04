@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmSerieHelper.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 21:45:11 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2011/04/04 17:33:58 $
+  Version:   $Revision: 1.73 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -1146,7 +1146,6 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File *inFile )
          }
       }
       // Eliminate non-alphanum characters, including whitespace.
-
       unsigned int s_size = s.size();
       if(s_size == 0)
       { // to avoid further troubles when wild anonymization was performed
@@ -1166,7 +1165,7 @@ std::string SerieHelper::CreateUserDefinedFileIdentifier( File *inFile )
                s.replace(i, 1, "_");  // ImagePositionPatient related stuff will be more human readable
             }
          }
-         // deal with Dicom strings trailing '\0' 
+         // deal with Dicom strings trailing '\0'
          if(s[s_size-1] == '_')
             s.erase(s_size-1, 1);
       }
