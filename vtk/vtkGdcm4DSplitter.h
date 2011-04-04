@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 21:45:12 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/04/04 17:01:03 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -22,9 +22,10 @@
 #include <vector>
 #include <vtkImageData.h>
 #include "gdcmDirList.h"
+#include "gdcmFile.h"
 
 typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
-//typedef  bool (vtkGdcm4DSplitter::*MembFoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
+
 #define CALL_MEMBER_FONC(object, ptrToFoncMember)  ((object).*(ptrToFoncMember))
  
 //namespace GDCM_NAME_SPACE
@@ -51,10 +52,10 @@ typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, G
        // ====
        inline void setSortOnPosition()   {SortOnPosition=true; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;
                                           SortOnPosition=true;}
-
-       inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)
-                                         {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false; SortOnUserFunction=false;
-                                          SortGroup=sortGroup;  SortElem=sortElem;}
+      // use setSortOnUserFunction, instead!
+      // inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)
+      //                                   {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false; SortOnUserFunction=false;
+      //                                    SortGroup=sortGroup;  SortElem=sortElem;}
 
        inline void setSortOnUserFunction (FoncComp f)
                                          { UserCompareFunction=f;

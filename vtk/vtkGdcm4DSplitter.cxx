@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/30 14:49:04 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/04/04 17:01:03 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -68,7 +68,6 @@ User will have to specify some points
  - ImageOrientationPatient
         void setSplitOnOrientation();
  - User choosen tag
-        ==> WARNING : This one has troubles; do NOT use it, right now!
         void setSplitOnTag(unsigned short splitGroup, unsigned short splitElem);
         void setSplitConvertToFloat(bool conv);
  - UserDefined Function
@@ -78,12 +77,21 @@ User will have to specify some points
 --------------------------
 
  - ImagePositionPatient
-        void setSortOnPosition();
+        void setSortOnPosition(); 
+ - ImageOrientationPatient
+       ==> Only in your dreams!
+       ==> or, please, write a IOP sorter ...
  - User choosen tag
+        ==> WARNING : This one has troubles; do NOT use it, right now!
+        ==> use setSortOnUserFunction instead 
         void setSortOnTag(unsigned short sortGroup, unsigned short sortElem);
         void setSortConvertToFloat(bool conv)
-
-. Execute
+ - UserDefined Function
+        void setSortOnUserFunction (FoncComp f);
+ - File name
+        void setSortOnFileName()
+    
+. Execute :
 -----------
         bool Go();
 
@@ -112,8 +120,8 @@ User will have to specify some points
                  SortOnPosition(false),  SortOnOrientation(false),  SortOnTag(false), 
                  SortGroup(0),  SortElem(0), SortConvertToFloat(false),
 
-                 Recursive(false), TypeDir(0), 
-                 verbose(true) 
+                 Recursive(false), TypeDir(0),
+                 verbose(false) 
  {
  
  }
@@ -145,8 +153,7 @@ User will have to specify some points
       }
       else
          return (vtkImageData*) NULL;
- }
-       
+ }      
        
  bool vtkGdcm4DSplitter::setDirName(std::string &dirName) 
  {
@@ -189,10 +196,10 @@ User will have to specify some points
     return true;
  }      
 
- /*static */bool vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
+ bool vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
  { 
   /* if (verbose) printf ("%04x %04x\n", this->SortGroup,this->SortElem);
-   if (verbose) std :: cout << file1->GetEntryString(SortGroup,SortElem).c_str() << " : " 
+     if (verbose) std :: cout << file1->GetEntryString(SortGroup,SortElem).c_str() << " : " 
                             << atof(file1->GetEntryString(SortGroup,SortElem).c_str())
                             << std::endl;
 */
@@ -200,11 +207,12 @@ User will have to specify some points
    return atof(file1->GetEntryString(SortGroup,SortElem).c_str()) < atof(file2->GetEntryString(SortGroup,SortElem).c_str()); 
  } 
 
- /*static */bool vtkGdcm4DSplitter::CompareOnSortTag(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
+ bool vtkGdcm4DSplitter::CompareOnSortTag(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
  {
    return file1->GetEntryString(vtkGdcm4DSplitter::SortGroup,vtkGdcm4DSplitter::SortElem) < file2->GetEntryString(vtkGdcm4DSplitter::SortGroup,vtkGdcm4DSplitter::SortElem);  
  }
-   
+ 
+ 
  bool vtkGdcm4DSplitter::Go()
  {
    if (!SplitOnPosition && !SplitOnOrientation && !SplitOnTag ) 
@@ -349,15 +357,7 @@ User will have to specify some points
       else if (SortOnOrientation)
       {
               if (verbose) std::cout << "SortOnOrientation" << std::endl;
-             /// \TODO SortOnOrientation()
-           // Within a 'just to see' program, 
-           // OrderFileList() causes trouble, since some files
-           // (eg:MIP views) don't have 'Position', now considered as mandatory
-           // --> Activated on user demand.
-   
-           // Information is in :      
-           // 0020,0032 : Image Position Patient
-           // 0020,0030 : Image Position (RET)
+            /// \TODO SortOnOrientation()
       
             // we still miss an algo to sort an Orientation, given by 6 cosines!
             //  Anything like this, in GDCM2? 
@@ -384,6 +384,9 @@ User will have to specify some points
          std::cout << "Sorry, troubles not solved yet; use SortOnUserFunction, right now!" << std::endl;
  
         /*        ==> WARNING : This one has troubles; do NOT use it, right now!
+        // a pointer to fonction cannot be casted as a pointer to member function!
+        // Use SortOnUserFunction, instead!
+
          if ( SortConvertToFloat )
             s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)> 
                                                                  ( &vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat));     
