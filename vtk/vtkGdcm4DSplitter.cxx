@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/04 17:01:03 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2011/04/05 13:56:31 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,6 +73,15 @@ User will have to specify some points
  - UserDefined Function
         void setSortOnUserFunction (FoncComp f);
  
+ for 'true' 3D image sets :
+   - if you want to get a single 3D vtkImageData, use SplitOnOrientation -i.e. no split-
+   - if you want to get a vector of 2D vtkImageData, use SplitOnPosition  -i.e. one slice in each 'XCoherent filesite'-
+
+ for 'true' 4D multi-orientation image sets (i.e. a stack of axial + sagital + coronal images, at different instants ...)
+   --> this is 5D, right?
+   Nothing done, yet.
+
+ 
 . Choose 'sort' criterion :
 --------------------------
 
@@ -81,16 +90,11 @@ User will have to specify some points
  - ImageOrientationPatient
        ==> Only in your dreams!
        ==> or, please, write a IOP sorter ...
- - User choosen tag
-        ==> WARNING : This one has troubles; do NOT use it, right now!
-        ==> use setSortOnUserFunction instead 
-        void setSortOnTag(unsigned short sortGroup, unsigned short sortElem);
-        void setSortConvertToFloat(bool conv)
  - UserDefined Function
         void setSortOnUserFunction (FoncComp f);
  - File name
         void setSortOnFileName()
-    
+  
 . Execute :
 -----------
         bool Go();
