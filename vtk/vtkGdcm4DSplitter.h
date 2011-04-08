@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/04/04 17:01:03 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2011/04/08 00:11:36 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -24,7 +24,7 @@
 #include "gdcmDirList.h"
 #include "gdcmFile.h"
 
-typedef  bool (*FoncComp)                       (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
+typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 
 #define CALL_MEMBER_FONC(object, ptrToFoncMember)  ((object).*(ptrToFoncMember))
  

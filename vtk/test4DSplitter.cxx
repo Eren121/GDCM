@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: test4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 21:45:12 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2011/04/08 00:11:36 $
+  Version:   $Revision: 1.4 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -57,8 +57,10 @@ int main(int argc, char *argv[])
   
    std::cout << "... inside " << argv[0] << std::endl;
 
-     
+// 3D     
+//std::string strDirName("/home/jpr/Desktop/Patients_Emilie/Patient.3T/AUB Jos/AUBERTIN JOSEPH/PROSTATE - 305629373/dSSh_DWISENSE_602");
 
+// 4D
 std::string strDirName("/home/jpr/Desktop/Patients_Emilie/Patient.3T/AUB Jos/AUBERTIN JOSEPH/PROSTATE - 305629373/DYN7INJDYN6_901");
    
 
@@ -81,7 +83,7 @@ std::vector<vtkImageData*> *output;
    spl->setDirName(strDirName);
    spl->setRecursive(false);
    spl->setSplitOnPosition();
-
+   //spl->setSplitOnOrientation();
    // Time triger : 0018|1060
    grSort=0x0018;
    elSort=0x1060;
@@ -109,11 +111,14 @@ std::cout << "--------------------------------" << std::endl;
 std::cout << "Vector size " << output->size()   << std::endl;
 std::cout << "--------------------------------" << std::endl;
 
+//(*output)[0]->PrintSelf(std::cout, vtkIndent(2));
+
 std::vector<vtkImageData*>::iterator it;
 // Print the first one (why not?)
-it=output->begin();
-(*it)->PrintSelf(std::cout, vtkIndent(2));
-
+ for(it=output->begin(); it!=output->end(); ++it) {
+   std::cout << "========================================" << std::endl;
+   (*it)->PrintSelf(std::cout, vtkIndent(2));
+ }
 
 // Pour un directory '4D'
 // en sortie, chaque  vtkImageData contiendra un volume au cours du temps.

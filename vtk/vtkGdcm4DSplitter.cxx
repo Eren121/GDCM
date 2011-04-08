@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/05 13:56:31 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2011/04/08 00:11:36 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -102,8 +102,8 @@ User will have to specify some points
 . Get the result
 ----------------
 
- -a single vtkImageData:
-        vtkImageData *GetImageData();
+// -a single vtkImageData:
+//        vtkImageData *GetImageData();
 - a vector of vtkImageData
         std::vector<vtkImageData*> *GetImageDataVector();
 
@@ -131,8 +131,9 @@ User will have to specify some points
  }
 
  std::vector<vtkImageData*> * vtkGdcm4DSplitter::GetImageDataVector() 
- {
- if (verbose) std::cout << "TypeDir " << TypeDir << std::endl;
+ { 
+/*
+ if (verbose) std::cout << "GetImageDataVector : TypeResult " << TypeResult << std::endl;
     if (TypeResult == 2)
        return ImageDataVector;
     else
@@ -144,19 +145,25 @@ User will have to specify some points
       }
       else
          return (std::vector<vtkImageData*>*) NULL;
+*/
+     return ImageDataVector;
  }
  
  vtkImageData *vtkGdcm4DSplitter::GetImageData() 
  {
+ /*
+  if (verbose) std::cout << "GetImageData : TypeResult " << TypeResult << std::endl;
     if (TypeResult == 1)
        return ImageData;
     else
-      if (TypeResult == 1)
+      if (TypeResult == 2)
       {
          return (*ImageDataVector)[0];      
       }
       else
          return (vtkImageData*) NULL;
+*/
+   return (*ImageDataVector)[0]; 
  }      
        
  bool vtkGdcm4DSplitter::setDirName(std::string &dirName) 
@@ -419,10 +426,19 @@ User will have to specify some points
        reader->Update();
        
        /// \TODO : remove the following
-       //if (verbose) reader->GetOutput()->PrintSelf(std::cout, vtkIndent(2));
+       if (verbose) {
+          std::cout << "reader->GetOutput() :" << std::endl;
+          reader->GetOutput()->PrintSelf(std::cout, vtkIndent(2));
+       }
        
        ImageDataVector->push_back(reader->GetOutput() );
-
+       
+       std::vector<vtkImageData*>::iterator it; 
+       if (verbose)      
+       for(it=ImageDataVector->begin(); it!=ImageDataVector->end(); ++it) {
+         std::cout << "-in vtkGdcm4DSplitter--------------------------" << std::endl;
+         (*it)->PrintSelf(std::cout, vtkIndent(2));
+       }
        std::cout << std::endl;
    }
 
