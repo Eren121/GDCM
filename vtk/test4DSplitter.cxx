@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: test4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/08 00:11:36 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2011/04/08 00:14:18 $
+  Version:   $Revision: 1.5 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -111,10 +111,10 @@ std::cout << "--------------------------------" << std::endl;
 std::cout << "Vector size " << output->size()   << std::endl;
 std::cout << "--------------------------------" << std::endl;
 
+// Print the first one (why not?)
 //(*output)[0]->PrintSelf(std::cout, vtkIndent(2));
 
-std::vector<vtkImageData*>::iterator it;
-// Print the first one (why not?)
+ std::vector<vtkImageData*>::iterator it;
  for(it=output->begin(); it!=output->end(); ++it) {
    std::cout << "========================================" << std::endl;
    (*it)->PrintSelf(std::cout, vtkIndent(2));
