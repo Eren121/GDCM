@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/08 00:11:36 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2011/04/11 11:28:31 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -303,13 +303,18 @@ User will have to specify some points
 
    if (SplitOnOrientation) 
    {
-            s->SetDropDuplicatePositions(false);
-            xcm = s->SplitOnOrientation(l);
+      s->SetDropDuplicatePositions(false);
+      xcm = s->SplitOnOrientation(l);
    }
    else if (SplitOnPosition)
    {
-            s->SetDropDuplicatePositions(true);
-            xcm = s->SplitOnPosition(l);
+      s->SetDropDuplicatePositions(true);
+      xcm = s->SplitOnPosition(l);
+      // reorg the std::map xcm according to position // JPR
+      // the key of xcm follows lexicographical order
+      // (that may be different than the 'distance' order)
+      // we have to reorganize it!
+      reorgXCoherentFileSetmap(xcm);
    }
    else if (SplitOnTag) 
    {
@@ -345,6 +350,7 @@ User will have to specify some points
            if (verbose)
                std::cout << "--- xCoherentName = [" << (*i).first << "]" << std::endl;
    }
+   
  // XCoherentFileSetmap map < critère de split, FileList (= std::vector de gdcm::File*) >
 
    for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
@@ -450,3 +456,287 @@ User will have to specify some points
    return true;
  }
 
+
+ void vtkGdcm4DSplitter::reorgXCoherentFileSetmap(GDCM_NAME_SPACE::XCoherentFileSetmap &xcm)
+ {
+   ELEM e;   
+   std::vector<ELEM> vectElem;
+/*
+   typedef struct 
+   {
+      std::string strIPP;
+      double dist;
+      GDCM_NAME_SPACE::File *file;
+   } ELEM;   
+*/
+
+   bool Debug=true;
+   
+   for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
+                                                  i != xcm.end();
+                                                ++i)
+   {
+      if (verbose)
+               std::cout << "--- xCoherentName = [" << (*i).first << "]" << std::endl;
+
+      e.strIPP  = (*i).first;
+      e.file = *(((*i).second)->begin()); // all the gdcm::File of a given xcm item *have* the same IPP; first one is enough
+      e.dist=0.0;
+      vectElem.push_back(e);   
+   }  
+   sortVectElem(&vectElem);
+   
+   // now, create the final std::map !
+   // final_xcm<to_str(e.dist , xcm[e.strIPP]>
+   // xcm = final_xcm;
+   // check what we need to free !
+
+   int dist;
+   char c_dist[100];
+   std::string str_dist;
+   int lgr=vectElem.size();
+   GDCM_NAME_SPACE::XCoherentFileSetmap final_xcm;
+   for (int i2=0; i2<lgr; i2++)
+   { 
+      dist =  (vectElem[i2].dist*1000);
+      sprintf(c_dist,"%010d",dist);
+      str_dist = c_dist;
+/*
+      std::cout << "dist " << vectElem[i2].dist 
+                << " str_dist " << str_dist
+                << " IPP " << vectElem[i2].strIPP
+                << std::endl;
+
+*/     
+      final_xcm[str_dist] = xcm[vectElem[i2].strIPP];
+   } 
+   
+   /// \TODO : check what needs to be cleared // JPR
+
+   xcm = final_xcm;
+   
+ }
+
+
+bool vtkGdcm4DSplitter::sortVectElem(std::vector<ELEM> *fileList)
+{
+//based on Jolinda Smith's algorithm
+
+//Tags always use the same coordinate system, where "x" is left
+//to right, "y" is posterior to anterior, and "z" is foot to head (RAH).
+
+   //iop is calculated based on the file file
+   float cosines[6];
+   double normal[3];
+   double ipp[3];
+   double dist;
+   double min = 0, max = 0;
+   bool first = true;
+   
+   double ZSpacing; // useless here! // JPR
+   bool DirectOrder = true; // remove it!
+   
+   ZSpacing = -1.0;  // will be updated if process doesn't fail
+    
+   //std::multimap<double,File *> distmultimap; // JPR
+   std::multimap<double,ELEM> distmultimap; // JPR
+   
+   // Use a multimap to sort the distances from 0,0,0
+   //for ( FileList::const_iterator // JPR
+   for ( std::vector<ELEM>::iterator   // JPR
+         it = fileList->begin();
+         it != fileList->end(); ++it )
+   {
+      //gdcmDebugMacro("deal with " << (*it)->file->GetFileName() );
+      if ( first ) 
+      {
+         (*it).file->GetImageOrientationPatient( cosines );
+
+   // The "Image Orientation Patient" tag gives the direction cosines 
+   // for the rows and columns for the three axes defined above. 
+   // Typical axial slices will have a value 1/0/0/0/1/0: 
+   // rows increase from left to right, 
+   // columns increase from posterior to anterior. This is your everyday
+   // "looking up from the bottom of the head with the eyeballs up" image. 
+   
+   // The "Image Position Patient" tag gives the coordinates of the first
+   // voxel in the image in the "RAH" coordinate system, relative to some
+   // origin.   
+
+   // First, calculate the slice normal from IOP : 
+          
+         // You only have to do this once for all slices in the volume. Next, 
+         // for each slice, calculate the distance along the slice normal 
+         // using the IPP ("Image Position Patient") tag.
+         // ("dist" is initialized to zero before reading the first slice) :
+
+         normal[0] = cosines[1]*cosines[5] - cosines[2]*cosines[4];
+         normal[1] = cosines[2]*cosines[3] - cosines[0]*cosines[5];
+         normal[2] = cosines[0]*cosines[4] - cosines[1]*cosines[3];
+
+   // For each slice (here : the first), calculate the distance along 
+   // the slice normal using the IPP tag 
+    
+         ipp[0] = (*it).file->GetXOrigin();
+         ipp[1] = (*it).file->GetYOrigin();
+         ipp[2] = (*it).file->GetZOrigin();
+
+         dist = 0;
+         for ( int i = 0; i < 3; ++i )
+         {
+            dist += normal[i]*ipp[i];
+         }
+    
+         //gdcmDebugMacro("dist : " << dist);
+         distmultimap.insert(std::pair<const double,ELEM>(dist, *it));
+
+         max = min = dist;
+         first = false;
+      }
+      else 
+      {
+   // Next, for each slice, calculate the distance along the slice normal
+   // using the IPP tag 
+         ipp[0] = (*it).file->GetXOrigin();
+         ipp[1] = (*it).file->GetYOrigin();
+         ipp[2] = (*it).file->GetZOrigin();
+
+         dist = 0;
+         for ( int i = 0; i < 3; ++i )
+         {
+            dist += normal[i]*ipp[i];
+         }
+
+         (*it).dist = dist; // JPR
+
+         distmultimap.insert(std::pair<const double,ELEM>(dist, *it));
+         //gdcmDebugMacro("dist : " << dist);
+         min = (min < dist) ? min : dist;
+         max = (max > dist) ? max : dist;
+      }
+   }
+
+  // gdcmDebugMacro("After parsing vector, nb of elements : " << fileList->size() );
+
+/*Useless here. // JPR
+
+   // Find out if min/max are coherent
+   if ( min == max )
+   {
+     gdcmWarningMacro("Looks like all images have the exact same image position. "
+                      << "No PositionPatientOrdering sort performed. "
+                      << "No 'ZSpacing' calculated! ");
+     return false;
+   }
+*/
+
+/* Useless here, 'split' already done. // JPR
+
+   // Check to see if image shares a common position
+   bool ok = true;
+   for (std::multimap<double, File *>::iterator it2 = distmultimap.begin(); 
+        it2 != distmultimap.end();
+        ++it2)
+   {
+   
+      gdcmDebugMacro("Check if image shares a common position : " << ((*it2).second).file->GetFileName() );   
+   
+      if (distmultimap.count((*it2).first) != 1)
+      {
+         gdcmWarningMacro("File: ["
+              << ((*it2).second->GetFileName())
+              << "] : more than ONE file at distance: '"
+              << (*it2).first
+              << " (position is not unique!) "
+              << "No PositionPatientOrdering sort performed. "
+              << "No 'ZSpacing' calculated! ");      
+
+         ok = false;
+      }
+   }
+   if (!ok)
+   {
+      if (! DropDuplicatePositions)
+         return false;
+   }
+
+*/
+      
+// Now, we can calculate Z Spacing as the difference
+// between the "dist" values for the first two slices.
+
+// The following (un)-commented out code is let here
+// to be re-used by whomsoever is interested...
+
+    std::multimap<double, ELEM>::iterator it5 = distmultimap.begin();
+    double d1 = (*it5).first;
+    it5++;
+    double d2 = (*it5).first;
+    ZSpacing = d1-d2;
+    if (ZSpacing < 0.0)
+       ZSpacing = - ZSpacing;
+
+   fileList->clear();  // doesn't delete list elements, only nodes
+
+// Acording to user requierement, we sort direct order or reverse order.
+   if (DirectOrder)
+   {  
+      for (std::multimap<double, ELEM>::iterator it3 = distmultimap.begin();
+           it3 != distmultimap.end();
+           ++it3)
+      {
+         fileList->push_back( (*it3).second );
+ 
+/*       useless here! // JPR
+
+         if (DropDuplicatePositions)
+         {
+            // ImagePositionPatientOrdering  wrong duplicates are found ???
+            // --> fixed. See comment
+
+            it3 =  distmultimap.upper_bound((*it3).first); // skip all duplicates
+           // the upper_bound function increments the iterator to the next non-duplicate entry
+           // The for loop iteration also increments the iterator, which causes the code to skip every other image
+           // --> decrement the iterator after the upper_bound function call
+            it3--;
+            if (it3 == distmultimap.end() )  // if last image, stop iterate
+               break;
+         }
+*/
+      }
+   }
+   else // user asked for reverse order
+   {
+      std::multimap<double, ELEM>::const_iterator it4;
+      it4 = distmultimap.end();
+      do
+      {
+         it4--;
+         fileList->push_back( (*it4).second );
+
+/* useless here // JPR
+
+         if (DropDuplicatePositions)  // skip all duplicates
+         {
+            // lower_bound finds the next element that is 
+            // less than or *equal to* the current value!
+            //it4 =  distmultimap.lower_bound((*it4).first);
+   
+           // David Feng's fix
+           std::multimap<double, ELEM>::const_iterator itPrev = it4;
+           while (itPrev->first == it4->first)
+              --itPrev;
+           it4 = itPrev;
+    
+           if (it4 == distmultimap.begin() ) // if first image, stop iterate
+               break;
+         }
+*/ 
+      } while (it4 != distmultimap.begin() );
+   }
+
+   distmultimap.clear();
+
+   return true;
+
+}

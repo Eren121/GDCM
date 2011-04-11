@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/04/08 00:11:36 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2011/04/11 11:28:31 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -27,7 +27,15 @@
 typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 
 #define CALL_MEMBER_FONC(object, ptrToFoncMember)  ((object).*(ptrToFoncMember))
- 
+
+   typedef struct 
+   {
+      std::string strIPP;
+      double dist;
+      GDCM_NAME_SPACE::File *file;
+   } ELEM;
+   
+   
 //namespace GDCM_NAME_SPACE
 //{
   class vtkGdcm4DSplitter {
@@ -79,6 +87,8 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
     private:
        bool CompareOnSortTag              (GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
        bool CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
+       void reorgXCoherentFileSetmap      (GDCM_NAME_SPACE::XCoherentFileSetmap &xcm);
+       bool sortVectElem(std::vector<ELEM> *le);
 
     // Data
     // ----

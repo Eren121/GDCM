@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: test4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/08 00:14:18 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/04/11 11:28:31 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -58,10 +58,10 @@ int main(int argc, char *argv[])
    std::cout << "... inside " << argv[0] << std::endl;
 
 // 3D     
-//std::string strDirName("/home/jpr/Desktop/Patients_Emilie/Patient.3T/AUB Jos/AUBERTIN JOSEPH/PROSTATE - 305629373/dSSh_DWISENSE_602");
+std::string strDirName("/home/jpr/Desktop/Patients_Emilie/Patient.3T/AUB Jos/AUBERTIN JOSEPH/PROSTATE - 305629373/dSSh_DWISENSE_602");
 
 // 4D
-std::string strDirName("/home/jpr/Desktop/Patients_Emilie/Patient.3T/AUB Jos/AUBERTIN JOSEPH/PROSTATE - 305629373/DYN7INJDYN6_901");
+//std::string strDirName("/home/jpr/Desktop/Patients_Emilie/Patient.3T/AUB Jos/AUBERTIN JOSEPH/PROSTATE - 305629373/DYN7INJDYN6_901");
    
 
    // ----- Begin Processing -----  
