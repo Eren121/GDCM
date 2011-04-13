@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/11 11:28:31 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2011/04/13 13:30:58 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -38,14 +38,22 @@ vtkGdcm4DSplitter
 A 'Dicom Serie' doesn't mean always the same thing :
         a given Slice along the time
         a given Volume at a given time
-Sometimes, an image within a serie is so artefacted than user decides to replace
-it by an other image.
+Sometimes, an image within a serie is so artefacted than user decides to replace it
+           by an other image.
 
 User needs to be aware, *only him* knows want he wants to do.
-vtkGdcm4DSplitter class does the job for hom
+vtkGdcm4DSplitter class does the job for him
 (despite its name, it works on 3D or 2D+T images too)
 
-User will have to specify some points
+==> To (try to) understand how the file store is organised, user is deeply encourage to use something like:
+
+PrintFile dirin=Root_Directory_holding_the_images rec > 1.txt
+
+open it with any test editor, and/or (Linux users) 
+grep a_supposed_to_be_string_of_interest 1.txt
+
+ 
+Aware user will have to specify some points :
 
 . Choose input data
 ------------------- 
@@ -56,6 +64,8 @@ User will have to specify some points
        bool setVectDirName(std::vector<std::string> &vectDirName);
 - a list of files       
        bool setVectFileName(std::vector<std::string> &vectFileName);
+- a list of gdcm::File*      
+       bool setVectGdcmFile(std::vector<GDCM_NAME_SPACE::File *> &vectGdcmFile);
 
 - Recursive directory exploration
        void setRecursive(bool recursive);
@@ -75,12 +85,17 @@ User will have to specify some points
  
  for 'true' 3D image sets :
    - if you want to get a single 3D vtkImageData, use SplitOnOrientation -i.e. no split-
-   - if you want to get a vector of 2D vtkImageData, use SplitOnPosition  -i.e. one slice in each 'XCoherent filesite'-
+   - if you want to get a vector of 2D vtkImageData, use SplitOnPosition  -i.e. one slice in each 'XCoherent fileset'-
 
- for 'true' 4D multi-orientation image sets (i.e. a stack of axial + sagital + coronal images, at different instants ...)
+ for 'true' 4D multi-orientation image sets (i.e. a stack of n axial + m sagital + p coronal images, at different instants ...)
    --> this is 5D, right?
-   Nothing done, yet.
-
+   (almost) nothing done, yet :
+   . use setSplitOnly()
+   . Use a first time vtkGdcm4DSplitter with setSplitOnOrientation();
+   . Get the VectGdcmFileLists (a std::vector of 'XCoherent fileset')
+   . use vtkGdcm4DSplitter, with as many setVectGdcmFile(std::vector<GDCM_NAME_SPACE::File *> &vectGdcmFile) you need 
+        one per element of std::vector<GDCM_NAME_SPACE::File *>
+        think on 'spliting' and 'sorting' it, according to your needs. 
  
 . Choose 'sort' criterion :
 --------------------------
@@ -109,19 +124,21 @@ User will have to specify some points
 
   ===================================================================== */
 
-#include "gdcmSerieHelper.h"
-
 #include "vtkGdcmReader.h"
 #include "vtkGdcm4DSplitter.h"
 #include <algorithm>
 #include "gdcmSerieHelper.h" // for ImagePositionPatientOrdering()
 #include <stdlib.h> // for atof
 
+// Constructor / Destructor
+/**
+ * \brief   Constructor from a given vtkGdcm4DSplitter
+ */
  vtkGdcm4DSplitter::vtkGdcm4DSplitter() :
                  SplitOnPosition(false), SplitOnOrientation(false), SplitOnTag(false),
-                 SplitGroup(0), SplitElem(0),
+                 SplitGroup(0), SplitElem(0), SplitConvertToFloat(false),
 
-                 SortOnPosition(false),  SortOnOrientation(false),  SortOnTag(false), 
+                 SortOnPosition(false),  SortOnOrientation(false),  SortOnTag(false), SortOnFileName(false), SortOnUserFunction(false),
                  SortGroup(0),  SortElem(0), SortConvertToFloat(false),
 
                  Recursive(false), TypeDir(0),
@@ -130,42 +147,29 @@ User will have to specify some points
  
  }
 
- std::vector<vtkImageData*> * vtkGdcm4DSplitter::GetImageDataVector() 
- { 
-/*
- if (verbose) std::cout << "GetImageDataVector : TypeResult " << TypeResult << std::endl;
-    if (TypeResult == 2)
-       return ImageDataVector;
-    else
-      if (TypeResult == 1)
-      {
-         std::vector<vtkImageData*> *t = new std::vector<vtkImageData*>; 
-         t->push_back( ImageData );
-         return t;            
-      }
-      else
-         return (std::vector<vtkImageData*>*) NULL;
-*/
-     return ImageDataVector;
- }
- 
- vtkImageData *vtkGdcm4DSplitter::GetImageData() 
+/**
+ * \brief   Canonical destructor.
+ */ 
+ vtkGdcm4DSplitter::~vtkGdcm4DSplitter()
  {
- /*
-  if (verbose) std::cout << "GetImageData : TypeResult " << TypeResult << std::endl;
-    if (TypeResult == 1)
-       return ImageData;
-    else
-      if (TypeResult == 2)
-      {
-         return (*ImageDataVector)[0];      
-      }
-      else
-         return (vtkImageData*) NULL;
-*/
-   return (*ImageDataVector)[0]; 
- }      
-       
+    /// \TODO : delete everything that must be! 
+ }
+
+       // Locate Data to process
+       // ======================
+/**
+ * \brief sets the directories exploration mode
+ * @param recursive whether we want explore recursively the root Directory
+ */       
+void  vtkGdcm4DSplitter::setRecursive(bool recursive) 
+{ 
+   Recursive=recursive;
+}
+      
+/**
+ * \brief Sets the root Directory to get the images from
+ * @param   dirName name of the directory to deal with
+ */       
  bool vtkGdcm4DSplitter::setDirName(std::string &dirName) 
  {
     if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirName) ) 
@@ -177,7 +181,11 @@ User will have to specify some points
     TypeDir=1;
     return true;
  }
- 
+
+/**
+ * \brief Sets a list of Directories to get the images from
+ * @param   vectDirName vector of directory names to deal with
+ */   
  bool vtkGdcm4DSplitter::setVectDirName(std::vector<std::string> &vectDirName) 
  {
     int nbDir = vectDirName.size();
@@ -194,7 +202,11 @@ User will have to specify some points
     TypeDir=2;
     return true;
  }
- 
+
+/**
+ * \brief Sets a list of files read
+ * @param   vectFileName vector of file names to deal with
+ */ 
  bool vtkGdcm4DSplitter::setVectFileName(std::vector<std::string> &vectFileName)
  {
     if ( vectFileName.size() == 0)
@@ -207,6 +219,160 @@ User will have to specify some points
     return true;
  }      
 
+/**
+ * \brief Sets a vector of gdcm::File *
+ * @param   vectGdcmFileName vector of gdcm::File *
+ */
+ 
+ bool vtkGdcm4DSplitter::setVectGdcmFile(GDCM_NAME_SPACE::FileList *vectGdcmFile)
+ {
+    if ( vectGdcmFile->size() == 0)
+    {
+          std::cout << "[ vectGdcmFile ] : empty list" << std::endl;
+          return false;
+    }
+    TypeDir=4;
+    VectGdcmFile = vectGdcmFile; 
+ } 
+
+
+       // Split
+       // =====
+
+/**
+ * \brief   asks for splitting  Filesets according to the Position
+ */
+       
+ void  vtkGdcm4DSplitter::setSplitOnPosition()
+ {
+    SplitOnPosition=true;
+    SplitOnOrientation=false;
+    SplitOnTag=false;
+ }
+/**
+ * \brief   asks for splitting  Filesets according to the Orientation
+ */ 
+ void  vtkGdcm4DSplitter::setSplitOnOrientation()
+ {
+    SplitOnPosition=false;
+    SplitOnOrientation=true; 
+    SplitOnTag=false;
+ }
+/**
+ * \brief   asks for splitting  Filesets according to the value of a given Tag
+ * @param   group  group number of the target Element
+ * @param   element element number of the target Element 
+ */ 
+ void  vtkGdcm4DSplitter::setSplitOnTag(unsigned short int splitGroup, unsigned short int splitElem)
+ {
+    SplitOnPosition=false;
+    SplitOnOrientation=false;
+    SplitOnTag=true;
+    SplitGroup=splitGroup;
+    SplitElem=splitElem;
+ }
+/**
+ * \brief   asks for converting to 'float' the tag values used as a splitting criteria (lexicographic order may not be suitable)
+ */   
+ void  vtkGdcm4DSplitter::setSplitConvertToFloat(bool conv) {SplitConvertToFloat=conv;}
+ 
+/**
+ * \brief   asks for splitting Filesets according to what was asked for (no sorting, no reading data)
+ */  
+ void  vtkGdcm4DSplitter::setSplitOnly(bool s)
+ {
+    SplitOnly = s;
+ }
+       // Sort
+       // ====
+
+ void  vtkGdcm4DSplitter::setSortOnPosition() 
+ {
+    SortOnPosition=true;
+    SortOnOrientation=false;
+    SortOnTag=false;
+    SortOnFileName=false;
+    SortOnUserFunction=false;
+    SortOnPosition=true;
+ }
+ 
+      // use setSortOnUserFunction, instead!
+      // void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)
+      // {
+      //    SortOnPosition=false;
+      //    SortOnOrientation=false;
+      //    SortOnTag=true;
+      //    SortOnFileName=false;
+      //    SortOnUserFunction=false;
+      //    SortGroup=sortGroup;  SortElem=sortElem;
+      // }
+
+
+/**
+ * \brief sets a user supplied function (comparison)
+ * @param f comparison function
+ */
+ void  vtkGdcm4DSplitter::setSortOnUserFunction (FoncComp f)
+ {
+    UserCompareFunction=f;
+    SortOnPosition=false;
+    SortOnOrientation=false;
+    SortOnTag=false;
+    SortOnFileName=false;
+    SortOnUserFunction=true;
+  }
+
+
+ //  void setSortConvertToFloat(bool conv)
+ //  {
+ //     SortConvertToFloat=conv;
+ //  }
+
+/**
+ * \brief asks for sorting  the images, according to their File Name
+ */
+ void  vtkGdcm4DSplitter::setSortOnFileName()
+ {
+    SortOnPosition=false;
+    SortOnOrientation=false;
+    SortOnTag=false;
+    SortOnFileName=true;
+    SortOnUserFunction=false;
+ }
+
+
+ std::vector<vtkImageData*> * vtkGdcm4DSplitter::GetImageDataVector() 
+ { 
+    if (SplitOnly)
+       return NULL;
+
+     return ImageDataVector;
+ }
+ 
+ std::vector<GDCM_NAME_SPACE::FileList *> *vtkGdcm4DSplitter::GetVectGdcmFileLists()
+ {
+    if (SplitOnly)
+        return NULL;
+
+    GDCM_NAME_SPACE::XCoherentFileSetmap::iterator it;
+    for ( it = xcm.begin();
+          it != xcm.end();
+        ++it)
+    {
+       VectGdcmFileLists.push_back((*it).second); 
+    } 
+    return  &VectGdcmFileLists;         
+ }
+ 
+
+ vtkImageData *vtkGdcm4DSplitter::GetImageData() 
+ {
+   if (SplitOnly)
+      return NULL;
+   return (*ImageDataVector)[0]; 
+ }      
+
+ 
  bool vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2)
  { 
   /* if (verbose) printf ("%04x %04x\n", this->SortGroup,this->SortElem);
@@ -226,7 +392,7 @@ User will have to specify some points
  
  bool vtkGdcm4DSplitter::Go()
  {
-   if (!SplitOnPosition && !SplitOnOrientation && !SplitOnTag ) 
+   if (!SplitOnPosition && !SplitOnOrientation && !SplitOnTag) 
    {
        ///\TODO (?) Throw an exception "Choose Splitting mode before!"
        std::cout << "Choose Splitting mode before!" << std::endl;
@@ -251,7 +417,11 @@ User will have to specify some points
 
    GDCM_NAME_SPACE::File *f;
    GDCM_NAME_SPACE::DirListType fileNames;
-   
+ 
+ //
+ // Fill  fileNames with the user supplied file names (in any)
+ // --------------------------------------
+ //
    if (TypeDir == 0 )
    {
       ///\TODO (?) Throw an exception "Set input Directory name(s) / file names  before!"
@@ -274,7 +444,7 @@ User will have to specify some points
         tmpFileNames = dirlist.GetFilenames();
         // Concat two std::vector
         //vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
-       fileNames.insert( fileNames.end(), tmpFileNames.begin(), tmpFileNames.end() );
+        fileNames.insert( fileNames.end(), tmpFileNames.begin(), tmpFileNames.end() );
       }    
    }
    else if (TypeDir == 3)
@@ -282,25 +452,42 @@ User will have to specify some points
       fileNames=VectFileName;
    }  
 
+ //
+ // Fill l with the gdcm::File* corresponding to the files
+ // --------------------------------------
+ //
+
    GDCM_NAME_SPACE::FileList *l = new GDCM_NAME_SPACE::FileList; // (set of gdcm::File)
-   double floatTagvalue;  
-   // Loop on all the gdcm-readable files
-   for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();
-                                    it != fileNames.end();
-                                  ++it)
+   
+   if (TypeDir == 4)
    {
-      int maxSize  = 0x7fff;         // load Elements of any length
-      f = GDCM_NAME_SPACE::File::New();
-      f->SetMaxSizeLoadEntry(maxSize);
-      f->SetFileName( *it );
-      if (f->Load())
-         l->push_back(f);
-      else 
-         std::cout << " Fail to load [" <<  *it << "]" << std::endl;          
-   }   
+   // User passed a vector of gdcm::File* 
+      l = VectGdcmFile;
+   } 
+   else
+   { 
+      double floatTagvalue;  
+      // Loop on all the gdcm-readable files
+      for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();
+                                                  it != fileNames.end();
+                                                ++it)
+      {
+         int maxSize  = 0x7fff;         // load Elements of any length
+         f = GDCM_NAME_SPACE::File::New();
+         f->SetMaxSizeLoadEntry(maxSize);
+         f->SetFileName( *it );
+         if (f->Load())
+            l->push_back(f);
+         else 
+            std::cout << " Fail to load [" <<  *it << "]" << std::endl;          
+      }
+   } 
 
-   GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
 
+//
+// Split the gdcm::File* set, according to user's requierements
+// ------------------------------------------------------------
+//
    if (SplitOnOrientation) 
    {
       s->SetDropDuplicatePositions(false);
@@ -310,10 +497,11 @@ User will have to specify some points
    {
       s->SetDropDuplicatePositions(true);
       xcm = s->SplitOnPosition(l);
-      // reorg the std::map xcm according to position // JPR
+
       // the key of xcm follows lexicographical order
       // (that may be different than the 'distance' order)
       // we have to reorganize it!
+
       reorgXCoherentFileSetmap(xcm);
    }
    else if (SplitOnTag) 
@@ -329,27 +517,28 @@ User will have to specify some points
                 xcm = s->SplitOnTagValueConvertToFloat(l, SplitGroup, SplitElem);
             }
    }
-   
+  
    if (xcm.size() == 0)
    {
       if(verbose) std::cout << "Empty XCoherent File Set after 'split' ?!?" << std::endl;
       return false;
    }
+/*
    else if (xcm.size() == 1)
       TypeResult=1;
    else
       TypeResult=2;
+*/
 
+   if(SplitOnly)
+      return true;   
+//
+//
+// ------------------------------------------------------------
+//
    ImageDataVector = new std::vector<vtkImageData*>;
+   /// \TODO move inside the loop, or be clever using vtk!
   // vtkGdcmReader *reader = vtkGdcmReader::New(); // move inside the loop, or be clever using vtk!
-   
-   for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
-                                                  i != xcm.end();
-                                                ++i)
-   {
-           if (verbose)
-               std::cout << "--- xCoherentName = [" << (*i).first << "]" << std::endl;
-   }
    
  // XCoherentFileSetmap map < critère de split, FileList (= std::vector de gdcm::File*) >
 
@@ -357,11 +546,10 @@ User will have to specify some points
                                                   i != xcm.end();
                                                 ++i)
    {
-   
-      vtkGdcmReader *reader = vtkGdcmReader::New(); /// \FIXME : unable to delete!
+      vtkGdcmReader *reader = vtkGdcmReader::New(); /// \TODO FIXME : unable to delete!
        
       if (verbose)
-               std::cout << "==========================================xCoherentName = [" << (*i).first << "]" << std::endl;
+               std::cout << " --- xCoherentName = [" << (*i).first << "]" << std::endl;
 
       if (SortOnPosition)
       {
@@ -374,7 +562,7 @@ User will have to specify some points
       else if (SortOnOrientation)
       {
               if (verbose) std::cout << "SortOnOrientation" << std::endl;
-            /// \TODO SortOnOrientation()
+            /// \TODO (?) SortOnOrientation()
       
             // we still miss an algo to sort an Orientation, given by 6 cosines!
             //  Anything like this, in GDCM2? 
@@ -404,15 +592,15 @@ User will have to specify some points
         // a pointer to fonction cannot be casted as a pointer to member function!
         // Use SortOnUserFunction, instead!
 
-         if ( SortConvertToFloat )
-            s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)> 
+        //  if ( SortConvertToFloat )
+         //    s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)> 
                                                                  ( &vtkGdcm4DSplitter::CompareOnSortTagConvertToFloat));     
-         else
-            s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)>
+        //  else
+        //     s->SetUserLessThanFunction( reinterpret_cast<bool (*)(gdcm13::File*, gdcm13::File*)>
                                                                  ( &vtkGdcm4DSplitter::CompareOnSortTag)); 
        
          // Anything like this, in GDCM2? 
-         s->UserOrdering((*i).second);
+        //  s->UserOrdering((*i).second);
         */
 
          //if (verbose) std::cout << "Out of SortOnTag" << std::endl;
@@ -459,9 +647,20 @@ User will have to specify some points
 
  void vtkGdcm4DSplitter::reorgXCoherentFileSetmap(GDCM_NAME_SPACE::XCoherentFileSetmap &xcm)
  {
+ /*
+ the key of the 'XCoherentFileSetmap', is a std::string, used as if it was found in the Dicom header
+ Normaly(?), it's suitable for almost everything ...
+ ... but the 'Image Position Patient'.
+ We need to order the 'XCoherentFileSetmap' (NOT the content of each XCoherentFileSet!) according to the IPP,
+ using Jolinda Smith's algorithm.
+ (we use a subset of the one defined in gdcm::SerieHelper)
+ 
+*/
+
    ELEM e;   
    std::vector<ELEM> vectElem;
-/*
+
+/* remenber :
    typedef struct 
    {
       std::string strIPP;
@@ -471,10 +670,10 @@ User will have to specify some points
 */
 
    bool Debug=true;
-   
+ 
    for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
-                                                  i != xcm.end();
-                                                ++i)
+                                                       i != xcm.end();
+                                                     ++i)
    {
       if (verbose)
                std::cout << "--- xCoherentName = [" << (*i).first << "]" << std::endl;
@@ -514,13 +713,15 @@ User will have to specify some points
    /// \TODO : check what needs to be cleared // JPR
 
    xcm = final_xcm;
-   
+
  }
 
 
 bool vtkGdcm4DSplitter::sortVectElem(std::vector<ELEM> *fileList)
 {
 //based on Jolinda Smith's algorithm
+// NOTE : if you need to use Jolinda Smith's algorithm, get the one inside gdcm::SerieHelper
+// this one is a light version.
 
 //Tags always use the same coordinate system, where "x" is left
 //to right, "y" is posterior to anterior, and "z" is foot to head (RAH).
@@ -533,10 +734,10 @@ bool vtkGdcm4DSplitter::sortVectElem(std::vector<ELEM> *fileList)
    double min = 0, max = 0;
    bool first = true;
    
-   double ZSpacing; // useless here! // JPR
+   //double ZSpacing; // useless here! // JPR
    bool DirectOrder = true; // remove it!
    
-   ZSpacing = -1.0;  // will be updated if process doesn't fail
+  // ZSpacing = -1.0;  // will be updated if process doesn't fail
     
    //std::multimap<double,File *> distmultimap; // JPR
    std::multimap<double,ELEM> distmultimap; // JPR
@@ -668,13 +869,13 @@ bool vtkGdcm4DSplitter::sortVectElem(std::vector<ELEM> *fileList)
 // The following (un)-commented out code is let here
 // to be re-used by whomsoever is interested...
 
-    std::multimap<double, ELEM>::iterator it5 = distmultimap.begin();
-    double d1 = (*it5).first;
-    it5++;
-    double d2 = (*it5).first;
-    ZSpacing = d1-d2;
-    if (ZSpacing < 0.0)
-       ZSpacing = - ZSpacing;
+    //std::multimap<double, ELEM>::iterator it5 = distmultimap.begin();
+    //double d1 = (*it5).first;
+    //it5++;
+    //double d2 = (*it5).first;
+    //ZSpacing = d1-d2;
+    //if (ZSpacing < 0.0)
+    //   ZSpacing = - ZSpacing;
 
    fileList->clear();  // doesn't delete list elements, only nodes
 

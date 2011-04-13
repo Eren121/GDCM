@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/04/11 11:28:31 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2011/04/13 13:30:58 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -23,6 +23,7 @@
 #include <vtkImageData.h>
 #include "gdcmDirList.h"
 #include "gdcmFile.h"
+#include "gdcmSerieHelper.h"
 
 typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
 
@@ -40,47 +41,52 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
 //{
   class vtkGdcm4DSplitter {
     public:
+//-----------------------------------------------------------------------------
 
        vtkGdcm4DSplitter();
-       ~vtkGdcm4DSplitter(){};
-       bool setDirName(std::string &dirName);
-       bool setVectDirName(std::vector<std::string> &vectDirName);
+       ~vtkGdcm4DSplitter();
+
+       // Locate Data to process
+       // ======================
+       void setRecursive(bool recursive);
+       bool setDirName     (std::string &dirName);
+       bool setVectDirName (std::vector<std::string> &vectDirName);
        bool setVectFileName(std::vector<std::string> &vectFileName);
+       
+       bool setVectGdcmFile(std::vector<GDCM_NAME_SPACE::File *> *vectGdcmFile);
 
        // Split
        // =====
-       inline void setSplitOnPosition()   {SplitOnPosition=true;  SplitOnOrientation=false; SplitOnTag=false;}
-       inline void setSplitOnOrientation(){SplitOnPosition=false; SplitOnOrientation=true;  SplitOnTag=false;}
-       inline void setSplitOnTag(unsigned short int splitGroup, unsigned short int splitElem)
-                                          {SplitOnPosition=false; SplitOnOrientation=false; SplitOnTag=true;
-                                           SplitGroup=splitGroup;    SplitElem=splitElem;}
-       inline void setSplitConvertToFloat(bool conv) {SplitConvertToFloat=conv;}
+       void setSplitOnPosition();
+       void setSplitOnOrientation();
+       void setSplitOnTag(unsigned short int splitGroup, unsigned short int splitElem);
 
+       void setSplitConvertToFloat(bool conv);
+
+       void setSplitOnly(bool s);
+       
        // Sort
        // ====
-       inline void setSortOnPosition()   {SortOnPosition=true; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;
-                                          SortOnPosition=true;}
+       void setSortOnPosition();
       // use setSortOnUserFunction, instead!
-      // inline void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)
+      // void setSortOnTag(unsigned short int sortGroup, unsigned short int sortElem)
       //                                   {SortOnPosition=false; SortOnOrientation=false; SortOnTag=true; SortOnFileName=false; SortOnUserFunction=false;
       //                                    SortGroup=sortGroup;  SortElem=sortElem;}
 
-       inline void setSortOnUserFunction (FoncComp f)
-                                         { UserCompareFunction=f;
-                                           SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=false; SortOnUserFunction=true;}
+       void setSortOnUserFunction (FoncComp f);
 
-       inline void setSortConvertToFloat(bool conv) {SortConvertToFloat=conv;}
+       //void setSortConvertToFloat(bool conv);
 
-       inline void setSortOnFileName()   {SortOnPosition=false; SortOnOrientation=false; SortOnTag=false; SortOnFileName=true; SortOnUserFunction=false;}
+       void setSortOnFileName();
 
-       inline void setRecursive(bool recursive) { Recursive=recursive;}
-
-       // SortOnOrientation : not yet made
+       // SortOnOrientation : not yet made; IOP sorter missing!
        //inline void setSortOnOrientation(){SortOnPosition=false; SortOnOrientation=true;  SortOnTag=false; SortOnFileName=false; SortOnUserFunction=false;}
 
         std::vector<vtkImageData*> *GetImageDataVector();
         vtkImageData *GetImageData();
 
+        std::vector< GDCM_NAME_SPACE::FileList *> *GetVectGdcmFileLists();
+        
         bool Go();
 
     protected:
@@ -106,7 +112,8 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
        unsigned short int SplitGroup;
        unsigned short int SplitElem;
        bool SplitConvertToFloat;
-
+       bool SplitOnly;
+ 
        bool SortOnPosition;
        bool SortOnOrientation;
        bool SortOnTag;
@@ -121,10 +128,15 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
 
        bool Recursive;
        int TypeDir;
-       int TypeResult;
+       //int TypeResult;
        bool verbose;
        std::vector<vtkImageData*> *ImageDataVector;
        vtkImageData *ImageData;
+       //std::vector<GDCM_NAME_SPACE::File *> VectGdcmFile;
+       GDCM_NAME_SPACE::FileList *VectGdcmFile; 
+       GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
+       //std::vector<std::vector<GDCM_NAME_SPACE::File *> > VectGdcmFileLists;
+       std::vector<GDCM_NAME_SPACE::FileList *> VectGdcmFileLists;
   };
 
 //} // end namespace gdcm
