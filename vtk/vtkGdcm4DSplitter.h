@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/04/13 13:30:58 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2011/04/15 15:14:40 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -54,6 +54,8 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
        bool setVectFileName(std::vector<std::string> &vectFileName);
        
        bool setVectGdcmFile(std::vector<GDCM_NAME_SPACE::File *> *vectGdcmFile);
+       
+       bool SetFlipY(bool f) { FlipY = f;}
 
        // Split
        // =====
@@ -137,6 +139,7 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
        GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
        //std::vector<std::vector<GDCM_NAME_SPACE::File *> > VectGdcmFileLists;
        std::vector<GDCM_NAME_SPACE::FileList *> VectGdcmFileLists;
+       bool FlipY;
   };
 
 //} // end namespace gdcm

@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/13 13:30:58 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2011/04/15 15:14:40 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -109,7 +109,14 @@ Aware user will have to specify some points :
         void setSortOnUserFunction (FoncComp f);
  - File name
         void setSortOnFileName()
-  
+
+- Choose 'flip' option
+----------------------
+VTK reader 'flop upside down' the images to display them correctly ?!?
+When a 'math guy' gets the image, the first thing he does is flipping it again.
+Avoid loosing CPU time using :
+      bool SetFlipY(bool); // Wrong = no flip
+
 . Execute :
 -----------
         bool Go();
@@ -547,7 +554,10 @@ void  vtkGdcm4DSplitter::setRecursive(bool recursive)
                                                 ++i)
    {
       vtkGdcmReader *reader = vtkGdcmReader::New(); /// \TODO FIXME : unable to delete!
-       
+      
+      reader->SetFlipY(FlipY);
+      // better user SetFileLowerLeft()
+      /// \TODO : modify vtkGdcmReader ! 
       if (verbose)
                std::cout << " --- xCoherentName = [" << (*i).first << "]" << std::endl;
 
