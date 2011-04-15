@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/15 15:14:40 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2011/04/15 15:23:14 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -115,7 +115,7 @@ Aware user will have to specify some points :
 VTK reader 'flop upside down' the images to display them correctly ?!?
 When a 'math guy' gets the image, the first thing he does is flipping it again.
 Avoid loosing CPU time using :
-      bool SetFlipY(bool); // Wrong = no flip
+      void SetFlipY(bool); // Wrong = no flip
 
 . Execute :
 -----------
