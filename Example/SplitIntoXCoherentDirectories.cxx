@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 07:35:58 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/04/20 14:06:50 $
+  Version:   $Revision: 1.6 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
       if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNameout) )    // dirout not found
       {
          std::string strDirNameout(dirNameout);          // to please gcc 4
-         systemCommand = "mkdir " +strDirNameout;        // create it!
+         systemCommand = "mkdir \"" +strDirNameout + "\"";        // create it!
          if (verbose)
             std::cout << systemCommand << std::endl;
          system (systemCommand.c_str());
@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
                 std::cout << "[" << currentSerieWriteDir<< "]" << std::endl;
             // if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(currentSerieWriteDir) )
              {     
-                systemCommand   = "mkdir " + currentSerieWriteDir;
+                systemCommand   = "mkdir \"" + currentSerieWriteDir + "\"";
                 system( systemCommand.c_str());
                 if (verbose)
                    std::cout <<  "1 " <<systemCommand << std::endl;
@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
                 xCoherentWriteDir = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ xCoherentName;
                // if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(xCoherentWriteDir) )
                 {      
-                   systemCommand   = "mkdir " + xCoherentWriteDir;
+                   systemCommand   = "mkdir \"" + xCoherentWriteDir + "\"";
                    system( systemCommand.c_str());
                    if (verbose)
                       std::cout << "2 " << systemCommand << std::endl;       
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
                }
                else if (copy)
                {
-                   systemCommand   = "cp " + fileName + " " + filenameout;
+                   systemCommand   = "cp \"" + fileName + "\" " + filenameout + "\"";
                    system( systemCommand.c_str());
                }
                if (verbose)

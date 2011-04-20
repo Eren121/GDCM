@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/20 11:14:48 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2011/04/20 14:06:50 $
+  Version:   $Revision: 1.7 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -354,8 +354,8 @@ int main(int argc, char *argv[])
       ///this is a trick to build up a lexicographical compliant name :
       ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
       std::string name = GDCM_NAME_SPACE::Util::GetName( *it );
-
-      std::cout << "name :[" << name << "]\n";
+      if (verbose)
+         std::cout << "name :[" << name << "]\n";
 
       if (hasSkel)
       {
@@ -435,11 +435,11 @@ int main(int argc, char *argv[])
       GDCM_NAME_SPACE::Util::Tokenize (it2->first, tokens, token);
       
       currentPatientName            = tokens[IND_PatientName];
-      currentStudyInstanceUID       = tokens[IND_StudyInstanceUID];      
+      currentStudyInstanceUID       = tokens[IND_StudyInstanceUID];     
       currentSerieInstanceUID       = tokens[IND_SerieInstanceUID];
       currentSerieDescription       = tokens[IND_SerieDescription];
       currentSerieNumber            = tokens[IND_SerieNumber];
-             
+
       if (previousPatientName != currentPatientName)
       {  
          previousPatientName = currentPatientName;
@@ -487,7 +487,9 @@ int main(int argc, char *argv[])
          if (seriedescr) // more human readable!
             currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                                   + currentSerieDescription + "_" + currentSerieNumber
-                                  + "_" + currentSerieInstanceUID;
+                                  /*+ "_" + currentSerieInstanceUID */
+                                  ;
+
          else
             currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                                   + currentSerieInstanceUID;         
