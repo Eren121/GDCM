@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.h,v $
   Language:  C++
-  Date:      $Date: 2011/04/15 15:23:14 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2011/04/20 15:03:54 $
+  Version:   $Revision: 1.12 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -55,7 +55,7 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
        
        bool setVectGdcmFile(std::vector<GDCM_NAME_SPACE::File *> *vectGdcmFile);
        
-       void SetFlipY(bool f) { FlipY = f; }
+       void setFlipY(bool f) { FlipY = f; }
 
        // Split
        // =====
@@ -97,12 +97,17 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
        bool CompareOnSortTagConvertToFloat(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *file2);
        void reorgXCoherentFileSetmap      (GDCM_NAME_SPACE::XCoherentFileSetmap &xcm);
        bool sortVectElem(std::vector<ELEM> *le);
-
+      GDCM_NAME_SPACE::FileList * getGdcmFileList();
+ 
     // Data
     // ----
     public:
     protected:
     private:
+    
+       //
+       // Set by user
+       //
        std::string DirName;
        std::vector<std::string> VectDirName;
        std::vector<std::string> VectFileName;
@@ -118,28 +123,33 @@ typedef  bool (*FoncComp)(GDCM_NAME_SPACE::File *file1, GDCM_NAME_SPACE::File *f
  
        bool SortOnPosition;
        bool SortOnOrientation;
-       bool SortOnTag;
+       //bool SortOnTag;
        bool SortOnFileName;
        bool SortOnUserFunction;
 
        FoncComp UserCompareFunction;
 
-       unsigned short int SortGroup;
-       unsigned short int SortElem;
-       bool SortConvertToFloat;
+       //unsigned short int SortGroup;
+       //unsigned short int SortElem;
+       //bool SortConvertToFloat;
 
        bool Recursive;
-       int TypeDir;
-       //int TypeResult;
-       bool verbose;
-       std::vector<vtkImageData*> *ImageDataVector;
-       vtkImageData *ImageData;
-       //std::vector<GDCM_NAME_SPACE::File *> VectGdcmFile;
-       GDCM_NAME_SPACE::FileList *VectGdcmFile; 
-       GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
-       //std::vector<std::vector<GDCM_NAME_SPACE::File *> > VectGdcmFileLists;
-       std::vector<GDCM_NAME_SPACE::FileList *> VectGdcmFileLists;
        bool FlipY;
+       bool verbose;
+       
+       //
+       // needed, to work
+       //       
+       int TypeDir;
+       GDCM_NAME_SPACE::XCoherentFileSetmap xcm;
+       
+       //
+       // may be got by user
+       //
+       std::vector<vtkImageData*> *ImageDataVector;
+       GDCM_NAME_SPACE::FileList *VectGdcmFile;       // std::vector of gdcm::File*
+       
+       std::vector<GDCM_NAME_SPACE::FileList *> VectGdcmFileLists; // result of the splitting operation
   };
 
 //} // end namespace gdcm
