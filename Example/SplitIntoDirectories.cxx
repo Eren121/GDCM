@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2009/05/28 15:44:34 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/04/20 11:14:48 $
+  Version:   $Revision: 1.6 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
    if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(dirNameout) )    // dirout not found
    {
       std::string strDirNameout(dirNameout);          // to please gcc 4
-      systemCommand = "mkdir " +strDirNameout;        // create it!
+      systemCommand = "mkdir \"" +strDirNameout + "\"";        // create it!
       if (verbose)
          std::cout << systemCommand << std::endl;
       system (systemCommand.c_str());
@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 
          currentPatientWriteDir = writeDir + currentPatientName;
 
-         systemCommand   = "mkdir " + currentPatientWriteDir;
+         systemCommand   = "mkdir \"" + currentPatientWriteDir + "\"";
          if (verbose || listonly)
             std::cout << "[" << systemCommand << "]" << std::endl;
          if (!listonly)
@@ -468,7 +468,7 @@ int main(int argc, char *argv[])
 
          currentStudyWriteDir  = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentStudyInstanceUID;
-         systemCommand   = "mkdir " + currentStudyWriteDir;
+         systemCommand   = "mkdir \"" + currentStudyWriteDir + "\"";
          
          if (listonly)
            std::cout << "[" << systemCommand << "]" << std::endl;         
@@ -492,7 +492,7 @@ int main(int argc, char *argv[])
             currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                                   + currentSerieInstanceUID;         
                       
-         systemCommand   = "mkdir " + currentSerieWriteDir;
+         systemCommand   = "mkdir \"" + currentSerieWriteDir + "\"";
          
          if (listonly)
             std::cout << "[" << systemCommand << "]" << std::endl;         
@@ -510,7 +510,7 @@ int main(int argc, char *argv[])
       fullWriteFilename = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename; 
 
-      systemCommand   = "cp " + fullFilename + " " + fullWriteFilename;
+      systemCommand   = "cp \"" + fullFilename + "\"" + " \"" + fullWriteFilename + " \"";
       
       if (listonly)
          std::cout << "[" << systemCommand << "]" << std::endl;         
