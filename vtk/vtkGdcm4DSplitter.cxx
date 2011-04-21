@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/20 15:03:54 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2011/04/21 09:14:31 $
+  Version:   $Revision: 1.14 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -360,7 +360,7 @@ void  vtkGdcm4DSplitter::setRecursive(bool recursive)
  std::vector<GDCM_NAME_SPACE::FileList *> *vtkGdcm4DSplitter::GetVectGdcmFileLists()
  {
     if (SplitOnly)
-        return NULL;
+        return &VectGdcmFileLists;
 
     GDCM_NAME_SPACE::XCoherentFileSetmap::iterator it;
     for ( it = xcm.begin();
@@ -483,6 +483,9 @@ std::cout << l->size() << " gdcm::File read" << std::endl;
       std::cout << xcm.size() << " XCoherent entries found" << std::endl;
    }
 
+// put here, to avoid segfault when unaware user sets SplitOnly to true, and the asks for ImageDataVector
+ImageDataVector = new std::vector<vtkImageData*>;
+
 std::cout <<"SplitOnly " << SplitOnly << std::endl;
    if(SplitOnly)
       return true;   
@@ -490,7 +493,7 @@ std::cout <<"SplitOnly " << SplitOnly << std::endl;
 //
 // ------------------------------------------------------------
 //
-   ImageDataVector = new std::vector<vtkImageData*>;
+//   ImageDataVector = new std::vector<vtkImageData*>;
 
    /// \TODO move inside the loop, or be clever using vtk!
   // vtkGdcmReader *reader = vtkGdcmReader::New(); // move inside the loop, or be clever using vtk!
