@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/20 14:06:50 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2011/04/22 12:30:08 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -445,7 +445,7 @@ int main(int argc, char *argv[])
          previousPatientName = currentPatientName;
          if (verbose)   
             std::cout << "==== new Patient  [" << currentPatientName  << "]" << std::endl;
-    
+
          previousPatientName            = currentPatientName;
          previousStudyInstanceUID       = ""; 
          previousSerieInstanceUID       = "";
@@ -474,9 +474,8 @@ int main(int argc, char *argv[])
            std::cout << "[" << systemCommand << "]" << std::endl;         
          else            
             system (systemCommand.c_str());
-
       }  
-      
+
       if (previousSerieInstanceUID != currentSerieInstanceUID)
       {        
          previousSerieInstanceUID       = currentSerieInstanceUID;
@@ -493,7 +492,7 @@ int main(int argc, char *argv[])
          else
             currentSerieWriteDir  = currentStudyWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                                   + currentSerieInstanceUID;         
-                      
+   
          systemCommand   = "mkdir \"" + currentSerieWriteDir + "\"";
          
          if (listonly)
@@ -512,7 +511,7 @@ int main(int argc, char *argv[])
       fullWriteFilename = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename; 
 
-      systemCommand   = "cp \"" + fullFilename + "\"" + " \"" + fullWriteFilename + " \"";
+      systemCommand   = "cp \"" + fullFilename + "\"  \"" + fullWriteFilename + "\"";
       
       if (listonly)
          std::cout << "[" << systemCommand << "]" << std::endl;         
@@ -522,4 +521,3 @@ int main(int argc, char *argv[])
    }
    return 0;
  }
-
