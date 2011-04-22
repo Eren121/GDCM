@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/22 12:30:08 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2011/04/22 13:50:09 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -266,7 +266,6 @@ int main(int argc, char *argv[])
    // or the field may be empty!   
    s->AddSeriesDetail(0x0020, 0x000d, false); // Study Instance UID (false : no convert)
 
-
    // You may prefer 0020 0011 Series Number
    // use :
    // s->AddSeriesDetail(0x0020, 0x0011, true);    
@@ -275,7 +274,6 @@ int main(int argc, char *argv[])
    s->AddSeriesDetail(0x0008, 0x103e, false); // Serie Description
    s->AddSeriesDetail(0x0020, 0x0011, false); // Serie Number (more than 1 serie may have the same Ser.Nbr don't 'convert!)
 
-   
    // Feel free to add more fields, if they can help a suitable (for you)
    // image sorting
 
@@ -386,7 +384,6 @@ int main(int argc, char *argv[])
                            tokens[IND_SerieDescription] + token +
                            tokens[IND_SerieNumber]      + token +
                            tokens[IND_FileName];
-
       if (verbose) 
          std::cout << "[" << userFileIdentifier  << "] : " << *it << std::endl;
 
@@ -419,7 +416,7 @@ int main(int argc, char *argv[])
    previousSerieInstanceUID       = "";   
        
    GDCM_NAME_SPACE::File *currentFile;
-     
+   std::string replaceChar("_"); 
    for (it2 = sf.begin() ; it2 != sf.end(); ++it2)
    {  
       currentFile = it2->second;
@@ -469,9 +466,12 @@ int main(int argc, char *argv[])
          currentStudyWriteDir  = currentPatientWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR
                              + currentStudyInstanceUID;
          systemCommand   = "mkdir \"" + currentStudyWriteDir + "\"";
-         
+ 
+         if (verbose)
+            std::cout << "Directory [" << currentStudyWriteDir << "] created" << std::endl;
+ 
          if (listonly)
-           std::cout << "[" << systemCommand << "]" << std::endl;         
+            std::cout << "[" << systemCommand << "]" << std::endl;         
          else            
             system (systemCommand.c_str());
       }  
@@ -499,6 +499,9 @@ int main(int argc, char *argv[])
             std::cout << "[" << systemCommand << "]" << std::endl;         
          else             
             system (systemCommand.c_str());
+
+         if (verbose)
+            std::cout << "Directory [" << currentSerieWriteDir << "] created" << std::endl;
       }            
    
       if ( GDCM_NAME_SPACE::Debug::GetDebugFlag())
@@ -507,7 +510,9 @@ int main(int argc, char *argv[])
                    << GDCM_NAME_SPACE::Util::GetName( fullFilename ) << std::endl;
  
       // If you want to create file names of your own, here is the place!
-      // Just replace 'lastFilename' by anything that's better for you.               
+      // Just replace 'lastFilename' by anything that's better for you.
+      GDCM_NAME_SPACE:: Util::ReplaceSpecChar(lastFilename, replaceChar);
+                   
       fullWriteFilename = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename; 
 
