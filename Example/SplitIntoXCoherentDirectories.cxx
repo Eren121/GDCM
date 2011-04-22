@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/20 14:06:50 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2011/04/22 14:39:41 $
+  Version:   $Revision: 1.7 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 {
 
    START_USAGE(usage)
-   "\n exXCoherentFileSet :\n                                                 ",
+   "\n SplitIntoXCoherentDirectories :\n                                      ",
    "Shows the various 'XCoherent' Filesets within a directory                 ",
    "Optionaly copies the images in a Directories tree                         ",
    "usage: exXCoherentFileSet {dirin=inputDirectoryName}                      ",
@@ -147,6 +147,7 @@ int main(int argc, char *argv[])
    GDCM_NAME_SPACE::SerieHelper *s;  
    s = GDCM_NAME_SPACE::SerieHelper::New();
 
+   GDCM_NAME_SPACE::File *f;
    s->SetLoadMode(GDCM_NAME_SPACE::LD_ALL); // Load everything for each File
    s->SetDirectory(dirName, true);          // true : recursive exploration
    
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
    GDCM_NAME_SPACE::DirListType fileNames = dirlist.GetFilenames();
    GDCM_NAME_SPACE::FileList *l = new GDCM_NAME_SPACE::FileList;
 
-   GDCM_NAME_SPACE::File *f;
+   std::string replaceChar("_");
 // Loop on all the gdcm-readable files
    for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();
                                     it != fileNames.end();
@@ -358,6 +359,11 @@ int main(int argc, char *argv[])
                fileName = (*it2)->GetFileName();
                // --- for write
                lastFilename =  GDCM_NAME_SPACE::Util::GetName( fileName );
+
+               // If you want to create file names of your own, here is the place!
+               // Just replace 'lastFilename' by anything that's better for you.
+               GDCM_NAME_SPACE:: Util::ReplaceSpecChar(lastFilename, replaceChar);
+
                filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename; 
                if (write)
                {  
@@ -379,7 +385,7 @@ int main(int argc, char *argv[])
                }
                else if (copy)
                {
-                   systemCommand   = "cp \"" + fileName + "\" " + filenameout + "\"";
+                   systemCommand   = "cp \"" + fileName + "\" \"" + filenameout + "\"";
                    system( systemCommand.c_str());
                }
                if (verbose)

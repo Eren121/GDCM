@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/22 13:50:09 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2011/04/22 14:39:41 $
+  Version:   $Revision: 1.10 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -352,8 +352,9 @@ int main(int argc, char *argv[])
       ///this is a trick to build up a lexicographical compliant name :
       ///     eg : fich001.ima vs fich100.ima as opposed to fich1.ima vs fich100.ima
       std::string name = GDCM_NAME_SPACE::Util::GetName( *it );
-      if (verbose)
-         std::cout << "name :[" << name << "]\n";
+
+     // if (verbose)
+     //    std::cout << "name :[" << name << "]\n";
 
       if (hasSkel)
       {

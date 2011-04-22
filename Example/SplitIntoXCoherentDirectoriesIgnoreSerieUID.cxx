@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectoriesIgnoreSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/20 14:06:50 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2011/04/22 14:39:41 $
+  Version:   $Revision: 1.5 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -30,13 +30,13 @@ int main(int argc, char *argv[])
    START_USAGE(usage)
    "\n SplitIntoCoherentFileSetIgnoreSerieUID :\n                             ",
    "Shows the various 'XCoherent' Filesets within a directory                 ",
-   "Optionaly copis the images in a Directories tree                          ",
+   "Optionaly copies the images in a Directories tree                          ",
    "usage: SplitIntoCoherentFileSetIgnoreSerieUID{dirin=inputDirectoryName}   ",
    "                           dirout=outputDirectoryName                     ",
    "                       { tag=group-elem | pos | ori } [sort]              ",
    "                       [{ write | copy }]                                 ",
    "                       [ { [noshadowseq] | [noshadow][noseq] } ] [debug]  ",
-   "  [studyUID = ]                                                           ",
+   "                       [studyUID = ]                                                           ",
    "       dirin : user wants to analyze *all* the files                      ",
    "                            within the directory                          ",
    "       write : user wants to create directories                           ",
@@ -143,13 +143,14 @@ int main(int argc, char *argv[])
 
    GDCM_NAME_SPACE::SerieHelper *s;  
    s = GDCM_NAME_SPACE::SerieHelper::New();
-   
+
    GDCM_NAME_SPACE::File *f;
    
    GDCM_NAME_SPACE::DirList dirlist(dirName, true); // recursive exploration
    GDCM_NAME_SPACE::DirListType fileNames = dirlist.GetFilenames();
-
    GDCM_NAME_SPACE::FileList *l = new GDCM_NAME_SPACE::FileList;
+
+   std::string replaceChar("_");
 // Loop on all the gdcm-readable files
    for (GDCM_NAME_SPACE::DirListType::iterator it = fileNames.begin();
                                     it != fileNames.end();
@@ -164,7 +165,6 @@ int main(int argc, char *argv[])
       f->Load();
       l->push_back(f);
    }
-
 
 /* ===========================================================================================*/
    std::string systemCommand;
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
          {
             xCoherentName = (*i).first;
             if (verbose)
-               std::cout << "xCoherentName = " << xCoherentName << std::endl;
+               std::cout << "==========================================xCoherentName = " << xCoherentName << std::endl;
              GDCM_NAME_SPACE::Util::ReplaceSpecChar(xCoherentName, rep);
              // --- for write
              if (write)
@@ -336,8 +336,17 @@ int main(int argc, char *argv[])
                controlCount ++;
                fileName = (*it2)->GetFileName();
                std::cout << "    " << fileName << std::endl;
-    
-               // --- for write
+
+               lastFilename =  GDCM_NAME_SPACE::Util::GetName( fileName );
+
+               // If you want to create file names of your own, here is the place!
+               // Just replace 'lastFilename' by anything that's better for you.
+               GDCM_NAME_SPACE:: Util::ReplaceSpecChar(lastFilename, replaceChar);
+
+               filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename; 
+                  //systemCommand   = "cp \"" + fileName + " \"" + filenameout;
+                  //system( systemCommand.c_str());
+              // --- for write
                if (write)
                {  
                   fh = GDCM_NAME_SPACE::FileHelper::New( (*it2) );
@@ -347,11 +356,6 @@ int main(int argc, char *argv[])
                   uint8_t *imageData = fh->GetImageDataRaw();// somewhat important : Loads the Pixels in memory !
                   if (!imageData)
                      std::cout << "fail to read [" << (*it2)->GetFileName() << std::endl;
-                  lastFilename =  GDCM_NAME_SPACE::Util::GetName( fileName );
-                  filenameout = xCoherentWriteDir  + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ lastFilename; 
-                  //systemCommand   = "cp \"" + fileName + " \"" + filenameout;
-                  //system( systemCommand.c_str());
-
                   fh->SetWriteTypeToDcmExplVR();
                   fh->SetContentType(GDCM_NAME_SPACE::UNMODIFIED_PIXELS_IMAGE);
                   if (!fh->Write(filenameout))
@@ -362,9 +366,9 @@ int main(int argc, char *argv[])
                   if (verbose)
                      std::cout << "3 " << systemCommand << std::endl;
                   fh->Delete();
-                }
+           }
                // --- end for write
-            } 
+            }
             std::cout << std::endl;
          }
       }
