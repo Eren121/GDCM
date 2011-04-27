@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: gdcmDocument.h,v $
   Language:  C++
-  Date:      $Date: 2008/09/15 15:49:22 $
-  Version:   $Revision: 1.154 $
+  Date:      $Date: 2011/04/27 13:40:04 $
+  Version:   $Revision: 1.155 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -104,8 +104,13 @@ public:
  *        of *each* Shadow Group. The parser will fail if the size is wrong !
  * @param   mode Load mode to be used
  */
-   void SetLoadMode (int mode) { if (LoadMode != mode)
-                                     LoadMode=mode, IsDocumentModified = true; }
+   void SetLoadMode (int mode) { 
+   //if (LoadMode != mode)
+   //    LoadMode=mode, IsDocumentModified = true;
+   
+   // fix definitively any misuse of LoadMode !
+   LoadMode = 0;
+}
 
 protected:
 // Methods
