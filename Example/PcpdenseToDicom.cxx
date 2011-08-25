@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/29 07:35:57 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2011/08/25 14:36:02 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 {
    START_USAGE(usage)
    " \n pcpdenseToDicom :\n                                                   ",
-   "        Converts the '.txt' files into 16 bits Dicom Files,               ",
+   "        Converts the '.txt' files into 16 bits Dicom-like Files,          ",
    " usage:                                                                   ",
    " pcpdenseToDicom rootfilename=...                                         ",
    "                 (e.g.. :   meas_MID380_DENSE_stacked_slices_aif_FID81637)",
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 
    std::string strSerieUID; 
    std::string strStudyUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
-   std::string dcmImageName, textFileName, patientname,/* studyUID, serieUID, */ serieDescr ;
+   std::string dcmImageName, textFileName, patientname, serieDescr;
    std::string deb(rootfilename);
    
    unsigned short int *image;
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
   // Get some info
   // -------------
 
-     {
+   {
         Ecc.str(rootfilename); 
         Ecc   << Ecc.str() << "_s0" << "_Ecc.txt";
 
@@ -157,12 +157,11 @@ int main(int argc, char *argv[])
 
    serieDescr = "Ecc";
 
-   if (!multiframe) {
-             
+   if (!multiframe) {            
      for (int i=0; i<numberOfSlices; i++)
      {  
         Ecc.str(rootfilename); 
-        Ecc   << Ecc.str()    << "_s" << i << "_Ecc.txt";
+        Ecc << Ecc.str() << "_s" << i << "_Ecc.txt";
       
         std::ifstream fromEcc( Ecc.str().c_str() );             
         if ( !fromEcc )
@@ -171,23 +170,24 @@ int main(int argc, char *argv[])
            exit(0);
         }
         std::cout << "Open file [" << Ecc.str() << "] : OK" << std::endl;
-
-        if (X2)
-           LoadImageX2(fromEcc, image);
-        else
-           LoadImage(fromEcc, image);      
-        fromEcc.close();
-
         dcmImageName = Ecc.str() + ".dcm";
 
-        MakeDicomImage(image, NX, NY, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe ); 
-   } // end : for (int i=0; i<numberOfSlices
-   delete []image;
-}
+        if (X2)
+        {
+           LoadImageX2(fromEcc, image);
+           MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+        }
+        else
+        {
+           LoadImage(fromEcc, image);
+           MakeDicomImage(image, NX, NY,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+        }         
+        fromEcc.close();
 
-      
-   if (multiframe) {
-     
+     } // end : for (int i=0; i<numberOfSlices
+   }
+   
+   if (multiframe) {  
      for (int i=0; i<numberOfSlices; i++)
      {  
         Ecc.str(rootfilename);
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 
         std::cout << "Open file [" << Ecc.str() << "] : OK" << std::endl;
         if (X2)
-          LoadImageX2(fromEcc ,&image[NX*NY*i] );
+          LoadImageX2(fromEcc ,&image[NX*NY*4*i] );
         else
           LoadImage(fromEcc, &image[NX*NY*i] );
         
@@ -210,8 +210,10 @@ int main(int argc, char *argv[])
      } // end : for (int i=0; i<numberOfSlices
      
      dcmImageName = deb + "_Ecc.dcm";
-     MakeDicomImage(image, NX, NY, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe ); 
-  
+     if (X2)     
+        MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );
+     else
+        MakeDicomImage(image, NX, NY,     dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );   
    }  // end : if (multiframe) 
 
 
@@ -221,6 +223,7 @@ int main(int argc, char *argv[])
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
 
    serieDescr = "perf";
+
    if (!multiframe) {    
      for (int i=0; i<numberOfSlices; i++)
      {      
@@ -242,8 +245,12 @@ int main(int argc, char *argv[])
       
         fromperf.close();
         
-        dcmImageName = Ecc.str() + ".dcm";
-        MakeDicomImage(image, NX, NY, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe ); 
+        dcmImageName = perf.str() + ".dcm";
+
+        if (X2)
+           MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+        else
+           MakeDicomImage(image, NX, NY,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe ); 
 
      } // end : for (int i=0; i<numberOfSlices
    }
@@ -264,7 +271,7 @@ int main(int argc, char *argv[])
         std::cout << "Open file [" << perf.str() << "] : OK" << std::endl;
 
       if (X2)
-         LoadImageX2(fromperf, &image[NX*NY*i]);
+         LoadImageX2(fromperf, &image[NX*NY*i*4]);
       else
          LoadImage(fromperf, &image[NX*NY*i] );
        
@@ -272,7 +279,10 @@ int main(int argc, char *argv[])
    } // end : for (int i=0; i<numberOfSlices
    
      dcmImageName = deb + "_perf.dcm";
-     MakeDicomImage(image, NX, NY, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, numberOfSlices, multiframe ); 
+     if (X2)     
+        MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );
+     else
+        MakeDicomImage(image, NX, NY,     dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe ); 
  }
  
 
@@ -283,33 +293,6 @@ int main(int argc, char *argv[])
    strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
 
    serieDescr = "WashoutTc";
-   
-   if (multiframe) {    
-     for (int i=0; i<numberOfSlices; i++)
-     {     
-        WashoutTc.str(rootfilename);
-        WashoutTc <<  WashoutTc.str() << "_s" << i << "_WashoutTc.txt";
-
-        std::ifstream fromWashoutTc( WashoutTc.str().c_str() );             
-        if ( !fromWashoutTc )
-        {
-           std::cout << "Can't open file [" << WashoutTc.str() << "]" << std::endl;
-           exit(0);
-        }
-        std::cout << "Open file [" << WashoutTc.str() << "] : OK" << std::endl;
-
-        if (X2)      
-          LoadImageX2(fromWashoutTc,  &image[NX*NY*i]);
-        else
-          LoadImage(fromWashoutTc, &image[NX*NY*i] );
-        fromWashoutTc.close();  
-
-     } // end : for (int i=0; i<numberOfSlices
-          
-     dcmImageName = deb + "_WashoutTc.dcm";
-     MakeDicomImage(image, NX, NY, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, numberOfSlices, multiframe );      
- } 
-
 
    if (!multiframe) {
     
@@ -332,12 +315,43 @@ int main(int argc, char *argv[])
          LoadImage(fromWashoutTc,image );
       fromWashoutTc.close();
        
-      dcmImageName = Ecc.str() + ".dcm";
-      MakeDicomImage(image, NX, NY, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i1, multiframe ); 
+      dcmImageName = WashoutTc.str() + ".dcm";
+      if (X2)      
+         MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i1, multiframe );      
+      else
+         MakeDicomImage(image, NX, NY,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i1, multiframe ); 
     } // end : for (int i=0; i<numberOfSlices
-
   }
 
+   if (multiframe) {    
+     for (int i=0; i<numberOfSlices; i++)
+     {     
+        WashoutTc.str(rootfilename);
+        WashoutTc <<  WashoutTc.str() << "_s" << i << "_WashoutTc.txt";
+
+        std::ifstream fromWashoutTc( WashoutTc.str().c_str() );             
+        if ( !fromWashoutTc )
+        {
+           std::cout << "Can't open file [" << WashoutTc.str() << "]" << std::endl;
+           exit(0);
+        }
+        std::cout << "Open file [" << WashoutTc.str() << "] : OK" << std::endl;
+
+        if (X2)      
+          LoadImageX2(fromWashoutTc,  &image[NX*NY*4*i]);
+        else
+          LoadImage(fromWashoutTc, &image[NX*NY*i] );
+        fromWashoutTc.close();  
+
+     } // end : for (int i=0; i<numberOfSlices
+          
+     dcmImageName = deb + "_WashoutTc.dcm";
+     if (X2)
+        MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );     
+     else
+        MakeDicomImage(image, NX, NY,     dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );      
+   }
+ 
    delete []image;
    return 1;            
 }
@@ -356,25 +370,26 @@ XY Dimensions           47          50
 
    if (!from)
       return;
-
+   
    std::string str1;
 
-    from >> str1;
-    from >> str1;
+   from >> str1;
+   from >> str1;
     
-    int NX, NY;
-    from >> NX;
-    from >> NY;
-    std::cout << "NX, NY : " << NX << ", " << NY << std::endl; 
+   int NX, NY;
+   from >> NX;
+   from >> NY;
+   std::cout << "NX, NY : " << NX << ", " << NY << std::endl; 
 
-    float pixelValue;
+   float pixelValue;
      
-     int i, j;
-     for( i=0;i<NY;i++)
+    int i, j;
+    for( i=0;i<NY;i++) {
         for(j=0;j<NX;j++) {
            from >> pixelValue;
            image[i*NX+j] = (unsigned short int)(pixelValue * 1000.); // Why do we multiply by 1000? // JPR
         }
+     }
 }
 
 
@@ -403,17 +418,37 @@ XY Dimensions           47          50
     from >> NY;
     std::cout << "NX, NY : " << NX << ", " << NY << std::endl; 
 
+     int k;
+     for( k=0;k<NX*NY*4;k++)
+          image[k] = 0;
+
     float pixelValue;
      
      int i, j;
+ /*
      for( i=0;i<NY;i++) {
            for(j=0;j<NX;j++) {
               from >> pixelValue;
               pixelValue*=1000.;  // Why do we multiply by 1000? // JPR
               image[i*4*NX + j*2] = image[i*4*NX + j*2+1] =  image[(i*4+2)*NX + j*2] =  image[(i*4+2)*NX + j*2+1] = (unsigned short int)(pixelValue);  
-   }
-        }
-
+           }
+     }
+ */
+ 
+     int lgrLigneNvlleImage = NX+NX;
+     int debLigneNvlleImage = 0;
+     for( i=0;i<NY;i++) {
+           for(j=0;j<NX;j++) {
+              from >> pixelValue;
+              pixelValue*=1000.;  // Why do we multiply by 1000? // JPR
+              image[debLigneNvlleImage + j+j] = 
+              image[debLigneNvlleImage + j+j +1] = 
+              image[debLigneNvlleImage + lgrLigneNvlleImage +j+j] = 
+              image[debLigneNvlleImage + lgrLigneNvlleImage + j+j +1] = 
+                 (unsigned short int)(pixelValue);
+           }
+           debLigneNvlleImage += 2*lgrLigneNvlleImage;  
+     }
 }
 // =====================================================================================================================================
 
@@ -421,6 +456,7 @@ XY Dimensions           47          50
 void MakeDicomImage(unsigned short int *tabVal, int X, int Y, std::string dcmImageName, const char * patientName, int nbFrames, std::string studyUID, std::string serieUID, std::string SerieDescr, int imgNum, bool m)
 {
 
+std::cout << "in MakeDicomImage : dcmImageName = [" << dcmImageName << "]" << std::endl;
  // GDCM_NAME_SPACE::Debug::DebugOn();
   
    std::ostringstream str;
