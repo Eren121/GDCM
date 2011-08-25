@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: exUnMosaicStack.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 21:45:08 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2011/08/25 14:37:05 $
+  Version:   $Revision: 1.3 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -100,8 +100,6 @@ int main(int argc, char *argv[])
       }
 
 
-
-
    GDCM_NAME_SPACE::File *f = GDCM_NAME_SPACE::File::New();
    f->SetLoadMode( GDCM_NAME_SPACE::LD_ALL);
    f->SetFileName( fileName );
@@ -133,7 +131,7 @@ int main(int argc, char *argv[])
    // Get the image data size
    size_t dataRawSize    = fh->GetImageDataRawSize();
    
- // ============================================================
+// ============================================================
 //   Create a new GDCM_NAME_SPACE::Filehelper, to hold new image.
 // ============================================================
 

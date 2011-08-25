@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoXCoherentDirectoriesIgnoreSerieUID.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/22 14:39:41 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2011/08/25 14:37:05 $
+  Version:   $Revision: 1.6 $
  
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
              GDCM_NAME_SPACE::Util::ReplaceSpecChar(xCoherentName, rep);
              // --- for write
              if (write)
-             { 
+             {
                 xCoherentWriteDir = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR+ xCoherentName;
                // if ( ! GDCM_NAME_SPACE::DirList::IsDirectory(xCoherentWriteDir) )
                 {      
@@ -303,12 +303,12 @@ int main(int argc, char *argv[])
                 }
             } 
             // --- end for write
-    
-            if (ori) 
+
+            if (ori)
                std::cout << "Orientation : ";
-            else if (pos) 
+            else if (pos)
                std::cout << "Position : ";
-            else if (groupelem != 0)    
+            else if (groupelem != 0)
                std::cout << "Tag (" << std::hex << groupelem[0]
                          << "|" << groupelem[1] << ") value : ";
             std::cout << "[" << (*i).first << "]" << std::endl;

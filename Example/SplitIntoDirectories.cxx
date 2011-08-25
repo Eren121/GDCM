@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: SplitIntoDirectories.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/22 14:39:41 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2011/08/25 14:37:05 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -517,7 +517,7 @@ int main(int argc, char *argv[])
       fullWriteFilename = currentSerieWriteDir + GDCM_NAME_SPACE::GDCM_FILESEPARATOR 
                                          + lastFilename; 
 
-      systemCommand   = "cp \"" + fullFilename + "\"  \"" + fullWriteFilename + "\"";
+      systemCommand   = "cp \"" + fullFilename + "\"  " + fullWriteFilename;
       
       if (listonly)
          std::cout << "[" << systemCommand << "]" << std::endl;         
