@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/08/25 14:36:02 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2011/09/06 16:08:07 $
+  Version:   $Revision: 1.9 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -43,6 +43,9 @@ void MakeDicomImage(unsigned short int *tabVal, int X, int Y, std::string dcmIma
 void LoadImage(std::ifstream &from,  unsigned short int * );
 
 void LoadImageX2(std::ifstream &from, unsigned short int * );      
+void RotateImage(unsigned short int *image, unsigned short int *image2, int NX, int NY);
+void FlipImage  (unsigned short int *image, unsigned short int *image2, int NX, int NY);
+
 bool verbose;
 
 int main(int argc, char *argv[])
@@ -112,7 +115,8 @@ int main(int argc, char *argv[])
    std::string deb(rootfilename);
    
    unsigned short int *image;
-   
+   unsigned short int *image2;
+  
    int NX, NY;
      
   // Get some info
@@ -144,12 +148,13 @@ int main(int argc, char *argv[])
    else
       mult=1;
       
-   if (multiframe)
-      image = new unsigned short int[NX*NY*mult*numberOfSlices];
-   else
-      image = new unsigned short int[NX*NY*mult];        
-   
-   
+   if (multiframe) {
+      image  = new unsigned short int[NX*NY*mult*numberOfSlices];
+      image2 = new unsigned short int[NX*NY*mult*numberOfSlices];
+   } else {
+      image  = new unsigned short int[NX*NY*mult];
+      image2 = new unsigned short int[NX*NY*mult];
+   }   
 
    // === Ecc ===
    
@@ -175,12 +180,16 @@ int main(int argc, char *argv[])
         if (X2)
         {
            LoadImageX2(fromEcc, image);
-           MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+           RotateImage(image, image2, NX*2, NY*2);
+           FlipImage(image2, image2, NY*2, NX*2);  
+           MakeDicomImage(image, NY*2, NX*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
         }
         else
-        {
+        {  
            LoadImage(fromEcc, image);
-           MakeDicomImage(image, NX, NY,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+           RotateImage(image, image2, NX, NY);
+           FlipImage(image2, image2, NY, NX);   
+           MakeDicomImage(image2, NY, NX,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
         }         
         fromEcc.close();
 
@@ -202,18 +211,26 @@ int main(int argc, char *argv[])
 
         std::cout << "Open file [" << Ecc.str() << "] : OK" << std::endl;
         if (X2)
+        {
           LoadImageX2(fromEcc ,&image[NX*NY*4*i] );
+          RotateImage(&image[NX*NY*4*i], &image2[NX*NY*4*i] , NX*2, NY*2);  
+          FlipImage(&image2[NX*NY*4*i],  &image2[NX*NY*4*i] , NY*2, NX*2);  
+        }
         else
+        {
           LoadImage(fromEcc, &image[NX*NY*i] );
+          RotateImage(&image[NX*NY*i],&image2[NX*NY*i], NX, NY);  
+          FlipImage(&image2[NX*NY*i], &image2[NX*NY*i], NY, NX);  
+        }
         
         fromEcc.close();
      } // end : for (int i=0; i<numberOfSlices
      
      dcmImageName = deb + "_Ecc.dcm";
      if (X2)     
-        MakeDicomImage(image, NX*2, NY*2, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );
+        MakeDicomImage(image2, NY*2, NX*2, dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );
      else
-        MakeDicomImage(image, NX, NY,     dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );   
+        MakeDicomImage(image2, NY, NX,     dcmImageName, patientName, numberOfSlices, strStudyUID, strSerieUID, serieDescr, 0, multiframe );   
    }  // end : if (multiframe) 
 
 
@@ -451,12 +468,37 @@ XY Dimensions           47          50
      }
 }
 // =====================================================================================================================================
+void RotateImage(unsigned short int *image, unsigned short int *image2, int NX, int NY)
+{
+     int k = 0;
+     for( int i=0;i<NY;i++) {
+           for(int j=0;j<NX;j++) {
+              image2[NY*j + i] = image[k];
+              k++;   
+           }
+     }
+}
 
 
+// =====================================================================================================================================
+void FlipImage(unsigned short int *image, unsigned short int *image2, int NX, int NY)
+{
+     unsigned short int temp;
+     for(int i=0;i<NY/2;i++) {
+           for(int j=0;j<NX;j++) {
+              temp = image[NX*i + j];
+              image2[NX*i + j] = image[NX*(NY-i-1) + j];
+              image2[NX*(NY-i-1) + j] = temp; 
+           }
+     }
+}
+
+
+// =====================================================================================================================================
 void MakeDicomImage(unsigned short int *tabVal, int X, int Y, std::string dcmImageName, const char * patientName, int nbFrames, std::string studyUID, std::string serieUID, std::string SerieDescr, int imgNum, bool m)
 {
 
-std::cout << "in MakeDicomImage : dcmImageName = [" << dcmImageName << "]" << std::endl;
+std::cout << "========================> in MakeDicomImage : dcmImageName = [" << dcmImageName << "] NX= " << X << " NY= " << Y << std::endl;
  // GDCM_NAME_SPACE::Debug::DebugOn();
   
    std::ostringstream str;
