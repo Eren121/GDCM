@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: PcpdenseToDicom.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/09/12 11:11:30 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2011/09/12 23:27:41 $
+  Version:   $Revision: 1.11 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
    "                 (e.g.. :   meas_MID380_DENSE_stacked_slices_aif_FID81637)",
    "                 numberOfSlices =  (default : 3)                          ",
    "                 X2 : multiply x 2 image size                             ",
-   "                 multFact = (default : 1000) multiply pixel value by...   ",
+   "                 multFact = (default : 1000) multiply pixel value by ...  ",
    "                 m :create multiframe files instead of image stacks       ", 
    "                 [patientname = Patient's name]                           ",
    "                 [verbose] [debug]                                        ",
@@ -287,6 +287,7 @@ void WholeBazar(unsigned short int *image, int NX, int NY, int numberOfSlices, s
    std::string strSerieUID =  GDCM_NAME_SPACE::Util::CreateUniqueUID();
    std::string deb(rootfilename);
    std::ostringstream Ecc;
+   std::ostringstream trueSerieDescr;   
    std::string dcmImageName;
 
    int mult;
@@ -303,13 +304,18 @@ void WholeBazar(unsigned short int *image, int NX, int NY, int numberOfSlices, s
       image2 = new unsigned short int[NX*NY*mult];
    }
    
-   if (!multiframe) {            
+   if (!multiframe) {
      for (int i=0; i<numberOfSlices; i++)
      {  
         Ecc.str(rootfilename); 
         //Ecc << Ecc.str() << "_s" << i << "_Ecc.txt";
         Ecc << Ecc.str() << "_s" << i << "_" << serieDescr << ".txt";
-      
+
+        trueSerieDescr.str("");
+
+        trueSerieDescr  << serieDescr << "_" "s" << i;
+        //std::cout << "-------------------------------------------------------" << trueSerieDescr.str() << std::endl;
+    
         std::ifstream fromEcc( Ecc.str().c_str() );             
         if ( !fromEcc )
         {
@@ -324,14 +330,14 @@ void WholeBazar(unsigned short int *image, int NX, int NY, int numberOfSlices, s
            LoadImageX2(fromEcc, image, multFact);
            RotateImage(image, image2, NX*2, NY*2);
            FlipImage(image2,  image2, NY*2, NX*2);  
-           MakeDicomImage(image, NY*2, NX*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+           MakeDicomImage(image, NY*2, NX*2, dcmImageName, patientName, 1, strStudyUID, strSerieUID, trueSerieDescr.str(), i, multiframe );
         }
         else
         {  
            LoadImage(fromEcc, image, multFact);
            RotateImage(image, image2, NX, NY);
            FlipImage(image2,  image2, NY, NX);   
-           MakeDicomImage(image2, NY, NX,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, serieDescr, i, multiframe );
+           MakeDicomImage(image2, NY, NX,     dcmImageName, patientName, 1, strStudyUID, strSerieUID, trueSerieDescr.str(), i, multiframe );
         }         
         fromEcc.close();
 
@@ -383,7 +389,7 @@ void WholeBazar(unsigned short int *image, int NX, int NY, int numberOfSlices, s
 void MakeDicomImage(unsigned short int *tabVal, int X, int Y, std::string dcmImageName, const char * patientName, int nbFrames, std::string studyUID, std::string serieUID, std::string SerieDescr, int imgNum, bool m)
 {
 
-std::cout << "========================> in MakeDicomImage : dcmImageName = [" << dcmImageName << "] NX= " << X << " NY= " << Y << std::endl;
+//std::cout << "========================> in MakeDicomImage : dcmImageName = [" << dcmImageName << "] NX= " << X << " NY= " << Y << std::endl;
  // GDCM_NAME_SPACE::Debug::DebugOn();
   
    std::ostringstream str;
@@ -471,7 +477,7 @@ std::cout << "========================> in MakeDicomImage : dcmImageName = [" <<
   // delete img;
    file->Delete();
    fileH->Delete(); 
-   std::cout << "========================> out of MakeDicomImage : " << std::endl; 
+   //std::cout << "========================> out of MakeDicomImage : " << std::endl; 
 }
 
 
