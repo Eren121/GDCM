@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcmReader.h,v $
   Language:  C++
-  Date:      $Date: 2011/03/31 12:37:54 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2011/09/20 16:09:05 $
+  Version:   $Revision: 1.41 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -73,7 +73,7 @@ public:
    vtkGetMacro(KeepOverlays, bool);
    vtkBooleanMacro(KeepOverlays, bool);
 
-//  Implementation note: when FileLowerLeft (gdcm2) is set to on the image is not flipped
+//  Implementation note: when FileLowerLeft (gdcm2) is set to on, the image is not flipped
 // upside down as VTK would expect, use this option only if you know what you are doing.   
   // vtkSetMacro(FileLowerLeft, bool);
   // vtkGetMacro(FileLowerLeft, bool);

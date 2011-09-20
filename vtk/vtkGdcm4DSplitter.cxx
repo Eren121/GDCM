@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/21 09:14:31 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2011/09/20 16:09:05 $
+  Version:   $Revision: 1.15 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -159,7 +159,26 @@ Avoid loosing CPU time using :
  */ 
  vtkGdcm4DSplitter::~vtkGdcm4DSplitter()
  {
-    /// \TODO : delete everything that must be! 
+    /// \TODO : delete everything that must be!
+    
+    GDCM_NAME_SPACE::XCoherentFileSetmap::iterator it;
+    std::vector<GDCM_NAME_SPACE::File*>::iterator it2;
+     
+    for ( it = xcm.begin(); // for each std::vector<gdcm::File*>
+          it != xcm.end();
+        ++it)
+    {      
+       for ( it2 = (*it).second->begin(); // for each gdcm::File*
+             it2 != (*it).second->end();
+           ++it2)
+       {
+           (*it2)->Delete(); // delete gdcm::File
+       }      
+       delete (*it).second; // delete the now empty std::vector<gdcm::File*>
+    }
+    
+    // VectGdcmFileLists is a vector of pointers on elements of xcm : nothing to do!
+  
  }
 
        // Locate Data to process
@@ -335,7 +354,7 @@ void  vtkGdcm4DSplitter::setRecursive(bool recursive)
     //SortOnTag=false;
     SortOnFileName=false;
     SortOnUserFunction=true;
-  }
+ }
 
  //  void setSortConvertToFloat(bool conv)
  //  {
@@ -428,10 +447,10 @@ void  vtkGdcm4DSplitter::setRecursive(bool recursive)
    }
 
    GDCM_NAME_SPACE::FileList *l;
-   
+
    GDCM_NAME_SPACE::SerieHelper *s;  
    s = GDCM_NAME_SPACE::SerieHelper::New();
-   
+
 //
 // Load the gdcm::File* set, according to user's requierements
 // ------------------------------------------------------------
@@ -471,7 +490,7 @@ std::cout << l->size() << " gdcm::File read" << std::endl;
                xcm = s->SplitOnTagValueConvertToFloat(l, SplitGroup, SplitElem);
             }
   }
-  
+
    if (xcm.size() == 0)
    {
       if(verbose)
@@ -483,10 +502,10 @@ std::cout << l->size() << " gdcm::File read" << std::endl;
       std::cout << xcm.size() << " XCoherent entries found" << std::endl;
    }
 
-// put here, to avoid segfault when unaware user sets SplitOnly to true, and the asks for ImageDataVector
-ImageDataVector = new std::vector<vtkImageData*>;
+   // put here, to avoid segfault when unaware user sets SplitOnly to true, and the asks for ImageDataVector
+   ImageDataVector = new std::vector<vtkImageData*>;
 
-std::cout <<"SplitOnly " << SplitOnly << std::endl;
+   std::cout <<"SplitOnly " << SplitOnly << std::endl;
    if(SplitOnly)
       return true;   
 //
@@ -496,15 +515,15 @@ std::cout <<"SplitOnly " << SplitOnly << std::endl;
 //   ImageDataVector = new std::vector<vtkImageData*>;
 
    /// \TODO move inside the loop, or be clever using vtk!
-  // vtkGdcmReader *reader = vtkGdcmReader::New(); // move inside the loop, or be clever using vtk!
-   
- // XCoherentFileSetmap map < critère de split, FileList (= std::vector de gdcm::File*) >
+    vtkGdcmReader *reader = vtkGdcmReader::New(); // move inside the loop, or be clever using vtk!
+
+   // XCoherentFileSetmap map < critère de split, FileList (= std::vector de gdcm::File*) >
 
    for (GDCM_NAME_SPACE::XCoherentFileSetmap::iterator i = xcm.begin(); 
-                                                  i != xcm.end();
-                                                ++i)
+                                                       i != xcm.end();
+                                                     ++i)
    {
-      vtkGdcmReader *reader = vtkGdcmReader::New(); /// \TODO FIXME : unable to delete!
+      //vtkGdcmReader *reader = vtkGdcmReader::New(); /// \TODO FIXME : unable to delete!
       
       reader->SetFlipY(FlipY);
       // better user SetFileLowerLeft()
@@ -598,7 +617,7 @@ std::cout <<"SplitOnly " << SplitOnly << std::endl;
        //std::cout << std::endl;
    }
 
-   //reader->Delete();  // \TODO : fix
+   reader->Delete();  // \TODO : fix
    s->Delete(); 
   // f->Delete();
    delete l;
@@ -634,7 +653,7 @@ GDCM_NAME_SPACE::FileList *vtkGdcm4DSplitter::getGdcmFileList()
       GDCM_NAME_SPACE::DirList dirlist(DirName, Recursive); // NO recursive exploration
       fileNames = dirlist.GetFilenames(); // all the file names
    }
-   
+
    else if (TypeDir == 2) // a std::vector of directory names was set as input
    {
       int nbDir = VectDirName.size();
@@ -673,6 +692,7 @@ GDCM_NAME_SPACE::FileList *vtkGdcm4DSplitter::getGdcmFileList()
                                                 ++it)
       {
          int maxSize  = 0x7fff;         // load Elements of any length
+         /// \TODO ? gdcm::File are never free'd
          f = GDCM_NAME_SPACE::File::New();
          f->SetMaxSizeLoadEntry(maxSize);
          f->SetFileName( *it );
@@ -770,12 +790,12 @@ bool vtkGdcm4DSplitter::sortVectElem(std::vector<ELEM> *fileList)
 //to right, "y" is posterior to anterior, and "z" is foot to head (RAH).
 
    //iop is calculated based on the file file
-   float cosines[6];
+   float  cosines[6];
    double normal[3];
    double ipp[3];
    double dist;
    double min = 0, max = 0;
-   bool first = true;
+   bool   first = true;
    
    //double ZSpacing; // useless here! // JPR
    bool DirectOrder = true; // remove it!

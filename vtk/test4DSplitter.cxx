@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: test4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/04/20 15:03:54 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2011/09/20 16:09:05 $
+  Version:   $Revision: 1.8 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -28,7 +28,6 @@ On Wed, Feb 16, 2011 at 11:51 AM, Roger Bramon Feixas <rogerbramon@gmail.com>
     the time needed without making the copy and now both readers take more or less 
     the same time.
 */
-
 
 #include "gdcmFile.h"
 #include "gdcmSerieHelper.h"
@@ -69,7 +68,7 @@ int main(int argc, char *argv[])
 
 // n directories 
 std::string strDirName("/home/jpr/Desktop/patient Andrei Dyn/dyn");
-
+//std::string strDirName("/home/jpr/Desktop/patient Andrei Dyn/dyn2"); // very small sample
    // ----- Begin Processing -----  
    
    unsigned short int grSplit;
@@ -111,7 +110,6 @@ if (1) {
       
    // ==> use SortOnUserFunction !
    spl->setSortOnUserFunction(myCompareFunction0008_0032);  
-   
 
    std::cout << "Everything set" << std::endl;  
    bool res=spl->Go();
@@ -124,7 +122,6 @@ if (1) {
 
    output = spl->GetImageDataVector();
 
-
 std::cout << "--------------------------------" << std::endl;
 std::cout << "Vector size " << output->size()   << std::endl;
 std::cout << "--------------------------------" << std::endl;
@@ -136,7 +133,18 @@ std::cout << "--------------------------------" << std::endl;
       //std::cout << "========================================" << std::endl;
       //(*it)->PrintSelf(std::cout, vtkIndent(2));
    }
-   //delete spl; 
+
+   delete spl;
+
+   // To please valgring  
+   std::vector<vtkImageData*>::iterator it2;       
+   for ( it2 = output->begin(); // for each vtkImageData*
+             it2 != output->end();
+           ++it2)
+   {
+           (*it2)->Delete(); // delete vtkImageData
+   }       
+   delete output;    
 } 
 
 
@@ -165,10 +173,10 @@ for(int i=0; i<3; i++)
    //grSort=0x0018;
    //elSort=0x1060;
  
- // Aquisition Time  : 0008|0032
-spl->setSplitOnTag(0x0008, 0x0032); 
+   // Aquisition Time  : 0008|0032
+   spl->setSplitOnTag(0x0008, 0x0032); 
    
-spl->setSortOnPosition();
+   spl->setSortOnPosition();
 
    std::cout << "Everything set" << std::endl;  
    bool res=spl->Go();
@@ -195,7 +203,17 @@ std::cout << "--------------------------------" << std::endl;
       //(*it)->PrintSelf(std::cout, vtkIndent(2));
    }
    
-  // delete spl;
+   delete spl;
+
+   // To please valgring  
+   std::vector<vtkImageData*>::iterator it2;       
+   for ( it2 = output->begin(); // for each vtkImageData*
+             it2 != output->end();
+           ++it2)
+   {
+           (*it2)->Delete(); // delete vtkImageData
+   }       
+   delete output;
 }
 
 // Pour un directory '4D'
