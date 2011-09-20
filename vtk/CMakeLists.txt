@@ -3,7 +3,6 @@
 # Rebuild gdcm whenever a file starting with vtk* is modified
 INCLUDE_REGULAR_EXPRESSION("^vtk.*$")
 
-
      if(COMMAND cmake_policy)
        cmake_policy(SET CMP0003 NEW)
      endif(COMMAND cmake_policy)
@@ -98,13 +97,9 @@ SET(vtkgdcmViewer_SOURCES
   vtkgdcmViewer.cxx
 )
 
-#SET(vtkJPEGViewer_SOURCES
-#  vtkJPEGViewer.cxx
-#)
-
-#SET(vtkJPEGViewer2_SOURCES
-#  vtkJPEGViewer2.cxx
-#)
+SET(vtkgdcmViewer2_SOURCES
+  vtkgdcmViewer2.cxx
+)
 
 # let's do some APPLE/WIN32 magic here
 #IF(WIN32)
@@ -144,8 +139,9 @@ SET(test4DSplitter_SOURCES
 
 ADD_EXECUTABLE(test4DSplitter ${GUI_EXECUTABLE} ${test4DSplitter_SOURCES})
 TARGET_LINK_LIBRARIES( test4DSplitter
-  vtkgdcm 
+  ${test4DSplitter_LINK_LIBRARIES} 
 )
+
 #-----------------------------------------------------------------------------
 #SET(testEmilie1_SOURCES
 #  testEmilie1.cxx
@@ -202,7 +198,7 @@ TARGET_LINK_LIBRARIES(vtkWriteDicomExtended
 IF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
   INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcmReader.h)
   INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcmWriter.h)
-  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcm4DSplitter.h)  
+  INSTALL_FILES(${GDCM_INSTALL_INCLUDE_DIR} FILES vtkGdcm4DSplitter.h)
 ENDIF(NOT GDCM_INSTALL_NO_DEVELOPMENT)
 
 IF(NOT GDCM_INSTALL_NO_LIBRARIES)
