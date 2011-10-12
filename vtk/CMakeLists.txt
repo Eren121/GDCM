@@ -139,7 +139,8 @@ SET(test4DSplitter_SOURCES
 
 ADD_EXECUTABLE(test4DSplitter ${GUI_EXECUTABLE} ${test4DSplitter_SOURCES})
 TARGET_LINK_LIBRARIES( test4DSplitter
-  ${test4DSplitter_LINK_LIBRARIES} 
+  vtkgdcm
+  vtkRendering
 )
 
 #-----------------------------------------------------------------------------
