@@ -3,8 +3,8 @@
   Program:   gdcm
   Module:    $RCSfile: vtkGdcm4DSplitter.cxx,v $
   Language:  C++
-  Date:      $Date: 2011/09/20 16:09:05 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2011/10/25 20:36:21 $
+  Version:   $Revision: 1.16 $
                                                                                 
   Copyright (c) CREATIS (Centre de Recherche et d'Applications en Traitement de
   l'Image). All rights reserved. See Doc/License.txt or
@@ -49,7 +49,7 @@ vtkGdcm4DSplitter class does the job for him
 
 PrintFile dirin=Root_Directory_holding_the_images rec > 1.txt
 
-open it with any test editor, and/or (Linux users) 
+open it with any text editor, and/or (Linux users) 
 grep a_supposed_to_be_string_of_interest 1.txt
 
  
@@ -112,7 +112,7 @@ Aware user will have to specify some points :
 
 - Choose 'flip' option
 ----------------------
-VTK reader 'flop upside down' the images to display them correctly ?!?
+VTK reader 'flips upside down' the images to display them correctly ?!?
 When a 'math guy' gets the image, the first thing he does is flipping it again.
 Avoid loosing CPU time using :
       void SetFlipY(bool); // Wrong = no flip
